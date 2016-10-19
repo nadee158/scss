@@ -18,6 +18,8 @@ public class SCSSEntryPoint {
 	CurrentDateTimeService getCurrentDateTimeService(){
 		return new CurrentDateTimeService();
 	}
+	
+	
 
 	public static void main(String[] args) {
 		SpringApplication.run(SCSSEntryPoint.class, args);
