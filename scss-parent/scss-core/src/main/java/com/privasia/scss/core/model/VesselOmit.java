@@ -72,7 +72,5 @@ public class VesselOmit extends AuditEntity implements Serializable {
 		this.vesselVoyOUT = vesselVoyOUT;
 	}
 
-	
-	
-	
+
 }
