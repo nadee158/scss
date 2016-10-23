@@ -18,6 +18,10 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
+		<mvn.compiler.plugin-version>3.3</mvn.compiler.plugin-version>
+		<mvn.surefire.plugin-version>2.16</mvn.surefire.plugin-version>
+		<skipTests>true</skipTests>
+		<spymemcached.version>2.8.4</spymemcached.version>
 	</properties>
 
 	<dependencies>
@@ -34,6 +38,10 @@
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+		<dependency>
     		<groupId>com.zaxxer</groupId>
     		<artifactId>HikariCP</artifactId>
 		</dependency>
@@ -45,6 +53,12 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter-tomcat</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<dependency>
@@ -59,16 +73,23 @@
 		    <version>3.0</version>
 		</dependency>
 		
+		<!-- ######################################### SERVLET DEPENDENCY ###################################### -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		
 	</dependencies>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
-		</plugins>
-	</build>
+<!-- 	<build> -->
+<!-- 		<plugins> -->
+<!-- 			<plugin> -->
+<!-- 				<groupId>org.springframework.boot</groupId> -->
+<!-- 				<artifactId>spring-boot-maven-plugin</artifactId> -->
+<!-- 			</plugin> -->
+<!-- 		</plugins> -->
+<!-- 	</build> -->
 	
 	<repositories>
     <repository>
@@ -79,7 +100,11 @@
   
   
   <modules>
+    <module>scss-common</module>
     <module>scss-core</module>
     <module>scss-scancard</module>
+    <module>scss-kioskbooth</module>
+    <module>scss-gatein</module>
+    <module>scss-gateout</module>
   </modules>
 </project>

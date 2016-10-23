@@ -5,6 +5,8 @@ package com.privasia.scss.core.model;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -19,6 +21,10 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
+
+import com.privasia.scss.common.security.Authority;
+import com.privasia.scss.common.security.User;
+import com.privasia.scss.core.util.constant.UserStatus;
 
 
 
@@ -109,6 +115,34 @@ public class Login extends AuditEntity implements Serializable {
 	public void setPassportExpiryDate(LocalDateTime passportExpiryDate) {
 		this.passportExpiryDate = passportExpiryDate;
 	}
+	
+	public User constructUser() {
+	    
+	    Set<Authority> userAuthorities = null;
+	    if (!(this.role == null)) {
+	      userAuthorities = new HashSet<Authority>();
+	      Authority authority=new Authority(this.role.getRoleName()); 
+	        
+	    }
+	    boolean accountExpired=true;
+	    boolean accountLocked=true;
+	    boolean credentialsExpired=true;
+	    boolean accountEnabled=false;
+	    UserStatus status=this.getSystemUser().getUserStatus();
+	    if(status.equals(UserStatus.ACTIVE)){
+	        accountExpired=false;
+	        accountLocked=false;
+	        credentialsExpired=false;
+	        accountEnabled=true;
+	    }
+	    
+	    SystemUser user=this.getSystemUser();
+
+	    User createdUser = new User(loginID, user.getStaffNumber(), user.getName(), user.getGender().toString(), user.getDateOfBirth(), user.getPassportNo(), 
+	        user.getPassportExpireDate(), user.getNationality().toString(), user.getDepartment().toString(), userName, password, user.getUserType().toString(), 
+	        userAuthorities, accountExpired, accountLocked, credentialsExpired, accountEnabled);
+	    return createdUser;
+	  }
 	
 	
 }

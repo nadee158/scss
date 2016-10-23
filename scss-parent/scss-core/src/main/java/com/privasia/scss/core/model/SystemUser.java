@@ -5,6 +5,8 @@ package com.privasia.scss.core.model;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
@@ -20,10 +22,14 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import com.privasia.scss.common.security.Authority;
+import com.privasia.scss.common.security.User;
 import com.privasia.scss.core.util.constant.Gender;
 import com.privasia.scss.core.util.constant.Nationality;
 import com.privasia.scss.core.util.constant.UserStatus;
 import com.privasia.scss.core.util.constant.UserType;
+
+
 
 /**
  * @author Janaka
@@ -295,6 +301,8 @@ public class SystemUser implements Serializable {
 	public void setUserType(UserType userType) {
 		this.userType = userType;
 	}
+
+  
 	
 	
 	

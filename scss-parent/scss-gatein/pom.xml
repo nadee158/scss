@@ -7,10 +7,10 @@
     <artifactId>scss-parent</artifactId>
     <version>1.0</version>
   </parent>
- 
-  <artifactId>scss-scancard</artifactId>
+  
+  <artifactId>scss-gatein</artifactId>
   <version>1.0</version>
-  <name>scss-scancard</name>
+  <name>scss-gatein</name>
   <url>http://maven.apache.org</url>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

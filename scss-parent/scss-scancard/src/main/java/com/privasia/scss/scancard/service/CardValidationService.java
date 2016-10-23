@@ -11,11 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.privasia.scss.core.model.Card;
+import com.privasia.scss.core.repository.CardRepository;
 import com.privasia.scss.core.util.constant.CardStatus;
-import com.privasia.scss.scancard.dao.CardRepository;
 import com.privasia.scss.scancard.util.ScanCardConstant;
-
-import ch.qos.logback.core.pattern.color.ForegroundCompositeConverterBase;
 
 /**
  * @author Janaka
@@ -63,7 +61,7 @@ public class CardValidationService {
 		
 		
 		
-		Card foundCard = card.orElseGet( Card::new );
+		//Card foundCard = card.orElseGet( Card::new );
 		
 		/*
 		 check the card number in  scss_company comp, scss_card card
