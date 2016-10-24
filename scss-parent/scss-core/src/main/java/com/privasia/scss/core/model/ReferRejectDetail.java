@@ -21,8 +21,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 import com.privasia.scss.core.util.constant.ContainerPosition;
 import com.privasia.scss.core.util.constant.ReferStatus;
@@ -33,230 +31,230 @@ import com.privasia.scss.core.util.constant.ReferStatus;
  */
 
 @Entity
-@Table(name="SCSS_REFER_REJECT_DET")
+@Table(name = "SCSS_REFER_REJECT_DET")
 public class ReferRejectDetail extends AuditEntity implements Serializable {
-	
-	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	@Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_SCSS_REFER_REJECT_DET")
-    @SequenceGenerator(name = "SEQ_SCSS_REFER_REJECT_DET", sequenceName = "SEQ_SCSS_REFER_REJECT_DET")
-	@Column(name = "REFER_REJECT_DET_ID")
-	private Long referRejectDetailID;
-	
-	@Column(name = "CONT_NO")
-	private String containerNo;
-	
-	@Column(name = "CONT_ISO_CODE")
-	private String containerIsoCode;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "REFER_ID", nullable = false)
-	private ReferReject referReject;
-	
-	@Embedded
-	private CommonSealAttribute seal;
-	
-	@Column(name = "REMARKS")
-	private String remarks;
-	
-	@Column(name = "STATUS_CODE")
-	@Enumerated(EnumType.STRING)
-	private ReferStatus status;
-	
-	@Column(name = "SUP_REMARKS")
-	private String supervisorRemarks;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "REJECT_BY", nullable = false, referencedColumnName="SYS_USERID_SEQ")
-	private SystemUser rejectBy;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "REFER_BY", nullable = false, referencedColumnName="SYS_USERID_SEQ")
-	private SystemUser referBy;
-	
-	@Column(name = "EXP_PM_BTM")
-	private int expPmBTM;
-	
-	@Column(name = "EXP_NET_WEIGHT")
-	private int expNetWeight;
-	
-	@Column(name = "DOUBLE_BOOKING")
-	private String doubleBooking;
-	
-	@Column(name = "LINE_CODE")
-	private String lineCode;
-	
-	@Column(name = "GATE_IN_DATETIME")
-	@Temporal(TemporalType.TIMESTAMP)
-	private LocalDateTime gateInTime;
-	
-	@Column(name = "POSITION")
-	@Enumerated(EnumType.STRING)
-	private ContainerPosition position;
-	
-	@Column(name = "MEASURED_WEIGHT_BRIDGE")
-	private int measuredWeightBridge;
-	
-	@Embedded
-	private CommonSolasAttribute solas;
-	
-	@OneToMany(fetch = FetchType.EAGER, mappedBy = "referRejectDetail")
-	private Set<ReferRejectReason> referRejectReason;
 
-	public Long getReferRejectDetailID() {
-		return referRejectDetailID;
-	}
 
-	public void setReferRejectDetailID(Long referRejectDetailID) {
-		this.referRejectDetailID = referRejectDetailID;
-	}
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 1L;
+  @Id
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_SCSS_REFER_REJECT_DET")
+  @SequenceGenerator(name = "SEQ_SCSS_REFER_REJECT_DET", sequenceName = "SEQ_SCSS_REFER_REJECT_DET")
+  @Column(name = "REFER_REJECT_DET_ID")
+  private Long referRejectDetailID;
 
-	public String getContainerNo() {
-		return containerNo;
-	}
+  @Column(name = "CONT_NO")
+  private String containerNo;
 
-	public void setContainerNo(String containerNo) {
-		this.containerNo = containerNo;
-	}
+  @Column(name = "CONT_ISO_CODE")
+  private String containerIsoCode;
 
-	public String getContainerIsoCode() {
-		return containerIsoCode;
-	}
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "REFER_ID", nullable = false)
+  private ReferReject referReject;
 
-	public void setContainerIsoCode(String containerIsoCode) {
-		this.containerIsoCode = containerIsoCode;
-	}
+  @Embedded
+  private CommonSealAttribute seal;
 
-	public ReferReject getReferReject() {
-		return referReject;
-	}
+  @Column(name = "REMARKS")
+  private String remarks;
 
-	public void setReferReject(ReferReject referReject) {
-		this.referReject = referReject;
-	}
+  @Column(name = "STATUS_CODE")
+  @Enumerated(EnumType.STRING)
+  private ReferStatus status;
 
-	public CommonSealAttribute getSeal() {
-		return seal;
-	}
+  @Column(name = "SUP_REMARKS")
+  private String supervisorRemarks;
 
-	public void setSeal(CommonSealAttribute seal) {
-		this.seal = seal;
-	}
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "REJECT_BY", nullable = false, referencedColumnName = "SYS_USERID_SEQ")
+  private SystemUser rejectBy;
 
-	public String getRemarks() {
-		return remarks;
-	}
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "REFER_BY", nullable = false, referencedColumnName = "SYS_USERID_SEQ")
+  private SystemUser referBy;
 
-	public void setRemarks(String remarks) {
-		this.remarks = remarks;
-	}
+  @Column(name = "EXP_PM_BTM")
+  private int expPmBTM;
 
-	public ReferStatus getStatus() {
-		return status;
-	}
+  @Column(name = "EXP_NET_WEIGHT")
+  private int expNetWeight;
 
-	public void setStatus(ReferStatus status) {
-		this.status = status;
-	}
+  @Column(name = "DOUBLE_BOOKING")
+  private String doubleBooking;
 
-	public String getSupervisorRemarks() {
-		return supervisorRemarks;
-	}
+  @Column(name = "LINE_CODE")
+  private String lineCode;
 
-	public void setSupervisorRemarks(String supervisorRemarks) {
-		this.supervisorRemarks = supervisorRemarks;
-	}
+  @Column(name = "GATE_IN_DATETIME")
+  // @Temporal(TemporalType.TIMESTAMP)
+  private LocalDateTime gateInTime;
 
-	public SystemUser getRejectBy() {
-		return rejectBy;
-	}
+  @Column(name = "POSITION")
+  @Enumerated(EnumType.STRING)
+  private ContainerPosition position;
 
-	public void setRejectBy(SystemUser rejectBy) {
-		this.rejectBy = rejectBy;
-	}
+  @Column(name = "MEASURED_WEIGHT_BRIDGE")
+  private int measuredWeightBridge;
 
-	public SystemUser getReferBy() {
-		return referBy;
-	}
+  @Embedded
+  private CommonSolasAttribute solas;
 
-	public void setReferBy(SystemUser referBy) {
-		this.referBy = referBy;
-	}
+  @OneToMany(fetch = FetchType.EAGER, mappedBy = "referRejectDetail")
+  private Set<ReferRejectReason> referRejectReason;
 
-	public int getExpPmBTM() {
-		return expPmBTM;
-	}
+  public Long getReferRejectDetailID() {
+    return referRejectDetailID;
+  }
 
-	public void setExpPmBTM(int expPmBTM) {
-		this.expPmBTM = expPmBTM;
-	}
+  public void setReferRejectDetailID(Long referRejectDetailID) {
+    this.referRejectDetailID = referRejectDetailID;
+  }
 
-	public int getExpNetWeight() {
-		return expNetWeight;
-	}
+  public String getContainerNo() {
+    return containerNo;
+  }
 
-	public void setExpNetWeight(int expNetWeight) {
-		this.expNetWeight = expNetWeight;
-	}
+  public void setContainerNo(String containerNo) {
+    this.containerNo = containerNo;
+  }
 
-	public String getDoubleBooking() {
-		return doubleBooking;
-	}
+  public String getContainerIsoCode() {
+    return containerIsoCode;
+  }
 
-	public void setDoubleBooking(String doubleBooking) {
-		this.doubleBooking = doubleBooking;
-	}
+  public void setContainerIsoCode(String containerIsoCode) {
+    this.containerIsoCode = containerIsoCode;
+  }
 
-	public String getLineCode() {
-		return lineCode;
-	}
+  public ReferReject getReferReject() {
+    return referReject;
+  }
 
-	public void setLineCode(String lineCode) {
-		this.lineCode = lineCode;
-	}
+  public void setReferReject(ReferReject referReject) {
+    this.referReject = referReject;
+  }
 
-	public LocalDateTime getGateInTime() {
-		return gateInTime;
-	}
+  public CommonSealAttribute getSeal() {
+    return seal;
+  }
 
-	public void setGateInTime(LocalDateTime gateInTime) {
-		this.gateInTime = gateInTime;
-	}
+  public void setSeal(CommonSealAttribute seal) {
+    this.seal = seal;
+  }
 
-	public ContainerPosition getPosition() {
-		return position;
-	}
+  public String getRemarks() {
+    return remarks;
+  }
 
-	public void setPosition(ContainerPosition position) {
-		this.position = position;
-	}
+  public void setRemarks(String remarks) {
+    this.remarks = remarks;
+  }
 
-	public int getMeasuredWeightBridge() {
-		return measuredWeightBridge;
-	}
+  public ReferStatus getStatus() {
+    return status;
+  }
 
-	public void setMeasuredWeightBridge(int measuredWeightBridge) {
-		this.measuredWeightBridge = measuredWeightBridge;
-	}
+  public void setStatus(ReferStatus status) {
+    this.status = status;
+  }
 
-	public CommonSolasAttribute getSolas() {
-		return solas;
-	}
+  public String getSupervisorRemarks() {
+    return supervisorRemarks;
+  }
 
-	public void setSolas(CommonSolasAttribute solas) {
-		this.solas = solas;
-	}
+  public void setSupervisorRemarks(String supervisorRemarks) {
+    this.supervisorRemarks = supervisorRemarks;
+  }
 
-	public Set<ReferRejectReason> getReferRejectReason() {
-		return referRejectReason;
-	}
+  public SystemUser getRejectBy() {
+    return rejectBy;
+  }
 
-	public void setReferRejectReason(Set<ReferRejectReason> referRejectReason) {
-		this.referRejectReason = referRejectReason;
-	}
+  public void setRejectBy(SystemUser rejectBy) {
+    this.rejectBy = rejectBy;
+  }
+
+  public SystemUser getReferBy() {
+    return referBy;
+  }
+
+  public void setReferBy(SystemUser referBy) {
+    this.referBy = referBy;
+  }
+
+  public int getExpPmBTM() {
+    return expPmBTM;
+  }
+
+  public void setExpPmBTM(int expPmBTM) {
+    this.expPmBTM = expPmBTM;
+  }
+
+  public int getExpNetWeight() {
+    return expNetWeight;
+  }
+
+  public void setExpNetWeight(int expNetWeight) {
+    this.expNetWeight = expNetWeight;
+  }
+
+  public String getDoubleBooking() {
+    return doubleBooking;
+  }
+
+  public void setDoubleBooking(String doubleBooking) {
+    this.doubleBooking = doubleBooking;
+  }
+
+  public String getLineCode() {
+    return lineCode;
+  }
+
+  public void setLineCode(String lineCode) {
+    this.lineCode = lineCode;
+  }
+
+  public LocalDateTime getGateInTime() {
+    return gateInTime;
+  }
+
+  public void setGateInTime(LocalDateTime gateInTime) {
+    this.gateInTime = gateInTime;
+  }
+
+  public ContainerPosition getPosition() {
+    return position;
+  }
+
+  public void setPosition(ContainerPosition position) {
+    this.position = position;
+  }
+
+  public int getMeasuredWeightBridge() {
+    return measuredWeightBridge;
+  }
+
+  public void setMeasuredWeightBridge(int measuredWeightBridge) {
+    this.measuredWeightBridge = measuredWeightBridge;
+  }
+
+  public CommonSolasAttribute getSolas() {
+    return solas;
+  }
+
+  public void setSolas(CommonSolasAttribute solas) {
+    this.solas = solas;
+  }
+
+  public Set<ReferRejectReason> getReferRejectReason() {
+    return referRejectReason;
+  }
+
+  public void setReferRejectReason(Set<ReferRejectReason> referRejectReason) {
+    this.referRejectReason = referRejectReason;
+  }
 
 }

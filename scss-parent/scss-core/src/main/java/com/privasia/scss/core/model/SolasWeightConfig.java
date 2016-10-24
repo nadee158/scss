@@ -26,95 +26,89 @@ import com.privasia.scss.core.util.constant.SolasWeightTypeSize;
  *
  */
 @Entity
-@Table(name="SCSS_SOLAS_WEIGHT_CONFIG")
-@AttributeOverrides({
-    @AttributeOverride(name="addBy",
-                       column=@Column(name="CREATED_BY")),
-    @AttributeOverride(name="updateBy",
-                       column=@Column(name="UPDATED_BY")),
-    @AttributeOverride(name="dateTimeAdd",
-    				   column=@Column(name="CREATED_DATE")),
-    @AttributeOverride(name="dateTimeUpdate",
-                       column=@Column(name="CREATED_BY"))
-})
+@Table(name = "SCSS_SOLAS_WEIGHT_CONFIG")
+@AttributeOverrides({@AttributeOverride(name = "addBy", column = @Column(name = "CREATED_BY")),
+    @AttributeOverride(name = "updateBy", column = @Column(name = "UPDATED_BY")),
+    @AttributeOverride(name = "dateTimeAdd", column = @Column(name = "CREATED_DATE")),
+    @AttributeOverride(name = "dateTimeUpdate", column = @Column(name = "UPDATED_DATE"))})
 public class SolasWeightConfig extends AuditEntity implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	
-	@Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_SCSS_SOLAS_WEIGHT_CONFIG")
-    @SequenceGenerator(name = "SEQ_SCSS_SOLAS_WEIGHT_CONFIG", sequenceName = "SOLAS_WGT_CON_SEQ")
-	@Column(name = "SOLAS_WGT_CON_SEQ")
-	private Long solasWegConfigID;
-	
-	@Column(name = "WEIGHT_TYPE")
-	@Enumerated(EnumType.STRING) 
-	private SolasWeightType weightType;
-	
-	@Column(name = "MIN_VALUE")
-	private int minValue;
-	
-	@Column(name = "MAX_VALUE")
-	private int maxValue;
-	
-	@Column(name = "DEFAULT_VALUE")
-	private int defaultValue;
-	
-	@Column(name = "WEIGHT_TYPE_SIZE")
-	@Enumerated(EnumType.STRING) 
-	private SolasWeightTypeSize weightTypeSize;
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 1L;
 
-	public Long getSolasWegConfigID() {
-		return solasWegConfigID;
-	}
+  @Id
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_SCSS_SOLAS_WEIGHT_CONFIG")
+  @SequenceGenerator(name = "SEQ_SCSS_SOLAS_WEIGHT_CONFIG", sequenceName = "SOLAS_WGT_CON_SEQ")
+  @Column(name = "SOLAS_WGT_CON_SEQ")
+  private Long solasWegConfigID;
 
-	public void setSolasWegConfigID(Long solasWegConfigID) {
-		this.solasWegConfigID = solasWegConfigID;
-	}
+  @Column(name = "WEIGHT_TYPE")
+  @Enumerated(EnumType.STRING)
+  private SolasWeightType weightType;
 
-	public SolasWeightType getWeightType() {
-		return weightType;
-	}
+  @Column(name = "MIN_VALUE")
+  private int minValue;
 
-	public void setWeightType(SolasWeightType weightType) {
-		this.weightType = weightType;
-	}
+  @Column(name = "MAX_VALUE")
+  private int maxValue;
 
-	public int getMinValue() {
-		return minValue;
-	}
+  @Column(name = "DEFAULT_VALUE")
+  private int defaultValue;
 
-	public void setMinValue(int minValue) {
-		this.minValue = minValue;
-	}
+  @Column(name = "WEIGHT_TYPE_SIZE")
+  @Enumerated(EnumType.STRING)
+  private SolasWeightTypeSize weightTypeSize;
 
-	public int getMaxValue() {
-		return maxValue;
-	}
+  public Long getSolasWegConfigID() {
+    return solasWegConfigID;
+  }
 
-	public void setMaxValue(int maxValue) {
-		this.maxValue = maxValue;
-	}
+  public void setSolasWegConfigID(Long solasWegConfigID) {
+    this.solasWegConfigID = solasWegConfigID;
+  }
 
-	public int getDefaultValue() {
-		return defaultValue;
-	}
+  public SolasWeightType getWeightType() {
+    return weightType;
+  }
 
-	public void setDefaultValue(int defaultValue) {
-		this.defaultValue = defaultValue;
-	}
+  public void setWeightType(SolasWeightType weightType) {
+    this.weightType = weightType;
+  }
 
-	public SolasWeightTypeSize getWeightTypeSize() {
-		return weightTypeSize;
-	}
+  public int getMinValue() {
+    return minValue;
+  }
 
-	public void setWeightTypeSize(SolasWeightTypeSize weightTypeSize) {
-		this.weightTypeSize = weightTypeSize;
-	}
-	
-	
-	
+  public void setMinValue(int minValue) {
+    this.minValue = minValue;
+  }
+
+  public int getMaxValue() {
+    return maxValue;
+  }
+
+  public void setMaxValue(int maxValue) {
+    this.maxValue = maxValue;
+  }
+
+  public int getDefaultValue() {
+    return defaultValue;
+  }
+
+  public void setDefaultValue(int defaultValue) {
+    this.defaultValue = defaultValue;
+  }
+
+  public SolasWeightTypeSize getWeightTypeSize() {
+    return weightTypeSize;
+  }
+
+  public void setWeightTypeSize(SolasWeightTypeSize weightTypeSize) {
+    this.weightTypeSize = weightTypeSize;
+  }
+
+
+
 }

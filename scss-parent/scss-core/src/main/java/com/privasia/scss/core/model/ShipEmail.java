@@ -17,7 +17,6 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
 
-
 import com.privasia.scss.core.util.constant.ShippingLineReportType;
 
 /**
@@ -26,129 +25,123 @@ import com.privasia.scss.core.util.constant.ShippingLineReportType;
  */
 
 @Entity
-@Table(name="SCSS_SHIP_EMAIL")
-@AttributeOverrides({
-    @AttributeOverride(name="addBy",
-                       column=@Column(name="CREATEDBY")),
-    @AttributeOverride(name="updateBy",
-                       column=@Column(name="UPDATEBY")),
-    @AttributeOverride(name="dateTimeAdd",
-    				   column=@Column(name="DATECREATE")),
-    @AttributeOverride(name="dateTimeUpdate",
-                       column=@Column(name="DATEUPDATE"))
-})
+@Table(name = "SCSS_SHIP_EMAIL")
+@AttributeOverrides({@AttributeOverride(name = "addBy", column = @Column(name = "CREATEDBY")),
+    @AttributeOverride(name = "updateBy", column = @Column(name = "UPDATEBY")),
+    @AttributeOverride(name = "dateTimeAdd", column = @Column(name = "DATECREATE")),
+    @AttributeOverride(name = "dateTimeUpdate", column = @Column(name = "DATEUPDATE"))})
 public class ShipEmail extends AuditEntity implements Serializable {
-	
-	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	
-	@Id
-	@Column(name = "LINE_CODE")
-	private String lineCode;
-	
-	@Column(name = "EMAIL_TO")
-	private String emailTo;
-	
-	@Column(name = "EMAIL_CC")
-	private String emailCC;
-	
-	@Column(name = "EMAIL_BCC")
-	private String emailBCC;
-	
-	@Column(name = "PERCENTAGE")
-	private BigDecimal percentage;
-	
-	@Column(name = "WEIGHT_NOTIFICATION")
-	@Type(type="YES_NO")
-	private boolean notifyWeight;
-	
-	@Column(name = "WRONG_DOOR_NOTIFICATION")
-	@Type(type="YES_NO")
-	private boolean notifyWrongDoor;
-	
-	@Column(name = "SEAL_LINE_NOTIFICATION")
-	@Type(type="YES_NO")
-	private boolean notifySealLine;
-	
-	@Column(name = "TYPE_CODE")
-	@Enumerated(EnumType.STRING)
-	private ShippingLineReportType typeCode;
 
-	public String getLineCode() {
-		return lineCode;
-	}
 
-	public void setLineCode(String lineCode) {
-		this.lineCode = lineCode;
-	}
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 1L;
 
-	public String getEmailTo() {
-		return emailTo;
-	}
+  @Id
+  @Column(name = "LINE_CODE")
+  private String lineCode;
 
-	public void setEmailTo(String emailTo) {
-		this.emailTo = emailTo;
-	}
+  @Column(name = "EMAIL_TO")
+  private String emailTo;
 
-	public String getEmailCC() {
-		return emailCC;
-	}
+  @Column(name = "EMAIL_CC")
+  private String emailCC;
 
-	public void setEmailCC(String emailCC) {
-		this.emailCC = emailCC;
-	}
+  @Column(name = "EMAIL_BCC")
+  private String emailBCC;
 
-	public String getEmailBCC() {
-		return emailBCC;
-	}
+  @Column(name = "PERCENTAGE")
+  private BigDecimal percentage;
 
-	public void setEmailBCC(String emailBCC) {
-		this.emailBCC = emailBCC;
-	}
+  @Column(name = "WEIGHT_NOTIFICATION")
+  @Type(type = "yes_no")
+  private boolean notifyWeight;
 
-	public BigDecimal getPercentage() {
-		return percentage;
-	}
+  @Column(name = "WRONG_DOOR_NOTIFICATION")
+  @Type(type = "yes_no")
+  private boolean notifyWrongDoor;
 
-	public void setPercentage(BigDecimal percentage) {
-		this.percentage = percentage;
-	}
+  @Column(name = "SEAL_LINE_NOTIFICATION")
+  @Type(type = "yes_no")
+  private boolean notifySealLine;
 
-	public boolean isNotifyWeight() {
-		return notifyWeight;
-	}
+  @Column(name = "TYPE_CODE")
+  @Enumerated(EnumType.STRING)
+  private ShippingLineReportType typeCode;
 
-	public void setNotifyWeight(boolean notifyWeight) {
-		this.notifyWeight = notifyWeight;
-	}
+  public String getLineCode() {
+    return lineCode;
+  }
 
-	public boolean isNotifyWrongDoor() {
-		return notifyWrongDoor;
-	}
+  public void setLineCode(String lineCode) {
+    this.lineCode = lineCode;
+  }
 
-	public void setNotifyWrongDoor(boolean notifyWrongDoor) {
-		this.notifyWrongDoor = notifyWrongDoor;
-	}
+  public String getEmailTo() {
+    return emailTo;
+  }
 
-	public boolean isNotifySealLine() {
-		return notifySealLine;
-	}
+  public void setEmailTo(String emailTo) {
+    this.emailTo = emailTo;
+  }
 
-	public void setNotifySealLine(boolean notifySealLine) {
-		this.notifySealLine = notifySealLine;
-	}
+  public String getEmailCC() {
+    return emailCC;
+  }
 
-	public ShippingLineReportType getTypeCode() {
-		return typeCode;
-	}
+  public void setEmailCC(String emailCC) {
+    this.emailCC = emailCC;
+  }
 
-	public void setTypeCode(ShippingLineReportType typeCode) {
-		this.typeCode = typeCode;
-	}
-	
-	
-	
+  public String getEmailBCC() {
+    return emailBCC;
+  }
+
+  public void setEmailBCC(String emailBCC) {
+    this.emailBCC = emailBCC;
+  }
+
+  public BigDecimal getPercentage() {
+    return percentage;
+  }
+
+  public void setPercentage(BigDecimal percentage) {
+    this.percentage = percentage;
+  }
+
+  public boolean isNotifyWeight() {
+    return notifyWeight;
+  }
+
+  public void setNotifyWeight(boolean notifyWeight) {
+    this.notifyWeight = notifyWeight;
+  }
+
+  public boolean isNotifyWrongDoor() {
+    return notifyWrongDoor;
+  }
+
+  public void setNotifyWrongDoor(boolean notifyWrongDoor) {
+    this.notifyWrongDoor = notifyWrongDoor;
+  }
+
+  public boolean isNotifySealLine() {
+    return notifySealLine;
+  }
+
+  public void setNotifySealLine(boolean notifySealLine) {
+    this.notifySealLine = notifySealLine;
+  }
+
+  public ShippingLineReportType getTypeCode() {
+    return typeCode;
+  }
+
+  public void setTypeCode(ShippingLineReportType typeCode) {
+    this.typeCode = typeCode;
+  }
+
+
+
 }

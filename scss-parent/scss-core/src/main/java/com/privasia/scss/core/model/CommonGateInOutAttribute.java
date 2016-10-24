@@ -12,8 +12,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.Type;
 
@@ -26,258 +24,256 @@ import com.privasia.scss.core.util.constant.TransactionStatus;
  */
 @Embeddable
 public class CommonGateInOutAttribute implements Serializable {
-	
-	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
 
-	private String pmHeadNo;
-	
-	private String pmPlateNo;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(nullable = true, referencedColumnName = "CRD_CARDID_SEQ")
-	private Card card;
-	
-	@Enumerated(EnumType.STRING)
-	private TransactionStatus eirStatus;
-	
-	private Long eirNumber;
-	
-	@Enumerated(EnumType.STRING)
-	private ImpExpFlagStatus impExpFlag;
-	
-	@Type(type="YES_NO")
-	private boolean transactionSlipPrinted;
-	
-	@Type(type="YES_NO")
-	private boolean kioskCancelPickUp;
-	
-	@Type(type="YES_NO")
-	private boolean kioskConfirmed;
-	
-	private String gateOutBoothNo;
-	
-	@Temporal(TemporalType.TIMESTAMP)
-	private LocalDateTime timeGateIn;
-	
-	@Temporal(TemporalType.TIMESTAMP)
-	private LocalDateTime timeGateInOk;
-	
-	@Temporal(TemporalType.TIMESTAMP)
-	private LocalDateTime timeGateOut;
-	
-	@Temporal(TemporalType.TIMESTAMP)
-	private LocalDateTime timeGateOutOk;
-	
-	@Temporal(TemporalType.TIMESTAMP)
-	private LocalDateTime timeGateOutBooth;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(nullable = true, referencedColumnName = "SYS_USERID_SEQ")
-	private SystemUser gateInClerk;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(nullable = true, referencedColumnName = "SYS_USERID_SEQ")
-	private SystemUser gateOutClerk;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(nullable = true, referencedColumnName = "SYS_USERID_SEQ")
-	private SystemUser gateOutBoothClerk;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(nullable = true, referencedColumnName = "CLI_CLIENTID_SEQ")
-	private Client gateInClient;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(nullable = true, referencedColumnName = "CLI_CLIENTID_SEQ")
-	private Client gateOutClient;
-	
-	private String rejectReason;
-	
-	@Enumerated(EnumType.STRING)
-	private TransactionStatus gateInStatus;
 
-	public String getPmHeadNo() {
-		return pmHeadNo;
-	}
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 1L;
 
-	public void setPmHeadNo(String pmHeadNo) {
-		this.pmHeadNo = pmHeadNo;
-	}
+  private String pmHeadNo;
 
-	public String getPmPlateNo() {
-		return pmPlateNo;
-	}
+  private String pmPlateNo;
 
-	public void setPmPlateNo(String pmPlateNo) {
-		this.pmPlateNo = pmPlateNo;
-	}
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(nullable = true, referencedColumnName = "CRD_CARDID_SEQ")
+  private Card card;
 
-	public Card getCard() {
-		return card;
-	}
+  @Enumerated(EnumType.STRING)
+  private TransactionStatus eirStatus;
 
-	public void setCard(Card card) {
-		this.card = card;
-	}
+  private Long eirNumber;
 
-	public TransactionStatus getEirStatus() {
-		return eirStatus;
-	}
+  @Enumerated(EnumType.STRING)
+  private ImpExpFlagStatus impExpFlag;
 
-	public void setEirStatus(TransactionStatus eirStatus) {
-		this.eirStatus = eirStatus;
-	}
+  @Type(type = "yes_no")
+  private boolean transactionSlipPrinted;
 
-	public Long getEirNumber() {
-		return eirNumber;
-	}
+  @Type(type = "yes_no")
+  private boolean kioskCancelPickUp;
 
-	public void setEirNumber(Long eirNumber) {
-		this.eirNumber = eirNumber;
-	}
+  @Type(type = "yes_no")
+  private boolean kioskConfirmed;
 
-	public ImpExpFlagStatus getImpExpFlag() {
-		return impExpFlag;
-	}
+  private String gateOutBoothNo;
 
-	public void setImpExpFlag(ImpExpFlagStatus impExpFlag) {
-		this.impExpFlag = impExpFlag;
-	}
+  // @Temporal(TemporalType.TIMESTAMP)
+  private LocalDateTime timeGateIn;
 
-	public boolean isTransactionSlipPrinted() {
-		return transactionSlipPrinted;
-	}
+  // @Temporal(TemporalType.TIMESTAMP)
+  private LocalDateTime timeGateInOk;
 
-	public void setTransactionSlipPrinted(boolean transactionSlipPrinted) {
-		this.transactionSlipPrinted = transactionSlipPrinted;
-	}
+  // @Temporal(TemporalType.TIMESTAMP)
+  private LocalDateTime timeGateOut;
 
-	public boolean isKioskCancelPickUp() {
-		return kioskCancelPickUp;
-	}
+  // @Temporal(TemporalType.TIMESTAMP)
+  private LocalDateTime timeGateOutOk;
 
-	public void setKioskCancelPickUp(boolean kioskCancelPickUp) {
-		this.kioskCancelPickUp = kioskCancelPickUp;
-	}
+  // @Temporal(TemporalType.TIMESTAMP)
+  private LocalDateTime timeGateOutBooth;
 
-	public boolean isKioskConfirmed() {
-		return kioskConfirmed;
-	}
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(nullable = true, referencedColumnName = "SYS_USERID_SEQ")
+  private SystemUser gateInClerk;
 
-	public void setKioskConfirmed(boolean kioskConfirmed) {
-		this.kioskConfirmed = kioskConfirmed;
-	}
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(nullable = true, referencedColumnName = "SYS_USERID_SEQ")
+  private SystemUser gateOutClerk;
 
-	public String getGateOutBoothNo() {
-		return gateOutBoothNo;
-	}
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(nullable = true, referencedColumnName = "SYS_USERID_SEQ")
+  private SystemUser gateOutBoothClerk;
 
-	public void setGateOutBoothNo(String gateOutBoothNo) {
-		this.gateOutBoothNo = gateOutBoothNo;
-	}
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(nullable = true, referencedColumnName = "CLI_CLIENTID_SEQ")
+  private Client gateInClient;
 
-	public LocalDateTime getTimeGateIn() {
-		return timeGateIn;
-	}
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(nullable = true, referencedColumnName = "CLI_CLIENTID_SEQ")
+  private Client gateOutClient;
 
-	public void setTimeGateIn(LocalDateTime timeGateIn) {
-		this.timeGateIn = timeGateIn;
-	}
+  private String rejectReason;
 
-	public LocalDateTime getTimeGateInOk() {
-		return timeGateInOk;
-	}
+  @Enumerated(EnumType.STRING)
+  private TransactionStatus gateInStatus;
 
-	public void setTimeGateInOk(LocalDateTime timeGateInOk) {
-		this.timeGateInOk = timeGateInOk;
-	}
+  public String getPmHeadNo() {
+    return pmHeadNo;
+  }
 
-	public LocalDateTime getTimeGateOut() {
-		return timeGateOut;
-	}
+  public void setPmHeadNo(String pmHeadNo) {
+    this.pmHeadNo = pmHeadNo;
+  }
 
-	public void setTimeGateOut(LocalDateTime timeGateOut) {
-		this.timeGateOut = timeGateOut;
-	}
+  public String getPmPlateNo() {
+    return pmPlateNo;
+  }
 
-	public LocalDateTime getTimeGateOutOk() {
-		return timeGateOutOk;
-	}
+  public void setPmPlateNo(String pmPlateNo) {
+    this.pmPlateNo = pmPlateNo;
+  }
 
-	public void setTimeGateOutOk(LocalDateTime timeGateOutOk) {
-		this.timeGateOutOk = timeGateOutOk;
-	}
+  public Card getCard() {
+    return card;
+  }
 
-	public LocalDateTime getTimeGateOutBooth() {
-		return timeGateOutBooth;
-	}
+  public void setCard(Card card) {
+    this.card = card;
+  }
 
-	public void setTimeGateOutBooth(LocalDateTime timeGateOutBooth) {
-		this.timeGateOutBooth = timeGateOutBooth;
-	}
+  public TransactionStatus getEirStatus() {
+    return eirStatus;
+  }
 
-	public SystemUser getGateInClerk() {
-		return gateInClerk;
-	}
+  public void setEirStatus(TransactionStatus eirStatus) {
+    this.eirStatus = eirStatus;
+  }
 
-	public void setGateInClerk(SystemUser gateInClerk) {
-		this.gateInClerk = gateInClerk;
-	}
+  public Long getEirNumber() {
+    return eirNumber;
+  }
 
-	public SystemUser getGateOutClerk() {
-		return gateOutClerk;
-	}
+  public void setEirNumber(Long eirNumber) {
+    this.eirNumber = eirNumber;
+  }
 
-	public void setGateOutClerk(SystemUser gateOutClerk) {
-		this.gateOutClerk = gateOutClerk;
-	}
+  public ImpExpFlagStatus getImpExpFlag() {
+    return impExpFlag;
+  }
 
-	public SystemUser getGateOutBoothClerk() {
-		return gateOutBoothClerk;
-	}
+  public void setImpExpFlag(ImpExpFlagStatus impExpFlag) {
+    this.impExpFlag = impExpFlag;
+  }
 
-	public void setGateOutBoothClerk(SystemUser gateOutBoothClerk) {
-		this.gateOutBoothClerk = gateOutBoothClerk;
-	}
+  public boolean isTransactionSlipPrinted() {
+    return transactionSlipPrinted;
+  }
 
-	public Client getGateInClient() {
-		return gateInClient;
-	}
+  public void setTransactionSlipPrinted(boolean transactionSlipPrinted) {
+    this.transactionSlipPrinted = transactionSlipPrinted;
+  }
 
-	public void setGateInClient(Client gateInClient) {
-		this.gateInClient = gateInClient;
-	}
+  public boolean isKioskCancelPickUp() {
+    return kioskCancelPickUp;
+  }
 
-	public Client getGateOutClient() {
-		return gateOutClient;
-	}
+  public void setKioskCancelPickUp(boolean kioskCancelPickUp) {
+    this.kioskCancelPickUp = kioskCancelPickUp;
+  }
 
-	public void setGateOutClient(Client gateOutClient) {
-		this.gateOutClient = gateOutClient;
-	}
+  public boolean isKioskConfirmed() {
+    return kioskConfirmed;
+  }
 
-	public String getRejectReason() {
-		return rejectReason;
-	}
+  public void setKioskConfirmed(boolean kioskConfirmed) {
+    this.kioskConfirmed = kioskConfirmed;
+  }
 
-	public void setRejectReason(String rejectReason) {
-		this.rejectReason = rejectReason;
-	}
+  public String getGateOutBoothNo() {
+    return gateOutBoothNo;
+  }
 
-	public TransactionStatus getGateInStatus() {
-		return gateInStatus;
-	}
+  public void setGateOutBoothNo(String gateOutBoothNo) {
+    this.gateOutBoothNo = gateOutBoothNo;
+  }
 
-	public void setGateInStatus(TransactionStatus gateInStatus) {
-		this.gateInStatus = gateInStatus;
-	}
-	
-	
-	
-	
+  public LocalDateTime getTimeGateIn() {
+    return timeGateIn;
+  }
 
-} 
+  public void setTimeGateIn(LocalDateTime timeGateIn) {
+    this.timeGateIn = timeGateIn;
+  }
+
+  public LocalDateTime getTimeGateInOk() {
+    return timeGateInOk;
+  }
+
+  public void setTimeGateInOk(LocalDateTime timeGateInOk) {
+    this.timeGateInOk = timeGateInOk;
+  }
+
+  public LocalDateTime getTimeGateOut() {
+    return timeGateOut;
+  }
+
+  public void setTimeGateOut(LocalDateTime timeGateOut) {
+    this.timeGateOut = timeGateOut;
+  }
+
+  public LocalDateTime getTimeGateOutOk() {
+    return timeGateOutOk;
+  }
+
+  public void setTimeGateOutOk(LocalDateTime timeGateOutOk) {
+    this.timeGateOutOk = timeGateOutOk;
+  }
+
+  public LocalDateTime getTimeGateOutBooth() {
+    return timeGateOutBooth;
+  }
+
+  public void setTimeGateOutBooth(LocalDateTime timeGateOutBooth) {
+    this.timeGateOutBooth = timeGateOutBooth;
+  }
+
+  public SystemUser getGateInClerk() {
+    return gateInClerk;
+  }
+
+  public void setGateInClerk(SystemUser gateInClerk) {
+    this.gateInClerk = gateInClerk;
+  }
+
+  public SystemUser getGateOutClerk() {
+    return gateOutClerk;
+  }
+
+  public void setGateOutClerk(SystemUser gateOutClerk) {
+    this.gateOutClerk = gateOutClerk;
+  }
+
+  public SystemUser getGateOutBoothClerk() {
+    return gateOutBoothClerk;
+  }
+
+  public void setGateOutBoothClerk(SystemUser gateOutBoothClerk) {
+    this.gateOutBoothClerk = gateOutBoothClerk;
+  }
+
+  public Client getGateInClient() {
+    return gateInClient;
+  }
+
+  public void setGateInClient(Client gateInClient) {
+    this.gateInClient = gateInClient;
+  }
+
+  public Client getGateOutClient() {
+    return gateOutClient;
+  }
+
+  public void setGateOutClient(Client gateOutClient) {
+    this.gateOutClient = gateOutClient;
+  }
+
+  public String getRejectReason() {
+    return rejectReason;
+  }
+
+  public void setRejectReason(String rejectReason) {
+    this.rejectReason = rejectReason;
+  }
+
+  public TransactionStatus getGateInStatus() {
+    return gateInStatus;
+  }
+
+  public void setGateInStatus(TransactionStatus gateInStatus) {
+    this.gateInStatus = gateInStatus;
+  }
+
+
+
+}

@@ -12,9 +12,10 @@ import com.privasia.scss.core.model.KioskBoothRightsPK;
 import com.privasia.scss.core.util.constant.KioskLockStatus;
 
 
-public interface KioskBoothRightsRepository extends BaseRepository<KioskBoothRights, KioskBoothRightsPK>, QueryDslPredicateExecutor<KioskBoothRights> {
+public interface KioskBoothRightsRepository
+    extends BaseRepository<KioskBoothRights, KioskBoothRightsPK>, QueryDslPredicateExecutor<KioskBoothRights> {
 
-  public List<KioskBoothRights> findByKioskBoothRightsIDBoothID(Client boothID);
+  public List<KioskBoothRights> findByKioskBoothRightsID_BoothID(Client boothID);
 
 //@formatter:off
   // String lockSql = " SELECT COUNT(1) FROM SCSS_KIOSK_BOOTH_RIGHTS" +
@@ -27,15 +28,15 @@ public interface KioskBoothRightsRepository extends BaseRepository<KioskBoothRig
       @Param("kioskLockStatus") KioskLockStatus kioskLockStatus, @Param("boothID") Long boothID);
 //@formatter:on
 
-  public List<KioskBoothRights> findByKioskBoothRightsIDKioskID(Client kioskID);
+  public List<KioskBoothRights> findByKioskBoothRightsID_KioskID(Client kioskID);
 
-  public List<KioskBoothRights> findByKioskBoothRightsIDKioskIDAndKioskBoothRightsIDBoothID(Client kioskID,
+  public List<KioskBoothRights> findByKioskBoothRightsID_KioskIDAndKioskBoothRightsID_BoothID(Client kioskID,
       Client boothID);
 
-  public List<KioskBoothRights> findByKioskBoothRightsIDKioskIDAndKioskBoothRightsIDBoothIDAndCardNumber(Client kioskID,
-      Client boothID, int cardNumber);
+  public List<KioskBoothRights> findByKioskBoothRightsID_KioskIDAndKioskBoothRightsID_BoothIDAndCardNumber(
+      Client kioskID, Client boothID, int cardNumber);
 
-  public List<KioskBoothRights> findByKioskBoothRightsIDKioskIDAndCardNumber(Client kioskID, int cardNumber);
+  public List<KioskBoothRights> findByKioskBoothRightsID_KioskIDAndCardNumber(Client kioskID, int cardNumber);
 
 //@formatter:off
   @Query("SELECT k FROM KioskBoothRights k where"

@@ -14,6 +14,7 @@ import com.privasia.scss.common.security.SecurityContext;
 import com.privasia.scss.common.security.SecurityHelper;
 import com.privasia.scss.gatein.service.CardUsageService;
 
+
 @RestController
 @RequestMapping("/in")
 public class GateInExpNormalController {
