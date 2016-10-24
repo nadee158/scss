@@ -5,13 +5,13 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-
-import javax.transaction.Transactional;
-import javax.transaction.Transactional.TxType;
+import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.privasia.scss.core.dto.ClientInfo;
 import com.privasia.scss.core.dto.KioskBoothRightInfo;
@@ -19,10 +19,13 @@ import com.privasia.scss.core.model.Client;
 import com.privasia.scss.core.model.KioskBoothContainerAttribute;
 import com.privasia.scss.core.model.KioskBoothRights;
 import com.privasia.scss.core.model.KioskBoothRightsPK;
+import com.privasia.scss.core.predicate.KioskBoothRightsPredicates;
 import com.privasia.scss.core.repository.KioskBoothRightsRepository;
 import com.privasia.scss.core.util.constant.DBTransactionStatus;
 import com.privasia.scss.core.util.constant.KioskLockStatus;
 import com.privasia.scss.core.util.constant.TransactionType;
+import com.querydsl.core.types.ExpressionUtils;
+import com.querydsl.core.types.Predicate;
 
 @Service("kioskBoothService")
 public class KioskBoothService {
@@ -75,7 +78,7 @@ public class KioskBoothService {
     return clientInfoList;
   }
 
-  @Transactional(value = TxType.REQUIRED)
+  @Transactional(propagation = Propagation.REQUIRED, readOnly=false)
   public int updateKioskBoothInfo(KioskBoothRightInfo kioskBoothRightInfo) {
     boolean islock = false;
     int rs = 0;
@@ -290,6 +293,17 @@ public class KioskBoothService {
 
 
     return rs;
+  }
+  
+  
+  @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
+  public KioskBoothRights getLockedKioskBoothInfo(String kioskID){
+	  Predicate kioskBoothInfoByKioskID = KioskBoothRightsPredicates.KioskBoothInfoByKioskID(kioskID);
+	  Predicate KioskBoothStatus = KioskBoothRightsPredicates.KioskBoothStatus(KioskLockStatus.LOCK.name());
+	  Predicate condition = ExpressionUtils.and(kioskBoothInfoByKioskID, KioskBoothStatus);
+	  return kioskBoothRightsRepository.findOne(condition);
+	 
+	  
   }
 
 

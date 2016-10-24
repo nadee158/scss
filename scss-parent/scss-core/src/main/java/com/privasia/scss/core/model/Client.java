@@ -8,7 +8,6 @@ import java.io.Serializable;
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -36,7 +35,18 @@ import com.privasia.scss.core.util.constant.RecordStatus;
 		@UniqueConstraint(columnNames={"LANE_NO"}),
 		@UniqueConstraint(columnNames={"CLI_UNITNO"})
 })
-public class Client implements Serializable {
+
+@AttributeOverrides({
+    @AttributeOverride(
+        name = "addBy", column = @Column( name = "CLI_CREATEDBY")),
+    @AttributeOverride(
+        name = "updateBy", column = @Column( name = "CLI_UPDATEDBY")),
+    @AttributeOverride(
+        name = "dateTimeAdd", column = @Column( name = "CLI_DATECREATE")),
+    @AttributeOverride(
+        name = "dateTimeUpdate", column = @Column( name = "CLI_DATEUPDATE"))
+})
+public class Client extends AuditEntity implements Serializable {
 
 	/**
 	 * 
@@ -119,27 +129,6 @@ public class Client implements Serializable {
 	@Column(name = "FTP_DIRECTORY")
 	private String ftpDirectory;
 	
-	@Embedded
-	@AttributeOverrides({
-		        @AttributeOverride(
-		            name = "addBy",
-		            column = @Column( name = "CLI_CREATEDBY")
-		        ),
-		        @AttributeOverride(
-		            name = "updateBy",
-		            column = @Column( name = "CLI_UPDATEDBY")
-		        ),
-		        @AttributeOverride(
-		            name = "dateTimeAdd",
-		            column = @Column( name = "CLI_DATECREATE")
-		        ),
-		        @AttributeOverride(
-		            name = "dateTimeUpdate",
-		            column = @Column( name = "CLI_DATEUPDATE")
-		        )
-	})
-	private AuditEntity auditEntity;
-
 	public Long getClientID() {
 		return clientID;
 	}
@@ -324,12 +313,6 @@ public class Client implements Serializable {
 		this.ftpDirectory = ftpDirectory;
 	}
 
-	public AuditEntity getCommonAttribute() {
-		return auditEntity;
-	}
-
-	public void setCommonAttribute(AuditEntity auditEntity) {
-		this.auditEntity = auditEntity;
-	}
+	
 
 }

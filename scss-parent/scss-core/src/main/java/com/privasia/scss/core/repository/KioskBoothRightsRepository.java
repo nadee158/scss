@@ -3,6 +3,7 @@ package com.privasia.scss.core.repository;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.querydsl.QueryDslPredicateExecutor;
 import org.springframework.data.repository.query.Param;
 
 import com.privasia.scss.core.model.Client;
@@ -10,7 +11,8 @@ import com.privasia.scss.core.model.KioskBoothRights;
 import com.privasia.scss.core.model.KioskBoothRightsPK;
 import com.privasia.scss.core.util.constant.KioskLockStatus;
 
-public interface KioskBoothRightsRepository extends BaseRepository<KioskBoothRights, KioskBoothRightsPK> {
+
+public interface KioskBoothRightsRepository extends BaseRepository<KioskBoothRights, KioskBoothRightsPK>, QueryDslPredicateExecutor<KioskBoothRights> {
 
   public List<KioskBoothRights> findByKioskBoothRightsIDBoothID(Client boothID);
 

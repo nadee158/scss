@@ -18,7 +18,7 @@
 
 	
 	<dependencies>
-		<dependency>
+		 <dependency>
 			<groupId>com.google.code.simple-spring-memcached</groupId>
 			<artifactId>spymemcached</artifactId>
 			<version>${spymemcached.version}</version>
@@ -28,7 +28,7 @@
 
 
 	<build>
-		<pluginManagement>
+		<!-- <pluginManagement>
 			<plugins>			   
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -48,7 +48,7 @@
 					</configuration>
 				</plugin>
 			</plugins>
-		</pluginManagement>
+		</pluginManagement> -->
 		<finalName>scss-common</finalName>
 	</build>
 

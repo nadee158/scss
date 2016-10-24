@@ -18,7 +18,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
-		<mvn.compiler.plugin-version>3.3</mvn.compiler.plugin-version>
+		<mvn.compiler.plugin-version>3.2</mvn.compiler.plugin-version>
 		<mvn.surefire.plugin-version>2.16</mvn.surefire.plugin-version>
 		<skipTests>true</skipTests>
 		<spymemcached.version>2.8.4</spymemcached.version>
@@ -82,14 +82,31 @@
 		
 	</dependencies>
 
-<!-- 	<build> -->
-<!-- 		<plugins> -->
-<!-- 			<plugin> -->
-<!-- 				<groupId>org.springframework.boot</groupId> -->
-<!-- 				<artifactId>spring-boot-maven-plugin</artifactId> -->
-<!-- 			</plugin> -->
-<!-- 		</plugins> -->
-<!-- 	</build> -->
+	<build>
+		<pluginManagement>
+			<plugins>			   
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>${mvn.compiler.plugin-version}</version>
+					<configuration>
+						<source>${java.version}</source>
+						<target>${java.version}</target>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<version>${mvn.surefire.plugin-version}</version>
+					<configuration>
+						<skipTests>${skipTests}</skipTests>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+		<finalName>scss-parent</finalName>
+	</build>
+
 	
 	<repositories>
     <repository>

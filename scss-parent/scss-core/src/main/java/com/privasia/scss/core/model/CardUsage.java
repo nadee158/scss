@@ -8,7 +8,6 @@ import java.io.Serializable;
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -29,7 +28,17 @@ import com.privasia.scss.core.util.constant.CardUsageStatus;
  */
 @Entity
 @Table(name="SCSS_CARD_USAGE")
-public class CardUsage implements Serializable {
+@AttributeOverrides({
+    @AttributeOverride(
+        name = "addBy", column = @Column( name = "CUG_CREATEDBY")),
+    @AttributeOverride(
+        name = "updateBy", column = @Column( name = "CUG_UPDATEDBY")),
+    @AttributeOverride(
+        name = "dateTimeAdd", column = @Column( name = "CUG_TIME_START")),
+    @AttributeOverride(
+        name = "dateTimeUpdate", column = @Column( name = "CUG_TIME_END"))
+})
+public class CardUsage extends AuditEntity implements Serializable {
 
 	/**
 	 * 
@@ -57,27 +66,6 @@ public class CardUsage implements Serializable {
 	@Column(name = "EXP_WEIGHT_BRIDGE")
 	private int expWeightBridge;
 	
-	@Embedded
-	@AttributeOverrides({
-		        @AttributeOverride(
-		            name = "addBy",
-		            column = @Column( name = "CUG_CREATEDBY")
-		        ),
-		        @AttributeOverride(
-		            name = "updateBy",
-		            column = @Column( name = "CUG_UPDATEDBY")
-		        ),
-		        @AttributeOverride(
-		            name = "dateTimeAdd",
-		            column = @Column( name = "CUG_TIME_START")
-		        ),
-		        @AttributeOverride(
-		            name = "dateTimeUpdate",
-		            column = @Column( name = "CUG_TIME_END")
-		        )
-	})
-	private AuditEntity auditEntity;
-
 	public Long getCardUsageID() {
 		return cardUsageID;
 	}
@@ -118,15 +106,5 @@ public class CardUsage implements Serializable {
 		this.expWeightBridge = expWeightBridge;
 	}
 
-	public AuditEntity getCommonAttribute() {
-		return auditEntity;
-	}
-
-	public void setCommonAttribute(AuditEntity auditEntity) {
-		this.auditEntity = auditEntity;
-	}
-	
-	
-	
 	
 }
