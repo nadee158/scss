@@ -18,8 +18,6 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.Type;
 
@@ -30,130 +28,124 @@ import org.hibernate.annotations.Type;
  *
  */
 @Entity
-@Table(name="SCSS_ETP_SOLAS_LOG")
-@AttributeOverrides({
-    @AttributeOverride(name="addBy",
-                       column=@Column(name="CREATED_BY")),
-    @AttributeOverride(name="updateBy",
-                       column=@Column(name="UPDATED_BY")),
-    @AttributeOverride(name="dateTimeAdd",
-    				   column=@Column(name="DATE_TIME_CREATED")),
-    @AttributeOverride(name="dateTimeUpdate",
-                       column=@Column(name="DATE_TIME_UPDATE"))
-})
+@Table(name = "SCSS_ETP_SOLAS_LOG")
+@AttributeOverrides({@AttributeOverride(name = "addBy", column = @Column(name = "CREATED_BY")),
+    @AttributeOverride(name = "updateBy", column = @Column(name = "UPDATED_BY")),
+    @AttributeOverride(name = "dateTimeAdd", column = @Column(name = "DATE_TIME_CREATED")),
+    @AttributeOverride(name = "dateTimeUpdate", column = @Column(name = "DATE_TIME_UPDATE"))})
 public class ETPSolasLog extends AuditEntity implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 1L;
 
-	
-	@Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_SCSS_ETP_SOLAS_LOG")
-    @SequenceGenerator(name = "SEQ_SCSS_ETP_SOLAS_LOG", sequenceName = "ETP_SOLAS_SEQ")
-	@Column(name = "ETP_SOLAS_SEQ")
-	private Long etpSolasID;
-	
-	@Column(name = "WEIGHING_METHOD")
-	private int weighingMethod;
-	
-	@Column(name = "WEIGHING_STATION")
-	private String weighingStation;
-	
-	@Column(name = "TIME_GATE_IN_OK")
-	@Temporal(TemporalType.TIMESTAMP)
-	@Type(type = "org.jadira.usertype.dateandtime.threeten.PersistentZonedDateTime")
-	private ZonedDateTime timeGateInOk;
-	
-	@Column(name = "CERTIFICATE_NO")
-	private String certificateNumber;
-	
-	@Column(name="CER_FILE_DATA")
-	@Type(type="YES_NO")
-	private boolean filedata;
-	
-	@Column(name = "WITHNESS_NAME")
-	private String withnessName;
-	
-	@Column(name = "WITHNESS_NRIC")
-	private String withnessNRIC;
-	
-	@OneToMany(fetch = FetchType.EAGER, mappedBy = "etpSolasLog")
-	private Set<ETPSolasLogDetail> etpSolasLogDetails;
-	
 
-	public Long getEtpSolasID() {
-		return etpSolasID;
-	}
+  @Id
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_SCSS_ETP_SOLAS_LOG")
+  @SequenceGenerator(name = "SEQ_SCSS_ETP_SOLAS_LOG", sequenceName = "ETP_SOLAS_SEQ")
+  @Column(name = "ETP_SOLAS_SEQ")
+  private Long etpSolasID;
 
-	public void setEtpSolasID(Long etpSolasID) {
-		this.etpSolasID = etpSolasID;
-	}
+  @Column(name = "WEIGHING_METHOD")
+  private int weighingMethod;
 
-	public int getWeighingMethod() {
-		return weighingMethod;
-	}
+  @Column(name = "WEIGHING_STATION")
+  private String weighingStation;
 
-	public void setWeighingMethod(int weighingMethod) {
-		this.weighingMethod = weighingMethod;
-	}
+  @Column(name = "TIME_GATE_IN_OK")
+  // @Temporal(TemporalType.TIMESTAMP)
+  @Type(type = "org.jadira.usertype.dateandtime.threeten.PersistentZonedDateTime")
+  private ZonedDateTime timeGateInOk;
 
-	public String getWeighingStation() {
-		return weighingStation;
-	}
+  @Column(name = "CERTIFICATE_NO")
+  private String certificateNumber;
 
-	public void setWeighingStation(String weighingStation) {
-		this.weighingStation = weighingStation;
-	}
+  @Column(name = "CER_FILE_DATA")
+  @Type(type = "yes_no")
+  private boolean filedata;
 
-	public String getCertificateNumber() {
-		return certificateNumber;
-	}
+  @Column(name = "WITHNESS_NAME")
+  private String withnessName;
 
-	public void setCertificateNumber(String certificateNumber) {
-		this.certificateNumber = certificateNumber;
-	}
+  @Column(name = "WITHNESS_NRIC")
+  private String withnessNRIC;
 
-	public boolean isFiledata() {
-		return filedata;
-	}
+  @OneToMany(fetch = FetchType.EAGER, mappedBy = "etpSolasLog")
+  private Set<ETPSolasLogDetail> etpSolasLogDetails;
 
-	public void setFiledata(boolean filedata) {
-		this.filedata = filedata;
-	}
 
-	public String getWithnessName() {
-		return withnessName;
-	}
+  public Long getEtpSolasID() {
+    return etpSolasID;
+  }
 
-	public void setWithnessName(String withnessName) {
-		this.withnessName = withnessName;
-	}
+  public void setEtpSolasID(Long etpSolasID) {
+    this.etpSolasID = etpSolasID;
+  }
 
-	public String getWithnessNRIC() {
-		return withnessNRIC;
-	}
+  public int getWeighingMethod() {
+    return weighingMethod;
+  }
 
-	public void setWithnessNRIC(String withnessNRIC) {
-		this.withnessNRIC = withnessNRIC;
-	}
+  public void setWeighingMethod(int weighingMethod) {
+    this.weighingMethod = weighingMethod;
+  }
 
-	public ZonedDateTime getTimeGateInOk() {
-		return timeGateInOk;
-	}
+  public String getWeighingStation() {
+    return weighingStation;
+  }
 
-	public void setTimeGateInOk(ZonedDateTime timeGateInOk) {
-		this.timeGateInOk = timeGateInOk;
-	}
+  public void setWeighingStation(String weighingStation) {
+    this.weighingStation = weighingStation;
+  }
 
-	public Set<ETPSolasLogDetail> getEtpSolasLogDetails() {
-		return etpSolasLogDetails;
-	}
+  public String getCertificateNumber() {
+    return certificateNumber;
+  }
 
-	public void setEtpSolasLogDetails(Set<ETPSolasLogDetail> etpSolasLogDetails) {
-		this.etpSolasLogDetails = etpSolasLogDetails;
-	}
+  public void setCertificateNumber(String certificateNumber) {
+    this.certificateNumber = certificateNumber;
+  }
 
-	
+  public boolean isFiledata() {
+    return filedata;
+  }
+
+  public void setFiledata(boolean filedata) {
+    this.filedata = filedata;
+  }
+
+  public String getWithnessName() {
+    return withnessName;
+  }
+
+  public void setWithnessName(String withnessName) {
+    this.withnessName = withnessName;
+  }
+
+  public String getWithnessNRIC() {
+    return withnessNRIC;
+  }
+
+  public void setWithnessNRIC(String withnessNRIC) {
+    this.withnessNRIC = withnessNRIC;
+  }
+
+  public ZonedDateTime getTimeGateInOk() {
+    return timeGateInOk;
+  }
+
+  public void setTimeGateInOk(ZonedDateTime timeGateInOk) {
+    this.timeGateInOk = timeGateInOk;
+  }
+
+  public Set<ETPSolasLogDetail> getEtpSolasLogDetails() {
+    return etpSolasLogDetails;
+  }
+
+  public void setEtpSolasLogDetails(Set<ETPSolasLogDetail> etpSolasLogDetails) {
+    this.etpSolasLogDetails = etpSolasLogDetails;
+  }
+
+
 }

@@ -18,8 +18,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 
 import com.privasia.scss.common.security.Authority;
@@ -33,116 +31,115 @@ import com.privasia.scss.core.util.constant.UserStatus;
  *
  */
 @Entity
-@Table(name="SCSS_LOGIN", uniqueConstraints={
-		@UniqueConstraint(columnNames={"LGN_LOGINNAME"})
-})
+@Table(name = "SCSS_LOGIN", uniqueConstraints = {@UniqueConstraint(columnNames = {"LGN_LOGINNAME"})})
 public class Login extends AuditEntity implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	
-	
-	@Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_SCSS_LOGIN")
-    @SequenceGenerator(name = "SEQ_SCSS_LOGIN", sequenceName = "LGN_LOGINID_SEQ")
-	@Column(name = "LGN_LOGINID_SEQ")
-	private Long loginID;
-	
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "USR_USERID", nullable = false, referencedColumnName="SYS_USERID_SEQ")
-	private SystemUser systemUser;
-	
-	@Column(name = "LGN_LOGINNAME")
-	private String userName;
-	
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "ROL_ROLEID", nullable = false, referencedColumnName="ROL_ROLEID_SEQ")
-	private Role role;
-	
-	@Column(name = "LGN_USERPWD")
-	private String password;
-	
-	@Column(name = "PASSWORD_EXPIRY_DATE")
-	@Temporal(TemporalType.TIMESTAMP)
-	private LocalDateTime passportExpiryDate;
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 1L;
 
-	public Long getLoginID() {
-		return loginID;
-	}
 
-	public void setLoginID(Long loginID) {
-		this.loginID = loginID;
-	}
+  @Id
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_SCSS_LOGIN")
+  @SequenceGenerator(name = "SEQ_SCSS_LOGIN", sequenceName = "LGN_LOGINID_SEQ")
+  @Column(name = "LGN_LOGINID_SEQ")
+  private Long loginID;
 
-	public SystemUser getSystemUser() {
-		return systemUser;
-	}
+  @ManyToOne(fetch = FetchType.EAGER)
+  @JoinColumn(name = "USR_USERID", nullable = false, referencedColumnName = "SYS_USERID_SEQ")
+  private SystemUser systemUser;
 
-	public void setSystemUser(SystemUser systemUser) {
-		this.systemUser = systemUser;
-	}
+  @Column(name = "LGN_LOGINNAME")
+  private String userName;
 
-	public String getUserName() {
-		return userName;
-	}
+  @ManyToOne(fetch = FetchType.EAGER)
+  @JoinColumn(name = "ROL_ROLEID", nullable = false, referencedColumnName = "ROL_ROLEID_SEQ")
+  private Role role;
 
-	public void setUserName(String userName) {
-		this.userName = userName;
-	}
+  @Column(name = "LGN_USERPWD")
+  private String password;
 
-	public Role getRole() {
-		return role;
-	}
+  @Column(name = "PASSWORD_EXPIRY_DATE")
+  // @Temporal(TemporalType.TIMESTAMP)
+  private LocalDateTime passportExpiryDate;
 
-	public void setRole(Role role) {
-		this.role = role;
-	}
+  public Long getLoginID() {
+    return loginID;
+  }
 
-	public String getPassword() {
-		return password;
-	}
+  public void setLoginID(Long loginID) {
+    this.loginID = loginID;
+  }
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
+  public SystemUser getSystemUser() {
+    return systemUser;
+  }
 
-	public LocalDateTime getPassportExpiryDate() {
-		return passportExpiryDate;
-	}
+  public void setSystemUser(SystemUser systemUser) {
+    this.systemUser = systemUser;
+  }
 
-	public void setPassportExpiryDate(LocalDateTime passportExpiryDate) {
-		this.passportExpiryDate = passportExpiryDate;
-	}
-	
-	public User constructUser() {
-	    
-	    Set<Authority> userAuthorities = null;
-	    if (!(this.role == null)) {
-	      userAuthorities = new HashSet<Authority>();
-	      Authority authority=new Authority(this.role.getRoleName()); 
-	        
-	    }
-	    boolean accountExpired=true;
-	    boolean accountLocked=true;
-	    boolean credentialsExpired=true;
-	    boolean accountEnabled=false;
-	    UserStatus status=this.getSystemUser().getUserStatus();
-	    if(status.equals(UserStatus.ACTIVE)){
-	        accountExpired=false;
-	        accountLocked=false;
-	        credentialsExpired=false;
-	        accountEnabled=true;
-	    }
-	    
-	    SystemUser user=this.getSystemUser();
+  public String getUserName() {
+    return userName;
+  }
 
-	    User createdUser = new User(loginID, user.getStaffNumber(), user.getName(), user.getGender().toString(), user.getDateOfBirth(), user.getPassportNo(), 
-	        user.getPassportExpireDate(), user.getNationality().toString(), user.getDepartment().toString(), userName, password, user.getUserType().toString(), 
-	        userAuthorities, accountExpired, accountLocked, credentialsExpired, accountEnabled);
-	    return createdUser;
-	  }
-	
-	
+  public void setUserName(String userName) {
+    this.userName = userName;
+  }
+
+  public Role getRole() {
+    return role;
+  }
+
+  public void setRole(Role role) {
+    this.role = role;
+  }
+
+  public String getPassword() {
+    return password;
+  }
+
+  public void setPassword(String password) {
+    this.password = password;
+  }
+
+  public LocalDateTime getPassportExpiryDate() {
+    return passportExpiryDate;
+  }
+
+  public void setPassportExpiryDate(LocalDateTime passportExpiryDate) {
+    this.passportExpiryDate = passportExpiryDate;
+  }
+
+  public User constructUser() {
+
+    Set<Authority> userAuthorities = null;
+    if (!(this.role == null)) {
+      userAuthorities = new HashSet<Authority>();
+      Authority authority = new Authority(this.role.getRoleName());
+
+    }
+    boolean accountExpired = true;
+    boolean accountLocked = true;
+    boolean credentialsExpired = true;
+    boolean accountEnabled = false;
+    UserStatus status = this.getSystemUser().getUserStatus();
+    if (status.equals(UserStatus.ACTIVE)) {
+      accountExpired = false;
+      accountLocked = false;
+      credentialsExpired = false;
+      accountEnabled = true;
+    }
+
+    SystemUser user = this.getSystemUser();
+
+    User createdUser = new User(loginID, user.getStaffNumber(), user.getName(), user.getGender().toString(),
+        user.getDateOfBirth(), user.getPassportNo(), user.getPassportExpireDate(), user.getNationality().toString(),
+        user.getDepartment().toString(), userName, password, user.getUserType().toString(), userAuthorities,
+        accountExpired, accountLocked, credentialsExpired, accountEnabled);
+    return createdUser;
+  }
+
+
 }

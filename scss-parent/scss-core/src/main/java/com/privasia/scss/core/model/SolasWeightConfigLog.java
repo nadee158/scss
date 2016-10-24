@@ -15,8 +15,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 import com.privasia.scss.core.util.constant.SolasWeightType;
 import com.privasia.scss.core.util.constant.SolasWeightTypeSize;
@@ -27,108 +25,108 @@ import com.privasia.scss.core.util.constant.SolasWeightTypeSize;
  *
  */
 @Entity
-@Table(name="SCSS_SOLAS_WEIGHT_CONFIG_LOG")
+@Table(name = "SCSS_SOLAS_WEIGHT_CONFIG_LOG")
 public class SolasWeightConfigLog implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	
-	@Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_SCSS_SOLAS_WEIGHT_CONFIG_LOG")
-    @SequenceGenerator(name = "SEQ_SCSS_SOLAS_WEIGHT_CONFIG_LOG", sequenceName = "SOLAS_WGTCON_LOG_SEQ")
-	@Column(name = "SOLAS_WGTCON_LOG_SEQ")
-	private Long solasWegConfigLogID;
-	
-	@Column(name = "WEIGHT_TYPE")
-	@Enumerated(EnumType.STRING) 
-	private SolasWeightType weightType;
-	
-	@Column(name = "MIN_VALUE")
-	private int minValue;
-	
-	@Column(name = "MAX_VALUE")
-	private int maxValue;
-	
-	@Column(name = "DEFAULT_VALUE")
-	private int defaultValue;
-	
-	@Column(name = "WEIGHT_TYPE_SIZE")
-	@Enumerated(EnumType.STRING) 
-	private SolasWeightTypeSize weightTypeSize;
-	
-	@Column(name = "CREATED_BY")
-	private long createdBy;
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 1L;
 
-	@Column(name = "CREATED_DATE", nullable = false)
-	@Temporal(TemporalType.TIMESTAMP)
-	private LocalDateTime createdDate;
+  @Id
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_SCSS_SOLAS_WEIGHT_CONFIG_LOG")
+  @SequenceGenerator(name = "SEQ_SCSS_SOLAS_WEIGHT_CONFIG_LOG", sequenceName = "SOLAS_WGTCON_LOG_SEQ")
+  @Column(name = "SOLAS_WGTCON_LOG_SEQ")
+  private Long solasWegConfigLogID;
 
-	public Long getSolasWegConfigLogID() {
-		return solasWegConfigLogID;
-	}
+  @Column(name = "WEIGHT_TYPE")
+  @Enumerated(EnumType.STRING)
+  private SolasWeightType weightType;
 
-	public void setSolasWegConfigLogID(Long solasWegConfigLogID) {
-		this.solasWegConfigLogID = solasWegConfigLogID;
-	}
+  @Column(name = "MIN_VALUE")
+  private int minValue;
 
-	public SolasWeightType getWeightType() {
-		return weightType;
-	}
+  @Column(name = "MAX_VALUE")
+  private int maxValue;
 
-	public void setWeightType(SolasWeightType weightType) {
-		this.weightType = weightType;
-	}
+  @Column(name = "DEFAULT_VALUE")
+  private int defaultValue;
 
-	public int getMinValue() {
-		return minValue;
-	}
+  @Column(name = "WEIGHT_TYPE_SIZE")
+  @Enumerated(EnumType.STRING)
+  private SolasWeightTypeSize weightTypeSize;
 
-	public void setMinValue(int minValue) {
-		this.minValue = minValue;
-	}
+  @Column(name = "CREATED_BY")
+  private long createdBy;
 
-	public int getMaxValue() {
-		return maxValue;
-	}
+  @Column(name = "CREATED_DATE", nullable = false)
+  // @Temporal(TemporalType.TIMESTAMP)
+  private LocalDateTime createdDate;
 
-	public void setMaxValue(int maxValue) {
-		this.maxValue = maxValue;
-	}
+  public Long getSolasWegConfigLogID() {
+    return solasWegConfigLogID;
+  }
 
-	public int getDefaultValue() {
-		return defaultValue;
-	}
+  public void setSolasWegConfigLogID(Long solasWegConfigLogID) {
+    this.solasWegConfigLogID = solasWegConfigLogID;
+  }
 
-	public void setDefaultValue(int defaultValue) {
-		this.defaultValue = defaultValue;
-	}
+  public SolasWeightType getWeightType() {
+    return weightType;
+  }
 
-	public SolasWeightTypeSize getWeightTypeSize() {
-		return weightTypeSize;
-	}
+  public void setWeightType(SolasWeightType weightType) {
+    this.weightType = weightType;
+  }
 
-	public void setWeightTypeSize(SolasWeightTypeSize weightTypeSize) {
-		this.weightTypeSize = weightTypeSize;
-	}
+  public int getMinValue() {
+    return minValue;
+  }
 
-	public long getCreatedBy() {
-		return createdBy;
-	}
+  public void setMinValue(int minValue) {
+    this.minValue = minValue;
+  }
 
-	public void setCreatedBy(long createdBy) {
-		this.createdBy = createdBy;
-	}
+  public int getMaxValue() {
+    return maxValue;
+  }
 
-	public LocalDateTime getCreatedDate() {
-		return createdDate;
-	}
+  public void setMaxValue(int maxValue) {
+    this.maxValue = maxValue;
+  }
 
-	public void setCreatedDate(LocalDateTime createdDate) {
-		this.createdDate = createdDate;
-	}
+  public int getDefaultValue() {
+    return defaultValue;
+  }
 
-	
-	
+  public void setDefaultValue(int defaultValue) {
+    this.defaultValue = defaultValue;
+  }
+
+  public SolasWeightTypeSize getWeightTypeSize() {
+    return weightTypeSize;
+  }
+
+  public void setWeightTypeSize(SolasWeightTypeSize weightTypeSize) {
+    this.weightTypeSize = weightTypeSize;
+  }
+
+  public long getCreatedBy() {
+    return createdBy;
+  }
+
+  public void setCreatedBy(long createdBy) {
+    this.createdBy = createdBy;
+  }
+
+  public LocalDateTime getCreatedDate() {
+    return createdDate;
+  }
+
+  public void setCreatedDate(LocalDateTime createdDate) {
+    this.createdDate = createdDate;
+  }
+
+
+
 }

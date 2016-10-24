@@ -24,75 +24,67 @@ import org.hibernate.annotations.Type;
  *
  */
 @Entity
-@Table(name="SCSS_ROLE", uniqueConstraints={
-		@UniqueConstraint(columnNames = "ROL_NAME")
-})
-@AttributeOverrides({
-    @AttributeOverride(name="addBy",
-                       column=@Column(name="CREATED_BY")),
-    @AttributeOverride(name="updateBy",
-                       column=@Column(name="UPDATED_BY")),
-    @AttributeOverride(name="dateTimeAdd",
-    				   column=@Column(name="DATE_TIME_CREATED")),
-    @AttributeOverride(name="dateTimeUpdate",
-                       column=@Column(name="DATE_TIME_UPDATE"))
-})
+@Table(name = "SCSS_ROLE", uniqueConstraints = {@UniqueConstraint(columnNames = "ROL_NAME")})
+@AttributeOverrides({@AttributeOverride(name = "addBy", column = @Column(name = "CREATED_BY")),
+    @AttributeOverride(name = "updateBy", column = @Column(name = "UPDATED_BY")),
+    @AttributeOverride(name = "dateTimeAdd", column = @Column(name = "DATE_TIME_CREATED")),
+    @AttributeOverride(name = "dateTimeUpdate", column = @Column(name = "DATE_TIME_UPDATE"))})
 public class Role extends AuditEntity implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	
-	
-	@Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_SCSS_ROLE")
-    @SequenceGenerator(name = "SEQ_SCSS_ROLE", sequenceName = "ROL_ROLEID_SEQ")
-	@Column(name = "ROL_ROLEID_SEQ")
-	private Long roleID;
-	
-	@Column(name = "ROL_NAME")
-	private String roleName;
-	
-	@Column(name = "ROL_TYPE")
-	private String roleType;
-	
-	@Column(name = "ROL_SUPERVISOR_FLAG")
-	@Type(type="YES_NO")
-	private boolean supervisorFlag;
-	
-	public Long getRoleID() {
-		return roleID;
-	}
-
-	public void setRoleID(Long roleID) {
-		this.roleID = roleID;
-	}
-
-	public String getRoleName() {
-		return roleName;
-	}
-
-	public void setRoleName(String roleName) {
-		this.roleName = roleName;
-	}
-
-	public String getRoleType() {
-		return roleType;
-	}
-
-	public void setRoleType(String roleType) {
-		this.roleType = roleType;
-	}
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 1L;
 
 
-	public boolean isSupervisorFlag() {
-		return supervisorFlag;
-	}
+  @Id
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_SCSS_ROLE")
+  @SequenceGenerator(name = "SEQ_SCSS_ROLE", sequenceName = "ROL_ROLEID_SEQ")
+  @Column(name = "ROL_ROLEID_SEQ")
+  private Long roleID;
+
+  @Column(name = "ROL_NAME")
+  private String roleName;
+
+  @Column(name = "ROL_TYPE")
+  private String roleType;
+
+  @Column(name = "ROL_SUPERVISOR_FLAG")
+  @Type(type = "yes_no")
+  private boolean supervisorFlag;
+
+  public Long getRoleID() {
+    return roleID;
+  }
+
+  public void setRoleID(Long roleID) {
+    this.roleID = roleID;
+  }
+
+  public String getRoleName() {
+    return roleName;
+  }
+
+  public void setRoleName(String roleName) {
+    this.roleName = roleName;
+  }
+
+  public String getRoleType() {
+    return roleType;
+  }
+
+  public void setRoleType(String roleType) {
+    this.roleType = roleType;
+  }
 
 
-	public void setSupervisorFlag(boolean supervisorFlag) {
-		this.supervisorFlag = supervisorFlag;
-	}
+  public boolean isSupervisorFlag() {
+    return supervisorFlag;
+  }
+
+
+  public void setSupervisorFlag(boolean supervisorFlag) {
+    this.supervisorFlag = supervisorFlag;
+  }
 
 }

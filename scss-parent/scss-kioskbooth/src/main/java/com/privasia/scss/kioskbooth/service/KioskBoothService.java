@@ -5,7 +5,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,13 +18,10 @@ import com.privasia.scss.core.model.Client;
 import com.privasia.scss.core.model.KioskBoothContainerAttribute;
 import com.privasia.scss.core.model.KioskBoothRights;
 import com.privasia.scss.core.model.KioskBoothRightsPK;
-import com.privasia.scss.core.predicate.KioskBoothRightsPredicates;
 import com.privasia.scss.core.repository.KioskBoothRightsRepository;
 import com.privasia.scss.core.util.constant.DBTransactionStatus;
 import com.privasia.scss.core.util.constant.KioskLockStatus;
 import com.privasia.scss.core.util.constant.TransactionType;
-import com.querydsl.core.types.ExpressionUtils;
-import com.querydsl.core.types.Predicate;
 
 @Service("kioskBoothService")
 public class KioskBoothService {
@@ -38,7 +34,7 @@ public class KioskBoothService {
     Client clientBoothID = new Client();
     clientBoothID.setClientID(Long.parseLong(boothID));
     List<KioskBoothRights> KioskBoothRightList =
-        kioskBoothRightsRepository.findByKioskBoothRightsIDBoothID(clientBoothID);
+        kioskBoothRightsRepository.findByKioskBoothRightsID_BoothID(clientBoothID);
     if (!(KioskBoothRightList == null || KioskBoothRightList.isEmpty())) {
       for (KioskBoothRights kioskBoothRights : KioskBoothRightList) {
 
@@ -78,7 +74,7 @@ public class KioskBoothService {
     return clientInfoList;
   }
 
-  @Transactional(propagation = Propagation.REQUIRED, readOnly=false)
+  @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
   public int updateKioskBoothInfo(KioskBoothRightInfo kioskBoothRightInfo) {
     boolean islock = false;
     int rs = 0;
@@ -115,17 +111,18 @@ public class KioskBoothService {
           Client clBoothID = new Client();
           clBoothID.setClientID(boothID);
           if (cardNumber != 0) {
-            list = kioskBoothRightsRepository.findByKioskBoothRightsIDKioskIDAndKioskBoothRightsIDBoothIDAndCardNumber(
-                clKioskID, clBoothID, cardNumber);
+            list =
+                kioskBoothRightsRepository.findByKioskBoothRightsID_KioskIDAndKioskBoothRightsID_BoothIDAndCardNumber(
+                    clKioskID, clBoothID, cardNumber);
           } else {
-            list = kioskBoothRightsRepository.findByKioskBoothRightsIDKioskIDAndKioskBoothRightsIDBoothID(clKioskID,
+            list = kioskBoothRightsRepository.findByKioskBoothRightsID_KioskIDAndKioskBoothRightsID_BoothID(clKioskID,
                 clBoothID);
           }
         } else {
           if (cardNumber != 0) {
-            list = kioskBoothRightsRepository.findByKioskBoothRightsIDKioskIDAndCardNumber(clKioskID, cardNumber);
+            list = kioskBoothRightsRepository.findByKioskBoothRightsID_KioskIDAndCardNumber(clKioskID, cardNumber);
           } else {
-            list = kioskBoothRightsRepository.findByKioskBoothRightsIDKioskID(clKioskID);
+            list = kioskBoothRightsRepository.findByKioskBoothRightsID_KioskID(clKioskID);
           }
         }
 
@@ -294,16 +291,18 @@ public class KioskBoothService {
 
     return rs;
   }
-  
-  
+
+
   @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-  public KioskBoothRights getLockedKioskBoothInfo(String kioskID){
-	  Predicate kioskBoothInfoByKioskID = KioskBoothRightsPredicates.KioskBoothInfoByKioskID(kioskID);
-	  Predicate KioskBoothStatus = KioskBoothRightsPredicates.KioskBoothStatus(KioskLockStatus.LOCK.name());
-	  Predicate condition = ExpressionUtils.and(kioskBoothInfoByKioskID, KioskBoothStatus);
-	  return kioskBoothRightsRepository.findOne(condition);
-	 
-	  
+  public KioskBoothRights getLockedKioskBoothInfo(String kioskID) {
+    // Predicate kioskBoothInfoByKioskID =
+    // KioskBoothRightsPredicates.KioskBoothInfoByKioskID(kioskID);
+    // Predicate KioskBoothStatus =
+    // KioskBoothRightsPredicates.KioskBoothStatus(KioskLockStatus.LOCK.name());
+    // Predicate condition = ExpressionUtils.and(kioskBoothInfoByKioskID, KioskBoothStatus);
+    // return kioskBoothRightsRepository.findOne(condition);
+    return null;
+
   }
 
 

@@ -15,8 +15,6 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.Type;
 
@@ -53,11 +51,11 @@ public class KioskBoothRights extends AuditEntity implements Serializable {
   private int cardNumber;
 
   @Column(name = "CARD_SCAN_TIME")
-  @Temporal(TemporalType.TIMESTAMP)
+  // @Temporal(TemporalType.TIMESTAMP)
   private LocalDateTime cardScanTime;
 
   @Column(name = "KIOSK_SELECT_TIME")
-  @Temporal(TemporalType.TIMESTAMP)
+  // @Temporal(TemporalType.TIMESTAMP)
   private LocalDateTime kioskSelectedTime;
 
   @Column(name = "DISPLAY_SCREEN_ID")
@@ -85,17 +83,17 @@ public class KioskBoothRights extends AuditEntity implements Serializable {
   @Enumerated(EnumType.STRING)
   private TransactionType transactionType;
 
-  @Column(name = "TRANSACTION_TYPE")
+  @Column(name = "reviseHeadNo")
   private String reviseHeadNo;
 
-  @Column(name = "TRANSACTION_TYPE")
+  @Column(name = "reviseHeadNoRemarks")
   private String reviseHeadNoRemarks;
 
-  @Column(name = "TRANSACTION_TYPE")
-  @Type(type = "YES_NO")
+  @Column(name = "retakePhoto")
+  @Type(type = "yes_no")
   private boolean retakePhoto;
 
-  @Column(name = "TRANSACTION_TYPE")
+  @Column(name = "trxCompleteTime")
   private LocalDateTime trxCompleteTime;
 
   @Column(name = "LOCK_USER_ID")
