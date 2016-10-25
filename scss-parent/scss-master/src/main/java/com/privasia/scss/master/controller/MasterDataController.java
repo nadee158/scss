@@ -20,7 +20,7 @@ import com.privasia.scss.master.service.GlobalSettingService;
  */
 
 @RestController
-@RequestMapping("/masterdata")
+@RequestMapping("scss/masterdata")
 public class MasterDataController {
 	
 	

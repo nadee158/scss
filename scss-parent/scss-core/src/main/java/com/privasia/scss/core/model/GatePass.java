@@ -152,9 +152,9 @@ public class GatePass extends AuditEntity implements Serializable {
   @JoinColumn(name = "CUG_ID_SEQ", nullable = true, referencedColumnName = "CUG_ID_SEQ")
   private CardUsage cardUsage;
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  /*@ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "BOOKING_ID", nullable = true, referencedColumnName = "BOOKING_ID")
-  private HPATBooking hpatBooking;
+  private HPATBooking hpatBooking;*/
 
   @Column(name = "COSMOS_GTP_SEAL_1_ORIGIN")
   private String cosmosSeal01Origin;
@@ -362,13 +362,13 @@ public class GatePass extends AuditEntity implements Serializable {
     this.cardUsage = cardUsage;
   }
 
-  public HPATBooking getHpatBooking() {
+  /*public HPATBooking getHpatBooking() {
     return hpatBooking;
   }
 
   public void setHpatBooking(HPATBooking hpatBooking) {
     this.hpatBooking = hpatBooking;
-  }
+  }*/
 
   public String getCosmosSeal01Origin() {
     return cosmosSeal01Origin;

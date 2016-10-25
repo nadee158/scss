@@ -42,10 +42,6 @@
 			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
 		<dependency>
-		      <groupId>mysql</groupId>
-		      <artifactId>mysql-connector-java</artifactId>
-		</dependency>
-		<dependency>
     		<groupId>com.zaxxer</groupId>
     		<artifactId>HikariCP</artifactId>
 		</dependency>

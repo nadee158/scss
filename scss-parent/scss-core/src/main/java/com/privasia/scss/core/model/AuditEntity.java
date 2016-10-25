@@ -4,20 +4,20 @@
 package com.privasia.scss.core.model;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.EntityListeners;
 import javax.persistence.MappedSuperclass;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.persistence.Version;
 
+import org.hibernate.annotations.Type;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 
 /**
  * @author Janaka
@@ -42,20 +42,20 @@ public class AuditEntity implements Serializable {
 
   @CreatedDate
   @Column(name = "DATETIME_ADD", nullable = false)
-  //@Temporal(TemporalType.TIMESTAMP)
-  private LocalDateTime dateTimeAdd;
+  @Type(type = "org.jadira.usertype.dateandtime.threeten.PersistentZonedDateTime")
+  private ZonedDateTime dateTimeAdd;
 
   @LastModifiedDate
   @Column(name = "DATETIME_UPDATE", nullable = false)
-  //@Temporal(TemporalType.TIMESTAMP)
-  private LocalDateTime dateTimeUpdate;
+  @Type(type = "org.jadira.usertype.dateandtime.threeten.PersistentZonedDateTime")
+  private ZonedDateTime dateTimeUpdate;
 
   @Version
   @Column(name = "VERSION")
   private long version;
 
 
-  public AuditEntity(long addBy, long updateBy, LocalDateTime dateTimeAdd, LocalDateTime dateTimeUpdate, long version) {
+  public AuditEntity(long addBy, long updateBy, ZonedDateTime dateTimeAdd, ZonedDateTime dateTimeUpdate, long version) {
     super();
     this.addBy = addBy;
     this.updateBy = updateBy;
@@ -90,21 +90,23 @@ public class AuditEntity implements Serializable {
     this.version = version;
   }
 
-  public LocalDateTime getDateTimeAdd() {
+  public ZonedDateTime getDateTimeAdd() {
 	return dateTimeAdd;
   }
-	
-  public void setDateTimeAdd(LocalDateTime dateTimeAdd) {
+
+  public void setDateTimeAdd(ZonedDateTime dateTimeAdd) {
 	this.dateTimeAdd = dateTimeAdd;
   }
-	
-  public LocalDateTime getDateTimeUpdate() {
+
+  public ZonedDateTime getDateTimeUpdate() {
 	return dateTimeUpdate;
   }
-	
-  public void setDateTimeUpdate(LocalDateTime dateTimeUpdate) {
+
+  public void setDateTimeUpdate(ZonedDateTime dateTimeUpdate) {
 	this.dateTimeUpdate = dateTimeUpdate;
   }
+
+  
 
   
 }
