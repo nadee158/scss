@@ -27,8 +27,8 @@ import com.privasia.scss.core.util.constant.RecordStatus;
  * @author Janaka
  *
  */
-@Entity
-@Table(name = "SCSS_PRINT_EIR")
+//@Entity
+//@Table(name = "SCSS_PRINT_EIR")
 public class PrintEir implements Serializable {
 
   /**

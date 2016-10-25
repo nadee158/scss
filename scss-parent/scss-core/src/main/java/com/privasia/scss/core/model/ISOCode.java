@@ -18,8 +18,8 @@ import javax.persistence.Table;
  * @author Janaka
  *
  */
-@Entity
-@Table(name="SCSS_ISO_CODES")
+//@Entity
+//@Table(name="SCSS_ISO_CODES")
 @AttributeOverrides({
     @AttributeOverride(name="addBy",
                        column=@Column(name="CREATED_BY")),

@@ -135,5 +135,6 @@
     <module>scss-kioskbooth</module>
     <module>scss-gatein</module>
     <module>scss-gateout</module>
+    <module>scss-master</module>
   </modules>
 </project>

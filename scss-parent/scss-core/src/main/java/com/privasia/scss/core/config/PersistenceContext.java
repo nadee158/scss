@@ -66,7 +66,7 @@ public class PersistenceContext {
     LocalContainerEntityManagerFactoryBean entityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();
     entityManagerFactoryBean.setDataSource(dataSource);
     entityManagerFactoryBean.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
-    entityManagerFactoryBean.setPackagesToScan("com.privasia.scss.*");
+    entityManagerFactoryBean.setPackagesToScan("com.privasia.scss.core.model", "org.springframework.data.jpa.convert.threeten");
 
     Properties jpaProperties = new Properties();
 

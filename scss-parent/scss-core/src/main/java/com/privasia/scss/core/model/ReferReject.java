@@ -21,8 +21,8 @@ import org.hibernate.annotations.Type;
  * @author Janaka
  *
  */
-@Entity
-@Table(name = "SCSS_REFER_REJECT")
+//@Entity
+//@Table(name = "SCSS_REFER_REJECT")
 public class ReferReject implements Serializable {
 
   @Id

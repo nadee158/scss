@@ -18,8 +18,8 @@ import javax.persistence.Table;
  * @author Janaka
  *
  */
-@Entity
-@Table(name = "SCSS_ROLE_RIGHTS")
+//@Entity
+//@Table(name = "SCSS_ROLE_RIGHTS")
 @AttributeOverrides({@AttributeOverride(name = "addBy", column = @Column(name = "CREATED_BY")),
     @AttributeOverride(name = "updateBy", column = @Column(name = "UPDATED_BY")),
     @AttributeOverride(name = "dateTimeAdd", column = @Column(name = "DATE_TIME_CREATED")),

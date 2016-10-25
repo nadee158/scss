@@ -29,8 +29,8 @@ import com.privasia.scss.core.util.constant.RecordStatus;
  * @author Janaka
  *
  */
-@Entity
-@Table(name = "SCSS_REFER_REASON")
+//@Entity
+//@Table(name = "SCSS_REFER_REASON")
 public class ReferReason implements Serializable {
 
   /**

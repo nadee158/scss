@@ -50,7 +50,7 @@ public class KioskBoothService {
         clientInfo.setClientStaus(kioskID.getStatus().getRecordStatus());
         clientInfo.setClientType(kioskID.getType().getClientType());
         clientInfo.setUnitNo(kioskID.getUnitNo());
-        clientInfo.setCsmControl(kioskID.getCsmControl());
+        //clientInfo.setCsmControl(kioskID.isCsmControl());
         clientInfo.setCosmosPortNumber(Integer.toString(kioskID.getCosmosPortNo()));
         clientInfo.setSortSeq(kioskID.getSortSEQ());
         clientInfo.setCameraServerIPAddress(kioskID.getCameraServerIPAddress());

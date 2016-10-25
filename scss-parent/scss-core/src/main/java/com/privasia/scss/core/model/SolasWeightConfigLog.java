@@ -24,8 +24,8 @@ import com.privasia.scss.core.util.constant.SolasWeightTypeSize;
  * @author Janaka
  *
  */
-@Entity
-@Table(name = "SCSS_SOLAS_WEIGHT_CONFIG_LOG")
+//@Entity
+//@Table(name = "SCSS_SOLAS_WEIGHT_CONFIG_LOG")
 public class SolasWeightConfigLog implements Serializable {
 
   /**

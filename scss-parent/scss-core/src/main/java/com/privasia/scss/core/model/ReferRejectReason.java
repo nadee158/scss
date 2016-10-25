@@ -24,8 +24,8 @@ import javax.persistence.Table;
  * @author Janaka
  *
  */
-@Entity
-@Table(name="SCSS_REFER_REJECT_REASON")
+//@Entity
+//@Table(name="SCSS_REFER_REJECT_REASON")
 public class ReferRejectReason implements Serializable {
 
 	/**

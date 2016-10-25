@@ -26,8 +26,8 @@ import com.privasia.scss.core.util.constant.HpatStatus;
  * @author Janaka
  *
  */
-@Entity
-@Table(name = "ETP_BOOKING_HPAT")
+//@Entity
+//@Table(name = "ETP_BOOKING_HPAT")
 @AttributeOverrides({@AttributeOverride(name = "addBy", column = @Column(name = "ADD_BY")),
     @AttributeOverride(name = "updateBy", column = @Column(name = "UPDATE_BY")),
     @AttributeOverride(name = "dateTimeAdd", column = @Column(name = "DATETIME_ADD")),

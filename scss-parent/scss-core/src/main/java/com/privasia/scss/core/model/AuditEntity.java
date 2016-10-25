@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import javax.persistence.Column;
 import javax.persistence.EntityListeners;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.Version;
 
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -47,7 +48,7 @@ public class AuditEntity implements Serializable {
   // @Temporal(TemporalType.TIMESTAMP)
   private LocalDate dateTimeUpdate;
 
-  // @Version
+  @Version
   @Column(name = "VERSION")
   private long version;
 

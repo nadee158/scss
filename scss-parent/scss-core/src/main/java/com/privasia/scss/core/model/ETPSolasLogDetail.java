@@ -26,8 +26,8 @@ import org.hibernate.annotations.Type;
  * @author Janaka
  *
  */
-@Entity
-@Table(name = "SCSS_ETP_SOLAS_LOG_DETAIL")
+//@Entity
+//@Table(name = "SCSS_ETP_SOLAS_LOG_DETAIL")
 public class ETPSolasLogDetail implements Serializable {
 
   /**

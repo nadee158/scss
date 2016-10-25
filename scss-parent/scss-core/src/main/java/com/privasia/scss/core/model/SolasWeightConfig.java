@@ -25,8 +25,8 @@ import com.privasia.scss.core.util.constant.SolasWeightTypeSize;
  * @author Janaka
  *
  */
-@Entity
-@Table(name = "SCSS_SOLAS_WEIGHT_CONFIG")
+//@Entity
+//@Table(name = "SCSS_SOLAS_WEIGHT_CONFIG")
 @AttributeOverrides({@AttributeOverride(name = "addBy", column = @Column(name = "CREATED_BY")),
     @AttributeOverride(name = "updateBy", column = @Column(name = "UPDATED_BY")),
     @AttributeOverride(name = "dateTimeAdd", column = @Column(name = "CREATED_DATE")),

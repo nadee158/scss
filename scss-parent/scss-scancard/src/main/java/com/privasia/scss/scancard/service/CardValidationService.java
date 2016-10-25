@@ -48,7 +48,7 @@ public class CardValidationService {
 
   public boolean validateCardStatus(String cardNo) {
 
-
+	  
     Optional<Card> cardOptional = cardRepository.findByCardNo(Long.valueOf(cardNo));
 
     cardOptional.ifPresent(foundCard -> {

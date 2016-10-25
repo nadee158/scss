@@ -24,8 +24,8 @@ import com.privasia.scss.core.util.constant.ShippingLineReportType;
  *
  */
 
-@Entity
-@Table(name = "SCSS_SHIP_EMAIL")
+//@Entity
+//@Table(name = "SCSS_SHIP_EMAIL")
 @AttributeOverrides({@AttributeOverride(name = "addBy", column = @Column(name = "CREATEDBY")),
     @AttributeOverride(name = "updateBy", column = @Column(name = "UPDATEBY")),
     @AttributeOverride(name = "dateTimeAdd", column = @Column(name = "DATECREATE")),
