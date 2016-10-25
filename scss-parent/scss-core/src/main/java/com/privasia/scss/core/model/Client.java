@@ -80,7 +80,7 @@ public class Client extends AuditEntity implements Serializable {
   private String unitNo;
 
   @Column(name = "CLI_CSM_CTRL")
-  @Type(type="YES_NO")
+  @Type(type="yes_no")
   private boolean csmControl;
 
   @Column(name = "COSMOS_PORT_NO")
@@ -114,7 +114,7 @@ public class Client extends AuditEntity implements Serializable {
   private String ftpPassword;
 
   @Column(name = "WITH_CMA_IMAGE")
-  @Type(type="YES_NO")
+  @Type(type="yes_no")
   private boolean withCameraImage;
 
   @Column(name = "FTP_DIRECTORY")

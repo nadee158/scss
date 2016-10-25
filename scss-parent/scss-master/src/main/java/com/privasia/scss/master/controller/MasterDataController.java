@@ -42,7 +42,7 @@ public class MasterDataController {
 	
 	
 	@RequestMapping(value = "customcheck", method = RequestMethod.GET)
-    public ResponseEntity<Boolean> isCustomCheckAfterTrans() {
+    public ResponseEntity<Boolean> isCustomCheckAfterTransaction() {
 		
 		boolean check = globalSettingService.isCustomCheckBeforeTransaction();
 		

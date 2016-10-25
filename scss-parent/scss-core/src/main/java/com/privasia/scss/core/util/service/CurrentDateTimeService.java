@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 
 
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
  * @author Janaka
  *
  */
-@Service
+@Component("currentDateTimeService")
 public class CurrentDateTimeService {
 
   public ZonedDateTime getCurrentDateAndTime() {

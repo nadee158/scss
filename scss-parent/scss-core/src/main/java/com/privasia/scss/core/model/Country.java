@@ -14,11 +14,11 @@ import javax.persistence.UniqueConstraint;
  *
  */
 
-//@Entity
-//@Table(name="SCSS_COUNTRY", uniqueConstraints={
-		//@UniqueConstraint(columnNames={"CON_CODE"}),
-		//@UniqueConstraint(columnNames={"CON_NAME"})
-//})
+@Entity
+@Table(name="SCSS_COUNTRY", uniqueConstraints={
+		@UniqueConstraint(columnNames={"CON_CODE"}),
+		@UniqueConstraint(columnNames={"CON_NAME"})
+})
 public class Country implements Serializable {
 	
 	/**

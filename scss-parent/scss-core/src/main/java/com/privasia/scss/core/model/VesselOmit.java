@@ -19,8 +19,8 @@ import javax.persistence.Table;
  *
  */
 
-//@Entity
-//@Table(name="SCSS_VESSEL_OMIT")
+@Entity
+@Table(name="SCSS_VESSEL_OMIT")
 @AttributeOverrides({
     @AttributeOverride(name="addBy",
                        column=@Column(name="ADD_BY")),

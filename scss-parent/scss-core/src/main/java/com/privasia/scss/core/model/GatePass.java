@@ -29,8 +29,8 @@ import com.privasia.scss.core.util.constant.GatePassStatus;
  * @author Janaka
  *
  */
-//@Entity
-//@Table(name = "SCSS_GATE_PASS")
+@Entity
+@Table(name = "SCSS_GATE_PASS")
 @AttributeOverrides({@AttributeOverride(name = "addBy", column = @Column(name = "GTP_ADD_BY")),
     @AttributeOverride(name = "updateBy", column = @Column(name = "GTP_UPDATE_BY")),
     @AttributeOverride(name = "dateTimeAdd", column = @Column(name = "GTP_DATECREATE")),

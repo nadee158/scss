@@ -5,10 +5,7 @@ package com.privasia.scss.core.model;
 
 import java.io.Serializable;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -27,8 +24,8 @@ import com.privasia.scss.core.util.constant.RecordStatus;
  * @author Janaka
  *
  */
-//@Entity
-//@Table(name = "SCSS_PRINT_EIR")
+@Entity
+@Table(name = "SCSS_PRINT_EIR")
 public class PrintEir implements Serializable {
 
   /**
@@ -112,13 +109,6 @@ public class PrintEir implements Serializable {
   @Column(name = "FTP_DIRECTORY")
   private String ftpDirectory;
 
-  @Embedded
-  @AttributeOverrides({@AttributeOverride(name = "addBy", column = @Column(name = "CLI_CREATEDBY")),
-      @AttributeOverride(name = "updateBy", column = @Column(name = "CLI_UPDATEDBY")),
-      @AttributeOverride(name = "dateTimeAdd", column = @Column(name = "CLI_DATECREATE")),
-      @AttributeOverride(name = "dateTimeUpdate", column = @Column(name = "CLI_DATEUPDATE"))})
-  private AuditEntity auditEntity;
-
-
+ 
 
 }

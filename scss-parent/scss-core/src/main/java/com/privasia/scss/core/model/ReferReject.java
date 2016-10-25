@@ -3,11 +3,9 @@
  */
 package com.privasia.scss.core.model;
 
-import java.io.Serializable;
-import java.time.LocalDateTime;
 
-import javax.persistence.Column;
-import javax.persistence.Embedded;
+import java.io.Serializable;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -15,27 +13,29 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.Type;
 
 /**
  * @author Janaka
  *
  */
-//@Entity
-//@Table(name = "SCSS_REFER_REJECT")
+@Entity
+@Table(name = "SCSS_REFER_REJECT")
 public class ReferReject implements Serializable {
 
+  /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_SCSS_REFER_ID")
   @SequenceGenerator(name = "SEQ_SCSS_REFER_ID", sequenceName = "SEQUENCE_REFER_REJECT")
   private Long referRejectID;
-  private Company company;
+  /*private Company company;
   private int expWeightBridge;
   private int expNetWeight;
   private HPATBooking bookingID;
   private String statusCode;
-  @Embedded
-  private AuditEntity auditEntity;
+  
   @Embedded
   private CommonGateInOutAttribute commonGateInOutAttribute;
 
@@ -61,7 +61,7 @@ public class ReferReject implements Serializable {
 
   @Column(name = "PM_VERIFIED")
   @Type(type = "yes_no")
-  private boolean pmVerified;
+  private boolean pmVerified;*/
 
 
 

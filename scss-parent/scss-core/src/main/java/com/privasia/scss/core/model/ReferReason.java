@@ -29,9 +29,13 @@ import com.privasia.scss.core.util.constant.RecordStatus;
  * @author Janaka
  *
  */
-//@Entity
-//@Table(name = "SCSS_REFER_REASON")
-public class ReferReason implements Serializable {
+@Entity
+@Table(name = "SCSS_REFER_REASON")
+@AttributeOverrides({@AttributeOverride(name = "addBy", column = @Column(name = "CREATEDBY")),
+    @AttributeOverride(name = "updateBy", column = @Column(name = "UPDATEDBY")),
+    @AttributeOverride(name = "dateTimeAdd", column = @Column(name = "DATE_TIME_ADD")),
+    @AttributeOverride(name = "dateTimeUpdate", column = @Column(name = "DATE_TIME_UPDATE"))})
+public class ReferReason extends AuditEntity implements Serializable {
 
   /**
    * 
@@ -61,13 +65,6 @@ public class ReferReason implements Serializable {
   @Column(name = "IS_PARENT")
   @Type(type = "yes_no")
   private boolean parent;
-
-  @Embedded
-  @AttributeOverrides({@AttributeOverride(name = "addBy", column = @Column(name = "CREATEDBY")),
-      @AttributeOverride(name = "updateBy", column = @Column(name = "UPDATEDBY")),
-      @AttributeOverride(name = "dateTimeAdd", column = @Column(name = "DATE_TIME_ADD")),
-      @AttributeOverride(name = "dateTimeUpdate", column = @Column(name = "DATE_TIME_UPDATE"))})
-  private AuditEntity auditEntity;
 
   public Long getReferReasonID() {
     return referReasonID;
@@ -116,15 +113,5 @@ public class ReferReason implements Serializable {
   public void setParent(boolean parent) {
     this.parent = parent;
   }
-
-  public AuditEntity getCommonAttribute() {
-    return auditEntity;
-  }
-
-  public void setCommonAttribute(AuditEntity auditEntity) {
-    this.auditEntity = auditEntity;
-  }
-
-
 
 }

@@ -4,11 +4,13 @@
 package com.privasia.scss.core.model;
 
 import java.io.Serializable;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.EntityListeners;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Version;
 
 import org.springframework.data.annotation.CreatedBy;
@@ -40,20 +42,20 @@ public class AuditEntity implements Serializable {
 
   @CreatedDate
   @Column(name = "DATETIME_ADD", nullable = false)
-  // @Temporal(TemporalType.TIMESTAMP)
-  private LocalDate dateTimeAdd;
+  //@Temporal(TemporalType.TIMESTAMP)
+  private LocalDateTime dateTimeAdd;
 
   @LastModifiedDate
   @Column(name = "DATETIME_UPDATE", nullable = false)
-  // @Temporal(TemporalType.TIMESTAMP)
-  private LocalDate dateTimeUpdate;
+  //@Temporal(TemporalType.TIMESTAMP)
+  private LocalDateTime dateTimeUpdate;
 
   @Version
   @Column(name = "VERSION")
   private long version;
 
 
-  public AuditEntity(long addBy, long updateBy, LocalDate dateTimeAdd, LocalDate dateTimeUpdate, long version) {
+  public AuditEntity(long addBy, long updateBy, LocalDateTime dateTimeAdd, LocalDateTime dateTimeUpdate, long version) {
     super();
     this.addBy = addBy;
     this.updateBy = updateBy;
@@ -88,22 +90,21 @@ public class AuditEntity implements Serializable {
     this.version = version;
   }
 
-  public LocalDate getDateTimeAdd() {
-    return dateTimeAdd;
+  public LocalDateTime getDateTimeAdd() {
+	return dateTimeAdd;
+  }
+	
+  public void setDateTimeAdd(LocalDateTime dateTimeAdd) {
+	this.dateTimeAdd = dateTimeAdd;
+  }
+	
+  public LocalDateTime getDateTimeUpdate() {
+	return dateTimeUpdate;
+  }
+	
+  public void setDateTimeUpdate(LocalDateTime dateTimeUpdate) {
+	this.dateTimeUpdate = dateTimeUpdate;
   }
 
-  public void setDateTimeAdd(LocalDate dateTimeAdd) {
-    this.dateTimeAdd = dateTimeAdd;
-  }
-
-  public LocalDate getDateTimeUpdate() {
-    return dateTimeUpdate;
-  }
-
-  public void setDateTimeUpdate(LocalDate dateTimeUpdate) {
-    this.dateTimeUpdate = dateTimeUpdate;
-  }
-
-
-
+  
 }

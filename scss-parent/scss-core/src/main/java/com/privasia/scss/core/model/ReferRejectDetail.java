@@ -30,8 +30,8 @@ import com.privasia.scss.core.util.constant.ReferStatus;
  *
  */
 
-//@Entity
-//@Table(name = "SCSS_REFER_REJECT_DET")
+@Entity
+@Table(name = "SCSS_REFER_REJECT_DET")
 public class ReferRejectDetail extends AuditEntity implements Serializable {
 
 

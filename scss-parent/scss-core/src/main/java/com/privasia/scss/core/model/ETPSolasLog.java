@@ -27,8 +27,8 @@ import org.hibernate.annotations.Type;
  * @author Janaka
  *
  */
-//@Entity
-//@Table(name = "SCSS_ETP_SOLAS_LOG")
+@Entity
+@Table(name = "SCSS_ETP_SOLAS_LOG")
 @AttributeOverrides({@AttributeOverride(name = "addBy", column = @Column(name = "CREATED_BY")),
     @AttributeOverride(name = "updateBy", column = @Column(name = "UPDATED_BY")),
     @AttributeOverride(name = "dateTimeAdd", column = @Column(name = "DATE_TIME_CREATED")),

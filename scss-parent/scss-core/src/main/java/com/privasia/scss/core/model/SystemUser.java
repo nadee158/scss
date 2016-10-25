@@ -36,7 +36,12 @@ import com.privasia.scss.core.util.constant.UserType;
     uniqueConstraints = {@UniqueConstraint(columnNames = {"SYS_PASSPORTNO"}),
         @UniqueConstraint(columnNames = {"SYS_EMAILADDR"}), @UniqueConstraint(columnNames = {"SYS_NEWNRICNO"}),
         @UniqueConstraint(columnNames = {"SYS_OLDNRICNO"})})
-public class SystemUser implements Serializable {
+
+@AttributeOverrides({@AttributeOverride(name = "addBy", column = @Column(name = "SYS_CREATEDBY")),
+    @AttributeOverride(name = "updateBy", column = @Column(name = "SYS_UPDATEDBY")),
+    @AttributeOverride(name = "dateTimeAdd", column = @Column(name = "SYS_DATECREATE")),
+    @AttributeOverride(name = "dateTimeUpdate", column = @Column(name = "SYS_DATEUPDATE"))})
+public class SystemUser extends AuditEntity implements Serializable {
 
   /**
    * 
@@ -74,13 +79,6 @@ public class SystemUser implements Serializable {
 
   @Column(name = "SYS_DEPTNAME")
   private String department;
-
-  @Embedded
-  @AttributeOverrides({@AttributeOverride(name = "addBy", column = @Column(name = "SYS_CREATEDBY")),
-      @AttributeOverride(name = "updateBy", column = @Column(name = "SYS_UPDATEDBY")),
-      @AttributeOverride(name = "dateTimeAdd", column = @Column(name = "SYS_DATECREATE")),
-      @AttributeOverride(name = "dateTimeUpdate", column = @Column(name = "SYS_DATEUPDATE"))})
-  private AuditEntity auditEntity;
 
   @Embedded
   @AttributeOverrides({@AttributeOverride(name = "phoneOffice", column = @Column(name = "SYS_PHONEWORK")),
@@ -184,14 +182,6 @@ public class SystemUser implements Serializable {
 
   public void setDepartment(String department) {
     this.department = department;
-  }
-
-  public AuditEntity getCommonAttribute() {
-    return auditEntity;
-  }
-
-  public void setCommonAttribute(AuditEntity auditEntity) {
-    this.auditEntity = auditEntity;
   }
 
   public CommonContactAttribute getCommonContactAttribute() {

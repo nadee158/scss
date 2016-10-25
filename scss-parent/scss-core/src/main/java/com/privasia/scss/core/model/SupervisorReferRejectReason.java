@@ -23,8 +23,8 @@ import javax.persistence.Table;
  * @author Janaka
  *
  */
-//@Entity
-//@Table(name="SCSS_REJECT_SUP_REASON")
+@Entity
+@Table(name="SCSS_REJECT_SUP_REASON")
 @AttributeOverrides({
     @AttributeOverride(name="addBy",
                        column=@Column(name="ADD_BY")),

@@ -8,7 +8,6 @@ import java.io.Serializable;
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -24,9 +23,19 @@ import javax.persistence.Table;
  * @author Janaka
  *
  */
-//@Entity
-//@Table(name="SCSS_REFER_REJECT_REASON")
-public class ReferRejectReason implements Serializable {
+@Entity
+@Table(name="SCSS_REFER_REJECT_REASON")
+@AttributeOverrides({
+    @AttributeOverride(name="addBy",
+                       column=@Column(name="ADD_BY")),
+    @AttributeOverride(name="updateBy",
+                       column=@Column(name="UPDATE_BY")),
+    @AttributeOverride(name="dateTimeAdd",
+    				   column=@Column(name="DATETIME_ADD")),
+    @AttributeOverride(name="dateTimeUpdate",
+                       column=@Column(name="DATETIME_UPDATE"))
+})
+public class ReferRejectReason extends AuditEntity implements Serializable {
 
 	/**
 	 * 
@@ -46,27 +55,6 @@ public class ReferRejectReason implements Serializable {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "REF_REASON_ID", nullable = false)
 	private ReferReason referReason;
-
-	@Embedded
-	@AttributeOverrides({
-		        @AttributeOverride(
-		            name = "addBy",
-		            column = @Column( name = "ADD_BY")
-		        ),
-		        @AttributeOverride(
-		            name = "updateBy",
-		            column = @Column( name = "UPDATE_BY")
-		        ),
-		        @AttributeOverride(
-		            name = "dateTimeAdd",
-		            column = @Column( name = "DATETIME_ADD")
-		        ),
-		        @AttributeOverride(
-		            name = "dateTimeUpdate",
-		            column = @Column( name = "DATETIME_UPDATE")
-		        )
-	})
-	private AuditEntity auditEntity;
 
 	public Long getReferRejectReasonID() {
 		return referRejectReasonID;
@@ -91,15 +79,4 @@ public class ReferRejectReason implements Serializable {
 	public void setReferReason(ReferReason referReason) {
 		this.referReason = referReason;
 	}
-
-	public AuditEntity getCommonAttribute() {
-		return auditEntity;
-	}
-
-	public void setCommonAttribute(AuditEntity auditEntity) {
-		this.auditEntity = auditEntity;
-	}
-
-	
-	
 }

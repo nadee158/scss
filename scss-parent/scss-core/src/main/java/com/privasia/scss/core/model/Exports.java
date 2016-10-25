@@ -18,8 +18,8 @@ import javax.persistence.Table;
  * @author Janaka
  *
  */
-//@Entity
-//@Table(name="SCSS_EXPORTS")
+@Entity
+@Table(name="SCSS_EXPORTS")
 public class Exports implements Serializable {
 
 	/**

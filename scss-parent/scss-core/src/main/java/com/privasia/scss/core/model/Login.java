@@ -30,8 +30,8 @@ import com.privasia.scss.core.util.constant.UserStatus;
  * @author Janaka
  *
  */
-//@Entity
-//@Table(name = "SCSS_LOGIN", uniqueConstraints = {@UniqueConstraint(columnNames = {"LGN_LOGINNAME"})})
+@Entity
+@Table(name = "SCSS_LOGIN", uniqueConstraints = {@UniqueConstraint(columnNames = {"LGN_LOGINNAME"})})
 public class Login extends AuditEntity implements Serializable {
 
   /**

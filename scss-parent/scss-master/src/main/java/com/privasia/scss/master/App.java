@@ -21,7 +21,7 @@ import org.springframework.web.filter.CharacterEncodingFilter;
  *
  */
 @Configuration
-@ComponentScan(basePackages = {"com.privasia.scss.master"})
+@ComponentScan(basePackages = {"com.privasia.scss.*"})
 @EnableAutoConfiguration
 public class App extends SpringBootServletInitializer {
 
