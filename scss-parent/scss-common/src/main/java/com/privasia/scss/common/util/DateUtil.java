@@ -4,6 +4,7 @@ package com.privasia.scss.common.util;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -54,6 +55,18 @@ public class DateUtil {
   public static Date convertStringToDate(String date, String pattern) throws ParseException {
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
     return simpleDateFormat.parse(date);
+  }
+
+  public static Date addDate(Date date, int noOfDays) {
+    Calendar cal = setTime(date);
+    cal.add(Calendar.DATE, noOfDays);
+    return cal.getTime();
+  }
+
+  public static Calendar setTime(Date date) {
+    Calendar calendar = Calendar.getInstance();
+    calendar.setTime(date);
+    return calendar;
   }
 
 }
