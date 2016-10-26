@@ -76,7 +76,7 @@ public class GatePass extends AuditEntity implements Serializable {
       @AttributeOverride(name = "eirNumber", column = @Column(name = "GTP_EIRNO")),
       @AttributeOverride(name = "eirStatus", column = @Column(name = "GTP_EIRSTATUS")),
       @AttributeOverride(name = "gateInClient", column = @Column(name = "CLI_CLIENTID_GATEIN")),
-      @AttributeOverride(name = "gateOutClerk", column = @Column(name = "CLI_CLIENTID_GATEOUT")),
+      @AttributeOverride(name = "gateOutClient", column = @Column(name = "CLI_CLIENTID_GATEOUT")),
       @AttributeOverride(name = "impExpFlag", column = @Column(name = "GTP_IMPEXPFLAG")),
       @AttributeOverride(name = "rejectReason", column = @Column(name = "GTP_REJECTREASON")),
       @AttributeOverride(name = "pmHeadNo", column = @Column(name = "GTP_TRUCK_HEAD_NO")),
@@ -88,6 +88,7 @@ public class GatePass extends AuditEntity implements Serializable {
       @AttributeOverride(name = "gateOutBoothClerk", column = @Column(name = "GTP_GATEOUT_BOOTH_CLERKID")),
       @AttributeOverride(name = "timeGateOutBooth", column = @Column(name = "GTP_TIMEGATEOUT_BOOTH")),
       @AttributeOverride(name = "gateInStatus", column = @Column(name = "GTP_GATEIN_STATUS")),
+      @AttributeOverride(name = "hpatBooking", column = @Column(name = "BOOKING_ID"))
 
   })
   private CommonGateInOutAttribute commonGateInOut;
@@ -143,18 +144,13 @@ public class GatePass extends AuditEntity implements Serializable {
   @Column(name = "GTP_CALL_CARD")
   private Long callCard;
 
-  // modified
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "GTP_HCID_M", nullable = true, referencedColumnName = "PRINT_NO")
+  @JoinColumn(name = "GTP_PRINT_EIR", nullable = true, referencedColumnName = "PRINT_NO")
   private PrintEir printEir;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "CUG_ID_SEQ", nullable = true, referencedColumnName = "CUG_ID_SEQ")
   private CardUsage cardUsage;
-
-  /*@ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "BOOKING_ID", nullable = true, referencedColumnName = "BOOKING_ID")
-  private HPATBooking hpatBooking;*/
 
   @Column(name = "COSMOS_GTP_SEAL_1_ORIGIN")
   private String cosmosSeal01Origin;
@@ -361,14 +357,6 @@ public class GatePass extends AuditEntity implements Serializable {
   public void setCardUsage(CardUsage cardUsage) {
     this.cardUsage = cardUsage;
   }
-
-  /*public HPATBooking getHpatBooking() {
-    return hpatBooking;
-  }
-
-  public void setHpatBooking(HPATBooking hpatBooking) {
-    this.hpatBooking = hpatBooking;
-  }*/
 
   public String getCosmosSeal01Origin() {
     return cosmosSeal01Origin;

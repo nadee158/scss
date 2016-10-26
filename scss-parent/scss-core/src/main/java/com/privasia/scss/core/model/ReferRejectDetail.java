@@ -7,6 +7,8 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Set;
 
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -32,6 +34,10 @@ import com.privasia.scss.core.util.constant.ReferStatus;
 
 @Entity
 @Table(name = "SCSS_REFER_REJECT_DET")
+@AttributeOverrides({@AttributeOverride(name = "addBy", column = @Column(name = "ADD_BY")),
+    @AttributeOverride(name = "updateBy", column = @Column(name = "UPDATE_BY")),
+    @AttributeOverride(name = "dateTimeAdd", column = @Column(name = "DATETIME_ADD")),
+    @AttributeOverride(name = "dateTimeUpdate", column = @Column(name = "DATETIME_UPDATE"))})
 public class ReferRejectDetail extends AuditEntity implements Serializable {
 
 
@@ -56,6 +62,12 @@ public class ReferRejectDetail extends AuditEntity implements Serializable {
   private ReferReject referReject;
 
   @Embedded
+  @AttributeOverrides({@AttributeOverride(name = "seal01Origin", column = @Column(name = "EXP_SEAL_1_ORIGIN")),
+      @AttributeOverride(name = "seal01Type", column = @Column(name = "EXP_SEAL_1_TYPE")),
+      @AttributeOverride(name = "seal01Number", column = @Column(name = "EXP_SEAL_1_NUMBER")),
+      @AttributeOverride(name = "seal02Origin", column = @Column(name = "EXP_SEAL_2_ORIGIN")),
+      @AttributeOverride(name = "seal02Type", column = @Column(name = "EXP_SEAL_2_TYPE")),
+      @AttributeOverride(name = "seal02Number", column = @Column(name = "EXP_SEAL_2_NUMBER"))})
   private CommonSealAttribute seal;
 
   @Column(name = "REMARKS")
@@ -69,11 +81,11 @@ public class ReferRejectDetail extends AuditEntity implements Serializable {
   private String supervisorRemarks;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "REJECT_BY", nullable = false, referencedColumnName = "SYS_USERID_SEQ")
+  @JoinColumn(name = "REJECT_BY", nullable = true, referencedColumnName = "SYS_USERID_SEQ")
   private SystemUser rejectBy;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "REFER_BY", nullable = false, referencedColumnName = "SYS_USERID_SEQ")
+  @JoinColumn(name = "REFER_BY", nullable = true, referencedColumnName = "SYS_USERID_SEQ")
   private SystemUser referBy;
 
   @Column(name = "EXP_PM_BTM")
@@ -89,7 +101,6 @@ public class ReferRejectDetail extends AuditEntity implements Serializable {
   private String lineCode;
 
   @Column(name = "GATE_IN_DATETIME")
-  // @Temporal(TemporalType.TIMESTAMP)
   private LocalDateTime gateInTime;
 
   @Column(name = "POSITION")

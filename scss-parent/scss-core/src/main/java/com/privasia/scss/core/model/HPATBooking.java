@@ -20,7 +20,7 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
 
-import com.privasia.scss.core.util.constant.HpatStatus;
+import com.privasia.scss.core.util.constant.HpatReferStatus;
 
 /**
  * @author Janaka
@@ -44,7 +44,6 @@ public class HPATBooking extends AuditEntity implements Serializable {
   private String bookingID;
 
   @Column(name = "APPT_DATE_START")
-  // @Temporal(TemporalType.TIMESTAMP)
   private LocalDateTime appointmentStartDate;
 
   @Column(name = "BUFFER")
@@ -54,7 +53,6 @@ public class HPATBooking extends AuditEntity implements Serializable {
   private String cardNo;
 
   @Column(name = "CREATION_DATE")
-  // @Temporal(TemporalType.TIMESTAMP)
   private LocalDateTime hpatCreationDate;
 
   @Column(name = "DRIVER_NAME")
@@ -64,7 +62,6 @@ public class HPATBooking extends AuditEntity implements Serializable {
   private String driverICNumber;
 
   @Column(name = "LAST_MODIFIED_DATE")
-  // @Temporal(TemporalType.TIMESTAMP)
   private LocalDateTime hpatLastModifiedDate;
 
   @Column(name = "PM_NO")
@@ -72,7 +69,7 @@ public class HPATBooking extends AuditEntity implements Serializable {
 
   @Column(name = "STATUS_CODE")
   @Enumerated(EnumType.STRING)
-  private HpatStatus status;
+  private HpatReferStatus status;
 
   @Column(name = "TRAILER_NO")
   private String trailerNo;
@@ -84,7 +81,6 @@ public class HPATBooking extends AuditEntity implements Serializable {
   private String haulierCode;
 
   @Column(name = "APPT_DATE_END")
-  // @Temporal(TemporalType.TIMESTAMP)
   private LocalDateTime appointmentEndDate;
 
   @Column(name = "PM_HEAD_WEIGHT")
@@ -197,12 +193,12 @@ public class HPATBooking extends AuditEntity implements Serializable {
   }
 
 
-  public HpatStatus getStatus() {
+  public HpatReferStatus getStatus() {
     return status;
   }
 
 
-  public void setStatus(HpatStatus status) {
+  public void setStatus(HpatReferStatus status) {
     this.status = status;
   }
 

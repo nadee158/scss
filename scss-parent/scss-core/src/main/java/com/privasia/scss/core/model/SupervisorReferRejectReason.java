@@ -25,16 +25,10 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name="SCSS_REJECT_SUP_REASON")
-@AttributeOverrides({
-    @AttributeOverride(name="addBy",
-                       column=@Column(name="ADD_BY")),
-    @AttributeOverride(name="updateBy",
-                       column=@Column(name="UPDATE_BY")),
-    @AttributeOverride(name="dateTimeAdd",
-    				   column=@Column(name="DATETIME_ADD")),
-    @AttributeOverride(name="dateTimeUpdate",
-                       column=@Column(name="DATETIME_UPDATE"))
-})
+@AttributeOverrides({@AttributeOverride(name = "addBy", column = @Column(name = "ADD_BY")),
+    @AttributeOverride(name = "updateBy", column = @Column(name = "UPDATE_BY")),
+    @AttributeOverride(name = "dateTimeAdd", column = @Column(name = "DATETIME_ADD")),
+    @AttributeOverride(name = "dateTimeUpdate", column = @Column(name = "DATETIME_UPDATE"))})
 public class SupervisorReferRejectReason extends AuditEntity implements Serializable {
 
 	/**
@@ -45,15 +39,15 @@ public class SupervisorReferRejectReason extends AuditEntity implements Serializ
 	@Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_SCSS_REJECT_SUP_REASON")
     @SequenceGenerator(name = "SEQ_SCSS_REJECT_SUP_REASON", sequenceName = "SEQ_REJECT_SUP_REASON")
-	@Column(name = "REFER_REJECT_REASON_ID")
+	@Column(name = "REJECT_SUP_REASON_ID")
 	private Long supRefRejectReasonID;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "REFER_REJECT_DET_ID", nullable = false)
+	@JoinColumn(name = "REFER_REJECT_DET_ID", nullable = true)
 	private ReferRejectDetail referRejectDetail;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "REF_REASON_ID", nullable = false)
+	@JoinColumn(name = "REF_REASON_ID", nullable = true)
 	private ReferReason referReason;
 
 	public Long getSupRefRejectReasonID() {
