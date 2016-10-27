@@ -8,6 +8,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang3.time.DateUtils;
+
 public class DateUtil {
 
   // List of all date formats that we want to parse.
@@ -67,6 +69,23 @@ public class DateUtil {
     Calendar calendar = Calendar.getInstance();
     calendar.setTime(date);
     return calendar;
+  }
+
+  public static long getDaysBetween2Dates(Date dateFrom, Date dateTo) {
+    long msDateFrom = DateUtil.truncateTime(dateFrom).getTime();
+    long msDateTo = DateUtil.truncateTime(dateTo).getTime();
+
+    return (msDateTo - msDateFrom) / (24 * 3600 * 1000) + 1;
+  }
+
+  /**
+   * erase all time. set all time fields to 0.
+   * 
+   * @param date
+   * @return
+   */
+  public static Date truncateTime(Date date) {
+    return DateUtils.truncate(date, Calendar.DAY_OF_MONTH);
   }
 
 }

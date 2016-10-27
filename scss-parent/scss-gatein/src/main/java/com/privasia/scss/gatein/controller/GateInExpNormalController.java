@@ -21,7 +21,9 @@ import com.privasia.scss.common.util.UserIpAddressUtil;
 import com.privasia.scss.core.dto.GateInForm;
 import com.privasia.scss.core.dto.GateInfo;
 import com.privasia.scss.core.util.constant.ButtonType;
+import com.privasia.scss.gatein.dto.Container;
 import com.privasia.scss.gatein.service.CardUsageService;
+import com.privasia.scss.gatein.service.ContainerService;
 
 
 @RestController
@@ -32,6 +34,9 @@ public class GateInExpNormalController {
 
   @Autowired
   private CardUsageService cardUsageService;
+
+  @Autowired
+  private ContainerService containerService;
 
   @RequestMapping(value = "/gateInImpNormal", method = RequestMethod.GET)
   public ResponseEntity<String> scanCard(@RequestBody GateInForm f, HttpServletRequest request) {
@@ -58,23 +63,26 @@ public class GateInExpNormalController {
       try {
         // get container numbers from UI - getting by using same old GateInForm
         // keep seperate two container objects in the objects passeed back to ui
-        f.setCardIdSeq(gateInInfo.getCardIdSeq());
-        f.setClientId(gateInInfo.getClientId());
-        f.setTimeIn(gateInInfo.getTimeGateIn());
-        f.setExpWeightBridge(gateInInfo.getWeightBridge());
-        if (StringUtils.isNotBlank(gateInInfo.getCugIdSeq())) {
-          f.setCugIdSeq(gateInInfo.getCugIdSeq());
-        }
-        if (StringUtils.isNotBlank(menuId)) {
-          f.setMenuId(menuId);
-        }
 
         int pressedButton = f.getPressedButton();
         ButtonType buttonType = ButtonType.fromCode(pressedButton);
 
+        Container c1 = null;
+        Container c2 = null;
+
         switch (buttonType) {
 
           case CONTINUE_BTN_PRESSED:
+
+            c1 = findContainer(f.getContainerNoC1());
+            c2 = findContainer(f.getContainerNoC2());
+
+            if (StringUtils.isNotBlank(f.getContainerNoC1()) && StringUtils.isNotBlank(f.getContainerNoC2())) {
+              f.setBackToBack("Y");
+            } else {
+              f.setBackToBack("N");
+            }
+
 
 
             break;
@@ -97,6 +105,13 @@ public class GateInExpNormalController {
 
 
     return new ResponseEntity<String>(returnedView, HttpStatus.OK);
+  }
+
+  private Container findContainer(String containerNo) throws Exception {
+    if (StringUtils.isNotEmpty(containerNo)) {
+      return containerService.getContainerByContainerNo(containerNo);
+    }
+    return null;
   }
 
 }
