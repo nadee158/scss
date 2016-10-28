@@ -7,6 +7,7 @@ import java.util.Date;
 
 import org.springframework.stereotype.Service;
 
+import com.privasia.scss.common.util.DateUtil;
 import com.privasia.scss.gatein.dto.Container;
 
 /**
@@ -491,48 +492,48 @@ public class ContainerService {
   }
 
 
-  public boolean isAllowIn() throws Exception {
+  public boolean isAllowIn(Container container) throws Exception {
     final Date now = new Date();
     boolean ret = false;
 
-    // // if no record found in the shp_ship_code table
-    // if (storagePeriod == -1) {
-    // return true;
-    // }
-    //
-    // long earlyEnrtyDate = 0;
-    // etad = DateUtil.addDate(etad, -1);
-    // earlyEnrtyDate = DateUtil.getDaysBetween2Dates(now, etad);
-    //
-    // // Before Eta Date
-    // if (earlyEnrtyDate > 1) {
-    // if (earlyEnrtyDate <= storagePeriod) {
-    // ret = true;
-    // } else {
-    // /**
-    // * Check if it is allowed for early entry
-    // */
-    // if (!seq.equals("")) {
-    // /**
-    // * check if container coming during early entry window.
-    // */
-    // if (inEarlyEntryWindow()) {
-    // earlyEntry = true;
-    // ret = true;
-    // } else {
-    // earlyEntry = true;
-    // if (bypassEEntry) {
-    // ret = true;
-    // } else {
-    // ret = false;
-    // }
-    // }
-    // }
-    // }
-    // } else {
-    // // After ETA
-    // ret = true;
-    // }
+    // if no record found in the shp_ship_code table
+    if (container.getStoragePeriod() == -1) {
+      return true;
+    }
+
+    long earlyEnrtyDate = 0;
+    container.setEtad(DateUtil.addDate(container.getEtad(), -1));
+    earlyEnrtyDate = DateUtil.getDaysBetween2Dates(now, container.getEtad());
+
+    // Before Eta Date
+    if (earlyEnrtyDate > 1) {
+      if (earlyEnrtyDate <= container.getStoragePeriod()) {
+        ret = true;
+      } else {
+        /**
+         * Check if it is allowed for early entry
+         */
+        if (!container.getSeq().equals("")) {
+          /**
+           * check if container coming during early entry window.
+           */
+          if (inEarlyEntryWindow()) {
+            container.setEarlyEntry(true);
+            ret = true;
+          } else {
+            container.setEarlyEntry(true);
+            if (container.isBypassEEntry()) {
+              ret = true;
+            } else {
+              ret = false;
+            }
+          }
+        }
+      }
+    } else {
+      // After ETA
+      ret = true;
+    }
 
     return ret;
   }
