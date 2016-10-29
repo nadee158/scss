@@ -180,50 +180,9 @@ public class GateInExpNormalController {
         returnmsg += MessageCode.format("ERR_MSG_015", new Object[] {c.getContainerNo()}) + ReturnMsg.SEPARATOR;
       }
 
-      if (StringUtils.isNotBlank(c.getAgentCode()) && StringUtils.isNotBlank(c.getLineCode())) {
-        /*
-         * Vessel OMIT Container 1
-         */
-        VesselOmitDto vesselOmitDto = vesselOmitService.getVesselOmit(c.getLineCode(), c.getAgentCode());
-        if (vesselOmitDto != null) {
-          if (StringUtils.isNotBlank(vesselOmitDto.getVesselVoyIn())) {
-            if (StringUtils.contains(c.getVesselVoyage(), vesselOmitDto.getVesselVoyIn())) {
-              returnmsg +=
-                  MessageCode.format("ERR_MSG_081", new Object[] {f.getContainerNoC1(), vesselOmitDto.getLineCode(),
-                      vesselOmitDto.getAgentCode(), vesselOmitDto.getVesselVoyIn()}) + ReturnMsg.SEPARATOR;
-            }
-          } else if (StringUtils.isNotBlank(vesselOmitDto.getVesselVoyOut())) {
-            if (StringUtils.contains(c.getVesselVoyageOut(), vesselOmitDto.getVesselVoyOut())) {
-              returnmsg +=
-                  MessageCode.format("ERR_MSG_081", new Object[] {f.getContainerNoC1(), vesselOmitDto.getLineCode(),
-                      vesselOmitDto.getAgentCode(), vesselOmitDto.getVesselVoyOut()}) + ReturnMsg.SEPARATOR;
-            }
-          }
-        }
-      }
+      returnmsg += validateVesselOmitDto(c);
 
-      boolean isContainerAllowedIn = containerService.isAllowIn(c);
-      if (!isContainerAllowedIn) {
-        if (c.isEarlyEntry()) {
-          final Date now = new Date();
-          final SimpleDateFormat date = new SimpleDateFormat("dd/MM/yyyy");
-          final SimpleDateFormat dateTime = new SimpleDateFormat("dd/MM/yyyy h:mm a");
-          final SimpleDateFormat time = new SimpleDateFormat("h:mm a");
-          String dateNow = date.format(now);
-          String startFullDate = dateNow + " " + c.getStartEarlyEntry();
-          String endFullDate = dateNow + " " + c.getEndEarlyEntry();
-          Date strtFullDate = dateTime.parse(startFullDate);
-          Date edFullDate = dateTime.parse(endFullDate);
-          if (strtFullDate.after(edFullDate)) {
-            edFullDate = DateUtil.addDate(edFullDate, 1);
-          }
-          returnmsg += MessageCode.format("ERR_MSG_100",
-              new Object[] {c.getContainerNo(), time.format(strtFullDate), time.format(edFullDate)})
-              + ReturnMsg.SEPARATOR;
-        } else {
-          returnmsg += MessageCode.format("ERR_MSG_064", new Object[] {c.getContainerNo()}) + ReturnMsg.SEPARATOR;
-        }
-      }
+      returnmsg += validateContainerAllowedIn(c);
 
       if (c.isInternalBlock()) {
         f.setInternalBlock(true);
@@ -244,6 +203,59 @@ public class GateInExpNormalController {
       }
     }
 
+    return returnmsg;
+  }
+
+  private String validateContainerAllowedIn(Container c) throws Exception {
+    String returnmsg = null;
+    boolean isContainerAllowedIn = containerService.isAllowIn(c);
+    if (!isContainerAllowedIn) {
+      if (c.isEarlyEntry()) {
+        final Date now = new Date();
+        final SimpleDateFormat date = new SimpleDateFormat("dd/MM/yyyy");
+        final SimpleDateFormat dateTime = new SimpleDateFormat("dd/MM/yyyy h:mm a");
+        final SimpleDateFormat time = new SimpleDateFormat("h:mm a");
+        String dateNow = date.format(now);
+        String startFullDate = dateNow + " " + c.getStartEarlyEntry();
+        String endFullDate = dateNow + " " + c.getEndEarlyEntry();
+        Date strtFullDate = dateTime.parse(startFullDate);
+        Date edFullDate = dateTime.parse(endFullDate);
+        if (strtFullDate.after(edFullDate)) {
+          edFullDate = DateUtil.addDate(edFullDate, 1);
+        }
+        returnmsg += MessageCode.format("ERR_MSG_100",
+            new Object[] {c.getContainerNo(), time.format(strtFullDate), time.format(edFullDate)})
+            + ReturnMsg.SEPARATOR;
+      } else {
+        returnmsg += MessageCode.format("ERR_MSG_064", new Object[] {c.getContainerNo()}) + ReturnMsg.SEPARATOR;
+      }
+    }
+    return returnmsg;
+  }
+
+  private String validateVesselOmitDto(Container c) throws Exception {
+    String returnmsg = null;
+    if (StringUtils.isNotBlank(c.getAgentCode()) && StringUtils.isNotBlank(c.getLineCode())) {
+      /*
+       * Vessel OMIT Container 1
+       */
+      VesselOmitDto vesselOmitDto = vesselOmitService.getVesselOmit(c.getLineCode(), c.getAgentCode());
+      if (vesselOmitDto != null) {
+        if (StringUtils.isNotBlank(vesselOmitDto.getVesselVoyIn())) {
+          if (StringUtils.contains(c.getVesselVoyage(), vesselOmitDto.getVesselVoyIn())) {
+            returnmsg +=
+                MessageCode.format("ERR_MSG_081", new Object[] {c.getContainerNo(), vesselOmitDto.getLineCode(),
+                    vesselOmitDto.getAgentCode(), vesselOmitDto.getVesselVoyIn()}) + ReturnMsg.SEPARATOR;
+          }
+        } else if (StringUtils.isNotBlank(vesselOmitDto.getVesselVoyOut())) {
+          if (StringUtils.contains(c.getVesselVoyageOut(), vesselOmitDto.getVesselVoyOut())) {
+            returnmsg +=
+                MessageCode.format("ERR_MSG_081", new Object[] {c.getContainerNo(), vesselOmitDto.getLineCode(),
+                    vesselOmitDto.getAgentCode(), vesselOmitDto.getVesselVoyOut()}) + ReturnMsg.SEPARATOR;
+          }
+        }
+      }
+    }
     return returnmsg;
   }
 
