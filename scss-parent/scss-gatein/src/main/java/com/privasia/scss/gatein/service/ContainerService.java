@@ -8,7 +8,8 @@ import java.util.Date;
 import org.springframework.stereotype.Service;
 
 import com.privasia.scss.common.util.DateUtil;
-import com.privasia.scss.gatein.dto.Container;
+import com.privasia.scss.core.dto.Container;
+import com.privasia.scss.core.dto.GateInForm;
 
 /**
  * @author nadee158
@@ -623,6 +624,13 @@ public class ContainerService {
     // System.out.println(today3.get(Calendar.WEEK_OF_YEAR));
     today3.set(Calendar.WEEK_OF_YEAR, 34);
     // System.out.println(today3.getTime());
+  }
+
+
+
+  public GateInForm selectContainerNoInfo(GateInForm f) {
+    // TODO Auto-generated method stub
+    return f;
   }
 
 

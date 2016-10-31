@@ -28,6 +28,12 @@ public class DateUtil {
     }
   };
 
+  public static Date addHours(Date date, int hour) {
+    Calendar cal = setTime(date);
+    cal.add(Calendar.HOUR, hour);
+    return cal.getTime();
+  }
+
   /**
    * Convert String with various formats into java.util.Date
    * 

@@ -1,8 +1,11 @@
 package com.privasia.scss.gatein.controller;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -23,10 +26,11 @@ import com.privasia.scss.common.util.DateUtil;
 import com.privasia.scss.common.util.MessageCode;
 import com.privasia.scss.common.util.ReturnMsg;
 import com.privasia.scss.common.util.UserIpAddressUtil;
+import com.privasia.scss.core.dto.Container;
 import com.privasia.scss.core.dto.GateInForm;
 import com.privasia.scss.core.dto.GateInfo;
+import com.privasia.scss.core.dto.IsoCodeDto;
 import com.privasia.scss.core.util.constant.ButtonType;
-import com.privasia.scss.gatein.dto.Container;
 import com.privasia.scss.gatein.dto.ExportSSR;
 import com.privasia.scss.gatein.dto.SCUInfo;
 import com.privasia.scss.gatein.dto.VesselOmitDto;
@@ -34,7 +38,10 @@ import com.privasia.scss.gatein.service.CardService;
 import com.privasia.scss.gatein.service.CardUsageService;
 import com.privasia.scss.gatein.service.ClientService;
 import com.privasia.scss.gatein.service.ContainerService;
+import com.privasia.scss.gatein.service.GlobalSettingService;
+import com.privasia.scss.gatein.service.IsoCodeService;
 import com.privasia.scss.gatein.service.VesselOmitService;
+import com.privasia.scss.gatein.util.DGContDesc;
 
 
 @RestController
@@ -57,6 +64,12 @@ public class GateInExpNormalController {
 
   @Autowired
   private ClientService clientService;
+
+  @Autowired
+  private GlobalSettingService globalSettingService;
+
+  @Autowired
+  private IsoCodeService isoCodeService;
 
   @RequestMapping(value = "/gateInImpNormal", method = RequestMethod.GET)
   public ResponseEntity<String> gateInImpNormal(@RequestBody GateInForm f, HttpServletRequest request) {
@@ -94,34 +107,35 @@ public class GateInExpNormalController {
 
           case CONTINUE_BTN_PRESSED:
 
-            c1 = findContainer(f.getContainerNoC1());
-            c2 = findContainer(f.getContainerNoC2());
+            String containerNoC1 = StringUtils.EMPTY;
+            if (!(f.getContainer1() == null || StringUtils.isEmpty(f.getContainer1().getContainerNo()))) {
+              containerNoC1 = f.getContainer1().getContainerNo();
+            }
+            String containerNoC2 = StringUtils.EMPTY;
+            if (!(f.getContainer2() == null || StringUtils.isEmpty(f.getContainer2().getContainerNo()))) {
+              containerNoC2 = f.getContainer1().getContainerNo();
+            }
 
-            if (StringUtils.isNotBlank(f.getContainerNoC1()) && StringUtils.isNotBlank(f.getContainerNoC2())) {
+            c1 = findContainer(containerNoC1);
+            c2 = findContainer(containerNoC2);
+
+            if (StringUtils.isNotBlank(containerNoC1) && StringUtils.isNotBlank(containerNoC2)) {
               f.setBackToBack("Y");
             } else {
               f.setBackToBack("N");
             }
 
             // validating container 1
-            String returnMessage = validateContainer(c1, f, gateInInfo);
+            String returnMessage = validateContainer(c1, gateInInfo);
 
             // validating container 2
-            returnMessage = returnMessage + validateContainer(c2, f, gateInInfo);
+            returnMessage = returnMessage + validateContainer(c2, gateInInfo);
 
             if (StringUtils.isNotEmpty(returnMessage)) {
               returnMessage = ReturnMsg.trim(returnMessage);
               returnedView = "INPUT";
             } else {
 
-              f.setBookingNoC1(c1.getBookingNo());
-              f.setSeq1(c1.getSeq());
-              if (c2 != null) {
-                f.setBookingNoC2(c2.getBookingNo());
-                f.setSeq2(c2.getSeq());
-              }
-
-              // to determine whether the smart card is Mastercard?
               // if yes then redirect to Gate In Export Bypass page
               // else redirect to Gate In Export page
 
@@ -138,14 +152,53 @@ public class GateInExpNormalController {
                 SCUInfo scuInfo = cardService.selectSCUInfo(gateInInfo.getCardIdSeq());
                 // no place to use this info - previously assigned to the UI form
                 String laneNo = clientService.getLaneNo(gateInInfo.getClientId());
+
+                /**
+                 * Query Export Information
+                 */
+                f = containerService.selectContainerNoInfo(f);
+
+                /**
+                 * Check if container 1 is a DG container
+                 */
+                returnMessage = returnMessage + checkIfDGContainer(c1, returnMessage);
+                /**
+                 * Check if container 2 is a DG container
+                 */
+                returnMessage = returnMessage + checkIfDGContainer(c2, returnMessage);
+
+                /**
+                 * final step: Check if user is allowed to bypass DG validation
+                 */
+                // f.setAllowBypassDgVal(super.log(request, AccessRight.GATE_BYPASS_DG_VALIDATION));
+
+                calculateWeightBridge(c1, c2, gateInInfo.getWeightBridge());
+
+                returnedView = "VIEW.NORMAL";
               }
 
             }
-
-
-
             break;
           case OK_BTN_PRESSED:
+            returnMessage = "";
+            f.setGateImpOrExp("Exports.EXP_FLAG");
+
+            refreshWeightForEmptyContainer(c1);
+
+            refreshWeightForEmptyContainer(c2);
+
+            calculateWeightBridge(c1, c2, gateInInfo.getWeightBridge());
+
+            /**
+             * Damage Container 1
+             */
+            List<String> clearedDamageCodesC1 = getClearedDamageCodes(c1, returnMessage, returnedView);
+
+            /**
+             * Damage Container 2
+             */
+            List<String> clearedDamageCodesC2 = getClearedDamageCodes(c1, returnMessage, returnedView);
+
             break;
           case PRINT_BTN_PRESSED:
             break;
@@ -166,7 +219,238 @@ public class GateInExpNormalController {
     return new ResponseEntity<String>(returnedView, HttpStatus.OK);
   }
 
-  private String validateContainer(Container c, GateInForm f, GateInfo gateInInfo) throws Exception {
+  private List<String> getClearedDamageCodes(Container c, String returnMessage, String returnedView) {
+    List<String> clearedDamageCodes = new ArrayList<String>();
+    if (!(c.getDamage() == null || c.getDamage().isEmpty())) {
+      for (String damage : c.getDamage()) {
+
+        if (StringUtils.isNotBlank(damage)) {
+          if (clearedDamageCodes != null && clearedDamageCodes.size() > 0) {
+            if (clearedDamageCodes.contains(damage)) {
+              returnMessage = returnMessage + MessageCode.format("ERR_MSG_089", new Object[] {"Container 1", damage});
+              // session.setAttribute("f", f);
+              returnedView = "VIEW.NORMAL";
+            } else {
+              clearedDamageCodes.add(damage);
+            }
+          } else {
+            clearedDamageCodes.add(damage);
+          }
+        }
+
+      }
+    }
+    return clearedDamageCodes;
+  }
+
+  private void refreshWeightForEmptyContainer(Container c) {
+    /**
+     * Refresh the Weight For Empty Container
+     */
+    if ("E".equals(c.getFullOrEmpty())) {
+      IsoCodeDto isoCodeDto = isoCodeService.getIsoCodeTarWeight(c.getISO());
+
+      c.setNetWeight("" + isoCodeDto.getTareWeight());
+      c.setEmptyWeight("" + isoCodeDto.getTareWeight());
+    }
+
+  }
+
+  private void calculateWeightBridge(Container c1, Container c2, String weightBridge) {
+
+    if (c1 != null) {
+      c1.setNetWeight("");
+      c1.setTotalWeightBridge(weightBridge);
+    }
+
+    if (c2 != null) {
+      c2.setNetWeight("");
+      c2.setTotalWeightBridge(weightBridge);
+    }
+
+    if (StringUtils.isNotBlank(c1.getContainerNo()) && StringUtils.isNotBlank(c2.getContainerNo())) {
+      if ("E".equals(c1.getFullOrEmpty()) && "E".equals(c2.getFullOrEmpty())) {
+        c1.setNetWeight(c1.getEmptyWeight());
+        c2.setNetWeight(c2.getEmptyWeight());
+
+        double totalWeightBridge = new Double(c1.getEmptyWeight()) + new Double(c2.getEmptyWeight());
+        c1.setTotalWeightBridge("" + totalWeightBridge);
+        c2.setTotalWeightBridge("" + totalWeightBridge);
+      } else if ("E".equals(c1.getFullOrEmpty()) && "F".equals(c2.getFullOrEmpty())) {
+        c1.setNetWeight(c1.getEmptyWeight());
+        c1.setTotalWeightBridge("" + c1.getEmptyWeight());
+
+        c2.setNetWeight("");
+        c2.setTotalWeightBridge("" + (new Double(weightBridge) - new Double(c1.getEmptyWeight())));
+
+      } else if ("E".equals(c2.getFullOrEmpty()) && "F".equals(c1.getFullOrEmpty())) {
+        c2.setNetWeight(c2.getEmptyWeight());
+        c2.setTotalWeightBridge("" + c2.getEmptyWeight());
+
+        c1.setNetWeight("");
+        c1.setTotalWeightBridge("" + (new Double(weightBridge) - new Double(c2.getEmptyWeight())));
+      } else {
+        c1.setTotalWeightBridge(weightBridge);
+        c2.setTotalWeightBridge(weightBridge);
+      }
+    } else if (StringUtils.isNotBlank(c1.getContainerNo())) {
+      if ("E".equals(c1.getFullOrEmpty())) {
+        c1.setNetWeight(c1.getEmptyWeight());
+        c1.setTotalWeightBridge(c1.getEmptyWeight());
+      } else {
+        c1.setNetWeight(c1.getNetWeight());
+        c1.setTotalWeightBridge(weightBridge);
+      }
+    }
+  }
+
+  private String checkIfDGContainer(Container c, String returnMessage) throws Exception {
+
+    if (returnMessage == null) {
+      returnMessage = StringUtils.EMPTY;
+    }
+
+    String globalCode = "LPK_EDI";
+    String globalSetting = globalSettingService.getWDCGlobalSeeting(globalCode);
+    if ("Y".equalsIgnoreCase(globalSetting)) {
+
+      c.setLpkEdiEnabled("Y");
+      /**
+       * Step 1: Check if container 1 is a DG container
+       */
+      if (StringUtils.isNotBlank(c.getIMDG())) {
+        /**
+         * Step 1.5: Check if container 1 has approval to bypass
+         */
+        if (!c.isBypassDg()) {
+          /**
+           * Step 2: Check if there is any approval
+           */
+          if (StringUtils.isBlank(c.getKpaApproval())) {
+            /**
+             * No approval from LPK
+             */
+            returnMessage = returnMessage + " DG container " + c.getContainerNo() + " approval record not found<br/>";
+
+            c.setDgWithinWindowEntry(false);
+
+          } else {
+            /**
+             * DG is approve. Check class to verify entry. class 1 has to wait till vessel status is
+             * ACT. class 2 and 3 get hours from LPI remarks. Step 3: validate LPK class and timing
+             */
+
+            if ("1".equals(c.getKpaClass())) {
+
+              returnMessage =
+                  returnMessage + "Class 1 block. Please call supervisor for entry confirmation for container no:"
+                      + c.getContainerNo();
+
+              c.setDgWithinWindowEntry(false);
+
+            } else if ("2".equals(c.getKpaClass())) {
+              /**
+               * default is 72 if no hours found
+               */
+              // int hours = parseHoursToGateInForDG(f.getGoodsHdlDescC1());
+              DGContDesc dgContDesc = new DGContDesc();
+              int hours = dgContDesc.parseHoursToGateInForDG(c.getGoodsHdlDesc());
+
+              Date newEta = getNewEta(c.getVesselDateEta());
+              Date allowedGateInDate = DateUtil.addHours(newEta, -hours);
+              Date now = new Date();
+              // Class 2 block. CC not within TT hours allowed window (XX - YY)
+              if (now.before(allowedGateInDate) || now.after(newEta)) {
+
+                returnMessage = returnMessage + "Class " + c.getKpaClass() + " block. " + c.getContainerNo()
+                    + " not within " + hours + " hours allowed window (" + allowedGateInDate + " - " + newEta + ")";
+                c.setDgWithinWindowEntry(false);
+
+              } else {
+
+                returnMessage = returnMessage + "<div style='color: green;'>Container  " + c.getContainerNo()
+                    + "  has arrived within the assigned entry slot</div>";
+
+              }
+
+            } else if ("3".equals(c.getKpaClass())) {
+
+              int hours = 72;
+
+              Date newEta = getNewEta(c.getVesselDateEta());
+              Date allowedGateInDate = DateUtil.addHours(newEta, -hours);
+              Date now = new Date();
+              // Class 2 block. CC not within TT hours allowed window (XX - YY)
+              if (now.before(allowedGateInDate) || now.after(newEta)) {
+                if (c.isRegisteredInEarlyEntry()) {
+
+                  if (!c.isBypassEEntry()) {
+                    /**
+                     * did not tick bypass early entry window
+                     */
+                    boolean inEarlyEntryWindow = containerService.inEarlyEntryWindow();
+                    if (!inEarlyEntryWindow) {
+
+                      final SimpleDateFormat time = new SimpleDateFormat("h:mm a");
+                      Date strtFullDate = getParsedFullDate(c.getStartEarlyEntry());
+                      Date edFullDate = getParsedFullDate(c.getEndEarlyEntry());
+
+                      if (strtFullDate.after(edFullDate)) {
+                        edFullDate = DateUtil.addDate(edFullDate, 1);
+                      }
+                      /**
+                       * generate message for early entry window
+                       */
+                      returnMessage = returnMessage
+                          + MessageCode.format("ERR_MSG_101",
+                              new Object[] {c.getContainerNo(), time.format(strtFullDate), time.format(edFullDate)})
+                          + ReturnMsg.SEPARATOR;
+
+                      c.setDgWithinWindowEntry(false);
+                      // return mapping.findForward(VIEW.INPUT);
+                    }
+                  }
+                } else {
+                  /*
+                   * did not register as early entry
+                   */
+                  returnMessage = returnMessage + MessageCode.format("ERR_MSG_094", new Object[] {c.getContainerNo()})
+                      + ReturnMsg.SEPARATOR;
+                  c.setDgWithinWindowEntry(false);
+                  // return mapping.findForward(VIEW.INPUT);
+                }
+
+              } else {
+                returnMessage = returnMessage + "<div style='color: green;'>Container  " + c.getContainerNo()
+                    + "  has arrived within the assigned entry slot</div>";
+              }
+            } // end of dg class type
+          }
+        } else {
+          c.setAllowBypassDgValRemote(true);
+        } // end check if container has bypass approval
+      } // end check if container is DG
+    }
+    return returnMessage;
+  }
+
+  private Date getParsedFullDate(String entry) throws ParseException {
+    Date now = new Date();
+    final SimpleDateFormat date = new SimpleDateFormat("dd/MM/yyyy");
+    final SimpleDateFormat dateTime = new SimpleDateFormat("dd/MM/yyyy h:mm a");
+    String dateNow = date.format(now);
+    String startFullDate = dateNow + " " + entry;
+    return dateTime.parse(startFullDate);
+  }
+
+  private Date getNewEta(Date eta) throws ParseException {
+    // SimpleDateFormat sdf_ddMMyyyyHHmmss = new SimpleDateFormat("ddMMyyyyHHmmss");
+    // SimpleDateFormat out_msg = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+    // Date eta = sdf_ddMMyyyyHHmmss.parse(vesselDateEta);
+    return DateUtil.addHours(eta, 2);
+  }
+
+  private String validateContainer(Container c, GateInfo gateInInfo) throws Exception {
     String returnmsg = "";
 
     if (c != null) {
@@ -185,21 +469,21 @@ public class GateInExpNormalController {
       returnmsg += validateContainerAllowedIn(c);
 
       if (c.isInternalBlock()) {
-        f.setInternalBlock(true);
+        c.setInternalBlock(true);
         returnmsg += MessageCode.format("ERR_MSG_082", new Object[] {c.getContainerNo(), c.getInternalBlockDesc()})
             + ReturnMsg.SEPARATOR;
       }
 
-      ExportSSR ssrC1 = new ExportSSR(gateInInfo.getTimeGateIn(), c.getVesselDateEta_ddMMyyyyHHmmss());
-      f.setExpHasReplanSSRC1(ssrC1.getHasReplan());
-      f.setExpHasOverClosingSSRC1(ssrC1.getHasOverClosing());
-      if (ssrC1.getSSRBlockStatus()) {
-        f.setExpSSRBlockStatusC1("BLK");
+      ExportSSR ssr = new ExportSSR(gateInInfo.getTimeGateIn(), c.getVesselDateEta_ddMMyyyyHHmmss());
+      c.setExpHasReplanSSR(ssr.getHasReplan());
+      c.setExpHasOverClosingSSR(ssr.getHasOverClosing());
+      if (ssr.getSSRBlockStatus()) {
+        c.setExpSSRBlockStatus("BLK");
       } else {
-        f.setExpSSRBlockStatusC1("RLS");
+        c.setExpSSRBlockStatus("RLS");
       }
       if (StringUtils.isNotEmpty(gateInInfo.getWeightBridge())) {
-        f.setNetWeightC1(gateInInfo.getWeightBridge());
+        c.setNetWeight(gateInInfo.getWeightBridge());
       }
     }
 
