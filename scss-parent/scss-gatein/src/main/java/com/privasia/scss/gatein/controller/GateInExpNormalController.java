@@ -3,9 +3,10 @@ package com.privasia.scss.gatein.controller;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -220,27 +221,40 @@ public class GateInExpNormalController {
   }
 
   private List<String> getClearedDamageCodes(Container c, String returnMessage, String returnedView) {
-    List<String> clearedDamageCodes = new ArrayList<String>();
-    if (!(c.getDamage() == null || c.getDamage().isEmpty())) {
-      for (String damage : c.getDamage()) {
+    List<String> originalDamagedCodes = c.getDamage();
+    long duplicateCount =
+        originalDamagedCodes.stream().filter(i -> Collections.frequency(originalDamagedCodes, i) > 1).count();
 
-        if (StringUtils.isNotBlank(damage)) {
-          if (clearedDamageCodes != null && clearedDamageCodes.size() > 0) {
-            if (clearedDamageCodes.contains(damage)) {
-              returnMessage = returnMessage + MessageCode.format("ERR_MSG_089", new Object[] {"Container 1", damage});
-              // session.setAttribute("f", f);
-              returnedView = "VIEW.NORMAL";
-            } else {
-              clearedDamageCodes.add(damage);
-            }
-          } else {
-            clearedDamageCodes.add(damage);
-          }
-        }
-
-      }
+    if (duplicateCount == 0) {
+      return c.getDamage();
     }
+    List<String> clearedDamageCodes = originalDamagedCodes.stream()
+        .filter(i -> Collections.frequency(originalDamagedCodes, i) == 1).collect(Collectors.toList());
     return clearedDamageCodes;
+
+//@formatter:off    
+//    List<String> clearedDamageCodes = new ArrayList<String>();
+    
+//    if (!(c.getDamage() == null || c.getDamage().isEmpty())) {
+//      for (String damage : c.getDamage()) {
+//
+//        if (StringUtils.isNotBlank(damage)) {
+//          if (clearedDamageCodes != null && clearedDamageCodes.size() > 0) {
+//            if (clearedDamageCodes.contains(damage)) {
+//              returnMessage = returnMessage + MessageCode.format("ERR_MSG_089", new Object[] {"Container 1", damage});
+//              // session.setAttribute("f", f);
+//              returnedView = "VIEW.NORMAL";
+//            } else {
+//              clearedDamageCodes.add(damage);
+//            }
+//          } else {
+//            clearedDamageCodes.add(damage);
+//          }
+//        }
+//
+//      }
+//    }
+  //@formatter:on
   }
 
   private void refreshWeightForEmptyContainer(Container c) {
