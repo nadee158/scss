@@ -132,5 +132,7 @@
     <module>scss-gatein</module>
     <module>scss-gateout</module>
     <module>scss-master</module>
+	<module>scss-refer</module>
+	<module>scss-hpat</module>
   </modules>
 </project>
