@@ -14,6 +14,6 @@ import com.privasia.scss.core.model.GlobalSetting;
  */
 public interface GlobalSettingRepository extends BaseRepository<GlobalSetting, Long> {
 	
-	@Query("select gs.customCheckBeforeTransaction from GlobalSetting gs")
+	@Query(name="GlobalSetting.isCustomCheckBeforeTransaction")
 	boolean isCustomCheckBeforeTransaction();
 }
