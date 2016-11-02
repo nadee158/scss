@@ -1,15 +1,26 @@
 package com.privasia.scss.gatein.service;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import javax.transaction.Transactional;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.privasia.scss.core.dto.GateInfo;
 import com.privasia.scss.core.dto.ScssClientDto;
+import com.privasia.scss.core.model.Card;
 import com.privasia.scss.core.model.CardUsage;
+import com.privasia.scss.core.repository.CardRepository;
+import com.privasia.scss.core.repository.CardUsageRepository;
+import com.privasia.scss.core.util.constant.CardStatus;
+import com.privasia.scss.core.util.constant.CardUsageStatus;
 
+/**
+ * @author nadee158
+ *
+ */
 @Service("cardUsageService")
 @Transactional()
 public class CardUsageService {
@@ -19,6 +30,12 @@ public class CardUsageService {
   private static final String STATUS_RESET = "R";
 
   private static Logger logger = Logger.getLogger(CardUsage.class.getName());
+
+  @Autowired
+  private CardUsageRepository cardUsageRepository;
+
+  @Autowired
+  private CardRepository cardRepository;
 
 
   public String selectClientId(String webIP) {
@@ -42,26 +59,23 @@ public class CardUsageService {
     return ret;
   }
 
-  public String[] lookupGateInfo(String webIP) {
-    String[] ret = new String[] {};
-    String clientId = selectClientId(webIP);
-
-    // String sql = "SELECT cug_id_seq, crd_cardid, TO_CHAR(cug_time_start, 'DD-MM-YYYY HH24:MI:SS')
-    // AS cug_time_start, cug_mc_flag, exp_weight_bridge "
-    // + "FROM scss_card_usage "
-    // + "WHERE cli_clientid = " + SQL.format(clientId)
-    // + "AND cug_status = " + SQL.format(STATUS_LOCK)
-    // + "AND (cug_time_end IS NULL OR cug_time_end = '')";
-
-    // String cardId = rs.getString("crd_cardid");
-    // String timeInOut = rs.getString("cug_time_start");
-    // String mcFlag = rs.getString("cug_mc_flag");
-    // mcFlag = mcFlag.equals(Card.MASTER_CARD) ? mcFlag = "true" : "false";
-    // String weightBridge = rs.getString("exp_weight_bridge");
-    // String cugIdSeq = rs.getString("cug_id_seq");
+  /**
+   * Method's return type was modified to GateInfo dto object - older version had a string array
+   * Returned information is the same
+   * 
+   * @author nadee158
+   * @param webIP
+   * @return
+   */
+  public GateInfo lookupGateInfo(String webIP) {
     // ret = new String[] {cardId, clientId, timeInOut, mcFlag, weightBridge, cugIdSeq};
 
-    return ret;
+    String clientId = selectClientId(webIP);
+
+    CardUsage cardUsage = cardUsageRepository.findByClient_ClientIDAndUsageStatusAndDateTimeUpdateIsNull(clientId,
+        CardUsageStatus.STATUS_LOCK);
+
+    return new GateInfo(cardUsage);
   }
 
   public boolean saveStartCardUsage(String cardId, String clientId, boolean isMC, String weight) {
@@ -131,29 +145,34 @@ public class CardUsageService {
     return 0;
   }
 
-  public boolean doCheckCardStatus(String cardIdSeq, Date date) {
+  /**
+   * Method modified
+   * 
+   * @author nadee158
+   * @param cardIdSeq
+   * @param date
+   * @return
+   */
+  public boolean doCheckCardStatus(String cardIdSeq, LocalDateTime date) {
     boolean isActive = false;
-    // date = DateUtil.addDate(date, -1);
+    date = date.minusDays(1);
 
     // String sql = "SELECT CRD_DATETHRU FROM SCSS_CARD " + " WHERE CRD_CARDID_SEQ = " +
     // SQL.format(cardIdSeq)
     // + " AND CRD_CARDSTATUS = " + SQL.format(Card.ACTIVE);
-
-
-    // if (rs != null && rs.next()) {
-    // if (rs.getDate("CRD_DATETHRU").after(date)) {
-    // isActive = true;
-    // } else {
-    // /*
-    // * update card status to expired
-    // */
-    // isActive = false;
-    // String sqlUpdate = "UPDATE SCSS_CARD SET CRD_CARDSTATUS = " + SQL.format(Card.EXPIRED)
-    // + " WHERE CRD_CARDID_SEQ =" + SQL.format(cardIdSeq);
-    // stmt.executeUpdate(sqlUpdate);
-    // conn.commit();
-    // }
-    // }
+    Card card = cardRepository.findByCardIDAndCardStatus(cardIdSeq, CardStatus.ACTIVE);
+    if (!(card == null)) {
+      if (card.getDateThrough().isAfter(date)) {
+        isActive = true;
+      } else {
+        /** update card status to expired **/
+        isActive = false;
+        card.setCardStatus(CardStatus.EXPIRED);
+        // String sqlUpdate = "UPDATE SCSS_CARD SET CRD_CARDSTATUS = " + SQL.format(Card.EXPIRED)
+        // + " WHERE CRD_CARDID_SEQ =" + SQL.format(cardIdSeq);
+        cardRepository.save(card);
+      }
+    }
 
     return isActive;
   }
