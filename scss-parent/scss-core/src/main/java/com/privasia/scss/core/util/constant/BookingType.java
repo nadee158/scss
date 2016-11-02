@@ -9,7 +9,7 @@ package com.privasia.scss.core.util.constant;
  */
 public enum BookingType {
 	
-	ER("ER"), EP("EP"), E("E"), I("I");
+	ER("ER"), EP("EP"), EXPORT("E"), IMPORT("I"), IMPORT_ITT("ITT");
 	
 	private final String bookingType;
 
