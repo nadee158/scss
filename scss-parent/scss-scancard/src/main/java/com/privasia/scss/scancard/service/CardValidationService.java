@@ -11,8 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.privasia.scss.core.model.Card;
+import com.privasia.scss.core.model.Company;
 import com.privasia.scss.core.repository.CardRepository;
 import com.privasia.scss.core.util.constant.CardStatus;
+import com.privasia.scss.core.util.constant.CompanyStatus;
+import com.privasia.scss.scancard.util.CardValidation;
 import com.privasia.scss.scancard.util.ScanCardConstant;
 
 /**
@@ -46,43 +49,128 @@ public class CardValidationService {
 
   }
 
-  public boolean validateCardStatus(String cardNo) {
 
-	  
+  public CardValidation validateCard(String cardNo) {
+    CardValidation cardValidation;
     Optional<Card> cardOptional = cardRepository.findByCardNo(Long.valueOf(cardNo));
 
-    cardOptional.ifPresent(foundCard -> {
-      cardOptional.get();
+    Card foundCard = cardOptional.orElse(null);
+    if (!(foundCard == null)) {
+      CardStatus cardStatus = EnumUtils.getEnum(CardStatus.class, foundCard.getCardStatus().getCardStatus());
+      cardValidation = validateCardStatus(cardStatus);
 
-      EnumUtils.getEnum(CardStatus.class, foundCard.getCardStatus().getCardStatus());
+      if (cardValidation.isValid()) {
+        Company company = foundCard.getCompany();
 
-    });
+        if (!(company == null)) {
+          CompanyStatus companyStatus =
+              EnumUtils.getEnum(CompanyStatus.class, company.getCompanyStatus().getComStatus());
+          CardValidation companyValidation = validateCompanyStatus(companyStatus);
+          if (!(companyValidation.isValid())) {
+            cardValidation = companyValidation;
+          }
 
-    // EnumUtils.getEnum(CardStatus.class, card.orElseGet(card));
+        }
+      }
+    } else {
+      cardValidation = new CardValidation(false, ScanCardConstant.CARD_ERR_NOT_FOUND, null);
+    }
+    return cardValidation;
+  }
+
+  public CardValidation validateCompanyStatus(CompanyStatus companyStatus) {
+    CardValidation cardValidation = null;
+    switch (companyStatus) {
+      case ACTIVE:
+        // ret = RET_OK;
+        cardValidation = new CardValidation(true, ScanCardConstant.RET_OK, CompanyStatus.ACTIVE.getComStatus());
+        break;
+      case CREATED:
+        // RET_UNKNOWN;
+        cardValidation = new CardValidation(false, ScanCardConstant.RET_UNKNOWN, CompanyStatus.CREATED.getComStatus());
+        break;
+      case SUSPENDED:
+        // ret = COMP_ERR_SUSPENDED;
+        cardValidation =
+            new CardValidation(false, ScanCardConstant.COMP_ERR_SUSPENDED, CompanyStatus.SUSPENDED.getComStatus());
+        break;
+      case TERMINATED:
+        // ret = COMP_ERR_TERMINATED;
+        cardValidation =
+            new CardValidation(false, ScanCardConstant.COMP_ERR_TERMINATED, CompanyStatus.TERMINATED.getComStatus());
+        break;
+      case UPDATED:
+        // RET_UNKNOWN;
+        cardValidation = new CardValidation(false, ScanCardConstant.RET_UNKNOWN, CompanyStatus.UPDATED.getComStatus());
+        break;
+      default:
+        // RET_UNKNOWN;
+        cardValidation = new CardValidation(false, ScanCardConstant.RET_UNKNOWN, null);
+        break;
+    }
+    return cardValidation;
+  }
 
 
-
-    // Card foundCard = card.orElseGet( Card::new );
-
+  public CardValidation validateCardStatus(CardStatus cardStatus) {
     /*
      * check the card number in scss_company comp, scss_card card if(found){
      * 
-     * write a switch statement for following validation if (cardStatus.equals(Card.ACTIVE) &&
-     * compStatus.equals(Company.ACTIVE)) { ret = RET_OK; } else if
-     * (cardStatus.equals(Card.BLACKLIST)) { ret = CARD_ERR_BLACKLIST; } else if
-     * (cardStatus.equals(Card.EXPIRED)) { ret = CARD_ERR_EXPIRED; } else if
-     * (cardStatus.equals(Card.SUSPENDED)) { ret = CARD_ERR_SUSPENDED; } else if
-     * (cardStatus.equals(Card.TERMINATED)) { ret = CARD_ERR_TERMINATED; } else if
-     * (cardStatus.equals(Card.PENDING)) { ret = CARD_ERR_PENDING; } else if
-     * (cardStatus.equals(Card.NOT_ISSUED)) { ret = CARD_ERR_NOT_ISSUED; } else if
-     * (compStatus.equals(Company.SUSPENDED)) { ret = COMP_ERR_SUSPENDED; } else if
-     * (compStatus.equals(Company.TERMINATED)) { ret = COMP_ERR_TERMINATED; } else { ret =
-     * RET_UNKNOWN; }
-     * 
-     * return the object with card status and isMC true }else{ return null object }
+     * write a switch statement for following validation return the object with card status and isMC
+     * true }else { return null object }
      */
+    CardValidation cardValidation = null;
+    switch (cardStatus) {
+      case ACTIVE:
+        // ret = RET_OK;
+        cardValidation = new CardValidation(true, ScanCardConstant.RET_OK, CardStatus.ACTIVE.getCardStatus());
+        break;
+      case BLACKLIST:
+        // ret = CARD_ERR_BLACKLIST;
+        cardValidation =
+            new CardValidation(false, ScanCardConstant.CARD_ERR_BLACKLIST, CardStatus.BLACKLIST.getCardStatus());
+        break;
+      case CREATED:
+        // ret = RET_UNKNOWN;
+        cardValidation = new CardValidation(false, ScanCardConstant.RET_UNKNOWN, CardStatus.CREATED.getCardStatus());
+        break;
+      case EXPIRED:
+        // ret = CARD_ERR_EXPIRED;
+        cardValidation =
+            new CardValidation(false, ScanCardConstant.CARD_ERR_EXPIRED, CardStatus.EXPIRED.getCardStatus());
+        break;
+      case NOT_ISSUED:
+        // ret = CARD_ERR_NOT_ISSUED;
+        cardValidation =
+            new CardValidation(false, ScanCardConstant.CARD_ERR_NOT_ISSUED, CardStatus.NOT_ISSUED.getCardStatus());
+        break;
+      case PENDING:
+        // ret = CARD_ERR_PENDING;
+        cardValidation =
+            new CardValidation(false, ScanCardConstant.CARD_ERR_PENDING, CardStatus.PENDING.getCardStatus());
+        break;
+      case SUSPENDED:
+        // ret = CARD_ERR_SUSPENDED;
+        cardValidation =
+            new CardValidation(false, ScanCardConstant.CARD_ERR_SUSPENDED, CardStatus.SUSPENDED.getCardStatus());
+        break;
+      case TERMINATED:
+        // ret = CARD_ERR_TERMINATED;
+        cardValidation =
+            new CardValidation(false, ScanCardConstant.CARD_ERR_TERMINATED, CardStatus.TERMINATED.getCardStatus());
+        break;
+      case UPDATED:
+        // ret = RET_UNKNOWN;
+        cardValidation = new CardValidation(false, ScanCardConstant.RET_UNKNOWN, CardStatus.UPDATED.getCardStatus());
+        break;
+      default:
+        cardValidation = new CardValidation(false, ScanCardConstant.RET_UNKNOWN, null);
+        break;
+    }
 
-    return false;
+    return cardValidation;
   }
+
+
 
 }
