@@ -23,10 +23,10 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 @Configuration
 @ComponentScan(basePackages = {"com.privasia.scss.*"})
 @EnableAutoConfiguration
-public class App extends SpringBootServletInitializer {
+public class MasterEntryPoint extends SpringBootServletInitializer {
 
   public static void main(String[] args) {
-    SpringApplication.run(App.class, args);
+    SpringApplication.run(MasterEntryPoint.class, args);
   }
 
 
@@ -35,7 +35,7 @@ public class App extends SpringBootServletInitializer {
     return application.sources(applicationClass);
   }
 
-  private static Class<App> applicationClass = App.class;
+  private static Class<MasterEntryPoint> applicationClass = MasterEntryPoint.class;
 
   @Bean
   public Filter characterEncodingFilter() {

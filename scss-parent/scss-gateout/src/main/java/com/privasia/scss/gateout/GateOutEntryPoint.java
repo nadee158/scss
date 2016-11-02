@@ -12,8 +12,8 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ComponentScan(basePackages = {"com.privasia.scss.*"})
 @EnableAutoConfiguration
-public class App {
+public class GateOutEntryPoint {
   public static void main(String[] args) {
-    SpringApplication.run(App.class, args);
+    SpringApplication.run(GateOutEntryPoint.class, args);
   }
 }
