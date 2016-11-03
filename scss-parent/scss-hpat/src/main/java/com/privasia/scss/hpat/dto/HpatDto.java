@@ -1,6 +1,10 @@
 package com.privasia.scss.hpat.dto;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+import com.privasia.scss.core.model.HPATBooking;
 
 public class HpatDto implements Serializable {
 
@@ -15,18 +19,12 @@ public class HpatDto implements Serializable {
   public static String EARLY = "EARLY";
   public static String CANCEL = "CAN";
 
-  public static String IMPORT = "I";
-  public static String EXPORT = "E";
-  public static String EMPTY_PICKUP = "EP";
-  public static String EMPTY_RETURN = "ER";
-  public static String IMPORT_ITT = "II";
-
   /**
    * 
    */
   private static final long serialVersionUID = 1L;
 
-  private String seqId;// (rs.getString("BOOKING_ID"));
+  private String bookingId;// (rs.getString("BOOKING_ID"));
   private String driverId;// (rs.getString("DRIVER_IC_PP"));
   private String buffer;// (rs.getString("BUFFER"));
   private String comId;// (rs.getString("HAULIER_CODE"));
@@ -40,12 +38,46 @@ public class HpatDto implements Serializable {
   private String apptStart;// (this.convertDateToString(rs.getTimestamp("APPT_DATE_START")));
   private String apptEnd;// (this.convertDateToString(rs.getTimestamp("APPT_DATE_END")));
 
-  public String getSeqId() {
-    return seqId;
+  private String OnTimeFlag = "N";
+  private String containerAndGatepass;
+  private String impExpScreen;
+  private String menuId;
+
+  public HpatDto(HPATBooking b) {
+    this.bookingId = b.getBookingID();
+    this.driverId = b.getDriverICNumber();
+    this.buffer = b.getBuffer();
+    this.comId = b.getHaulierCode();
+    this.crdScardno = b.getCardNo();
+    this.pmNo = b.getPmNumber();
+    this.fromScss = "Y";
+    this.status = b.getStatus().getValue();
+    this.trlrNo = b.getTrailerNo();
+    this.trlrType = b.getTrailerType();
+    LocalDateTime stDt = b.getAppointmentStartDate();
+    LocalDateTime enDt = b.getAppointmentEndDate();
+    DateTimeFormatter format = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+
+    if (!(stDt == null)) {
+      this.apptStart = format.format(stDt);
+    }
+    if (!(enDt == null)) {
+      this.apptEnd = format.format(enDt);
+    }
+
   }
 
-  public void setSeqId(String seqId) {
-    this.seqId = seqId;
+  public HpatDto() {
+    super();
+  }
+
+
+  public String getBookingId() {
+    return bookingId;
+  }
+
+  public void setBookingId(String bookingId) {
+    this.bookingId = bookingId;
   }
 
   public String getDriverId() {
@@ -138,6 +170,38 @@ public class HpatDto implements Serializable {
 
   public static long getSerialversionuid() {
     return serialVersionUID;
+  }
+
+  public String getOnTimeFlag() {
+    return OnTimeFlag;
+  }
+
+  public void setOnTimeFlag(String onTimeFlag) {
+    OnTimeFlag = onTimeFlag;
+  }
+
+  public String getContainerAndGatepass() {
+    return containerAndGatepass;
+  }
+
+  public void setContainerAndGatepass(String containerAndGatepass) {
+    this.containerAndGatepass = containerAndGatepass;
+  }
+
+  public String getImpExpScreen() {
+    return impExpScreen;
+  }
+
+  public void setImpExpScreen(String impExpScreen) {
+    this.impExpScreen = impExpScreen;
+  }
+
+  public String getMenuId() {
+    return menuId;
+  }
+
+  public void setMenuId(String menuId) {
+    this.menuId = menuId;
   }
 
 
