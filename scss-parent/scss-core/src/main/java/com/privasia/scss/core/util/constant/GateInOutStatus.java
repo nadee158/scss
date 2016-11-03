@@ -3,11 +3,12 @@
  */
 package com.privasia.scss.core.util.constant;
 
+
 /**
  * @author Janaka
  *
  */
-public enum GateInOutStatus {
+public enum GateInOutStatus implements Enumable {
 	
 	IN("IN"), OUT("OUT");
 	
@@ -20,8 +21,12 @@ public enum GateInOutStatus {
 	/**
 	 * @return the gateInOutStatus
 	 */
-	public String getGateInOutStatus() {
+	public String getValue() {
 		return gateInOutStatus;
+	}
+	
+	public Enum<?> getEnumFromValue(String value) {
+	      return EnumableHelper.getEnumFromValue(this, value, null);
 	}
 
 }

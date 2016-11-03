@@ -1,6 +1,6 @@
 package com.privasia.scss.core.util.constant;
 
-public enum ImpExpFlagStatus {
+public enum ImpExpFlagStatus implements Enumable {
 	
 	IMPORT("I"), EXPORT("E"), IMPORT_EXPORT("IE");
 	
@@ -13,11 +13,12 @@ public enum ImpExpFlagStatus {
 	/**
 	 * @return the impExpFlagStatus
 	 */
-	public String getImpExpFlagStatus() {
+	public String getValue() {
 		return impExpFlagStatus;
 	}
-
 	
+	public Enum<?> getEnumFromValue(String value) {
+	      return EnumableHelper.getEnumFromValue(this, value, null);
+	}
 
-	
 }

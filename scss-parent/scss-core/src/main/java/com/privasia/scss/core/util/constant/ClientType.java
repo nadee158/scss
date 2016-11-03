@@ -7,7 +7,7 @@ package com.privasia.scss.core.util.constant;
  * @author Janaka
  *
  */
-public enum ClientType {
+public enum ClientType implements Enumable {
 	
 	GATE_IN("GATE IN"), CCC("CCC"), GREEN_GATE("GREEN GATE"), OTHERS("OTHERS"), SPV("SPV"), SECOND_GBOOTH("2GBOOTH"), 
 	GATE_OUT("GATE OUT"), SECOND_GKIOSK("2GKIOSK");
@@ -21,8 +21,12 @@ public enum ClientType {
 	/**
 	 * @return the clientType
 	 */
-	public String getClientType() {
+	public String getValue() {
 		return clientType;
+	}
+	
+	public Enum<?> getEnumFromValue(String value) {
+	      return EnumableHelper.getEnumFromValue(this, value, null);
 	}
 
 	

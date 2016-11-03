@@ -3,11 +3,12 @@
  */
 package com.privasia.scss.core.util.constant;
 
+
 /**
  * @author Janaka
  *
  */
-public enum Nationality {
+public enum Nationality implements Enumable {
 	
 	MALAYSIAN("MY"), INDIAN("IN");
 	
@@ -21,11 +22,12 @@ public enum Nationality {
 	/**
 	 * @return the nationality
 	 */
-	public String getNationality() {
+	public String getValue() {
 		return nationality;
 	}
-
 	
+	public Enum<?> getEnumFromValue(String value) {
+	      return EnumableHelper.getEnumFromValue(this, value, null);
+	}
 	
-
 }

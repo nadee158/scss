@@ -43,7 +43,7 @@ public class HPATService {
   private CardRepository cardRepository;
 
   @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-  public void findEtpHpat4ImpAndExp(Long cardID) {
+  public void findEtpHpat4ImpAndExp(Long cardID, LocalDateTime date) {
     /*
      * String sql =
      * "SELECT bookHpat.BOOKING_ID, bookHpat.APPT_DATE_START, bookHpat.BUFFER, bookHpat.CRD_SCARDNO, bookHpat.CREATION_DATE \n"
@@ -63,10 +63,11 @@ public class HPATService {
      */
     Optional<Card> card = cardRepository.findOne(cardID);
     Predicate byCardNo = HPATBookingPredicates.byCardNo(String.valueOf(card.get().getCardNo()));
-    Predicate byBookingStatus = HPATBookingPredicates.byBookingStatus(HpatReferStatus.ACTIVE.getHpatStatus());
-    Predicate byAppointmentEndDate = HPATBookingPredicates.byAppointmentEndDate(LocalDateTime.now());
-    Predicate byBookingTypes = HPATBookingDetailPredicates
-        .byBookingTypes(Arrays.asList(BookingType.EXPORT, BookingType.IMPORT, BookingType.IMPORT_ITT));
+    System.out.println("ACTV : "+HpatReferStatus.ACTIVE.getValue());
+    Predicate byBookingStatus = HPATBookingPredicates.byBookingStatus(HpatReferStatus.ACTIVE.getValue());
+    Predicate byAppointmentEndDate = HPATBookingPredicates.byAppointmentEndDate(date);
+    Predicate byBookingTypes = HPATBookingPredicates
+        .byBookingDetailTypes(Arrays.asList(BookingType.EXPORT, BookingType.IMPORT, BookingType.IMPORT_ITT));
     Predicate condition = ExpressionUtils.allOf(byCardNo, byBookingStatus, byAppointmentEndDate, byBookingTypes);
     Iterable<HPATBooking> bookingList = hpatBookingRepository.findAll(condition);
 

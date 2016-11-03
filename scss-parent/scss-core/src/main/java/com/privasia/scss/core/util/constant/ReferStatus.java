@@ -7,7 +7,7 @@ package com.privasia.scss.core.util.constant;
  * @author Janaka
  *
  */
-public enum ReferStatus {
+public enum ReferStatus implements Enumable {
 	
 	REJECT("R");
 	
@@ -20,8 +20,12 @@ public enum ReferStatus {
 	/**
 	 * @return the referStatus
 	 */
-	public String getReferStatus() {
+	public String getValue() {
 		return referStatus;
+	}
+	
+	public Enum<?> getEnumFromValue(String value) {
+	      return EnumableHelper.getEnumFromValue(this, value, null);
 	}
 
 	

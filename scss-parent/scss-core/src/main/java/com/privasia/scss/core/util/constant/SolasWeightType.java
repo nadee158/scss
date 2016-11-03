@@ -7,7 +7,7 @@ package com.privasia.scss.core.util.constant;
  * @author Janaka
  *
  */
-public enum SolasWeightType {
+public enum SolasWeightType implements Enumable {
 	
 	FUEL("FUEL"), TYRE("TYRE"), VARIANCE("VARIANCE"), PM("PM"), TRAILER("TRAILER"), MGW("MGW");
 	
@@ -20,10 +20,12 @@ public enum SolasWeightType {
 	/**
 	 * @return the solasWeightType
 	 */
-	public String getSolasWeightType() {
+	public String getValue() {
 		return solasWeightType;
 	}
 
-	
+	public Enum<?> getEnumFromValue(String value) {
+	      return EnumableHelper.getEnumFromValue(this, value, null);
+	}
 
 }

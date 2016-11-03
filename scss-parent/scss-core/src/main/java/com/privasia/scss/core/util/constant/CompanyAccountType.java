@@ -7,7 +7,7 @@ package com.privasia.scss.core.util.constant;
  * @author Janaka
  *
  */
-public enum CompanyAccountType {
+public enum CompanyAccountType implements Enumable {
 	
 	LEDGER("LEDGER"), CREDIT("CREDIT"), CASH("CASH"), CHEQUE("CHEQUE");
 	
@@ -21,8 +21,12 @@ public enum CompanyAccountType {
 	/**
 	 * @return the accType
 	 */
-	public String getAccType() {
+	public String getValue() {
 		return accType;
+	}
+	
+	public Enum<?> getEnumFromValue(String value) {
+	      return EnumableHelper.getEnumFromValue(this, value, null);
 	}
 
 }

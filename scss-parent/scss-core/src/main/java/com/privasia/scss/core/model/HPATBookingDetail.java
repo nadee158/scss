@@ -22,6 +22,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Type;
+
 import com.privasia.scss.core.util.constant.BookingType;
 
 
@@ -48,12 +50,11 @@ public class HPATBookingDetail extends AuditEntity implements Serializable {
   @Column(name = "DETAIL_ID")
   private Long hpatBookingDetailID;
 
-  @Column(name = "BUFFER")
-  @Enumerated(EnumType.STRING)
+  @Column(name = "BOOKING_TYPE")
+  @Type(type="com.privasia.scss.core.util.enumusertype.BookingTypeEnumUserType")
   private BookingType bookingType;
 
   @Column(name = "CLOSING_TIME")
-  // @Temporal(TemporalType.TIMESTAMP)
   private LocalDateTime closingTime;
 
   @Column(name = "CONTAINER_ISO")
@@ -90,7 +91,6 @@ public class HPATBookingDetail extends AuditEntity implements Serializable {
   private String oddPickOrDrop;
 
   @Column(name = "YARD_OPENING_TIME")
-  // @Temporal(TemporalType.TIMESTAMP)
   private LocalDateTime yardOpeningTime;
 
   @ManyToOne(fetch = FetchType.LAZY)

@@ -47,8 +47,8 @@ public class KioskBoothService {
         clientInfo.setClientIdSeq(kioskID.getClientID());
         clientInfo.setWebIPAddress(kioskID.getWebIPAddress());
         clientInfo.setClientDescription(kioskID.getDescription());
-        clientInfo.setClientStaus(kioskID.getStatus().getRecordStatus());
-        clientInfo.setClientType(kioskID.getType().getClientType());
+        clientInfo.setClientStaus(kioskID.getStatus().getValue());
+        clientInfo.setClientType(kioskID.getType().getValue());
         clientInfo.setUnitNo(kioskID.getUnitNo());
         //clientInfo.setCsmControl(kioskID.isCsmControl());
         clientInfo.setCosmosPortNumber(Integer.toString(kioskID.getCosmosPortNo()));
@@ -56,7 +56,7 @@ public class KioskBoothService {
         clientInfo.setCameraServerIPAddress(kioskID.getCameraServerIPAddress());
         clientInfo.setCameraServerPort(Integer.toString(kioskID.getCameraServerPortNo()));
         clientInfo.setDisplayScreenId(Integer.toString(kioskBoothRights.getDisplayScreenID()));
-        clientInfo.setKioskLockStatus(kioskBoothRights.getKioskLockStatus().getKioskLockStatus());
+        clientInfo.setKioskLockStatus(kioskBoothRights.getKioskLockStatus().getValue());
         clientInfo.setLaneNO(kioskID.getLaneNo());
         clientInfo.setFtpIP(kioskID.getFtpIPAddress());
         clientInfo.setFtpPort(kioskID.getFtpPort());
@@ -94,7 +94,7 @@ public class KioskBoothService {
       }
 
       if (StringUtils.equals(kioskBoothRightInfo.getKioskLockStatus(),
-          DBTransactionStatus.LOCK.getDBTransactionStatus())) {
+          DBTransactionStatus.LOCK.getValue())) {
         List<KioskBoothRights> list = kioskBoothRightsRepository.findByKioskIDAndKioskLockStatusAndBoothID(kioskID,
             KioskLockStatus.LOCK, boothID);
         if (!(list == null || list.isEmpty())) {
@@ -216,7 +216,7 @@ public class KioskBoothService {
           }
         }
 
-        if (kioskBoothRightInfo.getKioskLockStatus().equals(DBTransactionStatus.LOCK.getDBTransactionStatus())
+        if (kioskBoothRightInfo.getKioskLockStatus().equals(DBTransactionStatus.LOCK.getValue())
             && StringUtils.isNotEmpty(kioskBoothRightInfo.getBoothID())) {
 
           List<KioskBoothRights> updatingList = kioskBoothRightsRepository.findByKioskIDAndNotBoothID(kioskID, boothID);

@@ -7,7 +7,7 @@ package com.privasia.scss.core.util.constant;
  * @author Janaka
  *
  */
-public enum CardUsageStatus {
+public enum CardUsageStatus implements Enumable {
 	
 	STATUS_COMPLETE("C"), STATUS_LOCK("L"), STATUS_RESET("R");
 	
@@ -20,10 +20,12 @@ public enum CardUsageStatus {
 	/**
 	 * @return the cardUsageStatus
 	 */
-	public String getCardUsageStatus() {
+	public String getValue() {
 		return cardUsageStatus;
 	}
-
 	
+	public Enum<?> getEnumFromValue(String value) {
+	      return EnumableHelper.getEnumFromValue(this, value, null);
+	}
 
 }

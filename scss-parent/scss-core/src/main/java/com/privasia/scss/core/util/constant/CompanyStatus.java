@@ -3,11 +3,12 @@
  */
 package com.privasia.scss.core.util.constant;
 
+
 /**
  * @author Janaka
  *
  */
-public enum CompanyStatus {
+public enum CompanyStatus implements Enumable {
 	
 	ACTIVE("A"), TERMINATED("T"), SUSPENDED("S"), CREATED("C"), UPDATED("U");
 	
@@ -22,10 +23,13 @@ public enum CompanyStatus {
 	/**
 	 * @return the comStatus
 	 */
-	public String getComStatus() {
+	public String getValue() {
 		return comStatus;
 	}
-
+	
+	public Enum<?> getEnumFromValue(String value) {
+	      return EnumableHelper.getEnumFromValue(this, value, null);
+	}
 	
 
 }

@@ -7,7 +7,7 @@ package com.privasia.scss.core.util.constant;
  * @author Janaka
  *
  */
-public enum SolasInstructionType {
+public enum SolasInstructionType implements Enumable {
 	
 	VGM_INSTRUCTION_SHIPPER("SHIPPER VGM"), VGM_INSTRUCTION_TERMINAL("TERMINAL VGM"), VGM_INSTRUCTION_NO_SOLAS("NO_SOLAS");
 	
@@ -20,8 +20,12 @@ public enum SolasInstructionType {
 	/**
 	 * @return the solasInstructionType
 	 */
-	public String getSolasInstructionType() {
+	public String getValue() {
 		return solasInstructionType;
+	}
+	
+	public Enum<?> getEnumFromValue(String value) {
+	      return EnumableHelper.getEnumFromValue(this, value, null);
 	}
 
 

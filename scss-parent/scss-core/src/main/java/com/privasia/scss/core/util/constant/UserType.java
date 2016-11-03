@@ -7,7 +7,7 @@ package com.privasia.scss.core.util.constant;
  * @author Janaka
  *
  */
-public enum UserType {
+public enum UserType implements Enumable {
 	
 	INTERNAL("I"), EXTERNAL("E");
 	
@@ -21,9 +21,13 @@ public enum UserType {
 	/**
 	 * @return the userType
 	 */
-	public String getUserType() {
+	public String getValue() {
 		return userType;
 	}
+	
+	public Enum<?> getEnumFromValue(String value) {
+        return EnumableHelper.getEnumFromValue(this, value, null);
+    }
 
 	
 	

@@ -3,11 +3,15 @@
  */
 package com.privasia.scss.core.util.constant;
 
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author Janaka
  *
  */
-public enum HpatReferStatus {
+public enum HpatReferStatus implements Enumable {
 	
 	ACTIVE("ACTV"), CANCEL("CAN"), COMPLETE("COMP");
 	
@@ -21,9 +25,27 @@ public enum HpatReferStatus {
 	/**
 	 * @return the hpatStatus
 	 */
-	public String getHpatStatus() {
+	public String getValue() {
 		return hpatStatus;
 	}
+	
+	public Enum<?> getEnumFromValue(String value) {
+	      return EnumableHelper.getEnumFromValue(this, value, null);
+	}
+	
+	
+	public static HpatReferStatus fromCode(String hpatStatus) {
+	    return LOOKUP.get(hpatStatus);
+	  }
+
+
+	  private static final Map<String, HpatReferStatus> LOOKUP = new HashMap<String, HpatReferStatus>();
+
+	  static {
+	    for (HpatReferStatus hpatReferStatus : EnumSet.allOf(HpatReferStatus.class)) {
+	      LOOKUP.put(hpatReferStatus.getValue(), hpatReferStatus);
+	    }
+	  }
 
 	
 

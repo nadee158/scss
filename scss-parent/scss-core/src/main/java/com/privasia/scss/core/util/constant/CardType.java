@@ -7,7 +7,7 @@ package com.privasia.scss.core.util.constant;
  * @author nadee158
  *
  */
-public enum CardType {
+public enum CardType implements Enumable {
 
   MASTER_CARD("M"), NORMAL_CARD("N");
 
@@ -18,8 +18,12 @@ public enum CardType {
     this.cardType = cardType;
   }
 
-  public String getCardType() {
+  public String getValue() {
     return cardType;
+  }
+  
+  public Enum<?> getEnumFromValue(String value) {
+      return EnumableHelper.getEnumFromValue(this, value, null);
   }
 
 

@@ -1,6 +1,7 @@
 package com.privasia.scss.core.util.constant;
 
-public enum DBTransactionStatus {
+
+public enum DBTransactionStatus implements Enumable {
 
   LOCK("L"), RESET("R"), ACTIVE("A"), COMPLETE("C");
 
@@ -13,8 +14,12 @@ public enum DBTransactionStatus {
   /**
    * @return the transactionStatus
    */
-  public String getDBTransactionStatus() {
+  public String getValue() {
     return transactionStatus;
+  }
+  
+  public Enum<?> getEnumFromValue(String value) {
+      return EnumableHelper.getEnumFromValue(this, value, null);
   }
 
 

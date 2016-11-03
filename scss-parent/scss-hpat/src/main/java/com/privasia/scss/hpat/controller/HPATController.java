@@ -3,6 +3,8 @@
  */
 package com.privasia.scss.hpat.controller;
 
+import java.time.LocalDateTime;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -28,12 +30,12 @@ public class HPATController {
 	private HPATService hpatService;
 	
 	
-	@RequestMapping(value = "/impexp/{cardID}/", method = RequestMethod.GET)
+	@RequestMapping(value = "/impexp/{cardID}", method = RequestMethod.GET)
     public ResponseEntity<Void> findEtpHpat4ImpAndExp(@PathVariable Long cardID) {
 		
 		System.out.println(cardID + "cardID");
 		
-		hpatService.findEtpHpat4ImpAndExp(cardID);
+		hpatService.findEtpHpat4ImpAndExp(cardID, LocalDateTime.now());
 		
 		return new ResponseEntity<Void>(HttpStatus.OK);
     }

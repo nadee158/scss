@@ -11,7 +11,7 @@ import java.util.Map;
  * @author Janaka
  *
  */
-public enum KioskLockStatus {
+public enum KioskLockStatus implements Enumable {
 
   ACTIVE("A"), LOCK("L"), COMPLETE("C");
 
@@ -24,8 +24,12 @@ public enum KioskLockStatus {
   /**
    * @return the kioskLockStatus
    */
-  public String getKioskLockStatus() {
+  public String getValue() {
     return kioskLockStatus;
+  }
+  
+  public Enum<?> getEnumFromValue(String value) {
+      return EnumableHelper.getEnumFromValue(this, value, null);
   }
 
   public static KioskLockStatus fromCode(String kioskLockStatus) {
@@ -37,7 +41,7 @@ public enum KioskLockStatus {
 
   static {
     for (KioskLockStatus kioskLockStatus : EnumSet.allOf(KioskLockStatus.class)) {
-      LOOKUP.put(kioskLockStatus.getKioskLockStatus(), kioskLockStatus);
+      LOOKUP.put(kioskLockStatus.getValue(), kioskLockStatus);
     }
   }
 

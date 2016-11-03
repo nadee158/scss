@@ -3,11 +3,12 @@
  */
 package com.privasia.scss.core.util.constant;
 
+
 /**
  * @author Janaka
  *
  */
-public enum CardValidityType {
+public enum CardValidityType implements Enumable {
 	
 	USAHAWAN("U"), PERMANENT("P"), CONTRACTOR("C");
 	
@@ -22,11 +23,12 @@ public enum CardValidityType {
 	/**
 	 * @return the cardValidityType
 	 */
-	public String getCardValidityType() {
+	public String getValue() {
 		return cardValidityType;
 	}
-
 	
-	
+	public Enum<?> getEnumFromValue(String value) {
+	      return EnumableHelper.getEnumFromValue(this, value, null);
+	}
 
 }

@@ -3,11 +3,12 @@
  */
 package com.privasia.scss.core.util.constant;
 
+
 /**
  * @author Janaka
  *
  */
-public enum CompanyType {
+public enum CompanyType implements Enumable {
 	
 	HAULAGE("H"), PORT_USER("P"), TRANSPORTER("T"), GOVERNMENT_AGENCY("A"), FOREIGN_WORKER("N"), FORWARDING("F"), GENERAL("G"), WESTPORT_STAFF("W");
 	
@@ -21,9 +22,14 @@ public enum CompanyType {
     /**
 	 * @return the comType
 	 */
-	public String getComType() {
+	public String getValue() {
 		return comType;
 	}
+	
+	public Enum<?> getEnumFromValue(String value) {
+	      return EnumableHelper.getEnumFromValue(this, value, null);
+	}
+	
 
 	
 

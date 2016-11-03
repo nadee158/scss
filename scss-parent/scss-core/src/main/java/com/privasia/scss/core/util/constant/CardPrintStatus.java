@@ -3,11 +3,12 @@
  */
 package com.privasia.scss.core.util.constant;
 
+
 /**
  * @author Janaka
  *
  */
-public enum CardPrintStatus {
+public enum CardPrintStatus implements Enumable {
 	
 	PRINTED("P");
 	
@@ -20,8 +21,12 @@ public enum CardPrintStatus {
 	/**
 	 * @return the cardPrintStatus
 	 */
-	public String getCardPrintStatus() {
+	public String getValue() {
 		return cardPrintStatus;
+	}
+	
+	public Enum<?> getEnumFromValue(String value) {
+	      return EnumableHelper.getEnumFromValue(this, value, null);
 	}
 
 }

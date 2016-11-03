@@ -3,11 +3,12 @@
  */
 package com.privasia.scss.core.util.constant;
 
+
 /**
  * @author Janaka
  *
  */
-public enum ShippingLineReportType {
+public enum ShippingLineReportType implements Enumable {
 	
 	CONTAINER_SIZE_DISCREPANCY("CSD"),  DSO_SEAL_DIFFERENT("DSEAL"), SEAL_LINE("SEAL"), WEIGHT("WGH"), WRONG_DOOR("WRD");
 	
@@ -20,7 +21,11 @@ public enum ShippingLineReportType {
 	/**
 	 * @return the shipMailTypeCode
 	 */
-	public String getShipMailTypeCode() {
+	public String getValue() {
 		return shipMailTypeCode;
+	}
+	
+	public Enum<?> getEnumFromValue(String value) {
+	      return EnumableHelper.getEnumFromValue(this, value, null);
 	}
 }

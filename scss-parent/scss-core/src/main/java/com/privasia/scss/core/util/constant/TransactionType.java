@@ -4,7 +4,7 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 
-public enum TransactionType {
+public enum TransactionType implements Enumable {
 
   IMPORT("I"), EXPORT("E"), IMPORT_EXPORT("IE"), ODD_EXPORT("OE"), ODD_IMPORT("OI"), ODD_IMPORT_EXPORT("OIE");
 
@@ -17,8 +17,12 @@ public enum TransactionType {
   /**
    * @return the transactionType
    */
-  public String getTransactionType() {
+  public String getValue() {
     return transactionType;
+  }
+  
+  public Enum<?> getEnumFromValue(String value) {
+      return EnumableHelper.getEnumFromValue(this, value, null);
   }
 
   public static TransactionType fromCode(String transactionType) {
@@ -30,10 +34,10 @@ public enum TransactionType {
 
   static {
     for (TransactionType transactionType : EnumSet.allOf(TransactionType.class)) {
-      LOOKUP.put(transactionType.getTransactionType(), transactionType);
+      LOOKUP.put(transactionType.getValue(), transactionType);
     }
   }
 
-
+  
 
 }

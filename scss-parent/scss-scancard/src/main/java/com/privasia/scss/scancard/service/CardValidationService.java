@@ -56,7 +56,7 @@ public class CardValidationService {
 
     Card foundCard = cardOptional.orElse(null);
     if (!(foundCard == null)) {
-      CardStatus cardStatus = EnumUtils.getEnum(CardStatus.class, foundCard.getCardStatus().getCardStatus());
+      CardStatus cardStatus = EnumUtils.getEnum(CardStatus.class, foundCard.getCardStatus().getValue());
       cardValidation = validateCardStatus(cardStatus);
 
       if (cardValidation.isValid()) {
@@ -64,7 +64,7 @@ public class CardValidationService {
 
         if (!(company == null)) {
           CompanyStatus companyStatus =
-              EnumUtils.getEnum(CompanyStatus.class, company.getCompanyStatus().getComStatus());
+              EnumUtils.getEnum(CompanyStatus.class, company.getCompanyStatus().getValue());
           CardValidation companyValidation = validateCompanyStatus(companyStatus);
           if (!(companyValidation.isValid())) {
             cardValidation = companyValidation;
@@ -83,25 +83,25 @@ public class CardValidationService {
     switch (companyStatus) {
       case ACTIVE:
         // ret = RET_OK;
-        cardValidation = new CardValidation(true, ScanCardConstant.RET_OK, CompanyStatus.ACTIVE.getComStatus());
+        cardValidation = new CardValidation(true, ScanCardConstant.RET_OK, CompanyStatus.ACTIVE.getValue());
         break;
       case CREATED:
         // RET_UNKNOWN;
-        cardValidation = new CardValidation(false, ScanCardConstant.RET_UNKNOWN, CompanyStatus.CREATED.getComStatus());
+        cardValidation = new CardValidation(false, ScanCardConstant.RET_UNKNOWN, CompanyStatus.CREATED.getValue());
         break;
       case SUSPENDED:
         // ret = COMP_ERR_SUSPENDED;
         cardValidation =
-            new CardValidation(false, ScanCardConstant.COMP_ERR_SUSPENDED, CompanyStatus.SUSPENDED.getComStatus());
+            new CardValidation(false, ScanCardConstant.COMP_ERR_SUSPENDED, CompanyStatus.SUSPENDED.getValue());
         break;
       case TERMINATED:
         // ret = COMP_ERR_TERMINATED;
         cardValidation =
-            new CardValidation(false, ScanCardConstant.COMP_ERR_TERMINATED, CompanyStatus.TERMINATED.getComStatus());
+            new CardValidation(false, ScanCardConstant.COMP_ERR_TERMINATED, CompanyStatus.TERMINATED.getValue());
         break;
       case UPDATED:
         // RET_UNKNOWN;
-        cardValidation = new CardValidation(false, ScanCardConstant.RET_UNKNOWN, CompanyStatus.UPDATED.getComStatus());
+        cardValidation = new CardValidation(false, ScanCardConstant.RET_UNKNOWN, CompanyStatus.UPDATED.getValue());
         break;
       default:
         // RET_UNKNOWN;
@@ -123,45 +123,45 @@ public class CardValidationService {
     switch (cardStatus) {
       case ACTIVE:
         // ret = RET_OK;
-        cardValidation = new CardValidation(true, ScanCardConstant.RET_OK, CardStatus.ACTIVE.getCardStatus());
+        cardValidation = new CardValidation(true, ScanCardConstant.RET_OK, CardStatus.ACTIVE.getValue());
         break;
       case BLACKLIST:
         // ret = CARD_ERR_BLACKLIST;
         cardValidation =
-            new CardValidation(false, ScanCardConstant.CARD_ERR_BLACKLIST, CardStatus.BLACKLIST.getCardStatus());
+            new CardValidation(false, ScanCardConstant.CARD_ERR_BLACKLIST, CardStatus.BLACKLIST.getValue());
         break;
       case CREATED:
         // ret = RET_UNKNOWN;
-        cardValidation = new CardValidation(false, ScanCardConstant.RET_UNKNOWN, CardStatus.CREATED.getCardStatus());
+        cardValidation = new CardValidation(false, ScanCardConstant.RET_UNKNOWN, CardStatus.CREATED.getValue());
         break;
       case EXPIRED:
         // ret = CARD_ERR_EXPIRED;
         cardValidation =
-            new CardValidation(false, ScanCardConstant.CARD_ERR_EXPIRED, CardStatus.EXPIRED.getCardStatus());
+            new CardValidation(false, ScanCardConstant.CARD_ERR_EXPIRED, CardStatus.EXPIRED.getValue());
         break;
       case NOT_ISSUED:
         // ret = CARD_ERR_NOT_ISSUED;
         cardValidation =
-            new CardValidation(false, ScanCardConstant.CARD_ERR_NOT_ISSUED, CardStatus.NOT_ISSUED.getCardStatus());
+            new CardValidation(false, ScanCardConstant.CARD_ERR_NOT_ISSUED, CardStatus.NOT_ISSUED.getValue());
         break;
       case PENDING:
         // ret = CARD_ERR_PENDING;
         cardValidation =
-            new CardValidation(false, ScanCardConstant.CARD_ERR_PENDING, CardStatus.PENDING.getCardStatus());
+            new CardValidation(false, ScanCardConstant.CARD_ERR_PENDING, CardStatus.PENDING.getValue());
         break;
       case SUSPENDED:
         // ret = CARD_ERR_SUSPENDED;
         cardValidation =
-            new CardValidation(false, ScanCardConstant.CARD_ERR_SUSPENDED, CardStatus.SUSPENDED.getCardStatus());
+            new CardValidation(false, ScanCardConstant.CARD_ERR_SUSPENDED, CardStatus.SUSPENDED.getValue());
         break;
       case TERMINATED:
         // ret = CARD_ERR_TERMINATED;
         cardValidation =
-            new CardValidation(false, ScanCardConstant.CARD_ERR_TERMINATED, CardStatus.TERMINATED.getCardStatus());
+            new CardValidation(false, ScanCardConstant.CARD_ERR_TERMINATED, CardStatus.TERMINATED.getValue());
         break;
       case UPDATED:
         // ret = RET_UNKNOWN;
-        cardValidation = new CardValidation(false, ScanCardConstant.RET_UNKNOWN, CardStatus.UPDATED.getCardStatus());
+        cardValidation = new CardValidation(false, ScanCardConstant.RET_UNKNOWN, CardStatus.UPDATED.getValue());
         break;
       default:
         cardValidation = new CardValidation(false, ScanCardConstant.RET_UNKNOWN, null);

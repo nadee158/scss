@@ -51,11 +51,11 @@ public class AuditEntity implements Serializable {
   private ZonedDateTime dateTimeUpdate;
 
   @Version
-  @Column(name = "VERSION")
-  private long version;
+  @Column(name = "VERSION", nullable = true)
+  private Long version;
 
 
-  public AuditEntity(long addBy, long updateBy, ZonedDateTime dateTimeAdd, ZonedDateTime dateTimeUpdate, long version) {
+  public AuditEntity(long addBy, long updateBy, ZonedDateTime dateTimeAdd, ZonedDateTime dateTimeUpdate, Long version) {
     super();
     this.addBy = addBy;
     this.updateBy = updateBy;
@@ -81,13 +81,13 @@ public class AuditEntity implements Serializable {
   public void setUpdateBy(long updateBy) {
     this.updateBy = updateBy;
   }
-
-  public long getVersion() {
-    return version;
+  
+  public Long getVersion() {
+	return version;
   }
 
-  public void setVersion(long version) {
-    this.version = version;
+  public void setVersion(Long version) {
+	this.version = version;
   }
 
   public ZonedDateTime getDateTimeAdd() {

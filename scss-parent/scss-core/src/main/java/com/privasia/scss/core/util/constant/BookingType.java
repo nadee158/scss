@@ -3,11 +3,12 @@
  */
 package com.privasia.scss.core.util.constant;
 
+
 /**
  * @author Janaka
  *
  */
-public enum BookingType {
+public enum BookingType implements Enumable { 
 	
 	ER("ER"), EP("EP"), EXPORT("E"), IMPORT("I"), IMPORT_ITT("ITT");
 	
@@ -20,8 +21,12 @@ public enum BookingType {
 	/**
 	 * @return the bookingType
 	 */
-	public String getBookingType() {
+	public String getValue() {
 		return bookingType;
+	}
+	
+	public Enum<?> getEnumFromValue(String value) {
+	      return EnumableHelper.getEnumFromValue(this, value, null);
 	}
 
 }

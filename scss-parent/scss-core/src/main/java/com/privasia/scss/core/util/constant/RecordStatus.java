@@ -3,11 +3,12 @@
  */
 package com.privasia.scss.core.util.constant;
 
+
 /**
  * @author Janaka
  *
  */
-public enum RecordStatus {
+public enum RecordStatus implements Enumable {
 	
 	ACTIVE("A"), INACTIVE("I");
 	
@@ -21,10 +22,13 @@ public enum RecordStatus {
 	/**
 	 * @return the recordStatus
 	 */
-	public String getRecordStatus() {
+	public String getValue() {
 		return recordStatus;
 	}
-
+	
+	public Enum<?> getEnumFromValue(String value) {
+	      return EnumableHelper.getEnumFromValue(this, value, null);
+	}
 	
     
 

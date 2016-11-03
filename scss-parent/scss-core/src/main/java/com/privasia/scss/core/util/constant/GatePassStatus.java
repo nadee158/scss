@@ -7,7 +7,7 @@ package com.privasia.scss.core.util.constant;
  * @author Janaka
  *
  */
-public enum GatePassStatus {
+public enum GatePassStatus implements Enumable {
 	
 	ACTIVE("A"), CANCEL("C");
 	
@@ -20,10 +20,12 @@ public enum GatePassStatus {
 	/**
 	 * @return the gatePassStatus
 	 */
-	public String getGatePassStatus() {
+	public String getValue() {
 		return gatePassStatus;
 	}
 
-	
+	public Enum<?> getEnumFromValue(String value) {
+	      return EnumableHelper.getEnumFromValue(this, value, null);
+	}
 
 }

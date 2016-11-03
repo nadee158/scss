@@ -3,11 +3,12 @@
  */
 package com.privasia.scss.core.util.constant;
 
+
 /**
  * @author Janaka
  *
  */
-public enum ContainerPosition {
+public enum ContainerPosition implements Enumable {
 	
 	FRONT("F"), AFTER("A"), MIDDLE("M");
 	
@@ -20,8 +21,12 @@ public enum ContainerPosition {
 	/**
 	 * @return the position
 	 */
-	public String getPosition() {
+	public String getValue() {
 		return position;
+	}
+	
+	public Enum<?> getEnumFromValue(String value) {
+	      return EnumableHelper.getEnumFromValue(this, value, null);
 	}
 
 }

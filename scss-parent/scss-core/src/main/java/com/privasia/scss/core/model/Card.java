@@ -22,7 +22,9 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import com.privasia.scss.core.util.constant.CardIsusedStatus;
+import org.hibernate.annotations.Type;
+
+import com.privasia.scss.core.util.constant.CardIssuedStatus;
 import com.privasia.scss.core.util.constant.CardPrintStatus;
 import com.privasia.scss.core.util.constant.CardStatus;
 import com.privasia.scss.core.util.constant.CardValidityType;
@@ -61,19 +63,16 @@ public class Card extends AuditEntity implements Serializable {
   private SystemUser systemUser;
 
   @Column(name = "CRD_CONTRACTEXPIRYDATE")
-  // @Temporal(TemporalType.TIMESTAMP)
   private LocalDateTime contractExpiryDate;
 
   @Column(name = "CRD_VALIDITYTYPE")
-  @Enumerated(EnumType.STRING)
+  @Type(type="com.privasia.scss.core.util.enumusertype.CardValidityEnumUserType")
   private CardValidityType cardValidityType;
 
   @Column(name = "CRD_AUTHORISEDATE")
-  // @Temporal(TemporalType.TIMESTAMP)
   private LocalDateTime authoriseDate;
 
   @Column(name = "CRD_DATEJOIN")
-  // @Temporal(TemporalType.TIMESTAMP)
   private LocalDateTime dateJoin;
 
   @Column(name = "CRD_EMAILADDR")
@@ -89,23 +88,20 @@ public class Card extends AuditEntity implements Serializable {
   private String phoneOffice;
 
   @Column(name = "CRD_DATETHRU")
-  // @Temporal(TemporalType.TIMESTAMP)
   private LocalDateTime dateThrough;
 
   @Column(name = "CRD_DATESINCE")
-  // @Temporal(TemporalType.TIMESTAMP)
   private LocalDateTime dateSince;
 
   @Column(name = "CRD_CARDSTATUS")
-  @Enumerated(EnumType.STRING)
+  @Type(type="com.privasia.scss.core.util.enumusertype.CardStatusEnumUserType")
   private CardStatus cardStatus;
 
   @Column(name = "CRD_PRINTSTATUS")
-  @Enumerated(EnumType.STRING)
+  @Type(type="com.privasia.scss.core.util.enumusertype.CardPrintStatusEnumUserType")
   private CardPrintStatus cardPrintStatus;
 
   @Column(name = "CRD_PRINTDATE")
-  // @Temporal(TemporalType.TIMESTAMP)
   private LocalDateTime printDate;
 
   @ManyToOne(fetch = FetchType.LAZY)
@@ -113,8 +109,8 @@ public class Card extends AuditEntity implements Serializable {
   private SystemUser printedBy;
 
   @Column(name = "CRD_ISUSED")
-  @Enumerated(EnumType.STRING)
-  private CardIsusedStatus cardIssued;
+  @Type(type="com.privasia.scss.core.util.enumusertype.CardIssuedEnumUserType")
+  private CardIssuedStatus cardIssued;
 
   @Column(name = "CRD_GOVE_AGENCY")
   private String agency;
@@ -123,7 +119,7 @@ public class Card extends AuditEntity implements Serializable {
   private String referenceNumber;
 
   @Column(name = "CRD_TYPE")
-  @Enumerated(EnumType.STRING)
+  @Type(type="com.privasia.scss.core.util.enumusertype.CompanyTypeEnumUserType")
   private CompanyType cardType;
 
   public Long getCardID() {
@@ -262,11 +258,11 @@ public class Card extends AuditEntity implements Serializable {
     this.printedBy = printedBy;
   }
 
-  public CardIsusedStatus getCardIssued() {
+  public CardIssuedStatus getCardIssued() {
     return cardIssued;
   }
 
-  public void setCardIssued(CardIsusedStatus cardIssued) {
+  public void setCardIssued(CardIssuedStatus cardIssued) {
     this.cardIssued = cardIssued;
   }
 

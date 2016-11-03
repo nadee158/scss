@@ -68,7 +68,7 @@ public class HPATBooking extends AuditEntity implements Serializable {
   private String pmNumber;
 
   @Column(name = "STATUS_CODE")
-  @Enumerated(EnumType.STRING)
+  @Type(type="com.privasia.scss.core.util.enumusertype.HpatReferStatusEnumUserType")
   private HpatReferStatus status;
 
   @Column(name = "TRAILER_NO")
