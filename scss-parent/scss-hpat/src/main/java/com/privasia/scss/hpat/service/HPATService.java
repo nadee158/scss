@@ -6,14 +6,17 @@ package com.privasia.scss.hpat.service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.privasia.scss.core.exception.ResultsNotFoundException;
 import com.privasia.scss.core.model.Card;
 import com.privasia.scss.core.model.HPATBooking;
 import com.privasia.scss.core.predicate.HPATBookingPredicates;
@@ -23,6 +26,7 @@ import com.privasia.scss.core.util.constant.BookingType;
 import com.privasia.scss.core.util.constant.HpatReferStatus;
 import com.privasia.scss.hpat.dto.HpatDto;
 import com.querydsl.core.types.ExpressionUtils;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Predicate;
 
 /**
@@ -68,10 +72,13 @@ public class HPATService {
     Predicate byBookingStatus = HPATBookingPredicates.byBookingStatus(HpatReferStatus.ACTIVE.getValue());
     Predicate byAppointmentEndDate = HPATBookingPredicates.byAppointmentEndDate(date);
     Predicate byBookingTypes = HPATBookingPredicates.byBookingDetailTypes(bookingTypes);
-    Predicate condition = ExpressionUtils.allOf(byCardNo, byBookingStatus, byAppointmentEndDate, byBookingTypes);
-    Iterable<HPATBooking> bookingList = hpatBookingRepository.findAll(condition);
 
-    // "ORDER BY bookHpat.APPT_DATE_START ASC"; add predicate
+    Predicate condition = ExpressionUtils.allOf(byCardNo, byBookingStatus, byAppointmentEndDate, byBookingTypes);
+
+    // NEWLY ADDED LINE FOR : - "ORDER BY bookHpat.APPT_DATE_START ASC"; add predicate
+    OrderSpecifier<LocalDateTime> sortSpec = HPATBookingPredicates.orderByAppointmentStartDateAsc();
+
+    Iterable<HPATBooking> bookingList = hpatBookingRepository.findAll(condition, sortSpec);
 
     bookingList.forEach((HPATBooking b) -> {
       dtoList.add(new HpatDto(b));
@@ -79,11 +86,15 @@ public class HPATService {
     return dtoList;
   }
 
-  public List<HpatDto> findHpats(String cardIdSeq, LocalDateTime systemDateTime, List<BookingType> bookingTypes)
-      throws Exception {
+
+
+  public List<HpatDto> findHpats(String cardIdSeq, LocalDateTime systemDateTime, List<BookingType> bookingTypes,
+      String impExpScreen, String menuId) throws Exception {
+
+    // String impExpScreen = (String) request.getParameter("impExp");
+    // String menuId = (String) request.getParameter("menuId");
 
     List<HpatDto> hpats = null;
-
     /**
      * Eterminal Flag
      */
@@ -94,12 +105,40 @@ public class HPATService {
     hpats = findEtpHpat4ImpAndExp(cardIdSeq, systemDateTime, bookingTypes);
     if (!(hpats == null || hpats.isEmpty())) {
       // add controller's code here
-      return hpats;
+      // move in to service
+
+      for (HpatDto hpat : hpats) {
+        if (StringUtils.isBlank(hpat.getApptStart()))
+          continue;
+        if (systemDateTime.isAfter(hpat.getApptEndDate()))
+          hpat.setStatus(HpatDto.LATE);
+        if (systemDateTime.isAfter(hpat.getApptStartDate()) && systemDateTime.isBefore(hpat.getApptEndDate())) {
+          hpat.setStatus(HpatDto.ACTIVE);
+          hpat.setOnTimeFlag("Y");
+        } else if (systemDateTime.isBefore(hpat.getApptEndDate())) {
+          hpat.setStatus(HpatDto.EARLY);
+          hpat.setOnTimeFlag("N");
+        }
+
+        // Imp Exp Screen Value
+        hpat.setImpExpScreen(impExpScreen);
+        if (StringUtils.isNotBlank(menuId)) {
+          hpat.setMenuId(menuId);
+        }
+      }
+
+
+
+      Comparator<HpatDto> byApptStartDate = (o1, o2) -> o1.getApptStartDate().compareTo(o2.getApptStartDate());
+      List<HpatDto> sortedHpats = new ArrayList<HpatDto>();
+      hpats.stream().sorted(byApptStartDate).forEach(e -> sortedHpats.add(e));
+
+      return sortedHpats;
+
     } else {
       // need to discuss with etp team to manage web services between etp and scss
-
+      throw new ResultsNotFoundException("No Hpat Records were found!");
     }
-    return hpats;
   }
 
 
