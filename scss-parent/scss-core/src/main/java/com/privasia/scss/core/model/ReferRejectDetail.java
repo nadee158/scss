@@ -24,6 +24,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Type;
+
 import com.privasia.scss.core.util.constant.ContainerPosition;
 import com.privasia.scss.core.util.constant.ReferStatus;
 
@@ -75,6 +77,7 @@ public class ReferRejectDetail extends AuditEntity implements Serializable {
 
   @Column(name = "STATUS_CODE")
   @Enumerated(EnumType.STRING)
+  @Type(type="com.privasia.scss.core.util.enumusertype.ReferStatusEnumUserType")
   private ReferStatus status;
 
   @Column(name = "SUP_REMARKS")
@@ -104,7 +107,7 @@ public class ReferRejectDetail extends AuditEntity implements Serializable {
   private LocalDateTime gateInTime;
 
   @Column(name = "POSITION")
-  @Enumerated(EnumType.STRING)
+  @Type(type="com.privasia.scss.core.util.enumusertype.ContainerPositionEnumUserType")
   private ContainerPosition position;
 
   @Column(name = "MEASURED_WEIGHT_BRIDGE")

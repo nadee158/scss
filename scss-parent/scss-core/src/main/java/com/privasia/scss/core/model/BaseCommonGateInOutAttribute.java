@@ -43,6 +43,7 @@ public class BaseCommonGateInOutAttribute implements Serializable {
   private HPATBooking hpatBooking;
 
   @Enumerated(EnumType.STRING)
+  @Type(type="com.privasia.scss.core.util.enumusertype.TransactionStatusEnumUserType")
   private TransactionStatus eirStatus;
   
   @Type(type = "yes_no")

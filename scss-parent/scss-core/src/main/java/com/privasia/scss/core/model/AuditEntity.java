@@ -34,11 +34,11 @@ public class AuditEntity implements Serializable {
 
   @Column(name = "ADD_BY")
   @CreatedBy
-  private long addBy;
+  private Long addBy;
 
   @Column(name = "UPDATE_BY")
   @LastModifiedBy
-  private long updateBy;
+  private Long updateBy;
 
   @CreatedDate
   @Column(name = "DATETIME_ADD", nullable = false)
@@ -55,7 +55,7 @@ public class AuditEntity implements Serializable {
   private Long version;
 
 
-  public AuditEntity(long addBy, long updateBy, ZonedDateTime dateTimeAdd, ZonedDateTime dateTimeUpdate, Long version) {
+  public AuditEntity(Long addBy, Long updateBy, ZonedDateTime dateTimeAdd, ZonedDateTime dateTimeUpdate, Long version) {
     super();
     this.addBy = addBy;
     this.updateBy = updateBy;
@@ -66,44 +66,44 @@ public class AuditEntity implements Serializable {
 
   public AuditEntity() {}
 
-  public long getAddBy() {
-    return addBy;
+  public Long getAddBy() {
+	  return addBy;
   }
 
-  public void setAddBy(long addBy) {
-    this.addBy = addBy;
+  public void setAddBy(Long addBy) {
+	  this.addBy = addBy;
   }
 
-  public long getUpdateBy() {
-    return updateBy;
+  public Long getUpdateBy() {
+	  return updateBy;
   }
 
-  public void setUpdateBy(long updateBy) {
-    this.updateBy = updateBy;
-  }
-  
-  public Long getVersion() {
-	return version;
-  }
-
-  public void setVersion(Long version) {
-	this.version = version;
+  public void setUpdateBy(Long updateBy) {
+	  this.updateBy = updateBy;
   }
 
   public ZonedDateTime getDateTimeAdd() {
-	return dateTimeAdd;
+	  return dateTimeAdd;
   }
 
   public void setDateTimeAdd(ZonedDateTime dateTimeAdd) {
-	this.dateTimeAdd = dateTimeAdd;
+	  this.dateTimeAdd = dateTimeAdd;
   }
 
   public ZonedDateTime getDateTimeUpdate() {
-	return dateTimeUpdate;
+	  return dateTimeUpdate;
   }
 
   public void setDateTimeUpdate(ZonedDateTime dateTimeUpdate) {
-	this.dateTimeUpdate = dateTimeUpdate;
+	  this.dateTimeUpdate = dateTimeUpdate;
+  }
+
+  public Long getVersion() {
+	  return version;
+  }
+
+  public void setVersion(Long version) {
+	  this.version = version;
   }
 
   

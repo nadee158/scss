@@ -9,7 +9,7 @@ import com.privasia.scss.core.util.constant.HpatReferStatus;
  * @author Janaka
  *
  */
-public class HpatReferStatusEnumUserType extends GeneralEnumMapUserType<HpatReferStatus> {
+public class HPATReferStatusEnumUserType extends GeneralEnumMapUserType<HpatReferStatus> {
 	
 	/**
 	 * 
@@ -20,7 +20,7 @@ public class HpatReferStatusEnumUserType extends GeneralEnumMapUserType<HpatRefe
      * Constructor.
      *
      */
-	public HpatReferStatusEnumUserType() {
+	public HPATReferStatusEnumUserType() {
         super(HpatReferStatus.class);
     }
 

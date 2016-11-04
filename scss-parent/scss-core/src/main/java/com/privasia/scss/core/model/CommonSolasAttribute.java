@@ -7,8 +7,8 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
+
+import org.hibernate.annotations.Type;
 
 import com.privasia.scss.core.util.constant.SolasInstructionType;
 
@@ -38,7 +38,7 @@ public class CommonSolasAttribute implements Serializable {
 	private String solasDetailID;
 	
 	@Column(name = "SOLAS_INSTRUCTION")
-	@Enumerated(EnumType.STRING)
+	@Type(type="com.privasia.scss.core.util.enumusertype.SolasInstructionEnumUserType")
 	private SolasInstructionType solasInstruction;
 	
 	@Column(name = "SHIPPER_VGM")

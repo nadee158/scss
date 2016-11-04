@@ -36,16 +36,16 @@ public enum HpatReferStatus implements Enumable {
 	
 	public static HpatReferStatus fromCode(String hpatStatus) {
 	    return LOOKUP.get(hpatStatus);
-	  }
+	}
 
 
-	  private static final Map<String, HpatReferStatus> LOOKUP = new HashMap<String, HpatReferStatus>();
+	private static final Map<String, HpatReferStatus> LOOKUP = new HashMap<String, HpatReferStatus>();
 
-	  static {
-	    for (HpatReferStatus hpatReferStatus : EnumSet.allOf(HpatReferStatus.class)) {
-	      LOOKUP.put(hpatReferStatus.getValue(), hpatReferStatus);
-	    }
-	  }
+	static {
+	   for (HpatReferStatus hpatReferStatus : EnumSet.allOf(HpatReferStatus.class)) {
+	     LOOKUP.put(hpatReferStatus.getValue(), hpatReferStatus);
+	   }
+	}
 
 	
 

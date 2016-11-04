@@ -11,8 +11,6 @@ import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
@@ -68,7 +66,7 @@ public class HPATBooking extends AuditEntity implements Serializable {
   private String pmNumber;
 
   @Column(name = "STATUS_CODE")
-  @Type(type="com.privasia.scss.core.util.enumusertype.HpatReferStatusEnumUserType")
+  @Type(type="com.privasia.scss.core.util.enumusertype.HPATReferStatusEnumUserType")
   private HpatReferStatus status;
 
   @Column(name = "TRAILER_NO")

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.privasia.scss.core.util.service.CurrentDateTimeService;
 import com.privasia.scss.master.service.GlobalSettingService;
+import com.privasia.scss.master.service.ReferReasonService;
 
 /**
  * @author Janaka
@@ -30,6 +31,9 @@ public class MasterDataController {
 	
 	@Autowired
 	private GlobalSettingService globalSettingService;
+	
+	@Autowired
+	private ReferReasonService referReasonService;
 	
 	@RequestMapping(value = "serverdate", method = RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> getServerDateTime() {
@@ -50,6 +54,14 @@ public class MasterDataController {
 		System.out.println("check : "+check);
 		
 		return new ResponseEntity<Boolean>(check, HttpStatus.OK);
+    }
+	
+	@RequestMapping(value = "referreason", method = RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Void> getReferReasonList() {
+		
+		referReasonService.findAllReferReason();
+		
+		return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
 }

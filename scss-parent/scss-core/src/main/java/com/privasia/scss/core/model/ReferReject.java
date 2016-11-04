@@ -6,20 +6,20 @@ package com.privasia.scss.core.model;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -61,7 +61,7 @@ public class ReferReject extends AuditEntity implements Serializable {
   private int expNetWeight;
   
   @Column(name = "STATUS_CODE")
-  @Enumerated(EnumType.STRING)
+  @Type(type="com.privasia.scss.core.util.enumusertype.HPATReferStatusEnumUserType")
   private HpatReferStatus statusCode;
   
   @Embedded
@@ -109,6 +109,9 @@ public class ReferReject extends AuditEntity implements Serializable {
   @Column(name = "PM_VERIFIED")
   @Type(type = "yes_no")
   private boolean pmVerified;
+  
+  @OneToMany(fetch = FetchType.EAGER, mappedBy = "referReject")
+  private Set<ReferRejectDetail> referRejectDetails;
 
   public Long getReferRejectID() {
 	return referRejectID;
@@ -213,6 +216,16 @@ public class ReferReject extends AuditEntity implements Serializable {
   public void setPmVerified(boolean pmVerified) {
 	this.pmVerified = pmVerified;
   }
+
+  public Set<ReferRejectDetail> getReferRejectDetails() {
+	return referRejectDetails;
+  }
+
+  public void setReferRejectDetails(Set<ReferRejectDetail> referRejectDetails) {
+	this.referRejectDetails = referRejectDetails;
+  }
+  
+  
 
 
 }
