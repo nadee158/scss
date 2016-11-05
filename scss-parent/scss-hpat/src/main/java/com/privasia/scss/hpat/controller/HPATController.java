@@ -3,8 +3,6 @@
  */
 package com.privasia.scss.hpat.controller;
 
-import java.time.LocalDateTime;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,7 +32,7 @@ public class HPATController {
 		
 		System.out.println(cardID + "cardID");
 		
-		hpatService.findEtpHpat4ImpAndExp(cardID, LocalDateTime.now());
+		//hpatService.findEtpHpat4ImpAndExp(cardID, LocalDateTime.now());
 		
 		return new ResponseEntity<Void>(HttpStatus.OK);
     }
