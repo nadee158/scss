@@ -1,4 +1,4 @@
-package com.privasia.scss.hpat.controller;
+package com.privasia.scss.refer.controller;
 
 import java.util.ArrayList;
 import java.util.List;

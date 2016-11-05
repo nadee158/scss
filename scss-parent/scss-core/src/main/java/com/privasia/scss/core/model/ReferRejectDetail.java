@@ -9,6 +9,7 @@ import java.util.Set;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -77,7 +78,7 @@ public class ReferRejectDetail extends AuditEntity implements Serializable {
 
   @Column(name = "STATUS_CODE")
   @Enumerated(EnumType.STRING)
-  @Type(type="com.privasia.scss.core.util.enumusertype.ReferStatusEnumUserType")
+  @Type(type = "com.privasia.scss.core.util.enumusertype.ReferStatusEnumUserType")
   private ReferStatus status;
 
   @Column(name = "SUP_REMARKS")
@@ -107,7 +108,7 @@ public class ReferRejectDetail extends AuditEntity implements Serializable {
   private LocalDateTime gateInTime;
 
   @Column(name = "POSITION")
-  @Type(type="com.privasia.scss.core.util.enumusertype.ContainerPositionEnumUserType")
+  @Type(type = "com.privasia.scss.core.util.enumusertype.ContainerPositionEnumUserType")
   private ContainerPosition position;
 
   @Column(name = "MEASURED_WEIGHT_BRIDGE")
@@ -116,7 +117,7 @@ public class ReferRejectDetail extends AuditEntity implements Serializable {
   @Embedded
   private CommonSolasAttribute solas;
 
-  @OneToMany(fetch = FetchType.EAGER, mappedBy = "referRejectDetail")
+  @OneToMany(fetch = FetchType.EAGER, mappedBy = "referRejectDetail", cascade = CascadeType.ALL)
   private Set<ReferRejectReason> referRejectReason;
 
   public Long getReferRejectDetailID() {

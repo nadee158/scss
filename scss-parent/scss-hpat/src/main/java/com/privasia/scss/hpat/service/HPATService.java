@@ -43,7 +43,7 @@ public class HPATService {
   private CardRepository cardRepository;
 
 
-  @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
+
   // overloaded method of above to match the following method's requirements
   /*
    * String sql =
@@ -63,18 +63,20 @@ public class HPATService {
    * " WHERE bookHpat.BOOKING_ID = ? " + " AND bookHpat.STATUS_CODE = 'ACTV' "
    * "ORDER BY bookHpat.APPT_DATE_START ASC";;
    */
-  public List<HpatDto> findEtpHpat4ImpAndExp(String cardIdSeq, LocalDateTime date, List<BookingType> bookingTypes) {
+  private List<HpatDto> findEtpHpat4ImpAndExp(long cardId, LocalDateTime date, List<BookingType> bookingTypes) {
     List<HpatDto> dtoList = new ArrayList<HpatDto>();
-    Long cardID = Long.parseLong(cardIdSeq);
-    Optional<Card> card = cardRepository.findOne(cardID);
+    Optional<Card> card = cardRepository.findOne(cardId);
     Predicate byCardNo = HPATBookingPredicates.byCardNo(String.valueOf(card.get().getCardNo()));
     System.out.println("ACTV : " + HpatReferStatus.ACTIVE.getValue());
     Predicate byBookingStatus = HPATBookingPredicates.byBookingStatus(HpatReferStatus.ACTIVE.getValue());
     Predicate byAppointmentEndDate = HPATBookingPredicates.byAppointmentEndDate(date);
-    Predicate byBookingTypes = HPATBookingPredicates.byBookingDetailTypes(bookingTypes);
-
-    Predicate condition = ExpressionUtils.allOf(byCardNo, byBookingStatus, byAppointmentEndDate, byBookingTypes);
-
+    Predicate condition = null;
+    if (!(bookingTypes == null || bookingTypes.isEmpty())) {
+      Predicate byBookingTypes = HPATBookingPredicates.byBookingDetailTypes(bookingTypes);
+      condition = ExpressionUtils.allOf(byCardNo, byBookingStatus, byAppointmentEndDate, byBookingTypes);
+    } else {
+      condition = ExpressionUtils.allOf(byCardNo, byBookingStatus, byAppointmentEndDate);
+    }
     // NEWLY ADDED LINE FOR : - "ORDER BY bookHpat.APPT_DATE_START ASC"; add predicate
     OrderSpecifier<LocalDateTime> sortSpec = HPATBookingPredicates.orderByAppointmentStartDateAsc();
 
@@ -87,9 +89,9 @@ public class HPATService {
   }
 
 
-
-  public List<HpatDto> findHpats(String cardIdSeq, LocalDateTime systemDateTime, List<BookingType> bookingTypes,
-      String impExpScreen, String menuId) throws Exception {
+  @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
+  public List<HpatDto> findHpats(Long cardId, LocalDateTime systemDateTime, List<String> bookingTypes,
+      String impExpScreen, String menuId) throws ResultsNotFoundException {
 
     // String impExpScreen = (String) request.getParameter("impExp");
     // String menuId = (String) request.getParameter("menuId");
@@ -100,9 +102,17 @@ public class HPATService {
      */
     /* TODO:Janaka Sir */
     // String etpFlag = gateInDao.getWDCGlobalSeeting("ETP_HPAT");
-    String etpFlag = "";
 
-    hpats = findEtpHpat4ImpAndExp(cardIdSeq, systemDateTime, bookingTypes);
+    List<BookingType> convertedBookingTypes = null;
+    if (!(bookingTypes == null || bookingTypes.isEmpty())) {
+      List<BookingType> temp = new ArrayList<BookingType>();
+      bookingTypes.forEach(bookingType -> {
+        temp.add(BookingType.fromValue(bookingType));
+      });
+      convertedBookingTypes = temp;
+    }
+
+    hpats = findEtpHpat4ImpAndExp(cardId, systemDateTime, convertedBookingTypes);
     if (!(hpats == null || hpats.isEmpty())) {
       // add controller's code here
       // move in to service

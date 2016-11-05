@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.privasia.scss.core.exception.ResultsNotFoundException;
 import com.privasia.scss.core.model.ReferReason;
 import com.privasia.scss.core.repository.ReferReasonRepository;
 import com.privasia.scss.core.util.constant.RecordStatus;
@@ -29,20 +30,28 @@ public class ReferReasonService {
   private ReferReasonRepository referReasonRepository;
 
   @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-  public void findAllReferReason() {
+  public Map<Boolean, Set<ReferReason>> findAllReferReason() throws ResultsNotFoundException {
 
     Stream<ReferReason> referReasonStream =
         referReasonRepository.findByReferStatus(RecordStatus.fromCode(RecordStatus.ACTIVE.getValue()));
 
-    referReasonStream.collect(Collectors.groupingBy(ReferReason::isParent))
-        .forEach((k, v) -> System.out.println("IsParent : " + k + " Object : " + v));
+    if (!(referReasonStream == null || referReasonStream.count() <= 0)) {
 
-    Map<Boolean, Set<ReferReason>> map = referReasonStream.collect(Collectors.groupingBy(ReferReason::isParent,
-        Collectors.mapping(ReferReason::getReferReason, Collectors.toSet())));
+      referReasonStream.collect(Collectors.groupingBy(ReferReason::isParent))
+          .forEach((k, v) -> System.out.println("IsParent : " + k + " Object : " + v));
 
-    // referReasonStream.forEach((ReferReason r ) ->System.out.println(r.getReferReasonID()));
+      Map<Boolean, Set<ReferReason>> map = referReasonStream.collect(Collectors.groupingBy(ReferReason::isParent,
+          Collectors.mapping(ReferReason::getReferReason, Collectors.toSet())));
 
+      // referReasonStream.forEach((ReferReason r ) ->System.out.println(r.getReferReasonID()));
+      map.forEach((k, v) -> System.out.println("IsParent new: " + k + " Object new: " + v));
 
+      return map;
+
+    } else {
+      // need to discuss with etp team to manage web services between etp and scss
+      throw new ResultsNotFoundException("No ReferReason Records were found!");
+    }
   }
 
 }
