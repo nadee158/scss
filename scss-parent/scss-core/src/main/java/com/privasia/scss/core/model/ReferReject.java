@@ -10,6 +10,7 @@ import java.util.Set;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -41,29 +42,29 @@ import com.privasia.scss.core.util.constant.HpatReferStatus;
 public class ReferReject extends AuditEntity implements Serializable {
 
   /**
-	 * 
-	 */
+   * 
+   */
   private static final long serialVersionUID = 1L;
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_SCSS_REFER_REJECT")
   @SequenceGenerator(name = "SEQ_SCSS_REFER_REJECT", sequenceName = "SEQ_SCSS_REFER_ID")
   @Column(name = "REFER_ID")
   private Long referRejectID;
-  
-  @ManyToOne(fetch = FetchType.LAZY)
+
+  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
   @JoinColumn(name = "REF_HCID", nullable = true, referencedColumnName = "COM_ID_SEQ")
   private Company company;
-  
+
   @Column(name = "EXP_WEIGHT_BRIDGE")
   private int expWeightBridge;
-  
+
   @Column(name = "EXP_NET_WEIGHT")
   private int expNetWeight;
-  
+
   @Column(name = "STATUS_CODE")
-  @Type(type="com.privasia.scss.core.util.enumusertype.HPATReferStatusEnumUserType")
+  @Type(type = "com.privasia.scss.core.util.enumusertype.HPATReferStatusEnumUserType")
   private HpatReferStatus statusCode;
-  
+
   @Embedded
   @AttributeOverrides({@AttributeOverride(name = "card", column = @Column(name = "CRD_CARDID_SEQ")),
       @AttributeOverride(name = "gateInClerk", column = @Column(name = "GATE_CLERK_ID")),
@@ -92,13 +93,13 @@ public class ReferReject extends AuditEntity implements Serializable {
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "CUG_ID_SEQ", nullable = true, referencedColumnName = "CUG_ID_SEQ")
   private CardUsage cardUsage;
-  
+
   @Column(name = "PM_WEIGHT")
   private int pmWeight;
-  
+
   @Column(name = "TRAILER_WEIGHT")
   private int trailerWeight;
-  
+
   @Column(name = "TRAILER_PLATE_NO")
   private String trailerPlateNo;
 
@@ -109,123 +110,122 @@ public class ReferReject extends AuditEntity implements Serializable {
   @Column(name = "PM_VERIFIED")
   @Type(type = "yes_no")
   private boolean pmVerified;
-  
-  @OneToMany(fetch = FetchType.EAGER, mappedBy = "referReject")
+
+  @OneToMany(fetch = FetchType.EAGER, mappedBy = "referReject", cascade = CascadeType.ALL)
   private Set<ReferRejectDetail> referRejectDetails;
 
   public Long getReferRejectID() {
-	return referRejectID;
+    return referRejectID;
   }
 
   public void setReferRejectID(Long referRejectID) {
-	this.referRejectID = referRejectID;
+    this.referRejectID = referRejectID;
   }
 
   public Company getCompany() {
-	return company;
+    return company;
   }
 
   public void setCompany(Company company) {
-	this.company = company;
+    this.company = company;
   }
 
   public int getExpWeightBridge() {
-	return expWeightBridge;
+    return expWeightBridge;
   }
 
   public void setExpWeightBridge(int expWeightBridge) {
-	this.expWeightBridge = expWeightBridge;
+    this.expWeightBridge = expWeightBridge;
   }
 
   public int getExpNetWeight() {
-	return expNetWeight;
+    return expNetWeight;
   }
 
   public void setExpNetWeight(int expNetWeight) {
-	this.expNetWeight = expNetWeight;
+    this.expNetWeight = expNetWeight;
   }
 
   public HpatReferStatus getStatusCode() {
-	return statusCode;
+    return statusCode;
   }
 
   public void setStatusCode(HpatReferStatus statusCode) {
-	this.statusCode = statusCode;
+    this.statusCode = statusCode;
   }
 
   public BaseCommonGateInOutAttribute getBaseCommonGateInOut() {
-	return baseCommonGateInOut;
+    return baseCommonGateInOut;
   }
 
   public void setBaseCommonGateInOut(BaseCommonGateInOutAttribute baseCommonGateInOut) {
-	this.baseCommonGateInOut = baseCommonGateInOut;
+    this.baseCommonGateInOut = baseCommonGateInOut;
   }
 
   public LocalDateTime getReferDateTime() {
-	return referDateTime;
+    return referDateTime;
   }
 
   public void setReferDateTime(LocalDateTime referDateTime) {
-	this.referDateTime = referDateTime;
+    this.referDateTime = referDateTime;
   }
 
   public CardUsage getCardUsage() {
-	return cardUsage;
+    return cardUsage;
   }
 
   public void setCardUsage(CardUsage cardUsage) {
-	this.cardUsage = cardUsage;
+    this.cardUsage = cardUsage;
   }
 
   public int getPmWeight() {
-	return pmWeight;
+    return pmWeight;
   }
 
   public void setPmWeight(int pmWeight) {
-	this.pmWeight = pmWeight;
+    this.pmWeight = pmWeight;
   }
 
   public int getTrailerWeight() {
-	return trailerWeight;
+    return trailerWeight;
   }
 
   public void setTrailerWeight(int trailerWeight) {
-	this.trailerWeight = trailerWeight;
+    this.trailerWeight = trailerWeight;
   }
 
   public String getTrailerPlateNo() {
-	return trailerPlateNo;
+    return trailerPlateNo;
   }
 
   public void setTrailerPlateNo(String trailerPlateNo) {
-	this.trailerPlateNo = trailerPlateNo;
+    this.trailerPlateNo = trailerPlateNo;
   }
 
   public boolean isAxleVerified() {
-	return axleVerified;
+    return axleVerified;
   }
 
   public void setAxleVerified(boolean axleVerified) {
-	this.axleVerified = axleVerified;
+    this.axleVerified = axleVerified;
   }
 
   public boolean isPmVerified() {
-	return pmVerified;
+    return pmVerified;
   }
 
   public void setPmVerified(boolean pmVerified) {
-	this.pmVerified = pmVerified;
+    this.pmVerified = pmVerified;
   }
 
   public Set<ReferRejectDetail> getReferRejectDetails() {
-	return referRejectDetails;
+    return referRejectDetails;
   }
 
   public void setReferRejectDetails(Set<ReferRejectDetail> referRejectDetails) {
-	this.referRejectDetails = referRejectDetails;
+    this.referRejectDetails = referRejectDetails;
   }
-  
-  
+
 
 
 }

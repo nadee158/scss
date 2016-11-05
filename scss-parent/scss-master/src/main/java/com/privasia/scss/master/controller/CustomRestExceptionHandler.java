@@ -28,6 +28,7 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import com.privasia.scss.core.dto.ApiError;
+import com.privasia.scss.core.exception.ResultsNotFoundException;
 
 @ControllerAdvice
 public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
@@ -200,6 +201,16 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
     //
     final ApiError apiError =
         new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, ex.getLocalizedMessage(), "error occurred");
+    return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
+  }
+
+  // custom
+  @ExceptionHandler({ResultsNotFoundException.class})
+  public ResponseEntity<Object> handleResultsNotFound(final ResultsNotFoundException ex, final WebRequest request) {
+    logger.info(ex.getClass().getName());
+    logger.error("error", ex);
+    //
+    final ApiError apiError = new ApiError(HttpStatus.NO_CONTENT, ex.getMessage(), "No Results Found!");
     return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
   }
 

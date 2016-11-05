@@ -14,6 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -72,7 +73,8 @@ public class GateInExpNormalController {
   @Autowired
   private IsoCodeService isoCodeService;
 
-  @RequestMapping(value = "/gateInImpNormal", method = RequestMethod.GET)
+  @RequestMapping(value = "/gateInImpNormal", method = RequestMethod.GET,
+      produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<String> gateInImpNormal(@RequestBody GateInForm f, HttpServletRequest request) {
 
     String returnedView = null;

@@ -6,9 +6,8 @@ package com.privasia.scss.core.model;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -34,18 +33,17 @@ public class BaseCommonGateInOutAttribute implements Serializable {
 
   private String pmPlateNo;
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
   @JoinColumn(nullable = true, referencedColumnName = "CRD_CARDID_SEQ")
   private Card card;
-  
-  @ManyToOne(fetch = FetchType.LAZY)
+
+  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
   @JoinColumn(name = "BOOKING_ID", nullable = true, referencedColumnName = "BOOKING_ID")
   private HPATBooking hpatBooking;
 
-  @Enumerated(EnumType.STRING)
-  @Type(type="com.privasia.scss.core.util.enumusertype.TransactionStatusEnumUserType")
+  @Type(type = "com.privasia.scss.core.util.enumusertype.TransactionStatusEnumUserType")
   private TransactionStatus eirStatus;
-  
+
   @Type(type = "yes_no")
   private boolean transactionSlipPrinted;
 
@@ -56,7 +54,7 @@ public class BaseCommonGateInOutAttribute implements Serializable {
   private LocalDateTime timeGateInOk;
 
   private LocalDateTime timeGateOut;
-  
+
   private LocalDateTime timeGateOutOk;
 
   private LocalDateTime timeGateOutBooth;
@@ -202,20 +200,20 @@ public class BaseCommonGateInOutAttribute implements Serializable {
   }
 
   public boolean isTransactionSlipPrinted() {
-	return transactionSlipPrinted;
+    return transactionSlipPrinted;
   }
 
   public void setTransactionSlipPrinted(boolean transactionSlipPrinted) {
-	this.transactionSlipPrinted = transactionSlipPrinted;
+    this.transactionSlipPrinted = transactionSlipPrinted;
   }
 
   public HPATBooking getHpatBooking() {
-	return hpatBooking;
+    return hpatBooking;
   }
 
   public void setHpatBooking(HPATBooking hpatBooking) {
-	this.hpatBooking = hpatBooking;
+    this.hpatBooking = hpatBooking;
   }
-  
-  
+
+
 }
