@@ -33,6 +33,7 @@ import com.privasia.scss.core.util.constant.TransactionStatus;
 import com.privasia.scss.refer.dto.ReferRejectDetailObjetDto;
 import com.privasia.scss.refer.dto.ReferRejectListDto;
 import com.privasia.scss.refer.dto.ReferRejectObjetDto;
+import com.privasia.scss.refer.dto.ReferRejectUpdateObjetDto;
 
 @Service("referRejectService")
 public class ReferRejectService {
@@ -184,6 +185,11 @@ public class ReferRejectService {
       });
     }
 
+  }
+
+  public String updateReferReject(ReferRejectUpdateObjetDto referRejectUpdateObjetDto) {
+    // TODO Auto-generated method stub
+    return null;
   }
 
 
