@@ -4,6 +4,7 @@
 package com.privasia.scss.master.service;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -22,22 +23,26 @@ import com.privasia.scss.core.util.constant.RecordStatus;
  */
 @Service("referReasonService")
 public class ReferReasonService {
-	
-	
-	@Autowired
-	private ReferReasonRepository referReasonRepository;
-	
-	@Transactional(propagation=Propagation.REQUIRED, readOnly=true)
-	public void findAllReferReason(){
-		
-		Stream<ReferReason> referReasonStream = referReasonRepository.findByReferStatus(RecordStatus.fromCode(RecordStatus.ACTIVE.getValue()));
-		
-		referReasonStream.collect(Collectors.groupingBy(ReferReason::isParent))
-			.forEach((k,v)->System.out.println("IsParent : " + k + " Object : " + v));
-		
-		//referReasonStream.forEach((ReferReason r ) ->System.out.println(r.getReferReasonID()));
-		
-		
-	}
+
+
+  @Autowired
+  private ReferReasonRepository referReasonRepository;
+
+  @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
+  public void findAllReferReason() {
+
+    Stream<ReferReason> referReasonStream =
+        referReasonRepository.findByReferStatus(RecordStatus.fromCode(RecordStatus.ACTIVE.getValue()));
+
+    referReasonStream.collect(Collectors.groupingBy(ReferReason::isParent))
+        .forEach((k, v) -> System.out.println("IsParent : " + k + " Object : " + v));
+
+    Map<Boolean, Set<ReferReason>> map = referReasonStream.collect(Collectors.groupingBy(ReferReason::isParent,
+        Collectors.mapping(ReferReason::getReferReason, Collectors.toSet())));
+
+    // referReasonStream.forEach((ReferReason r ) ->System.out.println(r.getReferReasonID()));
+
+
+  }
 
 }
