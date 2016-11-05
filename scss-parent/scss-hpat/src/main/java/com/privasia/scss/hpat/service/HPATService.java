@@ -45,17 +45,12 @@ public class HPATService {
   @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
   public List<HpatDto> getEtpHpat4ImpAndExp(long cardId, LocalDateTime date, List<BookingType> bookingTypes) {
     List<HpatDto> dtoList = new ArrayList<HpatDto>();
-    Optional<Card> card = cardRepository.findOne(cardId);
+    Optional<Card> card = cardRepository.findOne(cardId); // need to handle optional
     Predicate byCardNo = HPATBookingPredicates.byCardNo(String.valueOf(card.get().getCardNo()));
     Predicate byBookingStatus = HPATBookingPredicates.byBookingStatus(HpatReferStatus.ACTIVE.getValue());
     Predicate byAppointmentEndDate = HPATBookingPredicates.byAppointmentEndDate(date);
-    Predicate condition = null;
-    if (!(bookingTypes == null || bookingTypes.isEmpty())) {
-      Predicate byBookingTypes = HPATBookingPredicates.byBookingDetailTypes(bookingTypes);
-      condition = ExpressionUtils.allOf(byCardNo, byBookingStatus, byAppointmentEndDate, byBookingTypes);
-    } else {
-      condition = ExpressionUtils.allOf(byCardNo, byBookingStatus, byAppointmentEndDate);
-    }
+    Predicate byBookingTypes = HPATBookingPredicates.byBookingDetailTypes(bookingTypes);
+    Predicate condition = ExpressionUtils.allOf(byCardNo, byBookingStatus, byAppointmentEndDate, byBookingTypes);
     OrderSpecifier<LocalDateTime> sortSpec = HPATBookingPredicates.orderByAppointmentStartDateAsc();
 
     Iterable<HPATBooking> bookingList = hpatBookingRepository.findAll(condition, sortSpec);
@@ -103,7 +98,7 @@ public class HPATService {
 
     } else {
       // need to discuss with etp team to manage web services between etp and scss
-      throw new ResultsNotFoundException("No Hpat Records were found!");
+      throw new ResultsNotFoundException("No HPAT Bookings Founds !");
     }
   }
 
