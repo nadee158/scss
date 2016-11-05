@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.privasia.scss.refer.dto.ReferRejectListDto;
 import com.privasia.scss.refer.dto.ReferRejectObjetDto;
+import com.privasia.scss.refer.dto.ReferRejectUpdateObjetDto;
 import com.privasia.scss.refer.service.ReferRejectService;
 
 @RestController
@@ -47,6 +48,15 @@ public class ReferRejectController {
   public ResponseEntity<String> saveReferReject(@RequestBody ReferRejectObjetDto referRejectObjetDto) {
 
     String status = referRejectService.saveReferReject(referRejectObjetDto);
+
+    return new ResponseEntity<String>(status, HttpStatus.OK);
+  }
+
+  @RequestMapping(value = "/updatereferreject", method = RequestMethod.POST,
+      produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+  public ResponseEntity<String> updateReferReject(@RequestBody ReferRejectUpdateObjetDto referRejectUpdateObjetDto) {
+
+    String status = referRejectService.updateReferReject(referRejectUpdateObjetDto);
 
     return new ResponseEntity<String>(status, HttpStatus.OK);
   }
