@@ -9,8 +9,6 @@ import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -18,6 +16,8 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+
+import org.hibernate.annotations.Type;
 
 import com.privasia.scss.core.util.constant.CompanyAccountType;
 import com.privasia.scss.core.util.constant.CompanyStatus;
@@ -33,15 +33,10 @@ import com.privasia.scss.core.util.constant.CompanyType;
 		@UniqueConstraint(columnNames={"COM_CPNEWNRICNO"}),
 		@UniqueConstraint(columnNames={"COM_CPOLDNRICNO"})
 })
-@AttributeOverrides({
-    @AttributeOverride(name="addBy",
-                       column=@Column(name="COM_CREATEDBY")),
-    @AttributeOverride(name="updateBy",
-                       column=@Column(name="COM_UPDATEDBY")),
-    @AttributeOverride(name="dateTimeAdd",
-    				   column=@Column(name="COM_DATECREATE")),
-    @AttributeOverride(name="dateTimeUpdate",
-                       column=@Column(name="COM_DATEUPDATE"))
+@AttributeOverrides({@AttributeOverride(name="addBy",column=@Column(name="COM_CREATEDBY")),
+    @AttributeOverride(name="updateBy", column=@Column(name="COM_UPDATEDBY")),
+    @AttributeOverride(name="dateTimeAdd",column=@Column(name="COM_DATECREATE")),
+    @AttributeOverride(name="dateTimeUpdate",column=@Column(name="COM_DATEUPDATE"))
 })
 public class Company extends AuditEntity implements Serializable {
 
@@ -63,21 +58,21 @@ public class Company extends AuditEntity implements Serializable {
 	private String companyAccountNo;
 	
 	@Column(name = "COM_ACCTTYPE")
-	@Enumerated(EnumType.STRING) 
+	@Type(type="com.privasia.scss.core.util.enumusertype.CompanyAccountTypeEnumUserType")
 	private CompanyAccountType 	companyAccountType;
 	
 	@Column(name = "COM_CODE")
 	private String companyCode;
 	
 	@Column(name = "COM_TYPE")
-	@Enumerated(EnumType.STRING) 
+	@Type(type="com.privasia.scss.core.util.enumusertype.CompanyTypeEnumUserType") 
 	private CompanyType companyType;
 	
 	@Column(name = "COM_REGNO")
 	private String companyRegistrationNumber;
 	
 	@Column(name = "COM_STATUS")
-	@Enumerated(EnumType.STRING) 
+	@Type(type="com.privasia.scss.core.util.enumusertype.CompanyStatusEnumUserType") 
 	private CompanyStatus companyStatus;
 	
 	@Column(name = "COM_NAMEONCARD")

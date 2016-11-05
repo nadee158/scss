@@ -61,7 +61,6 @@ public class Login extends AuditEntity implements Serializable {
   private String password;
 
   @Column(name = "PASSWORD_EXPIRY_DATE")
-  // @Temporal(TemporalType.TIMESTAMP)
   private LocalDateTime passportExpiryDate;
 
   public Long getLoginID() {

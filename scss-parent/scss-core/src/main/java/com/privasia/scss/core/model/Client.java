@@ -9,8 +9,6 @@ import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -69,11 +67,11 @@ public class Client extends AuditEntity implements Serializable {
   private String description;
 
   @Column(name = "CLI_STATUS", nullable = false)
-  @Enumerated(EnumType.STRING)
+  @Type(type="com.privasia.scss.core.util.enumusertype.RecordStatusEnumUserType")
   private RecordStatus status;
 
   @Column(name = "CLI_TYPE", nullable = false)
-  @Enumerated(EnumType.STRING)
+  @Type(type="com.privasia.scss.core.util.enumusertype.ClientTypeEnumUserType")
   private ClientType type;
 
   @Column(name = "CLI_UNITNO", nullable = false)

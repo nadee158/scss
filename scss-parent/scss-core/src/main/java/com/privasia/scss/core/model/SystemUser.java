@@ -11,14 +11,14 @@ import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+
+import org.hibernate.annotations.Type;
 
 import com.privasia.scss.core.util.constant.Gender;
 import com.privasia.scss.core.util.constant.Nationality;
@@ -61,7 +61,7 @@ public class SystemUser extends AuditEntity implements Serializable {
   private String name;
 
   @Column(name = "SYS_GENDER")
-  @Enumerated(EnumType.STRING)
+  @Type(type="com.privasia.scss.core.util.enumusertype.GenderEnumUserType")
   private Gender gender;
 
   @Column(name = "SYS_DOB")
@@ -74,7 +74,7 @@ public class SystemUser extends AuditEntity implements Serializable {
   private LocalDateTime passportExpireDate;
 
   @Column(name = "SYS_NATIONALITY")
-  @Enumerated(EnumType.STRING)
+  @Type(type="com.privasia.scss.core.util.enumusertype.NationalityEnumUserType")
   private Nationality nationality;
 
   @Column(name = "SYS_DEPTNAME")
@@ -105,11 +105,11 @@ public class SystemUser extends AuditEntity implements Serializable {
   private String homePhone;
 
   @Column(name = "SYS_USERSTATUS")
-  @Enumerated(EnumType.STRING)
+  @Type(type="com.privasia.scss.core.util.enumusertype.UserStatusEnumUserType")
   private UserStatus userStatus;
 
   @Column(name = "SYS_USRTYP_FLAG")
-  @Enumerated(EnumType.STRING)
+  @Type(type="com.privasia.scss.core.util.enumusertype.UserTypeEnumUserType")
   private UserType userType;
 
   public Long getSystemUserID() {
