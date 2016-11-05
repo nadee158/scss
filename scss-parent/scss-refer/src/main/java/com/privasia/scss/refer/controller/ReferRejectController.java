@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.privasia.scss.refer.dto.ReferRejectDetailUpdateObjetDto;
 import com.privasia.scss.refer.dto.ReferRejectListDto;
 import com.privasia.scss.refer.dto.ReferRejectObjetDto;
 import com.privasia.scss.refer.dto.ReferRejectUpdateObjetDto;
@@ -57,6 +58,16 @@ public class ReferRejectController {
   public ResponseEntity<String> updateReferReject(@RequestBody ReferRejectUpdateObjetDto referRejectUpdateObjetDto) {
 
     String status = referRejectService.updateReferReject(referRejectUpdateObjetDto);
+
+    return new ResponseEntity<String>(status, HttpStatus.OK);
+  }
+
+  @RequestMapping(value = "/updatereferrejectdetaillinecodegateindate", method = RequestMethod.POST,
+      produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+  public ResponseEntity<String> updateLineCodeANdGateInDateForReferRejectDetail(
+      @RequestBody ReferRejectDetailUpdateObjetDto dto) {
+
+    String status = referRejectService.updateLineCodeAndGateInDateForReferRejectDetail(dto);
 
     return new ResponseEntity<String>(status, HttpStatus.OK);
   }
