@@ -31,4 +31,13 @@ public class ReferRejectController {
     return new ResponseEntity<List<ReferRejectListDto>>(list, HttpStatus.OK);
   }
 
+  @RequestMapping(value = "/referreject/{referId}", method = RequestMethod.GET,
+      produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+  public ResponseEntity<ReferRejectListDto> getReferRejectById(@PathVariable long referId) {
+
+    ReferRejectListDto referRejectListDto = referRejectService.getReferRejectByReferId(referId);
+
+    return new ResponseEntity<ReferRejectListDto>(referRejectListDto, HttpStatus.OK);
+  }
+
 }

@@ -37,4 +37,14 @@ public class ReferRejectService {
     }
   }
 
+  public ReferRejectListDto getReferRejectByReferId(long referId) {
+    ReferRejectDetail referRejectDetail = referRejectDetailRepository.findByReferReject_ReferRejectID(referId);
+    if (!(referRejectDetail == null)) {
+      return new ReferRejectListDto(referRejectDetail);
+    } else {
+      throw new ResultsNotFoundException("Refer reject was not found!");
+    }
+  }
+
+
 }

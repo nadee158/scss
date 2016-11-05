@@ -12,5 +12,7 @@ public interface ReferRejectDetailRepository extends PagingAndSortingRepository<
   List<ReferRejectDetail> findByReferReject_StatusCodeOrderByReferReject_ReferDateTimeDesc(String statusCode,
       Pageable pageRequest);
 
+  ReferRejectDetail findByReferReject_ReferRejectID(Long referId);
+
 
 }
