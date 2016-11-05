@@ -15,7 +15,9 @@ public class CardDto {
       this.crdScardNo = Long.toString(card.getCardID());
       this.compId = Long.toString(card.getCompany().getCompanyID());
       this.compCode = card.getCompany().getCompanyCode();
-      // this.newICNo=card.getSystemUser().getn
+      this.newICNo = card.getSystemUser().getCommonContactAttribute().getNewNRICNO();
+      this.oldICNo = card.getSystemUser().getCommonContactAttribute().getOldNRICNO();
+      this.passportNo = card.getSystemUser().getPassportNo();
     }
   }
 

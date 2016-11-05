@@ -38,6 +38,9 @@ public class HpatDto implements Serializable {
   private String apptStart;// (this.convertDateToString(rs.getTimestamp("APPT_DATE_START")));
   private String apptEnd;// (this.convertDateToString(rs.getTimestamp("APPT_DATE_END")));
 
+  private LocalDateTime apptStartDate;// (rs.getTimestamp("APPT_DATE_START")));
+  private LocalDateTime apptEndDate;// (rs.getTimestamp("APPT_DATE_END")));
+
   private String OnTimeFlag = "N";
   private String containerAndGatepass;
   private String impExpScreen;
@@ -54,15 +57,16 @@ public class HpatDto implements Serializable {
     this.status = b.getStatus().getValue();
     this.trlrNo = b.getTrailerNo();
     this.trlrType = b.getTrailerType();
-    LocalDateTime stDt = b.getAppointmentStartDate();
-    LocalDateTime enDt = b.getAppointmentEndDate();
+    this.apptStartDate = b.getAppointmentStartDate();
+    this.apptEndDate = b.getAppointmentEndDate();
     DateTimeFormatter format = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
 
-    if (!(stDt == null)) {
-      this.apptStart = format.format(stDt);
+
+    if (!(this.apptStartDate == null)) {
+      this.apptStart = format.format(this.apptStartDate);
     }
-    if (!(enDt == null)) {
-      this.apptEnd = format.format(enDt);
+    if (!(this.apptEndDate == null)) {
+      this.apptEnd = format.format(this.apptEndDate);
     }
 
   }
@@ -202,6 +206,22 @@ public class HpatDto implements Serializable {
 
   public void setMenuId(String menuId) {
     this.menuId = menuId;
+  }
+
+  public LocalDateTime getApptStartDate() {
+    return apptStartDate;
+  }
+
+  public void setApptStartDate(LocalDateTime apptStartDate) {
+    this.apptStartDate = apptStartDate;
+  }
+
+  public LocalDateTime getApptEndDate() {
+    return apptEndDate;
+  }
+
+  public void setApptEndDate(LocalDateTime apptEndDate) {
+    this.apptEndDate = apptEndDate;
   }
 
 
