@@ -10,6 +10,7 @@ import org.apache.commons.lang3.EnumUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.privasia.scss.core.exception.ResultsNotFoundException;
 import com.privasia.scss.core.model.Card;
 import com.privasia.scss.core.model.Company;
 import com.privasia.scss.core.repository.CardRepository;
@@ -49,12 +50,39 @@ public class CardValidationService {
 
   }
 
+  /**
+   * Validate by card pk
+   * 
+   * @param cardId
+   * @return
+   */
+  public CardValidation validateCard(long cardID) {
+    Optional<Card> cardOptional = cardRepository.findOne(cardID);
+    if (cardOptional.isPresent()) {
+      return validateCard(cardOptional.orElse(null));
+    }
+    throw new ResultsNotFoundException("Requested Card was not found!");
+  }
 
+  /**
+   * validate by card no
+   * 
+   * @param cardNo
+   * @return
+   */
   public CardValidation validateCard(String cardNo) {
-    CardValidation cardValidation;
-    Optional<Card> cardOptional = cardRepository.findByCardNo(Long.valueOf(cardNo));
+    boolean isValidCardNo = isValidCardNoLength(cardNo);
+    if (isValidCardNo) {
+      Optional<Card> cardOptional = cardRepository.findByCardNo(Long.valueOf(cardNo));
+      if (cardOptional.isPresent()) {
+        return validateCard(cardOptional.orElse(null));
+      }
+    }
+    throw new ResultsNotFoundException("Requested Card was not found!");
+  }
 
-    Card foundCard = cardOptional.orElse(null);
+  public CardValidation validateCard(Card foundCard) {
+    CardValidation cardValidation;
     if (!(foundCard == null)) {
       CardStatus cardStatus = EnumUtils.getEnum(CardStatus.class, foundCard.getCardStatus().getValue());
       cardValidation = validateCardStatus(cardStatus);
@@ -63,8 +91,7 @@ public class CardValidationService {
         Company company = foundCard.getCompany();
 
         if (!(company == null)) {
-          CompanyStatus companyStatus =
-              EnumUtils.getEnum(CompanyStatus.class, company.getCompanyStatus().getValue());
+          CompanyStatus companyStatus = EnumUtils.getEnum(CompanyStatus.class, company.getCompanyStatus().getValue());
           CardValidation companyValidation = validateCompanyStatus(companyStatus);
           if (!(companyValidation.isValid())) {
             cardValidation = companyValidation;
@@ -73,7 +100,7 @@ public class CardValidationService {
         }
       }
     } else {
-      cardValidation = new CardValidation(false, ScanCardConstant.CARD_ERR_NOT_FOUND, null);
+      throw new ResultsNotFoundException("Requested Card was not found!");
     }
     return cardValidation;
   }
@@ -136,8 +163,7 @@ public class CardValidationService {
         break;
       case EXPIRED:
         // ret = CARD_ERR_EXPIRED;
-        cardValidation =
-            new CardValidation(false, ScanCardConstant.CARD_ERR_EXPIRED, CardStatus.EXPIRED.getValue());
+        cardValidation = new CardValidation(false, ScanCardConstant.CARD_ERR_EXPIRED, CardStatus.EXPIRED.getValue());
         break;
       case NOT_ISSUED:
         // ret = CARD_ERR_NOT_ISSUED;
@@ -146,8 +172,7 @@ public class CardValidationService {
         break;
       case PENDING:
         // ret = CARD_ERR_PENDING;
-        cardValidation =
-            new CardValidation(false, ScanCardConstant.CARD_ERR_PENDING, CardStatus.PENDING.getValue());
+        cardValidation = new CardValidation(false, ScanCardConstant.CARD_ERR_PENDING, CardStatus.PENDING.getValue());
         break;
       case SUSPENDED:
         // ret = CARD_ERR_SUSPENDED;

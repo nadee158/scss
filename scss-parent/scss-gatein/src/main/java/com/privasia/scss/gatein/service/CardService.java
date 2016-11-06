@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.privasia.scss.core.model.Card;
 import com.privasia.scss.core.model.Company;
-import com.privasia.scss.core.model.SystemUser;
+import com.privasia.scss.core.model.SmartCardUser;
 import com.privasia.scss.core.repository.CardRepository;
 import com.privasia.scss.gatein.dto.SCUInfo;
 
@@ -38,13 +38,16 @@ public class CardService {
   private SCUInfo convertCardToSCUInfo(Card card) {
     if (!(card == null)) {
       SCUInfo scuInfo = new SCUInfo();
-      SystemUser systemUser = card.getSystemUser();
-      scuInfo.setSCUName(systemUser.getName());
-      scuInfo.setNewICNo(systemUser.getCommonContactAttribute().getNewNRICNO());
-      scuInfo.setOldICNo(systemUser.getCommonContactAttribute().getOldNRICNO());
-      scuInfo.setNationality(systemUser.getNationality().toString());
-      scuInfo.setPassportNo(systemUser.getPassportNo());
-      scuInfo.setSCUIdSeq(Long.toString(systemUser.getSystemUserID()));
+      SmartCardUser smartCardUser = card.getSmartCardUser();
+      if (!(smartCardUser.getCommonContactAttribute() == null)) {
+        scuInfo.setSCUName(smartCardUser.getCommonContactAttribute().getPersonName());
+        scuInfo.setNewICNo(smartCardUser.getCommonContactAttribute().getNewNRICNO());
+        scuInfo.setOldICNo(smartCardUser.getCommonContactAttribute().getOldNRICNO());
+      }
+
+      scuInfo.setNationality(smartCardUser.getNationality().toString());
+      scuInfo.setPassportNo(smartCardUser.getPassportNo());
+      scuInfo.setSCUIdSeq(Long.toString(smartCardUser.getSmartCardUserID()));
 
       Company company = card.getCompany();
       scuInfo.setCompName(company.getCompanyName());

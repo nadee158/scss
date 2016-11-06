@@ -16,24 +16,22 @@ import org.springframework.web.bind.annotation.RestController;
  */
 
 @RestController
-@RequestMapping("/scancard")
+@RequestMapping("/scss/scancard")
 public class ScanCardController {
-	
+  
+  
 	
 	@RequestMapping(value = "/{cardNo}", method = RequestMethod.GET)
     public ResponseEntity<String> scanCard(@PathVariable String cardNo) {
-		
-		System.out.println("cardNo : "+cardNo);
-		
-		// get the card no
-		//if(card number length validation){
-			
-			
-			
-		//}
-		
+	
 		
 		return new ResponseEntity<String>(cardNo, HttpStatus.OK);
     }
+	
+//	for above query
+//	/{cardNo}/scuinfo
+//
+//	new method to get companycode - select query
+//	/{cardNo}/compnay/code
 
 }

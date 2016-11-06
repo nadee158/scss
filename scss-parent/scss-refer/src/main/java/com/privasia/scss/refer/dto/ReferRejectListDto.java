@@ -9,7 +9,7 @@ import com.privasia.scss.core.model.Client;
 import com.privasia.scss.core.model.Company;
 import com.privasia.scss.core.model.ReferReject;
 import com.privasia.scss.core.model.ReferRejectDetail;
-import com.privasia.scss.core.model.SystemUser;
+import com.privasia.scss.core.model.SmartCardUser;
 
 public class ReferRejectListDto implements Serializable {
 
@@ -27,7 +27,7 @@ public class ReferRejectListDto implements Serializable {
   // ReferReject.baseCommonGateInOut.card.company.companyName
   private String haulierCompany;
 
-  // ReferReject.baseCommonGateInOut.card.systemUser.name
+  // ReferReject.baseCommonGateInOut.card.smartCardUser.commonContactAttribute.name
   private String driverName;
 
   // ReferReject.referDateTime
@@ -62,8 +62,8 @@ public class ReferRejectListDto implements Serializable {
         }
 
         if (!(company == null)) {
-          SystemUser systemUser = card.getSystemUser();
-          this.driverName = systemUser.getName();
+          SmartCardUser smartCardUser = card.getSmartCardUser();
+          this.driverName = smartCardUser.getCommonContactAttribute().getPersonName();
         }
 
         if (!(referReject.getReferDateTime() == null)) {
