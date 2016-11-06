@@ -2,7 +2,6 @@ package com.privasia.scss.gatein.controller;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -27,17 +26,13 @@ import com.privasia.scss.common.security.SecurityHelper;
 import com.privasia.scss.common.util.DateUtil;
 import com.privasia.scss.common.util.MessageCode;
 import com.privasia.scss.common.util.ReturnMsg;
-import com.privasia.scss.common.util.UserIpAddressUtil;
 import com.privasia.scss.core.dto.Container;
 import com.privasia.scss.core.dto.GateInForm;
 import com.privasia.scss.core.dto.GateInfo;
 import com.privasia.scss.core.dto.IsoCodeDto;
 import com.privasia.scss.core.util.constant.ButtonType;
 import com.privasia.scss.gatein.dto.ExportSSR;
-import com.privasia.scss.gatein.dto.SCUInfo;
 import com.privasia.scss.gatein.dto.VesselOmitDto;
-import com.privasia.scss.gatein.service.CardService;
-import com.privasia.scss.gatein.service.CardUsageService;
 import com.privasia.scss.gatein.service.ClientService;
 import com.privasia.scss.gatein.service.ContainerService;
 import com.privasia.scss.gatein.service.GlobalSettingService;
@@ -52,8 +47,7 @@ public class GateInExpNormalController {
 
   private static Logger logger = Logger.getLogger(GateInExpNormalController.class.getName());
 
-  @Autowired
-  private CardUsageService cardUsageService;
+
 
   @Autowired
   private ContainerService containerService;
@@ -61,8 +55,6 @@ public class GateInExpNormalController {
   @Autowired
   private VesselOmitService vesselOmitService;
 
-  @Autowired
-  private CardService cardService;
 
   @Autowired
   private ClientService clientService;
@@ -85,11 +77,12 @@ public class GateInExpNormalController {
     GateInfo gateInInfo = null;
 
     try {
-      gateInInfo = cardUsageService.lookupGateInfo(UserIpAddressUtil.getUserIp(request));
-      boolean cardStatus = cardUsageService.doCheckCardStatus(gateInInfo.getCardIdSeq(), LocalDateTime.now());
-      if (!cardStatus) {
-        returnedView = "CARD_EXPIRED";
-      }
+      // gateInInfo = cardUsageService.lookupGateInfo(UserIpAddressUtil.getUserIp(request));
+      // boolean cardStatus = cardUsageService.doCheckCardStatus(gateInInfo.getCardIdSeq(),
+      // LocalDateTime.now());
+      // if (!cardStatus) {
+      // returnedView = "CARD_EXPIRED";
+      // }
     } catch (Exception e) {
       e.printStackTrace();
       returnedView = "SCAN_CARD";
@@ -152,7 +145,7 @@ public class GateInExpNormalController {
 
               } else {
                 // no place to use this info - previously assigned to the UI form
-                SCUInfo scuInfo = cardService.selectSCUInfo(gateInInfo.getCardIdSeq());
+                // SCUInfo scuInfo = cardService.selectSCUInfo(gateInInfo.getCardIdSeq());
                 // no place to use this info - previously assigned to the UI form
                 String laneNo = clientService.getLaneNo(gateInInfo.getClientId());
 

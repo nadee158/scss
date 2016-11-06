@@ -1,6 +1,6 @@
-package com.privasia.scss.gatein.dto;
+package com.privasia.scss.scancard.dto;
 
-public class SCUInfo {
+public class SCUInfoDto {
 
   private String SCUName;
   private String newICNo;
