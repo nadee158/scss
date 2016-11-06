@@ -6,6 +6,9 @@ package com.privasia.scss.core.repository;
 
 import java.util.Optional;
 
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
 import com.privasia.scss.core.model.Card;
 import com.privasia.scss.core.util.constant.CardStatus;
 import com.privasia.scss.core.util.constant.CompanyType;
@@ -29,4 +32,10 @@ public interface CardRepository extends BaseRepository<Card, Long> {
 //          + " WHERE comp.COM_TYPE = 'H' AND card.CRD_CARDID_SEQ = '" + cardIdSeq + "'";//
 //@formatter:on
   Optional<Card> findByCardIDAndCompany_CompanyType(Long cardNo, CompanyType companyType);
+
+  @Query(name = "Card.getSmartCardInfoByCardNo")
+  Optional<Card> getSmartCardInfoByCardNo(@Param("cardNo") long cardNo);
+
+  @Query(name = "Card.getSmartCardInfoByCardId")
+  Optional<Card> getSmartCardInfoByCardId(@Param("cardID") long cardId);
 }

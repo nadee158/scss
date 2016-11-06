@@ -32,12 +32,12 @@ public class CardService {
   // + " AND c.crd_cardid_seq = " + SQL.format(cardIdSeq);
   //
   public SCUInfoDto selectSCUInfo(String cardNo) {
-    Optional<Card> card = cardRepository.findByCardNo(Long.parseLong(cardNo));
+    Optional<Card> card = cardRepository.getSmartCardInfoByCardNo(Long.parseLong(cardNo));
     return convertCardToSCUInfo(card.orElse(null));
   }
 
   public SCUInfoDto selectSCUInfo(long cardId) {
-    Optional<Card> card = cardRepository.findOne(cardId);
+    Optional<Card> card = cardRepository.getSmartCardInfoByCardId(cardId);
     return convertCardToSCUInfo(card.orElse(null));
   }
 
