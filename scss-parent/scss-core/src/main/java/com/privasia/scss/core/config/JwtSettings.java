@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @ConfigurationProperties(prefix = "demo.security.jwt")
-public final class JwtSettings {
+public class JwtSettings {
 	
 	/**
      * {@link JwtToken} will expire after this time.

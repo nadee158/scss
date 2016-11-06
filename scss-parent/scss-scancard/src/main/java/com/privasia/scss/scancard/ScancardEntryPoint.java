@@ -19,7 +19,7 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 
 
 /**
- * Hello world!
+ * Janaka Wanigatunga
  *
  */
 @Configuration
