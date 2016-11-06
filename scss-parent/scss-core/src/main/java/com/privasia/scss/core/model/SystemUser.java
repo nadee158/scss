@@ -37,10 +37,10 @@ import com.privasia.scss.core.util.constant.UserType;
         @UniqueConstraint(columnNames = {"SYS_EMAILADDR"}), @UniqueConstraint(columnNames = {"SYS_NEWNRICNO"}),
         @UniqueConstraint(columnNames = {"SYS_OLDNRICNO"})})
 
-@AttributeOverrides({@AttributeOverride(name = "addBy", column = @Column(name = "SYS_CREATEDBY")),
-    @AttributeOverride(name = "updateBy", column = @Column(name = "SYS_UPDATEDBY")),
-    @AttributeOverride(name = "dateTimeAdd", column = @Column(name = "SYS_DATECREATE")),
-    @AttributeOverride(name = "dateTimeUpdate", column = @Column(name = "SYS_DATEUPDATE"))})
+@AttributeOverrides({@AttributeOverride(name = "addBy", column = @Column(name = "ADD_BY")),
+    @AttributeOverride(name = "updateBy", column = @Column(name = "UPDATE_BY")),
+    @AttributeOverride(name = "dateTimeAdd", column = @Column(name = "DATETIME_ADD")),
+    @AttributeOverride(name = "dateTimeUpdate", column = @Column(name = "DATETIME_UPDATE"))})
 public class SystemUser extends AuditEntity implements Serializable {
 
   /**
@@ -56,9 +56,6 @@ public class SystemUser extends AuditEntity implements Serializable {
 
   @Column(name = "SYS_STAFFNO")
   private String staffNumber;
-
-  @Column(name = "SYS_NAME")
-  private String name;
 
   @Column(name = "SYS_GENDER")
   @Type(type="com.privasia.scss.core.util.enumusertype.GenderEnumUserType")
@@ -82,8 +79,7 @@ public class SystemUser extends AuditEntity implements Serializable {
 
   @Embedded
   @AttributeOverrides({@AttributeOverride(name = "phoneOffice", column = @Column(name = "SYS_PHONEWORK")),
-      @AttributeOverride(name = "faxOffice", column = @Column(name = "SYS_FAXOFFICE")),
-      @AttributeOverride(name = "personName", column = @Column(name = "SYS_PERSONNAME")),
+      @AttributeOverride(name = "personName", column = @Column(name = "SYS_NAME")),
       @AttributeOverride(name = "emailAddress", column = @Column(name = "SYS_EMAILADDR")),
       @AttributeOverride(name = "phoneMobile", column = @Column(name = "SYS_PHONEMOBILE")),
       @AttributeOverride(name = "newNRICNO", column = @Column(name = "SYS_NEWNRICNO")),
@@ -126,14 +122,6 @@ public class SystemUser extends AuditEntity implements Serializable {
 
   public void setStaffNumber(String staffNumber) {
     this.staffNumber = staffNumber;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
   }
 
   public Gender getGender() {

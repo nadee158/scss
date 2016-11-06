@@ -15,6 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.privasia.scss.core.exception.AuthMethodNotSupportedException;
@@ -27,6 +28,7 @@ import com.privasia.scss.core.util.constant.ErrorCode;
  * @author Janaka
  *
  */
+@Component
 public class SCSSAuthenticationFailureHandler implements AuthenticationFailureHandler {
 
 	private final ObjectMapper mapper;

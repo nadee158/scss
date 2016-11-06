@@ -111,34 +111,4 @@ public class Login extends AuditEntity implements Serializable {
     this.passportExpiryDate = passportExpiryDate;
   }
 
-  public User constructUser() {
-
-    Set<Authority> userAuthorities = null;
-    if (!(this.role == null)) {
-      userAuthorities = new HashSet<Authority>();
-      Authority authority = new Authority(this.role.getRoleName());
-
-    }
-    boolean accountExpired = true;
-    boolean accountLocked = true;
-    boolean credentialsExpired = true;
-    boolean accountEnabled = false;
-    UserStatus status = this.getSystemUser().getUserStatus();
-    if (status.equals(UserStatus.ACTIVE)) {
-      accountExpired = false;
-      accountLocked = false;
-      credentialsExpired = false;
-      accountEnabled = true;
-    }
-
-    SystemUser user = this.getSystemUser();
-
-    User createdUser = new User(loginID, user.getStaffNumber(), user.getName(), user.getGender().toString(),
-        user.getDateOfBirth(), user.getPassportNo(), user.getPassportExpireDate(), user.getNationality().toString(),
-        user.getDepartment().toString(), userName, password, user.getUserType().toString(), userAuthorities,
-        accountExpired, accountLocked, credentialsExpired, accountEnabled);
-    return createdUser;
-  }
-
-
 }

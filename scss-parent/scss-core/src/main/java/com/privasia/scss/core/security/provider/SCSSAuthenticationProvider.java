@@ -42,8 +42,16 @@ public class SCSSAuthenticationProvider implements AuthenticationProvider {
 
         String username = (String) authentication.getPrincipal();
         String password = (String) authentication.getCredentials();
+        
+        System.out.println("username : "+ username);
+        
+        System.out.println("password : "+ password);
 
         Login loguser = securityService.getByUsername(username).orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+        
+        System.out.println("loguser.getUserName() : "+ loguser.getUserName());
+        
+        System.out.println("password match : "+ encoder.matches(password, loguser.getPassword()));
         
         if (!encoder.matches(password, loguser.getPassword())) {
             throw new BadCredentialsException("Authentication Failed. Username or Password not valid.");

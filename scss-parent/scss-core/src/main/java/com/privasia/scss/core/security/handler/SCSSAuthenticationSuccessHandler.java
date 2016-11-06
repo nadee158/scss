@@ -18,7 +18,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.WebAttributes;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-
+import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.privasia.scss.core.security.model.UserContext;
@@ -29,6 +29,7 @@ import com.privasia.scss.core.security.model.token.JwtTokenFactory;
  * @author Janaka
  *
  */
+@Component
 public class SCSSAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 	
 	private final ObjectMapper mapper;

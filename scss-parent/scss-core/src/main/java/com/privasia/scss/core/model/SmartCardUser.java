@@ -84,7 +84,6 @@ public class SmartCardUser extends AuditEntity implements Serializable {
 
   @Embedded
   @AttributeOverrides({@AttributeOverride(name = "phoneOffice", column = @Column(name = "SCU_PHONEHOME")),
-      @AttributeOverride(name = "faxOffice", column = @Column(name = "SCU_FAXNUMBER")),
       @AttributeOverride(name = "personName", column = @Column(name = "SCU_NAME")),
       @AttributeOverride(name = "emailAddress", column = @Column(name = "SCU_EMAIL")),
       @AttributeOverride(name = "phoneMobile", column = @Column(name = "SCU_PHONEMOBILE")),

@@ -22,7 +22,7 @@ public class SecurityService {
 
   @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
   public Optional<Login> getByUsername(String username) throws UsernameNotFoundException {
-    return this.loginRepository.findByUserName(username);
+    return this.loginRepository.findByUserNameContainingIgnoreCase(username);
   }
 
 

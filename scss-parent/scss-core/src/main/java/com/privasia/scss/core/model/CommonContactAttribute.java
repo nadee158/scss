@@ -19,7 +19,6 @@ public class CommonContactAttribute implements Serializable {
 	
 	
 	private String phoneOffice;
-	private String faxOffice;
 	private String personName;
 	private String emailAddress;
 	private String phoneMobile;
@@ -43,12 +42,6 @@ public class CommonContactAttribute implements Serializable {
 	}
 	public void setPhoneOffice(String phoneOffice) {
 		this.phoneOffice = phoneOffice;
-	}
-	public String getFaxOffice() {
-		return faxOffice;
-	}
-	public void setFaxOffice(String faxOffice) {
-		this.faxOffice = faxOffice;
 	}
 	public String getPersonName() {
 		return personName;

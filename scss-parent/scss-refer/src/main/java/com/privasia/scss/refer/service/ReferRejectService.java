@@ -331,7 +331,7 @@ public class ReferRejectService {
           
           printReject.setPmHeadNo(referReject.getBaseCommonGateInOut().getPmHeadNo());
           printReject.setReferReject(referReject);
-          printReject.setStaffName(systemUser.getName());
+          printReject.setStaffName(systemUser.getCommonContactAttribute().getPersonName());
           printReject.setStaffNumber(systemUser.getStaffNumber());
           printReject.setStatus(status);
           printReject.setUpdateBy(systemUserId);
