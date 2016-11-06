@@ -1,6 +1,6 @@
-package com.privasia.scss.gatein.dto;
+package com.privasia.scss.scancard.dto;
 
-public class SCUInfo {
+public class SCUInfoDto {
 
   private String SCUName;
   private String newICNo;
@@ -18,6 +18,8 @@ public class SCUInfo {
 
   private String SCNo;
   private String cardStatus;
+
+  private String clientUnitNo;
 
   public String getSCUName() {
     return SCUName;
@@ -129,6 +131,14 @@ public class SCUInfo {
 
   public void setCardStatus(String cardStatus) {
     this.cardStatus = cardStatus;
+  }
+
+  public String getClientUnitNo() {
+    return clientUnitNo;
+  }
+
+  public void setClientUnitNo(String clientUnitNo) {
+    this.clientUnitNo = clientUnitNo;
   }
 
 

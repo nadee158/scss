@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.transaction.Transactional;
 
@@ -16,16 +17,19 @@ import org.springframework.stereotype.Service;
 import com.privasia.scss.core.exception.ResultsNotFoundException;
 import com.privasia.scss.core.model.BaseCommonGateInOutAttribute;
 import com.privasia.scss.core.model.Card;
+import com.privasia.scss.core.model.PrintReject;
 import com.privasia.scss.core.model.ReferReason;
 import com.privasia.scss.core.model.ReferReject;
 import com.privasia.scss.core.model.ReferRejectDetail;
 import com.privasia.scss.core.model.ReferRejectReason;
+import com.privasia.scss.core.model.SmartCardUser;
 import com.privasia.scss.core.model.SupervisorReferRejectReason;
 import com.privasia.scss.core.model.SystemUser;
 import com.privasia.scss.core.repository.CardRepository;
 import com.privasia.scss.core.repository.CardUsageRepository;
 import com.privasia.scss.core.repository.ClientRepository;
 import com.privasia.scss.core.repository.CompanyRepository;
+import com.privasia.scss.core.repository.PrintRejectRepository;
 import com.privasia.scss.core.repository.ReferReasonRepository;
 import com.privasia.scss.core.repository.ReferRejectDetailRepository;
 import com.privasia.scss.core.repository.ReferRejectRepository;
@@ -41,6 +45,10 @@ import com.privasia.scss.refer.dto.ReferRejectListDto;
 import com.privasia.scss.refer.dto.ReferRejectObjetDto;
 import com.privasia.scss.refer.dto.ReferRejectUpdateObjetDto;
 
+/**
+ * @author nadee158
+ *
+ */
 @Service("referRejectService")
 public class ReferRejectService {
 
@@ -71,6 +79,9 @@ public class ReferRejectService {
   @Autowired
   private SupervisorReferRejectReasonRepository supervisorReferRejectReasonRepository;
 
+  @Autowired
+  private PrintRejectRepository printRejectRepository;
+
   @Transactional()
   public List<ReferRejectListDto> getReferRejectList(String statusCode, int page, int pageSize) {
     PageRequest pageRequest = new PageRequest(page, pageSize);
@@ -99,8 +110,7 @@ public class ReferRejectService {
   }
 
   @Transactional()
-  public String saveReferReject(ReferRejectObjetDto referRejectObjetDto) {
-    String status = "ERROR";
+  public Long saveReferReject(ReferRejectObjetDto referRejectObjetDto) {
     ReferReject referReject = null;
     if (referRejectObjetDto.getReferId().isPresent()) {
       referReject = referRejectRepository.findOne(referRejectObjetDto.getReferId().orElse(null)).orElse(null);
@@ -109,9 +119,9 @@ public class ReferRejectService {
     referReject = convertToReferRejectDomain(referRejectObjetDto, referReject);
     ReferReject persisted = referRejectRepository.save(referReject);
     if (!(persisted == null || persisted.getReferRejectID() <= 0)) {
-      status = "SUCCESS";
+      return persisted.getReferRejectID();
     }
-    return status;
+    return 0l;
   }
 
   public ReferReject convertToReferRejectDomain(ReferRejectObjetDto referRejectObjetDto, ReferReject referReject) {
@@ -297,6 +307,108 @@ public class ReferRejectService {
 //        + " AND CONT_NO = " + SQL.format(f.getContainerNoC1());
     return status;
   }
+
+ 
+  public String savePrintReject(long referId, String ipAddress, long systemUserId) {
+    String status = "ERROR";
+    ReferReject referReject=referRejectRepository.findOne(referId).orElse(null);
+    if (!(referReject == null)) {
+      if(!(referReject.getReferRejectDetails()==null || referReject.getReferRejectDetails().isEmpty())){
+        SystemUser systemUser = systemUserRepository.findOne(systemUserId).orElse(null);
+        if (!(systemUser == null)) {
+          PrintReject printReject=new PrintReject();
+          printReject.setAddBy(systemUserId);
+          printReject.setClientIP(ipAddress);
+          printReject.setDateTimeAdd(ZonedDateTime.now());
+          printReject.setDateTimeUpdate(ZonedDateTime.now());
+          if(!(referReject.getBaseCommonGateInOut()==null || referReject.getBaseCommonGateInOut().getCard()==null)){
+            SmartCardUser cardUser=referReject.getBaseCommonGateInOut().getCard().getSmartCardUser();
+            if(!(cardUser==null)){
+              printReject.setDriverIC(cardUser.getPassportNo());
+              printReject.setDriverName(cardUser.getCommonContactAttribute().getPersonName());
+            }
+          }
+          
+          printReject.setPmHeadNo(referReject.getBaseCommonGateInOut().getPmHeadNo());
+          printReject.setReferReject(referReject);
+          printReject.setStaffName(systemUser.getName());
+          printReject.setStaffNumber(systemUser.getStaffNumber());
+          printReject.setStatus(status);
+          printReject.setUpdateBy(systemUserId);
+          
+          int i=0;
+          for (ReferRejectDetail referRejectDetail : referReject.getReferRejectDetails()) {
+            if(i==0){
+              //container 1
+              printReject.setContainer01(referRejectDetail.getContainerNo());
+              printReject.setContainer01Remarks(referRejectDetail.getSupervisorRemarks());
+              printReject=setRejectReasonsForPrentReject(printReject, referRejectDetail.getReferRejectReason(),i);
+            }else{
+              //container 2
+              printReject.setContainer02(referRejectDetail.getContainerNo());
+              printReject.setContainer02Remarks(referRejectDetail.getSupervisorRemarks());
+              printReject=setRejectReasonsForPrentReject(printReject, referRejectDetail.getReferRejectReason(),i);
+            }
+            i++;
+          }
+          
+          PrintReject saved=printRejectRepository.save(printReject);
+          if(!(saved==null || saved.getPrientRejectID()==0)){
+            status="SUCCESS";
+          }
+            
+          }
+          
+        }else{
+          throw new ResultsNotFoundException("System User detail was not found!");
+        }
+      }else{
+        throw new ResultsNotFoundException("Refer reject detail was not found!");
+      }
+      return status;
+  }
+  
+  private PrintReject setRejectReasonsForPrentReject(PrintReject printReject, Set<ReferRejectReason> referRejectReasons,
+      int i) {
+    
+    String reason1C1 = "";
+    String reason2C1 ="";
+    String reason3C1 = "";
+    
+    if(!(referRejectReasons==null || referRejectReasons.isEmpty())){
+      int count=0;
+      for (ReferRejectReason referRejectReason : referRejectReasons) {
+        if(!(referRejectReason.getReferReason()==null)){
+          String reason=referRejectReason.getReferReason().getReasonDescription();
+          if (count==1) {
+            reason1C1 = "1) " + reason;
+        } else if (count == 2){
+            reason2C1 = "2) " + reason;
+        } else {
+            if (StringUtils.isBlank(reason3C1)){
+                reason3C1 =  count + ")" + reason;
+            } else {
+                reason3C1 = reason3C1 + "," + count + ")" + reason;
+            }
+        }
+        }
+        
+        count++;
+      }
+      if(i==0){
+        printReject.setRejectContainer01Due01(reason1C1);
+        printReject.setRejectContainer01Due02(reason2C1);
+        printReject.setRejectContainer01Due03(reason3C1);
+      }else{
+        printReject.setRejectContainer02Due01(reason1C1);
+        printReject.setRejectContainer02Due02(reason2C1);
+        printReject.setRejectContainer02Due03(reason3C1);
+      }
+    }
+    return printReject;
+  } 
+ 
+
 
 
 }
