@@ -5,7 +5,9 @@ import java.util.Optional;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import com.privasia.scss.core.exception.ResultsNotFoundException;
 import com.privasia.scss.core.model.Card;
@@ -18,30 +20,33 @@ import com.privasia.scss.scancard.dto.SCUInfoDto;
 @Transactional
 public class CardService {
 
+  @Value("scss.client.port")
+  private String scssClientPort;
+
   @Autowired
   private CardRepository cardRepository;
 
-  // String sql = "SELECT " + " a.scu_name " + ", a.scu_newnricno " + ", a.scu_oldnricno " + ",
-  // a.scu_nationality "
-  // + ", a.scu_passportno " + ", a.scu_userid_seq " + ", b.com_name " + ", b.com_id_seq "
-  // + ", b.com_acctno " + ", b.com_status " + ", b.com_type " + ", b.com_code " + ",
-  // c.crd_scardno "
-  // + ", c.crd_cardstatus " + "FROM " + " scss_scuser a " + ", scss_card c " + ", scss_company b
-  // "
-  // + "WHERE " + " b.com_id_seq = c.com_id " + " AND a.scu_userid_seq = c.scu_userid"
-  // + " AND c.crd_cardid_seq = " + SQL.format(cardIdSeq);
-  //
-  public SCUInfoDto selectSCUInfo(String cardNo) {
+  public SCUInfoDto selectSCUInfo(String cardNo, String webIPAddress, String baseUrl) {
     Optional<Card> card = cardRepository.getSmartCardInfoByCardNo(Long.parseLong(cardNo));
-    return convertCardToSCUInfo(card.orElse(null));
+    return convertCardToSCUInfo(card.orElse(null), webIPAddress, baseUrl);
   }
 
-  public SCUInfoDto selectSCUInfo(long cardId) {
+  public SCUInfoDto selectSCUInfo(long cardId, String webIPAddress, String baseUrl) {
     Optional<Card> card = cardRepository.getSmartCardInfoByCardId(cardId);
-    return convertCardToSCUInfo(card.orElse(null));
+    return convertCardToSCUInfo(card.orElse(null), webIPAddress, baseUrl);
   }
 
-  private SCUInfoDto convertCardToSCUInfo(Card card) {
+  public String getClientUnitNoFromClientService(String webIPAddress, String baseUrl) {
+    try {
+      RestTemplate restTemplate = new RestTemplate();
+      return restTemplate.getForObject(baseUrl + "/scss/client/{webIp}/unitNo", String.class, webIPAddress);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return null;
+  }
+
+  private SCUInfoDto convertCardToSCUInfo(Card card, String webIPAddress, String baseUrl) {
     if (!(card == null)) {
       SCUInfoDto scuInfo = new SCUInfoDto();
       SmartCardUser smartCardUser = card.getSmartCardUser();
@@ -65,6 +70,13 @@ public class CardService {
 
       scuInfo.setSCNo(Long.toString(card.getCardNo()));
       scuInfo.setCardStatus(card.getCardStatus().toString());
+
+      baseUrl = baseUrl + scssClientPort;
+      System.out.println("baseUrl :" + baseUrl);
+
+      String unitNo = getClientUnitNoFromClientService(webIPAddress, baseUrl);
+      scuInfo.setClientUnitNo(unitNo);
+
       return scuInfo;
     } else {
       throw new ResultsNotFoundException("Card was not found!");

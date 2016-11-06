@@ -19,6 +19,8 @@ public class SCUInfoDto {
   private String SCNo;
   private String cardStatus;
 
+  private String clientUnitNo;
+
   public String getSCUName() {
     return SCUName;
   }
@@ -129,6 +131,14 @@ public class SCUInfoDto {
 
   public void setCardStatus(String cardStatus) {
     this.cardStatus = cardStatus;
+  }
+
+  public String getClientUnitNo() {
+    return clientUnitNo;
+  }
+
+  public void setClientUnitNo(String clientUnitNo) {
+    this.clientUnitNo = clientUnitNo;
   }
 
 

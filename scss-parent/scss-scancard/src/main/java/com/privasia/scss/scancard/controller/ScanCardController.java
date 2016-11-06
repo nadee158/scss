@@ -3,6 +3,8 @@
  */
 package com.privasia.scss.scancard.controller;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.privasia.scss.common.util.UserIpAddressUtil;
 import com.privasia.scss.scancard.dto.CardValidationDto;
 import com.privasia.scss.scancard.dto.SCUInfoDto;
 import com.privasia.scss.scancard.service.CardService;
@@ -48,15 +51,28 @@ public class ScanCardController {
 
   @RequestMapping(value = "/{cardNo}/scuinfo", method = RequestMethod.GET,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-  public ResponseEntity<SCUInfoDto> selectSCUInfo(@PathVariable("cardNo") String cardNo) {
-    SCUInfoDto dto = cardService.selectSCUInfo(cardNo);
+  public ResponseEntity<SCUInfoDto> selectSCUInfo(@PathVariable("cardNo") String cardNo, HttpServletRequest request) {
+    String webIPAddress = UserIpAddressUtil.getUserIp(request);
+    String baseUrl = getBaseUrl(request);
+    SCUInfoDto dto = cardService.selectSCUInfo(cardNo, webIPAddress, baseUrl);
     return new ResponseEntity<SCUInfoDto>(dto, HttpStatus.OK);
+  }
+
+  private String getBaseUrl(HttpServletRequest request) {
+    // http://localhost:8080/
+    // String baseUrl = String.format("%s://%s:%d/",request.getScheme(), request.getServerName(),
+    // request.getServerPort());
+    // http://localhost:
+    return String.format("%s://%s:", request.getScheme(), request.getServerName());
   }
 
   @RequestMapping(value = "/{cardID}/scuinfo/bycardid", method = RequestMethod.GET,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-  public ResponseEntity<SCUInfoDto> selectSCUInfoByCardId(@PathVariable("cardID") Long cardID) {
-    SCUInfoDto dto = cardService.selectSCUInfo(cardID);
+  public ResponseEntity<SCUInfoDto> selectSCUInfoByCardId(@PathVariable("cardID") Long cardID,
+      HttpServletRequest request) {
+    String webIPAddress = UserIpAddressUtil.getUserIp(request);
+    String baseUrl = getBaseUrl(request);
+    SCUInfoDto dto = cardService.selectSCUInfo(cardID, webIPAddress, baseUrl);
     return new ResponseEntity<SCUInfoDto>(dto, HttpStatus.OK);
   }
 
