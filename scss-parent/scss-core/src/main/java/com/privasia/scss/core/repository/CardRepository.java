@@ -4,6 +4,7 @@
 package com.privasia.scss.core.repository;
 
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.Query;
@@ -34,8 +35,8 @@ public interface CardRepository extends BaseRepository<Card, Long> {
   Optional<Card> findByCardIDAndCompany_CompanyType(Long cardNo, CompanyType companyType);
 
   @Query(name = "Card.getSmartCardInfoByCardNo")
-  Optional<Card> getSmartCardInfoByCardNo(@Param("cardNo") long cardNo);
+  Optional<List<Object[]>> getSmartCardInfoByCardNo(@Param("cardNo") long cardNo);
 
   @Query(name = "Card.getSmartCardInfoByCardId")
-  Optional<Card> getSmartCardInfoByCardId(@Param("cardID") long cardId);
+  Optional<List<Object[]>> getSmartCardInfoByCardId(@Param("cardID") long cardId);
 }
