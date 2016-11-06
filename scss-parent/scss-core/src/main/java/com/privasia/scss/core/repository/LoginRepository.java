@@ -8,6 +8,6 @@ public interface LoginRepository extends BaseRepository<Login, Long> {
 
   public Login findByLoginID(long loginID);
   
-  public Optional<Login> findByUsername(String username);
+  public Optional<Login> findByUserName(String username);
 
 }
