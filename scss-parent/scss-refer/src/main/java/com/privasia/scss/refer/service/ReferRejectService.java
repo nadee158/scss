@@ -41,6 +41,10 @@ import com.privasia.scss.refer.dto.ReferRejectListDto;
 import com.privasia.scss.refer.dto.ReferRejectObjetDto;
 import com.privasia.scss.refer.dto.ReferRejectUpdateObjetDto;
 
+/**
+ * @author nadee158
+ *
+ */
 @Service("referRejectService")
 public class ReferRejectService {
 

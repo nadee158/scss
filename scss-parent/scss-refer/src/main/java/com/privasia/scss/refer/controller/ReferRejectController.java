@@ -18,6 +18,10 @@ import com.privasia.scss.refer.dto.ReferRejectObjetDto;
 import com.privasia.scss.refer.dto.ReferRejectUpdateObjetDto;
 import com.privasia.scss.refer.service.ReferRejectService;
 
+/**
+ * @author nadee158
+ *
+ */
 @RestController
 @RequestMapping("scss/refer")
 public class ReferRejectController {
