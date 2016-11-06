@@ -134,6 +134,5 @@
     <module>scss-master</module>
 	<module>scss-refer</module>
 	<module>scss-hpat</module>
-    <module>scss-security</module>
   </modules>
 </project>
