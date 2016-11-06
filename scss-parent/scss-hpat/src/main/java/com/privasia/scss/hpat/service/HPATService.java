@@ -46,36 +46,42 @@ public class HPATService {
   public List<HpatDto> getEtpHpat4ImpAndExp(long cardId, LocalDateTime date, List<BookingType> bookingTypes) {
     List<HpatDto> dtoList = new ArrayList<HpatDto>();
     Optional<Card> card = cardRepository.findOne(cardId); // need to handle optional
-    Predicate byCardNo = HPATBookingPredicates.byCardNo(String.valueOf(card.get().getCardNo()));
-    Predicate byBookingStatus = HPATBookingPredicates.byBookingStatus(HpatReferStatus.ACTIVE.getValue());
-    Predicate byAppointmentEndDate = HPATBookingPredicates.byAppointmentEndDate(date);
-    Predicate byBookingTypes = HPATBookingPredicates.byBookingDetailTypes(bookingTypes);
-    Predicate condition = ExpressionUtils.allOf(byCardNo, byBookingStatus, byAppointmentEndDate, byBookingTypes);
-    OrderSpecifier<LocalDateTime> sortSpec = HPATBookingPredicates.orderByAppointmentStartDateAsc();
+    if (card.isPresent()) {
+      Predicate byCardNo = HPATBookingPredicates.byCardNo(String.valueOf(card.get().getCardNo()));
+      Predicate byBookingStatus = HPATBookingPredicates.byBookingStatus(HpatReferStatus.ACTIVE.getValue());
+      Predicate byAppointmentEndDate = HPATBookingPredicates.byAppointmentEndDate(date);
+      Predicate byBookingTypes = HPATBookingPredicates.byBookingDetailTypes(bookingTypes);
+      Predicate condition = ExpressionUtils.allOf(byCardNo, byBookingStatus, byAppointmentEndDate, byBookingTypes);
+      OrderSpecifier<LocalDateTime> sortSpec = HPATBookingPredicates.orderByAppointmentStartDateAsc();
 
-    Iterable<HPATBooking> bookingList = hpatBookingRepository.findAll(condition, sortSpec);
+      Iterable<HPATBooking> bookingList = hpatBookingRepository.findAll(condition, sortSpec);
 
-    bookingList.forEach((HPATBooking b) -> {
-      dtoList.add(new HpatDto(b));
-    });
-    return dtoList;
+      bookingList.forEach((HPATBooking b) -> {
+        dtoList.add(new HpatDto(b));
+      });
+      return dtoList;
+    } else {
+      throw new ResultsNotFoundException("No HPAT Bookings Founds !");
+    }
+
   }
 
 
   @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-  public List<HpatDto> findEtpHpat4ImpAndExp(Long cardId, LocalDateTime systemDateTime, List<String> bookingTypes) throws ResultsNotFoundException {
-	  
+  public List<HpatDto> findEtpHpat4ImpAndExp(Long cardId, LocalDateTime systemDateTime, List<String> bookingTypes)
+      throws ResultsNotFoundException {
+
     List<HpatDto> hpats = null;
-    
+
     List<BookingType> convertedBookingTypes = new ArrayList<>();
-    
+
     bookingTypes.forEach(bookingType -> {
-    	  convertedBookingTypes.add(BookingType.fromValue(bookingType));
+      convertedBookingTypes.add(BookingType.fromValue(bookingType));
     });
 
     hpats = getEtpHpat4ImpAndExp(cardId, systemDateTime, convertedBookingTypes);
     if (!(hpats == null || hpats.isEmpty())) {
-     
+
       for (HpatDto hpat : hpats) {
         if (StringUtils.isBlank(hpat.getApptStart()))
           continue;

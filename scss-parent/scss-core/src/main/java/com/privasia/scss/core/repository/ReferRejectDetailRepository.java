@@ -14,5 +14,7 @@ public interface ReferRejectDetailRepository extends PagingAndSortingRepository<
 
   ReferRejectDetail findByReferReject_ReferRejectID(Long referId);
 
+  ReferRejectDetail findByReferReject_ReferRejectIDAndContainerNo(Long referRejectID, String containerNo);
+
 
 }
