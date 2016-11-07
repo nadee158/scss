@@ -16,6 +16,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.Type;
@@ -32,10 +33,12 @@ import com.privasia.scss.core.util.constant.UserType;
  *
  */
 @Entity
-@Table(name = "SCSS_SYSUSER",
+/*@Table(name = "SCSS_SYSUSER",
     uniqueConstraints = {@UniqueConstraint(columnNames = {"SYS_PASSPORTNO"}),
         @UniqueConstraint(columnNames = {"SYS_EMAILADDR"}), @UniqueConstraint(columnNames = {"SYS_NEWNRICNO"}),
-        @UniqueConstraint(columnNames = {"SYS_OLDNRICNO"})})
+        @UniqueConstraint(columnNames = {"SYS_OLDNRICNO"})})*/
+
+@Table(name = "SCSS_SYSUSER")
 
 @AttributeOverrides({@AttributeOverride(name = "addBy", column = @Column(name = "ADD_BY")),
     @AttributeOverride(name = "updateBy", column = @Column(name = "UPDATE_BY")),
@@ -77,6 +80,7 @@ public class SystemUser extends AuditEntity implements Serializable {
   @Column(name = "SYS_DEPTNAME")
   private String department;
   
+  @Transient
   @Embedded
   @AttributeOverrides({@AttributeOverride(name = "phoneOffice", column = @Column(name = "SYS_PHONEWORK")),
       @AttributeOverride(name = "personName", column = @Column(name = "SYS_NAME")),

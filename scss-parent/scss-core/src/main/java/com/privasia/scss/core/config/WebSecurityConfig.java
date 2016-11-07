@@ -40,10 +40,10 @@ import com.privasia.scss.core.security.util.MD5PasswordEncoder;
  *
  */
 
-//@Configuration
-//@EnableWebSecurity
-//@Order(SecurityProperties.ACCESS_OVERRIDE_ORDER)
-//@EnableGlobalMethodSecurity(prePostEnabled = true)
+@Configuration
+@EnableWebSecurity
+@Order(SecurityProperties.ACCESS_OVERRIDE_ORDER)
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
   public static final String JWT_TOKEN_HEADER_PARAM = "X-Authorization";
@@ -115,7 +115,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         .and().authorizeRequests().antMatchers(FORM_BASED_LOGIN_ENTRY_POINT).permitAll() // Login
                                                                                          // end-point
         .antMatchers(TOKEN_REFRESH_ENTRY_POINT).permitAll() // Token refresh end-point
-        .antMatchers("/scss/scancard/**").permitAll()
+        //.antMatchers("/scss/scancard/**").permitAll()
         .antMatchers("/console").permitAll() // H2 Console Dash-board - only for testing
         .and().authorizeRequests().antMatchers(TOKEN_BASED_AUTH_ENTRY_POINT).authenticated() // Protected
                                                                                              // API

@@ -82,7 +82,6 @@ public class Company extends AuditEntity implements Serializable {
 	@Column(name = "COM_NAMEONCARD")
 	private String nameOnCard;
 	
-	@Transient
 	@Embedded
 	@AttributeOverrides({
 		        @AttributeOverride(
