@@ -39,6 +39,7 @@ import com.privasia.scss.core.service.SecurityService;
  *
  */
 @RestController
+@RequestMapping(value="/api/auth")
 public class RefreshTokenEndpoint {
 	
 	@Autowired 
@@ -52,7 +53,9 @@ public class RefreshTokenEndpoint {
     @Autowired @Qualifier("jwtHeaderTokenExtractor") 
     private TokenExtractor tokenExtractor;
     
-    @RequestMapping(value="/api/auth/token", method=RequestMethod.GET, produces={ MediaType.APPLICATION_JSON_VALUE })
+    @RequestMapping(value="token", method=RequestMethod.GET, produces={ MediaType.APPLICATION_JSON_UTF8_VALUE },
+    		consumes={ MediaType.APPLICATION_JSON_UTF8_VALUE })
+    
     public @ResponseBody JwtToken refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         String tokenPayload = tokenExtractor.extract(request.getHeader(WebSecurityConfig.JWT_TOKEN_HEADER_PARAM));
         

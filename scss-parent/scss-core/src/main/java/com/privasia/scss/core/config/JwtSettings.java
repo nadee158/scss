@@ -54,6 +54,7 @@ public class JwtSettings {
     public String getTokenIssuer() {
         return tokenIssuer;
     }
+    
     public void setTokenIssuer(String tokenIssuer) {
         this.tokenIssuer = tokenIssuer;
     }

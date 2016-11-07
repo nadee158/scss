@@ -41,7 +41,7 @@ public class Login extends AuditEntity implements Serializable {
   @Column(name = "LGN_LOGINID_SEQ")
   private Long loginID;
 
-  @ManyToOne(fetch = FetchType.EAGER)
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "USR_USERID", nullable = false, referencedColumnName = "SYS_USERID_SEQ")
   private SystemUser systemUser;
 

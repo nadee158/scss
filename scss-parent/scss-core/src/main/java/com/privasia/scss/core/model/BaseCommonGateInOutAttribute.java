@@ -34,10 +34,6 @@ public class BaseCommonGateInOutAttribute implements Serializable {
   private String pmPlateNo;
 
   @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
-  @JoinColumn(nullable = true, referencedColumnName = "CRD_CARDID_SEQ")
-  private Card card;
-
-  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
   @JoinColumn(name = "BOOKING_ID", nullable = true, referencedColumnName = "BOOKING_ID")
   private HPATBooking hpatBooking;
 
@@ -93,14 +89,6 @@ public class BaseCommonGateInOutAttribute implements Serializable {
 
   public void setPmPlateNo(String pmPlateNo) {
     this.pmPlateNo = pmPlateNo;
-  }
-
-  public Card getCard() {
-    return card;
-  }
-
-  public void setCard(Card card) {
-    this.card = card;
   }
 
   public TransactionStatus getEirStatus() {

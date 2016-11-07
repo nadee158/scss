@@ -44,10 +44,10 @@ public class PrintReject extends AuditEntity implements Serializable {
 	private Long prientRejectID;
 
 	@Column(name = "REJECT_DATE")
-	private String weighingMethod;
+	private String rejectDate;
 
 	@Column(name = "REJECT_TIME")
-	private String weighingStation;
+	private String rejectTime;
 
 	@Column(name = "PM_HEAD_NO")
 	private String pmHeadNo;
@@ -112,21 +112,21 @@ public class PrintReject extends AuditEntity implements Serializable {
 	public void setPrientRejectID(Long prientRejectID) {
 		this.prientRejectID = prientRejectID;
 	}
-
-	public String getWeighingMethod() {
-		return weighingMethod;
+	
+	public String getRejectDate() {
+		return rejectDate;
 	}
 
-	public void setWeighingMethod(String weighingMethod) {
-		this.weighingMethod = weighingMethod;
+	public void setRejectDate(String rejectDate) {
+		this.rejectDate = rejectDate;
+	}
+	
+	public String getRejectTime() {
+		return rejectTime;
 	}
 
-	public String getWeighingStation() {
-		return weighingStation;
-	}
-
-	public void setWeighingStation(String weighingStation) {
-		this.weighingStation = weighingStation;
+	public void setRejectTime(String rejectTime) {
+		this.rejectTime = rejectTime;
 	}
 
 	public String getPmHeadNo() {

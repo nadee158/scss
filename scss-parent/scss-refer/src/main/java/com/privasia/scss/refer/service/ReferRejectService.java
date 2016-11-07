@@ -136,7 +136,6 @@ public class ReferRejectService {
     baseCommonGateInOut = referRejectObjetDto.convertToBaseCommonGateInOutAttribute(baseCommonGateInOut);
 
     // manual conversion
-    baseCommonGateInOut.setCard(card.orElse(null));
     baseCommonGateInOut.setEirStatus(TransactionStatus.fromCode(referRejectObjetDto.getTransactionStatus()));
     baseCommonGateInOut.setGateInClerk(systemUserRepository.findOne(referRejectObjetDto.getGateInClerk()).orElse(null));
     baseCommonGateInOut.setGateInClient(clientRepository.findOne(referRejectObjetDto.getGateInClient()).orElse(null));
@@ -147,7 +146,7 @@ public class ReferRejectService {
 
     referReject.setCardUsage(cardUsageRepository.findOne(referRejectObjetDto.getCardUsageID()).orElse(null));
     referReject.setCompany(companyRepository.findOne(referRejectObjetDto.getCompanyID()).orElse(null));
-
+    referReject.setCard(card.orElse(null));
     ReferRejectDetailObjetDto referRejectDetailObjetDto = referRejectObjetDto.getReferRejectDetail();
 
     if (!(referRejectDetailObjetDto == null)) {
@@ -321,8 +320,8 @@ public class ReferRejectService {
           printReject.setClientIP(ipAddress);
           printReject.setDateTimeAdd(ZonedDateTime.now());
           printReject.setDateTimeUpdate(ZonedDateTime.now());
-          if(!(referReject.getBaseCommonGateInOut()==null || referReject.getBaseCommonGateInOut().getCard()==null)){
-            SmartCardUser cardUser=referReject.getBaseCommonGateInOut().getCard().getSmartCardUser();
+          if(!(referReject.getBaseCommonGateInOut()==null || referReject.getCard()==null)){
+            SmartCardUser cardUser=referReject.getCard().getSmartCardUser();
             if(!(cardUser==null)){
               printReject.setDriverIC(cardUser.getPassportNo());
               printReject.setDriverName(cardUser.getCommonContactAttribute().getPersonName());

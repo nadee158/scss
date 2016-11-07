@@ -54,7 +54,7 @@ public class ReferRejectListDto implements Serializable {
         this.boothNo = client.getUnitNo();
       }
 
-      Card card = baseCommonGateInOut.getCard();
+      Card card = referReject.getCard();
       if (!(card == null)) {
         Company company = card.getCompany();
         if (!(company == null)) {

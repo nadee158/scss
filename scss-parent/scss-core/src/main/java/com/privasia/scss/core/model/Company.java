@@ -7,15 +7,18 @@ import java.io.Serializable;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
+import javax.persistence.CascadeType;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.Type;
@@ -29,13 +32,11 @@ import com.privasia.scss.core.util.constant.CompanyType;
  *
  */
 @Entity
-@Table(name="SCSS_COMPANY")
-
-/*@Table(name="SCSS_COMPANY", uniqueConstraints={
+@Table(name="SCSS_COMPANY", uniqueConstraints={
 		@UniqueConstraint(columnNames={"COM_REGNO"}),
 		@UniqueConstraint(columnNames={"COM_CPNEWNRICNO"}),
 		@UniqueConstraint(columnNames={"COM_CPOLDNRICNO"})
-})*/
+})
 
 @AttributeOverrides({@AttributeOverride(name="addBy",column=@Column(name="COM_CREATEDBY")),
     @AttributeOverride(name="updateBy", column=@Column(name="COM_UPDATEDBY")),
@@ -84,77 +85,28 @@ public class Company extends AuditEntity implements Serializable {
 	
 	@Embedded
 	@AttributeOverrides({
-		        @AttributeOverride(
-		            name = "phoneOffice",
-		            column = @Column( name = "COM_PHONEOFFICE")
-		        ),
-		        @AttributeOverride(
-		            name = "personName",
-		            column = @Column( name = "COM_CPNAME")
-		        ),
-		        @AttributeOverride(
-		            name = "emailAddress",
-		            column = @Column( name = "COM_CPEMAILADDR")
-		        ),
-		        @AttributeOverride(
-			            name = "phoneMobile",
-			            column = @Column( name = "COM_CPHONEMOBILE")
-			    ),
-		        @AttributeOverride(
-			            name = "newNRICNO",
-			            column = @Column( name = "COM_CPNEWNRICNO")
-			    ),
-		        @AttributeOverride(
-			            name = "oldNRICNO",
-			            column = @Column( name = "COM_CPOLDNRICNO")
-			    ),
-		        @AttributeOverride(
-			            name = "designation",
-			            column = @Column( name = "COM_CPDESIGNATION")
-			    ),
-		        @AttributeOverride(
-			            name = "postalCode",
-			            column = @Column( name = "COM_ADDRPOSTCODE")
-		        ),
-		        @AttributeOverride(
-			            name = "blockNo",
-			            column = @Column( name = "COM_ADDRBLOCKNO")
-			    ),
-		        @AttributeOverride(
-			            name = "buildingName",
-			            column = @Column( name = "COM_ADDRBUILDNAME")
-			    ),
-		        @AttributeOverride(
-			            name = "buildingNo",
-			            column = @Column( name = "COM_ADDRBUILDNO")
-			    ),
-		        @AttributeOverride(
-			            name = "streetName01",
-			            column = @Column( name = "COM_ADDRSTNAME1")
-			    ),
-		        @AttributeOverride(
-			            name = "streetName02",
-			            column = @Column( name = "COM_ADDRSTNAME2")
-			    ),
-		        @AttributeOverride(
-			            name = "streetName03",
-			            column = @Column( name = "COM_ADDRSTNAME3")
-			    ),
-		        @AttributeOverride(
-			            name = "city",
-			            column = @Column( name = "COM_ADDRTOWNCITY")
-			    ),
-		        @AttributeOverride(
-			            name = "state",
-			            column = @Column( name = "COM_ADDRSTATE")
-			    ),
-		        @AttributeOverride(
-			            name = "country",
-			            column = @Column( name = "COM_ADDRCOUNTRY")
-			    )
+        @AttributeOverride(name = "phoneOffice", column = @Column( name = "COM_PHONEOFFICE")),
+        @AttributeOverride(name = "personName", column = @Column( name = "COM_CPNAME")),
+        @AttributeOverride(name = "emailAddress", column = @Column( name = "COM_CPEMAILADDR")),
+        @AttributeOverride(name = "phoneMobile", column = @Column( name = "COM_CPHONEMOBILE")),
+        @AttributeOverride(name = "newNRICNO", column = @Column( name = "COM_CPNEWNRICNO")),
+        @AttributeOverride(name = "oldNRICNO", column = @Column( name = "COM_CPOLDNRICNO")),
+        @AttributeOverride(name = "designation", column = @Column( name = "COM_CPDESIGNATION")),
+        @AttributeOverride(name = "postalCode", column = @Column( name = "COM_ADDRPOSTCODE")),
+        @AttributeOverride(name = "blockNo", column = @Column( name = "COM_ADDRBLOCKNO")),
+        @AttributeOverride( name = "buildingName", column = @Column( name = "COM_ADDRBUILDNAME")),
+        @AttributeOverride(name = "buildingNo", column = @Column( name = "COM_ADDRBUILDNO")),
+        @AttributeOverride(name = "streetName01", column = @Column( name = "COM_ADDRSTNAME1")),
+        @AttributeOverride(name = "streetName02", column = @Column( name = "COM_ADDRSTNAME2")),
+        @AttributeOverride(name = "streetName03", column = @Column( name = "COM_ADDRSTNAME3")),
+        @AttributeOverride(name = "city", column = @Column( name = "COM_ADDRTOWNCITY")),
+        @AttributeOverride(name = "state", column = @Column( name = "COM_ADDRSTATE"))
 	})
 	private CommonContactAttribute commonContactAttribute;
 	
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+	@JoinColumn(name = "COM_ADDRCOUNTRY", nullable = true, referencedColumnName = "CON_CODE")
+	private Country country;
 	
 	@Column(name = "COM_FAXOFFICE")
 	private String faxOffice;
@@ -245,6 +197,14 @@ public class Company extends AuditEntity implements Serializable {
 
 	public void setCommonContactAttribute(CommonContactAttribute commonContactAttribute) {
 		this.commonContactAttribute = commonContactAttribute;
+	}
+
+	public Country getCountry() {
+		return country;
+	}
+
+	public void setCountry(Country country) {
+		this.country = country;
 	}
 	
 	

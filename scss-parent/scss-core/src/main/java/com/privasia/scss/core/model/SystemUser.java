@@ -8,15 +8,18 @@ import java.time.LocalDateTime;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.Type;
@@ -26,188 +29,191 @@ import com.privasia.scss.core.util.constant.Nationality;
 import com.privasia.scss.core.util.constant.UserStatus;
 import com.privasia.scss.core.util.constant.UserType;
 
-
-
 /**
  * @author Janaka
  *
  */
 @Entity
-/*@Table(name = "SCSS_SYSUSER",
-    uniqueConstraints = {@UniqueConstraint(columnNames = {"SYS_PASSPORTNO"}),
-        @UniqueConstraint(columnNames = {"SYS_EMAILADDR"}), @UniqueConstraint(columnNames = {"SYS_NEWNRICNO"}),
-        @UniqueConstraint(columnNames = {"SYS_OLDNRICNO"})})*/
+@Table(name = "SCSS_SYSUSER", uniqueConstraints = { @UniqueConstraint(columnNames = { "SYS_PASSPORTNO" }),
+		@UniqueConstraint(columnNames = { "SYS_EMAILADDR" }), @UniqueConstraint(columnNames = { "SYS_NEWNRICNO" }),
+		@UniqueConstraint(columnNames = { "SYS_OLDNRICNO" }) })
 
-@Table(name = "SCSS_SYSUSER")
-
-@AttributeOverrides({@AttributeOverride(name = "addBy", column = @Column(name = "ADD_BY")),
-    @AttributeOverride(name = "updateBy", column = @Column(name = "UPDATE_BY")),
-    @AttributeOverride(name = "dateTimeAdd", column = @Column(name = "DATETIME_ADD")),
-    @AttributeOverride(name = "dateTimeUpdate", column = @Column(name = "DATETIME_UPDATE"))})
+@AttributeOverrides({ @AttributeOverride(name = "addBy", column = @Column(name = "ADD_BY")),
+		@AttributeOverride(name = "updateBy", column = @Column(name = "UPDATE_BY")),
+		@AttributeOverride(name = "dateTimeAdd", column = @Column(name = "DATETIME_ADD")),
+		@AttributeOverride(name = "dateTimeUpdate", column = @Column(name = "DATETIME_UPDATE")) })
 public class SystemUser extends AuditEntity implements Serializable {
 
-  /**
-   * 
-   */
-  private static final long serialVersionUID = 1L;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_SCSS_SYSUSER")
-  @SequenceGenerator(name = "SEQ_SCSS_SYSUSER", sequenceName = "SYS_USERID_SEQ")
-  @Column(name = "SYS_USERID_SEQ")
-  private Long systemUserID;
+	@Id
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_SCSS_SYSUSER")
+	@SequenceGenerator(name = "SEQ_SCSS_SYSUSER", sequenceName = "SYS_USERID_SEQ")
+	@Column(name = "SYS_USERID_SEQ")
+	private Long systemUserID;
 
-  @Column(name = "SYS_STAFFNO")
-  private String staffNumber;
+	@Column(name = "SYS_STAFFNO")
+	private String staffNumber;
 
-  @Column(name = "SYS_GENDER")
-  @Type(type="com.privasia.scss.core.util.enumusertype.GenderEnumUserType")
-  private Gender gender;
+	@Column(name = "SYS_GENDER")
+	@Type(type = "com.privasia.scss.core.util.enumusertype.GenderEnumUserType")
+	private Gender gender;
 
-  @Column(name = "SYS_DOB")
-  private LocalDateTime dateOfBirth;
+	@Column(name = "SYS_DOB")
+	private LocalDateTime dateOfBirth;
 
-  @Column(name = "SYS_PASSPORTNO")
-  private String passportNo;
+	@Column(name = "SYS_PASSPORTNO")
+	private String passportNo;
 
-  @Column(name = "SYS_PASSPORTEXPDATE", nullable=true)
-  private LocalDateTime passportExpireDate;
+	@Column(name = "SYS_PASSPORTEXPDATE", nullable = true)
+	private LocalDateTime passportExpireDate;
 
-  @Column(name = "SYS_NATIONALITY")
-  @Type(type="com.privasia.scss.core.util.enumusertype.NationalityEnumUserType")
-  private Nationality nationality;
+	@Column(name = "SYS_NATIONALITY")
+	@Type(type = "com.privasia.scss.core.util.enumusertype.NationalityEnumUserType")
+	private Nationality nationality;
 
-  @Column(name = "SYS_DEPTNAME")
-  private String department;
-  
-  @Transient
-  @Embedded
-  @AttributeOverrides({@AttributeOverride(name = "phoneOffice", column = @Column(name = "SYS_PHONEWORK")),
-      @AttributeOverride(name = "personName", column = @Column(name = "SYS_NAME")),
-      @AttributeOverride(name = "emailAddress", column = @Column(name = "SYS_EMAILADDR")),
-      @AttributeOverride(name = "phoneMobile", column = @Column(name = "SYS_PHONEMOBILE")),
-      @AttributeOverride(name = "newNRICNO", column = @Column(name = "SYS_NEWNRICNO")),
-      @AttributeOverride(name = "oldNRICNO", column = @Column(name = "SYS_OLDNRICNO")),
-      @AttributeOverride(name = "designation", column = @Column(name = "SYS_DESIGNATION")),
-      @AttributeOverride(name = "postalCode", column = @Column(name = "SYS_ADDRPOSTCODE")),
-      @AttributeOverride(name = "blockNo", column = @Column(name = "SYS_ADDRBLOCKNO")),
-      @AttributeOverride(name = "buildingName", column = @Column(name = "SYS_ADDRBUILDNAME")),
-      @AttributeOverride(name = "buildingNo", column = @Column(name = "SYS_ADDRBUILDNO")),
-      @AttributeOverride(name = "streetName01", column = @Column(name = "SYS_ADDRSTNAME1")),
-      @AttributeOverride(name = "streetName02", column = @Column(name = "SYS_ADDRSTNAME2")),
-      @AttributeOverride(name = "streetName03", column = @Column(name = "SYS_ADDRSTNAME3")),
-      @AttributeOverride(name = "city", column = @Column(name = "SYS_ADDRTOWNCITY")),
-      @AttributeOverride(name = "state", column = @Column(name = "SYS_ADDRSTATE")),
-      @AttributeOverride(name = "country", column = @Column(name = "SYS_ADDRCOUNTRY"))})
-  private CommonContactAttribute commonContactAttribute;
+	@Column(name = "SYS_DEPTNAME")
+	private String department;
 
-  @Column(name = "SYS_PHONEHOME")
-  private String homePhone;
+	@Embedded
+	@AttributeOverrides({ @AttributeOverride(name = "phoneOffice", column = @Column(name = "SYS_PHONEWORK")),
+			@AttributeOverride(name = "personName", column = @Column(name = "SYS_NAME")),
+			@AttributeOverride(name = "emailAddress", column = @Column(name = "SYS_EMAILADDR")),
+			@AttributeOverride(name = "phoneMobile", column = @Column(name = "SYS_PHONEMOBILE")),
+			@AttributeOverride(name = "newNRICNO", column = @Column(name = "SYS_NEWNRICNO")),
+			@AttributeOverride(name = "oldNRICNO", column = @Column(name = "SYS_OLDNRICNO")),
+			@AttributeOverride(name = "designation", column = @Column(name = "SYS_DESIGNATION")),
+			@AttributeOverride(name = "postalCode", column = @Column(name = "SYS_ADDRPOSTCODE")),
+			@AttributeOverride(name = "blockNo", column = @Column(name = "SYS_ADDRBLOCKNO")),
+			@AttributeOverride(name = "buildingName", column = @Column(name = "SYS_ADDRBUILDNAME")),
+			@AttributeOverride(name = "buildingNo", column = @Column(name = "SYS_ADDRBUILDNO")),
+			@AttributeOverride(name = "streetName01", column = @Column(name = "SYS_ADDRSTNAME1")),
+			@AttributeOverride(name = "streetName02", column = @Column(name = "SYS_ADDRSTNAME2")),
+			@AttributeOverride(name = "streetName03", column = @Column(name = "SYS_ADDRSTNAME3")),
+			@AttributeOverride(name = "city", column = @Column(name = "SYS_ADDRTOWNCITY")),
+			@AttributeOverride(name = "state", column = @Column(name = "SYS_ADDRSTATE")) })
+	private CommonContactAttribute commonContactAttribute;
 
-  @Column(name = "SYS_USERSTATUS")
-  @Type(type="com.privasia.scss.core.util.enumusertype.UserStatusEnumUserType")
-  private UserStatus userStatus;
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+	@JoinColumn(name = "SYS_ADDRCOUNTRY", nullable = true, referencedColumnName = "CON_CODE")
+	private Country country;
 
-  @Column(name = "SYS_USRTYP_FLAG")
-  @Type(type="com.privasia.scss.core.util.enumusertype.UserTypeEnumUserType")
-  private UserType userType;
+	@Column(name = "SYS_PHONEHOME")
+	private String homePhone;
 
-  public Long getSystemUserID() {
-    return systemUserID;
-  }
+	@Column(name = "SYS_USERSTATUS")
+	@Type(type = "com.privasia.scss.core.util.enumusertype.UserStatusEnumUserType")
+	private UserStatus userStatus;
 
-  public void setSystemUserID(Long systemUserID) {
-    this.systemUserID = systemUserID;
-  }
+	@Column(name = "SYS_USRTYP_FLAG")
+	@Type(type = "com.privasia.scss.core.util.enumusertype.UserTypeEnumUserType")
+	private UserType userType;
 
-  public String getStaffNumber() {
-    return staffNumber;
-  }
+	public Long getSystemUserID() {
+		return systemUserID;
+	}
 
-  public void setStaffNumber(String staffNumber) {
-    this.staffNumber = staffNumber;
-  }
+	public void setSystemUserID(Long systemUserID) {
+		this.systemUserID = systemUserID;
+	}
 
-  public Gender getGender() {
-    return gender;
-  }
+	public String getStaffNumber() {
+		return staffNumber;
+	}
 
-  public void setGender(Gender gender) {
-    this.gender = gender;
-  }
+	public void setStaffNumber(String staffNumber) {
+		this.staffNumber = staffNumber;
+	}
 
-  public LocalDateTime getDateOfBirth() {
-    return dateOfBirth;
-  }
+	public Gender getGender() {
+		return gender;
+	}
 
-  public void setDateOfBirth(LocalDateTime dateOfBirth) {
-    this.dateOfBirth = dateOfBirth;
-  }
+	public void setGender(Gender gender) {
+		this.gender = gender;
+	}
 
-  public String getPassportNo() {
-    return passportNo;
-  }
+	public LocalDateTime getDateOfBirth() {
+		return dateOfBirth;
+	}
 
-  public void setPassportNo(String passportNo) {
-    this.passportNo = passportNo;
-  }
+	public void setDateOfBirth(LocalDateTime dateOfBirth) {
+		this.dateOfBirth = dateOfBirth;
+	}
 
-  public LocalDateTime getPassportExpireDate() {
-    return passportExpireDate;
-  }
+	public String getPassportNo() {
+		return passportNo;
+	}
 
-  public void setPassportExpireDate(LocalDateTime passportExpireDate) {
-    this.passportExpireDate = passportExpireDate;
-  }
+	public void setPassportNo(String passportNo) {
+		this.passportNo = passportNo;
+	}
 
-  public Nationality getNationality() {
-    return nationality;
-  }
+	public LocalDateTime getPassportExpireDate() {
+		return passportExpireDate;
+	}
 
-  public void setNationality(Nationality nationality) {
-    this.nationality = nationality;
-  }
+	public void setPassportExpireDate(LocalDateTime passportExpireDate) {
+		this.passportExpireDate = passportExpireDate;
+	}
 
-  public String getDepartment() {
-    return department;
-  }
+	public Nationality getNationality() {
+		return nationality;
+	}
 
-  public void setDepartment(String department) {
-    this.department = department;
-  }
+	public void setNationality(Nationality nationality) {
+		this.nationality = nationality;
+	}
 
-  public CommonContactAttribute getCommonContactAttribute() {
-    return commonContactAttribute;
-  }
+	public String getDepartment() {
+		return department;
+	}
 
-  public void setCommonContactAttribute(CommonContactAttribute commonContactAttribute) {
-    this.commonContactAttribute = commonContactAttribute;
-  }
+	public void setDepartment(String department) {
+		this.department = department;
+	}
 
-  public String getHomePhone() {
-    return homePhone;
-  }
+	public CommonContactAttribute getCommonContactAttribute() {
+		return commonContactAttribute;
+	}
 
-  public void setHomePhone(String homePhone) {
-    this.homePhone = homePhone;
-  }
+	public void setCommonContactAttribute(CommonContactAttribute commonContactAttribute) {
+		this.commonContactAttribute = commonContactAttribute;
+	}
 
-  public UserStatus getUserStatus() {
-    return userStatus;
-  }
+	public String getHomePhone() {
+		return homePhone;
+	}
 
-  public void setUserStatus(UserStatus userStatus) {
-    this.userStatus = userStatus;
-  }
+	public void setHomePhone(String homePhone) {
+		this.homePhone = homePhone;
+	}
 
-  public UserType getUserType() {
-    return userType;
-  }
+	public UserStatus getUserStatus() {
+		return userStatus;
+	}
 
-  public void setUserType(UserType userType) {
-    this.userType = userType;
-  }
+	public void setUserStatus(UserStatus userStatus) {
+		this.userStatus = userStatus;
+	}
 
+	public UserType getUserType() {
+		return userType;
+	}
 
+	public void setUserType(UserType userType) {
+		this.userType = userType;
+	}
+
+	public Country getCountry() {
+		return country;
+	}
+
+	public void setCountry(Country country) {
+		this.country = country;
+	}
 
 }

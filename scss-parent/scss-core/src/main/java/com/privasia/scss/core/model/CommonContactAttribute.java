@@ -37,8 +37,6 @@ public class CommonContactAttribute implements Serializable {
 	private String streetName03;
 	private String city;
 	private String state;
-	private Country country;
-	
 	
 	public String getPhoneOffice() {
 		return phoneOffice;
@@ -136,11 +134,5 @@ public class CommonContactAttribute implements Serializable {
 	public void setState(String state) {
 		this.state = state;
 	}
-	public Country getCountry() {
-		return country;
-	}
-	public void setCountry(Country country) {
-		this.country = country;
-	}
-
+	
 }
