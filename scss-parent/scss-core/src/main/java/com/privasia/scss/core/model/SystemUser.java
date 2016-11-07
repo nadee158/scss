@@ -67,7 +67,7 @@ public class SystemUser extends AuditEntity implements Serializable {
   @Column(name = "SYS_PASSPORTNO")
   private String passportNo;
 
-  @Column(name = "SYS_PASSPORTEXPDATE")
+  @Column(name = "SYS_PASSPORTEXPDATE", nullable=true)
   private LocalDateTime passportExpireDate;
 
   @Column(name = "SYS_NATIONALITY")
@@ -76,7 +76,7 @@ public class SystemUser extends AuditEntity implements Serializable {
 
   @Column(name = "SYS_DEPTNAME")
   private String department;
-
+  
   @Embedded
   @AttributeOverrides({@AttributeOverride(name = "phoneOffice", column = @Column(name = "SYS_PHONEWORK")),
       @AttributeOverride(name = "personName", column = @Column(name = "SYS_NAME")),

@@ -15,6 +15,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.Type;
@@ -28,11 +29,14 @@ import com.privasia.scss.core.util.constant.CompanyType;
  *
  */
 @Entity
-@Table(name="SCSS_COMPANY", uniqueConstraints={
+@Table(name="SCSS_COMPANY")
+
+/*@Table(name="SCSS_COMPANY", uniqueConstraints={
 		@UniqueConstraint(columnNames={"COM_REGNO"}),
 		@UniqueConstraint(columnNames={"COM_CPNEWNRICNO"}),
 		@UniqueConstraint(columnNames={"COM_CPOLDNRICNO"})
-})
+})*/
+
 @AttributeOverrides({@AttributeOverride(name="addBy",column=@Column(name="COM_CREATEDBY")),
     @AttributeOverride(name="updateBy", column=@Column(name="COM_UPDATEDBY")),
     @AttributeOverride(name="dateTimeAdd",column=@Column(name="COM_DATECREATE")),
@@ -78,15 +82,12 @@ public class Company extends AuditEntity implements Serializable {
 	@Column(name = "COM_NAMEONCARD")
 	private String nameOnCard;
 	
+	@Transient
 	@Embedded
 	@AttributeOverrides({
 		        @AttributeOverride(
 		            name = "phoneOffice",
 		            column = @Column( name = "COM_PHONEOFFICE")
-		        ),
-		        @AttributeOverride(
-		            name = "faxOffice",
-		            column = @Column( name = "COM_FAXOFFICE")
 		        ),
 		        @AttributeOverride(
 		            name = "personName",
@@ -154,6 +155,10 @@ public class Company extends AuditEntity implements Serializable {
 			    )
 	})
 	private CommonContactAttribute commonContactAttribute;
+	
+	
+	@Column(name = "COM_FAXOFFICE")
+	private String faxOffice;
 
 	public Long getCompanyID() {
 		return companyID;
@@ -225,6 +230,14 @@ public class Company extends AuditEntity implements Serializable {
 
 	public void setNameOnCard(String nameOnCard) {
 		this.nameOnCard = nameOnCard;
+	}
+	
+	public String getFaxOffice() {
+		return faxOffice;
+	}
+
+	public void setFaxOffice(String faxOffice) {
+		this.faxOffice = faxOffice;
 	}
 
 	public CommonContactAttribute getCommonContactAttribute() {
