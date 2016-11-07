@@ -42,7 +42,7 @@ public class ScanCardController {
     return new ResponseEntity<CardValidationDto>(cardValidation, HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/bycardid/{cardId}", method = RequestMethod.GET,
+  @RequestMapping(value = "/bycardid/{cardID}", method = RequestMethod.GET,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public ResponseEntity<CardValidationDto> validateCardByCardId(@PathVariable("cardID") Long cardID) {
     CardValidationDto cardValidation = cardValidationService.validateCard(cardID);

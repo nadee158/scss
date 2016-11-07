@@ -6,7 +6,6 @@ package com.privasia.scss.scancard.service;
 
 import java.util.Optional;
 
-import org.apache.commons.lang3.EnumUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -84,20 +83,24 @@ public class CardValidationService {
   public CardValidationDto validateCard(Card foundCard) {
     CardValidationDto cardValidation;
     if (!(foundCard == null)) {
-      CardStatus cardStatus = EnumUtils.getEnum(CardStatus.class, foundCard.getCardStatus().getValue());
-      cardValidation = validateCardStatus(foundCard.getCardID(), cardStatus);
+      System.out.println("foundCard.getCardNo()" + foundCard.getCardNo());
+      CardStatus cardStatus = foundCard.getCardStatus();
+      System.out.println("foundCard.getCardStatus()" + foundCard.getCardStatus());
+      if (!(cardStatus == null)) {
+        cardValidation = validateCardStatus(foundCard.getCardID(), cardStatus);
+        if (cardValidation.isValid()) {
+          Company company = foundCard.getCompany();
 
-      if (cardValidation.isValid()) {
-        Company company = foundCard.getCompany();
-
-        if (!(company == null)) {
-          CompanyStatus companyStatus = EnumUtils.getEnum(CompanyStatus.class, company.getCompanyStatus().getValue());
-          CardValidationDto companyValidation = validateCompanyStatus(foundCard.getCardID(), companyStatus);
-          if (!(companyValidation.isValid())) {
-            cardValidation = companyValidation;
+          if (!(company == null)) {
+            CompanyStatus companyStatus = company.getCompanyStatus();
+            CardValidationDto companyValidation = validateCompanyStatus(foundCard.getCardID(), companyStatus);
+            if (!(companyValidation.isValid())) {
+              cardValidation = companyValidation;
+            }
           }
-
         }
+      } else {
+        cardValidation = new CardValidationDto(foundCard.getCardID(), false, ScanCardConstant.CARD_ERR_NOT_FOUND, null);
       }
     } else {
       throw new ResultsNotFoundException("Requested Card was not found!");
