@@ -2,6 +2,7 @@
 <project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
+  
   <parent>
     <groupId>com.privasia.scss</groupId>
     <artifactId>scss-parent</artifactId>
@@ -9,17 +10,20 @@
   </parent>
   
   <artifactId>scss-kioskbooth</artifactId>
-  <version>1.0</version>
   <name>scss-kioskbooth</name>
   <url>http://maven.apache.org</url>
+   <packaging>war</packaging>
+   
   <properties>
+    <start-class>com.privasia.scss.kioskbooth.KioskBoothEntryPoint</start-class>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
+  
   <dependencies>
+  
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>3.8.1</version>
       <scope>test</scope>
     </dependency>
     
@@ -29,9 +33,27 @@
 			<version>1.0</version>
 	</dependency>
     
-   
-	
-	
-    
   </dependencies>
+  
+   <build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-maven-plugin</artifactId>	
+					<configuration>
+	                    <executable>true</executable>
+	                </configuration>
+					<dependencies>
+						<dependency>
+							<groupId>org.springframework</groupId>
+							<artifactId>springloaded</artifactId>
+							<version>${spring-loaded.version}</version>
+						</dependency>
+					</dependencies>				
+				</plugin>				
+			</plugins>
+		</pluginManagement>
+		<finalName>scss-kioskbooth</finalName>
+	</build>
 </project>
