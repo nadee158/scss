@@ -137,8 +137,6 @@ public class ReferRejectService {
 
     // manual conversion
     baseCommonGateInOut.setEirStatus(TransactionStatus.fromCode(referRejectObjetDto.getTransactionStatus()));
-    baseCommonGateInOut.setGateInClerk(systemUserRepository.findOne(referRejectObjetDto.getGateInClerk()).orElse(null));
-    baseCommonGateInOut.setGateInClient(clientRepository.findOne(referRejectObjetDto.getGateInClient()).orElse(null));
 
     referReject.setBaseCommonGateInOut(baseCommonGateInOut);
 
@@ -147,6 +145,8 @@ public class ReferRejectService {
     referReject.setCardUsage(cardUsageRepository.findOne(referRejectObjetDto.getCardUsageID()).orElse(null));
     referReject.setCompany(companyRepository.findOne(referRejectObjetDto.getCompanyID()).orElse(null));
     referReject.setCard(card.orElse(null));
+    referReject.setGateInClerk(systemUserRepository.findOne(referRejectObjetDto.getGateInClerk()).orElse(null));
+    referReject.setGateInClient(clientRepository.findOne(referRejectObjetDto.getGateInClient()).orElse(null));
     ReferRejectDetailObjetDto referRejectDetailObjetDto = referRejectObjetDto.getReferRejectDetail();
 
     if (!(referRejectDetailObjetDto == null)) {

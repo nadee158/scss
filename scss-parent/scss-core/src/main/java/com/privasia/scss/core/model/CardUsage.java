@@ -9,8 +9,6 @@ import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -20,7 +18,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import com.privasia.scss.core.util.constant.CardType;
+import org.hibernate.annotations.Type;
+
 import com.privasia.scss.core.util.constant.CardUsageStatus;
 
 /**
@@ -55,15 +54,8 @@ public class CardUsage extends AuditEntity implements Serializable {
   private Client client;
 
   @Column(name = "CUG_STATUS")
-  @Enumerated(EnumType.STRING)
+  @Type(type = "com.privasia.scss.core.util.enumusertype.CardUsageStatusEnumUserType")
   private CardUsageStatus usageStatus;
-
-  /**
-   * Added by Nadeeshani - based on old queries
-   */
-  @Column(name = "CUG_MC_FLAG")
-  @Enumerated(EnumType.STRING)
-  private CardType mcFlag;
 
   @Column(name = "EXP_WEIGHT_BRIDGE")
   private int expWeightBridge;
@@ -108,13 +100,4 @@ public class CardUsage extends AuditEntity implements Serializable {
     this.expWeightBridge = expWeightBridge;
   }
 
-  public CardType getMcFlag() {
-    return mcFlag;
-  }
-
-  public void setMcFlag(CardType mcFlag) {
-    this.mcFlag = mcFlag;
-  }
-
-
-}
+ }

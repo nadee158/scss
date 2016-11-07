@@ -64,15 +64,11 @@ public class ReferReject extends AuditEntity implements Serializable {
 	private HpatReferStatus statusCode;
 
 	@Embedded
-	@AttributeOverrides({ @AttributeOverride(name = "gateInClerk", column = @Column(name = "GATE_CLERK_ID")),
-			@AttributeOverride(name = "timeGateIn", column = @Column(name = "REF_GATEIN_TIME")),
+	@AttributeOverrides({ @AttributeOverride(name = "timeGateIn", column = @Column(name = "REF_GATEIN_TIME")),
 			@AttributeOverride(name = "timeGateInOk", column = @Column(name = "REF_GATEIN_OK_TIME")),
-			@AttributeOverride(name = "gateOutClerk", column = @Column(name = "REF_GATEOUT_CLERKID")),
 			@AttributeOverride(name = "timeGateOut", column = @Column(name = "REF_GATEOUT_TIME")),
 			@AttributeOverride(name = "timeGateOutOk", column = @Column(name = "REF_GATEOUT_OK_TIME")),
 			@AttributeOverride(name = "eirStatus", column = @Column(name = "REF_EIRSTATUS")),
-			@AttributeOverride(name = "gateInClient", column = @Column(name = "CLI_CLIENT_SEQ")),
-			@AttributeOverride(name = "gateOutClient", column = @Column(name = "CLI_CLIENTID_GATEOUT")),
 			@AttributeOverride(name = "pmHeadNo", column = @Column(name = "PM_HEAD_NO")),
 			@AttributeOverride(name = "pmPlateNo", column = @Column(name = "EXP_TRUCK_PLATE_NO")),
 			@AttributeOverride(name = "transactionSlipPrinted", column = @Column(name = "TRANSACTION_SLIP_PRINTED")),
@@ -87,6 +83,22 @@ public class ReferReject extends AuditEntity implements Serializable {
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
 	@JoinColumn(name = "CRD_CARDID_SEQ", nullable = true, referencedColumnName = "CRD_CARDID_SEQ")
 	private Card card;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "REF_GATEOUT_CLERKID", nullable = true, referencedColumnName = "SYS_USERID_SEQ")
+	private SystemUser gateInClerk;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "EXP_GATEOUTCLERKID", nullable = true, referencedColumnName = "SYS_USERID_SEQ")
+	private SystemUser gateOutClerk;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "CLI_CLIENT_SEQ", nullable = true, referencedColumnName = "CLI_CLIENTID_SEQ")
+	private Client gateInClient;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "CLI_CLIENTID_GATEOUT", nullable = true, referencedColumnName = "CLI_CLIENTID_SEQ")
+	private Client gateOutClient;
 
 	@Column(name = "REFER_DATE_TIME")
 	private LocalDateTime referDateTime;
@@ -233,6 +245,38 @@ public class ReferReject extends AuditEntity implements Serializable {
 
 	public void setCard(Card card) {
 		this.card = card;
+	}
+
+	public SystemUser getGateInClerk() {
+		return gateInClerk;
+	}
+
+	public void setGateInClerk(SystemUser gateInClerk) {
+		this.gateInClerk = gateInClerk;
+	}
+
+	public SystemUser getGateOutClerk() {
+		return gateOutClerk;
+	}
+
+	public void setGateOutClerk(SystemUser gateOutClerk) {
+		this.gateOutClerk = gateOutClerk;
+	}
+
+	public Client getGateInClient() {
+		return gateInClient;
+	}
+
+	public void setGateInClient(Client gateInClient) {
+		this.gateInClient = gateInClient;
+	}
+
+	public Client getGateOutClient() {
+		return gateOutClient;
+	}
+
+	public void setGateOutClient(Client gateOutClient) {
+		this.gateOutClient = gateOutClient;
 	}
 
 }

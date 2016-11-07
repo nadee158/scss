@@ -135,15 +135,6 @@ public class GateInExpNormalController {
               // if yes then redirect to Gate In Export Bypass page
               // else redirect to Gate In Export page
 
-              if (gateInInfo.isMCByPass()) {
-                f.setMCBypass(true);
-                /*
-                 * could not find a master card modal, ignoring the line
-                 */
-                // dao.selectMCInfo(cardIdSeq, f);
-                returnedView = "MC_BYPASS";
-
-              } else {
                 // no place to use this info - previously assigned to the UI form
                 // SCUInfo scuInfo = cardService.selectSCUInfo(gateInInfo.getCardIdSeq());
                 // no place to use this info - previously assigned to the UI form
@@ -171,7 +162,7 @@ public class GateInExpNormalController {
                 calculateWeightBridge(c1, c2, gateInInfo.getWeightBridge());
 
                 returnedView = "VIEW.NORMAL";
-              }
+              
 
             }
             break;

@@ -49,7 +49,7 @@ public class ReferRejectListDto implements Serializable {
       BaseCommonGateInOutAttribute baseCommonGateInOut = referReject.getBaseCommonGateInOut();
       this.pmHeadNo = baseCommonGateInOut.getPmHeadNo();
 
-      Client client = baseCommonGateInOut.getGateInClient();
+      Client client = referReject.getGateInClient();
       if (!(client == null)) {
         this.boothNo = client.getUnitNo();
       }

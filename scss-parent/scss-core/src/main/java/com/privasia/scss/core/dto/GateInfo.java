@@ -7,7 +7,6 @@ import java.time.format.DateTimeFormatter;
 import org.apache.commons.lang3.StringUtils;
 
 import com.privasia.scss.core.model.CardUsage;
-import com.privasia.scss.core.util.constant.CardType;
 
 public class GateInfo implements Serializable {
 
@@ -19,7 +18,7 @@ public class GateInfo implements Serializable {
   String cardIdSeq = StringUtils.EMPTY;
   String clientId = StringUtils.EMPTY;
   String timeGateIn = StringUtils.EMPTY;
-  boolean isMCByPass = false;
+ 
   String weightBridge = StringUtils.EMPTY;
   String cugIdSeq = StringUtils.EMPTY;
 
@@ -39,8 +38,7 @@ public class GateInfo implements Serializable {
       if (!(dateTime == null)) {
         this.timeGateIn = format.format(dateTime);
       }
-      CardType cardType = cardUsage.getMcFlag();
-      this.isMCByPass = cardType.equals(CardType.MASTER_CARD) ? true : false;
+      
 
       this.weightBridge = Integer.toString(cardUsage.getExpWeightBridge());
       this.cugIdSeq = Long.toString(cardUsage.getCardUsageID());
@@ -71,15 +69,6 @@ public class GateInfo implements Serializable {
   public void setTimeGateIn(String timeGateIn) {
     this.timeGateIn = timeGateIn;
   }
-
-  public boolean isMCByPass() {
-    return isMCByPass;
-  }
-
-  public void setMCByPass(boolean isMCByPass) {
-    this.isMCByPass = isMCByPass;
-  }
-
 
   public String getWeightBridge() {
     return weightBridge;

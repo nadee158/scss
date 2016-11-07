@@ -36,7 +36,6 @@ public class ScancardEntryPoint extends SpringBootServletInitializer {
     return builder.build();
   }
 
-
   @Override
   protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
     return application.sources(applicationClass);

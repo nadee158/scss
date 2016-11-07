@@ -57,23 +57,7 @@ public class BaseCommonGateInOutAttribute implements Serializable {
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(nullable = true, referencedColumnName = "SYS_USERID_SEQ")
-  private SystemUser gateInClerk;
-
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(nullable = true, referencedColumnName = "SYS_USERID_SEQ")
-  private SystemUser gateOutClerk;
-
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(nullable = true, referencedColumnName = "SYS_USERID_SEQ")
   private SystemUser gateOutBoothClerk;
-
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(nullable = true, referencedColumnName = "CLI_CLIENTID_SEQ")
-  private Client gateInClient;
-
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(nullable = true, referencedColumnName = "CLI_CLIENTID_SEQ")
-  private Client gateOutClient;
 
   public String getPmHeadNo() {
     return pmHeadNo;
@@ -147,44 +131,12 @@ public class BaseCommonGateInOutAttribute implements Serializable {
     this.timeGateOutBooth = timeGateOutBooth;
   }
 
-  public SystemUser getGateInClerk() {
-    return gateInClerk;
-  }
-
-  public void setGateInClerk(SystemUser gateInClerk) {
-    this.gateInClerk = gateInClerk;
-  }
-
-  public SystemUser getGateOutClerk() {
-    return gateOutClerk;
-  }
-
-  public void setGateOutClerk(SystemUser gateOutClerk) {
-    this.gateOutClerk = gateOutClerk;
-  }
-
   public SystemUser getGateOutBoothClerk() {
     return gateOutBoothClerk;
   }
 
   public void setGateOutBoothClerk(SystemUser gateOutBoothClerk) {
     this.gateOutBoothClerk = gateOutBoothClerk;
-  }
-
-  public Client getGateInClient() {
-    return gateInClient;
-  }
-
-  public void setGateInClient(Client gateInClient) {
-    this.gateInClient = gateInClient;
-  }
-
-  public Client getGateOutClient() {
-    return gateOutClient;
-  }
-
-  public void setGateOutClient(Client gateOutClient) {
-    this.gateOutClient = gateOutClient;
   }
 
   public boolean isTransactionSlipPrinted() {
