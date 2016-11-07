@@ -28,27 +28,6 @@
 
 
 	<build>
-		<!-- <pluginManagement>
-			<plugins>			   
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-compiler-plugin</artifactId>
-					<version>${mvn.compiler.plugin-version}</version>
-					<configuration>
-						<source>${java.version}</source>
-						<target>${java.version}</target>
-					</configuration>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-surefire-plugin</artifactId>
-					<version>${mvn.surefire.plugin-version}</version>
-					<configuration>
-						<skipTests>${skipTests}</skipTests>
-					</configuration>
-				</plugin>
-			</plugins>
-		</pluginManagement> -->
 		<finalName>scss-common</finalName>
 	</build>
 
