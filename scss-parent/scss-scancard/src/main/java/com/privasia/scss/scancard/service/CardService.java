@@ -25,7 +25,7 @@ import com.privasia.scss.scancard.dto.SCUInfoDto;
 @Transactional
 public class CardService {
 
-  @Value("scss.client.port")
+  @Value("${scss.client.port}")
   private String scssClientPort;
 
   @Autowired
