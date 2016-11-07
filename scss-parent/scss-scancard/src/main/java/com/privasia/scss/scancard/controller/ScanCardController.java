@@ -26,7 +26,7 @@ import com.privasia.scss.scancard.service.CardValidationService;
  */
 
 @RestController
-@RequestMapping("/scss/scancard")
+@RequestMapping("scss/scancard")
 public class ScanCardController {
 
   @Autowired
@@ -42,14 +42,14 @@ public class ScanCardController {
     return new ResponseEntity<CardValidationDto>(cardValidation, HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/bycardid/{cardID}", method = RequestMethod.GET,
+  @RequestMapping(value = "/card/{cardID}", method = RequestMethod.GET,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public ResponseEntity<CardValidationDto> validateCardByCardId(@PathVariable("cardID") Long cardID) {
     CardValidationDto cardValidation = cardValidationService.validateCard(cardID);
     return new ResponseEntity<CardValidationDto>(cardValidation, HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/{cardNo}/scuinfo", method = RequestMethod.GET,
+  @RequestMapping(value = "/card/{cardNo}/scuinfo", method = RequestMethod.GET,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public ResponseEntity<SCUInfoDto> selectSCUInfo(@PathVariable("cardNo") String cardNo, HttpServletRequest request) {
     String webIPAddress = UserIpAddressUtil.getUserIp(request);

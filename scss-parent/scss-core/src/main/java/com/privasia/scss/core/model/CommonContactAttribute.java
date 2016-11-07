@@ -5,11 +5,14 @@ package com.privasia.scss.core.model;
 
 import java.io.Serializable;
 
+import javax.persistence.Embeddable;
+
 
 /**
  * @author Janaka
  *
  */
+@Embeddable
 public class CommonContactAttribute implements Serializable {
 	
 	/**
