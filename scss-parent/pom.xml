@@ -11,7 +11,7 @@
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>1.4.0.RELEASE</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		 <!-- <relativePath/> lookup parent from repository -->
 	</parent>
 
 	<properties>
@@ -22,9 +22,20 @@
 		<mvn.surefire.plugin-version>2.16</mvn.surefire.plugin-version>
 		<skipTests>true</skipTests>
 		<spymemcached.version>2.8.4</spymemcached.version>
+		<commons-logging.version>1.1.3</commons-logging.version>
 	</properties>
 
 	<dependencies>
+	     <dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+			<exclusions>
+		        <exclusion>
+		            <groupId>org.springframework.boot</groupId>
+		            <artifactId>spring-boot-starter-tomcat</artifactId>
+		        </exclusion>
+		    </exclusions>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-aop</artifactId>
@@ -50,21 +61,7 @@
     		<artifactId>ojdbc6</artifactId>
     		<version>11.2.0.3</version>
 		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
-			<exclusions>
-		        <exclusion>
-		            <groupId>org.springframework.boot</groupId>
-		            <artifactId>spring-boot-starter-tomcat</artifactId>
-		        </exclusion>
-		    </exclusions>
-		</dependency>
-		<dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-tomcat</artifactId>
-            <scope>provided</scope>
-        </dependency>
+		
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -76,6 +73,20 @@
 		    <groupId>org.apache.commons</groupId>
 		    <artifactId>commons-lang3</artifactId>
 		    <version>3.0</version>
+		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/log4j/log4j -->
+		<dependency>
+		    <groupId>log4j</groupId>
+		    <artifactId>log4j</artifactId>
+		    <version>1.2.17</version>
+		</dependency>
+
+		
+		<dependency>
+			<groupId>commons-logging</groupId>
+			<artifactId>commons-logging</artifactId>
+			<version>${commons-logging.version}</version>
 		</dependency>
 		
 		<!-- https://mvnrepository.com/artifact/org.jadira.usertype/usertype.core -->
@@ -145,6 +156,6 @@
     <module>scss-master</module>
 	<module>scss-refer</module>
 	<module>scss-hpat</module>
-    <module>scss-client</module>
+    <module>scss-client</module>	
   </modules>
 </project>
