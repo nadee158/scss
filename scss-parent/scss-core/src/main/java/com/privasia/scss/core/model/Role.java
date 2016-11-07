@@ -4,7 +4,7 @@
 package com.privasia.scss.core.model;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.Set;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
@@ -56,8 +56,8 @@ public class Role extends AuditEntity implements Serializable {
   @Type(type = "yes_no")
   private boolean supervisorFlag;
 
-  @OneToMany(mappedBy = "roleRightsID")
-  private List<RoleRights> roleRights;
+  @OneToMany(mappedBy = "roleRightsID.role")
+  private Set<RoleRights> roleRights;
 
   public Long getRoleID() {
     return roleID;
@@ -90,5 +90,13 @@ public class Role extends AuditEntity implements Serializable {
   public void setSupervisorFlag(boolean supervisorFlag) {
     this.supervisorFlag = supervisorFlag;
   }
+
+public Set<RoleRights> getRoleRights() {
+	return roleRights;
+}
+
+public void setRoleRights(Set<RoleRights> roleRights) {
+	this.roleRights = roleRights;
+}
 
 }
