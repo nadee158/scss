@@ -3,13 +3,15 @@
  */
 package com.privasia.scss.core.util.enumusertype;
 
+import java.io.Serializable;
+
 import com.privasia.scss.core.util.constant.Nationality;
 
 /**
  * @author Janaka
  *
  */
-public class NationalityEnumUserType extends GeneralEnumMapUserType<Nationality> {
+public class NationalityEnumUserType extends GeneralEnumMapUserType<Nationality> implements Serializable {
 	
 	/**
 	 * 

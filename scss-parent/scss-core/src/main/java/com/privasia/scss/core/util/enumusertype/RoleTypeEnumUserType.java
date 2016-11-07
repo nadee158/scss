@@ -3,13 +3,15 @@
  */
 package com.privasia.scss.core.util.enumusertype;
 
+import java.io.Serializable;
+
 import com.privasia.scss.core.util.constant.RoleType;
 
 /**
  * @author Janaka
  *
  */
-public class RoleTypeEnumUserType extends GeneralEnumMapUserType<RoleType> {
+public class RoleTypeEnumUserType extends GeneralEnumMapUserType<RoleType> implements Serializable {
 	
 	/**
 	 * 

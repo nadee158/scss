@@ -3,13 +3,15 @@
  */
 package com.privasia.scss.core.util.enumusertype;
 
+import java.io.Serializable;
+
 import com.privasia.scss.core.util.constant.CompanyType;
 
 /**
  * @author Janaka
  *
  */
-public class CompanyTypeEnumUserType extends GeneralEnumMapUserType<CompanyType> {
+public class CompanyTypeEnumUserType extends GeneralEnumMapUserType<CompanyType> implements Serializable {
 	
 	/**
 	 * 

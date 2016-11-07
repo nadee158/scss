@@ -3,13 +3,15 @@
  */
 package com.privasia.scss.core.util.enumusertype;
 
+import java.io.Serializable;
+
 import com.privasia.scss.core.util.constant.ContainerPosition;
 
 /**
  * @author Janaka
  *
  */
-public class ContainerPositionEnumUserType extends GeneralEnumMapUserType<ContainerPosition> {
+public class ContainerPositionEnumUserType extends GeneralEnumMapUserType<ContainerPosition> implements Serializable {
 	
 	/**
 	 * 

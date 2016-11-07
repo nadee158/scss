@@ -32,21 +32,21 @@ public class AuditEntity implements Serializable {
    */
   private static final long serialVersionUID = 1L;
 
-  @Column(name = "ADD_BY")
+  @Column(name = "ADD_BY", nullable = true)
   @CreatedBy
   private Long addBy;
 
-  @Column(name = "UPDATE_BY")
+  @Column(name = "UPDATE_BY", nullable = true)
   @LastModifiedBy
   private Long updateBy;
 
   @CreatedDate
-  @Column(name = "DATETIME_ADD", nullable = false)
+  @Column(name = "DATETIME_ADD", nullable = true)
   @Type(type = "org.jadira.usertype.dateandtime.threeten.PersistentZonedDateTime")
   private ZonedDateTime dateTimeAdd;
 
   @LastModifiedDate
-  @Column(name = "DATETIME_UPDATE", nullable = false)
+  @Column(name = "DATETIME_UPDATE", nullable = true)
   @Type(type = "org.jadira.usertype.dateandtime.threeten.PersistentZonedDateTime")
   private ZonedDateTime dateTimeUpdate;
 

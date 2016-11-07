@@ -3,13 +3,15 @@
  */
 package com.privasia.scss.core.util.enumusertype;
 
+import java.io.Serializable;
+
 import com.privasia.scss.core.util.constant.SolasInstructionType;
 
 /**
  * @author Janaka
  *
  */
-public class SolasInstructionEnumUserType extends GeneralEnumMapUserType<SolasInstructionType> {
+public class SolasInstructionEnumUserType extends GeneralEnumMapUserType<SolasInstructionType> implements Serializable {
 	
 	/**
 	 * 

@@ -139,7 +139,5 @@ public class CommonContactAttribute implements Serializable {
 	public void setCountry(Country country) {
 		this.country = country;
 	}
-	
-	
 
 }

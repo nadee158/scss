@@ -18,22 +18,22 @@ public class JwtSettings {
 	/**
      * {@link JwtToken} will expire after this time.
      */
-    private Integer tokenExpirationTime;
+    private Integer tokenExpirationTime = new Integer(15);
 
     /**
      * Token issuer.
      */
-    private String tokenIssuer;
+    private String tokenIssuer = new String("http://scss.com.my");
     
     /**
      * Key is used to sign {@link JwtToken}.
      */
-    private String tokenSigningKey;
+    private String tokenSigningKey = new String("xm8EV6Hy5RMFK4EEACIDAwQus");
     
     /**
      * {@link JwtToken} can be refreshed during this timeframe.
      */
-    private Integer refreshTokenExpTime;
+    private Integer refreshTokenExpTime = new Integer(60);
     
     public Integer getRefreshTokenExpTime() {
         return refreshTokenExpTime;

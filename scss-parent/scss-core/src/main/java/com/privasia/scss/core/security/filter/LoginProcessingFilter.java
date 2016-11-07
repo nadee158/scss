@@ -55,10 +55,6 @@ public class LoginProcessingFilter extends AbstractAuthenticationProcessingFilte
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
             throws AuthenticationException, IOException, ServletException {
     	
-    	System.out.println("WebUtil.isAjax(request) : "+ WebUtil.isAjax(request));
-    	
-    	System.out.println("HttpMethod.POST.name() : "+ HttpMethod.POST.name());
-    	
         if (!HttpMethod.POST.name().equals(request.getMethod()) || !WebUtil.isAjax(request)) {
             if(logger.isDebugEnabled()) {
                 logger.debug("Authentication method not supported. Request method: " + request.getMethod());

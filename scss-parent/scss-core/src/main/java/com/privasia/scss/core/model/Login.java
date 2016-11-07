@@ -5,8 +5,6 @@ package com.privasia.scss.core.model;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -20,9 +18,6 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import com.privasia.scss.common.security.Authority;
-import com.privasia.scss.common.security.User;
-import com.privasia.scss.core.util.constant.UserStatus;
 
 
 
@@ -46,7 +41,7 @@ public class Login extends AuditEntity implements Serializable {
   @Column(name = "LGN_LOGINID_SEQ")
   private Long loginID;
 
-  @ManyToOne(fetch = FetchType.EAGER)
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "USR_USERID", nullable = false, referencedColumnName = "SYS_USERID_SEQ")
   private SystemUser systemUser;
 

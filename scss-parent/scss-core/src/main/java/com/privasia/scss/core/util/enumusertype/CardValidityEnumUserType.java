@@ -3,13 +3,15 @@
  */
 package com.privasia.scss.core.util.enumusertype;
 
+import java.io.Serializable;
+
 import com.privasia.scss.core.util.constant.CardValidityType;
 
 /**
  * @author Janaka
  *
  */
-public class CardValidityEnumUserType extends GeneralEnumMapUserType<CardValidityType> {
+public class CardValidityEnumUserType extends GeneralEnumMapUserType<CardValidityType> implements Serializable {
 
 	/**
 	 * 

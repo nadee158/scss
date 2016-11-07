@@ -3,13 +3,15 @@
  */
 package com.privasia.scss.core.util.enumusertype;
 
+import java.io.Serializable;
+
 import com.privasia.scss.core.util.constant.ReferStatus;
 
 /**
  * @author Janaka
  *
  */
-public class ReferStatusEnumUserType extends GeneralEnumMapUserType<ReferStatus> {
+public class ReferStatusEnumUserType extends GeneralEnumMapUserType<ReferStatus> implements Serializable {
 	
 	/**
 	 * 
