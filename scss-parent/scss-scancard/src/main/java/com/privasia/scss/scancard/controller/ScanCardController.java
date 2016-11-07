@@ -53,17 +53,9 @@ public class ScanCardController {
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public ResponseEntity<SCUInfoDto> selectSCUInfo(@PathVariable("cardNo") String cardNo, HttpServletRequest request) {
     String webIPAddress = UserIpAddressUtil.getUserIp(request);
-    String baseUrl = getBaseUrl(request);
+    String baseUrl = UserIpAddressUtil.getBaseUrl(request);
     SCUInfoDto dto = cardService.selectSCUInfo(cardNo, webIPAddress, baseUrl);
     return new ResponseEntity<SCUInfoDto>(dto, HttpStatus.OK);
-  }
-
-  private String getBaseUrl(HttpServletRequest request) {
-    // http://localhost:8080/
-    // String baseUrl = String.format("%s://%s:%d/",request.getScheme(), request.getServerName(),
-    // request.getServerPort());
-    // http://localhost:
-    return String.format("%s://%s:", request.getScheme(), request.getServerName());
   }
 
   @RequestMapping(value = "/{cardID}/scuinfo/bycardid", method = RequestMethod.GET,
@@ -71,7 +63,7 @@ public class ScanCardController {
   public ResponseEntity<SCUInfoDto> selectSCUInfoByCardId(@PathVariable("cardID") Long cardID,
       HttpServletRequest request) {
     String webIPAddress = UserIpAddressUtil.getUserIp(request);
-    String baseUrl = getBaseUrl(request);
+    String baseUrl = UserIpAddressUtil.getBaseUrl(request);
     SCUInfoDto dto = cardService.selectSCUInfo(cardID, webIPAddress, baseUrl);
     return new ResponseEntity<SCUInfoDto>(dto, HttpStatus.OK);
   }

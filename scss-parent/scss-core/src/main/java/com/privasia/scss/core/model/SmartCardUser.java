@@ -5,6 +5,7 @@ package com.privasia.scss.core.model;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
@@ -20,6 +21,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -102,6 +104,9 @@ public class SmartCardUser extends AuditEntity implements Serializable {
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
 	@JoinColumn(name = "SCU_ADDRCOUNTRY", nullable = true, referencedColumnName = "CON_CODE")
 	private Country country;
+	
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "cardID")
+	private Set<Card> card;
 
 	public Gender getGender() {
 		return gender;
@@ -182,5 +187,15 @@ public class SmartCardUser extends AuditEntity implements Serializable {
 	public void setCountry(Country country) {
 		this.country = country;
 	}
+
+	public Set<Card> getCard() {
+		return card;
+	}
+
+	public void setCard(Set<Card> card) {
+		this.card = card;
+	}
+	
+	
 
 }

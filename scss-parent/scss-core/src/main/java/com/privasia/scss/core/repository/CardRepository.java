@@ -24,14 +24,6 @@ public interface CardRepository extends BaseRepository<Card, Long> {
 
   Card findByCardIDAndCardStatus(String cardIdSeq, CardStatus active);
 
-//  @formatter:off
-//  sql =
-//      " SELECT card.CRD_SCARDNO, scuser.SCU_NEWNRICNO, scuser.SCU_OLDNRICNO, scuser.SCU_PASSPORTNO, comp.COM_CODE \n" //
-//          + " FROM SCSS_SCUSER scuser \n" //
-//          + " LEFT JOIN SCSS_CARD card ON scuser.SCU_USERID_SEQ = card.SCU_USERID \n" //
-//          + " LEFT JOIN SCSS_COMPANY comp ON comp.COM_ID_SEQ = card.COM_ID \n" //
-//          + " WHERE comp.COM_TYPE = 'H' AND card.CRD_CARDID_SEQ = '" + cardIdSeq + "'";//
-//@formatter:on
   Optional<Card> findByCardIDAndCompany_CompanyType(Long cardNo, CompanyType companyType);
 
   @Query(name = "Card.getSmartCardInfoByCardNo")

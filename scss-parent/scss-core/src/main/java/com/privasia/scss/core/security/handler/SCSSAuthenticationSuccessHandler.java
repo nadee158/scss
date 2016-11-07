@@ -54,7 +54,7 @@ public class SCSSAuthenticationSuccessHandler implements AuthenticationSuccessHa
         tokenMap.put("refreshToken", refreshToken.getToken());
 
         response.setStatus(HttpStatus.OK.value());
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         mapper.writeValue(response.getWriter(), tokenMap);
 
         clearAuthenticationAttributes(request);
