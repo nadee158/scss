@@ -2,10 +2,9 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	
-	<groupId>com.privasia.scss.master</groupId>
 	<artifactId>scss-master</artifactId>
 	<packaging>war</packaging>
-	<name>scss-master Maven Webapp</name>
+	<name>scss-master</name>
 	
 	<parent>
 		<groupId>com.privasia.scss</groupId>
