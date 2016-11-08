@@ -1,18 +1,16 @@
 package com.privasia.scss.core.config;
 
-import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
-import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheManager;
-import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 
-// @Configuration
-// @EnableCaching
-public class CacheConfig extends CachingConfigurerSupport {
+@Configuration
+public class CacheConfig  {
 
   @Value("${redis.hostname}")
   private String redisHostName;
@@ -35,10 +33,11 @@ public class CacheConfig extends CachingConfigurerSupport {
     return redisConnectionFactory;
   }
 
-  @Bean(name = "customRedisTemplate", autowire = Autowire.BY_NAME)
-  public RedisTemplate<String, String> redisTemplate(RedisConnectionFactory cf) {
+  @Bean
+  public RedisTemplate<String, String> redisTemplate() {
     RedisTemplate<String, String> redisTemplate = new RedisTemplate<String, String>();
-    redisTemplate.setConnectionFactory(cf);
+    redisTemplate.setConnectionFactory(redisConnectionFactory());
+    redisTemplate.setKeySerializer(new StringRedisSerializer());
     return redisTemplate;
   }
 

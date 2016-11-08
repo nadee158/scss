@@ -14,7 +14,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
@@ -39,10 +38,8 @@ public class SCSSAuthenticationSuccessHandler implements AuthenticationSuccessHa
   private final ObjectMapper mapper;
   private final JwtTokenFactory tokenFactory;
 
-  // inject the actual customRedisTemplate
   @Autowired
-  @Qualifier("customRedisTemplate")
-  private RedisTemplate<String, String> customRedisTemplate;
+  private RedisTemplate<String, String> redisTemplate;
 
 
   @Autowired
@@ -76,21 +73,21 @@ public class SCSSAuthenticationSuccessHandler implements AuthenticationSuccessHa
   public void addTokenDetailsToCache(String token, String refreshToken, UserContext userContext) {
     try {
       String key = userContext.getUsername();
-      customRedisTemplate.opsForHash().put(key, "id", UUID.randomUUID().toString());
-      customRedisTemplate.opsForHash().put(key, "username", userContext.getUsername());
-      customRedisTemplate.opsForHash().put(key, "authorities", userContext.getAuthorities().toString());
-      customRedisTemplate.opsForHash().put(key, "token", token);
-      customRedisTemplate.opsForHash().put(key, "refreshToken", refreshToken);
+      redisTemplate.opsForHash().put(key, "id", UUID.randomUUID().toString());
+      redisTemplate.opsForHash().put(key, "username", userContext.getUsername());
+      redisTemplate.opsForHash().put(key, "authorities", userContext.getAuthorities().toString());
+      redisTemplate.opsForHash().put(key, "token", token);
+      redisTemplate.opsForHash().put(key, "refreshToken", refreshToken);
 
-      ListOperations<String, String> listOps = customRedisTemplate.opsForList();
+      ListOperations<String, String> listOps = redisTemplate.opsForList();
       listOps.leftPush("userLoginList", key);
 
-      customRedisTemplate.opsForSet().add("tokens", token);
+      redisTemplate.opsForSet().add("tokens", token);
 
       String refreshTokenKey = refreshToken;
-      customRedisTemplate.opsForHash().put(refreshTokenKey, "token", UUID.randomUUID().toString());
+      redisTemplate.opsForHash().put(refreshTokenKey, "token", UUID.randomUUID().toString());
 
-      customRedisTemplate.opsForSet().add("refreshTokens", refreshTokenKey);
+      redisTemplate.opsForSet().add("refreshTokens", refreshTokenKey);
 
     } catch (Exception e) {
       e.printStackTrace();

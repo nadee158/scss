@@ -57,8 +57,7 @@ public class RefreshTokenEndpoint {
   private TokenExtractor tokenExtractor;
 
   @Autowired
-  @Qualifier("customRedisTemplate")
-  private RedisTemplate<String, String> customRedisTemplate;
+  private RedisTemplate<String, String> redisTemplate;
 
   @RequestMapping(value = "token", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE},
       consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
@@ -94,20 +93,20 @@ public class RefreshTokenEndpoint {
   public void addTokenDetailsToCache(String token, String refreshToken, UserContext userContext) {
     try {
       String key = userContext.getUsername();
-      customRedisTemplate.opsForHash().put(key, "id", UUID.randomUUID().toString());
-      customRedisTemplate.opsForHash().put(key, "username", userContext.getUsername());
-      customRedisTemplate.opsForHash().put(key, "authorities", userContext.getAuthorities());
-      customRedisTemplate.opsForHash().put(key, "token", token);
-      customRedisTemplate.opsForHash().put(key, "refreshToken", refreshToken);
+      redisTemplate.opsForHash().put(key, "id", UUID.randomUUID().toString());
+      redisTemplate.opsForHash().put(key, "username", userContext.getUsername());
+      redisTemplate.opsForHash().put(key, "authorities", userContext.getAuthorities());
+      redisTemplate.opsForHash().put(key, "token", token);
+      redisTemplate.opsForHash().put(key, "refreshToken", refreshToken);
 
-      ListOperations<String, String> listOps = customRedisTemplate.opsForList();
+      ListOperations<String, String> listOps = redisTemplate.opsForList();
       listOps.leftPush("userLoginList", key);
 
-      customRedisTemplate.opsForSet().add("tokens", token);
+      redisTemplate.opsForSet().add("tokens", token);
 
       String refreshTokenKey = refreshToken;
-      customRedisTemplate.opsForHash().put(refreshTokenKey, "token", token);
-      customRedisTemplate.opsForSet().add("refreshTokens", refreshTokenKey);
+      redisTemplate.opsForHash().put(refreshTokenKey, "token", token);
+      redisTemplate.opsForSet().add("refreshTokens", refreshTokenKey);
 
     } catch (Exception e) {
       e.printStackTrace();
@@ -118,26 +117,26 @@ public class RefreshTokenEndpoint {
       UserContext userContext) {
     String key = userContext.getUsername();
 
-    customRedisTemplate.opsForHash().delete(key, "token");
+    redisTemplate.opsForHash().delete(key, "token");
 
-    String existingRecord = (String) customRedisTemplate.opsForHash().get(key, "id");
+    String existingRecord = (String) redisTemplate.opsForHash().get(key, "id");
 
     if (!(existingRecord == null)) {
-      customRedisTemplate.opsForHash().put(key, "token", newtoken);
+    	redisTemplate.opsForHash().put(key, "token", newtoken);
     }
 
     String refreshTokenKey = refreshToken;
 
     // delete old token
-    customRedisTemplate.opsForSet().remove("tokens", oldToken);
-    customRedisTemplate.opsForHash().delete(refreshTokenKey, "tokens");
+    redisTemplate.opsForSet().remove("tokens", oldToken);
+    redisTemplate.opsForHash().delete(refreshTokenKey, "tokens");
 
     // add new token
-    customRedisTemplate.opsForSet().add("tokens", newtoken);
+    redisTemplate.opsForSet().add("tokens", newtoken);
 
 
-    customRedisTemplate.opsForHash().put(refreshTokenKey, "token", newtoken);
-    customRedisTemplate.opsForSet().add("refreshTokens", refreshTokenKey);
+    redisTemplate.opsForHash().put(refreshTokenKey, "token", newtoken);
+    redisTemplate.opsForSet().add("refreshTokens", refreshTokenKey);
 
   }
 
