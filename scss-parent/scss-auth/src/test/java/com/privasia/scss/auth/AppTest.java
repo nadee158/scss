@@ -1,4 +1,4 @@
-package com.privasia.scss.refer;
+package com.privasia.scss.auth;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
