@@ -6,6 +6,7 @@ package com.privasia.scss.core.security.handler;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -13,6 +14,10 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.data.redis.core.HashOperations;
+import org.springframework.data.redis.core.ListOperations;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
@@ -34,6 +39,11 @@ public class SCSSAuthenticationSuccessHandler implements AuthenticationSuccessHa
 
 	private final ObjectMapper mapper;
 	private final JwtTokenFactory tokenFactory;
+	
+	// inject the actual template
+    @Autowired
+    private RedisTemplate<String, String> template;
+    
 
 	@Autowired
 	public SCSSAuthenticationSuccessHandler(final ObjectMapper mapper, final JwtTokenFactory tokenFactory) {
@@ -53,7 +63,7 @@ public class SCSSAuthenticationSuccessHandler implements AuthenticationSuccessHa
 		tokenMap.put("token", accessToken.getToken());
 		tokenMap.put("refreshToken", refreshToken.getToken());
 
-		String userName = addTokenDetailsToCache(accessToken.getToken(), userContext.getUsername());
+		addTokenDetailsToCache(accessToken.getToken(), refreshToken.getToken(), userContext);
 
 		response.setStatus(HttpStatus.OK.value());
 		response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
@@ -62,11 +72,29 @@ public class SCSSAuthenticationSuccessHandler implements AuthenticationSuccessHa
 		clearAuthenticationAttributes(request);
 	}
 
-	// @CachePut(cacheNames = "usetName", key = "#token")
-	public String addTokenDetailsToCache(String token, String userName) {
-		System.out.println("token :" + token);
-		System.out.println("userName :" + userName);
-		return userName;
+	
+	public void addTokenDetailsToCache(String token, String refreshToken, UserContext userContext) {
+		try {
+			String key = userContext.getUsername();
+			template.opsForHash().put(key, "id", UUID.randomUUID().toString());
+			template.opsForHash().put(key, "username", userContext.getUsername());
+			template.opsForHash().put(key, "authorities", userContext.getAuthorities());
+			template.opsForHash().put(key, "token", token);
+			template.opsForHash().put(key, "refreshToken", refreshToken);
+			
+			ListOperations<String,String> listOps = template.opsForList();
+			listOps.leftPush("userLoginList", key);
+			
+			template.opsForSet().add("tokens", token);
+			
+			String refreshTokenKey = refreshToken;
+			template.opsForHash().put(refreshTokenKey, "token", UUID.randomUUID().toString());
+			
+			template.opsForSet().add("refreshTokens", refreshTokenKey);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
