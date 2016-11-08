@@ -10,6 +10,7 @@
 		<version>1.0</version>
 	</parent>
 	
+	<groupId>com.privasia.scss.core</groupId>
 	<artifactId>scss-core</artifactId>
 	<name>scss-core</name>
 	<url>http://maven.apache.org</url>

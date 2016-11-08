@@ -35,7 +35,7 @@ import com.privasia.scss.gatein.dto.ExportSSR;
 import com.privasia.scss.gatein.dto.VesselOmitDto;
 import com.privasia.scss.gatein.service.ClientService;
 import com.privasia.scss.gatein.service.ContainerService;
-import com.privasia.scss.gatein.service.GlobalSettingService;
+import com.privasia.scss.gatein.service.WDCGlobalSettingService;
 import com.privasia.scss.gatein.service.IsoCodeService;
 import com.privasia.scss.gatein.service.VesselOmitService;
 import com.privasia.scss.gatein.util.DGContDesc;
@@ -60,7 +60,7 @@ public class GateInExpNormalController {
   private ClientService clientService;
 
   @Autowired
-  private GlobalSettingService globalSettingService;
+  private WDCGlobalSettingService wDCGlobalSettingService;
 
   @Autowired
   private IsoCodeService isoCodeService;
@@ -159,7 +159,7 @@ public class GateInExpNormalController {
                  */
                 // f.setAllowBypassDgVal(super.log(request, AccessRight.GATE_BYPASS_DG_VALIDATION));
 
-                calculateWeightBridge(c1, c2, gateInInfo.getWeightBridge());
+                //calculateWeightBridge(c1, c2, gateInInfo.getWeightBridge());
 
                 returnedView = "VIEW.NORMAL";
               
@@ -170,11 +170,6 @@ public class GateInExpNormalController {
             returnMessage = "";
             f.setGateImpOrExp("Exports.EXP_FLAG");
 
-            refreshWeightForEmptyContainer(c1);
-
-            refreshWeightForEmptyContainer(c2);
-
-            calculateWeightBridge(c1, c2, gateInInfo.getWeightBridge());
 
             /**
              * Damage Container 1
@@ -243,67 +238,6 @@ public class GateInExpNormalController {
   //@formatter:on
   }
 
-  private void refreshWeightForEmptyContainer(Container c) {
-    /**
-     * Refresh the Weight For Empty Container
-     */
-    if ("E".equals(c.getFullOrEmpty())) {
-      IsoCodeDto isoCodeDto = isoCodeService.getIsoCodeTarWeight(c.getISO());
-
-      c.setNetWeight("" + isoCodeDto.getTareWeight());
-      c.setEmptyWeight("" + isoCodeDto.getTareWeight());
-    }
-
-  }
-
-  private void calculateWeightBridge(Container c1, Container c2, String weightBridge) {
-
-    if (c1 != null) {
-      c1.setNetWeight("");
-      c1.setTotalWeightBridge(weightBridge);
-    }
-
-    if (c2 != null) {
-      c2.setNetWeight("");
-      c2.setTotalWeightBridge(weightBridge);
-    }
-
-    if (StringUtils.isNotBlank(c1.getContainerNo()) && StringUtils.isNotBlank(c2.getContainerNo())) {
-      if ("E".equals(c1.getFullOrEmpty()) && "E".equals(c2.getFullOrEmpty())) {
-        c1.setNetWeight(c1.getEmptyWeight());
-        c2.setNetWeight(c2.getEmptyWeight());
-
-        double totalWeightBridge = new Double(c1.getEmptyWeight()) + new Double(c2.getEmptyWeight());
-        c1.setTotalWeightBridge("" + totalWeightBridge);
-        c2.setTotalWeightBridge("" + totalWeightBridge);
-      } else if ("E".equals(c1.getFullOrEmpty()) && "F".equals(c2.getFullOrEmpty())) {
-        c1.setNetWeight(c1.getEmptyWeight());
-        c1.setTotalWeightBridge("" + c1.getEmptyWeight());
-
-        c2.setNetWeight("");
-        c2.setTotalWeightBridge("" + (new Double(weightBridge) - new Double(c1.getEmptyWeight())));
-
-      } else if ("E".equals(c2.getFullOrEmpty()) && "F".equals(c1.getFullOrEmpty())) {
-        c2.setNetWeight(c2.getEmptyWeight());
-        c2.setTotalWeightBridge("" + c2.getEmptyWeight());
-
-        c1.setNetWeight("");
-        c1.setTotalWeightBridge("" + (new Double(weightBridge) - new Double(c2.getEmptyWeight())));
-      } else {
-        c1.setTotalWeightBridge(weightBridge);
-        c2.setTotalWeightBridge(weightBridge);
-      }
-    } else if (StringUtils.isNotBlank(c1.getContainerNo())) {
-      if ("E".equals(c1.getFullOrEmpty())) {
-        c1.setNetWeight(c1.getEmptyWeight());
-        c1.setTotalWeightBridge(c1.getEmptyWeight());
-      } else {
-        c1.setNetWeight(c1.getNetWeight());
-        c1.setTotalWeightBridge(weightBridge);
-      }
-    }
-  }
-
   private String checkIfDGContainer(Container c, String returnMessage) throws Exception {
 
     if (returnMessage == null) {
@@ -311,7 +245,7 @@ public class GateInExpNormalController {
     }
 
     String globalCode = "LPK_EDI";
-    String globalSetting = globalSettingService.getWDCGlobalSeeting(globalCode);
+    String globalSetting = wDCGlobalSettingService.getWDCGlobalSeeting(globalCode);
     if ("Y".equalsIgnoreCase(globalSetting)) {
 
       c.setLpkEdiEnabled("Y");
@@ -464,7 +398,7 @@ public class GateInExpNormalController {
         returnmsg += MessageCode.format("ERR_MSG_015", new Object[] {c.getContainerNo()}) + ReturnMsg.SEPARATOR;
       }
 
-      returnmsg += validateVesselOmitDto(c);
+      
 
       returnmsg += validateContainerAllowedIn(c);
 
@@ -483,7 +417,7 @@ public class GateInExpNormalController {
         c.setExpSSRBlockStatus("RLS");
       }
       if (StringUtils.isNotEmpty(gateInInfo.getWeightBridge())) {
-        c.setNetWeight(gateInInfo.getWeightBridge());
+        //c.setNetWeight(gateInInfo.getWeightBridge());
       }
     }
 
@@ -517,31 +451,7 @@ public class GateInExpNormalController {
     return returnmsg;
   }
 
-  private String validateVesselOmitDto(Container c) throws Exception {
-    String returnmsg = null;
-    if (StringUtils.isNotBlank(c.getAgentCode()) && StringUtils.isNotBlank(c.getLineCode())) {
-      /*
-       * Vessel OMIT Container 1
-       */
-      VesselOmitDto vesselOmitDto = vesselOmitService.getVesselOmit(c.getLineCode(), c.getAgentCode());
-      if (vesselOmitDto != null) {
-        if (StringUtils.isNotBlank(vesselOmitDto.getVesselVoyIn())) {
-          if (StringUtils.contains(c.getVesselVoyage(), vesselOmitDto.getVesselVoyIn())) {
-            returnmsg +=
-                MessageCode.format("ERR_MSG_081", new Object[] {c.getContainerNo(), vesselOmitDto.getLineCode(),
-                    vesselOmitDto.getAgentCode(), vesselOmitDto.getVesselVoyIn()}) + ReturnMsg.SEPARATOR;
-          }
-        } else if (StringUtils.isNotBlank(vesselOmitDto.getVesselVoyOut())) {
-          if (StringUtils.contains(c.getVesselVoyageOut(), vesselOmitDto.getVesselVoyOut())) {
-            returnmsg +=
-                MessageCode.format("ERR_MSG_081", new Object[] {c.getContainerNo(), vesselOmitDto.getLineCode(),
-                    vesselOmitDto.getAgentCode(), vesselOmitDto.getVesselVoyOut()}) + ReturnMsg.SEPARATOR;
-          }
-        }
-      }
-    }
-    return returnmsg;
-  }
+ 
 
   private Container findContainer(String containerNo) throws Exception {
     if (StringUtils.isNotEmpty(containerNo)) {

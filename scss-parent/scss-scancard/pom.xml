@@ -8,11 +8,11 @@
 		<artifactId>scss-parent</artifactId>
 		<version>1.0</version>
 	</parent>
-
+	
+	<groupId>com.privasia.scss.scancard</groupId>
 	<artifactId>scss-scancard</artifactId>
 	<name>scss-scancard</name>
 	<packaging>war</packaging>
-
 	<url>http://maven.apache.org</url>
 	
 	<properties>

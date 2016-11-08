@@ -50,7 +50,8 @@ public class RefreshTokenEndpoint {
     private SecurityService securityService;
     @Autowired 
     private TokenVerifier tokenVerifier;
-    @Autowired @Qualifier("jwtHeaderTokenExtractor") 
+    @Autowired 
+    @Qualifier("jwtHeaderTokenExtractor") 
     private TokenExtractor tokenExtractor;
     
     @RequestMapping(value="token", method=RequestMethod.GET, produces={ MediaType.APPLICATION_JSON_UTF8_VALUE },

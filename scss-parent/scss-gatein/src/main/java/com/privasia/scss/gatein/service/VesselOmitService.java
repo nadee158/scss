@@ -2,47 +2,57 @@ package com.privasia.scss.gatein.service;
 
 import java.util.Optional;
 
-import javax.transaction.Transactional;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.privasia.scss.core.dto.Container;
+import com.privasia.scss.core.exception.ResultsNotFoundException;
 import com.privasia.scss.core.model.VesselOmit;
 import com.privasia.scss.core.model.VesselOmitPK;
 import com.privasia.scss.core.repository.VesselOmitRepository;
-import com.privasia.scss.gatein.dto.VesselOmitDto;
 
 /**
- * @author nadee158 - this code was taken from GateInDAOImpl in to VesselOmit's own service
+ * @author janakaw
  */
 @Service("vesselOmitService")
-@Transactional
 public class VesselOmitService {
 
   @Autowired
   private VesselOmitRepository vesselOmitRepository;
-
-  public VesselOmitDto getVesselOmit(String lineCode, String agentCode) throws Exception {
+  
+  @Transactional(propagation=Propagation.REQUIRED, readOnly=false)
+  public VesselOmit getVesselOmit(String lineCode, String agentCode) {
     VesselOmitPK primaryKey = new VesselOmitPK();
     primaryKey.setAgent(StringUtils.trim(agentCode));
     primaryKey.setLine(StringUtils.trim(lineCode));
-    // String sql = " SELECT LINE, AGENT, VESSEL_VOY_IN, VESSEL_VOY_OUT \n"//
-    // + " FROM SCSS_VESSEL_OMIT " + " WHERE LINE = ? AND AGENT = ? ";
     Optional<VesselOmit> vesselOmit = vesselOmitRepository.findOne(primaryKey);
-    return convertModelToDto(vesselOmit.orElse(null));
+    return vesselOmit.orElseThrow(() -> new ResultsNotFoundException("VesselOmit not found for linecode / agentCode : "+lineCode+" / "+agentCode));
   }
-
-  private VesselOmitDto convertModelToDto(VesselOmit vesselOmit) {
-    if (!(vesselOmit == null)) {
-      VesselOmitDto vesselOmitDto = new VesselOmitDto();
-      vesselOmitDto.setLineCode(vesselOmit.getVesselOmitID().getLine());
-      vesselOmitDto.setAgentCode(vesselOmit.getVesselOmitID().getAgent());
-      vesselOmitDto.setVesselVoyIn(vesselOmit.getVesselVoyIN());
-      vesselOmitDto.setVesselVoyOut(vesselOmit.getVesselVoyOUT());
-      return vesselOmitDto;
-    }
-    return null;
+  
+  public boolean isValidVesselOmit(Container c){
+	  
+	  VesselOmit vesselOmit = getVesselOmit(c.getLine(), c.getAgentCode());
+	  if (StringUtils.contains(c.getVesselVoyageIn(), vesselOmit.getVesselVoyIN())) {
+		 //return business exception
+		  /*returnmsg += MessageCode.format("ERR_MSG_081",
+					new Object[] { f.getContainerNoC2(), vesselOmitDto.getLineCode(),
+							vesselOmitDto.getAgentCode(), vesselOmitDto.getVesselVoyIn() })
+					+ ReturnMsg.SEPARATOR;*/
+	  }
+	  
+	  if (StringUtils.contains(c.getVesselVoyageOut(), vesselOmit.getVesselVoyOUT())) {
+			 //return business exception
+			  /*returnmsg += MessageCode.format("ERR_MSG_081",
+					new Object[] { f.getContainerNoC2(), vesselOmitDto.getLineCode(),
+					vesselOmitDto.getAgentCode(), vesselOmitDto.getVesselVoyOut() })
+					+ ReturnMsg.SEPARATOR;*/
+	  }
+	  return true;
   }
+  
 
+ 
 }

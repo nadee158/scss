@@ -21,15 +21,10 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="SCSS_VESSEL_OMIT")
-@AttributeOverrides({
-    @AttributeOverride(name="addBy",
-                       column=@Column(name="ADD_BY")),
-    @AttributeOverride(name="updateBy",
-                       column=@Column(name="UPDATE_BY")),
-    @AttributeOverride(name="dateTimeAdd",
-    				   column=@Column(name="DATETIME_ADD")),
-    @AttributeOverride(name="dateTimeUpdate",
-                       column=@Column(name="DATETIME_UPDATE"))
+@AttributeOverrides({@AttributeOverride(name="addBy", column=@Column(name="ADD_BY")),
+    @AttributeOverride(name="updateBy", column=@Column(name="UPDATE_BY")),
+    @AttributeOverride(name="dateTimeAdd", column=@Column(name="DATETIME_ADD")),
+    @AttributeOverride(name="dateTimeUpdate", column=@Column(name="DATETIME_UPDATE"))
 })
 public class VesselOmit extends AuditEntity implements Serializable {
 	

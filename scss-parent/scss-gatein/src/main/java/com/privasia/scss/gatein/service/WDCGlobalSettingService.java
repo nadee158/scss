@@ -7,9 +7,9 @@ import org.springframework.stereotype.Service;
 
 import com.privasia.scss.core.repository.GlobalSettingRepository;
 
-@Service("globalSettingService")
+@Service("wdcGlobalSettingService")
 @Transactional
-public class GlobalSettingService {
+public class WDCGlobalSettingService {
 
   @Autowired
   private GlobalSettingRepository globalSettingRepository;

@@ -10,6 +10,7 @@ import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -56,7 +57,7 @@ public class Role extends AuditEntity implements Serializable {
   @Type(type = "yes_no")
   private boolean supervisorFlag;
 
-  @OneToMany(mappedBy = "roleRightsID.role")
+  @OneToMany(fetch = FetchType.EAGER, mappedBy = "roleRightsID.role")
   private Set<RoleRights> roleRights;
 
   public Long getRoleID() {
