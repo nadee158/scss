@@ -10,7 +10,6 @@
 		<version>1.0</version>
 	</parent>
 	
-	<groupId>com.privasia.scss.refer</groupId>
 	<artifactId>scss-refer</artifactId>
 	<name>scss-refer</name>
 	<url>http://maven.apache.org</url>
