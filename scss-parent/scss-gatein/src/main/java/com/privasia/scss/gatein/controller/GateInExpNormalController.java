@@ -20,19 +20,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.privasia.scss.common.security.AuditContext;
-import com.privasia.scss.common.security.SecurityContext;
-import com.privasia.scss.common.security.SecurityHelper;
 import com.privasia.scss.common.util.DateUtil;
 import com.privasia.scss.common.util.MessageCode;
 import com.privasia.scss.common.util.ReturnMsg;
 import com.privasia.scss.core.dto.Container;
 import com.privasia.scss.core.dto.GateInForm;
 import com.privasia.scss.core.dto.GateInfo;
-import com.privasia.scss.core.dto.IsoCodeDto;
 import com.privasia.scss.core.util.constant.ButtonType;
 import com.privasia.scss.gatein.dto.ExportSSR;
-import com.privasia.scss.gatein.dto.VesselOmitDto;
 import com.privasia.scss.gatein.service.ClientService;
 import com.privasia.scss.gatein.service.ContainerService;
 import com.privasia.scss.gatein.service.WDCGlobalSettingService;
@@ -72,8 +67,7 @@ public class GateInExpNormalController {
     String returnedView = null;
     String menuId = (String) request.getParameter("menuId");
 
-    SecurityContext securityContext = SecurityHelper.getSecurityContext();
-    AuditContext auditContext = SecurityHelper.getAuditContext();
+   
     GateInfo gateInInfo = null;
 
     try {
@@ -135,6 +129,7 @@ public class GateInExpNormalController {
               // if yes then redirect to Gate In Export Bypass page
               // else redirect to Gate In Export page
 
+
                 // no place to use this info - previously assigned to the UI form
                 // SCUInfo scuInfo = cardService.selectSCUInfo(gateInInfo.getCardIdSeq());
                 // no place to use this info - previously assigned to the UI form
@@ -163,6 +158,31 @@ public class GateInExpNormalController {
 
                 returnedView = "VIEW.NORMAL";
               
+
+
+              /**
+               * Query Export Information
+               */
+              f = containerService.selectContainerNoInfo(f);
+
+              /**
+               * Check if container 1 is a DG container
+               */
+              returnMessage = returnMessage + checkIfDGContainer(c1, returnMessage);
+              /**
+               * Check if container 2 is a DG container
+               */
+              returnMessage = returnMessage + checkIfDGContainer(c2, returnMessage);
+
+              /**
+               * final step: Check if user is allowed to bypass DG validation
+               */
+              // f.setAllowBypassDgVal(super.log(request, AccessRight.GATE_BYPASS_DG_VALIDATION));
+
+        
+
+              returnedView = "VIEW.NORMAL";
+
 
             }
             break;
