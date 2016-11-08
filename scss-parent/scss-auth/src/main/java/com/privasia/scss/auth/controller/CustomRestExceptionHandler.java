@@ -210,7 +210,7 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
     logger.info(ex.getClass().getName());
     logger.error("error", ex);
     //
-    final ApiError apiError = new ApiError(HttpStatus.NO_CONTENT, ex.getMessage(), "No Results Found!");
+    final ApiError apiError = new ApiError(HttpStatus.OK, ex.getMessage(), "No Results Found!");
     return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
   }
 

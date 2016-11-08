@@ -25,7 +25,7 @@ public class SecurityService {
 
   // inject the actual template
   @Autowired
-  private RedisTemplate template;
+  private RedisTemplate<String, String> template;
 
   @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
   public Optional<Login> getByUsername(String username) throws UsernameNotFoundException {

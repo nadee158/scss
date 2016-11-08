@@ -57,7 +57,7 @@ public class RefreshTokenEndpoint {
   private TokenExtractor tokenExtractor;
 
   @Autowired
-  private RedisTemplate template;
+  private RedisTemplate<String, String> template;
 
   @RequestMapping(value = "token", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE},
       consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
