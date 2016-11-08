@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -23,9 +24,10 @@ public class SecurityService {
   @Autowired
   private LoginRepository loginRepository;
 
-  // inject the actual template
+  // inject the actual customRedisTemplate
   @Autowired
-  private RedisTemplate<String, String> template;
+  @Qualifier("customRedisTemplate")
+  private RedisTemplate<String, String> customRedisTemplate;
 
   @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
   public Optional<Login> getByUsername(String username) throws UsernameNotFoundException {
@@ -44,7 +46,7 @@ public class SecurityService {
 
   // @CacheEvict(cacheNames = "tokens", key = "#token")
   public void deleteTokenDetailsFromCache(String token) {
-    template.delete(token);
+    customRedisTemplate.delete(token);
   }
 
 

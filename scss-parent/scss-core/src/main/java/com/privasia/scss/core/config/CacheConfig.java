@@ -1,5 +1,6 @@
 package com.privasia.scss.core.config;
 
+import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CachingConfigurerSupport;
@@ -34,7 +35,7 @@ public class CacheConfig extends CachingConfigurerSupport {
     return redisConnectionFactory;
   }
 
-  @Bean
+  @Bean(name = "customRedisTemplate", autowire = Autowire.BY_NAME)
   public RedisTemplate<String, String> redisTemplate(RedisConnectionFactory cf) {
     RedisTemplate<String, String> redisTemplate = new RedisTemplate<String, String>();
     redisTemplate.setConnectionFactory(cf);
