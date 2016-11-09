@@ -9,11 +9,10 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.privasia.scss.core.config.WebSecurityConfig;
-import com.privasia.scss.core.security.model.token.RawAccessJwtToken;
+import com.privasia.scss.core.security.jwt.extractor.TokenExtractor;
 
 public final class SecurityHelper {
 
-  public static final String AUTH_HEADER_NAME = "X-AUTH-TOKEN";
 
   private static final String WINDOWS = "Windows";
   private static final String MAC = "Mac";
@@ -23,15 +22,15 @@ public final class SecurityHelper {
 
   private static final String SECURITY_CONTEXT = "SECURITY_CONTEXT";
   private static final String AUDIT_CONTEXT = "AUDIT_CONTEXT";
+  
 
-
-  public static SecurityContext getSecurityContext() {
+  public static SecurityContext getSecurityContext(TokenExtractor tokenExtractor) {
     HttpServletRequest request = getRequest();
     SecurityContext securityContext = null;
     if (request.getAttribute(SECURITY_CONTEXT) == null) {
-      String tokenPayload = request.getHeader(WebSecurityConfig.JWT_TOKEN_HEADER_PARAM);
+      String token = tokenExtractor.extract(request.getHeader(WebSecurityConfig.JWT_TOKEN_HEADER_PARAM));
 //      RawAccessJwtToken token = new RawAccessJwtToken(tokenExtractor.extract(tokenPayload));
-      securityContext = new SecurityContext(getRequest().getHeader(AUTH_HEADER_NAME));
+      securityContext = new SecurityContext(token);
       request.setAttribute(SECURITY_CONTEXT, securityContext);
     }
     return (SecurityContext) request.getAttribute(SECURITY_CONTEXT);

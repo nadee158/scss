@@ -15,9 +15,11 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import com.privasia.scss.core.config.JwtSettings;
+import com.privasia.scss.core.exception.JwtExpiredTokenException;
 import com.privasia.scss.core.security.model.UserContext;
 import com.privasia.scss.core.security.model.token.JwtAuthenticationToken;
 import com.privasia.scss.core.security.model.token.RawAccessJwtToken;
+import com.privasia.scss.core.service.CachedTokenValidatorService;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -31,6 +33,9 @@ import io.jsonwebtoken.Jws;
 public class JwtAuthenticationProvider implements AuthenticationProvider {
 
 	private final JwtSettings jwtSettings;
+	
+	@Autowired
+	private CachedTokenValidatorService cachedTokenValidatorService;
 
 	@Autowired
 	public JwtAuthenticationProvider(JwtSettings jwtSettings) {
@@ -42,6 +47,15 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 		RawAccessJwtToken rawAccessToken = (RawAccessJwtToken) authentication.getCredentials();
 
 		Jws<Claims> jwsClaims = rawAccessToken.parseClaims(jwtSettings.getTokenSigningKey());
+		
+		//is a valid key - check in cache now
+		
+		boolean isActiveToken=cachedTokenValidatorService.checkIfValidToken(rawAccessToken.getToken());
+		System.out.println("isActiveToken :" + isActiveToken);
+		if(!(isActiveToken)){
+			throw new JwtExpiredTokenException("JWT Token not available in cache!");
+		}
+		
 		String subject = jwsClaims.getBody().getSubject();
 		List<String> roles = jwsClaims.getBody().get("roles", List.class);
 		List<GrantedAuthority> authorities = roles.stream().map(authority -> new SimpleGrantedAuthority(authority))
