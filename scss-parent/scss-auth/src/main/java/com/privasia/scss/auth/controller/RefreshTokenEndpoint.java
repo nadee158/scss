@@ -4,6 +4,8 @@
 package com.privasia.scss.auth.controller;
 
 import java.io.IOException;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -11,7 +13,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.core.authority.AuthorityUtils;
@@ -40,7 +41,7 @@ import com.privasia.scss.core.service.SecurityService;
  *
  */
 @RestController
-@RequestMapping(value = "/api/auth")
+@RequestMapping(value = "/refreshtoken")
 public class RefreshTokenEndpoint {
 
 	@Autowired
@@ -54,11 +55,11 @@ public class RefreshTokenEndpoint {
 	@Autowired
 	@Qualifier("jwtHeaderTokenExtractor")
 	private TokenExtractor tokenExtractor;
-	
+
 	@Autowired
 	private CachedTokenValidatorService cachedTokenValidatorService;
 
-	@RequestMapping(value = "token", method = RequestMethod.GET, produces = {
+	@RequestMapping(value = "/", method = RequestMethod.GET, produces = {
 			MediaType.APPLICATION_JSON_UTF8_VALUE }, consumes = { MediaType.APPLICATION_JSON_UTF8_VALUE })
 
 	public @ResponseBody JwtToken refreshToken(HttpServletRequest request, HttpServletResponse response)
@@ -78,18 +79,22 @@ public class RefreshTokenEndpoint {
 		Login loguser = securityService.getByUsername(subject)
 				.orElseThrow(() -> new UsernameNotFoundException("User not found: " + subject));
 
+		Set<Long> functionList = loguser.getRole().getRoleRights().stream()
+				.map(roleRights -> roleRights.getRoleRightsID().getFunction().getFunctionID())
+				.collect(Collectors.toSet());
+
 		if (loguser.getRole() == null)
 			throw new InsufficientAuthenticationException("User has no roles assigned");
 
 		UserContext userContext = UserContext.create(loguser.getUserName(),
-				AuthorityUtils.createAuthorityList(loguser.getRole().getRoleName()));
+				AuthorityUtils.createAuthorityList(loguser.getRole().getRoleName()), functionList);
 
 		JwtToken accessToken = tokenFactory.createAccessJwtToken(userContext);
 
-		cachedTokenValidatorService.updateTokenDetailsOfCache(rawToken.getToken(), accessToken.getToken(), refreshToken.getToken(), userContext);
+		cachedTokenValidatorService.updateTokenDetailsOfCache(rawToken.getToken(), accessToken.getToken(),
+				refreshToken.getToken(), userContext);
 
 		return accessToken;
 	}
 
-	
 }

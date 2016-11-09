@@ -15,7 +15,7 @@ import com.privasia.scss.core.security.util.SecurityHelper;
 import com.privasia.scss.core.service.SecurityService;
 
 @RestController
-@RequestMapping(value = "/api/auth")
+@RequestMapping(value = "/")
 public class SecurityServiceController {
 
 	@Autowired
@@ -25,7 +25,7 @@ public class SecurityServiceController {
 	@Qualifier("jwtHeaderTokenExtractor")
 	private TokenExtractor tokenExtractor;
 
-	@RequestMapping(value = "signout", method = RequestMethod.GET, produces = {
+	@RequestMapping(value = "logout", method = RequestMethod.GET, produces = {
 			MediaType.APPLICATION_JSON_UTF8_VALUE }, consumes = { MediaType.APPLICATION_JSON_UTF8_VALUE })
 	public SignOutResponse signOut() {
 		AuditContext auditContext = SecurityHelper.getAuditContext();

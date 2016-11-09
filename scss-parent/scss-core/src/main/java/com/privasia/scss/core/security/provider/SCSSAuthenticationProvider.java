@@ -3,6 +3,9 @@
  */
 package com.privasia.scss.core.security.provider;
 
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -45,13 +48,18 @@ public class SCSSAuthenticationProvider implements AuthenticationProvider {
         
         Login loguser = securityService.getByUsername(username).orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
         
+        Set<Long> functionList = 
+        		loguser.getRole().getRoleRights().stream().map(roleRights -> roleRights.getRoleRightsID()
+        					.getFunction().getFunctionID()).collect(Collectors.toSet());
+        
         if (!encoder.matches(password, loguser.getPassword())) {
             throw new BadCredentialsException("Authentication Failed. Username or Password not valid.");
         }
 
         if (loguser.getRole() == null) throw new InsufficientAuthenticationException("User has no roles assigned");
         
-        UserContext userContext = UserContext.create(loguser.getUserName(), AuthorityUtils.createAuthorityList(loguser.getRole().getRoleName()));
+        UserContext userContext = UserContext.create(loguser.getUserName(), 
+        			AuthorityUtils.createAuthorityList(loguser.getRole().getRoleName()), functionList);
         
         return new UsernamePasswordAuthenticationToken(userContext, null, userContext.getAuthorities());
     }

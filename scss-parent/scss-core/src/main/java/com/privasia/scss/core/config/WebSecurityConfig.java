@@ -48,8 +48,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
   public static final String JWT_TOKEN_HEADER_PARAM = "X-Authorization";
   public static final String FORM_BASED_LOGIN_ENTRY_POINT = "/login";
-  public static final String TOKEN_BASED_AUTH_ENTRY_POINT = "/scss/**/";
-  public static final String TOKEN_REFRESH_ENTRY_POINT = "/tokenrefresh";
+  public static final String TOKEN_BASED_AUTH_ENTRY_POINT = "/**";
+  public static final String TOKEN_REFRESH_ENTRY_POINT = "/refreshtoken";
 
   @Autowired
   private RestAuthenticationEntryPoint authenticationEntryPoint;

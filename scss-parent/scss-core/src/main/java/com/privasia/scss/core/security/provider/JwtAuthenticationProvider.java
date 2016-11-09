@@ -4,6 +4,7 @@
 package com.privasia.scss.core.security.provider;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,8 +61,10 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 		List<String> roles = jwsClaims.getBody().get("roles", List.class);
 		List<GrantedAuthority> authorities = roles.stream().map(authority -> new SimpleGrantedAuthority(authority))
 				.collect(Collectors.toList());
-
-		UserContext context = UserContext.create(subject, authorities);
+		
+		Set<Long> functions = jwsClaims.getBody().get("functions", Set.class);
+		
+		UserContext context = UserContext.create(subject, authorities, functions);
 
 		return new JwtAuthenticationToken(context, context.getAuthorities());
 	}

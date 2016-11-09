@@ -1,6 +1,5 @@
 package com.privasia.scss.core.service;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,19 +30,13 @@ public class SecurityService {
 
 	@Autowired
 	private TokenVerifier tokenVerifier;
-	
+
 	@Autowired
 	private CachedTokenValidatorService cachedTokenValidatorService;
 
-	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
 	public Optional<Login> getByUsername(String username) throws UsernameNotFoundException {
 		return this.loginRepository.findByUserNameContainingIgnoreCase(username);
-	}
-
-	@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-	public List<Integer> getUserAccessFunctions(String username) {
-		return this.loginRepository.accessUserFunction(username);
 	}
 
 	public SignOutResponse signOut(SecurityContext securityContext, AuditContext auditContext) {
@@ -64,12 +57,10 @@ public class SecurityService {
 
 		cachedTokenValidatorService.deleteTokenDetailsFromCache(token, refreshToken.getToken(), loguser.getUserName());
 
-		SignOutResponse signOutResponse=new SignOutResponse();
+		SignOutResponse signOutResponse = new SignOutResponse();
 		signOutResponse.setMessage("SUCCESS");
 		signOutResponse.setStatusCode(200);
 		return signOutResponse;
 	}
-
-	
 
 }
