@@ -5,7 +5,6 @@ package com.privasia.scss.auth.controller;
 
 import java.io.IOException;
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.servlet.ServletException;
@@ -14,8 +13,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.data.redis.core.ListOperations;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.core.authority.AuthorityUtils;
@@ -36,6 +33,7 @@ import com.privasia.scss.core.security.model.token.JwtToken;
 import com.privasia.scss.core.security.model.token.JwtTokenFactory;
 import com.privasia.scss.core.security.model.token.RawAccessJwtToken;
 import com.privasia.scss.core.security.model.token.RefreshToken;
+import com.privasia.scss.core.service.CachedTokenValidatorService;
 import com.privasia.scss.core.service.SecurityService;
 
 /**
@@ -46,105 +44,57 @@ import com.privasia.scss.core.service.SecurityService;
 @RequestMapping(value = "/refreshtoken")
 public class RefreshTokenEndpoint {
 
-  @Autowired
-  private JwtTokenFactory tokenFactory;
-  @Autowired
-  private JwtSettings jwtSettings;
-  @Autowired
-  private SecurityService securityService;
-  @Autowired
-  private TokenVerifier tokenVerifier;
-  @Autowired
-  @Qualifier("jwtHeaderTokenExtractor")
-  private TokenExtractor tokenExtractor;
+	@Autowired
+	private JwtTokenFactory tokenFactory;
+	@Autowired
+	private JwtSettings jwtSettings;
+	@Autowired
+	private SecurityService securityService;
+	@Autowired
+	private TokenVerifier tokenVerifier;
+	@Autowired
+	@Qualifier("jwtHeaderTokenExtractor")
+	private TokenExtractor tokenExtractor;
 
-  @Autowired
-  private RedisTemplate<String, String> redisTemplate;
+	@Autowired
+	private CachedTokenValidatorService cachedTokenValidatorService;
 
-  @RequestMapping(value = "token", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE},
-      consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
+	@RequestMapping(value = "/", method = RequestMethod.GET, produces = {
+			MediaType.APPLICATION_JSON_UTF8_VALUE }, consumes = { MediaType.APPLICATION_JSON_UTF8_VALUE })
 
-  public @ResponseBody JwtToken refreshToken(HttpServletRequest request, HttpServletResponse response)
-      throws IOException, ServletException {
-    String tokenPayload = tokenExtractor.extract(request.getHeader(WebSecurityConfig.JWT_TOKEN_HEADER_PARAM));
+	public @ResponseBody JwtToken refreshToken(HttpServletRequest request, HttpServletResponse response)
+			throws IOException, ServletException {
+		String tokenPayload = tokenExtractor.extract(request.getHeader(WebSecurityConfig.JWT_TOKEN_HEADER_PARAM));
 
-    RawAccessJwtToken rawToken = new RawAccessJwtToken(tokenPayload);
-    RefreshToken refreshToken = RefreshToken.create(rawToken, jwtSettings.getTokenSigningKey())
-        .orElseThrow(() -> new InvalidJwtTokenException());
+		RawAccessJwtToken rawToken = new RawAccessJwtToken(tokenPayload);
+		RefreshToken refreshToken = RefreshToken.create(rawToken, jwtSettings.getTokenSigningKey())
+				.orElseThrow(() -> new InvalidJwtTokenException());
 
-    String jti = refreshToken.getJti();
-    if (!tokenVerifier.verify(jti)) {
-      throw new InvalidJwtTokenException();
-    }
+		String jti = refreshToken.getJti();
+		if (!tokenVerifier.verify(jti)) {
+			throw new InvalidJwtTokenException();
+		}
 
-    String subject = refreshToken.getSubject();
-    Login loguser = securityService.getByUsername(subject)
-        .orElseThrow(() -> new UsernameNotFoundException("User not found: " + subject));
-    
-    Set<Long> functionList = 
-    		loguser.getRole().getRoleRights().stream().map(roleRights -> roleRights.getRoleRightsID()
-    					.getFunction().getFunctionID()).collect(Collectors.toSet());
+		String subject = refreshToken.getSubject();
+		Login loguser = securityService.getByUsername(subject)
+				.orElseThrow(() -> new UsernameNotFoundException("User not found: " + subject));
 
-    if (loguser.getRole() == null)
-      throw new InsufficientAuthenticationException("User has no roles assigned");
+		Set<Long> functionList = loguser.getRole().getRoleRights().stream()
+				.map(roleRights -> roleRights.getRoleRightsID().getFunction().getFunctionID())
+				.collect(Collectors.toSet());
 
-    UserContext userContext =
-        UserContext.create(loguser.getUserName(), 
-        		AuthorityUtils.createAuthorityList(loguser.getRole().getRoleName()), functionList);
+		if (loguser.getRole() == null)
+			throw new InsufficientAuthenticationException("User has no roles assigned");
 
-    JwtToken accessToken = tokenFactory.createAccessJwtToken(userContext);
+		UserContext userContext = UserContext.create(loguser.getUserName(),
+				AuthorityUtils.createAuthorityList(loguser.getRole().getRoleName()), functionList);
 
-    return accessToken;
-  }
+		JwtToken accessToken = tokenFactory.createAccessJwtToken(userContext);
 
-  public void addTokenDetailsToCache(String token, String refreshToken, UserContext userContext) {
-    try {
-      String key = userContext.getUsername();
-      redisTemplate.opsForHash().put(key, "id", UUID.randomUUID().toString());
-      redisTemplate.opsForHash().put(key, "username", userContext.getUsername());
-      redisTemplate.opsForHash().put(key, "authorities", userContext.getAuthorities());
-      redisTemplate.opsForHash().put(key, "token", token);
-      redisTemplate.opsForHash().put(key, "refreshToken", refreshToken);
+		cachedTokenValidatorService.updateTokenDetailsOfCache(rawToken.getToken(), accessToken.getToken(),
+				refreshToken.getToken(), userContext);
 
-      ListOperations<String, String> listOps = redisTemplate.opsForList();
-      listOps.leftPush("userLoginList", key);
-
-      redisTemplate.opsForSet().add("tokens", token);
-
-      String refreshTokenKey = refreshToken;
-      redisTemplate.opsForHash().put(refreshTokenKey, "token", token);
-      redisTemplate.opsForSet().add("refreshTokens", refreshTokenKey);
-
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-  }
-
-  public void updateTokenDetailsOfCache(String oldToken, String newtoken, String refreshToken,
-      UserContext userContext) {
-    String key = userContext.getUsername();
-
-    redisTemplate.opsForHash().delete(key, "token");
-
-    String existingRecord = (String) redisTemplate.opsForHash().get(key, "id");
-
-    if (!(existingRecord == null)) {
-    	redisTemplate.opsForHash().put(key, "token", newtoken);
-    }
-
-    String refreshTokenKey = refreshToken;
-
-    // delete old token
-    redisTemplate.opsForSet().remove("tokens", oldToken);
-    redisTemplate.opsForHash().delete(refreshTokenKey, "tokens");
-
-    // add new token
-    redisTemplate.opsForSet().add("tokens", newtoken);
-
-
-    redisTemplate.opsForHash().put(refreshTokenKey, "token", newtoken);
-    redisTemplate.opsForSet().add("refreshTokens", refreshTokenKey);
-
-  }
+		return accessToken;
+	}
 
 }

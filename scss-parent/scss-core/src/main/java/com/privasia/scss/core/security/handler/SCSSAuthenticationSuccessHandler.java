@@ -27,6 +27,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.privasia.scss.core.security.model.UserContext;
 import com.privasia.scss.core.security.model.token.JwtToken;
 import com.privasia.scss.core.security.model.token.JwtTokenFactory;
+import com.privasia.scss.core.service.CachedTokenValidatorService;
 
 /**
  * @author Janaka
@@ -35,78 +36,55 @@ import com.privasia.scss.core.security.model.token.JwtTokenFactory;
 @Component
 public class SCSSAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
-  private final ObjectMapper mapper;
-  private final JwtTokenFactory tokenFactory;
-
-  @Autowired
-  private RedisTemplate<String, String> redisTemplate;
-
-
-  @Autowired
-  public SCSSAuthenticationSuccessHandler(final ObjectMapper mapper, final JwtTokenFactory tokenFactory) {
-    this.mapper = mapper;
-    this.tokenFactory = tokenFactory;
-  }
-
-  @Override
-  public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-      Authentication authentication) throws IOException, ServletException {
-    UserContext userContext = (UserContext) authentication.getPrincipal();
-
-    JwtToken accessToken = tokenFactory.createAccessJwtToken(userContext);
-    JwtToken refreshToken = tokenFactory.createRefreshToken(userContext);
-
-    Map<String, String> tokenMap = new HashMap<String, String>();
-    tokenMap.put("token", accessToken.getToken());
-    tokenMap.put("refreshToken", refreshToken.getToken());
-
-    addTokenDetailsToCache(accessToken.getToken(), refreshToken.getToken(), userContext);
-
-    response.setStatus(HttpStatus.OK.value());
-    response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
-    mapper.writeValue(response.getWriter(), tokenMap);
-
-    clearAuthenticationAttributes(request);
-  }
+	private final ObjectMapper mapper;
+	private final JwtTokenFactory tokenFactory;
+	
+	@Autowired
+	private CachedTokenValidatorService cachedTokenValidatorService;
 
 
-  public void addTokenDetailsToCache(String token, String refreshToken, UserContext userContext) {
-    try {
-      String key = userContext.getUsername();
-      redisTemplate.opsForHash().put(key, "id", UUID.randomUUID().toString());
-      redisTemplate.opsForHash().put(key, "username", userContext.getUsername());
-      redisTemplate.opsForHash().put(key, "authorities", userContext.getAuthorities().toString());
-      redisTemplate.opsForHash().put(key, "token", token);
-      redisTemplate.opsForHash().put(key, "refreshToken", refreshToken);
+	@Autowired
+	public SCSSAuthenticationSuccessHandler(final ObjectMapper mapper, final JwtTokenFactory tokenFactory) {
+		this.mapper = mapper;
+		this.tokenFactory = tokenFactory;
+	}
 
-      ListOperations<String, String> listOps = redisTemplate.opsForList();
-      listOps.leftPush("userLoginList", key);
+	@Override
+	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
+			Authentication authentication) throws IOException, ServletException {
+		UserContext userContext = (UserContext) authentication.getPrincipal();
 
-      redisTemplate.opsForSet().add("tokens", token);
+		JwtToken accessToken = tokenFactory.createAccessJwtToken(userContext);
+		JwtToken refreshToken = tokenFactory.createRefreshToken(userContext);
 
-      String refreshTokenKey = refreshToken;
-      redisTemplate.opsForHash().put(refreshTokenKey, "token", UUID.randomUUID().toString());
+		Map<String, String> tokenMap = new HashMap<String, String>();
+		tokenMap.put("token", accessToken.getToken());
+		tokenMap.put("refreshToken", refreshToken.getToken());
 
-      redisTemplate.opsForSet().add("refreshTokens", refreshTokenKey);
+		cachedTokenValidatorService.addTokenDetailsToCache(accessToken.getToken(), refreshToken.getToken(), userContext);
 
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-  }
+		response.setStatus(HttpStatus.OK.value());
+		response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+		mapper.writeValue(response.getWriter(), tokenMap);
 
-  /**
-   * Removes temporary authentication-related data which may have been stored in the session during
-   * the authentication process..
-   * 
-   */
-  protected final void clearAuthenticationAttributes(HttpServletRequest request) {
-    HttpSession session = request.getSession(false);
+		clearAuthenticationAttributes(request);
+	}
 
-    if (session == null) {
-      return;
-    }
+	
 
-    session.removeAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
-  }
+	/**
+	 * Removes temporary authentication-related data which may have been stored
+	 * in the session during the authentication process..
+	 * 
+	 */
+	protected final void clearAuthenticationAttributes(HttpServletRequest request) {
+		HttpSession session = request.getSession(false);
+
+		if (session == null) {
+			return;
+		}
+
+		session.removeAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
+	}
 
 }
