@@ -26,7 +26,7 @@ public class CachedTokenValidatorService {
 			String key = userContext.getUsername();
 			redisTemplate.opsForHash().put(key, "id", UUID.randomUUID().toString());
 			redisTemplate.opsForHash().put(key, "username", userContext.getUsername());
-			redisTemplate.opsForHash().put(key, "authorities", userContext.getAuthorities().toString());
+//			redisTemplate.opsForHash().put(key, "authorities", userContext.getAuthorities().toString());
 			redisTemplate.opsForHash().put(key, "token", token);
 			redisTemplate.opsForHash().put(key, "refreshToken", refreshToken);
 
@@ -87,7 +87,7 @@ public class CachedTokenValidatorService {
 			String key = userName;
 			redisTemplate.opsForHash().delete(key, "id");
 			redisTemplate.opsForHash().delete(key, "username");
-			redisTemplate.opsForHash().delete(key, "authorities");
+//			redisTemplate.opsForHash().delete(key, "authorities");
 			redisTemplate.opsForHash().delete(key, "token");
 			redisTemplate.opsForHash().delete(key, "password");
 			redisTemplate.opsForHash().delete(key, "refreshToken");
