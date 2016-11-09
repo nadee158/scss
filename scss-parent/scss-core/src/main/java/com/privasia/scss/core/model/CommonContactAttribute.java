@@ -5,7 +5,11 @@ package com.privasia.scss.core.model;
 
 import java.io.Serializable;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 
 /**
@@ -37,6 +41,9 @@ public class CommonContactAttribute implements Serializable {
 	private String streetName03;
 	private String city;
 	private String state;
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+	@JoinColumn(name = "CON_CODE", nullable = true, referencedColumnName = "CON_CODE")
+	private Country country;
 	
 	public String getPhoneOffice() {
 		return phoneOffice;
@@ -134,5 +141,12 @@ public class CommonContactAttribute implements Serializable {
 	public void setState(String state) {
 		this.state = state;
 	}
+	public Country getCountry() {
+		return country;
+	}
+	public void setCountry(Country country) {
+		this.country = country;
+	}
+	
 	
 }

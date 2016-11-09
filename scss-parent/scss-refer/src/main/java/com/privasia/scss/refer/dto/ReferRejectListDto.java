@@ -49,12 +49,12 @@ public class ReferRejectListDto implements Serializable {
       BaseCommonGateInOutAttribute baseCommonGateInOut = referReject.getBaseCommonGateInOut();
       this.pmHeadNo = baseCommonGateInOut.getPmHeadNo();
 
-      Client client = referReject.getGateInClient();
+      Client client = baseCommonGateInOut.getGateInClient();
       if (!(client == null)) {
         this.boothNo = client.getUnitNo();
       }
 
-      Card card = referReject.getCard();
+      Card card = baseCommonGateInOut.getCard();
       if (!(card == null)) {
         Company company = card.getCompany();
         if (!(company == null)) {

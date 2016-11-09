@@ -5,9 +5,10 @@ package com.privasia.scss.core.model;
 
 import java.io.Serializable;
 
+import javax.persistence.AssociationOverride;
+import javax.persistence.AssociationOverrides;
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -62,7 +63,7 @@ public class GatePass extends AuditEntity implements Serializable {
 	private Company company;
 
 	@Embedded
-	@AttributeOverrides({@AttributeOverride(name = "timeGateIn", column = @Column(name = "GTP_TIMEGATEIN")),
+	@AttributeOverrides({ @AttributeOverride(name = "timeGateIn", column = @Column(name = "GTP_TIMEGATEIN")),
 			@AttributeOverride(name = "timeGateInOk", column = @Column(name = "GTP_TIMEGATEINOK")),
 			@AttributeOverride(name = "timeGateOut", column = @Column(name = "GTP_TIMEGATEOUT")),
 			@AttributeOverride(name = "timeGateOutOk", column = @Column(name = "GTP_TIMEGATEOUTOK")),
@@ -82,30 +83,16 @@ public class GatePass extends AuditEntity implements Serializable {
 			@AttributeOverride(name = "hpatBooking", column = @Column(name = "BOOKING_ID"))
 
 	})
+	@AssociationOverrides({
+			@AssociationOverride(name = "card", joinColumns = @JoinColumn(name = "GTP_HCTDID", referencedColumnName = "CRD_CARDID_SEQ")),
+			@AssociationOverride(name = "gateInClerk", joinColumns = @JoinColumn(name = "GTP_GATEINCLERKID", referencedColumnName = "SYS_USERID_SEQ")),
+			@AssociationOverride(name = "gateOutClerk", joinColumns = @JoinColumn(name = "GTP_GATEOUTCLERKID", referencedColumnName = "SYS_USERID_SEQ")),
+			@AssociationOverride(name = "gateInClient", joinColumns = @JoinColumn(name = "CLI_CLIENTID_GATEIN", referencedColumnName = "CLI_CLIENTID_SEQ")),
+			@AssociationOverride(name = "gateOutClient", joinColumns = @JoinColumn(name = "CLI_CLIENTID_GATEOUT", referencedColumnName = "CLI_CLIENTID_SEQ")) })
 	private CommonGateInOutAttribute commonGateInOut;
 
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
-	@JoinColumn(name = "GTP_HCTDID", nullable = true, referencedColumnName = "CRD_CARDID_SEQ")
-	private Card card;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "GTP_GATEINCLERKID", nullable = true, referencedColumnName = "SYS_USERID_SEQ")
-	private SystemUser gateInClerk;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "GTP_GATEOUTCLERKID", nullable = true, referencedColumnName = "SYS_USERID_SEQ")
-	private SystemUser gateOutClerk;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "CLI_CLIENTID_GATEIN", nullable = true, referencedColumnName = "CLI_CLIENTID_SEQ")
-	private Client gateInClient;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "CLI_CLIENTID_GATEOUT", nullable = true, referencedColumnName = "CLI_CLIENTID_SEQ")
-	private Client gateOutClient;
-
 	@Column(name = "GTP_GATEPASSSTATUS")
-	@Type(type="com.privasia.scss.core.util.enumusertype.GatePassStatusEnumUserType")
+	@Type(type = "com.privasia.scss.core.util.enumusertype.GatePassStatusEnumUserType")
 	private GatePassStatus gatePassStatus;
 
 	@Column(name = "GTP_HANDLINGID")
@@ -115,7 +102,7 @@ public class GatePass extends AuditEntity implements Serializable {
 	private String orderNo;
 
 	@Column(name = "GTP_IN_OUT")
-	@Type(type="com.privasia.scss.core.util.enumusertype.GateInOutStatusEnumUserType")
+	@Type(type = "com.privasia.scss.core.util.enumusertype.GateInOutStatusEnumUserType")
 	private GateInOutStatus gateInOut;
 
 	@Column(name = "GTP_LINE")
@@ -125,7 +112,7 @@ public class GatePass extends AuditEntity implements Serializable {
 	private String currentPosition;
 
 	@Column(name = "GTP_TRUK_POS")
-	@Type(type="com.privasia.scss.core.util.enumusertype.ContainerPositionEnumUserType")
+	@Type(type = "com.privasia.scss.core.util.enumusertype.ContainerPositionEnumUserType")
 	private ContainerPosition containerPosition;
 
 	@Column(name = "GTP_GATE_IN_LANE_NO")
@@ -440,47 +427,5 @@ public class GatePass extends AuditEntity implements Serializable {
 	public void setForcedSeal(boolean forcedSeal) {
 		this.forcedSeal = forcedSeal;
 	}
-
-	public Card getCard() {
-		return card;
-	}
-
-	public void setCard(Card card) {
-		this.card = card;
-	}
-
-	public SystemUser getGateInClerk() {
-		return gateInClerk;
-	}
-
-	public void setGateInClerk(SystemUser gateInClerk) {
-		this.gateInClerk = gateInClerk;
-	}
-
-	public SystemUser getGateOutClerk() {
-		return gateOutClerk;
-	}
-
-	public void setGateOutClerk(SystemUser gateOutClerk) {
-		this.gateOutClerk = gateOutClerk;
-	}
-
-	public Client getGateInClient() {
-		return gateInClient;
-	}
-
-	public void setGateInClient(Client gateInClient) {
-		this.gateInClient = gateInClient;
-	}
-
-	public Client getGateOutClient() {
-		return gateOutClient;
-	}
-
-	public void setGateOutClient(Client gateOutClient) {
-		this.gateOutClient = gateOutClient;
-	}
-	
-	
 
 }

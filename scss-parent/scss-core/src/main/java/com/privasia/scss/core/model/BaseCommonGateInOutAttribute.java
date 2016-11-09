@@ -23,137 +23,195 @@ import com.privasia.scss.core.util.constant.TransactionStatus;
 @Embeddable
 public class BaseCommonGateInOutAttribute implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
-  /**
-   * 
-   */
-  private static final long serialVersionUID = 1L;
+	private String pmHeadNo;
 
-  private String pmHeadNo;
+	private String pmPlateNo;
 
-  private String pmPlateNo;
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+	@JoinColumn(name = "BOOKING_ID", nullable = true, referencedColumnName = "BOOKING_ID")
+	private HPATBooking hpatBooking;
 
-  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
-  @JoinColumn(name = "BOOKING_ID", nullable = true, referencedColumnName = "BOOKING_ID")
-  private HPATBooking hpatBooking;
+	@Type(type = "com.privasia.scss.core.util.enumusertype.TransactionStatusEnumUserType")
+	private TransactionStatus eirStatus;
 
-  @Type(type = "com.privasia.scss.core.util.enumusertype.TransactionStatusEnumUserType")
-  private TransactionStatus eirStatus;
+	@Type(type = "yes_no")
+	private boolean transactionSlipPrinted;
 
-  @Type(type = "yes_no")
-  private boolean transactionSlipPrinted;
+	private String gateOutBoothNo;
 
-  private String gateOutBoothNo;
+	private LocalDateTime timeGateIn;
 
-  private LocalDateTime timeGateIn;
+	private LocalDateTime timeGateInOk;
 
-  private LocalDateTime timeGateInOk;
+	private LocalDateTime timeGateOut;
 
-  private LocalDateTime timeGateOut;
+	private LocalDateTime timeGateOutOk;
 
-  private LocalDateTime timeGateOutOk;
+	private LocalDateTime timeGateOutBooth;
 
-  private LocalDateTime timeGateOutBooth;
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+	@JoinColumn(name = "GTP_HCTDID", nullable = true, referencedColumnName = "CRD_CARDID_SEQ")
+	private Card card;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(nullable = true, referencedColumnName = "SYS_USERID_SEQ")
-  private SystemUser gateOutBoothClerk;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "GTP_GATEINCLERKID", nullable = true, referencedColumnName = "SYS_USERID_SEQ")
+	private SystemUser gateInClerk;
 
-  public String getPmHeadNo() {
-    return pmHeadNo;
-  }
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "GTP_GATEOUTCLERKID", nullable = true, referencedColumnName = "SYS_USERID_SEQ")
+	private SystemUser gateOutClerk;
 
-  public void setPmHeadNo(String pmHeadNo) {
-    this.pmHeadNo = pmHeadNo;
-  }
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "CLI_CLIENTID_GATEIN", nullable = true, referencedColumnName = "CLI_CLIENTID_SEQ")
+	private Client gateInClient;
 
-  public String getPmPlateNo() {
-    return pmPlateNo;
-  }
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "CLI_CLIENTID_GATEOUT", nullable = true, referencedColumnName = "CLI_CLIENTID_SEQ")
+	private Client gateOutClient;
 
-  public void setPmPlateNo(String pmPlateNo) {
-    this.pmPlateNo = pmPlateNo;
-  }
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(nullable = true, referencedColumnName = "SYS_USERID_SEQ")
+	private SystemUser gateOutBoothClerk;
 
-  public TransactionStatus getEirStatus() {
-    return eirStatus;
-  }
+	public String getPmHeadNo() {
+		return pmHeadNo;
+	}
 
-  public void setEirStatus(TransactionStatus eirStatus) {
-    this.eirStatus = eirStatus;
-  }
+	public void setPmHeadNo(String pmHeadNo) {
+		this.pmHeadNo = pmHeadNo;
+	}
 
-  public String getGateOutBoothNo() {
-    return gateOutBoothNo;
-  }
+	public String getPmPlateNo() {
+		return pmPlateNo;
+	}
 
-  public void setGateOutBoothNo(String gateOutBoothNo) {
-    this.gateOutBoothNo = gateOutBoothNo;
-  }
+	public void setPmPlateNo(String pmPlateNo) {
+		this.pmPlateNo = pmPlateNo;
+	}
 
-  public LocalDateTime getTimeGateIn() {
-    return timeGateIn;
-  }
+	public TransactionStatus getEirStatus() {
+		return eirStatus;
+	}
 
-  public void setTimeGateIn(LocalDateTime timeGateIn) {
-    this.timeGateIn = timeGateIn;
-  }
+	public void setEirStatus(TransactionStatus eirStatus) {
+		this.eirStatus = eirStatus;
+	}
 
-  public LocalDateTime getTimeGateInOk() {
-    return timeGateInOk;
-  }
+	public String getGateOutBoothNo() {
+		return gateOutBoothNo;
+	}
 
-  public void setTimeGateInOk(LocalDateTime timeGateInOk) {
-    this.timeGateInOk = timeGateInOk;
-  }
+	public void setGateOutBoothNo(String gateOutBoothNo) {
+		this.gateOutBoothNo = gateOutBoothNo;
+	}
 
-  public LocalDateTime getTimeGateOut() {
-    return timeGateOut;
-  }
+	public LocalDateTime getTimeGateIn() {
+		return timeGateIn;
+	}
 
-  public void setTimeGateOut(LocalDateTime timeGateOut) {
-    this.timeGateOut = timeGateOut;
-  }
+	public void setTimeGateIn(LocalDateTime timeGateIn) {
+		this.timeGateIn = timeGateIn;
+	}
 
-  public LocalDateTime getTimeGateOutOk() {
-    return timeGateOutOk;
-  }
+	public LocalDateTime getTimeGateInOk() {
+		return timeGateInOk;
+	}
 
-  public void setTimeGateOutOk(LocalDateTime timeGateOutOk) {
-    this.timeGateOutOk = timeGateOutOk;
-  }
+	public void setTimeGateInOk(LocalDateTime timeGateInOk) {
+		this.timeGateInOk = timeGateInOk;
+	}
 
-  public LocalDateTime getTimeGateOutBooth() {
-    return timeGateOutBooth;
-  }
+	public LocalDateTime getTimeGateOut() {
+		return timeGateOut;
+	}
 
-  public void setTimeGateOutBooth(LocalDateTime timeGateOutBooth) {
-    this.timeGateOutBooth = timeGateOutBooth;
-  }
+	public void setTimeGateOut(LocalDateTime timeGateOut) {
+		this.timeGateOut = timeGateOut;
+	}
 
-  public SystemUser getGateOutBoothClerk() {
-    return gateOutBoothClerk;
-  }
+	public LocalDateTime getTimeGateOutOk() {
+		return timeGateOutOk;
+	}
 
-  public void setGateOutBoothClerk(SystemUser gateOutBoothClerk) {
-    this.gateOutBoothClerk = gateOutBoothClerk;
-  }
+	public void setTimeGateOutOk(LocalDateTime timeGateOutOk) {
+		this.timeGateOutOk = timeGateOutOk;
+	}
 
-  public boolean isTransactionSlipPrinted() {
-    return transactionSlipPrinted;
-  }
+	public LocalDateTime getTimeGateOutBooth() {
+		return timeGateOutBooth;
+	}
 
-  public void setTransactionSlipPrinted(boolean transactionSlipPrinted) {
-    this.transactionSlipPrinted = transactionSlipPrinted;
-  }
+	public void setTimeGateOutBooth(LocalDateTime timeGateOutBooth) {
+		this.timeGateOutBooth = timeGateOutBooth;
+	}
 
-  public HPATBooking getHpatBooking() {
-    return hpatBooking;
-  }
+	public SystemUser getGateOutBoothClerk() {
+		return gateOutBoothClerk;
+	}
 
-  public void setHpatBooking(HPATBooking hpatBooking) {
-    this.hpatBooking = hpatBooking;
-  }
+	public void setGateOutBoothClerk(SystemUser gateOutBoothClerk) {
+		this.gateOutBoothClerk = gateOutBoothClerk;
+	}
 
+	public boolean isTransactionSlipPrinted() {
+		return transactionSlipPrinted;
+	}
+
+	public void setTransactionSlipPrinted(boolean transactionSlipPrinted) {
+		this.transactionSlipPrinted = transactionSlipPrinted;
+	}
+
+	public HPATBooking getHpatBooking() {
+		return hpatBooking;
+	}
+
+	public void setHpatBooking(HPATBooking hpatBooking) {
+		this.hpatBooking = hpatBooking;
+	}
+
+	public Card getCard() {
+		return card;
+	}
+
+	public void setCard(Card card) {
+		this.card = card;
+	}
+
+	public SystemUser getGateInClerk() {
+		return gateInClerk;
+	}
+
+	public void setGateInClerk(SystemUser gateInClerk) {
+		this.gateInClerk = gateInClerk;
+	}
+
+	public SystemUser getGateOutClerk() {
+		return gateOutClerk;
+	}
+
+	public void setGateOutClerk(SystemUser gateOutClerk) {
+		this.gateOutClerk = gateOutClerk;
+	}
+
+	public Client getGateInClient() {
+		return gateInClient;
+	}
+
+	public void setGateInClient(Client gateInClient) {
+		this.gateInClient = gateInClient;
+	}
+
+	public Client getGateOutClient() {
+		return gateOutClient;
+	}
+
+	public void setGateOutClient(Client gateOutClient) {
+		this.gateOutClient = gateOutClient;
+	}
 
 }

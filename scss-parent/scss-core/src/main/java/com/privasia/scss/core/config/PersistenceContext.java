@@ -3,14 +3,20 @@
  */
 package com.privasia.scss.core.config;
 
+import java.lang.management.ManagementFactory;
 import java.util.Properties;
 
+import javax.management.InstanceNotFoundException;
+import javax.management.MBeanServer;
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectName;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.core.env.Environment;
 import org.springframework.data.auditing.DateTimeProvider;
 import org.springframework.data.domain.AuditorAware;
@@ -51,14 +57,21 @@ public class PersistenceContext {
   }
 
   @Bean(destroyMethod = "close")
-  DataSource dataSource(Environment env) {
-    HikariConfig dataSourceConfig = new HikariConfig();
-    dataSourceConfig.setDriverClassName(env.getRequiredProperty("spring.datasource.driver"));
-    dataSourceConfig.setJdbcUrl(env.getRequiredProperty("spring.datasource.url"));
-    dataSourceConfig.setUsername(env.getRequiredProperty("spring.datasource.username"));
-    dataSourceConfig.setPassword(env.getRequiredProperty("spring.datasource.password"));
-
-    return new HikariDataSource(dataSourceConfig);
+  DataSource dataSource(Environment env) throws MalformedObjectNameException, InstanceNotFoundException {
+	  
+	//MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
+	//ObjectName poolName = new ObjectName("com.zaxxer.hikari:name=dataSource,type=HikariDataSource");
+	//if(! mbs.isRegistered(poolName)){
+		HikariConfig dataSourceConfig = new HikariConfig();
+	    dataSourceConfig.setDriverClassName(env.getRequiredProperty("spring.datasource.driver"));
+	    dataSourceConfig.setJdbcUrl(env.getRequiredProperty("spring.datasource.url"));
+	    dataSourceConfig.setUsername(env.getRequiredProperty("spring.datasource.username"));
+	    dataSourceConfig.setPassword(env.getRequiredProperty("spring.datasource.password"));
+	    dataSourceConfig.setPoolName("scss");
+	    return new HikariDataSource(dataSourceConfig);
+	//}
+	//return (DataSource) mbs.getClassLoader(poolName);
+    
   }
 
   @Bean

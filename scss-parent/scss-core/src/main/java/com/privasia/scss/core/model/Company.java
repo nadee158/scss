@@ -5,18 +5,17 @@ package com.privasia.scss.core.model;
 
 import java.io.Serializable;
 
+import javax.persistence.AssociationOverride;
+import javax.persistence.AssociationOverrides;
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
-import javax.persistence.CascadeType;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -102,11 +101,10 @@ public class Company extends AuditEntity implements Serializable {
         @AttributeOverride(name = "city", column = @Column( name = "COM_ADDRTOWNCITY")),
         @AttributeOverride(name = "state", column = @Column( name = "COM_ADDRSTATE"))
 	})
+	@AssociationOverrides({
+	  @AssociationOverride(name = "country", joinColumns = @JoinColumn(name = "COM_ADDRCOUNTRY", referencedColumnName = "CON_CODE"))})
 	private CommonContactAttribute commonContactAttribute;
 	
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
-	@JoinColumn(name = "COM_ADDRCOUNTRY", nullable = true, referencedColumnName = "CON_CODE")
-	private Country country;
 	
 	@Column(name = "COM_FAXOFFICE")
 	private String faxOffice;
@@ -198,15 +196,5 @@ public class Company extends AuditEntity implements Serializable {
 	public void setCommonContactAttribute(CommonContactAttribute commonContactAttribute) {
 		this.commonContactAttribute = commonContactAttribute;
 	}
-
-	public Country getCountry() {
-		return country;
-	}
-
-	public void setCountry(Country country) {
-		this.country = country;
-	}
-	
-	
 
 }

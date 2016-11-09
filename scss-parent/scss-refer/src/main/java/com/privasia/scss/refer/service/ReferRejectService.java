@@ -137,16 +137,16 @@ public class ReferRejectService {
 
     // manual conversion
     baseCommonGateInOut.setEirStatus(TransactionStatus.fromCode(referRejectObjetDto.getTransactionStatus()));
-
+    baseCommonGateInOut.setGateInClient(clientRepository.findOne(referRejectObjetDto.getGateInClient()).orElse(null));
+    baseCommonGateInOut.setGateInClerk(systemUserRepository.findOne(referRejectObjetDto.getGateInClerk()).orElse(null));
+    baseCommonGateInOut.setCard(card.orElse(null));
     referReject.setBaseCommonGateInOut(baseCommonGateInOut);
 
     referReject.setStatusCode(HpatReferStatus.valueOf(referRejectObjetDto.getStatusCode()));
 
     referReject.setCardUsage(cardUsageRepository.findOne(referRejectObjetDto.getCardUsageID()).orElse(null));
     referReject.setCompany(companyRepository.findOne(referRejectObjetDto.getCompanyID()).orElse(null));
-    referReject.setCard(card.orElse(null));
-    referReject.setGateInClerk(systemUserRepository.findOne(referRejectObjetDto.getGateInClerk()).orElse(null));
-    referReject.setGateInClient(clientRepository.findOne(referRejectObjetDto.getGateInClient()).orElse(null));
+    
     ReferRejectDetailObjetDto referRejectDetailObjetDto = referRejectObjetDto.getReferRejectDetail();
 
     if (!(referRejectDetailObjetDto == null)) {
@@ -314,15 +314,15 @@ public class ReferRejectService {
     if (!(referReject == null)) {
       if(!(referReject.getReferRejectDetails()==null || referReject.getReferRejectDetails().isEmpty())){
         SystemUser systemUser = systemUserRepository.findOne(systemUserId).orElse(null);
-        if (!(systemUser == null)) {
+        if (systemUser != null) {
           PrintReject printReject=new PrintReject();
           printReject.setAddBy(systemUserId);
           printReject.setClientIP(ipAddress);
           printReject.setDateTimeAdd(ZonedDateTime.now());
           printReject.setDateTimeUpdate(ZonedDateTime.now());
-          if(!(referReject.getBaseCommonGateInOut()==null || referReject.getCard()==null)){
-            SmartCardUser cardUser=referReject.getCard().getSmartCardUser();
-            if(!(cardUser==null)){
+          if(referReject.getBaseCommonGateInOut().getCard()!= null){
+            SmartCardUser cardUser=referReject.getBaseCommonGateInOut().getCard().getSmartCardUser();
+            if(cardUser!=null){
               printReject.setDriverIC(cardUser.getPassportNo());
               printReject.setDriverName(cardUser.getCommonContactAttribute().getPersonName());
             }

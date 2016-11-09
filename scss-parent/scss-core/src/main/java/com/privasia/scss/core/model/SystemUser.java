@@ -6,18 +6,17 @@ package com.privasia.scss.core.model;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+import javax.persistence.AssociationOverride;
+import javax.persistence.AssociationOverrides;
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -95,11 +94,9 @@ public class SystemUser extends AuditEntity implements Serializable {
 			@AttributeOverride(name = "streetName03", column = @Column(name = "SYS_ADDRSTNAME3")),
 			@AttributeOverride(name = "city", column = @Column(name = "SYS_ADDRTOWNCITY")),
 			@AttributeOverride(name = "state", column = @Column(name = "SYS_ADDRSTATE")) })
+	@AssociationOverrides({
+		  @AssociationOverride(name = "country", joinColumns = @JoinColumn(name = "SYS_ADDRCOUNTRY", referencedColumnName = "CON_CODE")) })
 	private CommonContactAttribute commonContactAttribute;
-
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
-	@JoinColumn(name = "SYS_ADDRCOUNTRY", nullable = true, referencedColumnName = "CON_CODE")
-	private Country country;
 
 	@Column(name = "SYS_PHONEHOME")
 	private String homePhone;
@@ -208,12 +205,5 @@ public class SystemUser extends AuditEntity implements Serializable {
 		this.userType = userType;
 	}
 
-	public Country getCountry() {
-		return country;
-	}
-
-	public void setCountry(Country country) {
-		this.country = country;
-	}
 
 }

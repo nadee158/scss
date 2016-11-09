@@ -7,10 +7,11 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Set;
 
+import javax.persistence.AssociationOverride;
+import javax.persistence.AssociationOverrides;
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -20,7 +21,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -99,12 +99,11 @@ public class SmartCardUser extends AuditEntity implements Serializable {
 			@AttributeOverride(name = "streetName03", column = @Column(name = "SCU_ADDRSTNAME3")),
 			@AttributeOverride(name = "city", column = @Column(name = "SCU_ADDRTOWNCITY")),
 			@AttributeOverride(name = "state", column = @Column(name = "SCU_ADDRSTATE")) })
+
+	@AssociationOverrides({
+			@AssociationOverride(name = "country", joinColumns = @JoinColumn(name = "SCU_ADDRCOUNTRY", referencedColumnName = "CON_CODE")) })
 	private CommonContactAttribute commonContactAttribute;
 
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
-	@JoinColumn(name = "SCU_ADDRCOUNTRY", nullable = true, referencedColumnName = "CON_CODE")
-	private Country country;
-	
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "cardID")
 	private Set<Card> card;
 
@@ -180,14 +179,6 @@ public class SmartCardUser extends AuditEntity implements Serializable {
 		this.photo = photo;
 	}
 
-	public Country getCountry() {
-		return country;
-	}
-
-	public void setCountry(Country country) {
-		this.country = country;
-	}
-
 	public Set<Card> getCard() {
 		return card;
 	}
@@ -195,7 +186,5 @@ public class SmartCardUser extends AuditEntity implements Serializable {
 	public void setCard(Set<Card> card) {
 		this.card = card;
 	}
-	
-	
 
 }

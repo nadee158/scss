@@ -9,7 +9,6 @@ import javax.persistence.AssociationOverride;
 import javax.persistence.AssociationOverrides;
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -22,44 +21,45 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Type;
+
+import com.privasia.scss.core.util.constant.CompanyStatus;
 
 /**
  * @author Janaka
  *
  */
 @Entity
-@Table(name="SCSS_EXPORTS")
+@Table(name = "SCSS_EXPORTS")
 public class Exports implements Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
-	
+
 	@Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_SCSS_EXPORTS")
-    @SequenceGenerator(name = "SEQ_SCSS_EXPORTS", sequenceName = "EXP_EXPORTNO_SEQ")
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_SCSS_EXPORTS")
+	@SequenceGenerator(name = "SEQ_SCSS_EXPORTS", sequenceName = "EXP_EXPORTNO_SEQ")
 	@Column(name = "EXP_EXPORTNO_SEQ")
-	private Long exportSEQ;
-	
+	private Long exportID;
+
 	@Embedded
 	@AttributeOverrides({ @AttributeOverride(name = "containerNumber", column = @Column(name = "EXP_CONTAINERNO")),
-			@AttributeOverride(name = "containerISOCode", column = @Column(name = "GTP_CONT_ISO_CODE")),
+			@AttributeOverride(name = "containerISOCode", column = @Column(name = "EXP_CONT_ISO_CODE")),
 			@AttributeOverride(name = "containerLength", column = @Column(name = "CONT_LENGTH")),
-			@AttributeOverride(name = "containerFullOrEmpty", column = @Column(name = "GTP_FULLEMPTYFLAG")) })
+			@AttributeOverride(name = "containerFullOrEmpty", column = @Column(name = "EXP_FULL_EMPTY_FLAG")) })
 	private CommonContainerAttribute container;
-	
-	
+
 	@Embedded
-	@AttributeOverrides({@AttributeOverride(name = "timeGateIn", column = @Column(name = "EXP_TIMEGATEIN")),
+	@AttributeOverrides({ @AttributeOverride(name = "timeGateIn", column = @Column(name = "EXP_TIMEGATEIN")),
 			@AttributeOverride(name = "timeGateInOk", column = @Column(name = "GTP_TIMEGATEINOK")),
 			@AttributeOverride(name = "timeGateOut", column = @Column(name = "EXP_TIMEGATEOUT")),
 			@AttributeOverride(name = "timeGateOutOk", column = @Column(name = "EXP_TIMEGATEOUTOK")),
 			@AttributeOverride(name = "eirNumber", column = @Column(name = "EXP_EIRNO")),
 			@AttributeOverride(name = "eirStatus", column = @Column(name = "EXP_EIRSTATUS")),
-			@AttributeOverride(name = "impExpFlag", column = @Column(name = "GTP_IMPEXPFLAG")),
-			@AttributeOverride(name = "rejectReason", column = @Column(name = "GTP_REJECTREASON")),
+			@AttributeOverride(name = "impExpFlag", column = @Column(name = "EXP_IMPEXPFLAG")),
+			@AttributeOverride(name = "rejectReason", column = @Column(name = "EXP_REJECTREASON")),
 			@AttributeOverride(name = "pmHeadNo", column = @Column(name = "GTP_TRUCK_HEAD_NO")),
 			@AttributeOverride(name = "pmPlateNo", column = @Column(name = "GTP_TRUCK_PLATE_NO")),
 			@AttributeOverride(name = "kioskConfirmed", column = @Column(name = "KIOSK_CONFIRMED")),
@@ -72,35 +72,50 @@ public class Exports implements Serializable {
 			@AttributeOverride(name = "hpatBooking", column = @Column(name = "BOOKING_ID"))
 
 	})
-	/*!@AssociationOverrides({
-		   @AssociationOverride(name = "list",
-		      joinColumns = @JoinColumn(referencedColumnName = "COLUMN_NEW_NAME"))
-		})*/
+	@AssociationOverrides({
+		@AssociationOverride(name = "card", joinColumns = @JoinColumn(name = "EXP_HCTDID", referencedColumnName = "CRD_CARDID_SEQ")),
+		@AssociationOverride(name = "gateInClerk", joinColumns = @JoinColumn(name = "EXP_GATEINCLERKID", referencedColumnName = "SYS_USERID_SEQ")),
+		@AssociationOverride(name = "gateOutClerk", joinColumns = @JoinColumn(name = "EXP_GATEOUTCLERKID", referencedColumnName = "SYS_USERID_SEQ")),
+		@AssociationOverride(name = "gateInClient", joinColumns = @JoinColumn(name = "CLI_CLIENTID_GATEIN", referencedColumnName = "CLI_CLIENTID_SEQ")),
+		@AssociationOverride(name = "gateOutClient", joinColumns = @JoinColumn(name = "CLI_CLIENTID_GATEOUT", referencedColumnName = "CLI_CLIENTID_SEQ")) })
 	private CommonGateInOutAttribute commonGateInOut;
-	
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "EXP_GATEINCLERKID", nullable = true, referencedColumnName = "SYS_USERID_SEQ")
-	private SystemUser gateInClerk;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "EXP_GATEOUTCLERKID", nullable = true, referencedColumnName = "SYS_USERID_SEQ")
-	private SystemUser gateOutClerk;
-	
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
-	@JoinColumn(name = "EXP_HCTDID", nullable = true, referencedColumnName = "CRD_CARDID_SEQ")
-	private Card card;
-	
+
 	@Column(name = "EXP_BOOKINGNO")
 	private String bookingNo;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "CLI_CLIENTID_GATEIN", nullable = true, referencedColumnName = "CLI_CLIENTID_SEQ")
-	private Client gateInClient;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "CLI_CLIENTID_GATEOUT", nullable = true, referencedColumnName = "CLI_CLIENTID_SEQ")
-	private Client gateOutClient;
-	
-	
+	@JoinColumn(name = "SCN_SEQ", nullable = true, referencedColumnName = "SCN_SEQ")
+	private ShipSCN scn;
+
+	@Column(name = "EXP_IN_OUT", nullable = true)
+	@Type(type = "com.privasia.scss.core.util.enumusertype.InOutEnumUserType")
+	private CompanyStatus inOut;
+
+	@Column(name = "EXP_LINE")
+	private String expLine;
+
+	@Column(name = "EXP_OUT")
+	private String expOut;
+
+	@Column(name = "EXP_CAR")
+	private String expCar;
+
+	@Column(name = "EXP_SPOD")
+	private String expSpod;
+
+	@Embedded
+	@AttributeOverrides({ @AttributeOverride(name = "seal01Origin", column = @Column(name = "EXP_SEAL_1_ORIGIN")),
+			@AttributeOverride(name = "seal01Type", column = @Column(name = "EXP_SEAL_1_TYPE")),
+			@AttributeOverride(name = "seal01Number", column = @Column(name = "EXP_SEAL_1_NUMBER")),
+			@AttributeOverride(name = "seal02Origin", column = @Column(name = "EXP_SEAL_2_ORIGIN")),
+			@AttributeOverride(name = "seal02Type", column = @Column(name = "EXP_SEAL_2_TYPE")),
+			@AttributeOverride(name = "seal02Number", column = @Column(name = "EXP_SEAL_2_NUMBER")) })
+	private CommonSealAttribute sealAttribute;
+
+	@Column(name = "EXP_WEIGHT_BRIDGE")
+	private int expWeightBridge;
+
+	@Column(name = "EXP_NET_WEIGHT")
+	private int expNetWeight;
+
 }
