@@ -1,6 +1,5 @@
 package com.privasia.scss.core.service;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,11 +29,6 @@ public class SecurityService {
   @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
   public Optional<Login> getByUsername(String username) throws UsernameNotFoundException {
     return this.loginRepository.findByUserNameContainingIgnoreCase(username);
-  }
-
-  @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-  public List<Integer> getUserAccessFunctions(String username) {
-    return this.loginRepository.accessUserFunction(username);
   }
 
   public SignOutResponse signOut(SecurityContext securityContext, AuditContext auditContext, SignOutRequest request) {

@@ -5,7 +5,6 @@ package com.privasia.scss.core.security.model.token;
 
 import java.util.stream.Collectors;
 import java.util.UUID;
-import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
@@ -14,7 +13,6 @@ import org.springframework.stereotype.Component;
 
 import com.privasia.scss.core.config.JwtSettings;
 import com.privasia.scss.core.security.model.UserContext;
-import com.privasia.scss.core.service.SecurityService;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -28,9 +26,6 @@ import io.jsonwebtoken.SignatureAlgorithm;
 public class JwtTokenFactory {
 	
 	private final JwtSettings settings;
-	
-	@Autowired
-	private SecurityService securityService;
 	
 	@Autowired
     public JwtTokenFactory(JwtSettings settings) {
@@ -51,11 +46,9 @@ public class JwtTokenFactory {
         if (userContext.getAuthorities() == null || userContext.getAuthorities().isEmpty()) 
             throw new IllegalArgumentException("User doesn't have any privileges");
         
-        List<Integer> functions = securityService.getUserAccessFunctions(userContext.getUsername());
-        
         Claims claims = Jwts.claims().setSubject(userContext.getUsername());
         claims.put("roles", userContext.getAuthorities().stream().map(s -> s.toString()).collect(Collectors.toList()));
-        claims.put("functions", functions);
+        claims.put("functions", userContext.getFunctions());
 
         DateTime currentTime = new DateTime();
 
@@ -75,11 +68,9 @@ public class JwtTokenFactory {
             throw new IllegalArgumentException("Cannot create JWT Token without username");
         }
         
-        List<Integer> functions = securityService.getUserAccessFunctions(userContext.getUsername());
-        
         Claims claims = Jwts.claims().setSubject(userContext.getUsername());
         claims.put("roles", userContext.getAuthorities().stream().map(s -> s.toString()).collect(Collectors.toList()));
-        claims.put("functions", functions);
+        claims.put("functions", userContext.getFunctions());
         
         DateTime currentTime = new DateTime();
         

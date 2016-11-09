@@ -4,7 +4,9 @@
 package com.privasia.scss.auth.controller;
 
 import java.io.IOException;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -41,7 +43,7 @@ import com.privasia.scss.core.service.SecurityService;
  *
  */
 @RestController
-@RequestMapping(value = "/api/auth")
+@RequestMapping(value = "/refreshtoken")
 public class RefreshTokenEndpoint {
 
   @Autowired
@@ -78,12 +80,17 @@ public class RefreshTokenEndpoint {
     String subject = refreshToken.getSubject();
     Login loguser = securityService.getByUsername(subject)
         .orElseThrow(() -> new UsernameNotFoundException("User not found: " + subject));
+    
+    Set<Long> functionList = 
+    		loguser.getRole().getRoleRights().stream().map(roleRights -> roleRights.getRoleRightsID()
+    					.getFunction().getFunctionID()).collect(Collectors.toSet());
 
     if (loguser.getRole() == null)
       throw new InsufficientAuthenticationException("User has no roles assigned");
 
     UserContext userContext =
-        UserContext.create(loguser.getUserName(), AuthorityUtils.createAuthorityList(loguser.getRole().getRoleName()));
+        UserContext.create(loguser.getUserName(), 
+        		AuthorityUtils.createAuthorityList(loguser.getRole().getRoleName()), functionList);
 
     JwtToken accessToken = tokenFactory.createAccessJwtToken(userContext);
 
