@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.ListOperations;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -16,7 +14,6 @@ import com.privasia.scss.core.exception.InvalidJwtTokenException;
 import com.privasia.scss.core.model.Login;
 import com.privasia.scss.core.reponse.SignOutResponse;
 import com.privasia.scss.core.repository.LoginRepository;
-import com.privasia.scss.core.request.SignOutRequest;
 import com.privasia.scss.core.security.jwt.verifier.TokenVerifier;
 import com.privasia.scss.core.security.model.token.RawAccessJwtToken;
 import com.privasia.scss.core.security.model.token.RefreshToken;
@@ -49,7 +46,7 @@ public class SecurityService {
 		return this.loginRepository.accessUserFunction(username);
 	}
 
-	public SignOutResponse signOut(SecurityContext securityContext, AuditContext auditContext, SignOutRequest request) {
+	public SignOutResponse signOut(SecurityContext securityContext, AuditContext auditContext) {
 
 		String token = securityContext.getToken();
 		RawAccessJwtToken rawToken = new RawAccessJwtToken(token);
@@ -67,7 +64,10 @@ public class SecurityService {
 
 		cachedTokenValidatorService.deleteTokenDetailsFromCache(token, refreshToken.getToken(), loguser.getUserName());
 
-		return new SignOutResponse();
+		SignOutResponse signOutResponse=new SignOutResponse();
+		signOutResponse.setMessage("SUCCESS");
+		signOutResponse.setStatusCode(200);
+		return signOutResponse;
 	}
 
 	
