@@ -1,4 +1,4 @@
-package com.privasia.scss.auth.controller;
+package com.privasia.scss.core.controller;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,16 +23,21 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import com.fasterxml.jackson.core.JsonParseException;
 import com.privasia.scss.core.dto.ApiError;
 import com.privasia.scss.core.exception.InvalidJwtTokenException;
 import com.privasia.scss.core.exception.JwtExpiredTokenException;
 import com.privasia.scss.core.exception.ResultsNotFoundException;
+
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.RequiredTypeException;
 
 @ControllerAdvice
 public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
@@ -209,6 +214,7 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
   }
 
   // custom
+  @ResponseStatus(value = HttpStatus.CONFLICT, reason = "No Search Results Found!")
   @ExceptionHandler({ResultsNotFoundException.class, UsernameNotFoundException.class})
   public ResponseEntity<Object> handleResultsNotFound(final ResultsNotFoundException ex, final WebRequest request) {
     logger.info(ex.getClass().getName());
@@ -217,33 +223,64 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
     final ApiError apiError = new ApiError(HttpStatus.OK, ex.getMessage(), "No Search Results Found!");
     return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
   }
-  
-//custom
- @ExceptionHandler({InvalidJwtTokenException.class})
- public ResponseEntity<Object> handleInvalidJwtToken(final ResultsNotFoundException ex, final WebRequest request) {
-   logger.info(ex.getClass().getName());
-   logger.error("error", ex);
-   //
-   final ApiError apiError = new ApiError(HttpStatus.OK, ex.getMessage(), "Invalid Jwt Token!");
-   return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
- }
- 
- @ExceptionHandler({BadCredentialsException.class})
- public ResponseEntity<Object> handleBadCredentials(final ResultsNotFoundException ex, final WebRequest request) {
-   logger.info(ex.getClass().getName());
-   logger.error("error", ex);
-   //
-   final ApiError apiError = new ApiError(HttpStatus.OK, ex.getMessage(), "Invalid Credentials!");
-   return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
- }
- 
- @ExceptionHandler({JwtExpiredTokenException.class})
- public ResponseEntity<Object> handleJwtExpiredToken(final ResultsNotFoundException ex, final WebRequest request) {
-   logger.info(ex.getClass().getName());
-   logger.error("error", ex);
-   //
-   final ApiError apiError = new ApiError(HttpStatus.OK, ex.getMessage(), "Expired Jwt Token!");
-   return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
- }
+
+  // custom
+  @ExceptionHandler({InvalidJwtTokenException.class})
+  public ResponseEntity<Object> handleInvalidJwtToken(final ResultsNotFoundException ex, final WebRequest request) {
+    logger.info(ex.getClass().getName());
+    logger.error("error", ex);
+    //
+    final ApiError apiError = new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage(), "Invalid Jwt Token!");
+    return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
+  }
+
+  @ExceptionHandler({BadCredentialsException.class})
+  public ResponseEntity<Object> handleBadCredentials(final ResultsNotFoundException ex, final WebRequest request) {
+    logger.info(ex.getClass().getName());
+    logger.error("error", ex);
+    //
+    final ApiError apiError = new ApiError(HttpStatus.FORBIDDEN, ex.getMessage(), "Invalid Credentials!");
+    return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
+  }
+
+  @ExceptionHandler({JwtExpiredTokenException.class})
+  public ResponseEntity<Object> handleJwtExpiredToken(final ResultsNotFoundException ex, final WebRequest request) {
+    logger.info(ex.getClass().getName());
+    logger.error("error", ex);
+    //
+    final ApiError apiError = new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage(), "Expired Jwt Token!");
+    return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
+  }
+
+  @ExceptionHandler({RequiredTypeException.class})
+  public ResponseEntity<Object> handleRequiredTypeException(final RequiredTypeException ex, final WebRequest request) {
+    logger.info(ex.getClass().getName());
+    logger.error("error", ex);
+    //
+    final ApiError apiError = new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage(), "Jwt Reuqired Not Type!");
+    return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
+  }
+
+  @ExceptionHandler({MalformedJwtException.class})
+  public ResponseEntity<Object> handleMalformedJwtException(final MalformedJwtException ex, final WebRequest request) {
+    logger.info(ex.getClass().getName());
+    logger.error("error %%%%%%%%%%%", ex);
+    System.out.println("%%%%%%%%%%%%%%");
+    //
+    final ApiError apiError = new ApiError(HttpStatus.UNAUTHORIZED, ex.getMessage(), "Invalid token, Malformed!");
+    return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
+  }
+
+  @ExceptionHandler({JsonParseException.class})
+  public ResponseEntity<Object> handleMalformedJwtException(final JsonParseException ex, final WebRequest request) {
+    logger.info(ex.getClass().getName());
+    logger.error("error %%%%%%%%%%%", ex);
+    System.out.println("%%%%%%%%%%%%%%");
+    //
+    final ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, ex.getMessage(), "Invalid json, Malformed!");
+    return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
+  }
+
+
 
 }

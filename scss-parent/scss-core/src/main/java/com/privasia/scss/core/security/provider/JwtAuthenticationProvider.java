@@ -4,7 +4,6 @@
 package com.privasia.scss.core.security.provider;
 
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,45 +32,45 @@ import io.jsonwebtoken.Jws;
 @SuppressWarnings("unchecked")
 public class JwtAuthenticationProvider implements AuthenticationProvider {
 
-	private final JwtSettings jwtSettings;
-	
-	@Autowired
-	private CachedTokenValidatorService cachedTokenValidatorService;
+  private final JwtSettings jwtSettings;
 
-	@Autowired
-	public JwtAuthenticationProvider(JwtSettings jwtSettings) {
-		this.jwtSettings = jwtSettings;
-	}
+  @Autowired
+  private CachedTokenValidatorService cachedTokenValidatorService;
 
-	@Override
-	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-		RawAccessJwtToken rawAccessToken = (RawAccessJwtToken) authentication.getCredentials();
+  @Autowired
+  public JwtAuthenticationProvider(JwtSettings jwtSettings) {
+    this.jwtSettings = jwtSettings;
+  }
 
-		Jws<Claims> jwsClaims = rawAccessToken.parseClaims(jwtSettings.getTokenSigningKey());
-		
-		//is a valid key - check in cache now
-		
-		boolean isActiveToken=cachedTokenValidatorService.checkIfValidToken(rawAccessToken.getToken());
-		System.out.println("isActiveToken :" + isActiveToken);
-		if(!(isActiveToken)){
-			throw new JwtExpiredTokenException("JWT Token not available in cache!");
-		}
-		
-		String subject = jwsClaims.getBody().getSubject();
-		List<String> roles = jwsClaims.getBody().get("roles", List.class);
-		List<GrantedAuthority> authorities = roles.stream().map(authority -> new SimpleGrantedAuthority(authority))
-				.collect(Collectors.toList());
-		
-		Set<Long> functions = jwsClaims.getBody().get("functions", Set.class);
-		
-		UserContext context = UserContext.create(subject, authorities, functions);
+  @Override
+  public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+    RawAccessJwtToken rawAccessToken = (RawAccessJwtToken) authentication.getCredentials();
 
-		return new JwtAuthenticationToken(context, context.getAuthorities());
-	}
+    Jws<Claims> jwsClaims = rawAccessToken.parseClaims(jwtSettings.getTokenSigningKey());
 
-	@Override
-	public boolean supports(Class<?> authentication) {
-		return (JwtAuthenticationToken.class.isAssignableFrom(authentication));
-	}
+    // is a valid key - check in cache now
+
+    boolean isActiveToken = cachedTokenValidatorService.checkIfValidToken(rawAccessToken.getToken());
+    System.out.println("isActiveToken :" + isActiveToken);
+    if (!(isActiveToken)) {
+      throw new JwtExpiredTokenException("JWT Token not available in cache!");
+    }
+
+    String subject = jwsClaims.getBody().getSubject();
+    List<String> roles = jwsClaims.getBody().get("roles", List.class);
+    List<GrantedAuthority> authorities =
+        roles.stream().map(authority -> new SimpleGrantedAuthority(authority)).collect(Collectors.toList());
+
+    List<Long> functions = jwsClaims.getBody().get("functions", List.class);
+
+    UserContext context = UserContext.create(subject, authorities, functions);
+
+    return new JwtAuthenticationToken(context, context.getAuthorities());
+  }
+
+  @Override
+  public boolean supports(Class<?> authentication) {
+    return (JwtAuthenticationToken.class.isAssignableFrom(authentication));
+  }
 
 }

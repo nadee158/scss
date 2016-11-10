@@ -4,7 +4,7 @@
 package com.privasia.scss.auth.controller;
 
 import java.io.IOException;
-import java.util.Set;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.servlet.ServletException;
@@ -41,60 +41,60 @@ import com.privasia.scss.core.service.SecurityService;
  *
  */
 @RestController
-@RequestMapping(value = "/refreshtoken")
+@RequestMapping(value = WebSecurityConfig.TOKEN_REFRESH_ENTRY_POINT)
 public class RefreshTokenEndpoint {
 
-	@Autowired
-	private JwtTokenFactory tokenFactory;
-	@Autowired
-	private JwtSettings jwtSettings;
-	@Autowired
-	private SecurityService securityService;
-	@Autowired
-	private TokenVerifier tokenVerifier;
-	@Autowired
-	@Qualifier("jwtHeaderTokenExtractor")
-	private TokenExtractor tokenExtractor;
+  @Autowired
+  private JwtTokenFactory tokenFactory;
+  @Autowired
+  private JwtSettings jwtSettings;
+  @Autowired
+  private SecurityService securityService;
+  @Autowired
+  private TokenVerifier tokenVerifier;
+  @Autowired
+  @Qualifier("jwtHeaderTokenExtractor")
+  private TokenExtractor tokenExtractor;
 
-	@Autowired
-	private CachedTokenValidatorService cachedTokenValidatorService;
+  @Autowired
+  private CachedTokenValidatorService cachedTokenValidatorService;
 
-	@RequestMapping(method = RequestMethod.GET, produces = {
-			MediaType.APPLICATION_JSON_UTF8_VALUE }, consumes = { MediaType.APPLICATION_JSON_UTF8_VALUE })
+  @RequestMapping(method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE},
+      consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
 
-	public @ResponseBody JwtToken refreshToken(HttpServletRequest request, HttpServletResponse response)
-			throws IOException, ServletException {
-		String tokenPayload = tokenExtractor.extract(request.getHeader(WebSecurityConfig.JWT_TOKEN_HEADER_PARAM));
+  public @ResponseBody JwtToken refreshToken(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
 
-		RawAccessJwtToken rawToken = new RawAccessJwtToken(tokenPayload);
-		RefreshToken refreshToken = RefreshToken.create(rawToken, jwtSettings.getTokenSigningKey())
-				.orElseThrow(() -> new InvalidJwtTokenException());
+    String tokenPayload = tokenExtractor.extract(request.getHeader(WebSecurityConfig.JWT_TOKEN_HEADER_PARAM));
 
-		String jti = refreshToken.getJti();
-		if (!tokenVerifier.verify(jti)) {
-			throw new InvalidJwtTokenException();
-		}
+    RawAccessJwtToken rawToken = new RawAccessJwtToken(tokenPayload);
+    RefreshToken refreshToken = RefreshToken.create(rawToken, jwtSettings.getTokenSigningKey())
+        .orElseThrow(() -> new InvalidJwtTokenException());
 
-		String subject = refreshToken.getSubject();
-		Login loguser = securityService.getByUsername(subject)
-				.orElseThrow(() -> new UsernameNotFoundException("User not found: " + subject));
+    String jti = refreshToken.getJti();
+    if (!tokenVerifier.verify(jti)) {
+      throw new InvalidJwtTokenException();
+    }
 
-		Set<Long> functionList = loguser.getRole().getRoleRights().stream()
-				.map(roleRights -> roleRights.getRoleRightsID().getFunction().getFunctionID())
-				.collect(Collectors.toSet());
+    String subject = refreshToken.getSubject();
+    Login loguser = securityService.getByUsername(subject)
+        .orElseThrow(() -> new UsernameNotFoundException("User not found: " + subject));
 
-		if (loguser.getRole() == null)
-			throw new InsufficientAuthenticationException("User has no roles assigned");
+    List<Long> functionList = loguser.getRole().getRoleRights().stream()
+        .map(roleRights -> roleRights.getRoleRightsID().getFunction().getFunctionID()).collect(Collectors.toList());
 
-		UserContext userContext = UserContext.create(loguser.getUserName(),
-				AuthorityUtils.createAuthorityList(loguser.getRole().getRoleName()), functionList);
+    if (loguser.getRole() == null)
+      throw new InsufficientAuthenticationException("User has no roles assigned");
 
-		JwtToken accessToken = tokenFactory.createAccessJwtToken(userContext);
+    UserContext userContext = UserContext.create(loguser.getUserName(),
+        AuthorityUtils.createAuthorityList(loguser.getRole().getRoleName()), functionList);
 
-		cachedTokenValidatorService.updateTokenDetailsOfCache(rawToken.getToken(), accessToken.getToken(),
-				refreshToken.getToken(), userContext);
+    JwtToken accessToken = tokenFactory.createAccessJwtToken(userContext);
 
-		return accessToken;
-	}
+    cachedTokenValidatorService.updateTokenDetailsOfCache(rawToken.getToken(), accessToken.getToken(),
+        refreshToken.getToken(), userContext);
+
+    return accessToken;
+  }
 
 }
