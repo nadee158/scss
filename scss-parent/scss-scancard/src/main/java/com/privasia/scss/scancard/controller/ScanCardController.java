@@ -34,8 +34,8 @@ public class ScanCardController {
   @Autowired
   private CardValidationService cardValidationService;
 
-  @RequestMapping(value = "scancard/{cardNo}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
-      consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+  @RequestMapping(value = "scancard/{cardNo}", method = RequestMethod.GET,
+      produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public ResponseEntity<CardValidationDto> scanCardByCardNo(@PathVariable("cardNo") String cardNo) {
     CardValidationDto cardValidation = cardValidationService.validateCard(cardNo);
     return new ResponseEntity<CardValidationDto>(cardValidation, HttpStatus.OK);
@@ -50,7 +50,8 @@ public class ScanCardController {
 
   @RequestMapping(value = "/cardid/{cardID}/scuinfo", method = RequestMethod.GET,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-  public ResponseEntity<SmartCardUserDTO> selectSCUInfo(@PathVariable("cardID") Long cardID, HttpServletRequest request) {
+  public ResponseEntity<SmartCardUserDTO> selectSCUInfo(@PathVariable("cardID") Long cardID,
+      HttpServletRequest request) {
     SmartCardUserDTO dto = cardService.selectSCUInfo(cardID, null, request);
     return new ResponseEntity<SmartCardUserDTO>(dto, HttpStatus.OK);
   }

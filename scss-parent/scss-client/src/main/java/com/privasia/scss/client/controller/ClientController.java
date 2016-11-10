@@ -20,14 +20,14 @@ import com.privasia.scss.client.service.ClientService;
  */
 
 @RestController
-@RequestMapping("/scss/client")
+@RequestMapping("api")
 public class ClientController {
 
   @Autowired
   private ClientService clientService;
 
 
-  @RequestMapping(value = "/{webIp}/unitNo", method = RequestMethod.GET,
+  @RequestMapping(value = "client/{webIp}/unitNo", method = RequestMethod.GET,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public ResponseEntity<String> getClientUnitNoByIp(@PathVariable String webIPAddress) {
     String unitNo = clientService.getClientUnitNoByIp(webIPAddress);
