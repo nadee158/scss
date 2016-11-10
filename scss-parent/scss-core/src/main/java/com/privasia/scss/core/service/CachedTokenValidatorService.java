@@ -59,7 +59,7 @@ public class CachedTokenValidatorService {
 
 			String existingRecord = (String) redisTemplate.opsForHash().get(key, "id");
 
-			if (!(existingRecord == null)) {
+			if (existingRecord != null) {
 				redisTemplate.opsForHash().put(key, "token", newtoken);
 			}
 

@@ -8,8 +8,6 @@ import java.util.Optional;
 
 import org.springframework.security.authentication.BadCredentialsException;
 
-import com.privasia.scss.core.util.constant.Scopes;
-
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 
@@ -40,9 +38,10 @@ public class RefreshToken implements JwtToken {
         
     	Jws<Claims> claims = token.parseClaims(signingKey);
 
-        List<String> roles = claims.getBody().get("roles", List.class);
-        if (roles == null || roles.isEmpty() 
-                || !roles.stream().filter(scope -> Scopes.REFRESH_TOKEN.authority().equals(scope)).findFirst().isPresent()) {
+        @SuppressWarnings("unchecked")
+		List<String> roles = claims.getBody().get("roles", List.class);
+        
+        if (roles == null || roles.isEmpty()) {
             return Optional.empty();
         }
 

@@ -12,6 +12,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
@@ -28,6 +30,8 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import com.privasia.scss.core.dto.ApiError;
+import com.privasia.scss.core.exception.InvalidJwtTokenException;
+import com.privasia.scss.core.exception.JwtExpiredTokenException;
 import com.privasia.scss.core.exception.ResultsNotFoundException;
 
 @ControllerAdvice
@@ -205,13 +209,41 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
   }
 
   // custom
-  @ExceptionHandler({ResultsNotFoundException.class})
+  @ExceptionHandler({ResultsNotFoundException.class, UsernameNotFoundException.class})
   public ResponseEntity<Object> handleResultsNotFound(final ResultsNotFoundException ex, final WebRequest request) {
     logger.info(ex.getClass().getName());
     logger.error("error", ex);
     //
-    final ApiError apiError = new ApiError(HttpStatus.OK, ex.getMessage(), "No Results Found!");
+    final ApiError apiError = new ApiError(HttpStatus.OK, ex.getMessage(), "No Search Results Found!");
     return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
   }
+  
+//custom
+ @ExceptionHandler({InvalidJwtTokenException.class})
+ public ResponseEntity<Object> handleInvalidJwtToken(final ResultsNotFoundException ex, final WebRequest request) {
+   logger.info(ex.getClass().getName());
+   logger.error("error", ex);
+   //
+   final ApiError apiError = new ApiError(HttpStatus.OK, ex.getMessage(), "Invalid Jwt Token!");
+   return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
+ }
+ 
+ @ExceptionHandler({BadCredentialsException.class})
+ public ResponseEntity<Object> handleBadCredentials(final ResultsNotFoundException ex, final WebRequest request) {
+   logger.info(ex.getClass().getName());
+   logger.error("error", ex);
+   //
+   final ApiError apiError = new ApiError(HttpStatus.OK, ex.getMessage(), "Invalid Credentials!");
+   return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
+ }
+ 
+ @ExceptionHandler({JwtExpiredTokenException.class})
+ public ResponseEntity<Object> handleJwtExpiredToken(final ResultsNotFoundException ex, final WebRequest request) {
+   logger.info(ex.getClass().getName());
+   logger.error("error", ex);
+   //
+   final ApiError apiError = new ApiError(HttpStatus.OK, ex.getMessage(), "Expired Jwt Token!");
+   return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
+ }
 
 }

@@ -59,7 +59,7 @@ public class RefreshTokenEndpoint {
 	@Autowired
 	private CachedTokenValidatorService cachedTokenValidatorService;
 
-	@RequestMapping(value = "/", method = RequestMethod.GET, produces = {
+	@RequestMapping(method = RequestMethod.GET, produces = {
 			MediaType.APPLICATION_JSON_UTF8_VALUE }, consumes = { MediaType.APPLICATION_JSON_UTF8_VALUE })
 
 	public @ResponseBody JwtToken refreshToken(HttpServletRequest request, HttpServletResponse response)

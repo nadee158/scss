@@ -47,9 +47,9 @@ import com.privasia.scss.core.security.util.MD5PasswordEncoder;
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
   public static final String JWT_TOKEN_HEADER_PARAM = "X-Authorization";
-  public static final String FORM_BASED_LOGIN_ENTRY_POINT = "/login";
+  public static final String FORM_BASED_LOGIN_ENTRY_POINT = "/public/login";
   public static final String TOKEN_BASED_AUTH_ENTRY_POINT = "/**";
-  public static final String TOKEN_REFRESH_ENTRY_POINT = "/refreshtoken";
+  public static final String TOKEN_REFRESH_ENTRY_POINT = "/public/refreshtoken";
 
   @Autowired
   private RestAuthenticationEntryPoint authenticationEntryPoint;
@@ -119,7 +119,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         .antMatchers("/console").permitAll() // H2 Console Dash-board - only for testing
         .and().authorizeRequests().antMatchers(TOKEN_BASED_AUTH_ENTRY_POINT).authenticated() // Protected
                                                                                              // API
-                                                                                             // End-points
+                                                          									// End-points
         .and().addFilterBefore(buildLoginProcessingFilter(), UsernamePasswordAuthenticationFilter.class)
         .addFilterBefore(buildJwtTokenAuthenticationProcessingFilter(), UsernamePasswordAuthenticationFilter.class);
   }
