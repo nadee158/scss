@@ -81,7 +81,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
   @Bean
   protected JwtTokenAuthenticationProcessingFilter buildJwtTokenAuthenticationProcessingFilter() throws Exception {
-    List<String> pathsToSkip = Arrays.asList(TOKEN_REFRESH_ENTRY_POINT, FORM_BASED_LOGIN_ENTRY_POINT);
+    List<String> pathsToSkip = Arrays.asList(TOKEN_REFRESH_ENTRY_POINT, FORM_BASED_LOGIN_ENTRY_POINT, TOKEN_BASED_AUTH_ENTRY_POINT);
     SkipPathRequestMatcher matcher = new SkipPathRequestMatcher(pathsToSkip, TOKEN_BASED_AUTH_ENTRY_POINT);
     JwtTokenAuthenticationProcessingFilter filter =
         new JwtTokenAuthenticationProcessingFilter(failureHandler, tokenExtractor, matcher);
@@ -117,7 +117,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         .antMatchers(TOKEN_REFRESH_ENTRY_POINT).permitAll() // Token refresh end-point
         //.antMatchers("/scss/scancard/**").permitAll()
         .antMatchers("/console").permitAll() // H2 Console Dash-board - only for testing
-        .and().authorizeRequests().antMatchers(TOKEN_BASED_AUTH_ENTRY_POINT).authenticated() // Protected
+        .and().authorizeRequests().antMatchers(TOKEN_BASED_AUTH_ENTRY_POINT).permitAll() // Protected
                                                                                              // API
                                                           									// End-points
         .and().addFilterBefore(buildLoginProcessingFilter(), UsernamePasswordAuthenticationFilter.class)
