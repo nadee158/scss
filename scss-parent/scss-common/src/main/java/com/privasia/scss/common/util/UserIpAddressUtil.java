@@ -18,14 +18,21 @@ public class UserIpAddressUtil {
     return remoteAddress;
   }
 
-  public static String getBaseUrl(HttpServletRequest request) throws MalformedURLException {
+  public static String getBaseUrl(HttpServletRequest request)  {
     System.out.println("request.getRequestURL() " + request.getRequestURL());
     System.out.println("request.getLocalPort() " + request.getLocalPort());
     System.out.println("request.getremPort() " + request.getRemotePort());
     System.out.println("request.getserPort() " + request.getServerPort());
-    URL requestURL = new URL(request.getRequestURL().toString());
-    String port = requestURL.getPort() == -1 ? "" : ":" + requestURL.getPort();
-    return requestURL.getProtocol() + "://" + requestURL.getHost() + port;
-    // return String.format("%s://%s:", request.getScheme(), request.getServerName());
+    URL requestURL;
+	try {
+		requestURL = new URL(request.getRequestURL().toString());
+		String port = requestURL.getPort() == -1 ? "" : ":" + requestURL.getPort();
+		return requestURL.getProtocol() + "://" + requestURL.getHost() + port;
+	} catch (MalformedURLException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	return null;
+    
   }
 }

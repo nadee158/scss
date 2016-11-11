@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
-import com.privasia.scss.common.util.UserIpAddressUtil;
 import com.privasia.scss.core.config.WebSecurityConfig;
 import com.privasia.scss.core.dto.SmartCardUserDTO;
 import com.privasia.scss.core.exception.ResultsNotFoundException;
@@ -47,21 +46,21 @@ public class CardService {
       cardNo = new Long(0);
 
     Optional<SmartCardUserDTO> smartCardUser = cardRepository.findSCUInfoByCardIdOrNo(cardID, cardNo);
+    
+    return smartCardUser.orElseThrow(() -> new ResultsNotFoundException("Requested SCU Info not found!"));
+    
 
+    //String webIPAddress = UserIpAddressUtil.getUserIp(httpRequest);
+    //String baseUrl = UserIpAddressUtil.getBaseUrl(httpRequest);
 
-    String webIPAddress = UserIpAddressUtil.getUserIp(httpRequest);
-    String baseUrl = UserIpAddressUtil.getBaseUrl(httpRequest);
-
-    if (smartCardUser.isPresent()) {
+    /*if (smartCardUser.isPresent()) {
       SmartCardUserDTO cu = smartCardUser.orElse(null);
       if (!(cu == null)) {
         String clientUnitNo = getClientUnitNoFromClientService(webIPAddress, baseUrl);
         cu.setClientUnitNo(clientUnitNo);
         return cu;
       }
-    }
-
-    throw new ResultsNotFoundException("Requested SCU Info not found!");
+    }*/
 
   }
 
