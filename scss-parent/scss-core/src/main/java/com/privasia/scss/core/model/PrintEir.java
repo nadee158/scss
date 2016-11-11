@@ -5,20 +5,16 @@ package com.privasia.scss.core.model;
 
 import java.io.Serializable;
 
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-
-import org.hibernate.annotations.Type;
-
-import com.privasia.scss.core.util.constant.ClientType;
-import com.privasia.scss.core.util.constant.RecordStatus;
 
 /**
  * @author Janaka
@@ -26,89 +22,189 @@ import com.privasia.scss.core.util.constant.RecordStatus;
  */
 @Entity
 @Table(name = "SCSS_PRINT_EIR")
-public class PrintEir implements Serializable {
+@AttributeOverrides({ @AttributeOverride(name = "addBy", column = @Column(name = "ADD_BY")),
+		@AttributeOverride(name = "updateBy", column = @Column(name = "UPDATE_BY")),
+		@AttributeOverride(name = "dateTimeAdd", column = @Column(name = "DATETIME_ADD")),
+		@AttributeOverride(name = "dateTimeUpdate", column = @Column(name = "DATETIME_UPDATE")) })
+public class PrintEir extends AuditEntity implements Serializable {
 
-  /**
-   * 
-   */
-  private static final long serialVersionUID = 1L;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_SCSS_PRINT_EIR")
-  @SequenceGenerator(name = "SEQ_SCSS_PRINT_EIR", sequenceName = "SCSS_PRINT_EIR_SEQ")
-  @Column(name = "PRINT_NO")
-  private Long printEIRID;
+	@Id
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_SCSS_PRINT_EIR")
+	@SequenceGenerator(name = "SEQ_SCSS_PRINT_EIR", sequenceName = "SCSS_PRINT_EIR_SEQ")
+	@Column(name = "PRINT_NO")
+	private Long printEIRID;
 
-  @Column(name = "CLI_WEB_IPADDR", nullable = false)
-  private String webIPAddress;
+	@Column(name = "TIME_IN")
+	private String timeIn;
 
-  @Column(name = "CLI_SCR_IPADDR", nullable = false)
-  private String scrIPAddress;
+	@Column(name = "CALL_CARD")
+	private String callCard;
 
-  @Column(name = "CLI_READERID", nullable = false)
-  private int readerID;
+	@Column(name = "TRUCK_HEAD_NO")
+	private String truckHeadNo;
 
-  @Column(name = "CLI_LPS_IPADDR")
-  private String lpsIPAddress;
+	@Column(name = "COMP_NAME_PRINT")
+	private String compNamePrint;
 
-  @Column(name = "CLI_CSM_IPADDR")
-  private String csmIPAddress;
+	@Column(name = "ICNOORPASSPORT")
+	private String icNoOrPassport;
 
-  @Column(name = "CLI_DESCRIPTION", nullable = false)
-  private String description;
+	@Column(name = "TRUCKPLATENO")
+	private String truckNo;
 
-  @Column(name = "CLI_STATUS", nullable = false)
-  @Enumerated(EnumType.STRING)
-  private RecordStatus status;
+	@Column(name = "STATUS")
+	private String status;
 
-  @Column(name = "CLI_TYPE", nullable = false)
-  @Enumerated(EnumType.STRING)
-  private ClientType type;
+	@Column(name = "SCUNAME")
+	private String scuName;
 
-  @Column(name = "CLI_UNITNO", nullable = false)
-  private String unitNo;
+	@Column(name = "GATEINNO")
+	private String gateInNo;
 
-  @Column(name = "CLI_CSM_CTRL")
-  @Type(type = "yes_no")
-  private String csmControl;
+	@Column(name = "CLIENT_IP")
+	private String clientIp;
 
-  @Column(name = "COSMOS_PORT_NO")
-  private int cosmosPortNo;
+	@Embedded
+	@AttributeOverrides({ @AttributeOverride(name = "containerNumber", column = @Column(name = "CONTAINERNO_C1")),
+			@AttributeOverride(name = "containerISOCode", column = @Column(name = "ISO_C1")),
+			@AttributeOverride(name = "containerLength", column = @Column(name = "SIZE_C1")),
+			@AttributeOverride(name = "containerFullOrEmpty", column = @Column(name = "FULL_OR_EMPTY_C1")),
+			@AttributeOverride(name = "containerBayCode", column = @Column(name = "BAYCODE_C1")),
+			@AttributeOverride(name = "containerInOrOut", column = @Column(name = "INOROUT_C1")),
+			@AttributeOverride(name = "containerPositionOnTruck", column = @Column(name = "POSITIONONTRUCK_C1")),
+			@AttributeOverride(name = "containerHeight", column = @Column(name = "HEIGHT_C1")),
+			@AttributeOverride(name = "containerNetWeight", column = @Column(name = "NETWEIGHT_C1")),
+			@AttributeOverride(name = "containerType", column = @Column(name = "TYPE_C1")),
+			@AttributeOverride(name = "containerLineInfo1", column = @Column(name = "LINE_INFO1_C1")),
+			@AttributeOverride(name = "containerLineInfo2", column = @Column(name = "LINE_INFO2_C1")),
+			@AttributeOverride(name = "containerSeal", column = @Column(name = "SEAL_C1")),
+			@AttributeOverride(name = "containerLine", column = @Column(name = "LINE_C1")) })
+	private BaseContainerInfo container01;
 
-  @Column(name = "SORT_SEQ")
-  private String sortSEQ;
+	@Embedded
+	@AttributeOverrides({ @AttributeOverride(name = "containerNumber", column = @Column(name = "CONTAINERNO_C2")),
+			@AttributeOverride(name = "containerISOCode", column = @Column(name = "ISO_C2")),
+			@AttributeOverride(name = "containerLength", column = @Column(name = "SIZE_C2")),
+			@AttributeOverride(name = "containerFullOrEmpty", column = @Column(name = "FULL_OR_EMPTY_C2")),
+			@AttributeOverride(name = "containerBayCode", column = @Column(name = "BAYCODE_C2")),
+			@AttributeOverride(name = "containerInOrOut", column = @Column(name = "INOROUT_C2")),
+			@AttributeOverride(name = "containerPositionOnTruck", column = @Column(name = "POSITIONONTRUCK_C2")),
+			@AttributeOverride(name = "containerHeight", column = @Column(name = "HEIGHT_C2")),
+			@AttributeOverride(name = "containerNetWeight", column = @Column(name = "NETWEIGHT_C2")),
+			@AttributeOverride(name = "containerType", column = @Column(name = "TYPE_C2")),
+			@AttributeOverride(name = "containerLineInfo1", column = @Column(name = "LINE_INFO1_C2")),
+			@AttributeOverride(name = "containerLineInfo2", column = @Column(name = "LINE_INFO2_C2")),
+			@AttributeOverride(name = "containerSeal", column = @Column(name = "SEAL_C2")),
+			@AttributeOverride(name = "containerLine", column = @Column(name = "LINE_C2")) })
+	private BaseContainerInfo container02;
 
-  @Column(name = "CAMERA_SERVER_IPADDR")
-  private String cameraServerIPAddress;
+	public Long getPrintEIRID() {
+		return printEIRID;
+	}
 
-  @Column(name = "CAMERA_SERVER_PORT")
-  private int cameraServerPortNo;
+	public void setPrintEIRID(Long printEIRID) {
+		this.printEIRID = printEIRID;
+	}
 
-  @Column(name = "LANE_NO")
-  private String laneNo;
+	public String getTimeIn() {
+		return timeIn;
+	}
 
-  @Column(name = "FTP_IP")
-  private String ftpIPAddress;
+	public void setTimeIn(String timeIn) {
+		this.timeIn = timeIn;
+	}
 
-  @Column(name = "FTP_PORT")
-  private String ftpPort;
+	public String getCallCard() {
+		return callCard;
+	}
 
-  @Column(name = "FTP_PROTOCAL")
-  private String ftpProtocol;
+	public void setCallCard(String callCard) {
+		this.callCard = callCard;
+	}
 
-  @Column(name = "FTP_USERNAME")
-  private String ftpUsername;
+	public String getTruckHeadNo() {
+		return truckHeadNo;
+	}
 
-  @Column(name = "FTP_PASSWORD")
-  private String ftpPassword;
+	public void setTruckHeadNo(String truckHeadNo) {
+		this.truckHeadNo = truckHeadNo;
+	}
 
-  @Column(name = "WITH_CMA_IMAGE")
-  @Type(type = "yes_no")
-  private boolean withCameraImage;
+	public String getCompNamePrint() {
+		return compNamePrint;
+	}
 
-  @Column(name = "FTP_DIRECTORY")
-  private String ftpDirectory;
+	public void setCompNamePrint(String compNamePrint) {
+		this.compNamePrint = compNamePrint;
+	}
 
- 
+	public String getIcNoOrPassport() {
+		return icNoOrPassport;
+	}
+
+	public void setIcNoOrPassport(String icNoOrPassport) {
+		this.icNoOrPassport = icNoOrPassport;
+	}
+
+	public String getTruckNo() {
+		return truckNo;
+	}
+
+	public void setTruckNo(String truckNo) {
+		this.truckNo = truckNo;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public String getScuName() {
+		return scuName;
+	}
+
+	public void setScuName(String scuName) {
+		this.scuName = scuName;
+	}
+
+	public String getGateInNo() {
+		return gateInNo;
+	}
+
+	public void setGateInNo(String gateInNo) {
+		this.gateInNo = gateInNo;
+	}
+
+	public String getClientIp() {
+		return clientIp;
+	}
+
+	public void setClientIp(String clientIp) {
+		this.clientIp = clientIp;
+	}
+
+	public BaseContainerInfo getContainer01() {
+		return container01;
+	}
+
+	public void setContainer01(BaseContainerInfo container01) {
+		this.container01 = container01;
+	}
+
+	public BaseContainerInfo getContainer02() {
+		return container02;
+	}
+
+	public void setContainer02(BaseContainerInfo container02) {
+		this.container02 = container02;
+	}
 
 }
