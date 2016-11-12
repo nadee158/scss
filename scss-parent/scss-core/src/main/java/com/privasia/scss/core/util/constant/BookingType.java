@@ -13,7 +13,7 @@ import java.util.Map;
  */
 public enum BookingType implements Enumable {
 
-  ER("ER"), EP("EP"), EXPORT("E"), IMPORT("I"), IMPORT_ITT("ITT");
+  EMPTY_RETURN("ER"), EMPTY_PICKUP("EP"), EXPORT("E"), IMPORT("I"), IMPORT_ITT("ITT");
 
   private final String bookingType;
 

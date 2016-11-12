@@ -32,9 +32,9 @@ public class PrintEIRContainerInfo extends CommonContainerAttribute implements S
 
 	private String containerType;
 
-	private String containerLineInfo1;
+	private String lineOneInfo;
 
-	private String containerLineinfo2;
+	private String lineTwoInfo;
 
 	private String containerSeal;
 
@@ -94,28 +94,28 @@ public class PrintEIRContainerInfo extends CommonContainerAttribute implements S
 		this.containerType = containerType;
 	}
 
-	public String getContainerLineInfo1() {
-		return containerLineInfo1;
-	}
-
-	public void setContainerLineInfo1(String containerLineInfo1) {
-		this.containerLineInfo1 = containerLineInfo1;
-	}
-
-	public String getContainerLineinfo2() {
-		return containerLineinfo2;
-	}
-
-	public void setContainerLineinfo2(String containerLineinfo2) {
-		this.containerLineinfo2 = containerLineinfo2;
-	}
-
 	public String getContainerSeal() {
 		return containerSeal;
 	}
 
 	public void setContainerSeal(String containerSeal) {
 		this.containerSeal = containerSeal;
+	}
+
+	public String getLineOneInfo() {
+		return lineOneInfo;
+	}
+
+	public void setLineOneInfo(String lineOneInfo) {
+		this.lineOneInfo = lineOneInfo;
+	}
+
+	public String getLineTwoInfo() {
+		return lineTwoInfo;
+	}
+
+	public void setLineTwoInfo(String lineTwoInfo) {
+		this.lineTwoInfo = lineTwoInfo;
 	}
 
 }

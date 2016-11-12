@@ -85,8 +85,8 @@ public class PrintEir extends AuditEntity implements Serializable {
 			@AttributeOverride(name = "containerHeight", column = @Column(name = "HEIGHT_C1")),
 			@AttributeOverride(name = "containerNetWeight", column = @Column(name = "NETWEIGHT_C1")),
 			@AttributeOverride(name = "containerType", column = @Column(name = "TYPE_C1")),
-			@AttributeOverride(name = "containerLineInfo1", column = @Column(name = "LINE_INFO1_C1")),
-			@AttributeOverride(name = "containerLineInfo2", column = @Column(name = "LINE_INFO2_C1")),
+			@AttributeOverride(name = "lineOneInfo", column = @Column(name = "LINE_INFO1_C1")),
+			@AttributeOverride(name = "lineTwoInfo", column = @Column(name = "LINE_INFO2_C1")),
 			@AttributeOverride(name = "containerSeal", column = @Column(name = "SEAL_C1")),
 			@AttributeOverride(name = "containerLine", column = @Column(name = "LINE_C1")) })
 	private PrintEIRContainerInfo container01;
@@ -102,8 +102,8 @@ public class PrintEir extends AuditEntity implements Serializable {
 			@AttributeOverride(name = "containerHeight", column = @Column(name = "HEIGHT_C2")),
 			@AttributeOverride(name = "containerNetWeight", column = @Column(name = "NETWEIGHT_C2")),
 			@AttributeOverride(name = "containerType", column = @Column(name = "TYPE_C2")),
-			@AttributeOverride(name = "containerLineInfo1", column = @Column(name = "LINE_INFO1_C2")),
-			@AttributeOverride(name = "containerLineInfo2", column = @Column(name = "LINE_INFO2_C2")),
+			@AttributeOverride(name = "lineOneInfo", column = @Column(name = "LINE_INFO1_C2")),
+			@AttributeOverride(name = "lineTwoInfo", column = @Column(name = "LINE_INFO2_C2")),
 			@AttributeOverride(name = "containerSeal", column = @Column(name = "SEAL_C2")),
 			@AttributeOverride(name = "containerLine", column = @Column(name = "LINE_C2")) })
 	private PrintEIRContainerInfo container02;
