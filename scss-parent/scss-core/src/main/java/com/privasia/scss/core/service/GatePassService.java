@@ -102,7 +102,7 @@ public class GatePassService {
 
     log.error("------END check gatepass is valid , EIRStatus = N? ------" + gatePassNo + ":" + truckHeadNo);
 
-
+  //@formatter:off 
     /**
      * Gate Pass Expiry Date
      */
@@ -123,12 +123,44 @@ public class GatePassService {
     // if (CheckDB.isGatePassValidByYPN(gatePassNo)) {
     // return GatePassErrMsg.DATE_GATEPASS_EXPIRY;
     // }
+    
+    //  /**
+    //  * Edo Expiry Date //edo logs
+    //  */
+    // GateInDAOImpl gateInDao = GateInDAOImpl.getInstance();
+    // String etpEdoExpiryDateFlag = gateInDao.getWDCGlobalSeeting("EDO_EXP");
+    // if ("Y".equalsIgnoreCase(etpEdoExpiryDateFlag)){
+    //     log.error("-------------START Edo Expiry Date -----------" + gatePassNo + ":" + truckHeadNo);
+    //     EdoExpiryDto edoExpiryDto = CheckDB.getEdoExipryDate(gatePassNo);
+    //     log.error("-------------END Edo Expiry Date -----------" + gatePassNo + ":" + truckHeadNo);
+    //     if (edoExpiryDto != null) { 
+    //        if ("I".equalsIgnoreCase(edoExpiryDto.getGateOrderType()) || "J".equalsIgnoreCase(edoExpiryDto.getGateOrderType()) ||
+    //                "K".equalsIgnoreCase(edoExpiryDto.getGateOrderType())) {
+    //            if (edoExpiryDto.getEdoExpiryDate() != null){
+    //                Date today = new Date();
+    //                if (today.after(edoExpiryDto.getEdoExpiryDate())) {
+    //                    return GatePassErrMsg.DATE_GATEPASS_EDO_EXPIRY;
+    //                } 
+    //            } else {
+    //                if (StringUtils.isNotBlank(edoExpiryDto.getLineCode())) {
+    //                EtpPlusWebService etpPlusWebService = EtpPlusWebService.getInstance();
+    //                boolean isEdoLineEnabled = etpPlusWebService.getEdoExpiryForLine(edoExpiryDto.getLineCode());
+    //                   if (isEdoLineEnabled){
+    //                       if (edoExpiryDto.getEdoExpiryDate() == null){
+    //                           return GatePassErrMsg.EDO_EXPIRY_DATE_NULL;
+    //                       }
+    //                   }
+    //                }
+    //            }
+    //        }
+    //     }
+    // }
 
     return result;
   }
 
 
-//@formatter:off    
+   
 //  if (ret == GatePassErrMsg.GATE_PASS_IS_USED) {
 //    returnmsg += MessageCode.format("ERR_MSG_060", new Object[] { gateInDto.getGatePassNo2() });
 //} else if (ret == GatePassErrMsg.GATE_PASS_IN_PROGRESS) {
@@ -161,86 +193,8 @@ public class GatePassService {
 
 
 
-//  public int validateInfo_N(String cardIdSeq, String gatePassNo, String check, String hpatSeqId, String truckHeadNo) throws Exception {
-//    String[] data;
-//    Connection conn = null;
-//
-//    try {
-//      conn = SCSSDatabase.getInstance().getConnection();
-//      log.error("-------------START check gatepass no approved, EIRStatus = A? -----------" + gatePassNo + ":" + truckHeadNo);
 
 
   
 
- 
-
-
-//
-//      
-//      /**
-//       * Edo Expiry Date //edo logs
-//       */
-//      GateInDAOImpl gateInDao = GateInDAOImpl.getInstance();
-//      String etpEdoExpiryDateFlag = gateInDao.getWDCGlobalSeeting("EDO_EXP");
-//      if ("Y".equalsIgnoreCase(etpEdoExpiryDateFlag)){
-//          log.error("-------------START Edo Expiry Date -----------" + gatePassNo + ":" + truckHeadNo);
-//          EdoExpiryDto edoExpiryDto = CheckDB.getEdoExipryDate(gatePassNo);
-//          log.error("-------------END Edo Expiry Date -----------" + gatePassNo + ":" + truckHeadNo);
-//          if (edoExpiryDto != null) { 
-//             if ("I".equalsIgnoreCase(edoExpiryDto.getGateOrderType()) || "J".equalsIgnoreCase(edoExpiryDto.getGateOrderType()) ||
-//                     "K".equalsIgnoreCase(edoExpiryDto.getGateOrderType())) {
-//                 if (edoExpiryDto.getEdoExpiryDate() != null){
-//                     Date today = new Date();
-//                     if (today.after(edoExpiryDto.getEdoExpiryDate())) {
-//                         return GatePassErrMsg.DATE_GATEPASS_EDO_EXPIRY;
-//                     } 
-//                 } else {
-//                     if (StringUtils.isNotBlank(edoExpiryDto.getLineCode())) {
-//                     EtpPlusWebService etpPlusWebService = EtpPlusWebService.getInstance();
-//                     boolean isEdoLineEnabled = etpPlusWebService.getEdoExpiryForLine(edoExpiryDto.getLineCode());
-//                        if (isEdoLineEnabled){
-//                            if (edoExpiryDto.getEdoExpiryDate() == null){
-//                                return GatePassErrMsg.EDO_EXPIRY_DATE_NULL;
-//                            }
-//                        }
-//                     }
-//                 }
-//             }
-//          }
-//      }
-//      
-//      /**
-//       * Checking the Haulage Information
-//       */     
-//      return check_MatchCompany_PreArrival_New(conn, cardIdSeq, gatePassNo, check, hpatSeqId, truckHeadNo);
-//      
-//    } catch (Exception e) {
-//      throw e;
-//    } finally {
-//      if (conn != null) {
-//        conn.close();
-//      }
-//    }
-//  }
-
-  
-//  public static boolean isRecordExist(String[] columns, String table, String[] data) {
-//    boolean ret = false;
-//
-//    String sql = "";
-//
-//    for (int i = 0; i < columns.length; i++) {
-//        sql = sql + columns[i] + " = " + SQL.format(data[i]);
-//        if (i != columns.length - 1) {
-//            sql = sql + " AND ";
-//        }
-//    }
-//
-//    sql = "SELECT COUNT(1) FROM "
-//          + table
-//          + " WHERE "
-//          + sql;
-//    Connection conn = null;
-//    Statement stmt = null;
-//    ResultSet rs = null;
 }
