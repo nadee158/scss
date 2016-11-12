@@ -37,9 +37,6 @@ public class ReferReasonService {
 
     if (!(referReasonStream == null || referReasonStream.count() <= 0)) {
 
-      referReasonStream.collect(Collectors.groupingBy(ReferReason::isParent))
-          .forEach((k, v) -> System.out.println("IsParent : " + k + " Object : " + v));
-
       Map<Boolean, Set<ReferReason>> map = referReasonStream.collect(Collectors.groupingBy(ReferReason::isParent,
           Collectors.mapping(ReferReason::getReferReason, Collectors.toSet())));
 
@@ -49,7 +46,6 @@ public class ReferReasonService {
       return map;
 
     } else {
-      // need to discuss with etp team to manage web services between etp and scss
       throw new ResultsNotFoundException("No ReferReason Records were found!");
     }
   }

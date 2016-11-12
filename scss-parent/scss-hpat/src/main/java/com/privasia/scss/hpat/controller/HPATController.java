@@ -25,7 +25,7 @@ import com.privasia.scss.hpat.service.HPATService;
  */
 
 @RestController
-@RequestMapping("scss/hpat")
+@RequestMapping("**/hpat")
 public class HPATController {
 
   @Autowired

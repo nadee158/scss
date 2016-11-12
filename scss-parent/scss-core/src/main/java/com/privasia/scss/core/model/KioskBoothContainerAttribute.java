@@ -122,7 +122,7 @@ public class KioskBoothContainerAttribute extends CommonContainerAttribute imple
           this.setContainerISOCode(kioskBoothRightInfo.getCt1ISO());
           this.setLocation(kioskBoothRightInfo.getCt1Loc());
           this.setStatus(kioskBoothRightInfo.getCt1Status());
-          this.setContainerFullOrEmpty(kioskBoothRightInfo.getCt1fe());
+          //this.setContainerFullOrEmpty(kioskBoothRightInfo.getCt1fe());
           this.setOthers(kioskBoothRightInfo.getCt1Others());
           this.setRejectRemarks(kioskBoothRightInfo.getCt1RejectRemarks());
           this.setCustomCheck(kioskBoothRightInfo.getCt1CustomCheck());
@@ -135,7 +135,7 @@ public class KioskBoothContainerAttribute extends CommonContainerAttribute imple
           this.setContainerISOCode(kioskBoothRightInfo.getCt2ISO());
           this.setLocation(kioskBoothRightInfo.getCt2Loc());
           this.setStatus(kioskBoothRightInfo.getCt2Status());
-          this.setContainerFullOrEmpty(kioskBoothRightInfo.getCt2fe());
+          //this.setContainerFullOrEmpty(kioskBoothRightInfo.getCt2fe());
           this.setOthers(kioskBoothRightInfo.getCt2Others());
           this.setRejectRemarks(kioskBoothRightInfo.getCt2RejectRemarks());
           this.setCustomCheck(kioskBoothRightInfo.getCt2CustomCheck());
@@ -148,7 +148,7 @@ public class KioskBoothContainerAttribute extends CommonContainerAttribute imple
           this.setContainerISOCode(kioskBoothRightInfo.getCt3ISO());
           this.setLocation(kioskBoothRightInfo.getCt3Loc());
           this.setStatus(kioskBoothRightInfo.getCt3Status());
-          this.setContainerFullOrEmpty(kioskBoothRightInfo.getCt3fe());
+          //this.setContainerFullOrEmpty(kioskBoothRightInfo.getCt3fe());
           this.setOthers(kioskBoothRightInfo.getCt3Others());
           this.setRejectRemarks(kioskBoothRightInfo.getCt3RejectRemarks());
           this.setCustomCheck(kioskBoothRightInfo.getCt3CustomCheck());
@@ -161,7 +161,7 @@ public class KioskBoothContainerAttribute extends CommonContainerAttribute imple
           this.setContainerISOCode(kioskBoothRightInfo.getCt4ISO());
           this.setLocation(kioskBoothRightInfo.getCt4Loc());
           this.setStatus(kioskBoothRightInfo.getCt4Status());
-          this.setContainerFullOrEmpty(kioskBoothRightInfo.getCt4fe());
+          //this.setContainerFullOrEmpty(kioskBoothRightInfo.getCt4fe());
           this.setOthers(kioskBoothRightInfo.getCt4Others());
           this.setRejectRemarks(kioskBoothRightInfo.getCt4RejectRemarks());
           this.setCustomCheck(kioskBoothRightInfo.getCt4CustomCheck());
@@ -177,7 +177,7 @@ public class KioskBoothContainerAttribute extends CommonContainerAttribute imple
       this.setContainerISOCode(null);
       this.setLocation(null);
       this.setStatus(null);
-      this.setContainerFullOrEmpty(null);
+      //this.setContainerFullOrEmpty(null);
       this.setOthers(null);
       this.setRejectRemarks(null);
       this.setCustomCheck(null);
