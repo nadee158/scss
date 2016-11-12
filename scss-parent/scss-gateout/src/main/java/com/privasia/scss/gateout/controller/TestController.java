@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.privasia.scss.cosmos.dto.TestDto;
 import com.privasia.scss.cosmos.repository.TestRepository;
 
+
 @RestController
 @RequestMapping("api")
 public class TestController {
