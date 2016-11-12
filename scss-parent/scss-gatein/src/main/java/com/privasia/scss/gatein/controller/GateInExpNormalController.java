@@ -20,8 +20,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.privasia.scss.common.util.CommonUtil;
 import com.privasia.scss.common.util.DateUtil;
-import com.privasia.scss.common.util.MessageCode;
 import com.privasia.scss.common.util.ReturnMsg;
 import com.privasia.scss.core.dto.ExportContainer;
 import com.privasia.scss.core.dto.GateInForm;
@@ -30,10 +30,11 @@ import com.privasia.scss.core.util.constant.ButtonType;
 import com.privasia.scss.gatein.dto.ExportSSR;
 import com.privasia.scss.gatein.service.ClientService;
 import com.privasia.scss.gatein.service.ContainerService;
-import com.privasia.scss.gatein.service.WDCGlobalSettingService;
 import com.privasia.scss.gatein.service.IsoCodeService;
 import com.privasia.scss.gatein.service.VesselOmitService;
+import com.privasia.scss.gatein.service.WDCGlobalSettingService;
 import com.privasia.scss.gatein.util.DGContDesc;
+
 
 
 @RestController
@@ -67,7 +68,7 @@ public class GateInExpNormalController {
     String returnedView = null;
     String menuId = (String) request.getParameter("menuId");
 
-   
+
     GateInfo gateInInfo = null;
 
     try {
@@ -130,34 +131,34 @@ public class GateInExpNormalController {
               // else redirect to Gate In Export page
 
 
-                // no place to use this info - previously assigned to the UI form
-                // SCUInfo scuInfo = cardService.selectSCUInfo(gateInInfo.getCardIdSeq());
-                // no place to use this info - previously assigned to the UI form
-                String laneNo = clientService.getLaneNo(gateInInfo.getClientId());
+              // no place to use this info - previously assigned to the UI form
+              // SCUInfo scuInfo = cardService.selectSCUInfo(gateInInfo.getCardIdSeq());
+              // no place to use this info - previously assigned to the UI form
+              String laneNo = clientService.getLaneNo(gateInInfo.getClientId());
 
-                /**
-                 * Query Export Information
-                 */
-                f = containerService.selectContainerNoInfo(f);
+              /**
+               * Query Export Information
+               */
+              f = containerService.selectContainerNoInfo(f);
 
-                /**
-                 * Check if container 1 is a DG container
-                 */
-                returnMessage = returnMessage + checkIfDGContainer(c1, returnMessage);
-                /**
-                 * Check if container 2 is a DG container
-                 */
-                returnMessage = returnMessage + checkIfDGContainer(c2, returnMessage);
+              /**
+               * Check if container 1 is a DG container
+               */
+              returnMessage = returnMessage + checkIfDGContainer(c1, returnMessage);
+              /**
+               * Check if container 2 is a DG container
+               */
+              returnMessage = returnMessage + checkIfDGContainer(c2, returnMessage);
 
-                /**
-                 * final step: Check if user is allowed to bypass DG validation
-                 */
-                // f.setAllowBypassDgVal(super.log(request, AccessRight.GATE_BYPASS_DG_VALIDATION));
+              /**
+               * final step: Check if user is allowed to bypass DG validation
+               */
+              // f.setAllowBypassDgVal(super.log(request, AccessRight.GATE_BYPASS_DG_VALIDATION));
 
-                //calculateWeightBridge(c1, c2, gateInInfo.getWeightBridge());
+              // calculateWeightBridge(c1, c2, gateInInfo.getWeightBridge());
 
-                returnedView = "VIEW.NORMAL";
-              
+              returnedView = "VIEW.NORMAL";
+
 
 
               /**
@@ -179,7 +180,7 @@ public class GateInExpNormalController {
                */
               // f.setAllowBypassDgVal(super.log(request, AccessRight.GATE_BYPASS_DG_VALIDATION));
 
-        
+
 
               returnedView = "VIEW.NORMAL";
 
@@ -242,7 +243,7 @@ public class GateInExpNormalController {
 //        if (StringUtils.isNotBlank(damage)) {
 //          if (clearedDamageCodes != null && clearedDamageCodes.size() > 0) {
 //            if (clearedDamageCodes.contains(damage)) {
-//              returnMessage = returnMessage + MessageCode.format("ERR_MSG_089", new Object[] {"ExportContainer 1", damage});
+//              returnMessage = returnMessage + CommonUtil.formatMessageCode("ERR_MSG_089", new Object[] {"ExportContainer 1", damage});
 //              // session.setAttribute("f", f);
 //              returnedView = "VIEW.NORMAL";
 //            } else {
@@ -356,7 +357,7 @@ public class GateInExpNormalController {
                        * generate message for early entry window
                        */
                       returnMessage = returnMessage
-                          + MessageCode.format("ERR_MSG_101",
+                          + CommonUtil.formatMessageCode("ERR_MSG_101",
                               new Object[] {c.getContainerNo(), time.format(strtFullDate), time.format(edFullDate)})
                           + ReturnMsg.SEPARATOR;
 
@@ -368,8 +369,9 @@ public class GateInExpNormalController {
                   /*
                    * did not register as early entry
                    */
-                  returnMessage = returnMessage + MessageCode.format("ERR_MSG_094", new Object[] {c.getContainerNo()})
-                      + ReturnMsg.SEPARATOR;
+                  returnMessage =
+                      returnMessage + CommonUtil.formatMessageCode("ERR_MSG_094", new Object[] {c.getContainerNo()})
+                          + ReturnMsg.SEPARATOR;
                   c.setDgWithinWindowEntry(false);
                   // return mapping.findForward(VIEW.INPUT);
                 }
@@ -412,20 +414,23 @@ public class GateInExpNormalController {
        * WPTSCSSSUP-163: check multiple booking
        */
       if (c.getTotalBooking() > 1) {
-        returnmsg += MessageCode.format("ERR_MSG_095", new Object[] {c.getContainerNo()}) + ReturnMsg.SEPARATOR;
+        returnmsg +=
+            CommonUtil.formatMessageCode("ERR_MSG_095", new Object[] {c.getContainerNo()}) + ReturnMsg.SEPARATOR;
       }
       if (!c.isBookingNoExist()) {
-        returnmsg += MessageCode.format("ERR_MSG_015", new Object[] {c.getContainerNo()}) + ReturnMsg.SEPARATOR;
+        returnmsg +=
+            CommonUtil.formatMessageCode("ERR_MSG_015", new Object[] {c.getContainerNo()}) + ReturnMsg.SEPARATOR;
       }
 
-      
+
 
       returnmsg += validateContainerAllowedIn(c);
 
       if (c.isInternalBlock()) {
         c.setInternalBlock(true);
-        returnmsg += MessageCode.format("ERR_MSG_082", new Object[] {c.getContainerNo(), c.getInternalBlockDesc()})
-            + ReturnMsg.SEPARATOR;
+        returnmsg +=
+            CommonUtil.formatMessageCode("ERR_MSG_082", new Object[] {c.getContainerNo(), c.getInternalBlockDesc()})
+                + ReturnMsg.SEPARATOR;
       }
 
       ExportSSR ssr = new ExportSSR(gateInInfo.getTimeGateIn(), c.getVesselDateEta_ddMMyyyyHHmmss());
@@ -437,7 +442,7 @@ public class GateInExpNormalController {
         c.setExpSSRBlockStatus("RLS");
       }
       if (StringUtils.isNotEmpty(gateInInfo.getWeightBridge())) {
-        //c.setNetWeight(gateInInfo.getWeightBridge());
+        // c.setNetWeight(gateInInfo.getWeightBridge());
       }
     }
 
@@ -461,17 +466,18 @@ public class GateInExpNormalController {
         if (strtFullDate.after(edFullDate)) {
           edFullDate = DateUtil.addDate(edFullDate, 1);
         }
-        returnmsg += MessageCode.format("ERR_MSG_100",
+        returnmsg += CommonUtil.formatMessageCode("ERR_MSG_100",
             new Object[] {c.getContainerNo(), time.format(strtFullDate), time.format(edFullDate)})
             + ReturnMsg.SEPARATOR;
       } else {
-        returnmsg += MessageCode.format("ERR_MSG_064", new Object[] {c.getContainerNo()}) + ReturnMsg.SEPARATOR;
+        returnmsg +=
+            CommonUtil.formatMessageCode("ERR_MSG_064", new Object[] {c.getContainerNo()}) + ReturnMsg.SEPARATOR;
       }
     }
     return returnmsg;
   }
 
- 
+
 
   private ExportContainer findContainer(String containerNo) throws Exception {
     if (StringUtils.isNotEmpty(containerNo)) {
