@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import com.privasia.scss.core.dto.ClientDTO;
 import com.privasia.scss.core.model.Client;
 
 /**
@@ -16,5 +17,9 @@ public interface ClientRepository extends BaseRepository<Client, Long> {
 
   @Query(name = "Client.getClientUnitNoByIp")
   Optional<String> getClientUnitNoByIp(@Param("webIPAddress") String webIPAddress);
+
+
+  @Query(name = "Client.getlpsIPAddressByClientID")
+  Optional<ClientDTO> getlpsIPAddressInfoByClientID(@Param("clientID") long clientID);
 
 }

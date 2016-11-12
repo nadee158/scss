@@ -12,10 +12,10 @@ public class GateInForm implements Serializable {
   private int pressedButton;
 
   // container1
-  private Container container1;
+  private ExportContainer container1;
 
   // container2
-  private Container container2;
+  private ExportContainer container2;
 
   // truck info
   private String laneNo = "";
@@ -272,19 +272,19 @@ public class GateInForm implements Serializable {
     this.pressedButton = pressedButton;
   }
 
-  public Container getContainer1() {
+  public ExportContainer getContainer1() {
     return container1;
   }
 
-  public void setContainer1(Container container1) {
+  public void setContainer1(ExportContainer container1) {
     this.container1 = container1;
   }
 
-  public Container getContainer2() {
+  public ExportContainer getContainer2() {
     return container2;
   }
 
-  public void setContainer2(Container container2) {
+  public void setContainer2(ExportContainer container2) {
     this.container2 = container2;
   }
 

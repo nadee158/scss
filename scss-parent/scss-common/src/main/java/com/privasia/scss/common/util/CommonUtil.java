@@ -2,6 +2,7 @@ package com.privasia.scss.common.util;
 
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.text.MessageFormat;
 import java.util.Calendar;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -66,6 +67,23 @@ public final class CommonUtil {
     } else {
       return false;
     }
+  }
+
+
+  public static String formatMessageCode(String msgcode, Object[] args) {
+
+    String filePath = "message_code.properties";
+    String msg = (String) getValueFromFile(filePath, msgcode);
+
+    if (msg != null) {
+      msg = MessageFormat.format(msg, args);
+    }
+
+    return msg;
+  }
+
+  public static String getMessageCode(String msgcode) {
+    return CommonUtil.formatMessageCode(msgcode, null);
   }
 
   /**

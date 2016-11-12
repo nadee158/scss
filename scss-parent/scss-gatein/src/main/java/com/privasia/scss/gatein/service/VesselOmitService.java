@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.privasia.scss.core.dto.Container;
+import com.privasia.scss.core.dto.ExportContainer;
 import com.privasia.scss.core.exception.ResultsNotFoundException;
 import com.privasia.scss.core.model.VesselOmit;
 import com.privasia.scss.core.model.VesselOmitPK;
@@ -32,7 +32,7 @@ public class VesselOmitService {
     return vesselOmit.orElseThrow(() -> new ResultsNotFoundException("VesselOmit not found for linecode / agentCode : "+lineCode+" / "+agentCode));
   }
   
-  public boolean isValidVesselOmit(Container c){
+  public boolean isValidVesselOmit(ExportContainer c){
 	  
 	  VesselOmit vesselOmit = getVesselOmit(c.getLine(), c.getAgentCode());
 	  if (StringUtils.contains(c.getVesselVoyageIn(), vesselOmit.getVesselVoyIN())) {
