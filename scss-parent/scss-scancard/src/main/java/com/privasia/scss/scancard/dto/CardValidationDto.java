@@ -10,55 +10,66 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class CardValidationDto implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -3307259032020005634L;
-	Long cardId;
-	boolean isValid = false;
-	String validationMessage = StringUtils.EMPTY;
-	String cardStatus = StringUtils.EMPTY;
+  /**
+   * 
+   */
+  private static final long serialVersionUID = -3307259032020005634L;
+  Long cardId;
+  boolean isValid = false;
+  String validationMessage = StringUtils.EMPTY;
+  String cardStatus = StringUtils.EMPTY;
+  String cardScannedTime = null;
 
-	public CardValidationDto(Long cardId, boolean isValid, String validationMessage, String cardStatus) {
-		super();
-		this.cardId = cardId;
-		this.isValid = isValid;
-		this.validationMessage = validationMessage;
-		this.cardStatus = cardStatus;
-	}
+  public CardValidationDto(Long cardId, boolean isValid, String validationMessage, String cardStatus,
+      String cardScannedTime) {
+    super();
+    this.cardId = cardId;
+    this.isValid = isValid;
+    this.validationMessage = validationMessage;
+    this.cardStatus = cardStatus;
+    this.cardScannedTime = cardScannedTime;
+  }
 
-	public String getValidationMessage() {
-		return validationMessage;
-	}
+  public String getValidationMessage() {
+    return validationMessage;
+  }
 
-	public void setValidationMessage(String validationMessage) {
-		this.validationMessage = validationMessage;
-	}
+  public void setValidationMessage(String validationMessage) {
+    this.validationMessage = validationMessage;
+  }
 
-	public boolean isValid() {
-		return isValid;
-	}
+  public boolean isValid() {
+    return isValid;
+  }
 
-	public void setValid(boolean isValid) {
-		this.isValid = isValid;
-	}
+  public void setValid(boolean isValid) {
+    this.isValid = isValid;
+  }
 
-	public String getCardStatus() {
-		return cardStatus;
-	}
+  public String getCardStatus() {
+    return cardStatus;
+  }
 
-	public void setCardStatus(String cardStatus) {
-		this.cardStatus = cardStatus;
-	}
+  public void setCardStatus(String cardStatus) {
+    this.cardStatus = cardStatus;
+  }
 
-	public Long getCardId() {
-		return cardId;
-	}
+  public Long getCardId() {
+    return cardId;
+  }
 
-	public void setCardId(Long cardId) {
-		this.cardId = cardId;
-	}
+  public void setCardId(Long cardId) {
+    this.cardId = cardId;
+  }
 
-	
+  public String getCardScannedTime() {
+    return cardScannedTime;
+  }
+
+  public void setCardScannedTime(String cardScannedTime) {
+    this.cardScannedTime = cardScannedTime;
+  }
+
+
 
 }

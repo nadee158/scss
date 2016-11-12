@@ -99,12 +99,12 @@ public class GateInExpNormalController {
           case CONTINUE_BTN_PRESSED:
 
             String containerNoC1 = StringUtils.EMPTY;
-            if (!(f.getContainer1() == null || StringUtils.isEmpty(f.getContainer1().getContainerNo()))) {
-              containerNoC1 = f.getContainer1().getContainerNo();
+            if (!(f.getContainer1() == null || StringUtils.isEmpty(f.getContainer1().getContainerNumber()))) {
+              containerNoC1 = f.getContainer1().getContainerNumber();
             }
             String containerNoC2 = StringUtils.EMPTY;
-            if (!(f.getContainer2() == null || StringUtils.isEmpty(f.getContainer2().getContainerNo()))) {
-              containerNoC2 = f.getContainer1().getContainerNo();
+            if (!(f.getContainer2() == null || StringUtils.isEmpty(f.getContainer2().getContainerNumber()))) {
+              containerNoC2 = f.getContainer1().getContainerNumber();
             }
 
             c1 = findContainer(containerNoC1);
@@ -285,7 +285,8 @@ public class GateInExpNormalController {
             /**
              * No approval from LPK
              */
-            returnMessage = returnMessage + " DG container " + c.getContainerNo() + " approval record not found<br/>";
+            returnMessage =
+                returnMessage + " DG container " + c.getContainerNumber() + " approval record not found<br/>";
 
             c.setDgWithinWindowEntry(false);
 
@@ -299,7 +300,7 @@ public class GateInExpNormalController {
 
               returnMessage =
                   returnMessage + "Class 1 block. Please call supervisor for entry confirmation for container no:"
-                      + c.getContainerNo();
+                      + c.getContainerNumber();
 
               c.setDgWithinWindowEntry(false);
 
@@ -317,13 +318,13 @@ public class GateInExpNormalController {
               // Class 2 block. CC not within TT hours allowed window (XX - YY)
               if (now.before(allowedGateInDate) || now.after(newEta)) {
 
-                returnMessage = returnMessage + "Class " + c.getKpaClass() + " block. " + c.getContainerNo()
+                returnMessage = returnMessage + "Class " + c.getKpaClass() + " block. " + c.getContainerNumber()
                     + " not within " + hours + " hours allowed window (" + allowedGateInDate + " - " + newEta + ")";
                 c.setDgWithinWindowEntry(false);
 
               } else {
 
-                returnMessage = returnMessage + "<div style='color: green;'>ExportContainer  " + c.getContainerNo()
+                returnMessage = returnMessage + "<div style='color: green;'>ExportContainer  " + c.getContainerNumber()
                     + "  has arrived within the assigned entry slot</div>";
 
               }
@@ -358,7 +359,7 @@ public class GateInExpNormalController {
                        */
                       returnMessage = returnMessage
                           + CommonUtil.formatMessageCode("ERR_MSG_101",
-                              new Object[] {c.getContainerNo(), time.format(strtFullDate), time.format(edFullDate)})
+                              new Object[] {c.getContainerNumber(), time.format(strtFullDate), time.format(edFullDate)})
                           + ReturnMsg.SEPARATOR;
 
                       c.setDgWithinWindowEntry(false);
@@ -370,14 +371,14 @@ public class GateInExpNormalController {
                    * did not register as early entry
                    */
                   returnMessage =
-                      returnMessage + CommonUtil.formatMessageCode("ERR_MSG_094", new Object[] {c.getContainerNo()})
+                      returnMessage + CommonUtil.formatMessageCode("ERR_MSG_094", new Object[] {c.getContainerNumber()})
                           + ReturnMsg.SEPARATOR;
                   c.setDgWithinWindowEntry(false);
                   // return mapping.findForward(VIEW.INPUT);
                 }
 
               } else {
-                returnMessage = returnMessage + "<div style='color: green;'>ExportContainer  " + c.getContainerNo()
+                returnMessage = returnMessage + "<div style='color: green;'>ExportContainer  " + c.getContainerNumber()
                     + "  has arrived within the assigned entry slot</div>";
               }
             } // end of dg class type
@@ -415,11 +416,11 @@ public class GateInExpNormalController {
        */
       if (c.getTotalBooking() > 1) {
         returnmsg +=
-            CommonUtil.formatMessageCode("ERR_MSG_095", new Object[] {c.getContainerNo()}) + ReturnMsg.SEPARATOR;
+            CommonUtil.formatMessageCode("ERR_MSG_095", new Object[] {c.getContainerNumber()}) + ReturnMsg.SEPARATOR;
       }
       if (!c.isBookingNoExist()) {
         returnmsg +=
-            CommonUtil.formatMessageCode("ERR_MSG_015", new Object[] {c.getContainerNo()}) + ReturnMsg.SEPARATOR;
+            CommonUtil.formatMessageCode("ERR_MSG_015", new Object[] {c.getContainerNumber()}) + ReturnMsg.SEPARATOR;
       }
 
 
@@ -429,7 +430,7 @@ public class GateInExpNormalController {
       if (c.isInternalBlock()) {
         c.setInternalBlock(true);
         returnmsg +=
-            CommonUtil.formatMessageCode("ERR_MSG_082", new Object[] {c.getContainerNo(), c.getInternalBlockDesc()})
+            CommonUtil.formatMessageCode("ERR_MSG_082", new Object[] {c.getContainerNumber(), c.getInternalBlockDesc()})
                 + ReturnMsg.SEPARATOR;
       }
 
@@ -467,11 +468,11 @@ public class GateInExpNormalController {
           edFullDate = DateUtil.addDate(edFullDate, 1);
         }
         returnmsg += CommonUtil.formatMessageCode("ERR_MSG_100",
-            new Object[] {c.getContainerNo(), time.format(strtFullDate), time.format(edFullDate)})
+            new Object[] {c.getContainerNumber(), time.format(strtFullDate), time.format(edFullDate)})
             + ReturnMsg.SEPARATOR;
       } else {
         returnmsg +=
-            CommonUtil.formatMessageCode("ERR_MSG_064", new Object[] {c.getContainerNo()}) + ReturnMsg.SEPARATOR;
+            CommonUtil.formatMessageCode("ERR_MSG_064", new Object[] {c.getContainerNumber()}) + ReturnMsg.SEPARATOR;
       }
     }
     return returnmsg;
