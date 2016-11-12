@@ -82,6 +82,10 @@ public final class CommonUtil {
     return msg;
   }
 
+  public static String getMessageCode(String msgcode) {
+    return CommonUtil.formatMessageCode(msgcode, null);
+  }
+
   /**
    * To get all the key value pairs from the property file
    * 
