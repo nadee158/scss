@@ -15,6 +15,6 @@ import com.privasia.scss.core.model.Client;
 public interface ClientRepository extends BaseRepository<Client, Long> {
 
   @Query(name = "Client.getClientUnitNoByIp")
-  Optional<Client> getClientUnitNoByIp(@Param("webIPAddress") String webIPAddress);
+  Optional<String> getClientUnitNoByIp(@Param("webIPAddress") String webIPAddress);
 
 }

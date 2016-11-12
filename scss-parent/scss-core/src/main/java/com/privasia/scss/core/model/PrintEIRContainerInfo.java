@@ -4,8 +4,12 @@ import java.io.Serializable;
 
 import javax.persistence.Embeddable;
 
+import org.hibernate.annotations.Type;
+
+import com.privasia.scss.core.util.constant.GateInOutStatus;
+
 @Embeddable
-public class BaseContainerInfo extends CommonContainerAttribute implements Serializable {
+public class PrintEIRContainerInfo extends CommonContainerAttribute implements Serializable {
 
 	/**
 	 * 
@@ -14,8 +18,9 @@ public class BaseContainerInfo extends CommonContainerAttribute implements Seria
 	private static final long serialVersionUID = 1L;
 
 	private String containerBayCode;
-
-	private String containerInOrOut;
+	
+	@Type(type = "com.privasia.scss.core.util.enumusertype.GateInOutStatusEnumUserType")
+	private GateInOutStatus containerInOrOut;
 
 	private String containerPositionOnTruck;
 
@@ -41,11 +46,11 @@ public class BaseContainerInfo extends CommonContainerAttribute implements Seria
 		this.containerBayCode = containerBayCode;
 	}
 
-	public String getContainerInOrOut() {
+	public GateInOutStatus getContainerInOrOut() {
 		return containerInOrOut;
 	}
 
-	public void setContainerInOrOut(String containerInOrOut) {
+	public void setContainerInOrOut(GateInOutStatus containerInOrOut) {
 		this.containerInOrOut = containerInOrOut;
 	}
 

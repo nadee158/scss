@@ -16,6 +16,10 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Type;
+
+import com.privasia.scss.core.util.constant.HpatReferStatus;
+
 /**
  * @author Janaka
  *
@@ -49,7 +53,7 @@ public class PrintEir extends AuditEntity implements Serializable {
 	private String truckHeadNo;
 
 	@Column(name = "COMP_NAME_PRINT")
-	private String compNamePrint;
+	private String companyName;
 
 	@Column(name = "ICNOORPASSPORT")
 	private String icNoOrPassport;
@@ -58,7 +62,8 @@ public class PrintEir extends AuditEntity implements Serializable {
 	private String truckNo;
 
 	@Column(name = "STATUS")
-	private String status;
+	@Type(type = "com.privasia.scss.core.util.enumusertype.HPATReferStatusEnumUserType")
+	private HpatReferStatus status;
 
 	@Column(name = "SCUNAME")
 	private String scuName;
@@ -84,7 +89,7 @@ public class PrintEir extends AuditEntity implements Serializable {
 			@AttributeOverride(name = "containerLineInfo2", column = @Column(name = "LINE_INFO2_C1")),
 			@AttributeOverride(name = "containerSeal", column = @Column(name = "SEAL_C1")),
 			@AttributeOverride(name = "containerLine", column = @Column(name = "LINE_C1")) })
-	private BaseContainerInfo container01;
+	private PrintEIRContainerInfo container01;
 
 	@Embedded
 	@AttributeOverrides({ @AttributeOverride(name = "containerNumber", column = @Column(name = "CONTAINERNO_C2")),
@@ -101,7 +106,7 @@ public class PrintEir extends AuditEntity implements Serializable {
 			@AttributeOverride(name = "containerLineInfo2", column = @Column(name = "LINE_INFO2_C2")),
 			@AttributeOverride(name = "containerSeal", column = @Column(name = "SEAL_C2")),
 			@AttributeOverride(name = "containerLine", column = @Column(name = "LINE_C2")) })
-	private BaseContainerInfo container02;
+	private PrintEIRContainerInfo container02;
 
 	public Long getPrintEIRID() {
 		return printEIRID;
@@ -135,14 +140,6 @@ public class PrintEir extends AuditEntity implements Serializable {
 		this.truckHeadNo = truckHeadNo;
 	}
 
-	public String getCompNamePrint() {
-		return compNamePrint;
-	}
-
-	public void setCompNamePrint(String compNamePrint) {
-		this.compNamePrint = compNamePrint;
-	}
-
 	public String getIcNoOrPassport() {
 		return icNoOrPassport;
 	}
@@ -157,14 +154,6 @@ public class PrintEir extends AuditEntity implements Serializable {
 
 	public void setTruckNo(String truckNo) {
 		this.truckNo = truckNo;
-	}
-
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
 	}
 
 	public String getScuName() {
@@ -191,20 +180,36 @@ public class PrintEir extends AuditEntity implements Serializable {
 		this.clientIp = clientIp;
 	}
 
-	public BaseContainerInfo getContainer01() {
+	public PrintEIRContainerInfo getContainer01() {
 		return container01;
 	}
 
-	public void setContainer01(BaseContainerInfo container01) {
+	public void setContainer01(PrintEIRContainerInfo container01) {
 		this.container01 = container01;
 	}
 
-	public BaseContainerInfo getContainer02() {
+	public PrintEIRContainerInfo getContainer02() {
 		return container02;
 	}
 
-	public void setContainer02(BaseContainerInfo container02) {
+	public void setContainer02(PrintEIRContainerInfo container02) {
 		this.container02 = container02;
+	}
+
+	public String getCompanyName() {
+		return companyName;
+	}
+
+	public void setCompanyName(String companyName) {
+		this.companyName = companyName;
+	}
+
+	public HpatReferStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(HpatReferStatus status) {
+		this.status = status;
 	}
 
 }

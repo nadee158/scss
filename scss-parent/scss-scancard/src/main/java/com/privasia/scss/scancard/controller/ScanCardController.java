@@ -25,7 +25,7 @@ import com.privasia.scss.scancard.service.CardValidationService;
  */
 
 @RestController
-@RequestMapping("api")
+@RequestMapping("**/scancard")
 public class ScanCardController {
 
   @Autowired
@@ -34,14 +34,14 @@ public class ScanCardController {
   @Autowired
   private CardValidationService cardValidationService;
 
-  @RequestMapping(value = "scancard/{cardNo}", method = RequestMethod.GET,
+  @RequestMapping(value = "/{cardNo}", method = RequestMethod.GET,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public ResponseEntity<CardValidationDto> scanCardByCardNo(@PathVariable("cardNo") String cardNo) {
     CardValidationDto cardValidation = cardValidationService.validateCard(cardNo);
     return new ResponseEntity<CardValidationDto>(cardValidation, HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/card/{cardID}", method = RequestMethod.GET,
+  @RequestMapping(value = "/cardid/{cardID}", method = RequestMethod.GET,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public ResponseEntity<CardValidationDto> validateCardByCardId(@PathVariable("cardID") Long cardID) {
     CardValidationDto cardValidation = cardValidationService.validateCard(cardID);
@@ -64,14 +64,14 @@ public class ScanCardController {
     return new ResponseEntity<SmartCardUserDTO>(dto, HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/{cardNo}/compnay/code", method = RequestMethod.GET,
+  @RequestMapping(value = "/cardno/{cardNo}/compnay/code", method = RequestMethod.GET,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public ResponseEntity<String> selectCompanyCode(@PathVariable("cardNo") String cardNo) {
     String companyCode = cardService.selectCompanyCode(cardNo);
     return new ResponseEntity<String>(companyCode, HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/{cardID}/compnay/code/bycardid", method = RequestMethod.GET,
+  @RequestMapping(value = "/cardid/{cardID}/compnay/code", method = RequestMethod.GET,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public ResponseEntity<String> selectCompanyCodeByCardId(@PathVariable("cardID") Long cardID) {
     String companyCode = cardService.selectCompanyCode(cardID);

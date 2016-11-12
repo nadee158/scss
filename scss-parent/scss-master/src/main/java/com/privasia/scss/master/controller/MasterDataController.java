@@ -26,7 +26,7 @@ import com.privasia.scss.master.service.ReferReasonService;
  */
 
 @RestController
-@RequestMapping("scss/masterdata")
+@RequestMapping("**/masterdata")
 public class MasterDataController {
 
 
@@ -62,7 +62,7 @@ public class MasterDataController {
     return new ResponseEntity<Boolean>(check, HttpStatus.OK);
   }
 
-  @RequestMapping(value = "referreason", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
+  @RequestMapping(value = "/referreason", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
       consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public ResponseEntity<Map<Boolean, Set<ReferReason>>> getReferReasonList() {
 

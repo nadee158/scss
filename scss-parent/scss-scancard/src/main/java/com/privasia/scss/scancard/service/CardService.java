@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
+import com.privasia.scss.common.util.UserIpAddressUtil;
 import com.privasia.scss.core.config.WebSecurityConfig;
 import com.privasia.scss.core.dto.SmartCardUserDTO;
 import com.privasia.scss.core.exception.ResultsNotFoundException;
@@ -47,25 +48,27 @@ public class CardService {
 
     Optional<SmartCardUserDTO> smartCardUser = cardRepository.findSCUInfoByCardIdOrNo(cardID, cardNo);
     
-    return smartCardUser.orElseThrow(() -> new ResultsNotFoundException("Requested SCU Info not found!"));
-    
 
-    //String webIPAddress = UserIpAddressUtil.getUserIp(httpRequest);
-    //String baseUrl = UserIpAddressUtil.getBaseUrl(httpRequest);
-
-    /*if (smartCardUser.isPresent()) {
-      SmartCardUserDTO cu = smartCardUser.orElse(null);
+    if (smartCardUser.isPresent()) {
+      SmartCardUserDTO cu = smartCardUser.get();
       if (!(cu == null)) {
-        String clientUnitNo = getClientUnitNoFromClientService(webIPAddress, baseUrl);
+        String clientUnitNo = getClientUnitNoFromClientService(httpRequest);
         cu.setClientUnitNo(clientUnitNo);
         return cu;
       }
-    }*/
+    }else{
+    	throw new ResultsNotFoundException("Requested SCU Info not found!");
+    }
+	return null;
+	
 
   }
 
-  public String getClientUnitNoFromClientService(String webIPAddress, String baseUrl) {
+  public String getClientUnitNoFromClientService(HttpServletRequest httpRequest) {
     try {
+    	
+      String webIPAddress = UserIpAddressUtil.getUserIp(httpRequest);
+      String baseUrl = UserIpAddressUtil.getBaseUrl(httpRequest);
       System.out.println("webIPAddress :" + webIPAddress);
       System.out.println("baseUrl :" + baseUrl);
       SecurityContext securityContext = SecurityHelper.getSecurityContext(tokenExtractor);
@@ -79,9 +82,7 @@ public class CardService {
       headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON_UTF8));
       headers.set(WebSecurityConfig.JWT_TOKEN_HEADER_PARAM, "Bearer " + securityContext.getToken());
 
-
       HttpEntity<?> entity = new HttpEntity<>(headers);
-
 
       HttpEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
       System.out.println("response :" + response);
@@ -91,7 +92,7 @@ public class CardService {
 
 
     } catch (Exception e) {
-      e.printStackTrace();
+    	System.out.println("response :"+e.getMessage());
     }
     return null;
   }
@@ -107,11 +108,11 @@ public class CardService {
   }
 
   private String getCompanyCodeFromCard(Card card) {
-    if (!(card == null)) {
-      if (!(card.getCompany() == null)) {
+    if (card != null) {
+      if (card.getCompany() != null) {
         return card.getCompany().getCompanyCode();
       } else {
-        throw new ResultsNotFoundException("Card was not found!");
+        throw new ResultsNotFoundException("Card Company was not found!");
       }
     } else {
       throw new ResultsNotFoundException("Card was not found!");

@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.privasia.scss.core.exception.ResultsNotFoundException;
-import com.privasia.scss.core.model.Client;
 import com.privasia.scss.core.repository.ClientRepository;
 
 @Service("clientService")
@@ -21,14 +20,10 @@ public class ClientService {
 
   @Transactional()
   public String getClientUnitNoByIp(String webIPAddress) {
-    Optional<Client> client = clientRepository.getClientUnitNoByIp(webIPAddress);
-    if (client.isPresent()) {
-      Client found = client.orElse(null);
-      if (!(found == null)) {
-        return found.getUnitNo();
-      }
-    }
-    throw new ResultsNotFoundException("Client was not found!");
+    Optional<String> unitNo = clientRepository.getClientUnitNoByIp(webIPAddress);
+    
+    return unitNo.orElseThrow(() -> new ResultsNotFoundException("Unit No was not found!"));
+    
   }
 
 

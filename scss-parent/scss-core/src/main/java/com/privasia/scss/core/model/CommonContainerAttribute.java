@@ -7,6 +7,10 @@ import java.io.Serializable;
 
 import javax.persistence.Embeddable;
 
+import org.hibernate.annotations.Type;
+
+import com.privasia.scss.core.util.constant.ContainerFullEmptyType;
+
 
 
 /**
@@ -27,7 +31,8 @@ public class CommonContainerAttribute implements Serializable {
 	
 	private String containerISOCode;
 	
-	private String containerFullOrEmpty;
+	@Type(type="com.privasia.scss.core.util.enumusertype.ContainerFullEmptyTypeEnumUserType")
+	private ContainerFullEmptyType containerFullOrEmpty;
 
 	public String getContainerNumber() {
 		return containerNumber;
@@ -53,13 +58,6 @@ public class CommonContainerAttribute implements Serializable {
 		this.containerISOCode = containerISOCode;
 	}
 
-	public String getContainerFullOrEmpty() {
-		return containerFullOrEmpty;
-	}
-
-	public void setContainerFullOrEmpty(String containerFullOrEmpty) {
-		this.containerFullOrEmpty = containerFullOrEmpty;
-	}
 	
 
 }
