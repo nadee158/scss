@@ -8,7 +8,7 @@ import java.util.Date;
 import org.springframework.stereotype.Service;
 
 import com.privasia.scss.common.util.DateUtil;
-import com.privasia.scss.core.dto.Container;
+import com.privasia.scss.core.dto.ExportContainer;
 import com.privasia.scss.core.dto.GateInForm;
 
 /**
@@ -18,7 +18,7 @@ import com.privasia.scss.core.dto.GateInForm;
 @Service("containerService")
 public class ContainerService {
 
-  public Container getContainerByContainerNo(String containerNo) throws Exception {
+  public ExportContainer getContainerByContainerNo(String containerNo) throws Exception {
     // must be in this order
     this.checkContainerInAS400();
     this.checkContainer();
@@ -493,37 +493,37 @@ public class ContainerService {
   }
 
 
-  public boolean isAllowIn(Container container) throws Exception {
+  public boolean isAllowIn(ExportContainer exportContainer) throws Exception {
     final Date now = new Date();
     boolean ret = false;
 
     // if no record found in the shp_ship_code table
-    if (container.getStoragePeriod() == -1) {
+    if (exportContainer.getStoragePeriod() == -1) {
       return true;
     }
 
     long earlyEnrtyDate = 0;
-    container.setEtad(DateUtil.addDate(container.getEtad(), -1));
-    earlyEnrtyDate = DateUtil.getDaysBetween2Dates(now, container.getEtad());
+    exportContainer.setEtad(DateUtil.addDate(exportContainer.getEtad(), -1));
+    earlyEnrtyDate = DateUtil.getDaysBetween2Dates(now, exportContainer.getEtad());
 
     // Before Eta Date
     if (earlyEnrtyDate > 1) {
-      if (earlyEnrtyDate <= container.getStoragePeriod()) {
+      if (earlyEnrtyDate <= exportContainer.getStoragePeriod()) {
         ret = true;
       } else {
         /**
          * Check if it is allowed for early entry
          */
-        if (!container.getSeq().equals("")) {
+        if (!exportContainer.getSeq().equals("")) {
           /**
            * check if container coming during early entry window.
            */
           if (inEarlyEntryWindow()) {
-            container.setEarlyEntry(true);
+            exportContainer.setEarlyEntry(true);
             ret = true;
           } else {
-            container.setEarlyEntry(true);
-            if (container.isBypassEEntry()) {
+            exportContainer.setEarlyEntry(true);
+            if (exportContainer.isBypassEEntry()) {
               ret = true;
             } else {
               ret = false;

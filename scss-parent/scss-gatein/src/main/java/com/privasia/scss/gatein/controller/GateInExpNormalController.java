@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.privasia.scss.common.util.DateUtil;
 import com.privasia.scss.common.util.MessageCode;
 import com.privasia.scss.common.util.ReturnMsg;
-import com.privasia.scss.core.dto.Container;
+import com.privasia.scss.core.dto.ExportContainer;
 import com.privasia.scss.core.dto.GateInForm;
 import com.privasia.scss.core.dto.GateInfo;
 import com.privasia.scss.core.util.constant.ButtonType;
@@ -90,8 +90,8 @@ public class GateInExpNormalController {
         int pressedButton = f.getPressedButton();
         ButtonType buttonType = ButtonType.fromCode(pressedButton);
 
-        Container c1 = null;
-        Container c2 = null;
+        ExportContainer c1 = null;
+        ExportContainer c2 = null;
 
         switch (buttonType) {
 
@@ -192,12 +192,12 @@ public class GateInExpNormalController {
 
 
             /**
-             * Damage Container 1
+             * Damage ExportContainer 1
              */
             List<String> clearedDamageCodesC1 = getClearedDamageCodes(c1, returnMessage, returnedView);
 
             /**
-             * Damage Container 2
+             * Damage ExportContainer 2
              */
             List<String> clearedDamageCodesC2 = getClearedDamageCodes(c1, returnMessage, returnedView);
 
@@ -221,7 +221,7 @@ public class GateInExpNormalController {
     return new ResponseEntity<String>(returnedView, HttpStatus.OK);
   }
 
-  private List<String> getClearedDamageCodes(Container c, String returnMessage, String returnedView) {
+  private List<String> getClearedDamageCodes(ExportContainer c, String returnMessage, String returnedView) {
     List<String> originalDamagedCodes = c.getDamage();
     long duplicateCount =
         originalDamagedCodes.stream().filter(i -> Collections.frequency(originalDamagedCodes, i) > 1).count();
@@ -242,7 +242,7 @@ public class GateInExpNormalController {
 //        if (StringUtils.isNotBlank(damage)) {
 //          if (clearedDamageCodes != null && clearedDamageCodes.size() > 0) {
 //            if (clearedDamageCodes.contains(damage)) {
-//              returnMessage = returnMessage + MessageCode.format("ERR_MSG_089", new Object[] {"Container 1", damage});
+//              returnMessage = returnMessage + MessageCode.format("ERR_MSG_089", new Object[] {"ExportContainer 1", damage});
 //              // session.setAttribute("f", f);
 //              returnedView = "VIEW.NORMAL";
 //            } else {
@@ -258,7 +258,7 @@ public class GateInExpNormalController {
   //@formatter:on
   }
 
-  private String checkIfDGContainer(Container c, String returnMessage) throws Exception {
+  private String checkIfDGContainer(ExportContainer c, String returnMessage) throws Exception {
 
     if (returnMessage == null) {
       returnMessage = StringUtils.EMPTY;
@@ -322,7 +322,7 @@ public class GateInExpNormalController {
 
               } else {
 
-                returnMessage = returnMessage + "<div style='color: green;'>Container  " + c.getContainerNo()
+                returnMessage = returnMessage + "<div style='color: green;'>ExportContainer  " + c.getContainerNo()
                     + "  has arrived within the assigned entry slot</div>";
 
               }
@@ -375,7 +375,7 @@ public class GateInExpNormalController {
                 }
 
               } else {
-                returnMessage = returnMessage + "<div style='color: green;'>Container  " + c.getContainerNo()
+                returnMessage = returnMessage + "<div style='color: green;'>ExportContainer  " + c.getContainerNo()
                     + "  has arrived within the assigned entry slot</div>";
               }
             } // end of dg class type
@@ -404,7 +404,7 @@ public class GateInExpNormalController {
     return DateUtil.addHours(eta, 2);
   }
 
-  private String validateContainer(Container c, GateInfo gateInInfo) throws Exception {
+  private String validateContainer(ExportContainer c, GateInfo gateInInfo) throws Exception {
     String returnmsg = "";
 
     if (c != null) {
@@ -444,7 +444,7 @@ public class GateInExpNormalController {
     return returnmsg;
   }
 
-  private String validateContainerAllowedIn(Container c) throws Exception {
+  private String validateContainerAllowedIn(ExportContainer c) throws Exception {
     String returnmsg = null;
     boolean isContainerAllowedIn = containerService.isAllowIn(c);
     if (!isContainerAllowedIn) {
@@ -473,7 +473,7 @@ public class GateInExpNormalController {
 
  
 
-  private Container findContainer(String containerNo) throws Exception {
+  private ExportContainer findContainer(String containerNo) throws Exception {
     if (StringUtils.isNotEmpty(containerNo)) {
       return containerService.getContainerByContainerNo(containerNo);
     }

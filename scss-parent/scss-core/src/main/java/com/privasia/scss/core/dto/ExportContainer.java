@@ -7,13 +7,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * @author nadee158 moved all the methods to service class - Container Service
+ * @author nadee158 moved all the methods to service class - ExportContainer Service
  *         Only the attributes remains in the dto class
  *
  */
-public class Container {
+public class ExportContainer {
 
-	private static final Log log = LogFactory.getLog(Container.class);
+	private static final Log log = LogFactory.getLog(ExportContainer.class);
 
 	private String bookingNo = "";
 	private String containerNo = "";

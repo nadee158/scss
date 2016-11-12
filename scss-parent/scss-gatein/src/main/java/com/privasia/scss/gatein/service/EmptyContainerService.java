@@ -7,7 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.privasia.scss.core.dto.Container;
+import com.privasia.scss.core.dto.ExportContainer;
 import com.privasia.scss.core.exception.ResultsNotFoundException;
 import com.privasia.scss.core.model.ISOCode;
 
@@ -21,9 +21,9 @@ public class EmptyContainerService {
 	@Autowired
 	private IsoCodeService isoCodeService;
 
-	public void refreshWeightForEmptyContainer(Container c) throws ResultsNotFoundException {
+	public void refreshWeightForEmptyContainer(ExportContainer c) throws ResultsNotFoundException {
 		/**
-		 * Refresh the Weight For Empty Container
+		 * Refresh the Weight For Empty ExportContainer
 		 */
 		if ("E".equals(c.getFullOrEmpty())) {
 			ISOCode isoCodeDto = isoCodeService.getIsoCodeTarWeight(c.getISO());
@@ -35,9 +35,9 @@ public class EmptyContainerService {
 	}
 
 	/**
-	 * Calculate the WeightBridge For Empty Container
+	 * Calculate the WeightBridge For Empty ExportContainer
 	 */
-	public void calculateWeightBridgeForEmptyContainer(Container c1, Container c2) {
+	public void calculateWeightBridgeForEmptyContainer(ExportContainer c1, ExportContainer c2) {
 
 		if (StringUtils.isNotBlank(c1.getContainerNo()) && StringUtils.isNotBlank(c2.getContainerNo())) {
 			if ("E".equals(c1.getFullOrEmpty()) && "E".equals(c2.getFullOrEmpty())) {
