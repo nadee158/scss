@@ -44,23 +44,12 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-cache</artifactId>
 		</dependency> -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-jpa</artifactId>
-		</dependency>
+		
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
-		<dependency>
-    		<groupId>com.zaxxer</groupId>
-    		<artifactId>HikariCP</artifactId>
-		</dependency>
-		<dependency>
-    		<groupId>com.oracle</groupId>
-    		<artifactId>ojdbc6</artifactId>
-    		<version>11.2.0.3</version>
-		</dependency>
+		
 		
 
 		<dependency>
@@ -157,6 +146,7 @@
 	<module>scss-refer</module>
 	<module>scss-hpat</module>
     <module>scss-client</module>
-    <module>scss-auth</module>	
+    <module>scss-auth</module>
+	<module>scss-cosmos</module>	
   </modules>
 </project>

@@ -26,9 +26,11 @@
       <scope>test</scope>
     </dependency>
     
-     <dependency>
+
+
+    <dependency>
 			<groupId>com.privasia.scss</groupId>
-  			<artifactId>scss-core</artifactId>
+  			<artifactId>scss-cosmos</artifactId>
 			<version>1.0</version>
 	</dependency>
 	

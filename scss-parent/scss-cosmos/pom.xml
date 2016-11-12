@@ -1,0 +1,76 @@
+<?xml version="1.0"?>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.privasia.scss</groupId>
+		<artifactId>scss-parent</artifactId>
+		<version>1.0</version>
+	</parent>
+
+	<artifactId>scss-cosmos</artifactId>
+	<name>scss-cosmos</name>
+	<packaging>jar</packaging>
+	<url>http://maven.apache.org</url>
+	
+	<properties>
+	    <start-class>com.privasia.scss.cosmos.CosmosEntryPoint</start-class>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+	
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-jdbc</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache.tomcat</groupId>
+					<artifactId>tomcat-jdbc</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.zaxxer</groupId>
+			<artifactId>HikariCP</artifactId>
+		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/net.sf.jt400/jt400 -->
+		<dependency>
+		    <groupId>net.sf.jt400</groupId>
+		    <artifactId>jt400</artifactId>
+		    <version>6.6</version>
+		</dependency>
+		
+				
+	</dependencies>
+	
+	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-maven-plugin</artifactId>	
+					<configuration>
+	                    <executable>true</executable>
+	                </configuration>
+					<dependencies>
+						<dependency>
+							<groupId>org.springframework</groupId>
+							<artifactId>springloaded</artifactId>
+							<version>${spring-loaded.version}</version>
+						</dependency>
+					</dependencies>				
+				</plugin>				
+			</plugins>
+		</pluginManagement>
+		<finalName>scss-cosmos</finalName>
+	</build>
+</project>
