@@ -1,6 +1,7 @@
 package com.privasia.scss.core.service;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
@@ -31,6 +32,8 @@ import com.privasia.scss.core.util.constant.CompanyType;
 import com.privasia.scss.core.util.constant.GatePassStatus;
 import com.privasia.scss.core.util.constant.HpatReferStatus;
 import com.privasia.scss.core.util.constant.TransactionStatus;
+import com.privasia.scss.etpws.service.EdoExpiryForLineResponseType;
+import com.privasia.scss.etpws.service.client.ETPWebserviceClient;
 
 
 
@@ -53,6 +56,9 @@ public class GatePassService {
 
   @Autowired
   private CardRepository cardRepository;
+
+  @Autowired
+  private ETPWebserviceClient etpWebserviceClient;
 
 
 
@@ -188,13 +194,13 @@ public class GatePassService {
                   } else {
                     String lineCode = wdcGatePass.getGateOrder().getLineCode();
                     if (StringUtils.isNotBlank(lineCode)) {
-                      // EtpPlusWebService etpPlusWebService = EtpPlusWebService.getInstance();
-                      // boolean isEdoLineEnabled = etpPlusWebService.getEdoExpiryForLine(lineCode);
-                      // if (isEdoLineEnabled) {
-                      // if (edoExpiryDto.getEdoExpiryDate() == null) {
-                      // return GatePassErrMsg.EDO_EXPIRY_DATE_NULL;
-                      // }
-                      // }
+                      EdoExpiryForLineResponseType responseType = etpWebserviceClient.getEdoExpiryForLine(lineCode);
+                      if (responseType.isEdoExpiryEnabled()) {
+                        if (edoExpiryDate == null) {
+                          throw new BusinessException(CommonUtil.formatMessageCode(GatePassErrMsg.EDO_EXPIRY_DATE_NULL,
+                              new Object[] {gatePassNo}));
+                        }
+                      }
                     }
                   }
                 }
@@ -319,9 +325,7 @@ public class GatePassService {
                 if ("Y".equalsIgnoreCase(etpFlag)) {
 
                   // web service
-                  // EtpPlusWebService etpWebService = EtpPlusWebService.getInstance();
-                  // etpWebService.getHpatDetails(scssCardDto.getCrdScardNo(), icNo,
-                  // scssCardDto.getCompCode(), new Date());
+                  // getHpatDetails(card.getCardNo(), icNo, company.getCompanyCode(), new Date());
                   // isHpatExist = this.checkHpatBookingExist(containerNo, cardIdSeq, truckHeadNo);
                 } else {
                   isHpatExist = true;
@@ -370,6 +374,48 @@ public class GatePassService {
 
     }
     return false;
+  }
+
+  public boolean getHpatDetails(String smartCardNo, String icNo, String compCode, Date driverArrivalDate)
+      throws Exception {
+    // GateInDAOImpl gateInDAOImpl = GateInDAOImpl.getInstance();
+    //
+    // EtpServicePortTypeProxy ws = new EtpServicePortTypeProxy();
+    // ws.setEndpoint(gateInDAOImpl.getEtpWebServiceAddress());
+    //
+    // HpatDetailsRequestType hpatDetailsRequestType = new HpatDetailsRequestType();
+    // hpatDetailsRequestType.setDriverIc(icNo); // Driver IC
+    // hpatDetailsRequestType.setHaulageCompanyCode(compCode);
+    // hpatDetailsRequestType.setAppointmnetDate(this.convertDateToString(driverArrivalDate)); //
+    // DD/MM/YYYY
+    // // Format
+    //
+    // try {
+    // HpatDetailsResponseType[] response = ws.getHpatDetails(hpatDetailsRequestType);
+    //
+    // if (response != null && response.length > 0) {
+    // for (int i = 0; i < response.length; i++) {
+    // HpatDetailsResponseType hpatDetailsResponseType = response[i];
+    // /**
+    // * Check ETP_BOOKING_HPAT Based On Ref ID
+    // */
+    // boolean isExist =
+    // gateInDAOImpl.isExistEtpBookingHpat(hpatDetailsResponseType.getRefId().trim());
+    //
+    // if (!isExist) {
+    // gateInDAOImpl.doEterminalPlusHpat(hpatDetailsResponseType, smartCardNo, "");
+    // }
+    // }
+    // }
+    // } catch (EtpProcessExceptionType etpEx) {
+    // String stackTrace = ExceptionUtil.getExceptionStacktrace(etpEx);
+    // log.error(stackTrace);
+    // } catch (RemoteException ex) {
+    // String stackTrace = ExceptionUtil.getExceptionStacktrace(ex);
+    // log.error(stackTrace);
+    // }
+
+    return true;
   }
 
   private boolean checkLaden(String containerNo, String gatePassNo) throws Exception {
