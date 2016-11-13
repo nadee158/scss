@@ -15,11 +15,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.privasia.scss.etpws.service.EdoExpiryForLineResponseType;
+import com.privasia.scss.etpws.service.client.ETPWebserviceClient;
 import com.privasia.scss.hpat.dto.HpatDto;
-import com.privasia.scss.hpat.etp.service.EdoExpiryForLineResponseType;
-import com.privasia.scss.hpat.etp.service.client.ETPWebserviceClient;
 import com.privasia.scss.hpat.service.HPATService;
-
 
 /**
  * @author Janaka
@@ -27,7 +26,7 @@ import com.privasia.scss.hpat.service.HPATService;
  */
 
 @RestController
-@RequestMapping("api/hpat")
+@RequestMapping("api")
 public class HPATController {
 
   @Autowired

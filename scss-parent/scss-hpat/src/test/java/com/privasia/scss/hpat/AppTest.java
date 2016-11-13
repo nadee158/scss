@@ -5,7 +5,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 /**
- * Unit test for simple HPATEntryPoint.
+ * Unit test for simple ETPWsEntryPoint.
  */
 public class AppTest 
     extends TestCase

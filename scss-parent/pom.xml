@@ -136,17 +136,18 @@
   
   
   <modules>
-    <module>scss-common</module>
+    <module>scss-common</module>    
     <module>scss-core</module>
+    <module>scss-cosmos</module>
+	<module>scss-etpws</module>
+	<module>scss-hpat</module>
     <module>scss-scancard</module>
     <module>scss-kioskbooth</module>
     <module>scss-gatein</module>
     <module>scss-gateout</module>
     <module>scss-master</module>
-	<module>scss-refer</module>
-	<module>scss-hpat</module>
+	<module>scss-refer</module>	
     <module>scss-client</module>
     <module>scss-auth</module>
-	<module>scss-cosmos</module>	
   </modules>
 </project>

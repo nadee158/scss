@@ -21,11 +21,6 @@
 	</properties>
 
 	<dependencies>
-
-		<dependency>
-			<groupId>org.springframework.ws</groupId>
-			<artifactId>spring-ws-core</artifactId>
-		</dependency>
 		
 		<dependency>
 			<groupId>junit</groupId>
@@ -38,43 +33,37 @@
 			<artifactId>scss-core</artifactId>
 			<version>1.0</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>com.privasia.scss</groupId>
+			<artifactId>scss-etpws</artifactId>
+			<version>1.0</version>
+		</dependency>
 
 	</dependencies>
 
-
-
 	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
-			<!-- tag::wsdl[] -->
-			<plugin>
-				<groupId>org.jvnet.jaxb2.maven2</groupId>
-				<artifactId>maven-jaxb2-plugin</artifactId>
-				<version>0.12.3</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>generate</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<schemaLanguage>WSDL</schemaLanguage>
-					<generateDirectory>${project.build.sourceDirectory}</generateDirectory>
-					<generatePackage>com.privasia.scss.hpat.etp.service</generatePackage>
-					<schemas>
-						<schema>
-							<url>http://172.21.95.22:8081/u/services/etpIntegrationService?wsdl</url>
-						</schema>
-					</schemas>
-				</configuration>
-			</plugin>
-			<!-- end::wsdl[] -->
-		</plugins>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-maven-plugin</artifactId>	
+					<configuration>
+	                    <executable>true</executable>
+	                </configuration>
+					<dependencies>
+						<dependency>
+							<groupId>org.springframework</groupId>
+							<artifactId>springloaded</artifactId>
+							<version>${spring-loaded.version}</version>
+						</dependency>
+					</dependencies>				
+				</plugin>				
+			</plugins>
+		</pluginManagement>
 		<finalName>scss-hpat</finalName>
 	</build>
+
+	
 
 </project>
