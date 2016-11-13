@@ -1,60 +1,80 @@
 <?xml version="1.0"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <modelVersion>4.0.0</modelVersion>
-  
-  <parent>
-    <groupId>com.privasia.scss</groupId>
-    <artifactId>scss-parent</artifactId>
-    <version>1.0</version>
-  </parent>
-  
-  <artifactId>scss-hpat</artifactId>
-  <name>scss-hpat</name>
-  <packaging>war</packaging>
-  <url>http://maven.apache.org</url>
-  
-  <properties>
-    <start-class>com.privasia.scss.hpat.HPATEntryPoint</start-class>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  </properties>
-  
-  <dependencies>
-  
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
-    </dependency>
-    
-    <dependency>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>com.privasia.scss</groupId>
+		<artifactId>scss-parent</artifactId>
+		<version>1.0</version>
+	</parent>
+
+	<artifactId>scss-hpat</artifactId>
+	<name>scss-hpat</name>
+	<packaging>war</packaging>
+	<url>http://maven.apache.org</url>
+
+	<properties>
+		<start-class>com.privasia.scss.hpat.HPATEntryPoint</start-class>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+	<dependencies>
+
+		<dependency>
+			<groupId>org.springframework.ws</groupId>
+			<artifactId>spring-ws-core</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
 			<groupId>com.privasia.scss</groupId>
-  			<artifactId>scss-core</artifactId>
+			<artifactId>scss-core</artifactId>
 			<version>1.0</version>
-	</dependency>
-    
-  </dependencies>
-  
-  <build>
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<groupId>org.springframework.boot</groupId>
-					<artifactId>spring-boot-maven-plugin</artifactId>	
-					<configuration>
-	                    <executable>true</executable>
-	                </configuration>
-					<dependencies>
-						<dependency>
-							<groupId>org.springframework</groupId>
-							<artifactId>springloaded</artifactId>
-							<version>${spring-loaded.version}</version>
-						</dependency>
-					</dependencies>				
-				</plugin>				
-			</plugins>
-		</pluginManagement>
+		</dependency>
+
+	</dependencies>
+
+
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+			<!-- tag::wsdl[] -->
+			<plugin>
+				<groupId>org.jvnet.jaxb2.maven2</groupId>
+				<artifactId>maven-jaxb2-plugin</artifactId>
+				<version>0.12.3</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<schemaLanguage>WSDL</schemaLanguage>
+					<generateDirectory>${project.build.sourceDirectory}</generateDirectory>
+					<generatePackage>com.privasia.scss.hpat.etp.service</generatePackage>
+					<schemas>
+						<schema>
+							<url>http://172.21.95.22:8081/u/services/etpIntegrationService?wsdl</url>
+						</schema>
+					</schemas>
+				</configuration>
+			</plugin>
+			<!-- end::wsdl[] -->
+		</plugins>
 		<finalName>scss-hpat</finalName>
 	</build>
-  
+
 </project>
