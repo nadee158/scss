@@ -16,6 +16,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.privasia.scss.core.dto.ExportContainer;
+import com.privasia.scss.core.dto.ImportContainer;
+import com.privasia.scss.core.dto.TransactionDTO;
 import com.privasia.scss.core.exception.ResultsNotFoundException;
 import com.privasia.scss.core.model.Card;
 import com.privasia.scss.core.model.HPATBooking;
@@ -109,5 +112,72 @@ public class HPATService {
   }
 
 
+  @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
+  public TransactionDTO getEtpHpat4ImpAndExp(String bookingID) {
+
+    Optional<HPATBooking> hpatBooking =
+        hpatBookingRepository.findByBookingIDAndStatus(bookingID, HpatReferStatus.ACTIVE);
+
+    if (hpatBooking.isPresent()) {
+
+      HPATBooking booking = hpatBooking.get();
+
+      TransactionDTO transactionDTO = new TransactionDTO(booking);
+
+      if (!(booking.getHpatBookingDetails() == null || booking.getHpatBookingDetails().isEmpty())) {
+
+        booking.getHpatBookingDetails().forEach(bookingDetail -> {
+
+          BookingType bookingType = bookingDetail.getBookingType();
+          bookingDetail.getImpGatePassNumber();
+          switch (bookingType) {
+            case IMPORT:
+
+              if (transactionDTO.getImportContainer01() == null) {
+                transactionDTO.setImportContainer01(new ImportContainer(bookingDetail));
+              } else {
+                transactionDTO.setImportContainer02(new ImportContainer(bookingDetail));
+              }
+
+              break;
+            case EXPORT:
+
+              if (transactionDTO.getExportContainer01() == null) {
+                transactionDTO.setExportContainer01(new ExportContainer(bookingDetail));
+              } else {
+                transactionDTO.setExportContainer02(new ExportContainer(bookingDetail));
+              }
+
+              break;
+            case IMPORT_ITT:
+
+              if (transactionDTO.getImportContainer01() == null) {
+                transactionDTO.setImportContainer01(new ImportContainer(bookingDetail));
+              } else {
+                transactionDTO.setImportContainer02(new ImportContainer(bookingDetail));
+              }
+
+              break;
+            case EMPTY_PICKUP:
+
+              break;
+            case EMPTY_RETURN:
+
+              break;
+
+            default:
+              break;
+          }
+
+        });
+      }
+
+      return transactionDTO;
+
+    } else {
+      // need to discuss with etp team to manage web services between etp and scss
+      throw new ResultsNotFoundException("No HPAT Booking was Found !");
+    }
+  }
 
 }
