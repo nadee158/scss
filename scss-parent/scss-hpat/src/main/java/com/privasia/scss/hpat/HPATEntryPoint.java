@@ -8,6 +8,8 @@ import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 
 import com.privasia.scss.hpat.etp.service.client.ETPWebserviceClient;
@@ -19,6 +21,7 @@ import com.privasia.scss.hpat.etp.service.client.ETPWebserviceClient;
 @Configuration
 @ComponentScan(basePackages = {"com.privasia.scss.*"})
 @EnableAutoConfiguration
+@PropertySource("classpath:ws.properties")
 public class HPATEntryPoint extends SpringBootServletInitializer {
 
   @Value("${ws.client.default.uri}")
@@ -55,6 +58,11 @@ public class HPATEntryPoint extends SpringBootServletInitializer {
     client.setMarshaller(marshaller);
     client.setUnmarshaller(marshaller);
     return client;
+  }
+
+  @Bean
+  public static PropertySourcesPlaceholderConfigurer propertyConfig() {
+    return new PropertySourcesPlaceholderConfigurer();
   }
 
 
