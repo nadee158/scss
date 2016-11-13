@@ -4,8 +4,11 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
 /**
  * Hello world!
@@ -14,10 +17,16 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @EnableAutoConfiguration
 @ComponentScan(basePackages = {"com.privasia.scss.cosmos.*", "com.privasia.scss.gateout.*"})
+@PropertySource("classpath:cosmos-sql-dev.properties")
 public class GateOutEntryPoint extends SpringBootServletInitializer {
 
   public static void main(String[] args) {
     SpringApplication.run(GateOutEntryPoint.class, args);
+  }
+  
+  @Bean
+  public static PropertySourcesPlaceholderConfigurer propertyConfig() {
+    return new PropertySourcesPlaceholderConfigurer();
   }
 
   @Override

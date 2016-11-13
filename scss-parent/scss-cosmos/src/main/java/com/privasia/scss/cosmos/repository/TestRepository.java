@@ -24,12 +24,14 @@ public class TestRepository {
   @Autowired
   private Environment env;
 
-  @Value("${testquery:FAILED}")
+  @Value("${cosmos.testquery}")
   private String testText;
 
   @Transactional(readOnly = true)
   public List<TestDto> testQuery(String containerNo) {
     System.out.println("CAME HERE TestRepository :" + containerNo);
+    System.out.println("testQuery :" + testText);
+    
     String sql = env.getProperty("testquery");
     System.out.println("sql ## :" + sql);
     System.out.println("testText %% :" + testText);

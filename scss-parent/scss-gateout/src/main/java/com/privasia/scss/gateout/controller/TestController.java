@@ -16,13 +16,13 @@ import com.privasia.scss.cosmos.repository.TestRepository;
 
 
 @RestController
-@RequestMapping("api")
+@RequestMapping("**/test")
 public class TestController {
 
   @Autowired
   private TestRepository testRepository;
 
-  @RequestMapping(value = "/test/{containerNo}", method = RequestMethod.GET,
+  @RequestMapping(value = "/{containerNo}", method = RequestMethod.GET,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public ResponseEntity<List<TestDto>> scanCardByCardNo(@PathVariable("containerNo") String containerNo) {
     System.out.println("CAME HERE CONTROLLER :" + containerNo);

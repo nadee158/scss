@@ -65,10 +65,10 @@ public class Exports implements Serializable {
 			@AttributeOverride(name = "kioskConfirmed", column = @Column(name = "KIOSK_CONFIRMED")),
 			@AttributeOverride(name = "kioskCancelPickUp", column = @Column(name = "KIOSK_CANCEL_PICKUP")),
 			@AttributeOverride(name = "transactionSlipPrinted", column = @Column(name = "TRANSACTION_SLIP_PRINTED")),
-			@AttributeOverride(name = "gateOutBoothNo", column = @Column(name = "GTP_GATE_OUT_BOOTH_NO")),
-			@AttributeOverride(name = "gateOutBoothClerk", column = @Column(name = "GTP_GATEOUT_BOOTH_CLERKID")),
-			@AttributeOverride(name = "timeGateOutBooth", column = @Column(name = "GTP_TIMEGATEOUT_BOOTH")),
-			@AttributeOverride(name = "gateInStatus", column = @Column(name = "GTP_GATEIN_STATUS")),
+			@AttributeOverride(name = "gateOutBoothNo", column = @Column(name = "EXP_GATE_OUT_BOOTH_NO")),
+			@AttributeOverride(name = "gateOutBoothClerk", column = @Column(name = "EXP_GATEOUT_BOOTH_CLERKID")),
+			@AttributeOverride(name = "timeGateOutBooth", column = @Column(name = "EXP_TIMEGATEOUT_BOOTH")),
+			@AttributeOverride(name = "gateInStatus", column = @Column(name = "EXP_GATEIN_STATUS")),
 			@AttributeOverride(name = "hpatBooking", column = @Column(name = "BOOKING_ID"))
 
 	})
@@ -117,5 +117,45 @@ public class Exports implements Serializable {
 
 	@Column(name = "EXP_NET_WEIGHT")
 	private int expNetWeight;
+	
+	@Column(name = "TRUCK_WEIGHT")
+	private String pmWeight;
+
+	@Column(name = "TRAILER_WEIGHT")
+	private String trailerWeight;
+
+	@Column(name = "TRAILER_PLATE_NO")
+	private String trailerPlateNo;
+	
+	@Column(name = "FUEL_WEIGHT")
+	private String fuelWeight;
+	
+	@Column(name = "TIRE_WEIGHT")
+	private String tireWeight;
+	
+	@Column(name = "VARIANCE")
+	private String variance;
+	
+	@Column(name = "EXP_SUB_TYPE")
+	private String subType;
+	
+	@Column(name = "WITHIN_TOLERANCE")
+	@Type(type = "true_false")
+	private boolean withinTolerance;
+	
+	@Column(name = "CAL_VARIANCE")
+	private String calculatedVariance;
+	
+	@Column(name = "SOLAS_CERT")
+	private String solasCertNo;
+	
+	@Embedded
+	@AttributeOverrides({ @AttributeOverride(name = "mgw", column = @Column(name = "MGW")),
+		@AttributeOverride(name = "faLedgerCode", column = @Column(name = "FA_LEDGER_CODE")),
+		@AttributeOverride(name = "solasRefNumber", column = @Column(name = "SOLAS_REF_NO")),
+		@AttributeOverride(name = "solasDetailID", column = @Column(name = "SOLAS_DETAIL_NO")),
+		@AttributeOverride(name = "solasInstruction", column = @Column(name = "VGM_TYPE")),
+		@AttributeOverride(name = "shipperVGM", column = @Column(name = "SHIPPER_VGM")) })
+	private CommonSolasAttribute solas;
 
 }

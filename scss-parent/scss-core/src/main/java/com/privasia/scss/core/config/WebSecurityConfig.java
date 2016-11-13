@@ -118,7 +118,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				// .antMatchers("/scss/scancard/**").permitAll()
 				.antMatchers("/console").permitAll() // H2 Console Dash-board -
 														// only for testing
-				.and().authorizeRequests().antMatchers(TOKEN_BASED_AUTH_ENTRY_POINT).authenticated() // Protected
+				.and().authorizeRequests().antMatchers(TOKEN_BASED_AUTH_ENTRY_POINT).permitAll() // Protected
 																										// API
 																										// End-points
 				.and().addFilterBefore(buildLoginProcessingFilter(), UsernamePasswordAuthenticationFilter.class)
