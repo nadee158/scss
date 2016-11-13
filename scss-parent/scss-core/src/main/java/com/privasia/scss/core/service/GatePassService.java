@@ -13,15 +13,23 @@ import com.privasia.scss.common.util.CommonUtil;
 import com.privasia.scss.common.util.GatePassErrMsg;
 import com.privasia.scss.core.exception.BusinessException;
 import com.privasia.scss.core.exception.ResultsNotFoundException;
+import com.privasia.scss.core.model.Card;
 import com.privasia.scss.core.model.CommonContainerAttribute;
 import com.privasia.scss.core.model.Company;
 import com.privasia.scss.core.model.GatePass;
+import com.privasia.scss.core.model.HPATBookingDetail;
+import com.privasia.scss.core.model.SmartCardUser;
 import com.privasia.scss.core.model.WDCGatePass;
 import com.privasia.scss.core.model.WDCGlobalSetting;
+import com.privasia.scss.core.repository.CardRepository;
 import com.privasia.scss.core.repository.GatePassRepository;
+import com.privasia.scss.core.repository.HPATBookingDetailRepository;
 import com.privasia.scss.core.repository.WDCGatePassRepository;
 import com.privasia.scss.core.repository.WDCGlobalSettingRepository;
+import com.privasia.scss.core.util.constant.BookingType;
+import com.privasia.scss.core.util.constant.CompanyType;
 import com.privasia.scss.core.util.constant.GatePassStatus;
+import com.privasia.scss.core.util.constant.HpatReferStatus;
 import com.privasia.scss.core.util.constant.TransactionStatus;
 
 
@@ -39,6 +47,12 @@ public class GatePassService {
 
   @Autowired
   private WDCGlobalSettingRepository wdcGlobalSettingRepository;
+
+  @Autowired
+  private HPATBookingDetailRepository hpatBookingDetailRepository;
+
+  @Autowired
+  private CardRepository cardRepository;
 
   public boolean validateGatePass(String cardIdSeq, String gatePassNo, String check, String hpatSeqId,
       String truckHeadNo, long companyId) throws Exception {
@@ -240,13 +254,13 @@ public class GatePassService {
 
     if (isOgaBlock && isInternalBlock) {
       throw new BusinessException(
-          CommonUtil.formatMessageCode(GatePassErrMsg.GATE_PASS_OGA_INTERNAL_BLOCK, new Object[] {gatePassNo}));
+          CommonUtil.formatMessageCode(GatePassErrMsg.GATE_PASS_OGA_INTERNAL_BLOCK, new Object[] {containerNo}));
     } else if (isOgaBlock && !isInternalBlock) {
       throw new BusinessException(
-          CommonUtil.formatMessageCode(GatePassErrMsg.GATE_PASS_OGA_BLOCK, new Object[] {gatePassNo}));
+          CommonUtil.formatMessageCode(GatePassErrMsg.GATE_PASS_OGA_BLOCK, new Object[] {containerNo}));
     } else if (!isOgaBlock && isInternalBlock) {
       throw new BusinessException(
-          CommonUtil.formatMessageCode(GatePassErrMsg.GATE_PASS_INTERNAL_BLOCK, new Object[] {gatePassNo}));
+          CommonUtil.formatMessageCode(GatePassErrMsg.GATE_PASS_INTERNAL_BLOCK, new Object[] {containerNo}));
     }
 
     /**
@@ -254,57 +268,121 @@ public class GatePassService {
      */
     log.error("-------------END OGA And Internal Block -----------" + gatePassNo + ":" + containerNo);
 
-    return checkPreArrival(containerNo, cardIdSeq, "MANUALLY", "");
+    return checkPreArrival(containerNo, cardIdSeq, "MANUALLY", "", gatePassNo);
 
   }
 
-  private boolean checkPreArrival(String containerNo, String cardIdSeq, String hpatSeqId, String truckHeadNo)
-      throws Exception {
-    // GateInDAOImpl gateInDao = GateInDAOImpl.getInstance();
-    //
-    // if (StringUtils.isNotBlank(hpatSeqId)) {
-    // throw new BusinessException(CommonUtil.formatMessageCode(GatePassErrMsg.GATE_PASS_OK, new
-    // Object[] {gatePassNo}));
+
+
+  private boolean checkPreArrival(String containerNo, String cardIdSeq, String hpatSeqId, String truckHeadNo,
+      String gatePassNo) throws Exception {
+
+    if (StringUtils.isNotBlank(hpatSeqId)) {
+      return true;
+    } else {
+      log.error("Check Gate Pass pre-Arrival Booking.." + containerNo + ":" + truckHeadNo);
+
+      Optional<Card> cardOpt = cardRepository.findOne(Long.parseLong(cardIdSeq));
+      if (cardOpt.isPresent()) {
+
+        Card card = cardOpt.get();
+
+        SmartCardUser smartCardUser = card.getSmartCardUser();
+        Company company = card.getCompany();
+
+        boolean isHpatExist = this.checkHpatBookingExist(containerNo, truckHeadNo, card);
+
+        // Call Web Service
+        if (!isHpatExist) {
+
+          if (!(smartCardUser == null || company == null || company.getCompanyType() == null
+              || smartCardUser.getCommonContactAttribute() == null)) {
+            if (company.getCompanyType().equals(CompanyType.HAULAGE)) {
+
+              String icNo = "";
+
+              if (StringUtils.isNotBlank(smartCardUser.getCommonContactAttribute().getNewNRICNO())) {
+                icNo = smartCardUser.getCommonContactAttribute().getNewNRICNO();
+              } else if (StringUtils.isNotBlank(smartCardUser.getCommonContactAttribute().getOldNRICNO())) {
+                icNo = smartCardUser.getCommonContactAttribute().getOldNRICNO();
+              } else if (StringUtils.isNotBlank(smartCardUser.getPassportNo())) {
+                icNo = smartCardUser.getPassportNo();
+              }
+
+              Optional<WDCGlobalSetting> wdcGlobalSettingOpt = wdcGlobalSettingRepository.findOne("ETP_HPAT");
+              if (wdcGlobalSettingOpt.isPresent()) {
+                WDCGlobalSetting wdcGlobalSetting = wdcGlobalSettingOpt.get();
+                String etpFlag = wdcGlobalSetting.getGlobalString();
+                if ("Y".equalsIgnoreCase(etpFlag)) {
+                  // web service
+                  // EtpPlusWebService etpWebService = EtpPlusWebService.getInstance();
+                  // etpWebService.getHpatDetails(scssCardDto.getCrdScardNo(), icNo,
+                  // scssCardDto.getCompCode(), new Date());
+                  // isHpatExist = this.checkHpatBookingExist(containerNo, cardIdSeq, truckHeadNo);
+                } else {
+                  isHpatExist = true;
+                }
+              }
+
+              if (isHpatExist) {
+                return true;
+              } else {
+                return checkLaden(containerNo, gatePassNo);
+              }
+            }
+          }
+        }
+      }
+    }
+    return false;
+  }
+
+
+  private boolean checkHpatBookingExist(String containerNo, String truckHeadNo, Card card) throws Exception {
+    if (!(card == null)) {
+      String cardNo = Long.toString((card.getCardNo()));
+      containerNo = StringUtils.upperCase(containerNo);
+      BookingType type = BookingType.IMPORT;
+      HpatReferStatus hpatReferStatus = HpatReferStatus.ACTIVE;
+
+      HPATBookingDetail hpatBookingDetail = null;
+
+      if (StringUtils.isNotBlank(truckHeadNo)) {
+
+        truckHeadNo = StringUtils.upperCase(truckHeadNo);
+
+        hpatBookingDetail = hpatBookingDetailRepository
+            .findByContainerNumberAndBookingTypeAndHpatBooking_StatusAndHpatBooking_CardNoAndHpatBooking_PmNumber(
+                containerNo, type, hpatReferStatus, cardNo, truckHeadNo);
+      } else {
+        hpatBookingDetail =
+            hpatBookingDetailRepository.findByContainerNumberAndBookingTypeAndHpatBooking_StatusAndHpatBooking_CardNo(
+                containerNo, type, hpatReferStatus, cardNo);
+      }
+
+      if (!(hpatBookingDetail == null)) {
+        return true;
+      }
+
+    }
+    return false;
+  }
+
+  private boolean checkLaden(String containerNo, String gatePassNo) throws Exception {
+    // AS400Database db = null;
+    // sql = "SELECT hdid03" + ", hddt03" + ", hdtd03" + ", cnbt03" + " FROM PCTCSE.cthndl5" + "
+    // WHERE hdtm03='WPT1'"
+    // + " AND hdtp03='IN'" + " AND hddt03 >=20060601" + " AND hdtd03 >=0" + " AND hdfs03<>'CAN'" +
+    // " AND cnid03="
+    // + SQL.format(containerNo) + " ORDER BY hddt03 DESC, hdtd03 DESC";
+
+    // if (rs.next()) {
+    // if (rs.getString("cnbt03") != null && rs.getString("cnbt03").equals("E")) {
+    // return true;
     // } else {
-    // long start = System.currentTimeMillis();
-    // log.error("Check Gate Pass pre-Arrival Booking.." + containerNo + ":" + truckHeadNo);
-    //
-    // boolean isHpatExist = this.checkHpatBookingExist(containerNo, cardIdSeq, truckHeadNo);
-    //
-    // // Call Web Service
-    // if (!isHpatExist) {
-    // ScssCardDto scssCardDto = gateInDao.getSCardInfo(cardIdSeq);
-    // if (scssCardDto != null) {
-    // String icNo = "";
-    //
-    // if (StringUtils.isNotBlank(scssCardDto.getNewICNo())) {
-    // icNo = scssCardDto.getNewICNo();
-    // } else if (StringUtils.isNotBlank(scssCardDto.getOldICNo())) {
-    // icNo = scssCardDto.getOldICNo();
-    // } else if (StringUtils.isNotBlank(scssCardDto.getPassportNo())) {
-    // icNo = scssCardDto.getPassportNo();
-    // }
-    // String etpFlag = gateInDao.getWDCGlobalSeeting("ETP_HPAT");
-    // if ("Y".equalsIgnoreCase(etpFlag)) {
-    // EtpPlusWebService etpWebService = EtpPlusWebService.getInstance();
-    // etpWebService.getHpatDetails(scssCardDto.getCrdScardNo(), icNo, scssCardDto.getCompCode(),
-    // new Date());
-    // isHpatExist = this.checkHpatBookingExist(containerNo, cardIdSeq, truckHeadNo);
-    // } else {
-    // isHpatExist = true;
-    // }
-    // }
-    // }
-    //
-    // long end = System.currentTimeMillis();
-    // log.error("End Check Gate Pass pre-Arrival Booking time taken : " + containerNo + ":" +
-    // truckHeadNo
-    // + (end - start) / 1000.0 + "sec");
-    //
-    // if (isHpatExist) {
-    // return GatePassErrMsg.GATE_PASS_OK;
-    // } else {
-    // return check_Laden(containerNo);
+    // throw new BusinessException(
+    // CommonUtil.formatMessageCode(GatePassErrMsg.GATE_PASS_NO_PREARRIVAL, new Object[]
+    // {gatePassNo}));
     // }
     // }
     return false;
@@ -357,39 +435,6 @@ public class GatePassService {
     // }
     return isInternalBlock;
   }
-
-
-
-  // if (ret == GatePassErrMsg.GATE_PASS_IS_USED) {
-  // returnmsg += MessageCode.format("ERR_MSG_060", new Object[] { gateInDto.getGatePassNo2() });
-  // } else if (ret == GatePassErrMsg.GATE_PASS_IN_PROGRESS) {
-  // returnmsg += MessageCode.format("ERR_MSG_061", new Object[] { gateInDto.getGatePassNo2() });
-  // } else if (ret == GatePassErrMsg.GATE_PASS_CANCEL) {
-  // returnmsg += MessageCode.format("ERR_MSG_062", new Object[] { gateInDto.getGatePassNo2() });
-  // } else if (ret == GatePassErrMsg.GATE_PASS_INVALID) {
-  // returnmsg += MessageCode.format("ERR_MSG_011", new Object[] { gateInDto.getGatePassNo2() });
-  // } else if (!isMCByPass && ret == GatePassErrMsg.GATE_PASS_COMPANY_NOT_MATCH) {
-  // returnmsg += MessageCode.format("ERR_MSG_012", new Object[] { gateInDto.getGatePassNo2() });
-  // } else if (!isMCByPass && ret == GatePassErrMsg.GATE_PASS_NO_PREARRIVAL) {
-  // returnmsg += gateInDto.getGatePassNo2() + "No pre-arrival booking available";
-  // } else if (ret == GatePassErrMsg.GATE_PASS_OGA_INTERNAL_BLOCK) {
-  // f.setInternalBlock(true);
-  // f.setOGABlock(true);
-  // returnmsg += MessageCode.format("ERR_MSG_074", new Object[] { gateInDto.getContainerNoC2() });
-  // } else if (ret == GatePassErrMsg.GATE_PASS_INTERNAL_BLOCK) {
-  // f.setInternalBlock(true);
-  // returnmsg += MessageCode.format("ERR_MSG_072", new Object[] { gateInDto.getContainerNoC2() });
-  // } else if (ret == GatePassErrMsg.GATE_PASS_OGA_BLOCK) {
-  // f.setOGABlock(true);
-  // returnmsg += MessageCode.format("ERR_MSG_073", new Object[] { gateInDto.getContainerNoC2() });
-  // } else if (ret == GatePassErrMsg.DATE_GATEPASS_EXPIRY) {
-  // returnmsg += MessageCode.format("ERR_MSG_080", new Object[] { gateInDto.getGatePassNo2() });
-  // } else if (ret == GatePassErrMsg.DATE_GATEPASS_EDO_EXPIRY) {
-  // returnmsg += MessageCode.format("ERR_MSG_088", new Object[] { gateInDto.getGatePassNo2() });
-  // } else if (ret == GatePassErrMsg.EDO_EXPIRY_DATE_NULL) {
-  // returnmsg += MessageCode.format("ERR_MSG_090", new Object[] { gateInDto.getGatePassNo2() });
-  // }
-
 
 
 }
