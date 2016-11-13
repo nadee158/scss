@@ -4,6 +4,7 @@
 package com.privasia.scss.core.model;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 import javax.persistence.AssociationOverride;
 import javax.persistence.AssociationOverrides;
@@ -167,6 +168,9 @@ public class GatePass extends AuditEntity implements Serializable {
 
 	@Column(name = "COSMOS_GTP_SEAL_2_NO")
 	private String cosmosSeal02Number;
+
+	@Column(name = "DATE_GATEPASS_VALID")
+	private LocalDateTime gatePassValidDate;
 
 	@Column(name = "IS_RETRIEVED_COSMOS", columnDefinition = "TINYINT")
 	@Type(type = "org.hibernate.type.NumericBooleanType")
@@ -426,6 +430,14 @@ public class GatePass extends AuditEntity implements Serializable {
 
 	public void setForcedSeal(boolean forcedSeal) {
 		this.forcedSeal = forcedSeal;
+	}
+
+	public LocalDateTime getGatePassValidDate() {
+		return gatePassValidDate;
+	}
+
+	public void setGatePassValidDate(LocalDateTime gatePassValidDate) {
+		this.gatePassValidDate = gatePassValidDate;
 	}
 
 }
