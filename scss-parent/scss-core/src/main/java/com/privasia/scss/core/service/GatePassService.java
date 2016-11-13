@@ -440,5 +440,8 @@ public class GatePassService {
     return isInternalBlock;
   }
 
+  //
+  // public int selectGatePassInfo(GateInForm f, String comIdSeq, boolean isFirstTime) throws
+  // Exception {
 
 }
