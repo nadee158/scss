@@ -1,6 +1,6 @@
 package com.privasia.scss.core.repository;
 
-import org.jadira.usertype.spi.repository.BaseRepository;
+
 
 import com.privasia.scss.core.model.GatePass;
 import com.privasia.scss.core.util.constant.GatePassStatus;
