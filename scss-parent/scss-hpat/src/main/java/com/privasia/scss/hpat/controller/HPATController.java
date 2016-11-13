@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.privasia.scss.hpat.dto.HpatDto;
+import com.privasia.scss.hpat.etp.service.EdoExpiryForLineResponseType;
+import com.privasia.scss.hpat.etp.service.client.ETPWebserviceClient;
 import com.privasia.scss.hpat.service.HPATService;
 
 
@@ -25,11 +27,14 @@ import com.privasia.scss.hpat.service.HPATService;
  */
 
 @RestController
-@RequestMapping("**/hpat")
+@RequestMapping("api/hpat")
 public class HPATController {
 
   @Autowired
   private HPATService hpatService;
+
+  @Autowired
+  private ETPWebserviceClient etpWebserviceClient;
 
 
   @RequestMapping(value = "{cardID}/{bookingTypes}", method = RequestMethod.GET,
@@ -39,10 +44,23 @@ public class HPATController {
 
     System.out.println(cardID + "cardID");
     System.out.println(bookingTypes + "bookingTypes");
-  
+
     List<HpatDto> dtos = hpatService.findEtpHpat4ImpAndExp(cardID, LocalDateTime.now(), bookingTypes);
 
     return new ResponseEntity<List<HpatDto>>(dtos, HttpStatus.OK);
   }
+
+  @RequestMapping(value = "/test/{lineNo}", method = RequestMethod.GET,
+      produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+  public ResponseEntity<Boolean> findEtpHpat4ImpAndExp(@PathVariable String lineNo) {
+
+    System.out.println(lineNo + "lineNo");
+
+    EdoExpiryForLineResponseType response = etpWebserviceClient.getEdoExpiryForLine(lineNo);
+
+    return new ResponseEntity<Boolean>(response.isEdoExpiryEnabled(), HttpStatus.OK);
+  }
+
+
 
 }

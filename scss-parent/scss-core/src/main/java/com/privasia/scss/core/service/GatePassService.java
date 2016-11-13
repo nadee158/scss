@@ -54,6 +54,8 @@ public class GatePassService {
   @Autowired
   private CardRepository cardRepository;
 
+
+
   public boolean validateGatePass(String cardIdSeq, String gatePassNo, String check, String hpatSeqId,
       String truckHeadNo, long companyId) throws Exception {
     boolean result = true;
@@ -309,11 +311,13 @@ public class GatePassService {
                 icNo = smartCardUser.getPassportNo();
               }
 
+
               Optional<WDCGlobalSetting> wdcGlobalSettingOpt = wdcGlobalSettingRepository.findOne("ETP_HPAT");
               if (wdcGlobalSettingOpt.isPresent()) {
                 WDCGlobalSetting wdcGlobalSetting = wdcGlobalSettingOpt.get();
                 String etpFlag = wdcGlobalSetting.getGlobalString();
                 if ("Y".equalsIgnoreCase(etpFlag)) {
+
                   // web service
                   // EtpPlusWebService etpWebService = EtpPlusWebService.getInstance();
                   // etpWebService.getHpatDetails(scssCardDto.getCrdScardNo(), icNo,
