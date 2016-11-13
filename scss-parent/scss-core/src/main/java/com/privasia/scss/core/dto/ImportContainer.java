@@ -17,7 +17,14 @@ public class ImportContainer implements Serializable {
 
   private String containerNumber;
 
+  private String gateInOut;
+
+  private String line;
+
   private ISOInfo isoInfo;
+
+  private SealInfo sealInfo;
+
 
   public ImportContainer(HPATBookingDetail bookingDetail) {
     super();
@@ -52,6 +59,30 @@ public class ImportContainer implements Serializable {
 
   public void setContainerNumber(String containerNumber) {
     this.containerNumber = containerNumber;
+  }
+
+  public String getGateInOut() {
+    return gateInOut;
+  }
+
+  public void setGateInOut(String gateInOut) {
+    this.gateInOut = gateInOut;
+  }
+
+  public String getLine() {
+    return line;
+  }
+
+  public void setLine(String line) {
+    this.line = line;
+  }
+
+  public SealInfo getSealInfo() {
+    return sealInfo;
+  }
+
+  public void setSealInfo(SealInfo sealInfo) {
+    this.sealInfo = sealInfo;
   }
 
 

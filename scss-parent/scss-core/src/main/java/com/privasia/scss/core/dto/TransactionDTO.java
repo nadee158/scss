@@ -51,7 +51,13 @@ public class TransactionDTO implements Serializable {
   private ImportContainer importContainer01;
   private ImportContainer importContainer02;
 
+  private String pmHeadNo;
 
+  private String pmPlateNo;
+
+  private String unitNo;
+
+  private int cosmosPortNo;
 
   public TransactionDTO() {
     super();
@@ -233,6 +239,51 @@ public class TransactionDTO implements Serializable {
 
   public void setImportContainer02(ImportContainer importContainer02) {
     this.importContainer02 = importContainer02;
+  }
+
+  @Override
+  public String toString() {
+    return "TransactionDTO [bookingID=" + bookingID + ", driverICNumber=" + driverICNumber + ", buffer=" + buffer
+        + ", haulierCode=" + haulierCode + ", cardNo=" + cardNo + ", pmNumber=" + pmNumber + ", status=" + status
+        + ", trailerNo=" + trailerNo + ", trailerPlate=" + trailerPlate + ", pmVerified=" + pmVerified
+        + ", axleVerified=" + axleVerified + ", trailerType=" + trailerType + ", appointmentStartDate="
+        + appointmentStartDate + ", appointmentEndDate=" + appointmentEndDate + ", axleWeight=" + axleWeight
+        + ", pmWeight=" + pmWeight + ", hpatCreationDate=" + hpatCreationDate + ", exportContainer01="
+        + exportContainer01 + ", exportContainer02=" + exportContainer02 + ", importContainer01=" + importContainer01
+        + ", importContainer02=" + importContainer02 + ", pmHeadNo=" + pmHeadNo + ", pmPlateNo=" + pmPlateNo
+        + ", unitNo=" + unitNo + ", cosmosPortNo=" + cosmosPortNo + "]";
+  }
+
+  public String getPmHeadNo() {
+    return pmHeadNo;
+  }
+
+  public void setPmHeadNo(String pmHeadNo) {
+    this.pmHeadNo = pmHeadNo;
+  }
+
+  public String getPmPlateNo() {
+    return pmPlateNo;
+  }
+
+  public void setPmPlateNo(String pmPlateNo) {
+    this.pmPlateNo = pmPlateNo;
+  }
+
+  public String getUnitNo() {
+    return unitNo;
+  }
+
+  public void setUnitNo(String unitNo) {
+    this.unitNo = unitNo;
+  }
+
+  public int getCosmosPortNo() {
+    return cosmosPortNo;
+  }
+
+  public void setCosmosPortNo(int cosmosPortNo) {
+    this.cosmosPortNo = cosmosPortNo;
   }
 
 

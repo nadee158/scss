@@ -22,4 +22,13 @@ public interface ClientRepository extends BaseRepository<Client, Long> {
   @Query(name = "Client.getlpsIPAddressByClientID")
   Optional<ClientDTO> getlpsIPAddressInfoByClientID(@Param("clientID") long clientID);
 
+  @Query(name = "Client.getClientUnitNoByClientID")
+  Optional<ClientDTO> getClientUnitNoByClientID(@Param("clientID") long clientID);
+
+  @Query(name = "Client.getClientUnitNoAndCosmosPortNoByClientID")
+  Optional<ClientDTO> getClientUnitNoAndCosmosPortNoByClientID(@Param("clientID") long clientID,
+      @Param("cosmosPortNo") int cosmosPortNo);
+
+
+
 }

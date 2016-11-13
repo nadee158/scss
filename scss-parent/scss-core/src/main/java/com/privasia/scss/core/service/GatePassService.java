@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Optional;
 
+import javax.transaction.Transactional;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -12,23 +14,34 @@ import org.springframework.stereotype.Service;
 
 import com.privasia.scss.common.util.CommonUtil;
 import com.privasia.scss.common.util.GatePassErrMsg;
+import com.privasia.scss.core.dto.ClientDTO;
+import com.privasia.scss.core.dto.ISOInfo;
+import com.privasia.scss.core.dto.ImportContainer;
+import com.privasia.scss.core.dto.SealInfo;
+import com.privasia.scss.core.dto.TransactionDTO;
 import com.privasia.scss.core.exception.BusinessException;
 import com.privasia.scss.core.exception.ResultsNotFoundException;
 import com.privasia.scss.core.model.Card;
+import com.privasia.scss.core.model.Client;
 import com.privasia.scss.core.model.CommonContainerAttribute;
+import com.privasia.scss.core.model.CommonGateInOutAttribute;
 import com.privasia.scss.core.model.Company;
 import com.privasia.scss.core.model.GatePass;
 import com.privasia.scss.core.model.HPATBookingDetail;
+import com.privasia.scss.core.model.ISOCode;
 import com.privasia.scss.core.model.SmartCardUser;
 import com.privasia.scss.core.model.WDCGatePass;
 import com.privasia.scss.core.model.WDCGlobalSetting;
 import com.privasia.scss.core.repository.CardRepository;
+import com.privasia.scss.core.repository.ClientRepository;
 import com.privasia.scss.core.repository.GatePassRepository;
 import com.privasia.scss.core.repository.HPATBookingDetailRepository;
+import com.privasia.scss.core.repository.ISOCodeRepository;
 import com.privasia.scss.core.repository.WDCGatePassRepository;
 import com.privasia.scss.core.repository.WDCGlobalSettingRepository;
 import com.privasia.scss.core.util.constant.BookingType;
 import com.privasia.scss.core.util.constant.CompanyType;
+import com.privasia.scss.core.util.constant.GateInOutStatus;
 import com.privasia.scss.core.util.constant.GatePassStatus;
 import com.privasia.scss.core.util.constant.HpatReferStatus;
 import com.privasia.scss.core.util.constant.TransactionStatus;
@@ -59,6 +72,12 @@ public class GatePassService {
 
   @Autowired
   private ETPWebserviceClient etpWebserviceClient;
+
+  @Autowired
+  private ClientRepository clientRepository;
+
+  @Autowired
+  private ISOCodeRepository isoCodeRepository;
 
 
 
@@ -486,8 +505,199 @@ public class GatePassService {
     return isInternalBlock;
   }
 
-  //
-  // public int selectGatePassInfo(GateInForm f, String comIdSeq, boolean isFirstTime) throws
-  // Exception {
+
+  @Transactional
+  public TransactionDTO selectGatePassInfo(TransactionDTO transactionDTO, long companyID, long clientId)
+      throws Exception {
+
+    CommonGateInOutAttribute commonGateInOut = null;
+
+    log.error("-------START selectGatePassInfo----------" + transactionDTO.getImportContainer01() + "::"
+        + transactionDTO.getImportContainer02());
+
+    // try to find by gatePassNo1
+    ImportContainer container01 = transactionDTO.getImportContainer01();
+    GatePass gpForC1 = getGatePassForImportContainer(container01, companyID);
+
+    if (!(gpForC1 == null)) {
+      transactionDTO = assignValuesToImportContainer(transactionDTO, gpForC1, true);
+      commonGateInOut = gpForC1.getCommonGateInOut();
+    }
+
+    // try to find by gatePassNo1
+    ImportContainer container02 = transactionDTO.getImportContainer01();
+    GatePass gpForC2 = getGatePassForImportContainer(container02, companyID);
+
+    if (!(gpForC2 == null)) {
+      transactionDTO = assignValuesToImportContainer(transactionDTO, gpForC2, false);
+      if (commonGateInOut == null) {
+        commonGateInOut = gpForC2.getCommonGateInOut();
+      }
+    }
+
+    if (!(commonGateInOut == null)) {
+      transactionDTO.setPmHeadNo(commonGateInOut.getPmHeadNo());
+      transactionDTO.setPmPlateNo(commonGateInOut.getPmPlateNo());
+      Client gateInClient = commonGateInOut.getGateInClient();
+      if (!(gateInClient == null)) {
+        int portNo = gateInClient.getCosmosPortNo();
+        transactionDTO.setCosmosPortNo(portNo);
+      }
+    }
+
+    String unitNo = selectLaneNo(clientId);
+    transactionDTO.setUnitNo(unitNo);
+
+    log.error("-------END selectGatePassInfo----------" + transactionDTO.getImportContainer01() + "::"
+        + transactionDTO.getImportContainer02());
+
+    return transactionDTO;
+
+  }
+
+
+  public String selectLaneNo(long clientId) {
+    Optional<ClientDTO> client = clientRepository.getClientUnitNoByClientID(clientId);
+    if (client.isPresent()) {
+      return client.get().getUnitNo();
+    }
+    return null;
+  }
+
+
+  public TransactionDTO assignValuesToImportContainer(TransactionDTO transactionDTO, GatePass gatePass,
+      boolean isContainerNo1) throws Exception {
+    ImportContainer container = null;
+    if (isContainerNo1) {
+      container = transactionDTO.getImportContainer01();
+    } else {
+      container = transactionDTO.getImportContainer02();
+    }
+    CommonContainerAttribute containerComm = gatePass.getContainer();
+    if (!(containerComm == null)) {
+      container.setContainerNumber(containerComm.getContainerNumber());
+    }
+    GateInOutStatus gateInOut = gatePass.getGateInOut();
+    if (!(gateInOut == null)) {
+      container.setGateInOut(gateInOut.getValue());
+    }
+    container.setLine(gatePass.getLine());
+
+    transactionDTO = selectGatePassInfoCosmos(transactionDTO, false);
+
+    return transactionDTO;
+  }
+
+  public TransactionDTO selectGatePassInfoCosmos(TransactionDTO transactionDTO, boolean isContainerNo1)
+      throws Exception {
+
+    log.error("-------START selectGatePassInfo cosmos----------" + transactionDTO + ":" + isContainerNo1);
+    ImportContainer container = null;
+    if (isContainerNo1) {
+      container = transactionDTO.getImportContainer01();
+    } else {
+      container = transactionDTO.getImportContainer02();
+    }
+
+    String containerNo = container.getContainerNumber();
+
+
+    // sql = "SELECT cnid03" + ", hdtp03" + ", cnbt03" + ", lynd05" + ", orgv05" + ", cnis03" + ",
+    // orrf05"
+    // + ", psex45" + ", hdid10" + " FROM PCTCSE.cthndl5" + ", PCTCSE.ctlthd2" + ", PCTCSE.ctordru"
+    // + ", PSPACEE.spcinfi" + " WHERE hdtm03='WPT1'" + " AND cnid03=" + SQL.format(containerNo)
+    // //+ ", PSPACEE.spcinfi" + " WHERE hdtm03='WPT1'" + " AND cnid03 LIKE " + "'%" + containerNo +
+    // "%'"
+    // + " AND hdtp03='OUT'" + " AND lttp10='ORD'" + " AND hdid10 = hdid03" + " AND orid10 = orid05"
+    // + " AND lhfs10='RGS'" + " AND (ortp05='FOT'" + " OR ortp05 = 'BKG'" + " OR ortp05 = 'CNA' )"
+    // + " AND trmc45='WPT1'"
+    // + " AND cnid45=cnid03" + " AND psex45 IS NOT NULL";
+
+
+    /**
+     * Change COSMOS Schema
+     */
+
+    // if (isContainerNo1) {
+    // f.setAgentCode(TextString.format(rs.getString("orgv05")));
+    // }
+    //
+    // f.setContainerNoC1(TextString.format(rs.getString("cnid03")));
+    // f.setInOrOutC1(rs.getString("hdtp03"));
+    // f.setLineC1(TextString.format(rs.getString("lynd05")));
+    // f.setFullOrEmptyC1(TextString.format(rs.getString("cnbt03")));
+    // f.setISOC1(TextString.format(rs.getString("cnis03")));
+    // f.setOrderFOTC1(TextString.format(rs.getString("orrf05")));
+    // f.setCurPosC1(TextString.format(rs.getString("psex45")));
+
+    // TextString.format(rs.getString("cnis03")
+    String isoCode = null;
+    ISOInfo isoInfo = selectISOInfo(isoCode);
+    container.setIsoInfo(isoInfo);
+
+    // TextString.format(rs.getString("hdid10"))
+    String handlingId = null;
+    SealInfo sealInfo = selectSealInfo(handlingId);
+    container.setSealInfo(sealInfo);
+
+    // if (rs.getRow() == 0) {
+    // f.setFOTBKGFlag(false);
+    // }
+
+
+    log.error("-------END selectGatePassInfo cosmos----------" + transactionDTO + ":" + isContainerNo1);
+    return transactionDTO;
+  }
+
+  public ISOInfo selectISOInfo(String isoCode) throws Exception {
+    log.error("Check selectISOInfo:" + isoCode);
+
+    Optional<ISOCode> codeOpt = isoCodeRepository.findByIsoCode(isoCode);
+    if (codeOpt.isPresent()) {
+      ISOCode code = codeOpt.get();
+      return new ISOInfo(code);
+    }
+    return null;
+  }
+
+  public SealInfo selectSealInfo(String handlingId) throws Exception {
+
+    // sql = "SELECT slor2k" + ", sltp2k" + ", seal2k" + " FROM" + " PCTCSE.ctseal1" + " WHERE" + "
+    // rfid2k="
+    // + SQL.format(handlingId);
+    SealInfo sealInfo = new SealInfo();
+
+    // if (rs.next()) {
+    // if (isContainerNo1) {
+    // f.setSeal1OriginC1(TextString.format(rs.getString("slor2k")));
+    // f.setSeal1TypeC1(TextString.format(rs.getString("sltp2k")));
+    // f.setSeal1C1(TextString.format(rs.getString("seal2k")));
+    // } else {
+    // f.setSeal1OriginC2(TextString.format(rs.getString("slor2k")));
+    // f.setSeal1TypeC2(TextString.format(rs.getString("sltp2k")));
+    // f.setSeal1C2(TextString.format(rs.getString("seal2k")));
+    // }
+    // }
+
+    return sealInfo;
+
+  }
+
+
+
+  public GatePass getGatePassForImportContainer(ImportContainer container, long companyID) {
+    if (!(container == null)) {
+      // get gate pass 01
+      long gatePassNo = Long.parseLong(container.getImpGatePassNumber());
+
+      // try to find by gatePassNo1
+      Optional<GatePass> gatePassOptional =
+          gatePassRepository.findByGatePassNoAndCompany_companyID(gatePassNo, companyID);
+
+      return gatePassOptional.orElse(null);
+
+    }
+    return null;
+  }
 
 }

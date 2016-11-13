@@ -10,4 +10,6 @@ public interface GatePassRepository extends BaseRepository<GatePass, Long> {
 
   Optional<GatePass> findByGatePassNo(long gatePassNumber);
 
+  Optional<GatePass> findByGatePassNoAndCompany_companyID(long gatePassNo1, long companyID);
+
 }

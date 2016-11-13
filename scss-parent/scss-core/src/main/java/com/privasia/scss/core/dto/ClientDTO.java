@@ -19,7 +19,9 @@ public class ClientDTO implements Serializable {
 
   private boolean csmControl;
 
+  private String unitNo;
 
+  private int cosmosPortNo;
 
   public ClientDTO(String lpsIPAddress, Enum<ClientType> type, boolean csmControl) {
     super();
@@ -27,6 +29,23 @@ public class ClientDTO implements Serializable {
     this.type = ClientType.fromName(type.name()).getValue();;
     this.csmControl = csmControl;
   }
+
+
+
+  public ClientDTO(String unitNo) {
+    super();
+    this.unitNo = unitNo;
+  }
+
+
+
+  public ClientDTO(String unitNo, int cosmosPortNo) {
+    super();
+    this.unitNo = unitNo;
+    this.cosmosPortNo = cosmosPortNo;
+  }
+
+
 
   public long getClientID() {
     return clientID;
@@ -59,6 +78,26 @@ public class ClientDTO implements Serializable {
 
   public void setType(String type) {
     this.type = type;
+  }
+
+  public String getUnitNo() {
+    return unitNo;
+  }
+
+  public void setUnitNo(String unitNo) {
+    this.unitNo = unitNo;
+  }
+
+
+
+  public int getCosmosPortNo() {
+    return cosmosPortNo;
+  }
+
+
+
+  public void setCosmosPortNo(int cosmosPortNo) {
+    this.cosmosPortNo = cosmosPortNo;
   }
 
 
