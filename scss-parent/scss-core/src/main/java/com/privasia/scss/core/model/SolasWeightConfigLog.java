@@ -16,8 +16,8 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import com.privasia.scss.core.util.constant.SolasWeightType;
-import com.privasia.scss.core.util.constant.SolasWeightTypeSize;
+import com.privasia.scss.common.enums.SolasWeightType;
+import com.privasia.scss.common.enums.SolasWeightTypeSize;
 
 
 /**

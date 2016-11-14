@@ -7,7 +7,7 @@ import java.time.LocalDate;
 
 import org.springframework.http.HttpStatus;
 
-import com.privasia.scss.core.util.constant.ErrorCode;
+import com.privasia.scss.common.enums.ErrorCode;
 
 
 /**

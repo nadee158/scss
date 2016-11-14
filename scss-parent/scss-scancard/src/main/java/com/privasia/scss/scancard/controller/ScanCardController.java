@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.privasia.scss.core.dto.SmartCardUserDTO;
+import com.privasia.scss.common.dto.SmartCardUserDTO;
 import com.privasia.scss.scancard.dto.CardValidationDto;
 import com.privasia.scss.scancard.service.CardService;
 import com.privasia.scss.scancard.service.CardValidationService;

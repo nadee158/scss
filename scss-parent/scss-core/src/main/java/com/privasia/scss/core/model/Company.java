@@ -22,9 +22,9 @@ import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.Type;
 
-import com.privasia.scss.core.util.constant.CompanyAccountType;
-import com.privasia.scss.core.util.constant.CompanyStatus;
-import com.privasia.scss.core.util.constant.CompanyType;
+import com.privasia.scss.common.enums.CompanyAccountType;
+import com.privasia.scss.common.enums.CompanyStatus;
+import com.privasia.scss.common.enums.CompanyType;
 
 /**
  * @author Janaka

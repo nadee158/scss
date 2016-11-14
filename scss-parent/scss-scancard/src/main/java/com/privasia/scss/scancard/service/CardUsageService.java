@@ -8,14 +8,14 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.privasia.scss.core.dto.GateInfo;
-import com.privasia.scss.core.dto.ScssClientDto;
+import com.privasia.scss.common.dto.GateInfo;
+import com.privasia.scss.common.dto.ScssClientDto;
+import com.privasia.scss.common.enums.CardStatus;
+import com.privasia.scss.common.enums.CardUsageStatus;
 import com.privasia.scss.core.model.Card;
 import com.privasia.scss.core.model.CardUsage;
 import com.privasia.scss.core.repository.CardRepository;
 import com.privasia.scss.core.repository.CardUsageRepository;
-import com.privasia.scss.core.util.constant.CardStatus;
-import com.privasia.scss.core.util.constant.CardUsageStatus;
 
 /**
  * @author nadee158
@@ -75,7 +75,11 @@ public class CardUsageService {
     CardUsage cardUsage = cardUsageRepository.findByClient_ClientIDAndUsageStatusAndDateTimeUpdateIsNull(clientId,
         CardUsageStatus.STATUS_LOCK);
 
-    return new GateInfo(cardUsage);
+    if (!(cardUsage == null)) {
+      return cardUsage.constructGateInfo();
+    }
+
+    return null;
   }
 
   public boolean saveStartCardUsage(String cardId, String clientId, boolean isMC, String weight) {

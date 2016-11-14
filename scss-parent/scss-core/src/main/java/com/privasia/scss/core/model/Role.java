@@ -21,7 +21,7 @@ import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.Type;
 
-import com.privasia.scss.core.util.constant.RoleType;
+import com.privasia.scss.common.enums.RoleType;
 
 /**
  * @author Janaka

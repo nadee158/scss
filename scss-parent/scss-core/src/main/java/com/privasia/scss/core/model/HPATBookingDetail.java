@@ -21,8 +21,11 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
+import org.springframework.beans.BeanUtils;
 
-import com.privasia.scss.core.util.constant.BookingType;
+import com.privasia.scss.common.dto.ExportContainer;
+import com.privasia.scss.common.dto.ImportContainer;
+import com.privasia.scss.common.enums.BookingType;
 
 
 /**
@@ -49,7 +52,7 @@ public class HPATBookingDetail extends AuditEntity implements Serializable {
   private Long hpatBookingDetailID;
 
   @Column(name = "BOOKING_TYPE")
-  @Type(type="com.privasia.scss.core.util.enumusertype.BookingTypeEnumUserType")
+  @Type(type = "com.privasia.scss.core.util.enumusertype.BookingTypeEnumUserType")
   private BookingType bookingType;
 
   @Column(name = "CLOSING_TIME")
@@ -280,6 +283,23 @@ public class HPATBookingDetail extends AuditEntity implements Serializable {
     this.expBookingNo = expBookingNo;
   }
 
+  public ExportContainer constructExportContainer() {
+    ExportContainer exportContainer = new ExportContainer();
+    if (!(this.getSolas() == null)) {
+      exportContainer.setSolasInfo(this.getSolas().constructSolasInfo());
+    }
+    exportContainer.setContainerNumber(containerNumber);
+    exportContainer.setExpSealNo01(expSealNo01);
+    exportContainer.setExpSealNo02(expSealNo02);
+    exportContainer.setContainerISO(containerISO);
+    exportContainer.setExpBookingNo(expBookingNo);
+    return exportContainer;
+  }
 
+  public ImportContainer constructImportContainer() {
+    ImportContainer importContainer = new ImportContainer();
+    BeanUtils.copyProperties(this, importContainer);
+    return importContainer;
+  }
 
 }

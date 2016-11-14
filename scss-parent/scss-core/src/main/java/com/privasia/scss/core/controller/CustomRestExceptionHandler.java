@@ -31,7 +31,7 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import com.fasterxml.jackson.core.JsonParseException;
-import com.privasia.scss.core.dto.ApiError;
+import com.privasia.scss.common.dto.ApiError;
 import com.privasia.scss.core.exception.InvalidJwtTokenException;
 import com.privasia.scss.core.exception.JwtExpiredTokenException;
 import com.privasia.scss.core.exception.ResultsNotFoundException;

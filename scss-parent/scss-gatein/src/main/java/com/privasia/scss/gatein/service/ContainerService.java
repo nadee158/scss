@@ -7,9 +7,9 @@ import java.util.Date;
 
 import org.springframework.stereotype.Service;
 
+import com.privasia.scss.common.dto.ExportContainer;
+import com.privasia.scss.common.dto.GateInForm;
 import com.privasia.scss.common.util.DateUtil;
-import com.privasia.scss.core.dto.ExportContainer;
-import com.privasia.scss.core.dto.GateInForm;
 
 /**
  * @author nadee158

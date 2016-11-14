@@ -23,10 +23,10 @@ import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.Type;
 
-import com.privasia.scss.core.util.constant.Gender;
-import com.privasia.scss.core.util.constant.Nationality;
-import com.privasia.scss.core.util.constant.UserStatus;
-import com.privasia.scss.core.util.constant.UserType;
+import com.privasia.scss.common.enums.Gender;
+import com.privasia.scss.common.enums.Nationality;
+import com.privasia.scss.common.enums.UserStatus;
+import com.privasia.scss.common.enums.UserType;
 
 /**
  * @author Janaka

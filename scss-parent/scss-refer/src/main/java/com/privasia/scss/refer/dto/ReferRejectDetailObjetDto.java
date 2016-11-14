@@ -8,10 +8,10 @@ import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 
+import com.privasia.scss.common.enums.ReferStatus;
+import com.privasia.scss.common.enums.SealOriginType;
+import com.privasia.scss.common.enums.SealType;
 import com.privasia.scss.core.model.ReferRejectDetail;
-import com.privasia.scss.core.util.constant.ReferStatus;
-import com.privasia.scss.core.util.constant.SealOriginType;
-import com.privasia.scss.core.util.constant.SealType;
 
 public class ReferRejectDetailObjetDto implements Serializable {
 

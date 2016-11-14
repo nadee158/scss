@@ -8,8 +8,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
+import com.privasia.scss.common.enums.BookingType;
 import com.privasia.scss.core.model.QHPATBookingDetail;
-import com.privasia.scss.core.util.constant.BookingType;
 import com.querydsl.core.types.Predicate;
 
 

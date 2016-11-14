@@ -8,9 +8,9 @@ import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 
+import com.privasia.scss.common.enums.HpatReferStatus;
 import com.privasia.scss.core.model.BaseCommonGateInOutAttribute;
 import com.privasia.scss.core.model.ReferReject;
-import com.privasia.scss.core.util.constant.HpatReferStatus;
 
 public class ReferRejectObjetDto implements Serializable {
 

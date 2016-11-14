@@ -12,16 +12,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.privasia.scss.core.dto.ClientInfo;
-import com.privasia.scss.core.dto.KioskBoothRightInfo;
+import com.privasia.scss.common.dto.ClientInfo;
+import com.privasia.scss.common.dto.KioskBoothRightInfo;
+import com.privasia.scss.common.enums.DBTransactionStatus;
+import com.privasia.scss.common.enums.KioskLockStatus;
+import com.privasia.scss.common.enums.TransactionType;
 import com.privasia.scss.core.model.Client;
 import com.privasia.scss.core.model.KioskBoothContainerAttribute;
 import com.privasia.scss.core.model.KioskBoothRights;
 import com.privasia.scss.core.model.KioskBoothRightsPK;
 import com.privasia.scss.core.repository.KioskBoothRightsRepository;
-import com.privasia.scss.core.util.constant.DBTransactionStatus;
-import com.privasia.scss.core.util.constant.KioskLockStatus;
-import com.privasia.scss.core.util.constant.TransactionType;
 
 @Service("kioskBoothService")
 public class KioskBoothService {

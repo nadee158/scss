@@ -6,7 +6,7 @@ import javax.persistence.Embeddable;
 
 import org.hibernate.annotations.Type;
 
-import com.privasia.scss.core.util.constant.GateInOutStatus;
+import com.privasia.scss.common.enums.GateInOutStatus;
 
 @Embeddable
 public class PrintEIRContainerInfo extends CommonContainerAttribute implements Serializable {

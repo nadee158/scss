@@ -23,7 +23,7 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
 
-import com.privasia.scss.core.util.constant.CompanyStatus;
+import com.privasia.scss.common.enums.CompanyStatus;
 
 /**
  * @author Janaka

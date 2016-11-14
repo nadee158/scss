@@ -17,7 +17,7 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
 
-import com.privasia.scss.core.util.constant.ShippingLineReportType;
+import com.privasia.scss.common.enums.ShippingLineReportType;
 
 /**
  * @author Janaka

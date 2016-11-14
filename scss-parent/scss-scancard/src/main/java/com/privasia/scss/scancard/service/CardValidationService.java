@@ -9,12 +9,12 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.privasia.scss.common.enums.CardStatus;
+import com.privasia.scss.common.enums.CompanyStatus;
 import com.privasia.scss.core.exception.ResultsNotFoundException;
 import com.privasia.scss.core.model.Card;
 import com.privasia.scss.core.model.Company;
 import com.privasia.scss.core.repository.CardRepository;
-import com.privasia.scss.core.util.constant.CardStatus;
-import com.privasia.scss.core.util.constant.CompanyStatus;
 import com.privasia.scss.core.util.service.CurrentDateTimeService;
 import com.privasia.scss.scancard.dto.CardValidationDto;
 import com.privasia.scss.scancard.util.ScanCardConstant;

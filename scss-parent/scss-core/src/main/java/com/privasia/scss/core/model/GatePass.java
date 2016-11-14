@@ -21,9 +21,9 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
 
-import com.privasia.scss.core.util.constant.ContainerPosition;
-import com.privasia.scss.core.util.constant.GateInOutStatus;
-import com.privasia.scss.core.util.constant.GatePassStatus;
+import com.privasia.scss.common.enums.ContainerPosition;
+import com.privasia.scss.common.enums.GateInOutStatus;
+import com.privasia.scss.common.enums.GatePassStatus;
 
 /**
  * @author Janaka

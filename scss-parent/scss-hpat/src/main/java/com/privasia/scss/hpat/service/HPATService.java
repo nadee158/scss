@@ -16,17 +16,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.privasia.scss.core.dto.ExportContainer;
-import com.privasia.scss.core.dto.ImportContainer;
-import com.privasia.scss.core.dto.TransactionDTO;
+import com.privasia.scss.common.dto.TransactionDTO;
+import com.privasia.scss.common.enums.BookingType;
+import com.privasia.scss.common.enums.HpatReferStatus;
 import com.privasia.scss.core.exception.ResultsNotFoundException;
 import com.privasia.scss.core.model.Card;
 import com.privasia.scss.core.model.HPATBooking;
 import com.privasia.scss.core.predicate.HPATBookingPredicates;
 import com.privasia.scss.core.repository.CardRepository;
 import com.privasia.scss.core.repository.HPATBookingRepository;
-import com.privasia.scss.core.util.constant.BookingType;
-import com.privasia.scss.core.util.constant.HpatReferStatus;
 import com.privasia.scss.hpat.dto.HpatDto;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.OrderSpecifier;
@@ -122,7 +120,7 @@ public class HPATService {
 
       HPATBooking booking = hpatBooking.get();
 
-      TransactionDTO transactionDTO = new TransactionDTO(booking);
+      TransactionDTO transactionDTO = booking.constructTransactionDTO();
 
       if (!(booking.getHpatBookingDetails() == null || booking.getHpatBookingDetails().isEmpty())) {
 
@@ -134,27 +132,37 @@ public class HPATService {
             case IMPORT:
 
               if (transactionDTO.getImportContainer01() == null) {
-                transactionDTO.setImportContainer01(new ImportContainer(bookingDetail));
+                if (!(bookingDetail == null)) {
+                  transactionDTO.setImportContainer01(bookingDetail.constructImportContainer());
+                }
               } else {
-                transactionDTO.setImportContainer02(new ImportContainer(bookingDetail));
+                if (!(bookingDetail == null)) {
+                  transactionDTO.setImportContainer02(bookingDetail.constructImportContainer());
+                }
               }
 
               break;
             case EXPORT:
 
               if (transactionDTO.getExportContainer01() == null) {
-                transactionDTO.setExportContainer01(new ExportContainer(bookingDetail));
+                if (!(bookingDetail == null)) {
+                  transactionDTO.setExportContainer01(bookingDetail.constructExportContainer());
+                }
               } else {
-                transactionDTO.setExportContainer02(new ExportContainer(bookingDetail));
+                transactionDTO.setExportContainer02(bookingDetail.constructExportContainer());
               }
 
               break;
             case IMPORT_ITT:
 
               if (transactionDTO.getImportContainer01() == null) {
-                transactionDTO.setImportContainer01(new ImportContainer(bookingDetail));
+                if (!(bookingDetail == null)) {
+                  transactionDTO.setImportContainer01(bookingDetail.constructImportContainer());
+                }
               } else {
-                transactionDTO.setImportContainer02(new ImportContainer(bookingDetail));
+                if (!(bookingDetail == null)) {
+                  transactionDTO.setImportContainer02(bookingDetail.constructImportContainer());
+                }
               }
 
               break;

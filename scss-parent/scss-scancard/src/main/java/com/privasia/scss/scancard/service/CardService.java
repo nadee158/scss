@@ -9,8 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.privasia.scss.common.dto.SmartCardUserDTO;
 import com.privasia.scss.common.util.UserIpAddressUtil;
-import com.privasia.scss.core.dto.SmartCardUserDTO;
 import com.privasia.scss.core.exception.ResultsNotFoundException;
 import com.privasia.scss.core.model.Card;
 import com.privasia.scss.core.repository.CardRepository;

@@ -7,8 +7,8 @@ import java.util.Optional;
 
 import org.springframework.data.querydsl.QueryDslPredicateExecutor;
 
+import com.privasia.scss.common.enums.HpatReferStatus;
 import com.privasia.scss.core.model.HPATBooking;
-import com.privasia.scss.core.util.constant.HpatReferStatus;
 
 /**
  * @author Janaka

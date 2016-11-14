@@ -5,7 +5,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.privasia.scss.core.dto.ClientDTO;
+import com.privasia.scss.common.dto.ClientDTO;
 import com.privasia.scss.core.model.Client;
 
 /**

@@ -17,8 +17,10 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
+import org.springframework.beans.BeanUtils;
 
-import com.privasia.scss.core.util.constant.HpatReferStatus;
+import com.privasia.scss.common.dto.TransactionDTO;
+import com.privasia.scss.common.enums.HpatReferStatus;
 
 /**
  * @author Janaka
@@ -66,7 +68,7 @@ public class HPATBooking extends AuditEntity implements Serializable {
   private String pmNumber;
 
   @Column(name = "STATUS_CODE")
-  @Type(type="com.privasia.scss.core.util.enumusertype.HPATReferStatusEnumUserType")
+  @Type(type = "com.privasia.scss.core.util.enumusertype.HPATReferStatusEnumUserType")
   private HpatReferStatus status;
 
   @Column(name = "TRAILER_NO")
@@ -300,5 +302,13 @@ public class HPATBooking extends AuditEntity implements Serializable {
     this.hpatBookingDetails = hpatBookingDetails;
   }
 
+  public TransactionDTO constructTransactionDTO() {
+    TransactionDTO dto = new TransactionDTO();
+    BeanUtils.copyProperties(this, dto);
+    if (!(this.getStatus() == null)) {
+      dto.setStatus(this.getStatus().getValue());
+    }
+    return dto;
+  }
 
 }

@@ -1,270 +1,255 @@
 package com.privasia.scss.gatein.service;
 
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.privasia.scss.core.dto.ImportContainer;
+import com.privasia.scss.common.dto.DGInfo;
+import com.privasia.scss.common.dto.ImportContainer;
+import com.privasia.scss.common.dto.SealInfo;
+import com.privasia.scss.common.dto.TransactionDTO;
+import com.privasia.scss.common.enums.ContainerFullEmptyType;
+import com.privasia.scss.common.enums.GateInOutStatus;
+import com.privasia.scss.common.enums.HpatReferStatus;
+import com.privasia.scss.common.enums.Nationality;
+import com.privasia.scss.core.model.PrintEIRContainerInfo;
+import com.privasia.scss.core.model.PrintEir;
+import com.privasia.scss.core.repository.PrintEirRepository;
 
-@Service("")
+@Service("printEirService")
 public class PrintEirService {
 
-  public void insertScssPrintEir(ImportContainer importContainer01, ImportContainer importContainer02,
-      String customerIpAddress) throws Exception {
+  private static final String BLANK = " ";
+  private static final String PIPELINE_SEPERATOR = " | ";
 
-    String lineInfoC1 = "";
-    String lineInfo2C1 = "";
-    String lineInfoC2 = "";
-    String lineInfo2C2 = "";
+  @Autowired
+  private PrintEirRepository printEirRepository;
+
+  @Transactional(readOnly = false)
+  public void insertScssPrintEir(TransactionDTO transactionDTO, String customerIpAddress) throws Exception {
+
+    ImportContainer importContainer01 = transactionDTO.getImportContainer01();
+    ImportContainer importContainer02 = transactionDTO.getImportContainer02();
+
+    StringBuilder lineInfoC1 = null;
+    StringBuilder lineInfo2C1 = null;
+    StringBuilder lineInfoC2 = null;
+    StringBuilder lineInfo2C2 = null;
     String icNoOrPassportNo = "";
-    String sealC1 = "";
-    String sealC2 = "";
+    StringBuilder sealC1 = null;
+    StringBuilder sealC2 = null;
 
-    if (!(importContainer01 == null)) {
+
+    /***********************************************************/
+
+    /***************** FIRST Container ********************/
+    constructLinesForContainer(importContainer01, lineInfoC1, lineInfo2C1, sealC1);
+
+
+    /***********************************************************/
+
+    /***************** SECOND Container ********************/
+    constructLinesForContainer(importContainer02, lineInfoC2, lineInfo2C2, sealC2);
+
+
+
+    /********************************************************/
+    if (StringUtils.equals(transactionDTO.getNationality(), Nationality.MALAYSIAN.getValue())) {
+      if (StringUtils.isNotBlank(transactionDTO.getNewICNo())) {
+        icNoOrPassportNo = transactionDTO.getNewICNo();
+      } else {
+        icNoOrPassportNo = transactionDTO.getOldICNo();
+      }
+    } else {
+      icNoOrPassportNo = transactionDTO.getPassportNo();
+    }
+
+    String weight01 = getContainerWeight(importContainer01, transactionDTO);
+
+    String weight02 = getContainerWeight(importContainer02, transactionDTO);
+
+    PrintEir printEir = new PrintEir();
+    printEir.setTimeIn(transactionDTO.getTimeIn());
+    printEir.setCallCard(Long.toString(transactionDTO.getCallCard()));
+    printEir.setTruckHeadNo(transactionDTO.getPmHeadNo());
+    printEir.setCompanyName(transactionDTO.getCompNamePrint());
+
+    PrintEIRContainerInfo eirContainer01 =
+        getConstructedEirContainer(importContainer01, weight01, lineInfoC1, lineInfo2C1, sealC1);
+    printEir.setContainer01(eirContainer01);
+
+    PrintEIRContainerInfo eirContainer02 =
+        getConstructedEirContainer(importContainer02, weight02, lineInfoC2, lineInfo2C2, sealC2);
+    printEir.setContainer02(eirContainer02);
+
+    printEir.setIcNoOrPassport(icNoOrPassportNo);
+    printEir.setScuName(transactionDTO.getScuName());
+    printEir.setTruckNo(transactionDTO.getPmPlateNo());
+    printEir.setGateInNo(transactionDTO.getGateInNo());
+    printEir.setStatus(HpatReferStatus.ACTIVE);
+    printEir.setClientIp(customerIpAddress);
+
+    printEirRepository.save(printEir);
+
+  }
+
+
+
+  private PrintEIRContainerInfo getConstructedEirContainer(ImportContainer importContainer, String weight,
+      StringBuilder lineInfo, StringBuilder lineInfo2, StringBuilder seal) {
+    PrintEIRContainerInfo eirContainer = new PrintEIRContainerInfo();
+    eirContainer.setContainerBayCode(importContainer.getBayCode());
+    eirContainer.setContainerInOrOut(GateInOutStatus.fromValue(importContainer.getGateInOut()));
+    eirContainer.setContainerFullOrEmpty(ContainerFullEmptyType.fromValue(importContainer.getFullOrEmpty()));
+    eirContainer.setContainerPositionOnTruck(importContainer.getPositionOnTruck());
+    eirContainer.setContainerNumber(importContainer.getContainerNumber());
+    eirContainer.setContainerLine(importContainer.getLine());
+    eirContainer.setContainerISOCode(importContainer.getIsoCode());
+    eirContainer.setContainerLength(importContainer.getContainerLength());
+    eirContainer.setContainerHeight(importContainer.getContainerHeight());
+    eirContainer.setContainerType(importContainer.getContainerType());
+    eirContainer.setContainerNetWeight(weight);
+    if (!(lineInfo == null)) {
+      eirContainer.setLineOneInfo(lineInfo.toString());
+    }
+    if (!(lineInfo2 == null)) {
+      eirContainer.setLineTwoInfo(lineInfo2.toString());
+    }
+    if (!(seal == null)) {
+      eirContainer.setContainerSeal(seal.toString());
+    }
+    return eirContainer;
+  }
+
+
+
+  private void constructLinesForContainer(ImportContainer importContainer, StringBuilder lineInfo,
+      StringBuilder lineInfo2, StringBuilder seal) {
+
+    if (!(importContainer == null)) {
+
+      if (StringUtils.equals(importContainer.getFullOrEmpty(), "F")) {
+
+        if (!(importContainer.getSealInfo01() == null)) {
+          SealInfo sealInfo01 = importContainer.getSealInfo01();
+          lineInfo = constructSealString(sealInfo01, lineInfo);
+          seal = constructSealString(sealInfo01, lineInfo);
+        }
+
+        if (!(importContainer.getSealInfo02() == null)) {
+          SealInfo sealInfo02 = importContainer.getSealInfo02();
+          lineInfo = constructSealString(sealInfo02, lineInfo);
+
+          if (!(seal == null || StringUtils.isEmpty(seal.toString()))) {
+            seal.append(PIPELINE_SEPERATOR);
+          }
+          seal = constructSealString(sealInfo02, lineInfo);
+        }
+
+      }
+
+      if (StringUtils.equals(importContainer.getOperationReefer(), "Y")) {
+        lineInfo.append("Reefer:").append(BLANK).append(importContainer.getOperationReefer()).append(BLANK)
+            .append(importContainer.getTemp()).append(BLANK).append(importContainer.getTempUnit()).append(BLANK);
+      }
+
+      if (StringUtils.isNotBlank(importContainer.getImdg())) {
+        lineInfo = appendToLine("IMDG:", importContainer.getImdg(), lineInfo);
+      }
+
+      if (StringUtils.isNotBlank(importContainer.getUnc())) {
+        lineInfo = appendToLine("UN:", importContainer.getUnc(), lineInfo);
+      }
+
+
+      // Second Line
+      if (StringUtils.isNotBlank(importContainer.getOogoh())) {
+        lineInfo2 = appendToLine("OH :", importContainer.getOogoh(), lineInfo2);
+      }
+
+      if (StringUtils.isNotBlank(importContainer.getOogol())) {
+        lineInfo2 = appendToLine("OL :", importContainer.getOogol(), lineInfo2);
+      }
+
+      if (StringUtils.isNotBlank(importContainer.getOogof())) {
+        lineInfo2 = appendToLine("OF :", importContainer.getOogof(), lineInfo2);
+      }
+
+      if (StringUtils.isNotBlank(importContainer.getOogoa())) {
+        lineInfo2 = appendToLine("OA :", importContainer.getOogoa(), lineInfo2);
+      }
+
+      if (StringUtils.isNotBlank(importContainer.getOogor())) {
+        lineInfo2 = appendToLine("OR :", importContainer.getOogor(), lineInfo2);
+      }
+
+      if (!(importContainer.getDgInfo() == null)) {
+        DGInfo dgInfo = importContainer.getDgInfo();
+
+        if (StringUtils.isNotEmpty(dgInfo.getDamage1())) {
+          lineInfo2 = appendToLine("Damage: ", dgInfo.getDamage1(), lineInfo2);
+        }
+
+        if (StringUtils.isNotEmpty(dgInfo.getDamage2())) {
+          lineInfo2 = appendToLine(null, dgInfo.getDamage2(), lineInfo2);
+        }
+
+        if (StringUtils.isNotEmpty(dgInfo.getDamage3())) {
+          lineInfo2 = appendToLine(null, dgInfo.getDamage3(), lineInfo2);
+        }
+
+        if (StringUtils.isNotEmpty(dgInfo.getDamage4())) {
+          lineInfo2 = appendToLine(null, dgInfo.getDamage4(), lineInfo2);
+        }
+
+        if (StringUtils.isNotEmpty(dgInfo.getDamage5())) {
+          lineInfo2 = appendToLine(null, dgInfo.getDamage5(), lineInfo2);
+        }
+
+      }
 
     }
 
-    // // First Container
-    // if ("F".equalsIgnoreCase(f.getFullOrEmptyC1())) {
-    // if (StringUtils.isNotBlank(f.getSeal1C1())) {
-    // lineInfoC1 += f.getSeal1OriginC1() + " " + f.getSeal1TypeC1() + " " + f.getSeal1C1() + " ";
-    // sealC1 += f.getSeal1OriginC1() + " " + f.getSeal1TypeC1() + " " + f.getSeal1C1();
-    // }
-    //
-    // if (StringUtils.isNotBlank(f.getSeal2C1())) {
-    // lineInfoC1 += f.getSeal2OriginC1() + " " + f.getSeal2TypeC1() + " " + f.getSeal2C1() + " ";
-    //
-    // if (StringUtils.isNotBlank(sealC1)) {
-    // sealC1 += " | " + f.getSeal2OriginC1() + " " + f.getSeal2TypeC1() + " " + f.getSeal2C1();
-    // } else {
-    // sealC1 += f.getSeal2OriginC1() + " " + f.getSeal2TypeC1() + " " + f.getSeal2C1();
-    // }
-    // }
-    // }
-    //
-    // if ("Y".equalsIgnoreCase(f.getOperationReeferC1())) {
-    // lineInfoC1 += "Reefer:" + " " + f.getOperationReeferC1() + " " + f.getTempC1() +
-    // f.getTempUnitC1() + " ";
-    // }
-    //
-    // if (StringUtils.isNotBlank(f.getIMDGC1())) {
-    // lineInfoC1 += "IMDG:" + " " + f.getIMDGC1() + " ";
-    // }
-    //
-    // if (StringUtils.isNotBlank(f.getUNC1())) {
-    // lineInfoC1 += "UN:" + " " + f.getUNC1() + " ";
-    // }
-    //
-    // // // Second Line
-    // if (StringUtils.isNotBlank(f.getOOGOHC1())) {
-    // lineInfo2C1 += "OH :" + " " + f.getOOGOHC1() + " ";
-    // }
-    //
-    // if (StringUtils.isNotBlank(f.getOOGOLC1())) {
-    // lineInfo2C1 += "OL :" + " " + f.getOOGOLC1() + " ";
-    // }
-    //
-    // if (StringUtils.isNotBlank(f.getOOGOFC1())) {
-    // lineInfo2C1 += "OF :" + " " + f.getOOGOFC1() + " ";
-    // }
-    //
-    // if (StringUtils.isNotBlank(f.getOOGOAC1())) {
-    // lineInfo2C1 += "OA :" + " " + f.getOOGOAC1() + " ";
-    // }
-    //
-    // if (StringUtils.isNotBlank(f.getOOGORC1())) {
-    // lineInfo2C1 += "OR :" + " " + f.getOOGORC1() + " ";
-    // }
-    //
-    // if (StringUtils.isNotBlank(f.getDamage1C1())) {
-    // lineInfo2C1 += "Damage: ";
-    // }
-    //
-    // if (StringUtils.isNotBlank(f.getDamage1C1())) {
-    // lineInfo2C1 += f.getDamage1C1() + " ";
-    // }
-    //
-    // if (StringUtils.isNotBlank(f.getDamage2C1())) {
-    // lineInfo2C1 += f.getDamage2C1() + " ";
-    // }
-    //
-    // if (StringUtils.isNotBlank(f.getDamage3C1())) {
-    // lineInfo2C1 += f.getDamage3C1() + " ";
-    // }
-    //
-    // if (StringUtils.isNotBlank(f.getDamage4C1())) {
-    // lineInfo2C1 += f.getDamage4C1() + " ";
-    // }
-    //
-    // if (StringUtils.isNotBlank(f.getDamage5C1())) {
-    // lineInfo2C1 += f.getDamage5C1() + " ";
-    // }
-    //
-    // /***********************************************************/
-    //
-    // /***************** Second Container No ********************/
-    // if (f.getContainerNoC2() != "") {
-    // // First Container
-    // if ("F".equalsIgnoreCase(f.getFullOrEmptyC2())) {
-    // if (StringUtils.isNotBlank(f.getSeal1C1())) {
-    // lineInfoC2 += f.getSeal1OriginC2() + " " + f.getSeal1TypeC2() + " " + f.getSeal1C2() + " ";
-    // sealC1 += f.getSeal1OriginC2() + " " + f.getSeal1TypeC2() + " " + f.getSeal1C2();
-    // }
-    //
-    // if (StringUtils.isNotBlank(f.getSeal2C1())) {
-    // lineInfoC2 += f.getSeal2OriginC2() + " " + f.getSeal2TypeC2() + " " + f.getSeal2C2() + " ";
-    //
-    // if (StringUtils.isNotBlank(sealC2)) {
-    // sealC1 += " | " + f.getSeal2OriginC2() + " " + f.getSeal2TypeC2() + " " + f.getSeal2C2();
-    // } else {
-    // sealC1 += f.getSeal2OriginC2() + " " + f.getSeal2TypeC2() + " " + f.getSeal2C2();
-    // }
-    // }
-    // }
-    //
-    // if ("Y".equalsIgnoreCase(f.getOperationReeferC2())) {
-    // lineInfoC2 += "Reefer:" + " " + f.getOperationReeferC2() + " " + f.getTempC2() +
-    // f.getTempUnitC2() + " ";
-    // }
-    //
-    // if (StringUtils.isNotBlank(f.getIMDGC2())) {
-    // lineInfoC2 += "IMDG:" + " " + f.getIMDGC2() + " ";
-    // }
-    //
-    // if (StringUtils.isNotBlank(f.getUNC2())) {
-    // lineInfoC2 += "UN:" + " " + f.getUNC2() + " ";
-    // }
-    //
-    // // // Second Line
-    // if (StringUtils.isNotBlank(f.getOOGOHC2())) {
-    // lineInfo2C2 += "OH :" + " " + f.getOOGOHC2() + " ";
-    // }
-    //
-    // if (StringUtils.isNotBlank(f.getOOGOLC2())) {
-    // lineInfo2C2 += "OL :" + " " + f.getOOGOLC2() + " ";
-    // }
-    //
-    // if (StringUtils.isNotBlank(f.getOOGOFC2())) {
-    // lineInfo2C2 += "OF :" + " " + f.getOOGOFC2() + " ";
-    // }
-    //
-    // if (StringUtils.isNotBlank(f.getOOGOAC2())) {
-    // lineInfo2C2 += "OA :" + " " + f.getOOGOAC2() + " ";
-    // }
-    //
-    // if (StringUtils.isNotBlank(f.getOOGORC2())) {
-    // lineInfo2C2 += "OR :" + " " + f.getOOGORC2() + " ";
-    // }
-    //
-    // if (StringUtils.isNotBlank(f.getDamage1C2())) {
-    // lineInfo2C2 += "Damage: ";
-    // }
-    //
-    // if (StringUtils.isNotBlank(f.getDamage1C2())) {
-    // lineInfo2C2 += f.getDamage1C2() + " ";
-    // }
-    //
-    // if (StringUtils.isNotBlank(f.getDamage2C2())) {
-    // lineInfo2C2 += f.getDamage2C2() + " ";
-    // }
-    //
-    // if (StringUtils.isNotBlank(f.getDamage3C2())) {
-    // lineInfo2C2 += f.getDamage3C2() + " ";
-    // }
-    //
-    // if (StringUtils.isNotBlank(f.getDamage4C2())) {
-    // lineInfo2C2 += f.getDamage4C2() + " ";
-    // }
-    //
-    // if (StringUtils.isNotBlank(f.getDamage5C2())) {
-    // lineInfo2C2 += f.getDamage5C2() + " ";
-    // }
-    // }
-    // /********************************************************/
-    //
-    // if ("MY".equalsIgnoreCase(f.getNationality())) {
-    // if (StringUtils.isNotBlank(f.getNewICNo())) {
-    // icNoOrPassportNo = f.getNewICNo();
-    // } else {
-    // icNoOrPassportNo = f.getOldICNo();
-    // }
-    // } else {
-    // icNoOrPassportNo = f.getPassportNo();
-    // }
-    //
-    // String weight01 = null;
-    // if (f.isShipperVGM() && f.isC1WithInTolerance()) {
-    // weight01 = String.valueOf(f.getShipperVGMC1());
-    // } else {
-    // if (StringUtils.isNotBlank(f.getNetWeightC1())) {
-    // weight01 = f.getNetWeightC1();
-    // }
-    // }
-    //
-    // String weight02 = null;
-    // if (StringUtils.isNotBlank(f.getContainerNoC2())) {
-    // if (f.isShipperVGM() && f.isC2WithInTolerance()) {
-    // weight02 = String.valueOf(f.getShipperVGMC2());
-    // } else {
-    // if (StringUtils.isNotBlank(f.getNetWeightC2())) {
-    // weight02 = f.getNetWeightC2();
-    // }
-    // }
-    // }
-    //
-    //
-    // scssPrintEirIdSeq = SQL.NEXT_VALUE("SEQ_SCSS_PRINT_EIR");
-    //
-    // String sql = "INSERT INTO SCSS_PRINT_EIR(" + " PRINT_NO " + ", TIME_IN " + ", CALL_CARD " +
-    // ", TRUCK_HEAD_NO "
-    // + ", COMP_NAME_PRINT " + ", BAYCODE_C1 " + ", INOROUT_C1 " + ", FULL_OR_EMPTY_C1 " + ",
-    // POSITIONONTRUCK_C1 "
-    // + ", CONTAINERNO_C1 " + ", LINE_C1 " + ", ISO_C1 " + ", SIZE_C1 " + ", HEIGHT_C1 " + ",
-    // TYPE_C1 "
-    // + ", NETWEIGHT_C1 " + ", CONTAINERNO_C2 " + ", BAYCODE_C2 " + ", INOROUT_C2 " + ",
-    // FULLOREMPTY_C2 "
-    // + ", POSITIONONTRUCK_C2 " + ", LINE_C2 " + ", ISO_C2 " + ", SIZE_C2 " + ", HEIGHT_C2 " + ",
-    // TYPE_C2 "
-    // + ", NETWEIGHT_C2 " + ", LINE_INFO1_C1 " + ", LINE_INFO2_C1 " + ", LINE_INFO1_C2 " + ",
-    // LINE_INFO2_C2 "
-    // + ", ICNOORPASSPORT " + ", SCUNAME " + ", TRUCKPLATENO " + ", GATEINNO " + ", STATUS " + ",
-    // CLIENT_IP "
-    // + ", SEAL_C1 " + ", SEAL_C2 " + ") VALUES ( " + SQL.format(scssPrintEirIdSeq) + ", " +
-    // SQL.format(f.getTimeIn())
-    // + ", " + SQL.format(f.getCallCard()) + ", " + SQL.format(f.getTruckHeadNo()) + ", "
-    // + SQL.format(f.getCompNamePrint()) + ", " + SQL.format(f.getBayCodeC1()) + ", " +
-    // SQL.format(f.getInOrOutC1())
-    // + ", " + SQL.format(f.getFullOrEmptyC1()) + ", " + SQL.format(f.getPositionOnTruckC1()) + ",
-    // "
-    // + SQL.format(f.getContainerNoC1()) + ", " + SQL.format(f.getLineC1()) + ", " +
-    // SQL.format(f.getISOC1()) + ", "
-    // + SQL.format(f.getSizeC1()) + ", " + SQL.format(f.getHeightC1()) + ", " +
-    // SQL.format(f.getTypeC1()) + ", "
-    // + SQL.format(weight01) + ", " + SQL.format(f.getContainerNoC2()) + ", " +
-    // SQL.format(f.getBayCodeC2()) + ", "
-    // + SQL.format(f.getInOrOutC2()) + ", " + SQL.format(f.getFullOrEmptyC2()) + ", "
-    // + SQL.format(f.getPositionOnTruckC2()) + ", " + SQL.format(f.getLineC2()) + ", " +
-    // SQL.format(f.getISOC2())
-    // + ", " + SQL.format(f.getSizeC2()) + ", " + SQL.format(f.getHeightC2()) + ", " +
-    // SQL.format(f.getTypeC2())
-    // + ", " + SQL.format(weight02) + ", " + SQL.format(lineInfoC1) + ", " +
-    // SQL.format(lineInfo2C1) + ", "
-    // + SQL.format(lineInfoC2) + ", " + SQL.format(lineInfo2C2) + ", " +
-    // SQL.format(icNoOrPassportNo) + ", "
-    // + SQL.format(f.getSCUName()) + ", " + SQL.format(f.getTruckPlateNo()) + ", " +
-    // SQL.format(f.getGateInNo())
-    // + ", " + SQL.format("ACTV") + ", " + SQL.format(customerIpAddress) + ", " +
-    // SQL.format(sealC1) + ", "
-    // + SQL.format(sealC2) + ")";
-    //
-    // SCSSDatabase db = null;
-    // try {
-    // db = SCSSDatabase.getInstance();
-    // db.executeUpdate(sql);
-    // f.setPrintEIRNo(scssPrintEirIdSeq);
-    // } catch (Exception e) {
-    // String stackTrace = ExceptionUtil.getExceptionStacktrace(e);
-    // log.error(stackTrace);
-    // }
   }
+
+  private StringBuilder constructSealString(SealInfo sealInfo, StringBuilder stringBuilder) {
+    if (stringBuilder == null) {
+      stringBuilder = new StringBuilder("");
+    }
+    if (!(sealInfo == null)) {
+      stringBuilder.append(sealInfo.getSealOrigin()).append(BLANK).append(sealInfo.getSealType()).append(BLANK)
+          .append(sealInfo.getSealNo()).append(BLANK);
+    }
+    return stringBuilder;
+  }
+
+  private StringBuilder appendToLine(String prefix, String property, StringBuilder stringBuilder) {
+    if (stringBuilder == null) {
+      stringBuilder = new StringBuilder("");
+    }
+    if (StringUtils.isNotEmpty(prefix)) {
+      stringBuilder.append(prefix).append(BLANK);
+    }
+    if (StringUtils.isNotEmpty(property)) {
+      stringBuilder.append(prefix).append(property);
+    }
+    return stringBuilder;
+  }
+
+
+  private String getContainerWeight(ImportContainer importContainer, TransactionDTO transactionDTO) {
+    String weight = "";
+    if (transactionDTO.isShipperVGM() && importContainer.isWithInTolerance()) {
+      weight = String.valueOf(importContainer.getShipperVGM());
+    } else {
+      if (StringUtils.isNotBlank(importContainer.getNetWeight())) {
+        weight = importContainer.getNetWeight();
+      }
+    }
+    return weight;
+  }
+
 
 
 }

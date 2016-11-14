@@ -3,7 +3,7 @@ package com.privasia.scss.refer.dto;
 import java.io.Serializable;
 import java.util.List;
 
-import com.privasia.scss.core.util.constant.HpatReferStatus;
+import com.privasia.scss.common.enums.HpatReferStatus;
 
 public class ReferRejectUpdateObjetDto implements Serializable {
 

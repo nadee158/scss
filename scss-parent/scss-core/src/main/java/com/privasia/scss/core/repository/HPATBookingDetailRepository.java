@@ -1,8 +1,8 @@
 package com.privasia.scss.core.repository;
 
+import com.privasia.scss.common.enums.BookingType;
+import com.privasia.scss.common.enums.HpatReferStatus;
 import com.privasia.scss.core.model.HPATBookingDetail;
-import com.privasia.scss.core.util.constant.BookingType;
-import com.privasia.scss.core.util.constant.HpatReferStatus;
 
 public interface HPATBookingDetailRepository extends BaseRepository<HPATBookingDetail, Long> {
 

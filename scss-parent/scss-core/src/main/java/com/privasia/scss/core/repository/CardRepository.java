@@ -9,10 +9,10 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.privasia.scss.core.dto.SmartCardUserDTO;
+import com.privasia.scss.common.dto.SmartCardUserDTO;
+import com.privasia.scss.common.enums.CardStatus;
+import com.privasia.scss.common.enums.CompanyType;
 import com.privasia.scss.core.model.Card;
-import com.privasia.scss.core.util.constant.CardStatus;
-import com.privasia.scss.core.util.constant.CompanyType;
 
 /**
  * @author Janaka

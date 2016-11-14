@@ -5,9 +5,9 @@ package com.privasia.scss.core.predicate;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.privasia.scss.common.enums.KioskLockStatus;
 import com.privasia.scss.core.model.QClient;
 import com.privasia.scss.core.model.QKioskBoothRights;
-import com.privasia.scss.core.util.constant.KioskLockStatus;
 import com.querydsl.core.types.Predicate;
 
 

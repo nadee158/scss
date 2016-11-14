@@ -14,7 +14,7 @@ import javax.persistence.ManyToOne;
 
 import org.hibernate.annotations.Type;
 
-import com.privasia.scss.core.util.constant.TransactionStatus;
+import com.privasia.scss.common.enums.TransactionStatus;
 
 /**
  * @author Janaka

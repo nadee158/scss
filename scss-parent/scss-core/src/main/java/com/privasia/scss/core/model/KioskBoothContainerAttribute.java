@@ -7,7 +7,7 @@ import java.io.Serializable;
 
 import javax.persistence.Embeddable;
 
-import com.privasia.scss.core.dto.KioskBoothRightInfo;
+import com.privasia.scss.common.dto.KioskBoothRightInfo;
 
 
 

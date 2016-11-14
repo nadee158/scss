@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
-import com.privasia.scss.core.util.constant.Profiles;
+import com.privasia.scss.common.enums.Profiles;
 import com.privasia.scss.core.util.service.CurrentDateTimeService;
 
 @Configuration

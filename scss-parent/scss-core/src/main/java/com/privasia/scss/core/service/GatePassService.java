@@ -12,13 +12,22 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.privasia.scss.common.dto.ClientDTO;
+import com.privasia.scss.common.dto.ISOInfo;
+import com.privasia.scss.common.dto.ImportContainer;
+import com.privasia.scss.common.dto.SealInfo;
+import com.privasia.scss.common.dto.TransactionDTO;
+import com.privasia.scss.common.enums.BookingType;
+import com.privasia.scss.common.enums.CompanyType;
+import com.privasia.scss.common.enums.ContainerFullEmptyType;
+import com.privasia.scss.common.enums.ContainerPosition;
+import com.privasia.scss.common.enums.GateInOutStatus;
+import com.privasia.scss.common.enums.GatePassStatus;
+import com.privasia.scss.common.enums.HpatReferStatus;
+import com.privasia.scss.common.enums.ImpExpFlagStatus;
+import com.privasia.scss.common.enums.TransactionStatus;
 import com.privasia.scss.common.util.CommonUtil;
 import com.privasia.scss.common.util.GatePassErrMsg;
-import com.privasia.scss.core.dto.ClientDTO;
-import com.privasia.scss.core.dto.ISOInfo;
-import com.privasia.scss.core.dto.ImportContainer;
-import com.privasia.scss.core.dto.SealInfo;
-import com.privasia.scss.core.dto.TransactionDTO;
 import com.privasia.scss.core.exception.BusinessException;
 import com.privasia.scss.core.exception.ResultsNotFoundException;
 import com.privasia.scss.core.model.Card;
@@ -48,15 +57,6 @@ import com.privasia.scss.core.repository.PrintEirRepository;
 import com.privasia.scss.core.repository.SystemUserRepository;
 import com.privasia.scss.core.repository.WDCGatePassRepository;
 import com.privasia.scss.core.repository.WDCGlobalSettingRepository;
-import com.privasia.scss.core.util.constant.BookingType;
-import com.privasia.scss.core.util.constant.CompanyType;
-import com.privasia.scss.core.util.constant.ContainerFullEmptyType;
-import com.privasia.scss.core.util.constant.ContainerPosition;
-import com.privasia.scss.core.util.constant.GateInOutStatus;
-import com.privasia.scss.core.util.constant.GatePassStatus;
-import com.privasia.scss.core.util.constant.HpatReferStatus;
-import com.privasia.scss.core.util.constant.ImpExpFlagStatus;
-import com.privasia.scss.core.util.constant.TransactionStatus;
 import com.privasia.scss.etpws.service.EdoExpiryForLineResponseType;
 import com.privasia.scss.etpws.service.client.ETPWebserviceClient;
 
@@ -678,7 +678,9 @@ public class GatePassService {
     Optional<ISOCode> codeOpt = isoCodeRepository.findByIsoCode(isoCode);
     if (codeOpt.isPresent()) {
       ISOCode code = codeOpt.get();
-      return new ISOInfo(code);
+      if (!(code == null)) {
+        return code.constructISOInfo();
+      }
     }
     return null;
   }
@@ -858,7 +860,7 @@ public class GatePassService {
         gatePass.setGateInLaneNo(StringUtils.upperCase(container.getGateInLaneNo()));
 
 
-        gatePass.setCallCard(container.getCallCard());
+        gatePass.setCallCard(transactionDTO.getCallCard());
         Optional<PrintEir> printEirOpt = printEirRepository.findOne(container.getPrintEIRNo());
         if (printEirOpt.isPresent()) {
           PrintEir printEir = printEirOpt.get();
@@ -877,7 +879,7 @@ public class GatePassService {
 
         Optional<ClientDTO> client = clientRepository.getClientUnitNoByClientID(Long.parseLong(clientId));
         if (client.isPresent()) {
-          container.setGateInNo(client.get().getUnitNo());
+          transactionDTO.setGateInNo(client.get().getUnitNo());
         }
 
       } else {

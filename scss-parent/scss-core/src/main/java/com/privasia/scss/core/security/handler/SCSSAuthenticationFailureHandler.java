@@ -18,10 +18,10 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.privasia.scss.common.enums.ErrorCode;
 import com.privasia.scss.core.exception.AuthMethodNotSupportedException;
 import com.privasia.scss.core.exception.JwtExpiredTokenException;
 import com.privasia.scss.core.security.model.ErrorResponse;
-import com.privasia.scss.core.util.constant.ErrorCode;
 
 
 /**

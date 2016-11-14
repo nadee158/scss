@@ -22,11 +22,11 @@ import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.Type;
 
-import com.privasia.scss.core.util.constant.CardIssuedStatus;
-import com.privasia.scss.core.util.constant.CardPrintStatus;
-import com.privasia.scss.core.util.constant.CardStatus;
-import com.privasia.scss.core.util.constant.CardValidityType;
-import com.privasia.scss.core.util.constant.CompanyType;
+import com.privasia.scss.common.enums.CardIssuedStatus;
+import com.privasia.scss.common.enums.CardPrintStatus;
+import com.privasia.scss.common.enums.CardStatus;
+import com.privasia.scss.common.enums.CardValidityType;
+import com.privasia.scss.common.enums.CompanyType;
 
 /**
  * @author Janaka

@@ -18,8 +18,8 @@ import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.Type;
 
-import com.privasia.scss.core.util.constant.ClientType;
-import com.privasia.scss.core.util.constant.RecordStatus;
+import com.privasia.scss.common.enums.ClientType;
+import com.privasia.scss.common.enums.RecordStatus;
 
 /**
  * @author Janaka

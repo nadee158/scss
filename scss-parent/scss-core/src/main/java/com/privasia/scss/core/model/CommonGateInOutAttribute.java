@@ -11,8 +11,8 @@ import javax.persistence.Enumerated;
 
 import org.hibernate.annotations.Type;
 
-import com.privasia.scss.core.util.constant.ImpExpFlagStatus;
-import com.privasia.scss.core.util.constant.TransactionStatus;
+import com.privasia.scss.common.enums.ImpExpFlagStatus;
+import com.privasia.scss.common.enums.TransactionStatus;
 
 /**
  * @author Janaka

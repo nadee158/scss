@@ -13,10 +13,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.privasia.scss.common.enums.RecordStatus;
 import com.privasia.scss.core.exception.ResultsNotFoundException;
 import com.privasia.scss.core.model.ReferReason;
 import com.privasia.scss.core.repository.ReferReasonRepository;
-import com.privasia.scss.core.util.constant.RecordStatus;
 
 /**
  * @author Janaka

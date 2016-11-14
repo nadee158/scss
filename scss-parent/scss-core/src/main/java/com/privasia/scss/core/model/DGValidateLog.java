@@ -18,7 +18,7 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
 
-import com.privasia.scss.core.util.constant.LpkClassType;
+import com.privasia.scss.common.enums.LpkClassType;
 
 @Entity
 @Table(name = "SCSS_DG_VALIDATE_LOG")

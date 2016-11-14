@@ -9,9 +9,9 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
+import com.privasia.scss.common.enums.BookingType;
+import com.privasia.scss.common.enums.HpatReferStatus;
 import com.privasia.scss.core.model.QHPATBooking;
-import com.privasia.scss.core.util.constant.BookingType;
-import com.privasia.scss.core.util.constant.HpatReferStatus;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Predicate;
 

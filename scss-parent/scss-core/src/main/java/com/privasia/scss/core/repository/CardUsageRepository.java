@@ -1,7 +1,7 @@
 package com.privasia.scss.core.repository;
 
+import com.privasia.scss.common.enums.CardUsageStatus;
 import com.privasia.scss.core.model.CardUsage;
-import com.privasia.scss.core.util.constant.CardUsageStatus;
 
 public interface CardUsageRepository extends BaseRepository<CardUsage, Long> {
 
