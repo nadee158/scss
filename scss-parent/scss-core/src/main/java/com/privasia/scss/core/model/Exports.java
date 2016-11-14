@@ -113,10 +113,104 @@ public class Exports implements Serializable {
 	private CommonSealAttribute sealAttribute;
 
 	@Column(name = "EXP_WEIGHT_BRIDGE")
-	private int expWeightBridge;
+	private Integer expWeightBridge;
 
 	@Column(name = "EXP_NET_WEIGHT")
-	private int expNetWeight;
+	private Integer expNetWeight;
+	
+	//GCS_LAST_CHK_DATETIME (DATE)
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "EXP_PRINT_EIR", nullable = true, referencedColumnName = "PRINT_NO")
+	private PrintEir printEir;
+	
+	@Column(name = "USER_REMARKS")
+	private String userRemarks;
+	
+	@Column(name = "KPA_APPROVAL")
+	private String kpaApproval;
+	
+	@Column(name = "GOODS_HDL_CODE")
+	private String hdlGoodsCode;
+	
+	@Column(name = "DG_DESC")
+	private String dgDescription;
+	
+	@Column(name = "GOODS_HDL_DESC")
+	private String hdlGoodsDescription;
+	
+	@Column(name = "COSMOS_TARE_WEIGHT")
+	private Integer cosmosTareWeight;
+	
+	@Column(name = "COSMOS_GROSS_WEIGHT")
+	private Integer cosmosGrossWeight;
+	
+	@Column(name = "COSMOS_NET_WEIGHT")
+	private Integer cosmosNetWeight;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "CUG_ID_SEQ", nullable = true, referencedColumnName = "CUG_ID_SEQ")
+	private CardUsage cardUsage;
+	
+	@Column(name = " BACK_TO_BACK", nullable = true)
+	@Type(type = "yes_no")
+	private Boolean backToback;
+	
+	@Column(name = "WEIGHT_DIFF_PERCENTAGE")
+	private Double weightDiffPercentage;
+	
+	@Column(name = "WEIGHT_DIFF")
+	private Double weightDifference;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "EXP_DAMAGE_1", nullable = true, referencedColumnName = "DAMAGE_CODE")
+	private DamageCode damageCode_01;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "EXP_DAMAGE_2", nullable = true, referencedColumnName = "DAMAGE_CODE")
+	private DamageCode damageCode_02;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "EXP_DAMAGE_3", nullable = true, referencedColumnName = "DAMAGE_CODE")
+	private DamageCode damageCode_03;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "EXP_DAMAGE_4", nullable = true, referencedColumnName = "DAMAGE_CODE")
+	private DamageCode damageCode_04;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "EXP_DAMAGE_5", nullable = true, referencedColumnName = "DAMAGE_CODE")
+	private DamageCode damageCode_05;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "EXP_DAMAGE_6", nullable = true, referencedColumnName = "DAMAGE_CODE")
+	private DamageCode damageCode_06;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "EXP_DAMAGE_7", nullable = true, referencedColumnName = "DAMAGE_CODE")
+	private DamageCode damageCode_07;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "EXP_DAMAGE_8", nullable = true, referencedColumnName = "DAMAGE_CODE")
+	private DamageCode damageCode_08;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "EXP_DAMAGE_9", nullable = true, referencedColumnName = "DAMAGE_CODE")
+	private DamageCode damageCode_09;
+	
+	@Column(name = "DONT_VALIDATE_SEAL", nullable = true)
+	@Type(type = "yes_no")
+	private Boolean dontValidateSeal;
+	
+	@Column(name = "WRONG_DOOR", nullable = true)
+	@Type(type = "yes_no")
+	private Boolean wrongDoor;
+	
+	@Column(name = "HPAB_ISO_CODE")
+	private String hpabISOCode;
+	
+	@Column(name = "COSMOS_ISO_CODE")
+	private String cosmosISOCode;
 	
 	@Column(name = "TRUCK_WEIGHT")
 	private String pmWeight;

@@ -38,9 +38,10 @@
 		</dependency>
 		
 		<dependency>
-			<groupId>com.zaxxer</groupId>
-			<artifactId>HikariCP</artifactId>
-		</dependency>
+        	<groupId>com.zaxxer</groupId>
+        	<artifactId>HikariCP</artifactId>
+        	<version>2.5.1</version>
+   		</dependency>
 		
 		<!-- https://mvnrepository.com/artifact/net.sf.jt400/jt400 -->
 		<dependency>
@@ -49,8 +50,6 @@
 		    <version>9.1</version>
 		</dependency>
 
-		
-				
 	</dependencies>
 	
 	<build>

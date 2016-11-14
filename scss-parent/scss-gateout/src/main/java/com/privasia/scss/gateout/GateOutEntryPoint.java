@@ -7,8 +7,11 @@ import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+
+import com.privasia.scss.cosmos.AS400DBConfig;
 
 /**
  * Hello world!
@@ -17,7 +20,8 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 @Configuration
 @EnableAutoConfiguration
 @ComponentScan(basePackages = {"com.privasia.scss.cosmos.*", "com.privasia.scss.gateout.*"})
-@PropertySource("classpath:cosmos-sql-dev.properties")
+@PropertySource(value = {"classpath:cosmos_application.properties", "classpath:cosmos_sql-dev.properties"})
+@Import(AS400DBConfig.class) 
 public class GateOutEntryPoint extends SpringBootServletInitializer {
 
   public static void main(String[] args) {

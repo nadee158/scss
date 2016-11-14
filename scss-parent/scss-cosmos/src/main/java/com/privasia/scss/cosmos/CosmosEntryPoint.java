@@ -1,12 +1,7 @@
 package com.privasia.scss.cosmos;
 
-
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Configuration;
-
-import org.springframework.transaction.annotation.EnableTransactionManagement;
-
-
 
 /**
  * Janaka Wanigatunga
@@ -14,8 +9,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  */
 @Configuration
 @EnableAutoConfiguration
-@EnableTransactionManagement
 public class CosmosEntryPoint {
 
-	
 }

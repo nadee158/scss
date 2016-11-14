@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -18,6 +19,7 @@ import com.privasia.scss.cosmos.rowmappers.TestRowMapper;
 public class ImportContainerRepository {
 
   @Autowired
+  @Qualifier("as400JdbcTemplate")
   private JdbcTemplate jdbcTemplate;
 
   @Value("${cosmos.getImportContainerInfo}")
