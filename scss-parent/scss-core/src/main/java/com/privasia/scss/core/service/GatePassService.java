@@ -22,28 +22,40 @@ import com.privasia.scss.core.dto.TransactionDTO;
 import com.privasia.scss.core.exception.BusinessException;
 import com.privasia.scss.core.exception.ResultsNotFoundException;
 import com.privasia.scss.core.model.Card;
+import com.privasia.scss.core.model.CardUsage;
 import com.privasia.scss.core.model.Client;
 import com.privasia.scss.core.model.CommonContainerAttribute;
 import com.privasia.scss.core.model.CommonGateInOutAttribute;
+import com.privasia.scss.core.model.CommonSealAttribute;
 import com.privasia.scss.core.model.Company;
 import com.privasia.scss.core.model.GatePass;
+import com.privasia.scss.core.model.HPATBooking;
 import com.privasia.scss.core.model.HPATBookingDetail;
 import com.privasia.scss.core.model.ISOCode;
+import com.privasia.scss.core.model.PrintEir;
 import com.privasia.scss.core.model.SmartCardUser;
+import com.privasia.scss.core.model.SystemUser;
 import com.privasia.scss.core.model.WDCGatePass;
 import com.privasia.scss.core.model.WDCGlobalSetting;
 import com.privasia.scss.core.repository.CardRepository;
+import com.privasia.scss.core.repository.CardUsageRepository;
 import com.privasia.scss.core.repository.ClientRepository;
 import com.privasia.scss.core.repository.GatePassRepository;
 import com.privasia.scss.core.repository.HPATBookingDetailRepository;
+import com.privasia.scss.core.repository.HPATBookingRepository;
 import com.privasia.scss.core.repository.ISOCodeRepository;
+import com.privasia.scss.core.repository.PrintEirRepository;
+import com.privasia.scss.core.repository.SystemUserRepository;
 import com.privasia.scss.core.repository.WDCGatePassRepository;
 import com.privasia.scss.core.repository.WDCGlobalSettingRepository;
 import com.privasia.scss.core.util.constant.BookingType;
 import com.privasia.scss.core.util.constant.CompanyType;
+import com.privasia.scss.core.util.constant.ContainerFullEmptyType;
+import com.privasia.scss.core.util.constant.ContainerPosition;
 import com.privasia.scss.core.util.constant.GateInOutStatus;
 import com.privasia.scss.core.util.constant.GatePassStatus;
 import com.privasia.scss.core.util.constant.HpatReferStatus;
+import com.privasia.scss.core.util.constant.ImpExpFlagStatus;
 import com.privasia.scss.core.util.constant.TransactionStatus;
 import com.privasia.scss.etpws.service.EdoExpiryForLineResponseType;
 import com.privasia.scss.etpws.service.client.ETPWebserviceClient;
@@ -79,6 +91,17 @@ public class GatePassService {
   @Autowired
   private ISOCodeRepository isoCodeRepository;
 
+  @Autowired
+  private SystemUserRepository systemUserRepository;
+
+  @Autowired
+  private PrintEirRepository printEirRepository;
+
+  @Autowired
+  private CardUsageRepository cardUsageRepository;
+
+  @Autowired
+  private HPATBookingRepository hpatBookingRepository;
 
 
   public boolean validateGatePass(String cardIdSeq, String gatePassNo, String check, String hpatSeqId,
@@ -638,7 +661,7 @@ public class GatePassService {
     // TextString.format(rs.getString("hdid10"))
     String handlingId = null;
     SealInfo sealInfo = selectSealInfo(handlingId);
-    container.setSealInfo(sealInfo);
+    container.setSealInfo01(sealInfo);
 
     // if (rs.getRow() == 0) {
     // f.setFOTBKGFlag(false);
@@ -699,5 +722,171 @@ public class GatePassService {
     }
     return null;
   }
+
+
+
+  public void updateGatePass(TransactionDTO transactionDTO, LocalDateTime timeGateIn, String clientId, String cardIdSeq,
+      String expImpFlag) throws Exception {
+
+    if (!(transactionDTO == null)) {
+
+      ImportContainer container01 = transactionDTO.getImportContainer01();
+      ImportContainer container02 = transactionDTO.getImportContainer02();
+
+      if (!(container01 == null || StringUtils.isEmpty(container01.getContainerNumber()))) {
+        container01.setPositionOnTruck("M");
+        container01.setIsoInfo(selectISOInfo(container02.getIsoCode()));
+        updateGatePassIntoDb(transactionDTO, container02, cardIdSeq, timeGateIn, clientId, expImpFlag);
+      }
+
+      if (!(container02 == null || StringUtils.isEmpty(container02.getContainerNumber()))) {
+        container02.setPositionOnTruck("F");
+        container02.setIsoInfo(selectISOInfo(container02.getIsoCode()));
+        if (StringUtils.isNotEmpty(container02.getImpGatePassNumber())) {
+          container02.setPositionOnTruck("A");
+          updateGatePassIntoDb(transactionDTO, container02, cardIdSeq, timeGateIn, clientId, expImpFlag);
+        }
+      }
+
+
+    }
+
+  }
+
+  public void updateGatePassIntoDb(TransactionDTO transactionDTO, ImportContainer container, String cardIdSeq,
+      LocalDateTime timeGateIn, String clientId, String expImpFlag) {
+
+    if (!(container == null || StringUtils.isBlank(container.getImpGatePassNumber()))) {
+      long gatePassNo = Long.parseLong(container.getImpGatePassNumber());
+      Optional<GatePass> gatePassOpt = gatePassRepository.findByGatePassNo(gatePassNo);
+      if (gatePassOpt.isPresent()) {
+        GatePass gatePass = gatePassOpt.get();
+        CommonGateInOutAttribute commonGateInOut = gatePass.getCommonGateInOut();
+        if (commonGateInOut == null) {
+          commonGateInOut = new CommonGateInOutAttribute();
+        }
+        commonGateInOut.setEirNumber(container.getEirNo());
+        commonGateInOut.setEirStatus(TransactionStatus.INPROGRESS);
+
+        if (StringUtils.isNotEmpty(cardIdSeq)) {
+          long cardId = Long.parseLong(cardIdSeq);
+          Optional<Card> card = cardRepository.findOne(cardId);
+          if (card.isPresent()) {
+            commonGateInOut.setCard(card.get());
+          }
+        }
+
+        if (!(container.getUserSessionId() == 0)) {
+          Optional<SystemUser> gateInClerkOpt = systemUserRepository.findOne(container.getUserSessionId());
+          if (gateInClerkOpt.isPresent()) {
+            SystemUser gateInClerk = gateInClerkOpt.get();
+            commonGateInOut.setGateInClerk(gateInClerk);
+          }
+        }
+
+        commonGateInOut.setTimeGateIn(timeGateIn);
+        commonGateInOut.setTimeGateInOk(LocalDateTime.now());
+
+        if (StringUtils.isNotEmpty(clientId)) {
+          Optional<Client> gateInClientOpt = clientRepository.findOne(Long.parseLong(clientId));
+          if (gateInClientOpt.isPresent()) {
+            Client gateInClient = gateInClientOpt.get();
+            commonGateInOut.setGateInClient(gateInClient);
+          }
+        }
+        commonGateInOut.setImpExpFlag(ImpExpFlagStatus.fromValue(StringUtils.upperCase(expImpFlag)));
+
+        commonGateInOut.setPmHeadNo(StringUtils.upperCase(transactionDTO.getPmHeadNo()));
+        commonGateInOut.setPmPlateNo(StringUtils.upperCase(transactionDTO.getPmPlateNo()));
+
+
+        gatePass.setYardPosition(StringUtils.upperCase(container.getYardPosition()));
+        gatePass.setBayCode(StringUtils.upperCase(container.getBayCode()));
+        gatePass
+            .setContainerPosition(ContainerPosition.fromValue(StringUtils.upperCase(container.getPositionOnTruck())));
+
+
+
+        CommonSealAttribute sealAttribute = gatePass.getSealAttribute();
+        if (sealAttribute == null) {
+          sealAttribute = new CommonSealAttribute();
+        }
+
+        SealInfo sealInfo01 = container.getSealInfo01();
+        if (!(sealInfo01 == null)) {
+          sealAttribute.setSeal01Number(sealInfo01.getSealNo());
+          sealAttribute.setSeal01Origin(sealInfo01.getSealOrigin());
+          sealAttribute.setSeal01Type(sealInfo01.getSealType());
+        }
+
+        SealInfo sealInfo02 = container.getSealInfo02();
+        if (!(sealInfo02 == null)) {
+          sealAttribute.setSeal02Number(sealInfo02.getSealNo());
+          sealAttribute.setSeal02Origin(sealInfo02.getSealOrigin());
+          sealAttribute.setSeal02Type(sealInfo02.getSealType());
+        }
+
+        gatePass.setSealAttribute(sealAttribute);
+
+        if (StringUtils.isNotEmpty(container.getHpat())) {
+          Optional<HPATBooking> hpatBooking = hpatBookingRepository.findOne(StringUtils.upperCase(container.getHpat()));
+          if (hpatBooking.isPresent()) {
+            commonGateInOut.setHpatBooking(hpatBooking.get());
+          }
+        }
+        commonGateInOut.setRejectReason(StringUtils.upperCase(container.getRejectRemarks()));
+        commonGateInOut
+            .setGateInStatus(TransactionStatus.fromCode(StringUtils.upperCase(container.getAcceptOrReject())));
+        gatePass.setCommonGateInOut(commonGateInOut);
+
+
+        gatePass.setOrderNo(StringUtils.upperCase(container.getOrderFOT()));
+        gatePass.setCurrentPosition(StringUtils.upperCase(container.getCurPos()));
+
+        gatePass.setGateInOut(GateInOutStatus.fromValue(container.getGateInOut()));
+
+        CommonContainerAttribute containerCommonAttribute = gatePass.getContainer();
+        if (containerCommonAttribute == null) {
+          containerCommonAttribute = new CommonContainerAttribute();
+
+        }
+        containerCommonAttribute.setContainerFullOrEmpty(ContainerFullEmptyType.fromValue(container.getFullOrEmpty()));
+        container.setIsoCode(StringUtils.upperCase(container.getIsoCode()));
+        gatePass.setContainer(containerCommonAttribute);
+
+        gatePass.setLine(StringUtils.upperCase(container.getLine()));
+        gatePass.setGateInLaneNo(StringUtils.upperCase(container.getGateInLaneNo()));
+
+
+        gatePass.setCallCard(container.getCallCard());
+        Optional<PrintEir> printEirOpt = printEirRepository.findOne(container.getPrintEIRNo());
+        if (printEirOpt.isPresent()) {
+          PrintEir printEir = printEirOpt.get();
+          gatePass.setPrintEir(printEir);
+        }
+
+        if (StringUtils.isNotEmpty(container.getCugId())) {
+          long cardUsageID = Long.parseLong(container.getCugId());
+          Optional<CardUsage> cardUsage = cardUsageRepository.findOne(cardUsageID);
+          if (cardUsage.isPresent()) {
+            gatePass.setCardUsage(cardUsage.get());
+          }
+        }
+
+        gatePass.setGatePassNo(gatePassNo);
+
+        Optional<ClientDTO> client = clientRepository.getClientUnitNoByClientID(Long.parseLong(clientId));
+        if (client.isPresent()) {
+          container.setGateInNo(client.get().getUnitNo());
+        }
+
+      } else {
+        throw new ResultsNotFoundException("Gatepass could not be found!");
+      }
+    } else {
+      throw new BusinessException("Gatepass number is null!");
+    }
+  }
+
 
 }
