@@ -29,8 +29,6 @@ public class ImportContainer implements Serializable {
 
   private String fullOrEmpty;
 
-  private String iso;
-
   private String orderFOT;
 
   private String curPos;
@@ -109,14 +107,6 @@ public class ImportContainer implements Serializable {
 
   public void setFullOrEmpty(String fullOrEmpty) {
     this.fullOrEmpty = fullOrEmpty;
-  }
-
-  public String getIso() {
-    return iso;
-  }
-
-  public void setIso(String iso) {
-    this.iso = iso;
   }
 
   public String getOrderFOT() {
