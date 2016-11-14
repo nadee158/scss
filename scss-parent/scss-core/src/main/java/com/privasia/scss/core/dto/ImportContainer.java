@@ -25,6 +25,16 @@ public class ImportContainer implements Serializable {
 
   private SealInfo sealInfo;
 
+  private String agentCode;
+
+  private String fullOrEmpty;
+
+  private String iso;
+
+  private String orderFOT;
+
+  private String curPos;
+
 
   public ImportContainer(HPATBookingDetail bookingDetail) {
     super();
@@ -83,6 +93,46 @@ public class ImportContainer implements Serializable {
 
   public void setSealInfo(SealInfo sealInfo) {
     this.sealInfo = sealInfo;
+  }
+
+  public String getAgentCode() {
+    return agentCode;
+  }
+
+  public void setAgentCode(String agentCode) {
+    this.agentCode = agentCode;
+  }
+
+  public String getFullOrEmpty() {
+    return fullOrEmpty;
+  }
+
+  public void setFullOrEmpty(String fullOrEmpty) {
+    this.fullOrEmpty = fullOrEmpty;
+  }
+
+  public String getIso() {
+    return iso;
+  }
+
+  public void setIso(String iso) {
+    this.iso = iso;
+  }
+
+  public String getOrderFOT() {
+    return orderFOT;
+  }
+
+  public void setOrderFOT(String orderFOT) {
+    this.orderFOT = orderFOT;
+  }
+
+  public String getCurPos() {
+    return curPos;
+  }
+
+  public void setCurPos(String curPos) {
+    this.curPos = curPos;
   }
 
 
