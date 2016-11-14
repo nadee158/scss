@@ -53,6 +53,8 @@
 							<url>http://172.21.95.22:8081/u/services/etpIntegrationService?wsdl</url>
 						</schema>
 					</schemas>
+					<forceRegenerate>false</forceRegenerate>  
+                    <removeOldOutput>false</removeOldOutput>
 				</configuration>
 			</plugin>
 			<!-- end::wsdl[] -->
