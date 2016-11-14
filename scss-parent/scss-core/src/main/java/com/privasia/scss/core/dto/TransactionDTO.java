@@ -51,8 +51,10 @@ public class TransactionDTO implements Serializable {
   private ImportContainer importContainer01;
   private ImportContainer importContainer02;
 
+  // TruckHeadNo
   private String pmHeadNo;
 
+  // TruckPlateNo
   private String pmPlateNo;
 
   private String unitNo;

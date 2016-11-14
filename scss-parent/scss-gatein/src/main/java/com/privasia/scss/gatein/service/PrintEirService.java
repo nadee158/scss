@@ -2,12 +2,13 @@ package com.privasia.scss.gatein.service;
 
 import org.springframework.stereotype.Service;
 
-import com.privasia.scss.core.dto.GateInForm;
+import com.privasia.scss.core.dto.ImportContainer;
 
 @Service("")
 public class PrintEirService {
 
-  public void insertScssPrintEir(GateInForm f, String customerIpAddress) throws Exception {
+  public void insertScssPrintEir(ImportContainer importContainer01, ImportContainer importContainer02,
+      String customerIpAddress) throws Exception {
 
     String lineInfoC1 = "";
     String lineInfo2C1 = "";
@@ -16,6 +17,10 @@ public class PrintEirService {
     String icNoOrPassportNo = "";
     String sealC1 = "";
     String sealC2 = "";
+
+    if (!(importContainer01 == null)) {
+
+    }
 
     // // First Container
     // if ("F".equalsIgnoreCase(f.getFullOrEmptyC1())) {
