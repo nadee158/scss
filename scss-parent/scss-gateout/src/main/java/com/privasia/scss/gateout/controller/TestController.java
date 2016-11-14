@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.privasia.scss.cosmos.dto.TestDto;
-import com.privasia.scss.cosmos.repository.TestRepository;
+import com.privasia.scss.cosmos.repository.ImportContainerRepository;
 
 
 @RestController
@@ -20,13 +20,13 @@ import com.privasia.scss.cosmos.repository.TestRepository;
 public class TestController {
 
   @Autowired
-  private TestRepository testRepository;
+  private ImportContainerRepository importContainerRepository;
 
   @RequestMapping(value = "/{containerNo}", method = RequestMethod.GET,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public ResponseEntity<List<TestDto>> scanCardByCardNo(@PathVariable("containerNo") String containerNo) {
     System.out.println("CAME HERE CONTROLLER :" + containerNo);
-    List<TestDto> list = testRepository.testQuery(containerNo);
+    List<TestDto> list = importContainerRepository.getImportContainerInfo(containerNo);
     return new ResponseEntity<List<TestDto>>(list, HttpStatus.OK);
   }
 

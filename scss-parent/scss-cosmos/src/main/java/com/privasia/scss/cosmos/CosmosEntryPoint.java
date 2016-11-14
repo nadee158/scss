@@ -1,8 +1,11 @@
 package com.privasia.scss.cosmos;
 
+
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Configuration;
+
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+
 
 
 /**
@@ -14,5 +17,5 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableTransactionManagement
 public class CosmosEntryPoint {
 
-
+	
 }
