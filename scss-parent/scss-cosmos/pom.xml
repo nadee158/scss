@@ -13,19 +13,19 @@
 	<name>scss-cosmos</name>
 	<packaging>jar</packaging>
 	<url>http://maven.apache.org</url>
-	
+
 	<properties>
-	    <start-class>com.privasia.scss.cosmos.CosmosEntryPoint</start-class>
+		<start-class>com.privasia.scss.cosmos.CosmosEntryPoint</start-class>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
-	
+
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<scope>test</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-jdbc</artifactId>
@@ -36,39 +36,45 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		
+
 		<dependency>
-        	<groupId>com.zaxxer</groupId>
-        	<artifactId>HikariCP</artifactId>
-        	<version>2.5.1</version>
-   		</dependency>
-		
+			<groupId>com.zaxxer</groupId>
+			<artifactId>HikariCP</artifactId>
+			<version>2.5.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.privasia.scss</groupId>
+			<artifactId>scss-common</artifactId>
+			<version>1.0</version>
+		</dependency>
+
 		<!-- https://mvnrepository.com/artifact/net.sf.jt400/jt400 -->
 		<dependency>
-		    <groupId>net.sf.jt400</groupId>
-		    <artifactId>jt400</artifactId>
-		    <version>9.1</version>
+			<groupId>net.sf.jt400</groupId>
+			<artifactId>jt400</artifactId>
+			<version>9.1</version>
 		</dependency>
 
 	</dependencies>
-	
+
 	<build>
 		<pluginManagement>
 			<plugins>
 				<plugin>
 					<groupId>org.springframework.boot</groupId>
-					<artifactId>spring-boot-maven-plugin</artifactId>	
+					<artifactId>spring-boot-maven-plugin</artifactId>
 					<configuration>
-	                    <executable>true</executable>
-	                </configuration>
+						<executable>true</executable>
+					</configuration>
 					<dependencies>
 						<dependency>
 							<groupId>org.springframework</groupId>
 							<artifactId>springloaded</artifactId>
 							<version>${spring-loaded.version}</version>
 						</dependency>
-					</dependencies>				
-				</plugin>				
+					</dependencies>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 		<finalName>scss-cosmos</finalName>
