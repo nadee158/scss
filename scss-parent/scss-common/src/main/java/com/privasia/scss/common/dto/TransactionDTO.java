@@ -79,6 +79,8 @@ public class TransactionDTO implements Serializable {
 
   private String scuName;
 
+  //////////////////////////// TO createImpRequestXML
+
   public String getScuName() {
     return scuName;
   }
