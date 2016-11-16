@@ -1,12 +1,16 @@
 package com.privasia.scss.gatein.service;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
+import com.privasia.scss.common.dto.DGInfo;
+import com.privasia.scss.common.dto.ExportContainer;
 import com.privasia.scss.common.dto.ImportContainer;
+import com.privasia.scss.common.dto.SealInfo;
 import com.privasia.scss.common.dto.TransactionDTO;
 
 @Service("gateInXMLRequestService")
@@ -260,14 +264,337 @@ public class GateInXMLRequestService {
   }
 
   private String createExpRequestXML(TransactionDTO transactionDTO, String userName, String msgUniqueId) {
-    // TODO Auto-generated method stub
-    return null;
+    return createExpRequestXML(transactionDTO, userName, msgUniqueId, false, "2", "3");
   }
 
-  private String createExpRequestXML(TransactionDTO transactionDTO, String userName, String msgUniqueId, boolean b,
-      String cont1Index, String cont2Index) {
-    // TODO Auto-generated method stub
-    return null;
+  private String createExpRequestXML(TransactionDTO transactionDTO, String userName, String msgUniqueId,
+      boolean isImpExp, String cont1Index, String cont2Index) {
+    ExportContainer exportContainer01 = transactionDTO.getExportContainer01();
+    ExportContainer exportContainer02 = transactionDTO.getExportContainer02();
+
+    StringBuilder errXMLMsg2 = new StringBuilder("");
+    StringBuilder damageC1 = new StringBuilder("");
+    StringBuilder sealC1 = new StringBuilder("");
+    StringBuilder operationReferC1 = new StringBuilder("");
+    StringBuilder OOGC1 = new StringBuilder("");
+    StringBuilder IMDGC1 = new StringBuilder("");
+    StringBuilder UNC1 = new StringBuilder("");
+    StringBuilder requestXMLC2 = new StringBuilder("");
+
+    if (!(exportContainer01 == null)) {
+
+      errXMLMsg2 = constructExportContainerErrMsg(exportContainer01, errXMLMsg2);
+
+      damageC1 = constructExportContainerDamageInfo(exportContainer01, damageC1);
+
+      sealC1 = constructExportContainerSealInfo(exportContainer01, sealC1);
+
+      operationReferC1 = constructExportContainerOperationReeferInfo(exportContainer01, operationReferC1);
+
+      OOGC1 = constructExportContainerOOGInfo(exportContainer01, OOGC1);
+
+      IMDGC1 = constructExportContainerIMDGInfo(exportContainer01, IMDGC1);
+
+      UNC1 = constructExportContainerUNCInfo(exportContainer01, UNC1);
+
+
+    }
+
+    if (!(exportContainer02 == null)) {
+
+      if (StringUtils.isNotEmpty(exportContainer02.getContainerNumber())
+          && StringUtils.isEmpty(exportContainer02.getContRefer())) {
+
+        StringBuilder errXMLMsg3 = new StringBuilder("");
+        StringBuilder damageC2 = new StringBuilder("");
+        StringBuilder sealC2 = new StringBuilder("");
+        StringBuilder operationReferC2 = new StringBuilder("");
+        StringBuilder OOGC2 = new StringBuilder("");
+        StringBuilder IMDGC2 = new StringBuilder("");
+        StringBuilder UNC2 = new StringBuilder("");
+
+        errXMLMsg3 = constructExportContainerErrMsg(exportContainer02, errXMLMsg3);
+
+        damageC2 = constructExportContainerDamageInfo(exportContainer02, damageC2);
+
+        sealC2 = constructExportContainerSealInfo(exportContainer02, sealC2);
+
+        operationReferC2 = constructExportContainerOperationReeferInfo(exportContainer02, operationReferC2);
+
+        OOGC2 = constructExportContainerOOGInfo(exportContainer02, OOGC2);
+
+        IMDGC2 = constructExportContainerIMDGInfo(exportContainer02, IMDGC2);
+
+        UNC2 = constructExportContainerUNCInfo(exportContainer02, UNC2);
+
+        if (isImpExp) {
+          if (StringUtils.isNotBlank(exportContainer02.getContainerNumber())
+              && StringUtils.isNotBlank(exportContainer02.getContRefer())) {
+            requestXMLC2.append("<Message Index=\"").append(cont1Index).append("\">\n");
+          } else {
+            requestXMLC2.append("<Message Index=\"").append(cont2Index).append("\">\n");
+          }
+        } else {
+          requestXMLC2.append("<Message Index=\"3\">\n");
+        }
+
+        /**
+         * Remove decimal format
+         */
+        String weight = constructWeightForExportContainer(transactionDTO, exportContainer01);
+
+        requestXMLC2 = constructExportContainerRequestXML(exportContainer02, requestXMLC2, errXMLMsg3, damageC2, sealC2,
+            operationReferC2, OOGC2, IMDGC2, UNC2, userName, msgUniqueId, weight);
+
+
+      }
+
+    }
+
+
+    StringBuilder requestXML = new StringBuilder("");
+
+    if (StringUtils.isBlank(exportContainer01.getContRefer())
+        && StringUtils.isNotBlank(exportContainer01.getContainerNumber())) {
+      if (isImpExp) {
+        requestXML.append("<Message Index=\"").append(cont1Index).append("\">\n");
+      } else {
+        requestXML.append("<Message Index=\"2\">\n");
+      }
+      /**
+       * Remove decimal format
+       */
+      String weight = constructWeightForExportContainer(transactionDTO, exportContainer01);
+
+      requestXML = constructExportContainerRequestXML(exportContainer01, requestXML, errXMLMsg2, damageC1, sealC1,
+          operationReferC1, OOGC1, IMDGC1, UNC1, userName, msgUniqueId, weight);
+
+      requestXML.append(requestXMLC2);
+    } else {
+      requestXML.append(requestXMLC2);
+    }
+
+    return requestXML.toString();
+  }
+
+  private String constructWeightForExportContainer(TransactionDTO transactionDTO, ExportContainer exportContainer) {
+    String weight = "0";
+    DecimalFormat df = new DecimalFormat("#");
+    if (transactionDTO.isShipperVGM() && exportContainer.isWithInTolerance()) {
+      weight = String.valueOf(exportContainer.getShipperVGM());
+    } else {
+      weight = Double.toString(exportContainer.getNetWeight());
+    }
+    weight = df.format(Double.valueOf(weight));
+    return weight;
+  }
+
+  private StringBuilder constructExportContainerRequestXML(ExportContainer exportContainer, StringBuilder requestXML,
+      StringBuilder errXMLMsg, StringBuilder damage, StringBuilder seal, StringBuilder operationRefer,
+      StringBuilder oOG, StringBuilder iMDG, StringBuilder uN, String userName, String msgUniqueId, String weight) {
+  //@formatter:off   
+    requestXML.append("<CSMCTL>\n")
+        .append("<RQST>GSRQS</RQST>\n") // Request Code : To hard code
+        .append("<ACTN>CRT</ACTN>\n") // Action Code : To hard code
+        .append("<RTNC>0</RTNC>\n") // Return Code : To hard code
+        .append(errXMLMsg)
+        .append("<RQDS>CTEDSE</RQDS>\n") // Requestor Data Structure : To hard code
+        .append("<RTNM>AS</RTNM>\n") // Return Mode : To hard code
+        .append("<USID>").append(userName).append("</USID>\n") // User ID : To capture SCSS user id
+        .append("<RQUI>").append(msgUniqueId).append("</RQUI>\n") // To input msg unique id
+        .append("<TRMC>WPT1</TRMC>\n") // Terminal : To hard code
+        .append("</CSMCTL>\n")
+        .append("<GINCNTDRP>\n") // For Gate In container drop off
+        .append("<MSGTSE>GINCNTDRP</MSGTSE>\n") // Message Type : To hard code
+        .append("<UNITSE>").append(toEscapeXmlUpperCase(exportContainer.getContainerNumber())).append("</UNITSE>\n") // Container No : To capture
+        .append("<ORRFSE>").append(toEscapeXmlUpperCase(exportContainer.getBookingNo())).append("</ORRFSE>\n") // Order Reference : To capture Booking Ref no
+        .append("<UNISSE>").append(toUpperCase(exportContainer.getContainerISO())).append("</UNISSE>\n") // Container ISO code : To capture container ISO code
+        .append("<UNBTSE>").append(toUpperCase(exportContainer.getFullOrEmpty())).append("</UNBTSE>\n") // (E)mpty or (F)ull : To capture E or F
+        .append("<CNPVSE>").append(toUpperCase(exportContainer.getPositionOnTruck())).append("</CNPVSE>\n") // Position on Truck : To capture F, A or M
+        .append("<ORGVSE>").append(toUpperCase(exportContainer.getExpAgent())).append("</ORGVSE>\n") // Order supplier : To capture Agent code??
+        .append("<LYNDSE>").append(toUpperCase(exportContainer.getLine())).append("</LYNDSE>\n") // Line code : To capture line code
+        .append(damage.toString()) // Damage Code 1 : To capture damage code 1, To loop if more than 1
+        .append(seal.toString()) // Seal Origin 1 : To capture seal origin, seal type and seal no 1, To loop if more than 1
+        .append("<UNBGSE>").append(weight).append("</UNBGSE>\n") // Unit Gross Weight : To capture Gross Weight
+        .append(operationRefer.toString())
+        .append(oOG.toString())
+        .append(iMDG.toString()) // IMDG Class : To capture IMDG Class,Conditional if exist, loop if more than 1
+        .append(uN.toString()) // UN No : To capture UN no, Conditional if exist, loop if more than 1
+        .append("<UOLCSE>MY</UOLCSE>\n")
+        .append("<UOLLSE>PKG</UOLLSE>\n")
+        .append("<UOLOSE>PKG</UOLOSE>\n") //Changed by feroz on 11 OCT 2007
+        .append("<CYOISE>N</CYOISE>\n") // Opening Time : To hard code
+        .append("<CYCISE>N</CYCISE>\n") // Closing Time : To hard code
+        .append("<ACHISE>Y</ACHISE>\n") // Automatic A-Check : To hardcode
+        .append("<PCHISE>Y</PCHISE>\n") // Automatic P-Check : To hardcode
+        .append("</GINCNTDRP>\n")
+        .append("</Message>\n");
+  //@formatter:on
+    return requestXML;
+  }
+
+  private StringBuilder constructExportContainerErrMsg(ExportContainer exportContainer, StringBuilder errXMLMsg) {
+    if (StringUtils.isNotBlank(exportContainer.getErrXMLMsg())) {
+      errXMLMsg.append("<ERRI>").append(exportContainer.getErrXMLMsg()).append("</ERRI>\n");
+    }
+    return errXMLMsg;
+  }
+
+  //@formatter:on
+  private StringBuilder constructExportContainerUNCInfo(ExportContainer exportContainer, StringBuilder uN) {
+    if (StringUtils.isNotEmpty(exportContainer.getUN())) {
+      uN.append("<CUN1SE>").append(exportContainer.getUN()).append("</CUN1SE>\n");
+    }
+    return uN;
+  }
+
+  //@formatter:on
+  private StringBuilder constructExportContainerIMDGInfo(ExportContainer exportContainer, StringBuilder iMDG) {
+    if (StringUtils.isNotEmpty(exportContainer.getIMDG())) {
+      iMDG.append("<CNIMSE>").append(exportContainer.getIMDG()).append("</CNIMSE>\n"); // Testing
+      iMDG.append("<CIM1SE>").append(exportContainer.getIMDG()).append("</CIM1SE>\n");
+      iMDG.append("<ISA1SE>").append(exportContainer.getIMDGlabels()).append("</ISA1SE>\n");
+
+      if (exportContainer.getIMDG().equals("5.1") || exportContainer.getIMDG().equals("5.2")) {
+        iMDG.append("<ISI1SE>").append(exportContainer.getIMDG()).append("</ISI1SE>\n");
+      } else {
+        iMDG.append("<ISI1SE>").append(exportContainer.getIMDG().substring(0, 1)).append("</ISI1SE>\n");
+      }
+    }
+    return iMDG;
+  }
+
+  //@formatter:on
+  private StringBuilder constructExportContainerOOGInfo(ExportContainer exportContainer, StringBuilder OOG) {
+
+    String OOGindicator = "N";
+
+
+    if (!(StringUtils.isEmpty(exportContainer.getOOGOA()) || StringUtils.isEmpty(exportContainer.getOOGOF())
+        || StringUtils.isEmpty(exportContainer.getOOGOH()) || StringUtils.isEmpty(exportContainer.getOOGOL())
+        || StringUtils.isEmpty(exportContainer.getOOGOR()))) {
+      OOGindicator = "Y";
+    }
+  //@formatter:off
+    if (OOGindicator.equalsIgnoreCase("Y")) {
+
+      OOG.append("<OOGISE>").append(OOGindicator).append("</OOGISE>\n"); // OOG indicator : To // capture Y or N,
+      // Conditional if exist
+
+      if (StringUtils.isNotEmpty(exportContainer.getOOGOF())) {
+        OOG.append("<OVSVSE>").append(exportContainer.getOOGOF()).append("</OVSVSE>\n"); // Oversize Fore (in cm) : 5,0,
+                                                            // Conditional if exist
+      }
+
+      if (StringUtils.isNotEmpty(exportContainer.getOOGOA())) {
+        OOG.append("<OVSASE>").append(exportContainer.getOOGOA()).append("</OVSASE>\n"); // Oversize Aft (in cm) : 5,0,
+                                                            // Conditional if exist
+      }
+
+      if (StringUtils.isNotEmpty(exportContainer.getOOGOL())) {
+        OOG.append("<OVSLSE>").append(exportContainer.getOOGOL()).append("</OVSLSE>\n"); // // Oversize Left (in cm) : 5,0,
+                                                            // Conditional if exist
+      }
+      if (StringUtils.isNotEmpty(exportContainer.getOOGOH())) {
+        OOG.append("<OVHGSE>").append(exportContainer.getOOGOH()).append("</OVHGSE>\n"); // Oversize Height (in cm) : 5,0,
+                                                            // Conditional if exist
+      }
+      if (StringUtils.isNotEmpty(exportContainer.getOOGOR())) {
+        OOG.append("<OVSRSE>").append(exportContainer.getOOGOR()).append("</OVSRSE>\n"); // Oversize Rare (in cm) : 5,0,
+                                                            // Conditional if exist
+      }
+    }
+  //@formatter:on
+    return OOG;
+  }
+
+
+  private StringBuilder constructExportContainerOperationReeferInfo(ExportContainer exportContainer,
+      StringBuilder operationRefer) {
+    if ("Y".equals(exportContainer.getOperationReefer())) {
+      String tempSignC1 = "";
+      String tempC1 = "";
+      int tempC1Length = exportContainer.getTemp().length();
+
+      if (exportContainer.getTemp().startsWith("+") || exportContainer.getTemp().startsWith("-")) {
+        tempSignC1 = exportContainer.getTemp().substring(0, 1);
+        tempC1 = exportContainer.getTemp().substring(1, tempC1Length - 1);
+      } else {
+        tempC1 = exportContainer.getTemp();
+      }
+      //@formatter:off
+      operationRefer.append("<CNORSE>").append(toUpperCase(exportContainer.getOperationReefer())).append("</CNORSE>\n") //Operational Refer : To capture Operational Refer Y/N, Conditional if exi/st
+                      .append("<PLMNSE>").append(tempSignC1).append("</PLMNSE>\n")
+                      .append("<RGRTSE>").append(tempC1).append("</RGRTSE>\n") // Temperature : To capture temperature (5,2, Conditional if exist )
+                      .append("<RGTESE>").append(exportContainer.getTempUnit()).append("</RGTESE>\n"); // Temp uni
+    //@formatter:on
+
+    } else {
+      operationRefer.append("<CNORSE>").append(toUpperCase(exportContainer.getOperationReefer())).append("</CNORSE>\n");
+    } // added by feroz on 11 OCT 2007
+    return operationRefer;
+  }
+
+  private StringBuilder constructExportContainerSealInfo(ExportContainer exportContainer, StringBuilder seal) {
+    if ("F".equals(exportContainer.getFullOrEmpty())) {
+      //@formatter:off
+      if(!(exportContainer.getSealInfo01()==null)){
+        SealInfo sealInfo=exportContainer.getSealInfo01();
+        if (StringUtils.isNotBlank(sealInfo.getSealNo())) {
+          seal.append("<SO01SE>").append(toUpperCase(sealInfo.getSealOrigin())).append("</SO01SE>\n")
+              .append("<ST01SE>").append(toUpperCase(sealInfo.getSealType())).append("</ST01SE>\n")
+              .append("<SN01SE>").append(toUpperCase(sealInfo.getSealNo())).append("</SN01SE>\n");
+        }
+      }
+      if(!(exportContainer.getSealInfo02()==null)){
+        SealInfo sealInfo=exportContainer.getSealInfo02();
+        if (StringUtils.isNotBlank(sealInfo.getSealNo())) {
+          seal.append("<SO02SE>").append(toUpperCase(sealInfo.getSealOrigin())).append("</SO02SE>\n")
+               .append("<ST02SE>").append(toUpperCase(sealInfo.getSealType())).append("</ST02SE>\n")
+               .append("<SN02SE>").append(toUpperCase(sealInfo.getSealNo())).append("</SN02SE>\n");
+        }
+      }
+    //@formatter:on
+    }
+    return seal;
+  }
+
+  private StringBuilder constructExportContainerDamageInfo(ExportContainer exportContainer, StringBuilder damage) {
+    if (!(exportContainer.getDgInfo() == null)) {
+
+      DGInfo dgInfo = exportContainer.getDgInfo();
+
+      if (StringUtils.isNotBlank(dgInfo.getDamage1())) {
+        damage.append("<DM01SE>").append(toUpperCase(dgInfo.getDamage1())).append("</DM01SE>\n");
+      }
+
+      if (StringUtils.isNotBlank(dgInfo.getDamage2())) {
+        damage.append("<DM02SE>").append(toUpperCase(dgInfo.getDamage2())).append("</DM02SE>\n");
+      }
+      if (StringUtils.isNotBlank(dgInfo.getDamage3())) {
+        damage.append("<DM03SE>").append(toUpperCase(dgInfo.getDamage3())).append("</DM03SE>\n");
+      }
+      if (StringUtils.isNotBlank(dgInfo.getDamage4())) {
+        damage.append("<DM04SE>").append(toUpperCase(dgInfo.getDamage4())).append("</DM04SE>\n");
+      }
+      if (StringUtils.isNotBlank(dgInfo.getDamage5())) {
+        damage.append("<DM05SE>").append(toUpperCase(dgInfo.getDamage5())).append("</DM05SE>\n");
+      }
+      if (StringUtils.isNotBlank(dgInfo.getDamage6())) {
+        damage.append("<DM06SE>").append(toUpperCase(dgInfo.getDamage6())).append("</DM06SE>\n");
+      }
+      if (StringUtils.isNotBlank(dgInfo.getDamage7())) {
+        damage.append("<DM07SE>").append(toUpperCase(dgInfo.getDamage7())).append("</DM07SE>\n");
+      }
+      if (StringUtils.isNotBlank(dgInfo.getDamage8())) {
+        damage.append("<DM08SE>").append(toUpperCase(dgInfo.getDamage8())).append("</DM08SE>\n");
+      }
+      if (StringUtils.isNotBlank(dgInfo.getDamage9())) {
+        damage.append("<DM09SE>").append(toUpperCase(dgInfo.getDamage9())).append("</DM09SE>\n");
+      }
+
+    }
+    return damage;
   }
 
   public static String toEscapeXmlUpperCase(String str) {

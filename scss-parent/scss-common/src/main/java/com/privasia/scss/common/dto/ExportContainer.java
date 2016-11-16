@@ -32,17 +32,25 @@ public class ExportContainer {
   // -------------------END OF RESOLVED PROPERTIES -------------------------
   private DGInfo dgInfo;
 
+  //////////////////////////// TO createImpRequestXML
+  private String errXMLMsg;
 
+  private double shipperVGM;
+
+  private SealInfo sealInfo01;
+
+  private SealInfo sealInfo02;
+
+  private boolean withInTolerance;
+
+  private String expAgent;
+
+  private String contRefer;
 
   public ExportContainer() {
     super();
   }
 
-
-
-  private SealInfo sealInfo01;
-
-  private SealInfo sealInfo02;
 
   private String bookingNo = "";
   private String inOrOut = "";
@@ -169,6 +177,40 @@ public class ExportContainer {
     return seq;
   }
 
+  public String getExpAgent() {
+    return expAgent;
+  }
+
+
+  public double getShipperVGM() {
+    return shipperVGM;
+  }
+
+  public void setShipperVGM(double shipperVGM) {
+    this.shipperVGM = shipperVGM;
+  }
+
+  public void setExpAgent(String expAgent) {
+    this.expAgent = expAgent;
+  }
+
+  public String getContRefer() {
+    return contRefer;
+  }
+
+
+  public void setContRefer(String contRefer) {
+    this.contRefer = contRefer;
+  }
+
+  public boolean isWithInTolerance() {
+    return withInTolerance;
+  }
+
+
+  public void setWithInTolerance(boolean withInTolerance) {
+    this.withInTolerance = withInTolerance;
+  }
 
   public String getBookingNo() {
     return bookingNo;
@@ -197,6 +239,16 @@ public class ExportContainer {
   public String getAgentCode() {
     return agentCode;
   }
+
+  public String getErrXMLMsg() {
+    return errXMLMsg;
+  }
+
+
+  public void setErrXMLMsg(String errXMLMsg) {
+    this.errXMLMsg = errXMLMsg;
+  }
+
 
   public String getVesselCode() {
     return vesselCode;
