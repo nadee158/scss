@@ -843,7 +843,7 @@ public class GatePassService {
 
 
         gatePass.setOrderNo(StringUtils.upperCase(container.getOrderFOT()));
-        gatePass.setCurrentPosition(StringUtils.upperCase(container.getCurPos()));
+        gatePass.setCurrentPosition(StringUtils.upperCase(container.getCurrentPosition()));
 
         gatePass.setGateInOut(GateInOutStatus.fromValue(container.getGateInOut()));
 
