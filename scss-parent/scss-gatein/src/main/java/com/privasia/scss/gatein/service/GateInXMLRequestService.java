@@ -345,12 +345,9 @@ public class GateInXMLRequestService {
 
         requestXMLC2 = constructExportContainerRequestXML(exportContainer02, requestXMLC2, errXMLMsg3, damageC2, sealC2,
             operationReferC2, OOGC2, IMDGC2, UNC2, userName, msgUniqueId, weight);
-
-
       }
 
     }
-
 
     StringBuilder requestXML = new StringBuilder("");
 
