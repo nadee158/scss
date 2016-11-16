@@ -12,6 +12,15 @@ import com.privasia.scss.common.dto.TransactionDTO;
 @Service("gateInXMLRequestService")
 public class GateInXMLRequestService {
 
+  public final static String OPTFLAG_NORMAL = "N";
+  public final static String OPTFLAG_MANUAL = "M";
+
+  public static final String EXP_FLAG = "E";
+  public static final String IMPEXP_FLAG = "B";
+  private static final SimpleDateFormat yyyymmdd = new SimpleDateFormat("yyyyMMdd");
+  private static final SimpleDateFormat hhmmss = new SimpleDateFormat("HHmmss");
+
+
 
   public String createImpRequestXML(TransactionDTO transactionDTO, String userName, String msgUniqueId) {
     return createImpRequestXML(transactionDTO, userName, msgUniqueId, false, "2", "3");
@@ -128,100 +137,136 @@ public class GateInXMLRequestService {
     return 0;
   }
 
-  public static String getRequestXML(TransactionDTO transactionDTO, String userName) {
+  public String getRequestXML(TransactionDTO transactionDTO, String userName) {
+
+    ImportContainer importContainer01 = transactionDTO.getImportContainer01();
+    ImportContainer importContainer02 = transactionDTO.getImportContainer02();
+    String date = yyyymmdd.format(new java.util.Date());
+    String time = hhmmss.format(new java.util.Date());
+
+    String msgUniqueId = System.currentTimeMillis() + "";
+    StringBuilder createRequestXML = new StringBuilder("");
+    String errXMLMsg = "";
+    if (StringUtils.isNotEmpty(importContainer01.getErrXMLMsg())) {
+      errXMLMsg = "<ERRI>" + importContainer01.getErrXMLMsg() + "</ERRI>\n";
+    }
+
+    if (StringUtils.equals(IMPEXP_FLAG, transactionDTO.getGateImpOrExp())) {
+      if (!(importContainer01 == null)) {
+        if (StringUtils.isEmpty(importContainer01.getContainerNumber())) {
+          importContainer01.setContainerNumber(
+              importContainer01.getContainerNumber() == null ? "" : importContainer01.getContainerNumber());
+          importContainer01
+              .setFullOrEmpty(importContainer01.getFullOrEmpty() == null ? "" : importContainer01.getFullOrEmpty());
+          importContainer01.setPositionOnTruck(
+              importContainer01.getPositionOnTruck() == null ? "" : importContainer01.getPositionOnTruck());
+          importContainer01
+              .setErrXMLMsg(importContainer01.getErrXMLMsg() == null ? "" : importContainer01.getErrXMLMsg());
+        }
+      }
+
+      if (!(importContainer02 == null)) {
+        if (StringUtils.isEmpty(importContainer02.getContainerNumber())) {
+          importContainer02.setContainerNumber(
+              importContainer02.getContainerNumber() == null ? "" : importContainer02.getContainerNumber());
+          importContainer02
+              .setFullOrEmpty(importContainer02.getFullOrEmpty() == null ? "" : importContainer02.getFullOrEmpty());
+          importContainer02.setPositionOnTruck(
+              importContainer02.getPositionOnTruck() == null ? "" : importContainer02.getPositionOnTruck());
+          importContainer02
+              .setErrXMLMsg(importContainer02.getErrXMLMsg() == null ? "" : importContainer02.getErrXMLMsg());
+        }
+      }
+
+      boolean sentExport = false;
+      if (!(importContainer01 == null || importContainer02 == null)) {
+        if (StringUtils.isNotBlank(importContainer01.getContRefer())
+            && StringUtils.isNotBlank(importContainer02.getContRefer())) {
+          sentExport = false;
+        } else {
+          sentExport = true;
+        }
+      } else if (!(importContainer01 == null)) {
+        if (StringUtils.isNotBlank(importContainer01.getContainerNumber())) {
+          if (StringUtils.isBlank(importContainer01.getContRefer())) {
+            sentExport = true;
+          }
+        }
+      }
+
+      if (StringUtils.isNotBlank(importContainer01.getContainerNumber()) && sentExport) {
+        String impRequestXML = createImpRequestXML(transactionDTO, userName, msgUniqueId, true, "2", "3");
+        createRequestXML.append(impRequestXML);
+        String cont1Index = "4";
+        String cont2Index = "5";
+
+        if (StringUtils.isBlank(importContainer02.getContainerNumber())) {
+          cont1Index = "3";
+          cont2Index = "4";
+        }
+        String expRequestXML = createExpRequestXML(transactionDTO, userName, msgUniqueId, true, cont1Index, cont2Index);
+        createRequestXML.append(expRequestXML);
+      } else if (sentExport) {
+        String expRequestXML = createExpRequestXML(transactionDTO, userName, msgUniqueId);
+        createRequestXML.append(expRequestXML);
+      } else if (StringUtils.isNotBlank(importContainer01.getContainerNumber())) {
+        String impRequestXML = createImpRequestXML(transactionDTO, userName, msgUniqueId);
+        createRequestXML.append(impRequestXML);
+      }
+
+
+    } else if (StringUtils.equals(EXP_FLAG, transactionDTO.getGateImpOrExp())) {
+      String expRequestXML = createExpRequestXML(transactionDTO, userName, msgUniqueId);
+      createRequestXML.append(expRequestXML);
+    } else {
+      String impRequestXML = createImpRequestXML(transactionDTO, userName, msgUniqueId);
+      createRequestXML.append(impRequestXML);
+    }
+    StringBuilder requestXML = new StringBuilder("");
     //@formatter:off
-//    String msgUniqueId = System.currentTimeMillis() + "";
-//    String date = yyyymmdd.format(new java.util.Date());
-//    String time = hhmmss.format(new java.util.Date());
-//    String createRequestXML = "";
-//    String errXMLMsg1 = "";
-//    if (!f.getErrXMLMsg1().equals("")) {
-//      errXMLMsg1 = "<ERRI>" + f.getErrXMLMsg1() + "</ERRI>\n";
-//    }
-//
-//      if (Exports.IMPEXP_FLAG.equals(f.getGateImpOrExp())) {
-//          GateInForm impGateInForm = new GateInForm();
-//          if (StringUtils.isNotBlank(f.getGp1ContainerNoC1())) {
-//            impGateInForm.setContainerNoC1(f.getGp1ContainerNoC1() == null ? "" : f.getGp1ContainerNoC1());
-//            impGateInForm.setFullOrEmptyC1(f.getGp1FullOrEmptyC1() == null ? "" : f.getGp1FullOrEmptyC1());
-//            impGateInForm.setPositionOnTruckC1(f.getGp1PositionOnTruckC1() == null ? "" : f.getGp1PositionOnTruckC1());
-//
-//            impGateInForm.setContainerNoC2(f.getGp2ContainerNoC2() == null ? "" : f.getGp2ContainerNoC2());
-//            impGateInForm.setFullOrEmptyC2(f.getGp2FullOrEmptyC2() == null ? "" : f.getGp2FullOrEmptyC2());
-//            impGateInForm.setPositionOnTruckC2(f.getGp2PositionOnTruckC2() == null ? "" : f.getGp2PositionOnTruckC2());
-//            impGateInForm.setErrXMLMsg2(f.getErrXMLMsg2() == null ? "" : f.getErrXMLMsg2());
-//            impGateInForm.setErrXMLMsg3(f.getErrXMLMsg3() == null ? "" : f.getErrXMLMsg3());
-//            
-//          }
-//          
-//          boolean sentExport = false;
-//          if (StringUtils.isNotBlank(f.getContainerNoC1()) && StringUtils.isNotBlank(f.getContainerNoC2())){
-//              if (StringUtils.isNotBlank(f.getCont1Refer()) && StringUtils.isNotBlank(f.getCont2Refer())){
-//                  sentExport = false;
-//              } else {
-//                  sentExport = true;
-//              }
-//          } else if (StringUtils.isNotBlank(f.getContainerNoC1())){
-//              if (StringUtils.isBlank(f.getCont1Refer())){
-//                  sentExport = true;
-//              }
-//          }
-//          
-//          //if (StringUtils.isNotBlank(f.getGp1ContainerNoC1()) && StringUtils.isNotBlank(f.getContainerNoC1())) {
-//          if (StringUtils.isNotBlank(f.getGp1ContainerNoC1()) && sentExport) {
-//            createRequestXML = createImpRequestXML(impGateInForm, userName, msgUniqueId, true, "2", "3");
-//            String cont1Index = "4";
-//            String cont2Index = "5";
-//
-//            if (StringUtils.isBlank(f.getGp2ContainerNoC2())) {
-//                cont1Index = "3";
-//                cont2Index = "4";
-//            }
-//            createRequestXML += createExpRequestXML(f, userName, msgUniqueId, true, cont1Index, cont2Index);
-//        //} else if (StringUtils.isNotBlank(f.getContainerNoC1())) {
-//        } else if (sentExport) {
-//            createRequestXML = createExpRequestXML(f, userName, msgUniqueId);
-//        } else if (StringUtils.isNotBlank(f.getGp1ContainerNoC1())) {
-//            createRequestXML = createImpRequestXML(impGateInForm, userName, msgUniqueId);
-//        }
-//    } else if (f.getGateImpOrExp().equals(Exports.EXP_FLAG)) {
-//      createRequestXML = createExpRequestXML(f, userName, msgUniqueId);
-//    } else {
-//      createRequestXML = createImpRequestXML(f, userName, msgUniqueId);
-//    }
-//
-//    String requestXML = "<?xml version=\"1.0\" encoding=\"ASCII\" standalone=\"no\"?>\n"
-//                        + "<SGS2Cosmos>\n"
-//                        + "<Message Index=\"1\">\n"
-//                        + "<CSMCTL>\n"
-//                        + "<RQST>GSRQS</RQST>\n" //Request Code : To hard code
-//                        + "<ACTN>CRT</ACTN>\n" //Action Code : To hard code
-//                        + "<RTNC>0</RTNC>\n" //Return Code : To hard code
-//                        + errXMLMsg1
-//                        + "<RQDS>CTEDSC</RQDS>\n" //Requestor Data Structure : To hard code
-//                        + "<RTNM>AS</RTNM>\n" //Return Mode : To hard code
-//                        + "<USID>" + userName + "</USID>\n" //User ID : To capture SCSS user id
-//                        + "<RQUI>" + msgUniqueId + "</RQUI>\n" //To input msg unique id
-//                        + "<TRMC>WPT1</TRMC>\n" //Terminal : To hard code
-//                        + "</CSMCTL>\n"
-//                        + "<GINTRCINF>\n" // For Gate In Truck Information
-//                        + "<MSGTSC>GINTRCINF</MSGTSC>\n" //Message Type : To hard code
-//                        + "<LANESC>" + toUpperCase(f.getLaneNo()) + "</LANESC>\n" // Lane : To capture gate lane no
-//                        + "<VMIDSC>" + toUpperCase(f.getTruckHeadNo()) + "</VMIDSC>\n" // Truck License Plate : To capture truck no
-//                        + "<ATDDSC>" + date + "</ATDDSC>\n" // Date of Arrival : To capture current date
-//                        + "<ATDTSC>" + time + "</ATDTSC>\n" // Time of Arrival : To capture current time
-//                        + "<VMYKSC>" + toUpperCase(f.getCompCode()) + "</VMYKSC>\n" //Truck Com. Code : To capture Truck Com. Code
-//                        + "</GINTRCINF>\n"
-//                        + "</Message>\n"
-//                        + createRequestXML
-//                        + "</SGS2Cosmos>\n";
-//    
-//    if (StringUtils.isBlank(createRequestXML)){
-//        return "";
-//    }
-//    
-//    return requestXML;
-    //@formatter:on
+       requestXML.append("<?xml version=\"1.0\" encoding=\"ASCII\" standalone=\"no\"?>\n")
+                        .append("<SGS2Cosmos>\n")
+                        .append("<Message Index=\"1\">\n")
+                        .append("<CSMCTL>\n")
+                        .append("<RQST>GSRQS</RQST>\n") //Request Code : To hard code
+                        .append("<ACTN>CRT</ACTN>\n") //Action Code : To hard code
+                        .append("<RTNC>0</RTNC>\n") //Return Code : To hard code
+                        .append(errXMLMsg)
+                        .append("<RQDS>CTEDSC</RQDS>\n") //Requestor Data Structure : To hard code
+                        .append("<RTNM>AS</RTNM>\n") //Return Mode : To hard code
+                        .append("<USID>").append(userName).append("</USID>\n") //User ID : To capture SCSS user id
+                        .append("<RQUI>").append(msgUniqueId).append("</RQUI>\n") //To input msg unique id
+                        .append("<TRMC>WPT1</TRMC>\n") //Terminal : To hard code
+                        .append("</CSMCTL>\n")
+                        .append("<GINTRCINF>\n") // For Gate In Truck Information
+                        .append("<MSGTSC>GINTRCINF</MSGTSC>\n") //Message Type : To hard code
+                        .append("<LANESC>").append(toUpperCase(transactionDTO.getLaneNo())).append("</LANESC>\n") // Lane : To capture gate lane no
+                        .append("<VMIDSC>").append(toUpperCase(transactionDTO.getPmHeadNo())).append("</VMIDSC>\n") // Truck License Plate : To capture truck no
+                        .append("<ATDDSC>").append(date).append("</ATDDSC>\n") // Date of Arrival : To capture current date
+                        .append("<ATDTSC>").append(time).append("</ATDTSC>\n") // Time of Arrival : To capture current time
+                        .append("<VMYKSC>").append(toUpperCase(transactionDTO.getCompCode())).append("</VMYKSC>\n") //Truck Com. Code : To capture Truck Com. Code
+                        .append("</GINTRCINF>\n")
+                        .append("</Message>\n")
+                        .append(createRequestXML)
+                        .append("</SGS2Cosmos>\n");
+  //@formatter:on
+
+    if (StringUtils.isBlank(createRequestXML)) {
+      return "";
+    }
+
+    return requestXML.toString();
+
+  }
+
+  private String createExpRequestXML(TransactionDTO transactionDTO, String userName, String msgUniqueId) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  private String createExpRequestXML(TransactionDTO transactionDTO, String userName, String msgUniqueId, boolean b,
+      String cont1Index, String cont2Index) {
+    // TODO Auto-generated method stub
     return null;
   }
 
@@ -241,7 +286,5 @@ public class GateInXMLRequestService {
     }
   }
 
-  private static final SimpleDateFormat yyyymmdd = new SimpleDateFormat("yyyyMMdd");
-  private static final SimpleDateFormat hhmmss = new SimpleDateFormat("HHmmss");
 
 }
