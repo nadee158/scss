@@ -1,7 +1,5 @@
 package com.privasia.scss.gateout.controller;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -11,8 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.privasia.scss.cosmos.dto.TestDto;
-import com.privasia.scss.cosmos.repository.ImportContainerRepository;
+import com.privasia.scss.common.dto.ImportContainer;
+import com.privasia.scss.cosmos.repository.ImportRepository;
 
 
 @RestController
@@ -20,14 +18,15 @@ import com.privasia.scss.cosmos.repository.ImportContainerRepository;
 public class TestController {
 
   @Autowired
-  private ImportContainerRepository importContainerRepository;
+  private ImportRepository importRepository;
 
   @RequestMapping(value = "/{containerNo}", method = RequestMethod.GET,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-  public ResponseEntity<List<TestDto>> scanCardByCardNo(@PathVariable("containerNo") String containerNo) {
+  public ResponseEntity<ImportContainer> scanCardByCardNo(@PathVariable("containerNo") String containerNo) {
     System.out.println("CAME HERE CONTROLLER :" + containerNo);
-    List<TestDto> list = importContainerRepository.getImportContainerInfo(containerNo);
-    return new ResponseEntity<List<TestDto>>(list, HttpStatus.OK);
+    ImportContainer importContainer = new ImportContainer();
+    importContainer = importRepository.getContainerInfo(importContainer, containerNo);
+    return new ResponseEntity<ImportContainer>(importContainer, HttpStatus.OK);
   }
 
 }

@@ -4,6 +4,7 @@
 package com.privasia.scss.core.model;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 import javax.persistence.AssociationOverride;
 import javax.persistence.AssociationOverrides;
@@ -24,6 +25,9 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Type;
 
 import com.privasia.scss.common.enums.CompanyStatus;
+import com.privasia.scss.common.enums.ContainerPosition;
+import com.privasia.scss.common.enums.GCS_SSRBlockStatusType;
+import com.privasia.scss.common.enums.VesselStatus;
 
 /**
  * @author Janaka
@@ -60,8 +64,8 @@ public class Exports implements Serializable {
 			@AttributeOverride(name = "eirStatus", column = @Column(name = "EXP_EIRSTATUS")),
 			@AttributeOverride(name = "impExpFlag", column = @Column(name = "EXP_IMPEXPFLAG")),
 			@AttributeOverride(name = "rejectReason", column = @Column(name = "EXP_REJECTREASON")),
-			@AttributeOverride(name = "pmHeadNo", column = @Column(name = "GTP_TRUCK_HEAD_NO")),
-			@AttributeOverride(name = "pmPlateNo", column = @Column(name = "GTP_TRUCK_PLATE_NO")),
+			@AttributeOverride(name = "pmHeadNo", column = @Column(name = "EXP_TRUCK_HEAD_NO")),
+			@AttributeOverride(name = "pmPlateNo", column = @Column(name = "EXP_TRUCK_PLATE_NO")),
 			@AttributeOverride(name = "kioskConfirmed", column = @Column(name = "KIOSK_CONFIRMED")),
 			@AttributeOverride(name = "kioskCancelPickUp", column = @Column(name = "KIOSK_CANCEL_PICKUP")),
 			@AttributeOverride(name = "transactionSlipPrinted", column = @Column(name = "TRANSACTION_SLIP_PRINTED")),
@@ -118,7 +122,95 @@ public class Exports implements Serializable {
 	@Column(name = "EXP_NET_WEIGHT")
 	private Integer expNetWeight;
 	
-	//GCS_LAST_CHK_DATETIME (DATE)
+	//EXP_OVERSIZE_FLAG
+	
+	@Column(name = "EXP_TRUCK_POS", nullable = true)
+	@Type(type = "com.privasia.scss.core.util.enumusertype.ContainerPositionEnumUserType")
+	private ContainerPosition containerPosition;
+	 
+	@Column(name = "EXP_P_CHECK_DATE_TIME")
+	private LocalDateTime preCheckDate;
+	
+	@Column(name = "EXP_YARD_POSITION")
+	private String yardPosition;
+	
+	@Column(name = "EXP_BAY_CODE")
+	private String bayCode;
+	
+	@Column(name = "EXP_PM_BTM")
+	private Integer pmBTM;
+	
+	@Column(name = "EXP_TR_BTM")
+	private Integer trBTM;
+	
+	@Column(name = "EXP_OOG_OR")
+	private Integer oogOR;
+	
+	@Column(name = "EXP_CALL_CARD")
+	private Integer callCard;
+	
+	@Column(name = "VESSEL_VISIT_ID")
+	private String vesselVisitID;
+	
+	@Column(name = "VESSEL_VOYAGE")
+	private String vesselVoyage;
+	
+	@Column(name = "VESSEL_CODE")
+	private String vesselCode;
+	
+	@Column(name = "VESSEL_NAME")
+	private String vesselName;
+	
+	@Column(name = "EXP_AGENT")
+	private String expAgent;
+	
+	@Column(name = "VESSEL_STATUS", nullable = true)
+	@Type(type = "com.privasia.scss.core.util.enumusertype.VesselStatusEnumUserType")
+	private VesselStatus vesselStatus;
+	
+	@Column(name = "SHIP_ID")
+	private String shipID;
+	
+	@Column(name = "VESSEL_SCN")
+	private String vesselSCN;
+	
+	@Column(name = "DATE_VESSEL_ETA")
+	private LocalDateTime vesselETADate;
+	
+	@Column(name = "DATE_VESSEL_ATA")
+	private LocalDateTime vesselATADate;
+	
+	@Column(name = " EXP_HAS_OOG_SSR", nullable = true)
+	@Type(type = "yes_no")
+	private Boolean oogSSR;
+	
+	@Column(name = " EXP_HAS_OVERCLOSING_SSR", nullable = true)
+	@Type(type = "yes_no")
+	private Boolean overClosingSSR;
+	
+	@Column(name = " EXP_HAS_REPLAN_SSR", nullable = true)
+	@Type(type = "yes_no")
+	private Boolean replanSSR;
+	
+	@Column(name = "EXP_SSR_BLOCK_STATUS", nullable = true)
+	@Type(type = "com.privasia.scss.core.util.enumusertype.GCS_SSRBlockStatusEnumUserType")
+	private GCS_SSRBlockStatusType ssrBlockStatus;
+	
+	@Column(name = "EXP_SSR_BLOCK_STATUS_DATETIME")
+	private LocalDateTime ssrBlockStatusDate;
+	
+	@Column(name = "EXP_GCS_BLOCK_STATUS", nullable = true)
+	@Type(type = "com.privasia.scss.core.util.enumusertype.GCS_SSRBlockStatusEnumUserType")
+	private GCS_SSRBlockStatusType gcsBlockStatus;
+	
+	@Column(name = "EXP_GCS_BLOCK_STATUS_DATETIME")
+	private LocalDateTime gcsBlockStatusDate;
+	
+	@Column(name = "EXP_GCS_DECLARENO")
+	private String gcsDeclareNo;
+	
+	@Column(name = "GCS_LAST_CHK_DATETIME")
+	private LocalDateTime gcsLastCheck;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "EXP_PRINT_EIR", nullable = true, referencedColumnName = "PRINT_NO")
@@ -156,10 +248,10 @@ public class Exports implements Serializable {
 	@Type(type = "yes_no")
 	private Boolean backToback;
 	
-	@Column(name = "WEIGHT_DIFF_PERCENTAGE")
+	@Column(name = "WEIGHT_DIFF_PERCENTAGE", nullable = true)
 	private Double weightDiffPercentage;
 	
-	@Column(name = "WEIGHT_DIFF")
+	@Column(name = "WEIGHT_DIFF", nullable = true)
 	private Double weightDifference;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -233,7 +325,7 @@ public class Exports implements Serializable {
 	@Column(name = "EXP_SUB_TYPE")
 	private String subType;
 	
-	@Column(name = "WITHIN_TOLERANCE")
+	@Column(name = "WITHIN_TOLERANCE", nullable = true)
 	@Type(type = "true_false")
 	private boolean withinTolerance;
 	

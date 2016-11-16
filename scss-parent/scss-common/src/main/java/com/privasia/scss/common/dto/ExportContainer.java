@@ -3,6 +3,7 @@ package com.privasia.scss.common.dto;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -99,24 +100,24 @@ public class ExportContainer {
   private String orderFOT = "";
   private String curPos = "";
 
-  private String shipCode = "";
-  private String agentCode = "";
-  private String vesselCode = "";
-  private String vesselName = "";
-  private String vesselVoyageIn = "";
-  private String vesselVisitId = "";
-  private String vesselStatus = "";
-  private String vesselScn = "";
+  private String shipCode = StringUtils.EMPTY;
+  private String agentCode = StringUtils.EMPTY;
+  private String vesselCode = StringUtils.EMPTY;
+  private String vesselName = StringUtils.EMPTY;
+  private String vesselVoyageIn = StringUtils.EMPTY;
+  private String vesselVisitId = StringUtils.EMPTY;
+  private String vesselStatus = StringUtils.EMPTY;
+  private String vesselScn = StringUtils.EMPTY;
   private java.util.Date vesselDateEta;
   private java.util.Date vesselDateAta;
-  private String vesselVoyageOut = "";
-  private String lineCode = "";
+  private String vesselVoyageOut = StringUtils.EMPTY;
+  private String lineCode = StringUtils.EMPTY;;
 
-  private String fOrE = "";
-  private String scn = "";
-  private String seq = "";
+  private String fOrE = StringUtils.EMPTY;
+  private String scn = StringUtils.EMPTY;
+  private String seq = StringUtils.EMPTY;
   private java.util.Date etad;
-  private String internalBlockDesc;
+  private String internalBlockDesc = StringUtils.EMPTY;
 
   private int totalBooking = 0;
   private int storagePeriod = -1;
@@ -126,8 +127,8 @@ public class ExportContainer {
   private boolean internalBlock = false;
 
   private boolean earlyEntry = false;
-  private String startEarlyEntry = "";
-  private String endEarlyEntry = "";
+  private String startEarlyEntry = StringUtils.EMPTY;
+  private String endEarlyEntry = StringUtils.EMPTY;
   private boolean bypassEEntry = false;
   private boolean bypassDg = false;
 

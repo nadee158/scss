@@ -240,13 +240,13 @@ public class PrintEirService {
 
   private String getContainerWeight(ImportContainer importContainer, TransactionDTO transactionDTO) {
     String weight = "";
-    if (transactionDTO.isShipperVGM() && importContainer.isWithInTolerance()) {
+    /*if (transactionDTO.isShipperVGM() && importContainer.isWithInTolerance()) {
       weight = String.valueOf(importContainer.getShipperVGM());
     } else {
       if (StringUtils.isNotBlank(importContainer.getNetWeight())) {
         weight = importContainer.getNetWeight();
       }
-    }
+    }*/
     return weight;
   }
 

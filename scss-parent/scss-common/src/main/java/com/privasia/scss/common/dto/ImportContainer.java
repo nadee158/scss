@@ -87,9 +87,7 @@ public class ImportContainer implements Serializable {
 
 	private DGInfo dgInfo;
 
-	private boolean withInTolerance;
-
-	private int shipperVGM;
+	private boolean FOTBKGFlag = true;
 
 	private String netWeight;
 
@@ -123,13 +121,6 @@ public class ImportContainer implements Serializable {
 		this.containerType = containerType;
 	}
 
-	public int getShipperVGM() {
-		return shipperVGM;
-	}
-
-	public void setShipperVGM(int shipperVGM) {
-		this.shipperVGM = shipperVGM;
-	}
 
 	public String getNetWeight() {
 		return netWeight;
@@ -189,14 +180,6 @@ public class ImportContainer implements Serializable {
 
 	public String getUnc() {
 		return unc;
-	}
-
-	public boolean isWithInTolerance() {
-		return withInTolerance;
-	}
-
-	public void setWithInTolerance(boolean withInTolerance) {
-		this.withInTolerance = withInTolerance;
 	}
 
 	public void setUnc(String unc) {
@@ -438,6 +421,16 @@ public class ImportContainer implements Serializable {
 	public void setInOrOut(String inOrOut) {
 		InOrOut = inOrOut;
 	}
+
+	public boolean isFOTBKGFlag() {
+		return FOTBKGFlag;
+	}
+
+	public void setFOTBKGFlag(boolean fOTBKGFlag) {
+		FOTBKGFlag = fOTBKGFlag;
+	}
+	
+	
 	
 	
 
