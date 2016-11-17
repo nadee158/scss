@@ -87,6 +87,46 @@ public class TransactionDTO implements Serializable {
   // Lane : To capture gate lane no
   private String laneNo;
 
+  private String requestXML;
+
+  private int portNo;
+
+  private String replyXML;
+
+  private String msg;
+
+  public String getReplyXML() {
+    return replyXML;
+  }
+
+  public void setReplyXML(String replyXML) {
+    this.replyXML = replyXML;
+  }
+
+  public String getMsg() {
+    return msg;
+  }
+
+  public void setMsg(String msg) {
+    this.msg = msg;
+  }
+
+  public int getPortNo() {
+    return portNo;
+  }
+
+  public void setPortNo(int portNo) {
+    this.portNo = portNo;
+  }
+
+  public String getRequestXML() {
+    return requestXML;
+  }
+
+  public void setRequestXML(String requestXML) {
+    this.requestXML = requestXML;
+  }
+
   public String getCompCode() {
     return compCode;
   }

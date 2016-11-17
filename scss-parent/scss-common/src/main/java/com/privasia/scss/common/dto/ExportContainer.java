@@ -47,6 +47,28 @@ public class ExportContainer {
 
   private String contRefer;
 
+  private String yardPosition;
+
+  private String bayCode;
+
+
+
+  public String getYardPosition() {
+    return yardPosition;
+  }
+
+  public void setYardPosition(String yardPosition) {
+    this.yardPosition = yardPosition;
+  }
+
+  public String getBayCode() {
+    return bayCode;
+  }
+
+  public void setBayCode(String bayCode) {
+    this.bayCode = bayCode;
+  }
+
   public ExportContainer() {
     super();
   }

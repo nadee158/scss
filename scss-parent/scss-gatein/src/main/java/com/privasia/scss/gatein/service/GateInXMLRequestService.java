@@ -1,10 +1,15 @@
 package com.privasia.scss.gatein.service;
 
+import java.io.ByteArrayInputStream;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.time.ZonedDateTime;
+
+import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.privasia.scss.common.dto.DGInfo;
@@ -12,6 +17,11 @@ import com.privasia.scss.common.dto.ExportContainer;
 import com.privasia.scss.common.dto.ImportContainer;
 import com.privasia.scss.common.dto.SealInfo;
 import com.privasia.scss.common.dto.TransactionDTO;
+import com.privasia.scss.common.util.AGSClient;
+import com.privasia.scss.common.util.ApplicationConstants;
+import com.privasia.scss.common.util.XPathErrorReader;
+import com.privasia.scss.core.model.AGSLog;
+import com.privasia.scss.core.repository.AGSLogRepository;
 
 @Service("gateInXMLRequestService")
 public class GateInXMLRequestService {
@@ -23,6 +33,9 @@ public class GateInXMLRequestService {
   public static final String IMPEXP_FLAG = "B";
   private static final SimpleDateFormat yyyymmdd = new SimpleDateFormat("yyyyMMdd");
   private static final SimpleDateFormat hhmmss = new SimpleDateFormat("HHmmss");
+
+  @Autowired
+  private AGSLogRepository agsLogRepository;
 
 
 
@@ -111,34 +124,45 @@ public class GateInXMLRequestService {
     return requestXMLC2;
   }
 
-  public static int send(TransactionDTO transactionDTO, String userName) throws Exception {
+  @Transactional
+  public int send(TransactionDTO transactionDTO, String userName) throws Exception {
   //@formatter:off
-//    String requestXML = getRequestXML(f, userName);
-//    //System.out.println("request xml : " + requestXML);
-//    f.setRequestXML(requestXML);
-//    
-//   if (StringUtils.isNotBlank(requestXML)) {
-//        gateInDao.insertAGSXmlLog(requestXML, f.getPortNo(), AGSClient.SEND);
-//        String replyXML = AGSClient.sendXMLMessage(requestXML, f.getPortNo());
-//        gateInDao.insertAGSXmlLog(replyXML, f.getPortNo(), AGSClient.RECEIVE);
-//        if (!replyXML.equals("")) {
-//            //System.out.println("reply xml : " + replyXML);
-//            f.setReplyXML(replyXML);
-//      
-//
-//            ByteArrayInputStream b = new ByteArrayInputStream(replyXML.getBytes());
-//            XPathErrorReader x = new XPathErrorReader();
-//            return x.parseGateInReplyXML(b, f);
-//        }
-//    } else {
-//        if (StringUtils.isNotBlank(f.getCont1Refer()) || StringUtils.isNotBlank(f.getCont2Refer())) {
-//            return GateInErrMsg.NO_ERROR;
-//        }
-//    }
-//
-//    return GateInErrMsg.AGS_REPLY_TIME_OUT;
+    String requestXML = getRequestXML(transactionDTO, userName);
+    //System.out.println("request xml : " + requestXML);
+    transactionDTO.setRequestXML(requestXML);
+    
+   if (StringUtils.isNotBlank(requestXML)) {
+        insertAGSXmlLog(requestXML, transactionDTO.getPortNo(), AGSClient.SEND);
+        String replyXML = AGSClient.sendXMLMessage(requestXML, transactionDTO.getPortNo());
+        insertAGSXmlLog(replyXML, transactionDTO.getPortNo(), AGSClient.RECEIVE);
+        if (!replyXML.equals("")) {
+            //System.out.println("reply xml : " + replyXML);
+          transactionDTO.setReplyXML(replyXML);
+          ByteArrayInputStream b = new ByteArrayInputStream(replyXML.getBytes());
+          XPathErrorReader x = new XPathErrorReader();
+          return x.parseGateInReplyXML(b, transactionDTO);
+        }
+    } else {
+        ImportContainer container01=transactionDTO.getImportContainer01();
+        ImportContainer container02=transactionDTO.getImportContainer02();
+        if(!(container01==null || container02==null)){
+          if (StringUtils.isNotBlank(container01.getContRefer()) || StringUtils.isNotBlank(container02.getContRefer())) {
+            return ApplicationConstants.NO_ERROR;
+        }
+        }
+    }
+
+    return ApplicationConstants.AGS_REPLY_TIME_OUT;
     //@formatter:on
-    return 0;
+  }
+
+  public void insertAGSXmlLog(String requestXML, int portNo, String sendReceive) {
+    AGSLog agsLog = new AGSLog();
+    agsLog.setSendRCV(sendReceive);
+    agsLog.setPortNumber(Integer.toString(portNo));
+    agsLog.setDateTimeAdd(ZonedDateTime.now());
+    agsLog.setXmlData(requestXML);
+    agsLogRepository.save(agsLog);
   }
 
   public String getRequestXML(TransactionDTO transactionDTO, String userName) {

@@ -42,5 +42,40 @@ public interface ApplicationConstants {
   public static final String ERROR = "ERROR";
 
 
+  public static final int EIR_NO_EXIST = 1;
+  public static final int COMPANY_NOT_ACTIVE = 2;
+  public static final int CARD_NOT_ACTIVE = 3;
+  public static final int TRUCK_PLATE_NO_IN_USE = 4;
+  public static final int TRUCK_HEAD_NO_IN_USE = 5;
+  public static final int ERROR_EXIST = 6;
+  public static final int MPL = 7;
+  public static final int NO_ERROR = 8;
+  public static final int AGS_REPLY_TIME_OUT = 9;
+  public static final int MAX_WEIGHTC1 = 10;
+  public static final int MAX_WEIGHTC2 = 11;
+  public static final int PMCT = 12;
+  public static final int NET_WEIGHT = 13;
+  public static final int DG_REMARKS = 14;
+  public static final int DG_CHECKBOX = 15;
+  public static final int DG_CANTBYPASS = 16;
+
+
+  public static final int GI_OK = 0;
+
+
+  public static final String GATE_PASS_IS_USED = "ERR_MSG_060";
+  public static final String GATE_PASS_IN_PROGRESS = "ERR_MSG_061";
+  public static final String GATE_PASS_CANCEL = "ERR_MSG_062";
+  public static final String GATE_PASS_INVALID = "ERR_MSG_011";
+  public static final String GATE_PASS_COMPANY_NOT_MATCH = "ERR_MSG_012";
+  public static final String GATE_PASS_NO_PREARRIVAL = "ERR_MSG_800";
+  public static final String GATE_PASS_OGA_BLOCK = "ERR_MSG_073";
+  public static final String GATE_PASS_INTERNAL_BLOCK = "ERR_MSG_072";
+  public static final String GATE_PASS_OGA_INTERNAL_BLOCK = "ERR_MSG_074";
+  public static final String DATE_GATEPASS_EXPIRY = "ERR_MSG_080";
+  public static final String DATE_GATEPASS_EDO_EXPIRY = "ERR_MSG_088";
+  public static final String EDO_EXPIRY_DATE_NULL = "ERR_MSG_090";
+
+
 
 }
