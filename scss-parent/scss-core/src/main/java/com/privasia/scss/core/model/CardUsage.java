@@ -56,7 +56,7 @@ public class CardUsage extends AuditEntity implements Serializable {
   private Client client;
 
   @Column(name = "CUG_STATUS")
-  @Type(type = "com.privasia.scss.core.util.enumusertype.CardUsageStatusEnumUserType")
+  @Type(type = "com.privasia.scss.common.enumusertype.CardUsageStatusEnumUserType")
   private CardUsageStatus usageStatus;
 
   @Column(name = "EXP_WEIGHT_BRIDGE")

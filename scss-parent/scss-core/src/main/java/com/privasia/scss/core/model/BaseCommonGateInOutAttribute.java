@@ -36,7 +36,7 @@ public class BaseCommonGateInOutAttribute implements Serializable {
 	@JoinColumn(name = "BOOKING_ID", nullable = true, referencedColumnName = "BOOKING_ID")
 	private HPATBooking hpatBooking;
 
-	@Type(type = "com.privasia.scss.core.util.enumusertype.TransactionStatusEnumUserType")
+	@Type(type = "com.privasia.scss.common.enumusertype.TransactionStatusEnumUserType")
 	private TransactionStatus eirStatus;
 
 	@Type(type = "yes_no")

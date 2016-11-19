@@ -89,7 +89,7 @@ public class PrintReject extends AuditEntity implements Serializable {
 	private String staffNumber;
 
 	@Column(name = "STATUS")
-	@Type(type = "com.privasia.scss.core.util.enumusertype.HPATReferStatusEnumUserType")
+	@Type(type = "com.privasia.scss.common.enumusertype.HPATReferStatusEnumUserType")
 	private String status;
 
 	@Column(name = "CLIENT_IP")

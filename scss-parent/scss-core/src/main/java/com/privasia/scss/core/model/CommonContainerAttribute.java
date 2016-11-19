@@ -31,7 +31,7 @@ public class CommonContainerAttribute implements Serializable {
 
   private String containerISOCode;
 
-  @Type(type = "com.privasia.scss.core.util.enumusertype.ContainerFullEmptyTypeEnumUserType")
+  @Type(type = "com.privasia.scss.common.enumusertype.ContainerFullEmptyTypeEnumUserType")
   private ContainerFullEmptyType containerFullOrEmpty;
 
   public String getContainerNumber() {

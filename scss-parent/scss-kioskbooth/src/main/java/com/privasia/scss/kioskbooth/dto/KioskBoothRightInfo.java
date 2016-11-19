@@ -25,57 +25,57 @@ public class KioskBoothRightInfo implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
-  private String boothID;
+  private String boothID = StringUtils.EMPTY;
 
-  private String kioskID;
+  private String kioskID = StringUtils.EMPTY;
 
-  private String kioskLockStatus;
+  private String kioskLockStatus = StringUtils.EMPTY;
 
-  private int cardNumber;
+  private int cardNumber = 0;
 
-  private String cardScanTime;
+  private String cardScanTime = StringUtils.EMPTY;
 
-  private String kioskSelectedTime;
+  private String kioskSelectedTime = StringUtils.EMPTY;
 
-  private int displayScreenID;
+  private int displayScreenID = 0;
 
-  private String transactionIDList;
+  private String transactionIDList = StringUtils.EMPTY;
 
-  private String driverName;
+  private String driverName = StringUtils.EMPTY;
 
-  private String pmHeadNo;
+  private String pmHeadNo = StringUtils.EMPTY;
 
-  private String truckCompany;
+  private String truckCompany = StringUtils.EMPTY;
 
-  private String driverIC;
+  private String driverIC = StringUtils.EMPTY;
 
-  private String plateNo;
+  private String plateNo = StringUtils.EMPTY;
 
-  private String transactionType;
+  private String transactionType = StringUtils.EMPTY;
 
-  private String reviseHeadNo;
+  private String reviseHeadNo = StringUtils.EMPTY;
 
-  private String reviseHeadNoRemarks;
+  private String reviseHeadNoRemarks = StringUtils.EMPTY;
 
-  private boolean retakePhoto;
+  private boolean retakePhoto = false;
 
-  private String trxCompleteTime;
+  private String trxCompleteTime = StringUtils.EMPTY;
 
-  private String lockUserID;
+  private String lockUserID = StringUtils.EMPTY;
 
-  private String lockUserName;
+  private String lockUserName = StringUtils.EMPTY;
 
-  private String referReason01List;
+  private String referReason01List = StringUtils.EMPTY;
 
-  private String referReason02List;
+  private String referReason02List = StringUtils.EMPTY;
 
-  private KioskBoothContainerDTO container01;
+  private KioskBoothContainerDTO container01 = null;
 
-  private KioskBoothContainerDTO container02;
+  private KioskBoothContainerDTO container02 = null;
 
-  private KioskBoothContainerDTO container03;
+  private KioskBoothContainerDTO container03 = null;
 
-  private KioskBoothContainerDTO container04;
+  private KioskBoothContainerDTO container04 = null;
 
 
   public String getBoothID() {
@@ -332,6 +332,19 @@ public class KioskBoothRightInfo implements Serializable {
 
   public KioskBoothRights updateKioskBoothRights(KioskBoothRights kiosk) {
     return updateKioskBoothRights(kiosk);
+  }
+
+  @Override
+  public String toString() {
+    return "KioskBoothRightInfo [boothID=" + boothID + ", kioskID=" + kioskID + ", kioskLockStatus=" + kioskLockStatus
+        + ", cardNumber=" + cardNumber + ", cardScanTime=" + cardScanTime + ", kioskSelectedTime=" + kioskSelectedTime
+        + ", displayScreenID=" + displayScreenID + ", transactionIDList=" + transactionIDList + ", driverName="
+        + driverName + ", pmHeadNo=" + pmHeadNo + ", truckCompany=" + truckCompany + ", driverIC=" + driverIC
+        + ", plateNo=" + plateNo + ", transactionType=" + transactionType + ", reviseHeadNo=" + reviseHeadNo
+        + ", reviseHeadNoRemarks=" + reviseHeadNoRemarks + ", retakePhoto=" + retakePhoto + ", trxCompleteTime="
+        + trxCompleteTime + ", lockUserID=" + lockUserID + ", lockUserName=" + lockUserName + ", referReason01List="
+        + referReason01List + ", referReason02List=" + referReason02List + ", container01=" + container01
+        + ", container02=" + container02 + ", container03=" + container03 + ", container04=" + container04 + "]";
   }
 
 

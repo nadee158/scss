@@ -42,7 +42,7 @@ public class KioskBoothRights extends AuditEntity implements Serializable {
   private KioskBoothRightsPK kioskBoothRightsID;
 
   @Column(name = "KIOSK_LOCK_STATUS")
-  @Type(type = "com.privasia.scss.core.util.enumusertype.KioskLockStatusEnumUserType")
+  @Type(type = "com.privasia.scss.common.enumusertype.KioskLockStatusEnumUserType")
   private KioskLockStatus kioskLockStatus;
 
   @Column(name = "CARDNUMBER")
@@ -76,7 +76,7 @@ public class KioskBoothRights extends AuditEntity implements Serializable {
   private String plateNo;
 
   @Column(name = "TRANSACTION_TYPE")
-  @Type(type = "com.privasia.scss.core.util.enumusertype.TransactionTypeEnumUserType")
+  @Type(type = "com.privasia.scss.common.enumusertype.TransactionTypeEnumUserType")
   private TransactionType transactionType;
 
   @Column(name = "reviseHeadNo")

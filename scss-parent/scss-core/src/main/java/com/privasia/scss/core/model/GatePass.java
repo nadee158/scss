@@ -93,7 +93,7 @@ public class GatePass extends AuditEntity implements Serializable {
 	private CommonGateInOutAttribute commonGateInOut;
 
 	@Column(name = "GTP_GATEPASSSTATUS")
-	@Type(type = "com.privasia.scss.core.util.enumusertype.GatePassStatusEnumUserType")
+	@Type(type = "com.privasia.scss.common.enumusertype.GatePassStatusEnumUserType")
 	private GatePassStatus gatePassStatus;
 
 	@Column(name = "GTP_HANDLINGID")
@@ -103,7 +103,7 @@ public class GatePass extends AuditEntity implements Serializable {
 	private String orderNo;
 
 	@Column(name = "GTP_IN_OUT")
-	@Type(type = "com.privasia.scss.core.util.enumusertype.GateInOutStatusEnumUserType")
+	@Type(type = "com.privasia.scss.common.enumusertype.GateInOutStatusEnumUserType")
 	private GateInOutStatus gateInOut;
 
 	@Column(name = "GTP_LINE")
@@ -113,7 +113,7 @@ public class GatePass extends AuditEntity implements Serializable {
 	private String currentPosition;
 
 	@Column(name = "GTP_TRUK_POS")
-	@Type(type = "com.privasia.scss.core.util.enumusertype.ContainerPositionEnumUserType")
+	@Type(type = "com.privasia.scss.common.enumusertype.ContainerPositionEnumUserType")
 	private ContainerPosition containerPosition;
 
 	@Column(name = "GTP_GATE_IN_LANE_NO")

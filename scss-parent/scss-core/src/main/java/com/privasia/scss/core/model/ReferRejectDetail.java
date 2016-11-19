@@ -75,7 +75,7 @@ public class ReferRejectDetail extends AuditEntity implements Serializable {
   private String remarks;
 
   @Column(name = "STATUS_CODE")
-  @Type(type = "com.privasia.scss.core.util.enumusertype.ReferStatusEnumUserType")
+  @Type(type = "com.privasia.scss.common.enumusertype.ReferStatusEnumUserType")
   private ReferStatus status;
 
   @Column(name = "SUP_REMARKS")
@@ -105,7 +105,7 @@ public class ReferRejectDetail extends AuditEntity implements Serializable {
   private LocalDateTime gateInTime;
 
   @Column(name = "POSITION")
-  @Type(type = "com.privasia.scss.core.util.enumusertype.ContainerPositionEnumUserType")
+  @Type(type = "com.privasia.scss.common.enumusertype.ContainerPositionEnumUserType")
   private ContainerPosition position;
 
   @Column(name = "MEASURED_WEIGHT_BRIDGE")

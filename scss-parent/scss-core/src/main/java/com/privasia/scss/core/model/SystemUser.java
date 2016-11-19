@@ -58,7 +58,7 @@ public class SystemUser extends AuditEntity implements Serializable {
 	private String staffNumber;
 
 	@Column(name = "SYS_GENDER")
-	@Type(type = "com.privasia.scss.core.util.enumusertype.GenderEnumUserType")
+	@Type(type = "com.privasia.scss.common.enumusertype.GenderEnumUserType")
 	private Gender gender;
 
 	@Column(name = "SYS_DOB")
@@ -71,7 +71,7 @@ public class SystemUser extends AuditEntity implements Serializable {
 	private LocalDateTime passportExpireDate;
 
 	@Column(name = "SYS_NATIONALITY")
-	@Type(type = "com.privasia.scss.core.util.enumusertype.NationalityEnumUserType")
+	@Type(type = "com.privasia.scss.common.enumusertype.NationalityEnumUserType")
 	private Nationality nationality;
 
 	@Column(name = "SYS_DEPTNAME")
@@ -102,11 +102,11 @@ public class SystemUser extends AuditEntity implements Serializable {
 	private String homePhone;
 
 	@Column(name = "SYS_USERSTATUS")
-	@Type(type = "com.privasia.scss.core.util.enumusertype.UserStatusEnumUserType")
+	@Type(type = "com.privasia.scss.common.enumusertype.UserStatusEnumUserType")
 	private UserStatus userStatus;
 
 	@Column(name = "SYS_USRTYP_FLAG")
-	@Type(type = "com.privasia.scss.core.util.enumusertype.UserTypeEnumUserType")
+	@Type(type = "com.privasia.scss.common.enumusertype.UserTypeEnumUserType")
 	private UserType userType;
 
 	public Long getSystemUserID() {

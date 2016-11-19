@@ -52,7 +52,7 @@ public class HPATBookingDetail extends AuditEntity implements Serializable {
   private Long hpatBookingDetailID;
 
   @Column(name = "BOOKING_TYPE")
-  @Type(type = "com.privasia.scss.core.util.enumusertype.BookingTypeEnumUserType")
+  @Type(type = "com.privasia.scss.common.enumusertype.BookingTypeEnumUserType")
   private BookingType bookingType;
 
   @Column(name = "CLOSING_TIME")

@@ -64,7 +64,7 @@ public class Card extends AuditEntity implements Serializable {
   private LocalDateTime contractExpiryDate;
 
   @Column(name = "CRD_VALIDITYTYPE")
-  @Type(type = "com.privasia.scss.core.util.enumusertype.CardValidityEnumUserType")
+  @Type(type = "com.privasia.scss.common.enumusertype.CardValidityEnumUserType")
   private CardValidityType cardValidityType;
 
   @Column(name = "CRD_AUTHORISEDATE")
@@ -92,11 +92,11 @@ public class Card extends AuditEntity implements Serializable {
   private LocalDateTime dateSince;
 
   @Column(name = "CRD_CARDSTATUS")
-  @Type(type = "com.privasia.scss.core.util.enumusertype.CardStatusEnumUserType")
+  @Type(type = "com.privasia.scss.common.enumusertype.CardStatusEnumUserType")
   private CardStatus cardStatus;
 
   @Column(name = "CRD_PRINTSTATUS")
-  @Type(type = "com.privasia.scss.core.util.enumusertype.CardPrintStatusEnumUserType")
+  @Type(type = "com.privasia.scss.common.enumusertype.CardPrintStatusEnumUserType")
   private CardPrintStatus cardPrintStatus;
 
   @Column(name = "CRD_PRINTDATE")
@@ -107,7 +107,7 @@ public class Card extends AuditEntity implements Serializable {
   private SystemUser printedBy;
 
   @Column(name = "CRD_ISUSED")
-  @Type(type = "com.privasia.scss.core.util.enumusertype.CardIssuedEnumUserType")
+  @Type(type = "com.privasia.scss.common.enumusertype.CardIssuedEnumUserType")
   private CardIssuedStatus cardIssued;
 
   @Column(name = "CRD_GOVE_AGENCY")
@@ -117,7 +117,7 @@ public class Card extends AuditEntity implements Serializable {
   private String referenceNumber;
 
   @Column(name = "CRD_TYPE")
-  @Type(type = "com.privasia.scss.core.util.enumusertype.CompanyTypeEnumUserType")
+  @Type(type = "com.privasia.scss.common.enumusertype.CompanyTypeEnumUserType")
   private CompanyType cardType;
 
   public Long getCardID() {

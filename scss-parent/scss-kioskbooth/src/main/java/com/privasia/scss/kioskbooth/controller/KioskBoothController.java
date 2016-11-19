@@ -21,9 +21,10 @@ public class KioskBoothController {
   private KioskBoothService kioskBoothService;
 
 
-  @RequestMapping(value = "/activateBoothsByKioskId", method = RequestMethod.GET,
+  @RequestMapping(value = "/activateBoothsByKioskId", method = RequestMethod.POST,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public ResponseEntity<String> activateBoothsByKioskId(@RequestBody KioskBoothRightInfo kioskBoothRightInfo) {
+    System.out.println("kioskBoothRightInfo :" + kioskBoothRightInfo);
     String status = kioskBoothService.activateBoothsByKioskId(kioskBoothRightInfo);
     return new ResponseEntity<String>(status, HttpStatus.OK);
   }
@@ -32,6 +33,8 @@ public class KioskBoothController {
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public ResponseEntity<String> lockBoothForKiosk(@PathVariable("kioskID") String kioskID,
       @PathVariable("boothID") String boothID) {
+    System.out.println("kioskID :" + kioskID);
+    System.out.println("boothID :" + boothID);
     String status = kioskBoothService.lockBoothForKiosk(kioskID, boothID);
     return new ResponseEntity<String>(status, HttpStatus.OK);
   }

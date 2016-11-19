@@ -36,7 +36,7 @@ public final class KioskBoothRightsPredicates {
     } else {
       QClient client = QClient.client;
       client.clientID.eq(Long.valueOf(kioskID));
-      return QKioskBoothRights.kioskBoothRights.kioskBoothRightsID.kioskID.eq(client);
+      return QKioskBoothRights.kioskBoothRights.kioskBoothRightsID.kioskID.clientID.eq(Long.valueOf(kioskID));
     }
 
   }

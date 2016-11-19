@@ -2,6 +2,8 @@ package com.privasia.scss.kioskbooth.dto;
 
 import java.io.Serializable;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.privasia.scss.core.model.KioskBoothContainerAttribute;
 
 public class KioskBoothContainerDTO implements Serializable {
@@ -11,21 +13,21 @@ public class KioskBoothContainerDTO implements Serializable {
    */
   private static final long serialVersionUID = 1L;
 
-  private String cancelPickup;
+  private String cancelPickup = StringUtils.EMPTY;
 
-  private String location;
+  private String location = StringUtils.EMPTY;
 
-  private String status;
+  private String status = StringUtils.EMPTY;
 
-  private String others;
+  private String others = StringUtils.EMPTY;
 
-  private String rejectRemarks;
+  private String rejectRemarks = StringUtils.EMPTY;
 
-  private String customCheck;
+  private String customCheck = StringUtils.EMPTY;
 
-  private String shipper;
+  private String shipper = StringUtils.EMPTY;
 
-  private String line;
+  private String line = StringUtils.EMPTY;
 
   public String getCancelPickup() {
     return cancelPickup;
@@ -113,6 +115,13 @@ public class KioskBoothContainerDTO implements Serializable {
   public KioskBoothContainerAttribute updateContainerAttribute(
       KioskBoothContainerAttribute kioskBoothContainerAttribute) {
     return updateContainerAttribute(kioskBoothContainerAttribute);
+  }
+
+  @Override
+  public String toString() {
+    return "KioskBoothContainerDTO [cancelPickup=" + cancelPickup + ", location=" + location + ", status=" + status
+        + ", others=" + others + ", rejectRemarks=" + rejectRemarks + ", customCheck=" + customCheck + ", shipper="
+        + shipper + ", line=" + line + "]";
   }
 
 
