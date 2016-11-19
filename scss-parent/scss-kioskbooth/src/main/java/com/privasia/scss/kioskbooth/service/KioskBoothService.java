@@ -103,6 +103,7 @@ public class KioskBoothService {
       if (!(isLockedOrActiveAvailable)) {
         allKiosks.forEach(kiosk -> {
           KioskBoothRights updatedKioskBoothRights = updateKioskBoothRightsFromDTO(kiosk, kioskBoothRightInfo);
+          updatedKioskBoothRights.setKioskLockStatus(KioskLockStatus.ACTIVE);
           kioskBoothRightsRepository.save(updatedKioskBoothRights);
         });
         result = "SUCCESS";

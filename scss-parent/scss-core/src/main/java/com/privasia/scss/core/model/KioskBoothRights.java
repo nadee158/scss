@@ -12,8 +12,6 @@ import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
@@ -44,18 +42,16 @@ public class KioskBoothRights extends AuditEntity implements Serializable {
   private KioskBoothRightsPK kioskBoothRightsID;
 
   @Column(name = "KIOSK_LOCK_STATUS")
-  @Enumerated(EnumType.STRING)
+  @Type(type = "com.privasia.scss.core.util.enumusertype.KioskLockStatusEnumUserType")
   private KioskLockStatus kioskLockStatus;
 
   @Column(name = "CARDNUMBER")
   private int cardNumber;
 
   @Column(name = "CARD_SCAN_TIME")
-  // @Temporal(TemporalType.TIMESTAMP)
   private LocalDateTime cardScanTime;
 
   @Column(name = "KIOSK_SELECT_TIME")
-  // @Temporal(TemporalType.TIMESTAMP)
   private LocalDateTime kioskSelectedTime;
 
   @Column(name = "DISPLAY_SCREEN_ID")
@@ -80,7 +76,7 @@ public class KioskBoothRights extends AuditEntity implements Serializable {
   private String plateNo;
 
   @Column(name = "TRANSACTION_TYPE")
-  @Enumerated(EnumType.STRING)
+  @Type(type = "com.privasia.scss.core.util.enumusertype.TransactionTypeEnumUserType")
   private TransactionType transactionType;
 
   @Column(name = "reviseHeadNo")
