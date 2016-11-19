@@ -35,63 +35,6 @@ public class KioskBoothService {
   @Autowired
   private ClientRepository clientRepository;
 
-  public List<ClientInfo> getKioskInfoByBooth(String boothID) {
-    List<ClientInfo> clientInfoList = new ArrayList<ClientInfo>();
-    Client clientBoothID = new Client();
-    clientBoothID.setClientID(Long.parseLong(boothID));
-    List<KioskBoothRights> KioskBoothRightList =
-        kioskBoothRightsRepository.findByKioskBoothRightsID_BoothID(clientBoothID);
-    if (!(KioskBoothRightList == null || KioskBoothRightList.isEmpty())) {
-      for (KioskBoothRights kioskBoothRights : KioskBoothRightList) {
-
-        KioskBoothRightsPK kioskBoothRightsID = kioskBoothRights.getKioskBoothRightsID();
-
-        Client kioskID = kioskBoothRightsID.getKioskID();
-
-        ClientInfo clientInfo = new ClientInfo();
-
-        clientInfo.setClientIdSeq(kioskID.getClientID());
-        clientInfo.setWebIPAddress(kioskID.getWebIPAddress());
-        clientInfo.setClientDescription(kioskID.getDescription());
-        clientInfo.setClientStaus(kioskID.getStatus().getValue());
-        clientInfo.setClientType(kioskID.getType().getValue());
-        clientInfo.setUnitNo(kioskID.getUnitNo());
-        // clientInfo.setCsmControl(kioskID.isCsmControl());
-        clientInfo.setCosmosPortNumber(Integer.toString(kioskID.getCosmosPortNo()));
-        clientInfo.setSortSeq(kioskID.getSortSEQ());
-        clientInfo.setCameraServerIPAddress(kioskID.getCameraServerIPAddress());
-        clientInfo.setCameraServerPort(Integer.toString(kioskID.getCameraServerPortNo()));
-        clientInfo.setDisplayScreenId(Integer.toString(kioskBoothRights.getDisplayScreenID()));
-        clientInfo.setKioskLockStatus(kioskBoothRights.getKioskLockStatus().getValue());
-        clientInfo.setLaneNO(kioskID.getLaneNo());
-        clientInfo.setFtpIP(kioskID.getFtpIPAddress());
-        clientInfo.setFtpPort(kioskID.getFtpPort());
-        clientInfo.setFtpProtocal(kioskID.getFtpProtocol());
-        clientInfo.setFtpUserName(kioskID.getFtpUsername());
-        clientInfo.setFtpPassword(kioskID.getFtpPassword());
-        clientInfo.setFtpDirectory(kioskID.getFtpDirectory());
-        clientInfo.setWithCameraImage(Boolean.toString(kioskID.isWithCameraImage()));
-
-        clientInfoList.add(clientInfo);
-
-
-      }
-    }
-    return clientInfoList;
-  }
-
-
-
-  public Iterable<KioskBoothRights> getKioskBoothInfoById(String kioskID) {
-    Predicate kioskBoothInfoByKioskID = KioskBoothRightsPredicates.KioskBoothInfoByKioskID(kioskID);
-    return kioskBoothRightsRepository.findAll(kioskBoothInfoByKioskID);
-  }
-
-  public java.util.function.Predicate<KioskBoothRights> getKioskLockStatusCombinedPredicate() {
-    java.util.function.Predicate<KioskBoothRights> p1 = kb -> kb.getKioskLockStatus().equals(KioskLockStatus.ACTIVE)
-        || kb.getKioskLockStatus().equals(KioskLockStatus.LOCK);
-    return p1;
-  }
 
   @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, readOnly = false)
   public String activateBoothsByKioskId(KioskBoothRightInfo kioskBoothRightInfo) {
@@ -114,6 +57,39 @@ public class KioskBoothService {
       throw new BusinessException("Kiosk Information is null!");
     }
     return result;
+  }
+
+  @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, readOnly = false)
+  public String lockBoothForKiosk(String kioskID, String boothID) {
+    String result = "ERROR";
+    if (!(StringUtils.isEmpty(kioskID) || StringUtils.isEmpty(boothID))) {
+      Iterable<KioskBoothRights> allKiosks = getKioskBoothInfoById(kioskID);
+      if (!(allKiosks == null)) {
+        allKiosks.forEach(kioskBoothright -> {
+          long boothIDl = Long.parseLong(boothID);
+          if (boothIDl == kioskBoothright.getKioskBoothRightsID().getBoothID().getClientID()) {
+            kioskBoothright.setKioskLockStatus(KioskLockStatus.LOCK);
+          } else {
+            kioskBoothright.setKioskLockStatus(KioskLockStatus.RELEASED);
+          }
+          kioskBoothRightsRepository.save(kioskBoothright);
+        });
+      }
+    } else {
+      throw new BusinessException("Kiosk Information and/or booth information is null!");
+    }
+    return result;
+  }
+
+  public Iterable<KioskBoothRights> getKioskBoothInfoById(String kioskID) {
+    Predicate kioskBoothInfoByKioskID = KioskBoothRightsPredicates.KioskBoothInfoByKioskID(kioskID);
+    return kioskBoothRightsRepository.findAll(kioskBoothInfoByKioskID);
+  }
+
+  public java.util.function.Predicate<KioskBoothRights> getKioskLockStatusCombinedPredicate() {
+    java.util.function.Predicate<KioskBoothRights> p1 = kb -> kb.getKioskLockStatus().equals(KioskLockStatus.ACTIVE)
+        || kb.getKioskLockStatus().equals(KioskLockStatus.LOCK);
+    return p1;
   }
 
   public KioskBoothRights updateKioskBoothRightsFromDTO(KioskBoothRights kiosk,
@@ -177,5 +153,52 @@ public class KioskBoothService {
   public static <T> Stream<T> stream(Iterable<T> iterable) {
     return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterable.iterator(), Spliterator.ORDERED), false);
   }
+
+  public List<ClientInfo> getKioskInfoByBooth(String boothID) {
+    List<ClientInfo> clientInfoList = new ArrayList<ClientInfo>();
+    Client clientBoothID = new Client();
+    clientBoothID.setClientID(Long.parseLong(boothID));
+    List<KioskBoothRights> KioskBoothRightList =
+        kioskBoothRightsRepository.findByKioskBoothRightsID_BoothID(clientBoothID);
+    if (!(KioskBoothRightList == null || KioskBoothRightList.isEmpty())) {
+      for (KioskBoothRights kioskBoothRights : KioskBoothRightList) {
+
+        KioskBoothRightsPK kioskBoothRightsID = kioskBoothRights.getKioskBoothRightsID();
+
+        Client kioskID = kioskBoothRightsID.getKioskID();
+
+        ClientInfo clientInfo = new ClientInfo();
+
+        clientInfo.setClientIdSeq(kioskID.getClientID());
+        clientInfo.setWebIPAddress(kioskID.getWebIPAddress());
+        clientInfo.setClientDescription(kioskID.getDescription());
+        clientInfo.setClientStaus(kioskID.getStatus().getValue());
+        clientInfo.setClientType(kioskID.getType().getValue());
+        clientInfo.setUnitNo(kioskID.getUnitNo());
+        // clientInfo.setCsmControl(kioskID.isCsmControl());
+        clientInfo.setCosmosPortNumber(Integer.toString(kioskID.getCosmosPortNo()));
+        clientInfo.setSortSeq(kioskID.getSortSEQ());
+        clientInfo.setCameraServerIPAddress(kioskID.getCameraServerIPAddress());
+        clientInfo.setCameraServerPort(Integer.toString(kioskID.getCameraServerPortNo()));
+        clientInfo.setDisplayScreenId(Integer.toString(kioskBoothRights.getDisplayScreenID()));
+        clientInfo.setKioskLockStatus(kioskBoothRights.getKioskLockStatus().getValue());
+        clientInfo.setLaneNO(kioskID.getLaneNo());
+        clientInfo.setFtpIP(kioskID.getFtpIPAddress());
+        clientInfo.setFtpPort(kioskID.getFtpPort());
+        clientInfo.setFtpProtocal(kioskID.getFtpProtocol());
+        clientInfo.setFtpUserName(kioskID.getFtpUsername());
+        clientInfo.setFtpPassword(kioskID.getFtpPassword());
+        clientInfo.setFtpDirectory(kioskID.getFtpDirectory());
+        clientInfo.setWithCameraImage(Boolean.toString(kioskID.isWithCameraImage()));
+
+        clientInfoList.add(clientInfo);
+
+
+      }
+    }
+    return clientInfoList;
+  }
+
+
 
 }
