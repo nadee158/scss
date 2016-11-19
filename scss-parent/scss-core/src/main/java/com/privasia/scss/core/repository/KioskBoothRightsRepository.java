@@ -1,6 +1,7 @@
 package com.privasia.scss.core.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.querydsl.QueryDslPredicateExecutor;
@@ -30,8 +31,12 @@ public interface KioskBoothRightsRepository
 
   public List<KioskBoothRights> findByKioskBoothRightsID_KioskID(Client kioskID);
 
-  public List<KioskBoothRights> findByKioskBoothRightsID_KioskIDAndKioskBoothRightsID_BoothID(Client kioskID,
+  public Optional<KioskBoothRights> findByKioskBoothRightsID_KioskIDAndKioskBoothRightsID_BoothID(Client kioskID,
       Client boothID);
+
+  public Optional<KioskBoothRights> findByKioskBoothRightsID_KioskID_ClientIDAndKioskBoothRightsID_BoothID_ClientID(
+      long kioskID, long boothID);
+
 
   public List<KioskBoothRights> findByKioskBoothRightsID_KioskIDAndKioskBoothRightsID_BoothIDAndCardNumber(
       Client kioskID, Client boothID, int cardNumber);

@@ -55,7 +55,7 @@ public class KioskBoothService {
             });
             result = "SUCCESS";
           } else {
-            throw new BusinessException("Locked or Active records available!");
+            throw new ResultsNotFoundException("Locked or Active records available!");
           }
         } else {
           throw new ResultsNotFoundException("Kiosk Information could not be found!");
@@ -77,16 +77,24 @@ public class KioskBoothService {
           || StringUtils.isEmpty(kioskBoothRightInfo.getBoothID()))) {
         Iterable<KioskBoothRights> allKiosks = getKioskBoothInfoById(kioskBoothRightInfo.getKioskID());
         if (!(allKiosks == null)) {
-          allKiosks.forEach(kioskBoothright -> {
-            long boothIDl = Long.parseLong(kioskBoothRightInfo.getBoothID());
-            if (boothIDl == kioskBoothright.getKioskBoothRightsID().getBoothID().getClientID()) {
-              kioskBoothright = updateKioskBoothRightsFromDTO(kioskBoothright, kioskBoothRightInfo);
-              kioskBoothright.setKioskLockStatus(KioskLockStatus.LOCK);
-            } else {
-              kioskBoothright.setKioskLockStatus(KioskLockStatus.RELEASED);
-            }
-            kioskBoothRightsRepository.save(kioskBoothright);
-          });
+          Stream<KioskBoothRights> allKiosksStrem = stream(allKiosks);
+          if (allKiosksStrem.count() > 0) {
+            allKiosks.forEach(kioskBoothright -> {
+              long boothIDl = Long.parseLong(kioskBoothRightInfo.getBoothID());
+              if (boothIDl == kioskBoothright.getKioskBoothRightsID().getBoothID().getClientID()) {
+                kioskBoothright = updateKioskBoothRightsFromDTO(kioskBoothright, kioskBoothRightInfo);
+                kioskBoothright.setKioskLockStatus(KioskLockStatus.LOCK);
+              } else {
+                kioskBoothright.setKioskLockStatus(KioskLockStatus.RELEASED);
+              }
+              kioskBoothRightsRepository.save(kioskBoothright);
+            });
+            result = "SUCCESS";
+          } else {
+            throw new ResultsNotFoundException("Kiosk Information could not be found!");
+          }
+        } else {
+          throw new ResultsNotFoundException("Kiosk Information could not be foundl!");
         }
       } else {
         throw new BusinessException("Kiosk Information and/or booth information is null!");
@@ -104,22 +112,20 @@ public class KioskBoothService {
     if (!(kioskBoothRightInfo == null)) {
       if (!(StringUtils.isEmpty(kioskBoothRightInfo.getKioskID())
           || StringUtils.isEmpty(kioskBoothRightInfo.getBoothID()))) {
-        KioskBoothRightsPK primaryKey = new KioskBoothRightsPK();
-        Client booth = new Client();
-        booth.setClientID(Long.parseLong(kioskBoothRightInfo.getBoothID()));
-        Client kiosk = new Client();
-        booth.setClientID(Long.parseLong(kioskBoothRightInfo.getKioskID()));
-        primaryKey.setBoothID(booth);
-        primaryKey.setKioskID(kiosk);
-        Optional<KioskBoothRights> completedKioskOpt = kioskBoothRightsRepository.findOne(primaryKey);
-        if (!(completedKioskOpt.isPresent())) {
+        Optional<KioskBoothRights> completedKioskOpt =
+            kioskBoothRightsRepository.findByKioskBoothRightsID_KioskID_ClientIDAndKioskBoothRightsID_BoothID_ClientID(
+                Long.parseLong(kioskBoothRightInfo.getKioskID()), Long.parseLong(kioskBoothRightInfo.getBoothID()));
+        if ((completedKioskOpt.isPresent())) {
           KioskBoothRights completedKiosk = completedKioskOpt.get();
           completedKiosk = updateKioskBoothRightsFromDTO(completedKiosk, kioskBoothRightInfo);
           completedKiosk.setKioskLockStatus(KioskLockStatus.LOCK);
           kioskBoothRightsRepository.save(completedKiosk);
+          result = "SUCCESS";
+        } else {
+          throw new ResultsNotFoundException("Kiosk Information could not be found!");
         }
       } else {
-        throw new BusinessException("Kiosk Information could not be found!");
+        throw new BusinessException("Kiosk Information is null!");
       }
     } else {
       throw new BusinessException("Kiosk Information is null!");
