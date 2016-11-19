@@ -1,10 +1,12 @@
 package com.privasia.scss.kioskbooth.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -23,20 +25,35 @@ public class KioskBoothController {
 
   @RequestMapping(value = "/activateBoothsByKioskId", method = RequestMethod.POST,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-  public ResponseEntity<String> activateBoothsByKioskId(@RequestBody KioskBoothRightInfo kioskBoothRightInfo) {
+  public ResponseEntity<Map<String, Object>> activateBoothsByKioskId(
+      @RequestBody KioskBoothRightInfo kioskBoothRightInfo) {
+    Map<String, Object> resultMap = new HashMap<String, Object>();
     System.out.println("kioskBoothRightInfo :" + kioskBoothRightInfo);
     String status = kioskBoothService.activateBoothsByKioskId(kioskBoothRightInfo);
-    return new ResponseEntity<String>(status, HttpStatus.OK);
+    resultMap.put("STATUS", status);
+    return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
   }
 
-  @RequestMapping(value = "lockboothforkiosk/{kioskID}/{boothID}", method = RequestMethod.GET,
+  @RequestMapping(value = "/lockboothforkiosk", method = RequestMethod.POST,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-  public ResponseEntity<String> lockBoothForKiosk(@PathVariable("kioskID") String kioskID,
-      @PathVariable("boothID") String boothID) {
-    System.out.println("kioskID :" + kioskID);
-    System.out.println("boothID :" + boothID);
-    String status = kioskBoothService.lockBoothForKiosk(kioskID, boothID);
-    return new ResponseEntity<String>(status, HttpStatus.OK);
+  public ResponseEntity<Map<String, Object>> lockBoothForKiosk(@RequestBody KioskBoothRightInfo kioskBoothRightInfo) {
+    Map<String, Object> resultMap = new HashMap<String, Object>();
+    System.out.println("kioskID :" + kioskBoothRightInfo.getKioskID());
+    System.out.println("boothID :" + kioskBoothRightInfo.getBoothID());
+    String status = kioskBoothService.lockBoothForKiosk(kioskBoothRightInfo);
+    resultMap.put("STATUS", status);
+    return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
+  }
+
+  @RequestMapping(value = "/completekioskbooth", method = RequestMethod.POST,
+      produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+  public ResponseEntity<Map<String, Object>> completekioskbooth(@RequestBody KioskBoothRightInfo kioskBoothRightInfo) {
+    Map<String, Object> resultMap = new HashMap<String, Object>();
+    System.out.println("kioskID :" + kioskBoothRightInfo.getKioskID());
+    System.out.println("boothID :" + kioskBoothRightInfo.getBoothID());
+    String status = kioskBoothService.completekioskbooth(kioskBoothRightInfo);
+    resultMap.put("STATUS", status);
+    return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
   }
 
 

@@ -2,6 +2,7 @@ package com.privasia.scss.kioskbooth.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.stream.Stream;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.privasia.scss.common.dto.ClientInfo;
 import com.privasia.scss.common.enums.KioskLockStatus;
 import com.privasia.scss.core.exception.BusinessException;
+import com.privasia.scss.core.exception.ResultsNotFoundException;
 import com.privasia.scss.core.model.Client;
 import com.privasia.scss.core.model.KioskBoothRights;
 import com.privasia.scss.core.model.KioskBoothRightsPK;
@@ -41,17 +43,25 @@ public class KioskBoothService {
     String result = "ERROR";
     if (!(kioskBoothRightInfo == null || StringUtils.isEmpty(kioskBoothRightInfo.getKioskID()))) {
       Iterable<KioskBoothRights> allKiosks = getKioskBoothInfoById(kioskBoothRightInfo.getKioskID());
-      Stream<KioskBoothRights> allKiosksStrem = stream(allKiosks);
-      boolean isLockedOrActiveAvailable = allKiosksStrem.anyMatch(getKioskLockStatusCombinedPredicate());
-      if (!(isLockedOrActiveAvailable)) {
-        allKiosks.forEach(kiosk -> {
-          KioskBoothRights updatedKioskBoothRights = updateKioskBoothRightsFromDTO(kiosk, kioskBoothRightInfo);
-          updatedKioskBoothRights.setKioskLockStatus(KioskLockStatus.ACTIVE);
-          kioskBoothRightsRepository.save(updatedKioskBoothRights);
-        });
-        result = "SUCCESS";
+      if (!(allKiosks == null)) {
+        Stream<KioskBoothRights> allKiosksStrem = stream(allKiosks);
+        if (allKiosksStrem.count() > 0) {
+          boolean isLockedOrActiveAvailable = allKiosksStrem.anyMatch(getKioskLockStatusCombinedPredicate());
+          if (!(isLockedOrActiveAvailable)) {
+            allKiosks.forEach(kiosk -> {
+              KioskBoothRights updatedKioskBoothRights = updateKioskBoothRightsFromDTO(kiosk, kioskBoothRightInfo);
+              updatedKioskBoothRights.setKioskLockStatus(KioskLockStatus.ACTIVE);
+              kioskBoothRightsRepository.save(updatedKioskBoothRights);
+            });
+            result = "SUCCESS";
+          } else {
+            throw new BusinessException("Locked or Active records available!");
+          }
+        } else {
+          throw new ResultsNotFoundException("Kiosk Information could not be found!");
+        }
       } else {
-        throw new BusinessException("Locked or Active records available!");
+        throw new ResultsNotFoundException("Kiosk Information could not be found!");
       }
     } else {
       throw new BusinessException("Kiosk Information is null!");
@@ -60,26 +70,64 @@ public class KioskBoothService {
   }
 
   @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, readOnly = false)
-  public String lockBoothForKiosk(String kioskID, String boothID) {
+  public String lockBoothForKiosk(KioskBoothRightInfo kioskBoothRightInfo) {
     String result = "ERROR";
-    if (!(StringUtils.isEmpty(kioskID) || StringUtils.isEmpty(boothID))) {
-      Iterable<KioskBoothRights> allKiosks = getKioskBoothInfoById(kioskID);
-      if (!(allKiosks == null)) {
-        allKiosks.forEach(kioskBoothright -> {
-          long boothIDl = Long.parseLong(boothID);
-          if (boothIDl == kioskBoothright.getKioskBoothRightsID().getBoothID().getClientID()) {
-            kioskBoothright.setKioskLockStatus(KioskLockStatus.LOCK);
-          } else {
-            kioskBoothright.setKioskLockStatus(KioskLockStatus.RELEASED);
-          }
-          kioskBoothRightsRepository.save(kioskBoothright);
-        });
+    if (!(kioskBoothRightInfo == null)) {
+      if (!(StringUtils.isEmpty(kioskBoothRightInfo.getKioskID())
+          || StringUtils.isEmpty(kioskBoothRightInfo.getBoothID()))) {
+        Iterable<KioskBoothRights> allKiosks = getKioskBoothInfoById(kioskBoothRightInfo.getKioskID());
+        if (!(allKiosks == null)) {
+          allKiosks.forEach(kioskBoothright -> {
+            long boothIDl = Long.parseLong(kioskBoothRightInfo.getBoothID());
+            if (boothIDl == kioskBoothright.getKioskBoothRightsID().getBoothID().getClientID()) {
+              kioskBoothright = updateKioskBoothRightsFromDTO(kioskBoothright, kioskBoothRightInfo);
+              kioskBoothright.setKioskLockStatus(KioskLockStatus.LOCK);
+            } else {
+              kioskBoothright.setKioskLockStatus(KioskLockStatus.RELEASED);
+            }
+            kioskBoothRightsRepository.save(kioskBoothright);
+          });
+        }
+      } else {
+        throw new BusinessException("Kiosk Information and/or booth information is null!");
       }
     } else {
-      throw new BusinessException("Kiosk Information and/or booth information is null!");
+      throw new BusinessException("Kiosk Information is null!");
     }
+
     return result;
   }
+
+  @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, readOnly = false)
+  public String completekioskbooth(KioskBoothRightInfo kioskBoothRightInfo) {
+    String result = "ERROR";
+    if (!(kioskBoothRightInfo == null)) {
+      if (!(StringUtils.isEmpty(kioskBoothRightInfo.getKioskID())
+          || StringUtils.isEmpty(kioskBoothRightInfo.getBoothID()))) {
+        KioskBoothRightsPK primaryKey = new KioskBoothRightsPK();
+        Client booth = new Client();
+        booth.setClientID(Long.parseLong(kioskBoothRightInfo.getBoothID()));
+        Client kiosk = new Client();
+        booth.setClientID(Long.parseLong(kioskBoothRightInfo.getKioskID()));
+        primaryKey.setBoothID(booth);
+        primaryKey.setKioskID(kiosk);
+        Optional<KioskBoothRights> completedKioskOpt = kioskBoothRightsRepository.findOne(primaryKey);
+        if (!(completedKioskOpt.isPresent())) {
+          KioskBoothRights completedKiosk = completedKioskOpt.get();
+          completedKiosk = updateKioskBoothRightsFromDTO(completedKiosk, kioskBoothRightInfo);
+          completedKiosk.setKioskLockStatus(KioskLockStatus.LOCK);
+          kioskBoothRightsRepository.save(completedKiosk);
+        }
+      } else {
+        throw new BusinessException("Kiosk Information could not be found!");
+      }
+    } else {
+      throw new BusinessException("Kiosk Information is null!");
+    }
+
+    return result;
+  }
+
 
   public Iterable<KioskBoothRights> getKioskBoothInfoById(String kioskID) {
     Predicate kioskBoothInfoByKioskID = KioskBoothRightsPredicates.KioskBoothInfoByKioskID(kioskID);
