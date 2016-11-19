@@ -25,9 +25,9 @@ public class KioskBoothRightInfo implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
-  private long boothID;
+  private String boothID;
 
-  private long kioskID;
+  private String kioskID;
 
   private String kioskLockStatus;
 
@@ -77,19 +77,20 @@ public class KioskBoothRightInfo implements Serializable {
 
   private KioskBoothContainerDTO container04;
 
-  public long getBoothID() {
+
+  public String getBoothID() {
     return boothID;
   }
 
-  public void setBoothID(long boothID) {
+  public void setBoothID(String boothID) {
     this.boothID = boothID;
   }
 
-  public long getKioskID() {
+  public String getKioskID() {
     return kioskID;
   }
 
-  public void setKioskID(long kioskID) {
+  public void setKioskID(String kioskID) {
     this.kioskID = kioskID;
   }
 
@@ -287,13 +288,18 @@ public class KioskBoothRightInfo implements Serializable {
 
   public KioskBoothRights constructKioskBoothRights(KioskBoothRightsPK kioskBoothRightsID) {
     KioskBoothRights kioskBoothRights = new KioskBoothRights();
+    kioskBoothRights.setKioskBoothRightsID(kioskBoothRightsID);
+    updateKioskBoothRightsValues(kioskBoothRights);
+    return kioskBoothRights;
+  }
+
+  private KioskBoothRights updateKioskBoothRightsValues(KioskBoothRights kioskBoothRights) {
     kioskBoothRights.setCardNumber(cardNumber);
     kioskBoothRights.setCardScanTime(convertToLocalDate(cardScanTime));
     kioskBoothRights.setDisplayScreenID(displayScreenID);
     kioskBoothRights.setDriverIC(driverIC);
     kioskBoothRights.setDriverName(driverName);
     kioskBoothRights.setDriverName(driverName);
-    kioskBoothRights.setKioskBoothRightsID(kioskBoothRightsID);
     if (!(kioskLockStatus == null)) {
       kioskBoothRights.setKioskLockStatus(KioskLockStatus.fromCode(kioskLockStatus));
     }
@@ -322,6 +328,10 @@ public class KioskBoothRightInfo implements Serializable {
       return LocalDateTime.parse(strDate, formatter);
     }
     return null;
+  }
+
+  public KioskBoothRights updateKioskBoothRights(KioskBoothRights kiosk) {
+    return updateKioskBoothRights(kiosk);
   }
 
 

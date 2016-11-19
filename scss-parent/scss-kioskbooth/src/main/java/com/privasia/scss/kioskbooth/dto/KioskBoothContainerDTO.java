@@ -93,6 +93,12 @@ public class KioskBoothContainerDTO implements Serializable {
 
   public KioskBoothContainerAttribute constructContainerAttribute() {
     KioskBoothContainerAttribute kioskBoothContainerAttribute = new KioskBoothContainerAttribute();
+    kioskBoothContainerAttribute = updateKioskBoothContainerAttribute(kioskBoothContainerAttribute);
+    return kioskBoothContainerAttribute;
+  }
+
+  private KioskBoothContainerAttribute updateKioskBoothContainerAttribute(
+      KioskBoothContainerAttribute kioskBoothContainerAttribute) {
     kioskBoothContainerAttribute.setCancelPickup(cancelPickup);
     kioskBoothContainerAttribute.setCustomCheck(customCheck);
     kioskBoothContainerAttribute.setLine(line);
@@ -102,6 +108,11 @@ public class KioskBoothContainerDTO implements Serializable {
     kioskBoothContainerAttribute.setShipper(shipper);
     kioskBoothContainerAttribute.setStatus(status);
     return kioskBoothContainerAttribute;
+  }
+
+  public KioskBoothContainerAttribute updateContainerAttribute(
+      KioskBoothContainerAttribute kioskBoothContainerAttribute) {
+    return updateContainerAttribute(kioskBoothContainerAttribute);
   }
 
 
