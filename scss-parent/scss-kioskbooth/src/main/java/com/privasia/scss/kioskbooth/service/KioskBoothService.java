@@ -105,6 +105,7 @@ public class KioskBoothService {
           KioskBoothRights updatedKioskBoothRights = updateKioskBoothRightsFromDTO(kiosk, kioskBoothRightInfo);
           kioskBoothRightsRepository.save(updatedKioskBoothRights);
         });
+        result = "SUCCESS";
       } else {
         throw new BusinessException("Locked or Active records available!");
       }
