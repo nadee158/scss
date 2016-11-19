@@ -1,20 +1,10 @@
-/**
- * 
- */
-package com.privasia.scss.core.model;
+package com.privasia.scss.kioskbooth.dto;
 
 import java.io.Serializable;
 
-import javax.persistence.Embeddable;
+import com.privasia.scss.core.model.KioskBoothContainerAttribute;
 
-
-
-/**
- * @author Janaka
- *
- */
-@Embeddable
-public class KioskBoothContainerAttribute extends CommonContainerAttribute implements Serializable {
+public class KioskBoothContainerDTO implements Serializable {
 
   /**
    * 
@@ -36,11 +26,6 @@ public class KioskBoothContainerAttribute extends CommonContainerAttribute imple
   private String shipper;
 
   private String line;
-
-
-  public KioskBoothContainerAttribute() {
-    super();
-  }
 
   public String getCancelPickup() {
     return cancelPickup;
@@ -104,6 +89,19 @@ public class KioskBoothContainerAttribute extends CommonContainerAttribute imple
 
   public void setLine(String line) {
     this.line = line;
+  }
+
+  public KioskBoothContainerAttribute constructContainerAttribute() {
+    KioskBoothContainerAttribute kioskBoothContainerAttribute = new KioskBoothContainerAttribute();
+    kioskBoothContainerAttribute.setCancelPickup(cancelPickup);
+    kioskBoothContainerAttribute.setCustomCheck(customCheck);
+    kioskBoothContainerAttribute.setLine(line);
+    kioskBoothContainerAttribute.setLocation(location);
+    kioskBoothContainerAttribute.setOthers(others);
+    kioskBoothContainerAttribute.setRejectRemarks(rejectRemarks);
+    kioskBoothContainerAttribute.setShipper(shipper);
+    kioskBoothContainerAttribute.setStatus(status);
+    return kioskBoothContainerAttribute;
   }
 
 
