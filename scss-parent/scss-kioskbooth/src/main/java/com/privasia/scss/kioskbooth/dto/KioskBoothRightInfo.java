@@ -78,6 +78,62 @@ public class KioskBoothRightInfo implements Serializable {
   private KioskBoothContainerDTO container04 = null;
 
 
+  public KioskBoothRightInfo(KioskBoothRights boothRights) {
+    if (!(boothRights == null)) {
+      if (!(boothRights.getKioskBoothRightsID() == null)) {
+        if (!(boothRights.getKioskBoothRightsID().getBoothID() == null)) {
+          this.boothID = Long.toString(boothRights.getKioskBoothRightsID().getBoothID().getClientID());
+        }
+        if (!(boothRights.getKioskBoothRightsID().getKioskID() == null)) {
+          this.kioskID = Long.toString(boothRights.getKioskBoothRightsID().getKioskID().getClientID());
+        }
+      }
+
+      if (!(boothRights.getKioskLockStatus() == null)) {
+        this.kioskLockStatus = boothRights.getKioskLockStatus().getValue();
+      }
+      this.cardNumber = boothRights.getCardNumber();
+      this.cardScanTime = convertLocalDateToString(boothRights.getCardScanTime());
+      this.kioskSelectedTime = convertLocalDateToString(boothRights.getKioskSelectedTime());
+      this.displayScreenID = boothRights.getDisplayScreenID();
+      this.transactionIDList = boothRights.getTransactionIDList();
+      this.driverName = boothRights.getDriverName();
+      this.pmHeadNo = boothRights.getPmHeadNo();
+      this.truckCompany = boothRights.getTruckCompany();
+      this.driverIC = boothRights.getDriverIC();
+      this.plateNo = boothRights.getPlateNo();
+      if (!(boothRights.getKioskLockStatus() == null)) {
+        this.transactionType = boothRights.getKioskLockStatus().getValue();
+      }
+      this.reviseHeadNo = boothRights.getReviseHeadNo();
+      this.reviseHeadNoRemarks = boothRights.getReviseHeadNoRemarks();
+      this.retakePhoto = boothRights.isRetakePhoto();
+      this.trxCompleteTime = convertLocalDateToString(boothRights.getTrxCompleteTime());
+      this.lockUserID = boothRights.getLockUserID();
+      this.lockUserName = boothRights.getLockUserName();
+      this.referReason01List = boothRights.getReferReason01List();
+      this.referReason02List = boothRights.getReferReason02List();
+      if (!(boothRights.getContainer01() == null)) {
+        KioskBoothContainerDTO container01 = new KioskBoothContainerDTO(boothRights.getContainer01());
+        this.setContainer01(container01);
+      }
+      if (!(boothRights.getContainer02() == null)) {
+        KioskBoothContainerDTO container02 = new KioskBoothContainerDTO(boothRights.getContainer02());
+        this.setContainer01(container02);
+      }
+      if (!(boothRights.getContainer03() == null)) {
+        KioskBoothContainerDTO container03 = new KioskBoothContainerDTO(boothRights.getContainer03());
+        this.setContainer01(container03);
+      }
+      if (!(boothRights.getContainer04() == null)) {
+        KioskBoothContainerDTO container04 = new KioskBoothContainerDTO(boothRights.getContainer04());
+        this.setContainer01(container04);
+      }
+    }
+
+
+  }
+
   public String getBoothID() {
     return boothID;
   }
@@ -326,6 +382,14 @@ public class KioskBoothRightInfo implements Serializable {
     if (StringUtils.isNotEmpty(strDate)) {
       DateTimeFormatter formatter = DateTimeFormatter.ofPattern(TIME_FORMAT);
       return LocalDateTime.parse(strDate, formatter);
+    }
+    return null;
+  }
+
+  private String convertLocalDateToString(LocalDateTime dateTime) {
+    if (!(dateTime == null)) {
+      DateTimeFormatter formatter = DateTimeFormatter.ofPattern(TIME_FORMAT);
+      return formatter.format(dateTime);
     }
     return null;
   }

@@ -29,6 +29,19 @@ public class KioskBoothContainerDTO implements Serializable {
 
   private String line = StringUtils.EMPTY;
 
+  public KioskBoothContainerDTO(KioskBoothContainerAttribute container) {
+    if (!(container == null)) {
+      this.cancelPickup = container.getCancelPickup();
+      this.location = container.getLocation();
+      this.status = container.getStatus();
+      this.others = container.getOthers();
+      this.rejectRemarks = container.getRejectRemarks();
+      this.customCheck = container.getCustomCheck();
+      this.shipper = container.getShipper();
+      this.line = container.getLine();
+    }
+  }
+
   public String getCancelPickup() {
     return cancelPickup;
   }

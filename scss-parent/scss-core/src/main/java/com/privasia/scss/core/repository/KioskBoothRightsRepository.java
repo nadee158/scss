@@ -51,4 +51,8 @@ public interface KioskBoothRightsRepository
 //@formatter:on
 
 
+  public Optional<List<KioskBoothRights>> findByKioskBoothRightsID_BoothID_ClientIDOrderByKioskBoothRightsID_KioskID_LaneNoAsc(
+      long parseLong);
+
+
 }

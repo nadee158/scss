@@ -42,5 +42,25 @@ public final class KioskBoothRightsPredicates {
   }
 
 
+  public static Predicate KioskBoothInfoByBoothID(String boothID) {
+    if (StringUtils.isEmpty(boothID)) {
+      return QKioskBoothRights.kioskBoothRights.isNull();
+    } else {
+      QClient client = QClient.client;
+      client.clientID.eq(Long.valueOf(boothID));
+      return QKioskBoothRights.kioskBoothRights.kioskBoothRightsID.boothID.clientID.eq(Long.valueOf(boothID));
+    }
+  }
+
+
+  public static Predicate KioskBoothInfoByCardNumber(String cardNumber) {
+    if (StringUtils.isEmpty(cardNumber)) {
+      return QKioskBoothRights.kioskBoothRights.isNull();
+    } else {
+      return QKioskBoothRights.kioskBoothRights.cardNumber.eq(Integer.parseInt(cardNumber));
+    }
+  }
+
+
 
 }
