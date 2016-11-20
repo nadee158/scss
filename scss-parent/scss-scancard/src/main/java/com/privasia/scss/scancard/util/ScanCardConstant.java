@@ -21,6 +21,7 @@ public final class ScanCardConstant {
   public static final String CARD_ERR_PENDING = "CRD PEN";
   public static final String CARD_ERR_NOT_FOUND = "NO CARD ";
   public static final String CARD_ERR_NOT_VALID_LENGTH = "NOT VALID CARD LENGTH ";
+  public static final String CARD_ERR_NOT_VALID_FORMAT = "NOT VALID CARD FORMAT ";
 
   // company error code
   public static final String COMP_ERR_SUSPENDED = "COM SUS";

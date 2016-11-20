@@ -6,6 +6,7 @@ package com.privasia.scss.scancard.service;
 
 import java.util.Optional;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -73,18 +74,23 @@ public class CardValidationService {
    * @return
    */
   public CardValidationDto validateCard(String cardNo) {
-    boolean isValidCardNo = isValidCardNoLength(cardNo);
-    if (isValidCardNo) {
-      Optional<Card> cardOptional = cardRepository.findByCardNo(Long.valueOf(cardNo));
-      if (cardOptional.isPresent()) {
-        return validateCard(
-            cardOptional.orElseThrow(() -> new ResultsNotFoundException("Requested Card was not found!")));
+    if (StringUtils.isNumeric(cardNo)) {
+      boolean isValidCardNo = isValidCardNoLength(cardNo);
+      if (isValidCardNo) {
+        Optional<Card> cardOptional = cardRepository.findByCardNo(Long.valueOf(cardNo));
+        if (cardOptional.isPresent()) {
+          return validateCard(
+              cardOptional.orElseThrow(() -> new ResultsNotFoundException("Requested Card was not found!")));
+        } else {
+          throw new ResultsNotFoundException("Requested Card was not found!");
+        }
       } else {
-        throw new ResultsNotFoundException("Requested Card was not found!");
+        return new CardValidationDto(null, false, ScanCardConstant.CARD_ERR_NOT_VALID_LENGTH, null, null);
       }
     } else {
-      return new CardValidationDto(null, false, ScanCardConstant.CARD_ERR_NOT_VALID_LENGTH, null, null);
+      return new CardValidationDto(null, false, ScanCardConstant.CARD_ERR_NOT_VALID_FORMAT, null, null);
     }
+
   }
 
   public CardValidationDto validateCard(Card foundCard) {

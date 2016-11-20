@@ -25,7 +25,7 @@ public final class KioskBoothRightsPredicates {
     if (StringUtils.isEmpty(Status)) {
       return QKioskBoothRights.kioskBoothRights.isNull();
     } else {
-      return QKioskBoothRights.kioskBoothRights.kioskLockStatus.eq(KioskLockStatus.valueOf(Status));
+      return QKioskBoothRights.kioskBoothRights.kioskLockStatus.eq(KioskLockStatus.fromCode(Status));
     }
 
   }
