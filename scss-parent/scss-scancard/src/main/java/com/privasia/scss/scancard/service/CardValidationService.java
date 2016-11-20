@@ -79,11 +79,12 @@ public class CardValidationService {
       if (cardOptional.isPresent()) {
         return validateCard(
             cardOptional.orElseThrow(() -> new ResultsNotFoundException("Requested Card was not found!")));
+      } else {
+        throw new ResultsNotFoundException("Requested Card was not found!");
       }
     } else {
       return new CardValidationDto(null, false, ScanCardConstant.CARD_ERR_NOT_VALID_LENGTH, null, null);
     }
-    throw new ResultsNotFoundException("Requested Card was not found!");
   }
 
   public CardValidationDto validateCard(Card foundCard) {

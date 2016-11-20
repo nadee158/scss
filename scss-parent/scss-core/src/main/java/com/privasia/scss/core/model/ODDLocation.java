@@ -41,7 +41,7 @@ public class ODDLocation extends AuditEntity implements Serializable {
 	private ODDGroup oddGroup;
 
 	@Column(name = "STATUS_CODE")
-	@Type(type = "com.privasia.scss.core.util.enumusertype.RecordStatusEnumUserType")
+	@Type(type = "com.privasia.scss.common.enumusertype.RecordStatusEnumUserType")
 	private RecordStatus statusCode;
 
 	public String getOddCode() {

@@ -98,7 +98,7 @@ public class WHODD extends AuditEntity implements Serializable {
 	private SystemUser gateOutBoothClerk;
 
 	@Column(name = "ODD_IMPEXPFLAG", nullable = true)
-	@Type(type = "com.privasia.scss.core.util.enumusertype.ImpExpFlagEnumUserType")
+	@Type(type = "com.privasia.scss.common.enumusertype.ImpExpFlagEnumUserType")
 	private ImpExpFlagStatus impExpFlag;
 
 	@Column(name = "KIOSK_CANCEL_PICKUP", nullable = true)
@@ -110,11 +110,11 @@ public class WHODD extends AuditEntity implements Serializable {
 	private boolean kioskConfirmed;
 
 	@Column(name = "ODD_GATE_IN_STATUS", nullable = true)
-	@Type(type = "com.privasia.scss.core.util.enumusertype.TransactionStatusEnumUserType")
+	@Type(type = "com.privasia.scss.common.enumusertype.TransactionStatusEnumUserType")
 	private TransactionStatus gateInStatus;
 
 	@Column(name = "ODD_INOUTFLAG", nullable = true)
-	@Type(type = "com.privasia.scss.core.util.enumusertype.GateInOutStatusEnumUserType")
+	@Type(type = "com.privasia.scss.common.enumusertype.GateInOutStatusEnumUserType")
 	private GateInOutStatus inOutFlag;
 
 	@Column(name = "ODD_REV_HEADNO_REM")

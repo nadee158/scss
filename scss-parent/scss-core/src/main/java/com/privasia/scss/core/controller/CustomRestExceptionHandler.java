@@ -13,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
@@ -28,9 +27,12 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import org.springframework.web.util.WebUtils;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.privasia.scss.common.dto.ApiError;
+import com.privasia.scss.common.dto.ApiResponseObject;
+import com.privasia.scss.common.dto.CustomResponseEntity;
 import com.privasia.scss.core.exception.InvalidJwtTokenException;
 import com.privasia.scss.core.exception.JwtExpiredTokenException;
 import com.privasia.scss.core.exception.ResultsNotFoundException;
@@ -41,243 +43,276 @@ import io.jsonwebtoken.RequiredTypeException;
 @RestControllerAdvice
 public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
 
+  protected CustomResponseEntity<ApiResponseObject> handleExceptionInternal(Exception exception, HttpStatus httpStatus,
+      WebRequest request, String error) {
+    if (HttpStatus.INTERNAL_SERVER_ERROR.equals(httpStatus)) {
+      request.setAttribute(WebUtils.ERROR_EXCEPTION_ATTRIBUTE, exception, WebRequest.SCOPE_REQUEST);
+    }
+    final ApiError apiError = new ApiError(httpStatus, exception.getLocalizedMessage(), error);
+    ApiResponseObject<ApiError> body = new ApiResponseObject<ApiError>(httpStatus, apiError);
+    return new CustomResponseEntity<ApiResponseObject>(body, httpStatus);
+  }
+
+  protected CustomResponseEntity<ApiResponseObject> handleExceptionInternal(Exception exception, HttpStatus httpStatus,
+      WebRequest request, List<String> errors) {
+    if (HttpStatus.INTERNAL_SERVER_ERROR.equals(httpStatus)) {
+      request.setAttribute(WebUtils.ERROR_EXCEPTION_ATTRIBUTE, exception, WebRequest.SCOPE_REQUEST);
+    }
+    final ApiError apiError = new ApiError(httpStatus, exception.getLocalizedMessage(), errors);
+    ApiResponseObject<ApiError> body = new ApiResponseObject<ApiError>(httpStatus, apiError);
+    return new CustomResponseEntity<ApiResponseObject>(body, httpStatus);
+  }
+
   // 400
-
   @Override
-  protected ResponseEntity<Object> handleMethodArgumentNotValid(final MethodArgumentNotValidException ex,
-      final HttpHeaders headers, final HttpStatus status, final WebRequest request) {
-    logger.info(ex.getClass().getName());
+  protected ResponseEntity handleMethodArgumentNotValid(final MethodArgumentNotValidException exception,
+      final HttpHeaders headers, final HttpStatus status, final WebRequest webRequest) {
+
+    HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
+
+    logger.info(exception.getClass().getName());
     //
     final List<String> errors = new ArrayList<String>();
-    for (final FieldError error : ex.getBindingResult().getFieldErrors()) {
+    for (final FieldError error : exception.getBindingResult().getFieldErrors()) {
       errors.add(error.getField() + ": " + error.getDefaultMessage());
     }
-    for (final ObjectError error : ex.getBindingResult().getGlobalErrors()) {
+    for (final ObjectError error : exception.getBindingResult().getGlobalErrors()) {
       errors.add(error.getObjectName() + ": " + error.getDefaultMessage());
     }
-    final ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, ex.getLocalizedMessage(), errors);
-    return handleExceptionInternal(ex, apiError, headers, apiError.getStatus(), request);
+
+    return handleExceptionInternal(exception, httpStatus, webRequest, errors);
   }
 
   @Override
-  protected ResponseEntity<Object> handleBindException(final BindException ex, final HttpHeaders headers,
-      final HttpStatus status, final WebRequest request) {
-    logger.info(ex.getClass().getName());
+  protected ResponseEntity handleBindException(final BindException exception, final HttpHeaders headers,
+      final HttpStatus status, final WebRequest webRequest) {
+
+    HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
+
+    logger.info(exception.getClass().getName());
     //
     final List<String> errors = new ArrayList<String>();
-    for (final FieldError error : ex.getBindingResult().getFieldErrors()) {
+    for (final FieldError error : exception.getBindingResult().getFieldErrors()) {
       errors.add(error.getField() + ": " + error.getDefaultMessage());
     }
-    for (final ObjectError error : ex.getBindingResult().getGlobalErrors()) {
+    for (final ObjectError error : exception.getBindingResult().getGlobalErrors()) {
       errors.add(error.getObjectName() + ": " + error.getDefaultMessage());
     }
-    final ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, ex.getLocalizedMessage(), errors);
-    return handleExceptionInternal(ex, apiError, headers, apiError.getStatus(), request);
+
+    return handleExceptionInternal(exception, httpStatus, webRequest, errors);
   }
 
   @Override
-  protected ResponseEntity<Object> handleTypeMismatch(final TypeMismatchException ex, final HttpHeaders headers,
-      final HttpStatus status, final WebRequest request) {
-    logger.info(ex.getClass().getName());
-    //
-    final String error =
-        ex.getValue() + " value for " + ex.getPropertyName() + " should be of type " + ex.getRequiredType();
+  protected ResponseEntity handleTypeMismatch(final TypeMismatchException exception, final HttpHeaders headers,
+      final HttpStatus status, final WebRequest webRequest) {
 
-    final ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, ex.getLocalizedMessage(), error);
-    return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
+    logger.info(exception.getClass().getName());
+    //
+    final String error = exception.getValue() + " value for " + exception.getPropertyName() + " should be of type "
+        + exception.getRequiredType();
+
+    HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
+
+    return handleExceptionInternal(exception, httpStatus, webRequest, error);
   }
 
   @Override
-  protected ResponseEntity<Object> handleMissingServletRequestPart(final MissingServletRequestPartException ex,
-      final HttpHeaders headers, final HttpStatus status, final WebRequest request) {
-    logger.info(ex.getClass().getName());
+  protected ResponseEntity handleMissingServletRequestPart(final MissingServletRequestPartException exception,
+      final HttpHeaders headers, final HttpStatus status, final WebRequest webRequest) {
+    logger.info(exception.getClass().getName());
     //
-    final String error = ex.getRequestPartName() + " part is missing";
-    final ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, ex.getLocalizedMessage(), error);
-    return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
+    final String error = exception.getRequestPartName() + " part is missing";
+    HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
+    return handleExceptionInternal(exception, httpStatus, webRequest, error);
   }
 
   @Override
-  protected ResponseEntity<Object> handleMissingServletRequestParameter(
-      final MissingServletRequestParameterException ex, final HttpHeaders headers, final HttpStatus status,
-      final WebRequest request) {
-    logger.info(ex.getClass().getName());
+  protected ResponseEntity handleMissingServletRequestParameter(final MissingServletRequestParameterException exception,
+      final HttpHeaders headers, final HttpStatus status, final WebRequest webRequest) {
+    logger.info(exception.getClass().getName());
     //
-    final String error = ex.getParameterName() + " parameter is missing";
-    final ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, ex.getLocalizedMessage(), error);
-    return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
+    final String error = exception.getParameterName() + " parameter is missing";
+    HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
+    return handleExceptionInternal(exception, httpStatus, webRequest, error);
   }
 
   //
 
   @ExceptionHandler({MethodArgumentTypeMismatchException.class})
-  public ResponseEntity<Object> handleMethodArgumentTypeMismatch(final MethodArgumentTypeMismatchException ex,
-      final WebRequest request) {
-    logger.info(ex.getClass().getName());
+  public CustomResponseEntity<ApiResponseObject> handleMethodArgumentTypeMismatch(
+      final MethodArgumentTypeMismatchException exception, final WebRequest webRequest) {
+    logger.info(exception.getClass().getName());
     //
-    final String error = ex.getName() + " should be of type " + ex.getRequiredType().getName();
+    final String error = exception.getName() + " should be of type " + exception.getRequiredType().getName();
 
-    final ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, ex.getLocalizedMessage(), error);
-    return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
+    HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
+    return handleExceptionInternal(exception, httpStatus, webRequest, error);
   }
 
   @ExceptionHandler({ConstraintViolationException.class})
-  public ResponseEntity<Object> handleConstraintViolation(final ConstraintViolationException ex,
-      final WebRequest request) {
-    logger.info(ex.getClass().getName());
+  public CustomResponseEntity<ApiResponseObject> handleConstraintViolation(final ConstraintViolationException exception,
+      final WebRequest webRequest) {
+    logger.info(exception.getClass().getName());
     //
     final List<String> errors = new ArrayList<String>();
-    for (final ConstraintViolation<?> violation : ex.getConstraintViolations()) {
+    for (final ConstraintViolation<?> violation : exception.getConstraintViolations()) {
       errors.add(
           violation.getRootBeanClass().getName() + " " + violation.getPropertyPath() + ": " + violation.getMessage());
     }
 
-    final ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, ex.getLocalizedMessage(), errors);
-    return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
+    HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
+    return handleExceptionInternal(exception, httpStatus, webRequest, errors);
   }
 
   @ExceptionHandler({DataIntegrityViolationException.class})
-  public ResponseEntity<Object> handleConflictException(final DataIntegrityViolationException ex,
-      final WebRequest request) {
-    logger.info(ex.getClass().getName());
-    final ApiError apiError = new ApiError(HttpStatus.CONFLICT, ex.getLocalizedMessage(), ex.getMessage());
-    return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
+  public CustomResponseEntity<ApiResponseObject> handleConflictException(
+      final DataIntegrityViolationException exception, final WebRequest webRequest) {
+    logger.info(exception.getClass().getName());
+    String error = "Duplicate entry for a column marked as unique";
+    HttpStatus httpStatus = HttpStatus.CONFLICT;
+    return handleExceptionInternal(exception, httpStatus, webRequest, error);
   }
 
 
   // 404
 
   @Override
-  protected ResponseEntity<Object> handleNoHandlerFoundException(final NoHandlerFoundException ex,
-      final HttpHeaders headers, final HttpStatus status, final WebRequest request) {
-    logger.info(ex.getClass().getName());
+  protected ResponseEntity handleNoHandlerFoundException(final NoHandlerFoundException exception,
+      final HttpHeaders headers, final HttpStatus status, final WebRequest webRequest) {
+    logger.info(exception.getClass().getName());
     //
-    final String error = "No handler found for " + ex.getHttpMethod() + " " + ex.getRequestURL();
+    final String error = "No handler found for " + exception.getHttpMethod() + " " + exception.getRequestURL();
 
-    final ApiError apiError = new ApiError(HttpStatus.NOT_FOUND, ex.getLocalizedMessage(), error);
-    return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
+    HttpStatus httpStatus = HttpStatus.NOT_FOUND;
+    return handleExceptionInternal(exception, httpStatus, webRequest, error);
   }
 
   // 405
 
   @Override
-  protected ResponseEntity<Object> handleHttpRequestMethodNotSupported(final HttpRequestMethodNotSupportedException ex,
-      final HttpHeaders headers, final HttpStatus status, final WebRequest request) {
-    logger.info(ex.getClass().getName());
+  protected ResponseEntity handleHttpRequestMethodNotSupported(final HttpRequestMethodNotSupportedException exception,
+      final HttpHeaders headers, final HttpStatus status, final WebRequest webRequest) {
+    logger.info(exception.getClass().getName());
     //
     final StringBuilder builder = new StringBuilder();
-    builder.append(ex.getMethod());
-    builder.append(" method is not supported for this request. Supported methods are ");
-    ex.getSupportedHttpMethods().forEach(t -> builder.append(t + " "));
+    builder.append(exception.getMethod());
+    builder.append(" method is not supported for this webRequest. Supported methods are ");
+    exception.getSupportedHttpMethods().forEach(t -> builder.append(t + " "));
 
-    final ApiError apiError = new ApiError(HttpStatus.METHOD_NOT_ALLOWED, ex.getLocalizedMessage(), builder.toString());
-    return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
+    HttpStatus httpStatus = HttpStatus.METHOD_NOT_ALLOWED;
+    return handleExceptionInternal(exception, httpStatus, webRequest, builder.toString());
   }
 
   // 415
 
   @Override
-  protected ResponseEntity<Object> handleHttpMediaTypeNotSupported(final HttpMediaTypeNotSupportedException ex,
-      final HttpHeaders headers, final HttpStatus status, final WebRequest request) {
-    logger.info(ex.getClass().getName());
+  protected ResponseEntity handleHttpMediaTypeNotSupported(final HttpMediaTypeNotSupportedException exception,
+      final HttpHeaders headers, final HttpStatus status, final WebRequest webRequest) {
+    logger.info(exception.getClass().getName());
     //
     final StringBuilder builder = new StringBuilder();
-    builder.append(ex.getContentType());
+    builder.append(exception.getContentType());
     builder.append(" media type is not supported. Supported media types are ");
-    ex.getSupportedMediaTypes().forEach(t -> builder.append(t + " "));
+    exception.getSupportedMediaTypes().forEach(t -> builder.append(t + " "));
 
-    final ApiError apiError = new ApiError(HttpStatus.UNSUPPORTED_MEDIA_TYPE, ex.getLocalizedMessage(),
-        builder.substring(0, builder.length() - 2));
-    return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
+    HttpStatus httpStatus = HttpStatus.UNSUPPORTED_MEDIA_TYPE;
+    return handleExceptionInternal(exception, httpStatus, webRequest, builder.substring(0, builder.length() - 2));
   }
 
   // 403
   @ExceptionHandler({AccessDeniedException.class})
-  public ResponseEntity<Object> handleAccessDenied(final Exception ex, final WebRequest request) {
-    logger.info(ex.getClass().getName());
-    logger.error("error", ex);
+  public CustomResponseEntity<ApiResponseObject> handleAccessDenied(final Exception exception,
+      final WebRequest webRequest) {
+    logger.info(exception.getClass().getName());
+    logger.error("error", exception);
     //
-    final ApiError apiError = new ApiError(HttpStatus.FORBIDDEN, ex.getLocalizedMessage(), "Forbidden");
-    return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
+    HttpStatus httpStatus = HttpStatus.FORBIDDEN;
+    return handleExceptionInternal(exception, httpStatus, webRequest, "Forbidden");
   }
 
   // 500
   @ExceptionHandler({Exception.class})
-  public ResponseEntity<Object> handleAll(final Exception ex, final WebRequest request) {
-    logger.info(ex.getClass().getName());
-    logger.error("error", ex);
+  public CustomResponseEntity<ApiResponseObject> handleAll(final Exception exception, final WebRequest webRequest) {
+    logger.info(exception.getClass().getName());
+    logger.error("error", exception);
     //
-    final ApiError apiError =
-        new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, ex.getLocalizedMessage(), "error occurred");
-    return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
+    HttpStatus httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+    return handleExceptionInternal(exception, httpStatus, webRequest, "internal error occurred");
   }
 
   // custom
   // @ResponseStatus(value = HttpStatus.OK, reason = "No Search Results Found!")
-  @ExceptionHandler({ResultsNotFoundException.class, UsernameNotFoundException.class})
-  public ResponseEntity<Object> handleResultsNotFound(final ResultsNotFoundException ex, final WebRequest request) {
-    logger.info(ex.getClass().getName());
-    logger.error("error", ex);
+  @ExceptionHandler({ResultsNotFoundException.class})
+  public CustomResponseEntity<ApiResponseObject> handleResultsNotFound(final ResultsNotFoundException exception,
+      final WebRequest webRequest) {
+    logger.info(exception.getClass().getName());
+    logger.error("error", exception);
     //
-    final ApiError apiError = new ApiError(HttpStatus.OK, ex.getMessage(), "No Search Results Found!");
-    return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
+    HttpStatus httpStatus = HttpStatus.NOT_FOUND;
+    return handleExceptionInternal(exception, httpStatus, webRequest, "No Search Results Found!");
   }
 
   // custom
   @ExceptionHandler({InvalidJwtTokenException.class})
-  public ResponseEntity<Object> handleInvalidJwtToken(final InvalidJwtTokenException ex, final WebRequest request) {
-    logger.info(ex.getClass().getName());
-    logger.error("error", ex);
+  public CustomResponseEntity<ApiResponseObject> handleInvalidJwtToken(final InvalidJwtTokenException exception,
+      final WebRequest webRequest) {
+    logger.info(exception.getClass().getName());
+    logger.error("error", exception);
     //
-    final ApiError apiError = new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage(), "Invalid Jwt Token!");
-    return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
+    HttpStatus httpStatus = HttpStatus.UNAUTHORIZED;
+    return handleExceptionInternal(exception, httpStatus, webRequest, "Invalid Jwt Token!");
   }
 
   @ExceptionHandler({BadCredentialsException.class})
-  public ResponseEntity<Object> handleBadCredentials(final BadCredentialsException ex, final WebRequest request) {
-    logger.info(ex.getClass().getName());
-    logger.error("error", ex);
+  public CustomResponseEntity<ApiResponseObject> handleBadCredentials(final BadCredentialsException exception,
+      final WebRequest webRequest) {
+    logger.info(exception.getClass().getName());
+    logger.error("error", exception);
     //
-    final ApiError apiError = new ApiError(HttpStatus.FORBIDDEN, ex.getMessage(), "Invalid Credentials!");
-    return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
+    HttpStatus httpStatus = HttpStatus.UNAUTHORIZED;
+    return handleExceptionInternal(exception, httpStatus, webRequest, "Invalid Credentials!");
   }
 
   @ExceptionHandler({JwtExpiredTokenException.class})
-  public ResponseEntity<Object> handleJwtExpiredToken(final JwtExpiredTokenException ex, final WebRequest request) {
-    logger.info(ex.getClass().getName());
-    logger.error("error", ex);
+  public CustomResponseEntity<ApiResponseObject> handleJwtExpiredToken(final JwtExpiredTokenException exception,
+      final WebRequest webRequest) {
+    logger.info(exception.getClass().getName());
+    logger.error("error", exception);
     //
-    final ApiError apiError = new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage(), "Expired Jwt Token!");
-    return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
+    HttpStatus httpStatus = HttpStatus.UNAUTHORIZED;
+    return handleExceptionInternal(exception, httpStatus, webRequest, "Expired Jwt Token!");
   }
 
   @ExceptionHandler({RequiredTypeException.class})
-  public ResponseEntity<Object> handleRequiredTypeException(final RequiredTypeException ex, final WebRequest request) {
-    logger.info(ex.getClass().getName());
-    logger.error("error", ex);
+  public CustomResponseEntity<ApiResponseObject> handleRequiredTypeException(final RequiredTypeException exception,
+      final WebRequest webRequest) {
+    logger.info(exception.getClass().getName());
+    logger.error("error", exception);
     //
-    final ApiError apiError = new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage(), "Jwt Reuqired Not Type!");
-    return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
+    HttpStatus httpStatus = HttpStatus.UNAUTHORIZED;
+    return handleExceptionInternal(exception, httpStatus, webRequest, "Jwt Reuqired Not Type!");
   }
 
   @ExceptionHandler({MalformedJwtException.class})
-  public ResponseEntity<Object> handleMalformedJwtException(final MalformedJwtException ex, final WebRequest request) {
-    logger.info(ex.getClass().getName());
-    logger.error("error %%%%%%%%%%%", ex);
+  public CustomResponseEntity<ApiResponseObject> handleMalformedJwtException(final MalformedJwtException exception,
+      final WebRequest webRequest) {
+    logger.info(exception.getClass().getName());
+    logger.error("error %%%%%%%%%%%", exception);
     System.out.println("%%%%%%%%%%%%%%");
     //
-    final ApiError apiError = new ApiError(HttpStatus.UNAUTHORIZED, ex.getMessage(), "Invalid token, Malformed!");
-    return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
+    HttpStatus httpStatus = HttpStatus.UNAUTHORIZED;
+    return handleExceptionInternal(exception, httpStatus, webRequest, "Invalid token, Malformed!");
   }
 
   @ExceptionHandler({JsonParseException.class})
-  public ResponseEntity<Object> handleMalformedJwtException(final JsonParseException ex, final WebRequest request) {
-    logger.info(ex.getClass().getName());
-    logger.error("error %%%%%%%%%%%", ex);
+  public CustomResponseEntity<ApiResponseObject> handleJsonParseException(final JsonParseException exception,
+      final WebRequest webRequest) {
+    logger.info(exception.getClass().getName());
+    logger.error("error %%%%%%%%%%%", exception);
     System.out.println("%%%%%%%%%%%%%%");
     //
-    final ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, ex.getMessage(), "Invalid json, Malformed!");
-    return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
+    HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
+    return handleExceptionInternal(exception, httpStatus, webRequest, "Invalid json, Malformed!");
   }
 
 

@@ -29,24 +29,24 @@ public class ODDContainerDetails implements Serializable {
 
 	private String remarks;
 	
-	@Type(type = "com.privasia.scss.core.util.enumusertype.TransactionStatusEnumUserType")
+	@Type(type = "com.privasia.scss.common.enumusertype.TransactionStatusEnumUserType")
 	private TransactionStatus oddStatus;
 
 	private String rejectionReason;
 
-	@Type(type = "com.privasia.scss.core.util.enumusertype.GateInOutStatusEnumUserType")
+	@Type(type = "com.privasia.scss.common.enumusertype.GateInOutStatusEnumUserType")
 	private ContainerFullEmptyType fullOrEmpty;
 
-	@Type(type = "com.privasia.scss.core.util.enumusertype.ContainerSizeEnumUserType")
+	@Type(type = "com.privasia.scss.common.enumusertype.ContainerSizeEnumUserType")
 	private ContainerSize containerSize;
 
 	@OneToOne(fetch = FetchType.LAZY, mappedBy = "oddIdSeq", cascade = CascadeType.MERGE)
 	private HDBSBkgDetail hdbsBkgDetailNo;
 
-	@Type(type = "com.privasia.scss.core.util.enumusertype.HDBSStatusEnumUserType")
+	@Type(type = "com.privasia.scss.common.enumusertype.HDBSStatusEnumUserType")
 	private HDBSStatus hdbsStatus;
 
-	@Type(type = "com.privasia.scss.core.util.enumusertype.HDBSArrivalStatusEnumUserType")
+	@Type(type = "com.privasia.scss.common.enumusertype.HDBSArrivalStatusEnumUserType")
 	private HDBSArrivalStatus hdbsArrivalStatus;
 
 	public String getContainerNo() {

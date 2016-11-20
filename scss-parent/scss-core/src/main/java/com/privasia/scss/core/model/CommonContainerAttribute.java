@@ -27,12 +27,12 @@ public class CommonContainerAttribute implements Serializable {
 	private String containerNumber;
 
 
-	@Type(type = "com.privasia.scss.core.util.enumusertype.ContainerSizeEnumUserType")
+	@Type(type = "com.privasia.scss.common.enumusertype.ContainerSizeEnumUserType")
 	private ContainerSize containerLength;
 
 	private String containerISOCode;
 
-	@Type(type = "com.privasia.scss.core.util.enumusertype.ContainerFullEmptyTypeEnumUserType")
+	@Type(type = "com.privasia.scss.common.enumusertype.ContainerFullEmptyTypeEnumUserType")
 	private ContainerFullEmptyType containerFullOrEmpty;
 
 	public String getContainerNumber() {

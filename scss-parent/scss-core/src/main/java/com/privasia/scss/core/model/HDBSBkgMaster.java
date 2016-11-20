@@ -75,14 +75,14 @@ public class HDBSBkgMaster extends AuditEntity implements Serializable {
 	private String cardNo;
 
 	@Column(name = "CRD_CARDSTATUS", nullable = true)
-	@Type(type = "com.privasia.scss.core.util.enumusertype.CardStatusEnumUserType")
+	@Type(type = "com.privasia.scss.common.enumusertype.CardStatusEnumUserType")
 	private CardStatus cardStatus;
 
 	@Column(name = "HDBS_BKG_REF_NO")
 	private String hdbsBkgRefNo;
 
 	@Column(name = "STATUS_CODE", nullable = true)
-	@Type(type = "com.privasia.scss.core.util.enumusertype.CompanyStatusEnumUserType")
+	@Type(type = "com.privasia.scss.common.enumusertype.CompanyStatusEnumUserType")
 	private CompanyStatus statusCode;
 
 	@Column(name = "PM_HEAD_NO")

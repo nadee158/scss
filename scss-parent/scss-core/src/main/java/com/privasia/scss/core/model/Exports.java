@@ -94,7 +94,7 @@ public class Exports implements Serializable {
 	private ShipSCN scn;
 
 	@Column(name = "EXP_IN_OUT", nullable = true)
-	@Type(type = "com.privasia.scss.core.util.enumusertype.GateInOutStatusEnumUserType")
+	@Type(type = "com.privasia.scss.common.enumusertype.GateInOutStatusEnumUserType")
 	private GateInOutStatus gateInOut;
 	
 	@Column(name = "EXP_LINE")

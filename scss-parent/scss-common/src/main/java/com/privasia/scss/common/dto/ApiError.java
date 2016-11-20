@@ -5,17 +5,15 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 
+/**
+ * @author Nadeeshani Senevirathna
+ *
+ */
 public class ApiError {
 
   private HttpStatus status;
   private String message;
   private List<String> errors;
-
-  //
-
-  public ApiError() {
-    super();
-  }
 
   public ApiError(final HttpStatus status, final String message, final List<String> errors) {
     super();
@@ -31,7 +29,6 @@ public class ApiError {
     errors = Arrays.asList(error);
   }
 
-  //
 
   public HttpStatus getStatus() {
     return status;
