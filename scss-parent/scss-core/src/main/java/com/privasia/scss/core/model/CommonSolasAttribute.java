@@ -28,7 +28,7 @@ public class CommonSolasAttribute implements Serializable {
   private static final long serialVersionUID = 1L;
 
   @Column(name = "MGW")
-  private int mgw;
+  private Integer mgw;
 
   @Column(name = "FA_LEDGER_CODE")
   private String faLedgerCode;
@@ -39,18 +39,19 @@ public class CommonSolasAttribute implements Serializable {
   @Column(name = "SOLAS_DET_ID")
   private String solasDetailID;
 
-  @Column(name = "SOLAS_INSTRUCTION")
+  @Column(name = "SOLAS_INSTRUCTION", nullable = true)
   @Type(type = "com.privasia.scss.common.enumusertype.SolasInstructionEnumUserType")
   private SolasInstructionType solasInstruction;
 
   @Column(name = "SHIPPER_VGM")
   private String shipperVGM;
 
-  public int getMgw() {
+
+  public Integer getMgw() {
     return mgw;
   }
 
-  public void setMgw(int mgw) {
+  public void setMgw(Integer mgw) {
     this.mgw = mgw;
   }
 

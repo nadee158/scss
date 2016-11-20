@@ -4,22 +4,21 @@
 package com.privasia.scss.master.controller;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.privasia.scss.common.dto.ApiResponseObject;
+import com.privasia.scss.common.dto.CustomResponseEntity;
 import com.privasia.scss.core.model.ODDExportReason;
 import com.privasia.scss.core.model.ODDImportReason;
 import com.privasia.scss.core.model.ODDLocation;
-import com.privasia.scss.core.model.ReferReason;
 import com.privasia.scss.core.util.service.CurrentDateTimeService;
+import com.privasia.scss.master.dto.ReferReasonDTO;
 import com.privasia.scss.master.service.GlobalSettingService;
 import com.privasia.scss.master.service.ODDMasterDataService;
 import com.privasia.scss.master.service.ReferReasonService;
@@ -33,68 +32,80 @@ import com.privasia.scss.master.service.ReferReasonService;
 @RequestMapping("**/masterdata")
 public class MasterDataController {
 
-	@Autowired
-	private CurrentDateTimeService currentDateTimeService;
+  @Autowired
+  private CurrentDateTimeService currentDateTimeService;
 
-	@Autowired
-	private GlobalSettingService globalSettingService;
+  @Autowired
+  private GlobalSettingService globalSettingService;
 
-	@Autowired
-	private ReferReasonService referReasonService;
+  @Autowired
+  private ReferReasonService referReasonService;
 
-	@Autowired
-	private ODDMasterDataService oddMasterDataService;
+  @Autowired
+  private ODDMasterDataService oddMasterDataService;
 
-	@RequestMapping(value = "serverdate", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public ResponseEntity<String> getServerDateTime() {
+  @RequestMapping(value = "serverdate", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
+      consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+  public CustomResponseEntity<ApiResponseObject> getServerDateTime() {
 
-		String date = currentDateTimeService.getFormattedCurrentDateAndTime();
+    String date = currentDateTimeService.getFormattedCurrentDateAndTime();
 
-		System.out.println("date : " + date);
+    System.out.println("date : " + date);
 
-		return new ResponseEntity<String>(date, HttpStatus.OK);
-	}
+    return new CustomResponseEntity<ApiResponseObject>(new ApiResponseObject<String>(HttpStatus.OK, date),
+        HttpStatus.OK);
+  }
 
-	@RequestMapping(value = "customcheck", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public ResponseEntity<Boolean> isCustomCheckAfterTransaction() {
+  @RequestMapping(value = "customcheck", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
+      consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+  public CustomResponseEntity<ApiResponseObject> isCustomCheckAfterTransaction() {
 
-		boolean check = globalSettingService.isCustomCheckBeforeTransaction();
+    boolean check = globalSettingService.isCustomCheckBeforeTransaction();
 
-		System.out.println("check : " + check);
+    System.out.println("check : " + check);
 
-		return new ResponseEntity<Boolean>(check, HttpStatus.OK);
-	}
+    return new CustomResponseEntity<ApiResponseObject>(new ApiResponseObject<Boolean>(HttpStatus.OK, check),
+        HttpStatus.OK);
+  }
 
-	@RequestMapping(value = "/referreason", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public ResponseEntity<Map<Boolean, Set<ReferReason>>> getReferReasonList() {
+  @RequestMapping(value = "/referreason", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
+      consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+  public CustomResponseEntity<ApiResponseObject> getReferReasonList() {
+    System.out.println("dtoList before:");
+    List<ReferReasonDTO> dtoList = referReasonService.findAllReferReason();
+    System.out.println("dtoList :" + dtoList);
+    return new CustomResponseEntity<ApiResponseObject>(
+        new ApiResponseObject<List<ReferReasonDTO>>(HttpStatus.OK, dtoList), HttpStatus.OK);
+  }
 
-		Map<Boolean, Set<ReferReason>> map = referReasonService.findAllReferReason();
+  @RequestMapping(value = "/oddlocation", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
+      consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+  public CustomResponseEntity<ApiResponseObject> getODDActionLocation() {
 
-		return new ResponseEntity<Map<Boolean, Set<ReferReason>>>(map, HttpStatus.OK);
-	}
+    List<ODDLocation> locationList = oddMasterDataService.findActiveODDLocation();
 
-	@RequestMapping(value = "/oddlocation", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public ResponseEntity<List<ODDLocation>> getODDActionLocation() {
+    return new CustomResponseEntity<ApiResponseObject>(
+        new ApiResponseObject<List<ODDLocation>>(HttpStatus.OK, locationList), HttpStatus.OK);
+  }
 
-		List<ODDLocation> locationList = oddMasterDataService.findActiveODDLocation();
+  @RequestMapping(value = "/oddexportreason", method = RequestMethod.GET,
+      produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+  public CustomResponseEntity<ApiResponseObject> getAllExportReason() {
 
-		return new ResponseEntity<List<ODDLocation>>(locationList, HttpStatus.OK);
-	}
+    List<ODDExportReason> oddExportReason = oddMasterDataService.findAllExporteason();
 
-	@RequestMapping(value = "/oddexportreason", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public ResponseEntity<List<ODDExportReason>> getAllExportReason() {
+    return new CustomResponseEntity<ApiResponseObject>(
+        new ApiResponseObject<List<ODDExportReason>>(HttpStatus.OK, oddExportReason), HttpStatus.OK);
+  }
 
-		List<ODDExportReason> oddExportReason = oddMasterDataService.findAllExporteason();
+  @RequestMapping(value = "/oddimportreason", method = RequestMethod.GET,
+      produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+  public CustomResponseEntity<ApiResponseObject> getAllImportReason() {
 
-		return new ResponseEntity<List<ODDExportReason>>(oddExportReason, HttpStatus.OK);
-	}
+    List<ODDImportReason> oddImportReason = oddMasterDataService.findAllImportReason();
 
-	@RequestMapping(value = "/oddimportreason", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public ResponseEntity<List<ODDImportReason>> getAllImportReason() {
-
-		List<ODDImportReason> oddImportReason = oddMasterDataService.findAllImportReason();
-
-		return new ResponseEntity<List<ODDImportReason>>(oddImportReason, HttpStatus.OK);
-	}
+    return new CustomResponseEntity<ApiResponseObject>(
+        new ApiResponseObject<List<ODDImportReason>>(HttpStatus.OK, oddImportReason), HttpStatus.OK);
+  }
 
 }

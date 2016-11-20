@@ -23,10 +23,10 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "SCSS_ODD_EXPORT_REASON")
-@AttributeOverrides({@AttributeOverride(name = "addBy", column = @Column(name = "CREATED_BY")),
-    @AttributeOverride(name = "updateBy", column = @Column(name = "UPDATED_BY")),
-    @AttributeOverride(name = "dateTimeAdd", column = @Column(name = "DATE_TIME_CREATED")),
-    @AttributeOverride(name = "dateTimeUpdate", column = @Column(name = "DATE_TIME_UPDATE"))})
+@AttributeOverrides({@AttributeOverride(name = "addBy", column = @Column(name = "ADD_BY")),
+    @AttributeOverride(name = "updateBy", column = @Column(name = "UPDATE_BY")),
+    @AttributeOverride(name = "dateTimeAdd", column = @Column(name = "DATETIME_ADD")),
+    @AttributeOverride(name = "dateTimeUpdate", column = @Column(name = "DATETIME_UPDATE"))})
 public class ODDExportReason extends AuditEntity implements Serializable {
 
   /**
@@ -43,5 +43,23 @@ public class ODDExportReason extends AuditEntity implements Serializable {
 
   @Column(name = "ODD_EXPORT_REASON")
   private String exportReason;
+
+  public Long getOddExportReasonID() {
+    return oddExportReasonID;
+  }
+
+  public void setOddExportReasonID(Long oddExportReasonID) {
+    this.oddExportReasonID = oddExportReasonID;
+  }
+
+  public String getExportReason() {
+    return exportReason;
+  }
+
+  public void setExportReason(String exportReason) {
+    this.exportReason = exportReason;
+  }
+
+
 
 }

@@ -3,9 +3,10 @@
  */
 package com.privasia.scss.master.service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.function.Supplier;
+
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -18,6 +19,7 @@ import com.privasia.scss.common.enums.RecordStatus;
 import com.privasia.scss.core.exception.ResultsNotFoundException;
 import com.privasia.scss.core.model.ReferReason;
 import com.privasia.scss.core.repository.ReferReasonRepository;
+import com.privasia.scss.master.dto.ReferReasonDTO;
 
 /**
  * @author Janaka
@@ -31,28 +33,48 @@ public class ReferReasonService {
   private ReferReasonRepository referReasonRepository;
 
   @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-  public Map<ReferReason, Set<ReferReason>> findAllReferReason() throws ResultsNotFoundException {
 
-    Stream<ReferReason> referReasonStream =
+  public List<ReferReasonDTO> findAllReferReason() throws ResultsNotFoundException {
+
+
+    List<ReferReason> referReasonList =
         referReasonRepository.findByReferStatus(RecordStatus.fromCode(RecordStatus.ACTIVE.getValue()));
-    
-    
-    
-    
-    
-    return referReasonStream.filter(r -> r.isParent() == true).collect(Collectors.groupingBy(ReferReason::getParentReferReason,
-                Collectors.mapping(ReferReason::getReferReasonID, Collectors.toSet())));
-    
-    
 
-      // referReasonStream.forEach((ReferReason r ) ->System.out.println(r.getReferReasonID()));
-      //map.forEach((k, v) -> System.out.println("IsParent new: " + k + " Object new: " + v));
+    System.out.println("referReasonList :" + referReasonList);
+    if (!(referReasonList == null || referReasonList.isEmpty())) {
+      List<ReferReasonDTO> dtoList = new ArrayList<ReferReasonDTO>();
+      try {
 
-      //return map;
+        Stream<ReferReason> parentStream = referReasonList.stream();
 
-    //} else {
-      //throw new ResultsNotFoundException("No ReferReason Records were found!");
-    //}
+        Map<ReferReason, List<ReferReason>> map = parentStream.filter(ch -> ch.getReferReason() != null)
+            .collect(Collectors.groupingBy(ReferReason::getReferReason));
+
+
+        if (!(map == null || map.isEmpty())) {
+          map.forEach((key, val) -> {
+            dtoList.add(new ReferReasonDTO(key, val));
+          });
+        }
+        Stream<ReferReason> aloneStream = referReasonList.stream();
+
+        List<ReferReason> aloneList =
+            aloneStream.filter(r -> r.getReferReason() == null && r.isParent() == false).collect(Collectors.toList());
+        if (!(aloneList == null || aloneList.isEmpty())) {
+          aloneList.forEach(rfr -> {
+            dtoList.add(new ReferReasonDTO(rfr, null));
+          });
+        }
+
+        return dtoList;
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    } else {
+      throw new ResultsNotFoundException("No ReferReason Records were found!");
+    }
+    throw new ResultsNotFoundException("No ReferReason Records were found!");
+
   }
 
 }

@@ -77,6 +77,9 @@ public class KioskBoothRightInfo implements Serializable {
 
   private KioskBoothContainerDTO container04 = null;
 
+  public KioskBoothRightInfo() {
+    super();
+  }
 
   public KioskBoothRightInfo(KioskBoothRights boothRights) {
     if (!(boothRights == null)) {

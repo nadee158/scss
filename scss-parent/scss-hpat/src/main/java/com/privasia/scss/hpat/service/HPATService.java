@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.privasia.scss.common.dto.TransactionDTO;
 import com.privasia.scss.common.enums.BookingType;
 import com.privasia.scss.common.enums.HpatReferStatus;
+import com.privasia.scss.core.exception.BusinessException;
 import com.privasia.scss.core.exception.ResultsNotFoundException;
 import com.privasia.scss.core.model.Card;
 import com.privasia.scss.core.model.HPATBooking;
@@ -43,8 +44,8 @@ public class HPATService {
   @Autowired
   private CardRepository cardRepository;
 
-  @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-  public List<HpatDto> getEtpHpat4ImpAndExp(long cardId, LocalDateTime date, List<BookingType> bookingTypes) {
+  // @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
+  public List<HpatDto> getEtpHpat4ImpAndExp(Long cardId, LocalDateTime date, List<BookingType> bookingTypes) {
     List<HpatDto> dtoList = new ArrayList<HpatDto>();
     Optional<Card> card = cardRepository.findOne(cardId); // need to handle optional
     if (card.isPresent()) {
@@ -75,11 +76,16 @@ public class HPATService {
     List<HpatDto> hpats = null;
 
     List<BookingType> convertedBookingTypes = new ArrayList<>();
-
+    System.out.println("bookingTypes :" + bookingTypes);
     bookingTypes.forEach(bookingType -> {
-      convertedBookingTypes.add(BookingType.fromValue(bookingType));
+      BookingType bk = BookingType.fromValue(bookingType);
+      if (!(bk == null)) {
+        convertedBookingTypes.add(bk);
+      } else {
+        throw new BusinessException("Invalid Booking Type!");
+      }
     });
-
+    System.out.println("convertedBookingTypes :" + convertedBookingTypes);
     hpats = getEtpHpat4ImpAndExp(cardId, systemDateTime, convertedBookingTypes);
     if (!(hpats == null || hpats.isEmpty())) {
 
