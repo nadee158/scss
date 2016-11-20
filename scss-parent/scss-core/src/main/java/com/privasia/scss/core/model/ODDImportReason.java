@@ -21,12 +21,13 @@ import javax.persistence.Table;
  * @author Janaka
  *
  */
+
 @Entity
 @Table(name = "SCSS_ODD_IMPORT_REASON")
-@AttributeOverrides({@AttributeOverride(name = "addBy", column = @Column(name = "CREATED_BY")),
-    @AttributeOverride(name = "updateBy", column = @Column(name = "UPDATED_BY")),
-    @AttributeOverride(name = "dateTimeAdd", column = @Column(name = "DATE_TIME_CREATED")),
-    @AttributeOverride(name = "dateTimeUpdate", column = @Column(name = "DATE_TIME_UPDATE"))})
+@AttributeOverrides({@AttributeOverride(name = "addBy", column = @Column(name = "ADD_BY")),
+    @AttributeOverride(name = "updateBy", column = @Column(name = "UPDATE_BY")),
+    @AttributeOverride(name = "dateTimeAdd", column = @Column(name = "DATETIME_ADD")),
+    @AttributeOverride(name = "dateTimeUpdate", column = @Column(name = "DATETIME_UPDATE"))})
 public class ODDImportReason extends AuditEntity implements Serializable {
 
   /**
@@ -43,5 +44,23 @@ public class ODDImportReason extends AuditEntity implements Serializable {
 
   @Column(name = "ODD_IMPORT_REASON")
   private String importReason;
+
+  public Long getOddImportReasonID() {
+    return oddImportReasonID;
+  }
+
+  public void setOddImportReasonID(Long oddImportReasonID) {
+    this.oddImportReasonID = oddImportReasonID;
+  }
+
+  public String getImportReason() {
+    return importReason;
+  }
+
+  public void setImportReason(String importReason) {
+    this.importReason = importReason;
+  }
+
+
 
 }

@@ -67,7 +67,7 @@ public class HPATBooking extends AuditEntity implements Serializable {
   @Column(name = "PM_NO")
   private String pmNumber;
 
-  @Column(name = "STATUS_CODE")
+  @Column(name = "STATUS_CODE", nullable = true)
   @Type(type = "com.privasia.scss.common.enumusertype.HPATReferStatusEnumUserType")
   private HpatReferStatus status;
 
@@ -92,13 +92,13 @@ public class HPATBooking extends AuditEntity implements Serializable {
   @Column(name = "TRAILER_PLATE")
   private String trailerPlate;
 
-  @Column(name = "AXLE_VERIFIED")
+  @Column(name = "AXLE_VERIFIED", nullable = true)
   @Type(type = "yes_no")
-  private boolean axleVerified;
+  private Boolean axleVerified;
 
-  @Column(name = "PM_VERIFIED")
+  @Column(name = "PM_VERIFIED", nullable = true)
   @Type(type = "yes_no")
-  private boolean pmVerified;
+  private Boolean pmVerified;
 
   @OneToMany(fetch = FetchType.EAGER, mappedBy = "hpatBooking")
   private Set<HPATBookingDetail> hpatBookingDetails;
@@ -273,22 +273,23 @@ public class HPATBooking extends AuditEntity implements Serializable {
   }
 
 
-  public boolean isAxleVerified() {
+
+  public Boolean getAxleVerified() {
     return axleVerified;
   }
 
 
-  public void setAxleVerified(boolean axleVerified) {
+  public void setAxleVerified(Boolean axleVerified) {
     this.axleVerified = axleVerified;
   }
 
 
-  public boolean isPmVerified() {
+  public Boolean getPmVerified() {
     return pmVerified;
   }
 
 
-  public void setPmVerified(boolean pmVerified) {
+  public void setPmVerified(Boolean pmVerified) {
     this.pmVerified = pmVerified;
   }
 

@@ -9,14 +9,14 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.privasia.scss.etpws.service.EdoExpiryForLineResponseType;
-import com.privasia.scss.etpws.service.client.ETPWebserviceClient;
+import com.privasia.scss.common.dto.ApiResponseObject;
+import com.privasia.scss.common.dto.CustomResponseEntity;
+import com.privasia.scss.common.dto.TransactionDTO;
 import com.privasia.scss.hpat.dto.HpatDto;
 import com.privasia.scss.hpat.service.HPATService;
 
@@ -26,19 +26,16 @@ import com.privasia.scss.hpat.service.HPATService;
  */
 
 @RestController
-@RequestMapping("api")
+@RequestMapping("**/hpat")
 public class HPATController {
 
   @Autowired
   private HPATService hpatService;
 
-  @Autowired
-  private ETPWebserviceClient etpWebserviceClient;
 
-
-  @RequestMapping(value = "{cardID}/{bookingTypes}", method = RequestMethod.GET,
+  @RequestMapping(value = "/{cardID}/{bookingTypes}", method = RequestMethod.GET,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-  public ResponseEntity<List<HpatDto>> findEtpHpat4ImpAndExp(@PathVariable Long cardID,
+  public CustomResponseEntity<ApiResponseObject> findEtpHpat4ImpAndExp(@PathVariable Long cardID,
       @PathVariable List<String> bookingTypes) {
 
     System.out.println(cardID + "cardID");
@@ -46,18 +43,21 @@ public class HPATController {
 
     List<HpatDto> dtos = hpatService.findEtpHpat4ImpAndExp(cardID, LocalDateTime.now(), bookingTypes);
 
-    return new ResponseEntity<List<HpatDto>>(dtos, HttpStatus.OK);
+    return new CustomResponseEntity<ApiResponseObject>(new ApiResponseObject<List<HpatDto>>(HttpStatus.OK, dtos),
+        HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/test/{lineNo}", method = RequestMethod.GET,
+
+  @RequestMapping(value = "/{bookingID}/details", method = RequestMethod.GET,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-  public ResponseEntity<Boolean> findEtpHpat4ImpAndExp(@PathVariable String lineNo) {
+  public CustomResponseEntity<ApiResponseObject> getEtpHpat4ImpAndExp(@PathVariable String bookingID) {
 
-    System.out.println(lineNo + "lineNo");
+    System.out.println(bookingID + "bookingID");
 
-    EdoExpiryForLineResponseType response = etpWebserviceClient.getEdoExpiryForLine(lineNo);
+    TransactionDTO dto = hpatService.getEtpHpat4ImpAndExp(bookingID);
 
-    return new ResponseEntity<Boolean>(response.isEdoExpiryEnabled(), HttpStatus.OK);
+    return new CustomResponseEntity<ApiResponseObject>(new ApiResponseObject<TransactionDTO>(HttpStatus.OK, dto),
+        HttpStatus.OK);
   }
 
 

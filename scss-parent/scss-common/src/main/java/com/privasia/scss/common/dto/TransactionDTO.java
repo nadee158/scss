@@ -25,9 +25,9 @@ public class TransactionDTO implements Serializable {
 
   private String trailerPlate;
 
-  private boolean pmVerified;
+  private Boolean pmVerified;
 
-  private boolean axleVerified;
+  private Boolean axleVerified;
 
   private String trailerType;
 
@@ -67,7 +67,7 @@ public class TransactionDTO implements Serializable {
 
   private String passportNo;
 
-  private boolean shipperVGM;
+  private Boolean shipperVGM;
 
   private String timeIn;
 
@@ -195,11 +195,11 @@ public class TransactionDTO implements Serializable {
     super();
   }
 
-  public boolean isShipperVGM() {
+  public Boolean isShipperVGM() {
     return shipperVGM;
   }
 
-  public void setShipperVGM(boolean shipperVGM) {
+  public void setShipperVGM(Boolean shipperVGM) {
     this.shipperVGM = shipperVGM;
   }
 
@@ -307,19 +307,19 @@ public class TransactionDTO implements Serializable {
     this.trailerPlate = trailerPlate;
   }
 
-  public boolean isPmVerified() {
+  public Boolean isPmVerified() {
     return pmVerified;
   }
 
-  public void setPmVerified(boolean pmVerified) {
+  public void setPmVerified(Boolean pmVerified) {
     this.pmVerified = pmVerified;
   }
 
-  public boolean isAxleVerified() {
+  public Boolean isAxleVerified() {
     return axleVerified;
   }
 
-  public void setAxleVerified(boolean axleVerified) {
+  public void setAxleVerified(Boolean axleVerified) {
     this.axleVerified = axleVerified;
   }
 

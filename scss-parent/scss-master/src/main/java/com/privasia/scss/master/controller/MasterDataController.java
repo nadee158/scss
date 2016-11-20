@@ -74,10 +74,10 @@ public class MasterDataController {
       consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public CustomResponseEntity<ApiResponseObject> getReferReasonList() {
     System.out.println("map dddd:");
-    Map<Boolean, Set<ReferReason>> map = referReasonService.findAllReferReason();
+    Map<ReferReason, Set<ReferReason>> map = referReasonService.findAllReferReason();
     System.out.println("map :" + map);
     return new CustomResponseEntity<ApiResponseObject>(
-        new ApiResponseObject<Map<Boolean, Set<ReferReason>>>(HttpStatus.OK, map), HttpStatus.OK);
+        new ApiResponseObject<Map<ReferReason, Set<ReferReason>>>(HttpStatus.OK, map), HttpStatus.OK);
   }
 
   @RequestMapping(value = "/oddlocation", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
