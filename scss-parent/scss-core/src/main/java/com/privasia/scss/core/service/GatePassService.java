@@ -26,8 +26,8 @@ import com.privasia.scss.common.enums.GatePassStatus;
 import com.privasia.scss.common.enums.HpatReferStatus;
 import com.privasia.scss.common.enums.ImpExpFlagStatus;
 import com.privasia.scss.common.enums.TransactionStatus;
+import com.privasia.scss.common.util.ApplicationConstants;
 import com.privasia.scss.common.util.CommonUtil;
-import com.privasia.scss.common.util.GatePassErrMsg;
 import com.privasia.scss.core.exception.BusinessException;
 import com.privasia.scss.core.exception.ResultsNotFoundException;
 import com.privasia.scss.core.model.Card;
@@ -125,7 +125,7 @@ public class GatePassService {
       if (!(gatePass.getCommonGateInOut() == null || gatePass.getCommonGateInOut().getEirStatus() == null)) {
         if (gatePass.getCommonGateInOut().getEirStatus().equals(eirStatus)) {
           throw new BusinessException(
-              CommonUtil.formatMessageCode(GatePassErrMsg.GATE_PASS_IS_USED, new Object[] {gatePassNo}));
+              CommonUtil.formatMessageCode(ApplicationConstants.GATE_PASS_IS_USED, new Object[] {gatePassNo}));
         }
       }
       log.debug("---END check gatepass no approved, EIRStatus = A? ----" + gatePassNo + ":" + truckHeadNo);
@@ -136,7 +136,7 @@ public class GatePassService {
       if (!(gatePass.getCommonGateInOut() == null || gatePass.getCommonGateInOut().getEirStatus() == null)) {
         if (gatePass.getCommonGateInOut().getEirStatus().equals(eirStatus)) {
           throw new BusinessException(
-              CommonUtil.formatMessageCode(GatePassErrMsg.GATE_PASS_IN_PROGRESS, new Object[] {gatePassNo}));
+              CommonUtil.formatMessageCode(ApplicationConstants.GATE_PASS_IN_PROGRESS, new Object[] {gatePassNo}));
         }
       }
       log.debug("--END check gatepass is in progress (in using), EIRStatus = I? --" + gatePassNo + ":" + truckHeadNo);
@@ -148,7 +148,7 @@ public class GatePassService {
       if (!(gatePass.getGatePassStatus() == null)) {
         if (gatePass.getGatePassStatus().equals(gatePassStatus)) {
           throw new BusinessException(
-              CommonUtil.formatMessageCode(GatePassErrMsg.GATE_PASS_CANCEL, new Object[] {gatePassNo}));
+              CommonUtil.formatMessageCode(ApplicationConstants.GATE_PASS_CANCEL, new Object[] {gatePassNo}));
         }
         log.error("-----END check gatepass is cancelled -----" + gatePassNo + ":" + truckHeadNo);
 
@@ -161,7 +161,7 @@ public class GatePassService {
           if (gatePass.getCommonGateInOut().getEirStatus().equals(eirStatus)
               && gatePass.getGatePassStatus().equals(gatePassStatus)) {
             throw new BusinessException(
-                CommonUtil.formatMessageCode(GatePassErrMsg.GATE_PASS_INVALID, new Object[] {gatePassNo}));
+                CommonUtil.formatMessageCode(ApplicationConstants.GATE_PASS_INVALID, new Object[] {gatePassNo}));
           }
         }
         log.error("------END check gatepass is valid , EIRStatus = N? ------" + gatePassNo + ":" + truckHeadNo);
@@ -175,7 +175,7 @@ public class GatePassService {
               + " :validateDate: " + validateDate + " :today: " + today);
           if (today.isAfter(validateDate)) {
             throw new BusinessException(
-                CommonUtil.formatMessageCode(GatePassErrMsg.DATE_GATEPASS_EXPIRY, new Object[] {gatePassNo}));
+                CommonUtil.formatMessageCode(ApplicationConstants.DATE_GATEPASS_EXPIRY, new Object[] {gatePassNo}));
           }
           log.error("------END check Gate Pass Expiry Date By YPN? ---- gatePassNo: " + gatePassNo + " :validateDate: "
               + validateDate + " :today: " + today);
@@ -201,7 +201,7 @@ public class GatePassService {
                 + " :wdcValidateDate: " + wdcValidateDate + " :today: " + today);
             if (today.isAfter(wdcValidateDate)) {
               throw new BusinessException(
-                  CommonUtil.formatMessageCode(GatePassErrMsg.DATE_GATEPASS_EXPIRY, new Object[] {gatePassNo}));
+                  CommonUtil.formatMessageCode(ApplicationConstants.DATE_GATEPASS_EXPIRY, new Object[] {gatePassNo}));
             }
             log.error("------END check WDC Gate Pass Expiry Date By YPN? ---- gatePassNo: " + gatePassNo
                 + " :wdcValidateDate: " + wdcValidateDate + " :today: " + today);
@@ -230,8 +230,8 @@ public class GatePassService {
                   LocalDateTime edoExpiryDate = wdcGatePass.getEdoExpiryDate();
                   if (edoExpiryDate != null) {
                     if (today.isAfter(edoExpiryDate)) {
-                      throw new BusinessException(CommonUtil.formatMessageCode(GatePassErrMsg.DATE_GATEPASS_EDO_EXPIRY,
-                          new Object[] {gatePassNo}));
+                      throw new BusinessException(CommonUtil
+                          .formatMessageCode(ApplicationConstants.DATE_GATEPASS_EDO_EXPIRY, new Object[] {gatePassNo}));
                     }
                   } else {
                     String lineCode = wdcGatePass.getGateOrder().getLineCode();
@@ -239,8 +239,8 @@ public class GatePassService {
                       EdoExpiryForLineResponseType responseType = etpWebserviceClient.getEdoExpiryForLine(lineCode);
                       if (responseType.isEdoExpiryEnabled()) {
                         if (edoExpiryDate == null) {
-                          throw new BusinessException(CommonUtil.formatMessageCode(GatePassErrMsg.EDO_EXPIRY_DATE_NULL,
-                              new Object[] {gatePassNo}));
+                          throw new BusinessException(CommonUtil
+                              .formatMessageCode(ApplicationConstants.EDO_EXPIRY_DATE_NULL, new Object[] {gatePassNo}));
                         }
                       }
                     }
@@ -290,7 +290,7 @@ public class GatePassService {
     log.error("-------------END check_MatchCompany_PreArrival_New -----------" + gatePassNo + ":" + truckHeadNo);
     if (!(companyId == hcid)) {
       throw new BusinessException(
-          CommonUtil.formatMessageCode(GatePassErrMsg.GATE_PASS_COMPANY_NOT_MATCH, new Object[] {gatePassNo}));
+          CommonUtil.formatMessageCode(ApplicationConstants.GATE_PASS_COMPANY_NOT_MATCH, new Object[] {gatePassNo}));
     }
 
     /**
@@ -304,13 +304,13 @@ public class GatePassService {
 
     if (isOgaBlock && isInternalBlock) {
       throw new BusinessException(
-          CommonUtil.formatMessageCode(GatePassErrMsg.GATE_PASS_OGA_INTERNAL_BLOCK, new Object[] {containerNo}));
+          CommonUtil.formatMessageCode(ApplicationConstants.GATE_PASS_OGA_INTERNAL_BLOCK, new Object[] {containerNo}));
     } else if (isOgaBlock && !isInternalBlock) {
       throw new BusinessException(
-          CommonUtil.formatMessageCode(GatePassErrMsg.GATE_PASS_OGA_BLOCK, new Object[] {containerNo}));
+          CommonUtil.formatMessageCode(ApplicationConstants.GATE_PASS_OGA_BLOCK, new Object[] {containerNo}));
     } else if (!isOgaBlock && isInternalBlock) {
       throw new BusinessException(
-          CommonUtil.formatMessageCode(GatePassErrMsg.GATE_PASS_INTERNAL_BLOCK, new Object[] {containerNo}));
+          CommonUtil.formatMessageCode(ApplicationConstants.GATE_PASS_INTERNAL_BLOCK, new Object[] {containerNo}));
     }
 
     /**
@@ -473,7 +473,7 @@ public class GatePassService {
     // return true;
     // } else {
     // throw new BusinessException(
-    // CommonUtil.formatMessageCode(GatePassErrMsg.GATE_PASS_NO_PREARRIVAL, new Object[]
+    // CommonUtil.formatMessageCode(ApplicationConstants.GATE_PASS_NO_PREARRIVAL, new Object[]
     // {gatePassNo}));
     // }
     // }
@@ -501,7 +501,7 @@ public class GatePassService {
 
 
     // if (rs.next()) {
-    // //return GatePassErrMsg.GATE_PASS_OGA_BLOCK;
+    // //return ApplicationConstants.GATE_PASS_OGA_BLOCK;
     // isOGABlock = true;
     // }
 
@@ -522,7 +522,7 @@ public class GatePassService {
     // + " ORDER BY orid30 DESC";
     //
     // if (rs.next()) {
-    // //return GatePassErrMsg.GATE_PASS_INTERNAL_BLOCK;
+    // //return ApplicationConstants.GATE_PASS_INTERNAL_BLOCK;
     // isInternalBlock = true;
     // }
     return isInternalBlock;

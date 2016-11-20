@@ -19,7 +19,7 @@ public class PrintEIRContainerInfo extends CommonContainerAttribute implements S
 
 	private String containerBayCode;
 	
-	@Type(type = "com.privasia.scss.core.util.enumusertype.GateInOutStatusEnumUserType")
+	@Type(type = "com.privasia.scss.common.enumusertype.GateInOutStatusEnumUserType")
 	private GateInOutStatus containerInOrOut;
 
 	private String containerPositionOnTruck;

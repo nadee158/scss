@@ -4,434 +4,454 @@ import java.io.Serializable;
 
 public class ImportContainer implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 1L;
 
-	private String impGatePassNumber;
+  private String impGatePassNumber;
 
-	private String containerNumber;
+  private String containerNumber;
 
-	private String gateInOut;
+  private String gateInOut;
 
-	private String line;
+  private String line;
 
-	private ISOInfo isoInfo;
+  private ISOInfo isoInfo;
 
-	private SealInfo sealInfo01;
+  private SealInfo sealInfo01;
 
-	private SealInfo sealInfo02;
+  private SealInfo sealInfo02;
 
-	private String agentCode;
+  private String agentCode;
 
-	private String fullOrEmpty;
+  private String fullOrEmpty;
 
-	private String isoCode;
+  private String isoCode;
 
-	private String orderFOT;
+  private String orderFOT;
 
-	private String currentPosition;
+  private String currentPosition;
 
-	private String handlingID;
-	
-	private String InOrOut;
+  private String handlingID;
 
-	// properties added for updateGatePass
-	private String positionOnTruck;
+  private String InOrOut;
 
-	// eirNumber -
-	private long eirNo;
+  // properties added for updateGatePass
+  private String positionOnTruck;
 
-	// systemUser id
-	private long userSessionId;
+  // eirNumber -
+  private long eirNo;
 
-	private String gateInLaneNo;
+  // systemUser id
+  private long userSessionId;
 
-	private String bayCode;
+  private String gateInLaneNo;
 
-	private String yardPosition;
+  private String bayCode;
 
-	private long printEIRNo;
+  private String yardPosition;
 
-	private String rejectRemarks;
+  private long printEIRNo;
 
-	private String acceptOrReject;
+  private String rejectRemarks;
 
-	// cardUsageID
-	private String cugId;
+  private String acceptOrReject;
 
-	// bookingID
-	private String hpat;
+  // cardUsageID
+  private String cugId;
 
-	//////////////////////////// TO PRINT EIR
-	private String operationReefer;
+  // bookingID
+  private String hpat;
 
-	private String temp;
+  //////////////////////////// TO PRINT EIR
+  private String operationReefer;
 
-	private String tempUnit;
+  private String temp;
 
-	private String imdg;
+  private String tempUnit;
 
-	private String unc;
+  private String imdg;
 
-	private String oogoh;
+  private String unc;
 
-	private String oogol;
+  private String oogoh;
 
-	private String oogof;
+  private String oogol;
 
-	private String oogoa;
+  private String oogof;
 
-	private String oogor;
+  private String oogoa;
 
-	private DGInfo dgInfo;
+  private String oogor;
 
-	private boolean FOTBKGFlag = true;
+  private DGInfo dgInfo;
 
-	private String netWeight;
+  private boolean FOTBKGFlag = true;
 
-	private String containerHeight;
+  private String netWeight;
 
-	private String containerLength;
 
-	private String containerType;
+  private String containerHeight;
 
-	public String getContainerHeight() {
-		return containerHeight;
-	}
+  private String containerLength;
 
-	public void setContainerHeight(String containerHeight) {
-		this.containerHeight = containerHeight;
-	}
+  private String containerType;
 
-	public String getContainerLength() {
-		return containerLength;
-	}
+  //////////////////////////// TO createImpRequestXML
+  private String errXMLMsg;
 
-	public void setContainerLength(String containerLength) {
-		this.containerLength = containerLength;
-	}
+  private String contRefer;
 
-	public String getContainerType() {
-		return containerType;
-	}
+  public String getContRefer() {
+    return contRefer;
+  }
 
-	public void setContainerType(String containerType) {
-		this.containerType = containerType;
-	}
+  public void setContRefer(String contRefer) {
+    this.contRefer = contRefer;
+  }
 
+  public String getErrXMLMsg() {
+    return errXMLMsg;
+  }
 
-	public String getNetWeight() {
-		return netWeight;
-	}
+  public void setErrXMLMsg(String errXMLMsg) {
+    this.errXMLMsg = errXMLMsg;
+  }
 
-	public void setNetWeight(String netWeight) {
-		this.netWeight = netWeight;
-	}
+  public String getContainerHeight() {
+    return containerHeight;
+  }
 
-	public String getOogoh() {
-		return oogoh;
-	}
+  public void setContainerHeight(String containerHeight) {
+    this.containerHeight = containerHeight;
+  }
 
-	public void setOogoh(String oogoh) {
-		this.oogoh = oogoh;
-	}
+  public String getContainerLength() {
+    return containerLength;
+  }
 
-	public String getOogol() {
-		return oogol;
-	}
+  public void setContainerLength(String containerLength) {
+    this.containerLength = containerLength;
+  }
 
-	public void setOogol(String oogol) {
-		this.oogol = oogol;
-	}
+  public String getContainerType() {
+    return containerType;
+  }
 
-	public String getOogof() {
-		return oogof;
-	}
+  public void setContainerType(String containerType) {
+    this.containerType = containerType;
+  }
 
-	public void setOogof(String oogof) {
-		this.oogof = oogof;
-	}
 
-	public String getOogoa() {
-		return oogoa;
-	}
+  public String getNetWeight() {
+    return netWeight;
+  }
 
-	public void setOogoa(String oogoa) {
-		this.oogoa = oogoa;
-	}
+  public void setNetWeight(String netWeight) {
+    this.netWeight = netWeight;
+  }
 
-	public String getOogor() {
-		return oogor;
-	}
+  public String getOogoh() {
+    return oogoh;
+  }
 
-	public void setOogor(String oogor) {
-		this.oogor = oogor;
-	}
+  public void setOogoh(String oogoh) {
+    this.oogoh = oogoh;
+  }
 
-	public DGInfo getDgInfo() {
-		return dgInfo;
-	}
+  public String getOogol() {
+    return oogol;
+  }
 
-	public void setDgInfo(DGInfo dgInfo) {
-		this.dgInfo = dgInfo;
-	}
+  public void setOogol(String oogol) {
+    this.oogol = oogol;
+  }
 
-	public String getUnc() {
-		return unc;
-	}
+  public String getOogof() {
+    return oogof;
+  }
 
-	public void setUnc(String unc) {
-		this.unc = unc;
-	}
+  public void setOogof(String oogof) {
+    this.oogof = oogof;
+  }
 
-	public String getTemp() {
-		return temp;
-	}
+  public String getOogoa() {
+    return oogoa;
+  }
 
-	public void setTemp(String temp) {
-		this.temp = temp;
-	}
+  public void setOogoa(String oogoa) {
+    this.oogoa = oogoa;
+  }
 
-	public String getTempUnit() {
-		return tempUnit;
-	}
+  public String getOogor() {
+    return oogor;
+  }
 
-	public void setTempUnit(String tempUnit) {
-		this.tempUnit = tempUnit;
-	}
+  public void setOogor(String oogor) {
+    this.oogor = oogor;
+  }
 
-	public ImportContainer() {
-		super();
-	}
+  public DGInfo getDgInfo() {
+    return dgInfo;
+  }
 
-	public ISOInfo getIsoInfo() {
-		return isoInfo;
-	}
+  public void setDgInfo(DGInfo dgInfo) {
+    this.dgInfo = dgInfo;
+  }
 
-	public void setIsoInfo(ISOInfo isoInfo) {
-		this.isoInfo = isoInfo;
-	}
+  public String getUnc() {
+    return unc;
+  }
 
-	public String getImpGatePassNumber() {
-		return impGatePassNumber;
-	}
+  public void setUnc(String unc) {
+    this.unc = unc;
+  }
 
-	public void setImpGatePassNumber(String impGatePassNumber) {
-		this.impGatePassNumber = impGatePassNumber;
-	}
+  public String getTemp() {
+    return temp;
+  }
 
-	public String getContainerNumber() {
-		return containerNumber;
-	}
+  public void setTemp(String temp) {
+    this.temp = temp;
+  }
 
-	public void setContainerNumber(String containerNumber) {
-		this.containerNumber = containerNumber;
-	}
+  public String getTempUnit() {
+    return tempUnit;
+  }
 
-	public String getGateInOut() {
-		return gateInOut;
-	}
+  public void setTempUnit(String tempUnit) {
+    this.tempUnit = tempUnit;
+  }
 
-	public void setGateInOut(String gateInOut) {
-		this.gateInOut = gateInOut;
-	}
+  public ImportContainer() {
+    super();
+  }
 
-	public String getLine() {
-		return line;
-	}
+  public ISOInfo getIsoInfo() {
+    return isoInfo;
+  }
 
-	public void setLine(String line) {
-		this.line = line;
-	}
+  public void setIsoInfo(ISOInfo isoInfo) {
+    this.isoInfo = isoInfo;
+  }
 
-	public SealInfo getSealInfo01() {
-		return sealInfo01;
-	}
+  public String getImpGatePassNumber() {
+    return impGatePassNumber;
+  }
 
-	public void setSealInfo01(SealInfo sealInfo01) {
-		this.sealInfo01 = sealInfo01;
-	}
+  public void setImpGatePassNumber(String impGatePassNumber) {
+    this.impGatePassNumber = impGatePassNumber;
+  }
 
-	public SealInfo getSealInfo02() {
-		return sealInfo02;
-	}
+  public String getContainerNumber() {
+    return containerNumber;
+  }
 
-	public void setSealInfo02(SealInfo sealInfo02) {
-		this.sealInfo02 = sealInfo02;
-	}
+  public void setContainerNumber(String containerNumber) {
+    this.containerNumber = containerNumber;
+  }
 
-	public String getAgentCode() {
-		return agentCode;
-	}
+  public String getGateInOut() {
+    return gateInOut;
+  }
 
-	public void setAgentCode(String agentCode) {
-		this.agentCode = agentCode;
-	}
+  public void setGateInOut(String gateInOut) {
+    this.gateInOut = gateInOut;
+  }
 
-	public String getFullOrEmpty() {
-		return fullOrEmpty;
-	}
+  public String getLine() {
+    return line;
+  }
 
-	public void setFullOrEmpty(String fullOrEmpty) {
-		this.fullOrEmpty = fullOrEmpty;
-	}
+  public void setLine(String line) {
+    this.line = line;
+  }
 
-	public String getIsoCode() {
-		return isoCode;
-	}
+  public SealInfo getSealInfo01() {
+    return sealInfo01;
+  }
 
-	public void setIsoCode(String isoCode) {
-		this.isoCode = isoCode;
-	}
+  public void setSealInfo01(SealInfo sealInfo01) {
+    this.sealInfo01 = sealInfo01;
+  }
 
-	public String getOrderFOT() {
-		return orderFOT;
-	}
+  public SealInfo getSealInfo02() {
+    return sealInfo02;
+  }
 
-	public void setOrderFOT(String orderFOT) {
-		this.orderFOT = orderFOT;
-	}
+  public void setSealInfo02(SealInfo sealInfo02) {
+    this.sealInfo02 = sealInfo02;
+  }
 
-	public String getCurrentPosition() {
-		return currentPosition;
-	}
+  public String getAgentCode() {
+    return agentCode;
+  }
 
-	public void setCurrentPosition(String currentPosition) {
-		this.currentPosition = currentPosition;
-	}
+  public void setAgentCode(String agentCode) {
+    this.agentCode = agentCode;
+  }
 
-	public String getPositionOnTruck() {
-		return positionOnTruck;
-	}
+  public String getFullOrEmpty() {
+    return fullOrEmpty;
+  }
 
-	public void setPositionOnTruck(String positionOnTruck) {
-		this.positionOnTruck = positionOnTruck;
-	}
+  public void setFullOrEmpty(String fullOrEmpty) {
+    this.fullOrEmpty = fullOrEmpty;
+  }
 
-	public long getEirNo() {
-		return eirNo;
-	}
+  public String getIsoCode() {
+    return isoCode;
+  }
 
-	public void setEirNo(long eirNo) {
-		this.eirNo = eirNo;
-	}
+  public void setIsoCode(String isoCode) {
+    this.isoCode = isoCode;
+  }
 
-	public long getUserSessionId() {
-		return userSessionId;
-	}
+  public String getOrderFOT() {
+    return orderFOT;
+  }
 
-	public void setUserSessionId(long userSessionId) {
-		this.userSessionId = userSessionId;
-	}
+  public void setOrderFOT(String orderFOT) {
+    this.orderFOT = orderFOT;
+  }
 
-	public String getGateInLaneNo() {
-		return gateInLaneNo;
-	}
+  public String getCurrentPosition() {
+    return currentPosition;
+  }
 
-	public void setGateInLaneNo(String gateInLaneNo) {
-		this.gateInLaneNo = gateInLaneNo;
-	}
-
-	public String getBayCode() {
-		return bayCode;
-	}
-
-	public void setBayCode(String bayCode) {
-		this.bayCode = bayCode;
-	}
-
-	public String getYardPosition() {
-		return yardPosition;
-	}
-
-	public void setYardPosition(String yardPosition) {
-		this.yardPosition = yardPosition;
-	}
-
-	public long getPrintEIRNo() {
-		return printEIRNo;
-	}
-
-	public void setPrintEIRNo(long printEIRNo) {
-		this.printEIRNo = printEIRNo;
-	}
-
-	public String getRejectRemarks() {
-		return rejectRemarks;
-	}
-
-	public void setRejectRemarks(String rejectRemarks) {
-		this.rejectRemarks = rejectRemarks;
-	}
-
-	public String getAcceptOrReject() {
-		return acceptOrReject;
-	}
-
-	public void setAcceptOrReject(String acceptOrReject) {
-		this.acceptOrReject = acceptOrReject;
-	}
-
-	public String getCugId() {
-		return cugId;
-	}
-
-	public void setCugId(String cugId) {
-		this.cugId = cugId;
-	}
-
-	public String getHpat() {
-		return hpat;
-	}
-
-	public void setHpat(String hpat) {
-		this.hpat = hpat;
-	}
-
-	public String getOperationReefer() {
-		return operationReefer;
-	}
-
-	public void setOperationReefer(String operationReefer) {
-		this.operationReefer = operationReefer;
-	}
-
-	public String getImdg() {
-		return imdg;
-	}
-
-	public void setImdg(String imdg) {
-		this.imdg = imdg;
-	}
-
-	public String getHandlingID() {
-		return handlingID;
-	}
-
-	public void setHandlingID(String handlingID) {
-		this.handlingID = handlingID;
-	}
-
-	public String getInOrOut() {
-		return InOrOut;
-	}
-
-	public void setInOrOut(String inOrOut) {
-		InOrOut = inOrOut;
-	}
-
-	public boolean isFOTBKGFlag() {
-		return FOTBKGFlag;
-	}
-
-	public void setFOTBKGFlag(boolean fOTBKGFlag) {
-		FOTBKGFlag = fOTBKGFlag;
-	}
-	
-	
-	
-	
+  public void setCurrentPosition(String currentPosition) {
+    this.currentPosition = currentPosition;
+  }
+
+  public String getPositionOnTruck() {
+    return positionOnTruck;
+  }
+
+  public void setPositionOnTruck(String positionOnTruck) {
+    this.positionOnTruck = positionOnTruck;
+  }
+
+  public long getEirNo() {
+    return eirNo;
+  }
+
+  public void setEirNo(long eirNo) {
+    this.eirNo = eirNo;
+  }
+
+  public long getUserSessionId() {
+    return userSessionId;
+  }
+
+  public void setUserSessionId(long userSessionId) {
+    this.userSessionId = userSessionId;
+  }
+
+  public String getGateInLaneNo() {
+    return gateInLaneNo;
+  }
+
+  public void setGateInLaneNo(String gateInLaneNo) {
+    this.gateInLaneNo = gateInLaneNo;
+  }
+
+  public String getBayCode() {
+    return bayCode;
+  }
+
+  public void setBayCode(String bayCode) {
+    this.bayCode = bayCode;
+  }
+
+  public String getYardPosition() {
+    return yardPosition;
+  }
+
+  public void setYardPosition(String yardPosition) {
+    this.yardPosition = yardPosition;
+  }
+
+  public long getPrintEIRNo() {
+    return printEIRNo;
+  }
+
+  public void setPrintEIRNo(long printEIRNo) {
+    this.printEIRNo = printEIRNo;
+  }
+
+  public String getRejectRemarks() {
+    return rejectRemarks;
+  }
+
+  public void setRejectRemarks(String rejectRemarks) {
+    this.rejectRemarks = rejectRemarks;
+  }
+
+  public String getAcceptOrReject() {
+    return acceptOrReject;
+  }
+
+  public void setAcceptOrReject(String acceptOrReject) {
+    this.acceptOrReject = acceptOrReject;
+  }
+
+  public String getCugId() {
+    return cugId;
+  }
+
+  public void setCugId(String cugId) {
+    this.cugId = cugId;
+  }
+
+  public String getHpat() {
+    return hpat;
+  }
+
+  public void setHpat(String hpat) {
+    this.hpat = hpat;
+  }
+
+  public String getOperationReefer() {
+    return operationReefer;
+  }
+
+  public void setOperationReefer(String operationReefer) {
+    this.operationReefer = operationReefer;
+  }
+
+  public String getImdg() {
+    return imdg;
+  }
+
+  public void setImdg(String imdg) {
+    this.imdg = imdg;
+  }
+
+  public String getHandlingID() {
+    return handlingID;
+  }
+
+  public void setHandlingID(String handlingID) {
+    this.handlingID = handlingID;
+  }
+
+  public String getInOrOut() {
+    return InOrOut;
+  }
+
+  public void setInOrOut(String inOrOut) {
+    InOrOut = inOrOut;
+  }
+
+  public boolean isFOTBKGFlag() {
+    return FOTBKGFlag;
+  }
+
+  public void setFOTBKGFlag(boolean fOTBKGFlag) {
+    FOTBKGFlag = fOTBKGFlag;
+  }
+
+
 
 }

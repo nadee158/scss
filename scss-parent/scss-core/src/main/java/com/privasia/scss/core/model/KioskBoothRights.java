@@ -12,8 +12,6 @@ import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
@@ -44,18 +42,16 @@ public class KioskBoothRights extends AuditEntity implements Serializable {
   private KioskBoothRightsPK kioskBoothRightsID;
 
   @Column(name = "KIOSK_LOCK_STATUS")
-  @Enumerated(EnumType.STRING)
+  @Type(type = "com.privasia.scss.common.enumusertype.KioskLockStatusEnumUserType")
   private KioskLockStatus kioskLockStatus;
 
   @Column(name = "CARDNUMBER")
   private int cardNumber;
 
   @Column(name = "CARD_SCAN_TIME")
-  // @Temporal(TemporalType.TIMESTAMP)
   private LocalDateTime cardScanTime;
 
   @Column(name = "KIOSK_SELECT_TIME")
-  // @Temporal(TemporalType.TIMESTAMP)
   private LocalDateTime kioskSelectedTime;
 
   @Column(name = "DISPLAY_SCREEN_ID")
@@ -80,20 +76,20 @@ public class KioskBoothRights extends AuditEntity implements Serializable {
   private String plateNo;
 
   @Column(name = "TRANSACTION_TYPE")
-  @Enumerated(EnumType.STRING)
+  @Type(type = "com.privasia.scss.common.enumusertype.TransactionTypeEnumUserType")
   private TransactionType transactionType;
 
-  @Column(name = "reviseHeadNo")
+  @Column(name = "REVISE_HEAD_NO")
   private String reviseHeadNo;
 
-  @Column(name = "reviseHeadNoRemarks")
+  @Column(name = "REVISE_HEAD_NO_REMARK")
   private String reviseHeadNoRemarks;
 
-  @Column(name = "retakePhoto")
+  @Column(name = "RE_TAKE_PHOTO")
   @Type(type = "yes_no")
   private boolean retakePhoto;
 
-  @Column(name = "trxCompleteTime")
+  @Column(name = "TRX_COMPLETE_TIME")
   private LocalDateTime trxCompleteTime;
 
   @Column(name = "LOCK_USER_ID")

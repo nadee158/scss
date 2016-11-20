@@ -21,9 +21,8 @@ import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
@@ -39,7 +38,7 @@ import com.privasia.scss.core.exception.ResultsNotFoundException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.RequiredTypeException;
 
-@ControllerAdvice
+@RestControllerAdvice
 public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
 
   // 400
@@ -214,7 +213,7 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
   }
 
   // custom
-  @ResponseStatus(value = HttpStatus.CONFLICT, reason = "No Search Results Found!")
+  // @ResponseStatus(value = HttpStatus.OK, reason = "No Search Results Found!")
   @ExceptionHandler({ResultsNotFoundException.class, UsernameNotFoundException.class})
   public ResponseEntity<Object> handleResultsNotFound(final ResultsNotFoundException ex, final WebRequest request) {
     logger.info(ex.getClass().getName());
@@ -226,7 +225,7 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
 
   // custom
   @ExceptionHandler({InvalidJwtTokenException.class})
-  public ResponseEntity<Object> handleInvalidJwtToken(final ResultsNotFoundException ex, final WebRequest request) {
+  public ResponseEntity<Object> handleInvalidJwtToken(final InvalidJwtTokenException ex, final WebRequest request) {
     logger.info(ex.getClass().getName());
     logger.error("error", ex);
     //
@@ -235,7 +234,7 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
   }
 
   @ExceptionHandler({BadCredentialsException.class})
-  public ResponseEntity<Object> handleBadCredentials(final ResultsNotFoundException ex, final WebRequest request) {
+  public ResponseEntity<Object> handleBadCredentials(final BadCredentialsException ex, final WebRequest request) {
     logger.info(ex.getClass().getName());
     logger.error("error", ex);
     //
@@ -244,7 +243,7 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
   }
 
   @ExceptionHandler({JwtExpiredTokenException.class})
-  public ResponseEntity<Object> handleJwtExpiredToken(final ResultsNotFoundException ex, final WebRequest request) {
+  public ResponseEntity<Object> handleJwtExpiredToken(final JwtExpiredTokenException ex, final WebRequest request) {
     logger.info(ex.getClass().getName());
     logger.error("error", ex);
     //

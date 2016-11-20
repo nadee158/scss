@@ -40,7 +40,7 @@ public class CommonSolasAttribute implements Serializable {
   private String solasDetailID;
 
   @Column(name = "SOLAS_INSTRUCTION")
-  @Type(type = "com.privasia.scss.core.util.enumusertype.SolasInstructionEnumUserType")
+  @Type(type = "com.privasia.scss.common.enumusertype.SolasInstructionEnumUserType")
   private SolasInstructionType solasInstruction;
 
   @Column(name = "SHIPPER_VGM")

@@ -58,14 +58,14 @@ public class SmartCardUser extends AuditEntity implements Serializable {
 	private Long smartCardUserID;
 
 	@Column(name = "SCU_GENDER")
-	@Type(type = "com.privasia.scss.core.util.enumusertype.GenderEnumUserType")
+	@Type(type = "com.privasia.scss.common.enumusertype.GenderEnumUserType")
 	private Gender gender;
 
 	@Column(name = "SCU_DOB")
 	private LocalDateTime dateOfBirth;
 
 	@Column(name = "SCU_NATIONALITY")
-	@Type(type = "com.privasia.scss.core.util.enumusertype.NationalityEnumUserType")
+	@Type(type = "com.privasia.scss.common.enumusertype.NationalityEnumUserType")
 	private Nationality nationality;
 
 	@Column(name = "SCU_PASSPORTNO")

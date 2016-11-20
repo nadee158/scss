@@ -67,11 +67,11 @@ public class Client extends AuditEntity implements Serializable {
   private String description;
 
   @Column(name = "CLI_STATUS", nullable = false)
-  @Type(type="com.privasia.scss.core.util.enumusertype.RecordStatusEnumUserType")
+  @Type(type="com.privasia.scss.common.enumusertype.RecordStatusEnumUserType")
   private RecordStatus status;
 
   @Column(name = "CLI_TYPE", nullable = false)
-  @Type(type="com.privasia.scss.core.util.enumusertype.ClientTypeEnumUserType")
+  @Type(type="com.privasia.scss.common.enumusertype.ClientTypeEnumUserType")
   private ClientType type;
 
   @Column(name = "CLI_UNITNO", nullable = false)

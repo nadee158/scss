@@ -62,21 +62,21 @@ public class Company extends AuditEntity implements Serializable {
 	private String companyAccountNo;
 	
 	@Column(name = "COM_ACCTTYPE")
-	@Type(type="com.privasia.scss.core.util.enumusertype.CompanyAccountTypeEnumUserType")
+	@Type(type="com.privasia.scss.common.enumusertype.CompanyAccountTypeEnumUserType")
 	private CompanyAccountType 	companyAccountType;
 	
 	@Column(name = "COM_CODE")
 	private String companyCode;
 	
 	@Column(name = "COM_TYPE")
-	@Type(type="com.privasia.scss.core.util.enumusertype.CompanyTypeEnumUserType") 
+	@Type(type="com.privasia.scss.common.enumusertype.CompanyTypeEnumUserType") 
 	private CompanyType companyType;
 	
 	@Column(name = "COM_REGNO")
 	private String companyRegistrationNumber;
 	
 	@Column(name = "COM_STATUS")
-	@Type(type="com.privasia.scss.core.util.enumusertype.CompanyStatusEnumUserType") 
+	@Type(type="com.privasia.scss.common.enumusertype.CompanyStatusEnumUserType") 
 	private CompanyStatus companyStatus;
 	
 	@Column(name = "COM_NAMEONCARD")

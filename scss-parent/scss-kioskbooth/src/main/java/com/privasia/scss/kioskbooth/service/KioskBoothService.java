@@ -1,27 +1,35 @@
 package com.privasia.scss.kioskbooth.service;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
+import java.util.Optional;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.privasia.scss.common.dto.ClientInfo;
-import com.privasia.scss.common.dto.KioskBoothRightInfo;
-import com.privasia.scss.common.enums.DBTransactionStatus;
+import com.privasia.scss.common.dto.GateOutMessage;
 import com.privasia.scss.common.enums.KioskLockStatus;
-import com.privasia.scss.common.enums.TransactionType;
+import com.privasia.scss.common.util.CommonUtil;
+import com.privasia.scss.core.exception.BusinessException;
+import com.privasia.scss.core.exception.ResultsNotFoundException;
 import com.privasia.scss.core.model.Client;
-import com.privasia.scss.core.model.KioskBoothContainerAttribute;
 import com.privasia.scss.core.model.KioskBoothRights;
 import com.privasia.scss.core.model.KioskBoothRightsPK;
+import com.privasia.scss.core.predicate.KioskBoothRightsPredicates;
+import com.privasia.scss.core.repository.ClientRepository;
 import com.privasia.scss.core.repository.KioskBoothRightsRepository;
+import com.privasia.scss.kioskbooth.dto.KioskBoothRightInfo;
+import com.querydsl.core.types.ExpressionUtils;
+import com.querydsl.core.types.Predicate;
 
 @Service("kioskBoothService")
 public class KioskBoothService {
@@ -29,280 +37,339 @@ public class KioskBoothService {
   @Autowired
   private KioskBoothRightsRepository kioskBoothRightsRepository;
 
+  @Autowired
+  private ClientRepository clientRepository;
+
+
+  @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, readOnly = false)
+  public String activateBoothsByKioskId(KioskBoothRightInfo kioskBoothRightInfo) {
+    String result = "ERROR";
+    if (!(kioskBoothRightInfo == null || StringUtils.isEmpty(kioskBoothRightInfo.getKioskID()))) {
+      Iterable<KioskBoothRights> allKiosks = getKioskBoothInfoById(kioskBoothRightInfo.getKioskID());
+      if (!(allKiosks == null)) {
+        Stream<KioskBoothRights> allKiosksStrem = stream(allKiosks);
+        if (allKiosksStrem.count() > 0) {
+          boolean isLockedOrActiveAvailable = allKiosksStrem.anyMatch(getKioskLockStatusCombinedPredicate());
+          if (!(isLockedOrActiveAvailable)) {
+            allKiosks.forEach(kiosk -> {
+              KioskBoothRights updatedKioskBoothRights = updateKioskBoothRightsFromDTO(kiosk, kioskBoothRightInfo);
+              updatedKioskBoothRights.setKioskLockStatus(KioskLockStatus.ACTIVE);
+              kioskBoothRightsRepository.save(updatedKioskBoothRights);
+            });
+            result = "SUCCESS";
+          } else {
+            throw new ResultsNotFoundException("Locked or Active records available!");
+          }
+        } else {
+          throw new ResultsNotFoundException("Kiosk Information could not be found!");
+        }
+      } else {
+        throw new ResultsNotFoundException("Kiosk Information could not be found!");
+      }
+    } else {
+      throw new BusinessException("Kiosk Information is null!");
+    }
+    return result;
+  }
+
+  @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, readOnly = false)
+  public String lockBoothForKiosk(KioskBoothRightInfo kioskBoothRightInfo) {
+    String result = "ERROR";
+    if (!(kioskBoothRightInfo == null)) {
+      if (!(StringUtils.isEmpty(kioskBoothRightInfo.getKioskID())
+          || StringUtils.isEmpty(kioskBoothRightInfo.getBoothID()))) {
+        Iterable<KioskBoothRights> allKiosks = getKioskBoothInfoById(kioskBoothRightInfo.getKioskID());
+        if (!(allKiosks == null)) {
+          Stream<KioskBoothRights> allKiosksStrem = stream(allKiosks);
+          if (allKiosksStrem.count() > 0) {
+            allKiosks.forEach(kioskBoothright -> {
+              long boothIDl = Long.parseLong(kioskBoothRightInfo.getBoothID());
+              if (boothIDl == kioskBoothright.getKioskBoothRightsID().getBoothID().getClientID()) {
+                kioskBoothright = updateKioskBoothRightsFromDTO(kioskBoothright, kioskBoothRightInfo);
+                kioskBoothright.setKioskLockStatus(KioskLockStatus.LOCK);
+              } else {
+                kioskBoothright.setKioskLockStatus(KioskLockStatus.RELEASED);
+              }
+              kioskBoothRightsRepository.save(kioskBoothright);
+            });
+            result = "SUCCESS";
+          } else {
+            throw new ResultsNotFoundException("Kiosk Information could not be found!");
+          }
+        } else {
+          throw new ResultsNotFoundException("Kiosk Information could not be foundl!");
+        }
+      } else {
+        throw new BusinessException("Kiosk Information and/or booth information is null!");
+      }
+    } else {
+      throw new BusinessException("Kiosk Information is null!");
+    }
+
+    return result;
+  }
+
+  @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, readOnly = false)
+  public String completekioskbooth(KioskBoothRightInfo kioskBoothRightInfo) {
+    String result = "ERROR";
+    if (!(kioskBoothRightInfo == null)) {
+      if (!(StringUtils.isEmpty(kioskBoothRightInfo.getKioskID())
+          || StringUtils.isEmpty(kioskBoothRightInfo.getBoothID()))) {
+        Optional<KioskBoothRights> completedKioskOpt =
+            kioskBoothRightsRepository.findByKioskBoothRightsID_KioskID_ClientIDAndKioskBoothRightsID_BoothID_ClientID(
+                Long.parseLong(kioskBoothRightInfo.getKioskID()), Long.parseLong(kioskBoothRightInfo.getBoothID()));
+        if ((completedKioskOpt.isPresent())) {
+          KioskBoothRights completedKiosk = completedKioskOpt.get();
+          completedKiosk = updateKioskBoothRightsFromDTO(completedKiosk, kioskBoothRightInfo);
+          completedKiosk.setKioskLockStatus(KioskLockStatus.COMPLETE);
+          kioskBoothRightsRepository.save(completedKiosk);
+          result = "SUCCESS";
+        } else {
+          throw new ResultsNotFoundException("Kiosk Information could not be found!");
+        }
+      } else {
+        throw new BusinessException("Kiosk Information is null!");
+      }
+    } else {
+      throw new BusinessException("Kiosk Information is null!");
+    }
+
+    return result;
+  }
+
+  @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
   public List<ClientInfo> getKioskInfoByBooth(String boothID) {
     List<ClientInfo> clientInfoList = new ArrayList<ClientInfo>();
-    Client clientBoothID = new Client();
-    clientBoothID.setClientID(Long.parseLong(boothID));
-    List<KioskBoothRights> KioskBoothRightList =
-        kioskBoothRightsRepository.findByKioskBoothRightsID_BoothID(clientBoothID);
+
+    Optional<List<KioskBoothRights>> KioskBoothRightListOpt = kioskBoothRightsRepository
+        .findByKioskBoothRightsID_BoothID_ClientIDOrderByKioskBoothRightsID_KioskID_LaneNoAsc(Long.parseLong(boothID));
+
+    List<KioskBoothRights> KioskBoothRightList = KioskBoothRightListOpt.orElse(null);
+
     if (!(KioskBoothRightList == null || KioskBoothRightList.isEmpty())) {
+
       for (KioskBoothRights kioskBoothRights : KioskBoothRightList) {
 
         KioskBoothRightsPK kioskBoothRightsID = kioskBoothRights.getKioskBoothRightsID();
 
         Client kioskID = kioskBoothRightsID.getKioskID();
 
-        ClientInfo clientInfo = new ClientInfo();
-
-        clientInfo.setClientIdSeq(kioskID.getClientID());
-        clientInfo.setWebIPAddress(kioskID.getWebIPAddress());
-        clientInfo.setClientDescription(kioskID.getDescription());
-        clientInfo.setClientStaus(kioskID.getStatus().getValue());
-        clientInfo.setClientType(kioskID.getType().getValue());
-        clientInfo.setUnitNo(kioskID.getUnitNo());
-        //clientInfo.setCsmControl(kioskID.isCsmControl());
-        clientInfo.setCosmosPortNumber(Integer.toString(kioskID.getCosmosPortNo()));
-        clientInfo.setSortSeq(kioskID.getSortSEQ());
-        clientInfo.setCameraServerIPAddress(kioskID.getCameraServerIPAddress());
-        clientInfo.setCameraServerPort(Integer.toString(kioskID.getCameraServerPortNo()));
+        ClientInfo clientInfo = constructClientInfoFromClient(kioskID);
         clientInfo.setDisplayScreenId(Integer.toString(kioskBoothRights.getDisplayScreenID()));
         clientInfo.setKioskLockStatus(kioskBoothRights.getKioskLockStatus().getValue());
-        clientInfo.setLaneNO(kioskID.getLaneNo());
-        clientInfo.setFtpIP(kioskID.getFtpIPAddress());
-        clientInfo.setFtpPort(kioskID.getFtpPort());
-        clientInfo.setFtpProtocal(kioskID.getFtpProtocol());
-        clientInfo.setFtpUserName(kioskID.getFtpUsername());
-        clientInfo.setFtpPassword(kioskID.getFtpPassword());
-        clientInfo.setFtpDirectory(kioskID.getFtpDirectory());
-        clientInfo.setWithCameraImage(Boolean.toString(kioskID.isWithCameraImage()));
-
         clientInfoList.add(clientInfo);
-
-
       }
+    } else {
+      throw new ResultsNotFoundException("No kiosk booth information was found!");
     }
     return clientInfoList;
   }
 
-  @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
-  public int updateKioskBoothInfo(KioskBoothRightInfo kioskBoothRightInfo) {
-    boolean islock = false;
-    int rs = 0;
-    try {
 
-      long kioskID = 0;
-      if (StringUtils.isNotEmpty(kioskBoothRightInfo.getKioskID())) {
-        kioskID = Long.parseLong(kioskBoothRightInfo.getKioskID());
-      }
-      long boothID = 0;
-      if (StringUtils.isNotEmpty(kioskBoothRightInfo.getBoothID())) {
-        boothID = Long.parseLong(kioskBoothRightInfo.getBoothID());
-      }
-      int cardNumber = 0;
-      if (StringUtils.isNotEmpty(kioskBoothRightInfo.getCardNumber())) {
-        cardNumber = Integer.parseInt(kioskBoothRightInfo.getCardNumber());
-      }
 
-      if (StringUtils.equals(kioskBoothRightInfo.getKioskLockStatus(),
-          DBTransactionStatus.LOCK.getValue())) {
-        List<KioskBoothRights> list = kioskBoothRightsRepository.findByKioskIDAndKioskLockStatusAndBoothID(kioskID,
-            KioskLockStatus.LOCK, boothID);
-        if (!(list == null || list.isEmpty())) {
-          islock = true;
+  @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
+  public ClientInfo getKioskLoginInfo(String ipAddress) {
+    if (StringUtils.isNotEmpty(ipAddress)) {
+      Optional<Client> clientOpt = clientRepository.findByWebIPAddress(ipAddress);
+      if (clientOpt.isPresent()) {
+        Client client = clientOpt.get();
+        ClientInfo clientInfo = constructClientInfoFromClient(client);
+        GateOutMessage gateOutMessage = new GateOutMessage();
+        if (clientInfo != null) {
+          gateOutMessage.setCode(GateOutMessage.OK);
+          gateOutMessage.setDescription(CommonUtil.formatMessageCode("SCSS_KIOSK_LOGIN_CODE01", null));
+
+        } else {
+          gateOutMessage.setCode(GateOutMessage.NOK);
+          gateOutMessage.setDescription(CommonUtil.formatMessageCode("SCSS_KIOSK_LOGIN_ERR_CODE02", null));
         }
+        clientInfo.setMessageStatus(gateOutMessage);
+        return clientInfo;
+      } else {
+        throw new ResultsNotFoundException("Client information could not be found!");
       }
+    } else {
+      throw new BusinessException("Web IP address was null!");
+    }
+  }
 
-      if (!islock) {
-        Client clKioskID = new Client();
-        clKioskID.setClientID(kioskID);
-        List<KioskBoothRights> list = null;
-
-        if (boothID != 0) {
-          Client clBoothID = new Client();
-          clBoothID.setClientID(boothID);
-          if (cardNumber != 0) {
-            list =
-                kioskBoothRightsRepository.findByKioskBoothRightsID_KioskIDAndKioskBoothRightsID_BoothIDAndCardNumber(
-                    clKioskID, clBoothID, cardNumber);
+  @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
+  public KioskBoothRightInfo getLockedKioskBoothInfo(String kioskID) {
+    if (StringUtils.isNotEmpty(kioskID)) {
+      Iterable<KioskBoothRights> kioskList = getKioskBoothInfoByIdAndStatus(kioskID, KioskLockStatus.LOCK.getValue());
+      if (!(kioskList == null)) {
+        Stream<KioskBoothRights> kioskListStrem = stream(kioskList);
+        if (kioskListStrem.count() > 0) {
+          Optional<KioskBoothRights> kioskBoothRightsOpt = kioskListStrem.findFirst();
+          if (kioskBoothRightsOpt.isPresent()) {
+            KioskBoothRights boothRights = kioskBoothRightsOpt.get();
+            if (!(boothRights == null)) {
+              return new KioskBoothRightInfo(boothRights);
+            } else {
+              throw new ResultsNotFoundException("Kiosk Booth information could not be found!");
+            }
           } else {
-            list = kioskBoothRightsRepository.findByKioskBoothRightsID_KioskIDAndKioskBoothRightsID_BoothID(clKioskID,
-                clBoothID);
+            throw new ResultsNotFoundException("Kiosk Booth information could not be found!");
           }
         } else {
-          if (cardNumber != 0) {
-            list = kioskBoothRightsRepository.findByKioskBoothRightsID_KioskIDAndCardNumber(clKioskID, cardNumber);
-          } else {
-            list = kioskBoothRightsRepository.findByKioskBoothRightsID_KioskID(clKioskID);
-          }
+          throw new ResultsNotFoundException("Kiosk Booth information could not be found!");
         }
-
-
-        if (!(list == null || list.isEmpty())) {
-          for (KioskBoothRights kioskBoothRights : list) {
-
-            int newCardNumber = 0;
-            if (StringUtils.isNotEmpty(kioskBoothRightInfo.getNewCardNumber())) {
-              newCardNumber = Integer.parseInt(kioskBoothRightInfo.getNewCardNumber());
-            }
-            kioskBoothRights.setCardNumber(newCardNumber);
-
-            KioskBoothContainerAttribute container01 = kioskBoothRights.getContainer01();
-            if (container01 == null) {
-              container01 = new KioskBoothContainerAttribute(kioskBoothRightInfo, 1);
-            } else {
-              container01.updateFromKioskBoothRightInfo(kioskBoothRightInfo, 1);
-            }
-            kioskBoothRights.setContainer01(container01);
-
-            KioskBoothContainerAttribute container02 = kioskBoothRights.getContainer02();
-            if (container02 == null) {
-              container02 = new KioskBoothContainerAttribute(kioskBoothRightInfo, 2);
-            } else {
-              container02.updateFromKioskBoothRightInfo(kioskBoothRightInfo, 2);
-            }
-            kioskBoothRights.setContainer02(container02);
-
-            KioskBoothContainerAttribute container03 = kioskBoothRights.getContainer03();
-            if (container03 == null) {
-              container03 = new KioskBoothContainerAttribute(kioskBoothRightInfo, 3);
-            } else {
-              container03.updateFromKioskBoothRightInfo(kioskBoothRightInfo, 3);
-            }
-            kioskBoothRights.setContainer03(container03);
-
-            KioskBoothContainerAttribute container04 = kioskBoothRights.getContainer04();
-            if (container04 == null) {
-              container04 = new KioskBoothContainerAttribute(kioskBoothRightInfo, 4);
-            } else {
-              container04.updateFromKioskBoothRightInfo(kioskBoothRightInfo, 4);
-            }
-            kioskBoothRights.setContainer04(container04);
-
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MMM/yyyy HH:mm:ss", Locale.ENGLISH);
-
-            if (StringUtils.isNotEmpty(kioskBoothRightInfo.getCardScanTime())) {
-              LocalDateTime cardScanTime = LocalDateTime.parse(kioskBoothRightInfo.getCardScanTime(), formatter);
-              kioskBoothRights.setCardScanTime(cardScanTime);
-            }
-
-            if (StringUtils.isNotEmpty(kioskBoothRightInfo.getKioskSelectTime())) {
-              LocalDateTime kioskSelectedTime =
-                  LocalDateTime.parse(kioskBoothRightInfo.getKioskSelectTime(), formatter);
-              kioskBoothRights.setKioskSelectedTime(kioskSelectedTime);
-            }
-
-            if (StringUtils.isNotEmpty(kioskBoothRightInfo.getDisplayScreenID())) {
-              kioskBoothRights.setDisplayScreenID(Integer.parseInt(kioskBoothRightInfo.getDisplayScreenID()));
-            }
-
-            kioskBoothRights.setKioskLockStatus(KioskLockStatus.fromCode(kioskBoothRightInfo.getKioskLockStatus()));
-
-            kioskBoothRights.setTransactionIDList(kioskBoothRightInfo.getTransID());
-
-            kioskBoothRights.setDriverName(kioskBoothRightInfo.getDriverName());
-            kioskBoothRights.setPmHeadNo(kioskBoothRightInfo.getPmHead());
-            kioskBoothRights.setTruckCompany(kioskBoothRightInfo.getTruckCO());
-            kioskBoothRights.setDriverIC(kioskBoothRightInfo.getDriverIC());
-            kioskBoothRights.setPlateNo(kioskBoothRightInfo.getPlateNo());
-            kioskBoothRights.setTransactionType(TransactionType.fromCode(kioskBoothRightInfo.getTransactionType()));
-
-            kioskBoothRights.setReviseHeadNo(kioskBoothRightInfo.getReviseHeadNo());
-            kioskBoothRights.setReviseHeadNoRemarks(kioskBoothRightInfo.getReviseHeadNoRemark());
-            kioskBoothRights.setRetakePhoto(Boolean.getBoolean(kioskBoothRightInfo.getReTakePhoto()));
-
-            if (StringUtils.isNotEmpty(kioskBoothRightInfo.getTrxCompleateTime())) {
-              LocalDateTime trxCompleateTime =
-                  LocalDateTime.parse(kioskBoothRightInfo.getTrxCompleateTime(), formatter);
-              kioskBoothRights.setTrxCompleteTime(trxCompleateTime);
-            }
-
-            kioskBoothRights.setLockUserID(kioskBoothRightInfo.getLockUserID());
-            kioskBoothRights.setLockUserName(kioskBoothRightInfo.getLockUserName());
-            kioskBoothRights.setReferReason01List(kioskBoothRightInfo.getReferReasonList01());
-            kioskBoothRights.setReferReason02List(kioskBoothRightInfo.getReferReasonList02());
-
-            kioskBoothRightsRepository.save(kioskBoothRights);
-
-          }
-        }
-
-        if (kioskBoothRightInfo.getKioskLockStatus().equals(DBTransactionStatus.LOCK.getValue())
-            && StringUtils.isNotEmpty(kioskBoothRightInfo.getBoothID())) {
-
-          List<KioskBoothRights> updatingList = kioskBoothRightsRepository.findByKioskIDAndNotBoothID(kioskID, boothID);
-          if (!(updatingList == null || updatingList.isEmpty())) {
-            for (KioskBoothRights kioskBoothRights : updatingList) {
-              kioskBoothRights.setCardNumber(0);
-              KioskBoothContainerAttribute container01 = kioskBoothRights.getContainer01();
-              if (container01 == null) {
-                container01 = new KioskBoothContainerAttribute(null, 1);
-              } else {
-                container01.updateFromKioskBoothRightInfo(null, 1);
-              }
-              kioskBoothRights.setContainer01(container01);
-
-              KioskBoothContainerAttribute container02 = kioskBoothRights.getContainer02();
-              if (container02 == null) {
-                container02 = new KioskBoothContainerAttribute(null, 2);
-              } else {
-                container02.updateFromKioskBoothRightInfo(null, 2);
-              }
-              kioskBoothRights.setContainer02(container02);
-
-              KioskBoothContainerAttribute container03 = kioskBoothRights.getContainer03();
-              if (container03 == null) {
-                container03 = new KioskBoothContainerAttribute(null, 3);
-              } else {
-                container03.updateFromKioskBoothRightInfo(null, 3);
-              }
-              kioskBoothRights.setContainer03(container03);
-
-              KioskBoothContainerAttribute container04 = kioskBoothRights.getContainer04();
-              if (container04 == null) {
-                container04 = new KioskBoothContainerAttribute(null, 4);
-              } else {
-                container04.updateFromKioskBoothRightInfo(null, 4);
-              }
-              kioskBoothRights.setContainer04(container04);
-              kioskBoothRights.setCardScanTime(null);
-              kioskBoothRights.setKioskSelectedTime(null);
-              kioskBoothRights.setDisplayScreenID(0);
-              kioskBoothRights.setKioskLockStatus(null);
-              kioskBoothRights.setTransactionIDList(null);
-              kioskBoothRights.setDriverName(null);
-              kioskBoothRights.setPmHeadNo(null);
-              kioskBoothRights.setTruckCompany(null);
-              kioskBoothRights.setDriverIC(null);
-              kioskBoothRights.setPlateNo(null);
-              kioskBoothRights.setTransactionType(null);
-              kioskBoothRights.setReviseHeadNo(null);
-              kioskBoothRights.setReviseHeadNoRemarks(null);
-              kioskBoothRights.setRetakePhoto(false);
-              kioskBoothRights.setTrxCompleteTime(null);
-              kioskBoothRights.setLockUserID(null);
-              kioskBoothRights.setLockUserName(null);
-              kioskBoothRights.setReferReason01List(null);
-              kioskBoothRights.setReferReason02List(null);
-              kioskBoothRightsRepository.save(kioskBoothRights);
-            }
-          }
-
-        }
-
       } else {
-        rs = -1;
+        throw new ResultsNotFoundException("Kiosk Booth information could not be found!");
       }
-
-
-    } catch (Exception e) {
-      e.printStackTrace();
+    } else {
+      throw new BusinessException("Kiosk ID was null!");
     }
-
-
-    return rs;
   }
 
 
   @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-  public KioskBoothRights getLockedKioskBoothInfo(String kioskID) {
-    // Predicate kioskBoothInfoByKioskID =
-    // KioskBoothRightsPredicates.KioskBoothInfoByKioskID(kioskID);
-    // Predicate KioskBoothStatus =
-    // KioskBoothRightsPredicates.KioskBoothStatus(KioskLockStatus.LOCK.name());
-    // Predicate condition = ExpressionUtils.and(kioskBoothInfoByKioskID, KioskBoothStatus);
-    // return kioskBoothRightsRepository.findOne(condition);
-    return null;
+  public List<KioskBoothRightInfo> getBoothAccessRight(String boothID, String kioskID, String cardNumber) {
+    if (StringUtils.isNotEmpty(boothID)) {
+      Iterable<KioskBoothRights> kioskList = getKioskBoothInfoByIdAndCard(boothID, kioskID, cardNumber);
+      if (!(kioskList == null)) {
+        Stream<KioskBoothRights> kioskListStrem = stream(kioskList);
+        if (kioskListStrem.count() > 0) {
+          List<KioskBoothRightInfo> infos = new ArrayList<KioskBoothRightInfo>();
+          kioskList.forEach(kisokBooth -> {
+            infos.add(new KioskBoothRightInfo(kisokBooth));
+          });
+          return infos;
+        } else {
+          throw new ResultsNotFoundException("Kiosk Booth information could not be found!");
+        }
+      } else {
+        throw new ResultsNotFoundException("Kiosk Booth information could not be found!");
+      }
+    } else {
+      throw new BusinessException("Kiosk ID was null!");
+    }
+  }
 
+  private ClientInfo constructClientInfoFromClient(Client client) {
+    ClientInfo clientInfo = new ClientInfo();
+    clientInfo.setClientIdSeq(client.getClientID());
+    clientInfo.setWebIPAddress(client.getWebIPAddress());
+    clientInfo.setClientDescription(client.getDescription());
+    clientInfo.setClientStaus(client.getStatus().getValue());
+    clientInfo.setClientType(client.getType().getValue());
+    clientInfo.setUnitNo(client.getUnitNo());
+    clientInfo.setCsmControl(Boolean.toString(client.isCsmControl()));
+    clientInfo.setCosmosPortNumber(Integer.toString(client.getCosmosPortNo()));
+    clientInfo.setSortSeq(client.getSortSEQ());
+    clientInfo.setCameraServerIPAddress(client.getCameraServerIPAddress());
+    clientInfo.setCameraServerPort(Integer.toString(client.getCameraServerPortNo()));
+    clientInfo.setLaneNO(client.getLaneNo());
+    clientInfo.setFtpIP(client.getFtpIPAddress());
+    clientInfo.setFtpPort(client.getFtpPort());
+    clientInfo.setFtpProtocal(client.getFtpProtocol());
+    clientInfo.setFtpUserName(client.getFtpUsername());
+    clientInfo.setFtpPassword(client.getFtpPassword());
+    clientInfo.setFtpDirectory(client.getFtpDirectory());
+    clientInfo.setWithCameraImage(Boolean.toString(client.isWithCameraImage()));
+    return clientInfo;
+  }
+
+
+  public Iterable<KioskBoothRights> getKioskBoothInfoByIdAndStatus(String kioskID, String status) {
+    Predicate kioskBoothInfoByKioskID = KioskBoothRightsPredicates.KioskBoothInfoByKioskID(kioskID);
+    Predicate kioskBoothStatus = KioskBoothRightsPredicates.KioskBoothStatus(status);
+    Predicate finalPredicate = ExpressionUtils.allOf(kioskBoothInfoByKioskID, kioskBoothStatus);
+    return kioskBoothRightsRepository.findAll(finalPredicate);
+  }
+
+  public Iterable<KioskBoothRights> getKioskBoothInfoById(String kioskID) {
+    Predicate kioskBoothInfoByKioskID = KioskBoothRightsPredicates.KioskBoothInfoByKioskID(kioskID);
+    return kioskBoothRightsRepository.findAll(kioskBoothInfoByKioskID);
+  }
+
+  private Iterable<KioskBoothRights> getKioskBoothInfoByIdAndCard(String boothID, String kioskID, String cardNumber) {
+    Predicate kioskBoothInfoByBoothID = null;
+    Predicate kioskBoothInfoByKioskID = null;
+    Predicate kioskBoothInfoByCardNo = null;
+    List<Predicate> predicated = new ArrayList<Predicate>();
+    if (StringUtils.isNotEmpty(boothID)) {
+      kioskBoothInfoByBoothID = KioskBoothRightsPredicates.KioskBoothInfoByBoothID(boothID);
+      predicated.add(kioskBoothInfoByBoothID);
+    }
+    if (StringUtils.isNotEmpty(kioskID)) {
+      kioskBoothInfoByKioskID = KioskBoothRightsPredicates.KioskBoothInfoByKioskID(kioskID);
+      predicated.add(kioskBoothInfoByKioskID);
+    }
+    if (StringUtils.isNotEmpty(cardNumber)) {
+      kioskBoothInfoByCardNo = KioskBoothRightsPredicates.KioskBoothInfoByCardNumber(cardNumber);
+      predicated.add(kioskBoothInfoByCardNo);
+    }
+    Predicate finalPredicate = ExpressionUtils.allOf(predicated);
+    return kioskBoothRightsRepository.findAll(finalPredicate);
+  }
+
+  public java.util.function.Predicate<KioskBoothRights> getKioskLockStatusCombinedPredicate() {
+    java.util.function.Predicate<KioskBoothRights> p1 = kb -> kb.getKioskLockStatus().equals(KioskLockStatus.ACTIVE)
+        || kb.getKioskLockStatus().equals(KioskLockStatus.LOCK);
+    return p1;
+  }
+
+  public KioskBoothRights updateKioskBoothRightsFromDTO(KioskBoothRights kiosk,
+      KioskBoothRightInfo kioskBoothRightInfo) {
+    if (!(kioskBoothRightInfo == null)) {
+      KioskBoothRights kioskBoothRights = kioskBoothRightInfo.updateKioskBoothRights(kiosk);
+      if (!(kioskBoothRightInfo.getContainer01() == null)) {
+        kioskBoothRights.setContainer01(
+            kioskBoothRightInfo.getContainer01().updateContainerAttribute(kioskBoothRights.getContainer01()));
+      } else {
+        kioskBoothRights.setContainer01(null);
+      }
+      if (!(kioskBoothRightInfo.getContainer02() == null)) {
+        kioskBoothRights.setContainer02(
+            kioskBoothRightInfo.getContainer02().updateContainerAttribute(kioskBoothRights.getContainer02()));
+      } else {
+        kioskBoothRights.setContainer02(null);
+      }
+      if (!(kioskBoothRightInfo.getContainer03() == null)) {
+        kioskBoothRights.setContainer03(
+            kioskBoothRightInfo.getContainer03().updateContainerAttribute(kioskBoothRights.getContainer03()));
+      } else {
+        kioskBoothRights.setContainer03(null);
+      }
+      if (!(kioskBoothRightInfo.getContainer04() == null)) {
+        kioskBoothRights.setContainer04(
+            kioskBoothRightInfo.getContainer04().updateContainerAttribute(kioskBoothRights.getContainer04()));
+      } else {
+        kioskBoothRights.setContainer04(null);
+      }
+      return kioskBoothRights;
+    }
+    return null;
+  }
+
+
+
+  public KioskBoothRights convertDtoToDomain(KioskBoothRightInfo kioskBoothRightInfo) {
+    if (!(kioskBoothRightInfo == null)) {
+      KioskBoothRightsPK pk = new KioskBoothRightsPK();
+      pk.setBoothID(clientRepository.findOne(Long.parseLong(kioskBoothRightInfo.getBoothID())).orElse(null));
+      pk.setKioskID(clientRepository.findOne(Long.parseLong(kioskBoothRightInfo.getKioskID())).orElse(null));
+      KioskBoothRights kioskBoothRights = kioskBoothRightInfo.constructKioskBoothRights(pk);
+      if (!(kioskBoothRightInfo.getContainer01() == null)) {
+        kioskBoothRights.setContainer01(kioskBoothRightInfo.getContainer01().constructContainerAttribute());
+      }
+      if (!(kioskBoothRightInfo.getContainer02() == null)) {
+        kioskBoothRights.setContainer02(kioskBoothRightInfo.getContainer02().constructContainerAttribute());
+      }
+      if (!(kioskBoothRightInfo.getContainer03() == null)) {
+        kioskBoothRights.setContainer03(kioskBoothRightInfo.getContainer03().constructContainerAttribute());
+      }
+      if (!(kioskBoothRightInfo.getContainer04() == null)) {
+        kioskBoothRights.setContainer04(kioskBoothRightInfo.getContainer04().constructContainerAttribute());
+      }
+      return kioskBoothRights;
+    }
+    return null;
+  }
+
+  public static <T> Stream<T> stream(Iterable<T> iterable) {
+    return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterable.iterator(), Spliterator.ORDERED), false);
   }
 
 

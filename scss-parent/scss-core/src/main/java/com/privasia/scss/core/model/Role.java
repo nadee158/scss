@@ -50,7 +50,7 @@ public class Role extends AuditEntity implements Serializable {
   private String roleName;
 
   @Column(name = "ROL_TYPE")
-  @Type(type = "com.privasia.scss.core.util.enumusertype.RoleTypeEnumUserType")
+  @Type(type = "com.privasia.scss.common.enumusertype.RoleTypeEnumUserType")
   private RoleType roleType;
 
   @Column(name = "ROL_SUPERVISOR_FLAG")

@@ -23,6 +23,14 @@ public class DGInfo implements Serializable {
 
   private String damage5;
 
+  private String damage6;
+
+  private String damage7;
+
+  private String damage8;
+
+  private String damage9;
+
   public String getDamage1() {
     return damage1;
   }
@@ -61,6 +69,38 @@ public class DGInfo implements Serializable {
 
   public void setDamage5(String damage5) {
     this.damage5 = damage5;
+  }
+
+  public String getDamage6() {
+    return damage6;
+  }
+
+  public void setDamage6(String damage6) {
+    this.damage6 = damage6;
+  }
+
+  public String getDamage7() {
+    return damage7;
+  }
+
+  public void setDamage7(String damage7) {
+    this.damage7 = damage7;
+  }
+
+  public String getDamage8() {
+    return damage8;
+  }
+
+  public void setDamage8(String damage8) {
+    this.damage8 = damage8;
+  }
+
+  public String getDamage9() {
+    return damage9;
+  }
+
+  public void setDamage9(String damage9) {
+    this.damage9 = damage9;
   }
 
 

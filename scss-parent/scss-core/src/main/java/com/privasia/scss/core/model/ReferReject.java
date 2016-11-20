@@ -62,7 +62,7 @@ public class ReferReject extends AuditEntity implements Serializable {
 	private int expNetWeight;
 
 	@Column(name = "STATUS_CODE")
-	@Type(type = "com.privasia.scss.core.util.enumusertype.HPATReferStatusEnumUserType")
+	@Type(type = "com.privasia.scss.common.enumusertype.HPATReferStatusEnumUserType")
 	private HpatReferStatus statusCode;
 
 	@Embedded

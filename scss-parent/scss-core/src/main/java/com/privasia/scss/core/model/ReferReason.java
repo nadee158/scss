@@ -56,7 +56,7 @@ public class ReferReason extends AuditEntity implements Serializable {
   private int sortSEQ;
 
   @Column(name = "REFER_STATUS")
-  @Type(type="com.privasia.scss.core.util.enumusertype.RecordStatusEnumUserType")
+  @Type(type="com.privasia.scss.common.enumusertype.RecordStatusEnumUserType")
   private RecordStatus referStatus;
 
   @Column(name = "IS_PARENT")

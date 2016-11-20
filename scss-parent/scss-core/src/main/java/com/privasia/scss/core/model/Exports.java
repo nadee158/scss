@@ -96,7 +96,7 @@ public class Exports implements Serializable {
 	@Column(name = "EXP_IN_OUT", nullable = true)
 	@Type(type = "com.privasia.scss.core.util.enumusertype.GateInOutStatusEnumUserType")
 	private GateInOutStatus gateInOut;
-
+	
 	@Column(name = "EXP_LINE")
 	private String expLine;
 
@@ -127,7 +127,7 @@ public class Exports implements Serializable {
 	//EXP_OVERSIZE_FLAG
 	
 	@Column(name = "EXP_TRUCK_POS", nullable = true)
-	@Type(type = "com.privasia.scss.core.util.enumusertype.ContainerPositionEnumUserType")
+	@Type(type = "com.privasia.scss.common.enumusertype.ContainerPositionEnumUserType")
 	private ContainerPosition containerPosition;
 	 
 	@Column(name = "EXP_P_CHECK_DATE_TIME")
@@ -167,7 +167,7 @@ public class Exports implements Serializable {
 	private String expAgent;
 	
 	@Column(name = "VESSEL_STATUS", nullable = true)
-	@Type(type = "com.privasia.scss.core.util.enumusertype.VesselStatusEnumUserType")
+	@Type(type = "com.privasia.scss.common.enumusertype.VesselStatusEnumUserType")
 	private VesselStatus vesselStatus;
 	
 	@Column(name = "SHIP_ID")
@@ -195,14 +195,14 @@ public class Exports implements Serializable {
 	private Boolean replanSSR;
 	
 	@Column(name = "EXP_SSR_BLOCK_STATUS", nullable = true)
-	@Type(type = "com.privasia.scss.core.util.enumusertype.GCS_SSRBlockStatusEnumUserType")
+	@Type(type = "com.privasia.scss.common.enumusertype.GCS_SSRBlockStatusEnumUserType")
 	private GCS_SSRBlockStatusType ssrBlockStatus;
 	
 	@Column(name = "EXP_SSR_BLOCK_STATUS_DATETIME")
 	private LocalDateTime ssrBlockStatusDate;
 	
 	@Column(name = "EXP_GCS_BLOCK_STATUS", nullable = true)
-	@Type(type = "com.privasia.scss.core.util.enumusertype.GCS_SSRBlockStatusEnumUserType")
+	@Type(type = "com.privasia.scss.common.enumusertype.GCS_SSRBlockStatusEnumUserType")
 	private GCS_SSRBlockStatusType gcsBlockStatus;
 	
 	@Column(name = "EXP_GCS_BLOCK_STATUS_DATETIME")

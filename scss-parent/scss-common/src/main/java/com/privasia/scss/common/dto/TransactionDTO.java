@@ -79,8 +79,80 @@ public class TransactionDTO implements Serializable {
 
   private String scuName;
 
+  //////////////////////////// TO createImpRequestXML
+
+  private String gateImpOrExp;
+  // Truck Com. Code : To capture Truck Com. Code
+  private String compCode;
+  // Lane : To capture gate lane no
+  private String laneNo;
+
+  private String requestXML;
+
+  private int portNo;
+
+  private String replyXML;
+
+  private String msg;
+
+  public String getReplyXML() {
+    return replyXML;
+  }
+
+  public void setReplyXML(String replyXML) {
+    this.replyXML = replyXML;
+  }
+
+  public String getMsg() {
+    return msg;
+  }
+
+  public void setMsg(String msg) {
+    this.msg = msg;
+  }
+
+  public int getPortNo() {
+    return portNo;
+  }
+
+  public void setPortNo(int portNo) {
+    this.portNo = portNo;
+  }
+
+  public String getRequestXML() {
+    return requestXML;
+  }
+
+  public void setRequestXML(String requestXML) {
+    this.requestXML = requestXML;
+  }
+
+  public String getCompCode() {
+    return compCode;
+  }
+
+  public void setCompCode(String compCode) {
+    this.compCode = compCode;
+  }
+
+  public String getLaneNo() {
+    return laneNo;
+  }
+
+  public void setLaneNo(String laneNo) {
+    this.laneNo = laneNo;
+  }
+
   public String getScuName() {
     return scuName;
+  }
+
+  public String getGateImpOrExp() {
+    return gateImpOrExp;
+  }
+
+  public void setGateImpOrExp(String gateImpOrExp) {
+    this.gateImpOrExp = gateImpOrExp;
   }
 
   public void setScuName(String scuName) {
