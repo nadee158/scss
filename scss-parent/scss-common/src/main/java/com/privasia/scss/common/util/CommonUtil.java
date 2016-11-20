@@ -3,6 +3,8 @@ package com.privasia.scss.common.util;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.text.MessageFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -13,12 +15,15 @@ import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 public final class CommonUtil {
 
   private static final Logger LOGGER = Logger.getLogger(CommonUtil.class);
   private static Map<String, Properties> fileNamePropertiesMapping = new HashMap<String, Properties>();
+
+  public static final String GLOBAL_DATE_PATTERN = "MM/dd/yyyy hh:mm:ss a";
 
   /**
    * To check whether a string is empty or null
@@ -170,6 +175,22 @@ public final class CommonUtil {
           || extension.toLowerCase().equals(ApplicationConstants.EXTENSION_TYPE_PNG)) {
         return ApplicationConstants.FILE_TYPE_IMAGE;
       }
+    }
+    return null;
+  }
+
+  public static String getFormatteDate(LocalDateTime localDateTime) {
+    if (!(localDateTime == null)) {
+      DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern(GLOBAL_DATE_PATTERN);
+      return localDateTime.format(dateFormat);
+    }
+    return null;
+  }
+
+  public static LocalDateTime getParsedDate(String dateString) {
+    if (StringUtils.isNotEmpty(dateString)) {
+      DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern(GLOBAL_DATE_PATTERN);
+      return LocalDateTime.parse(dateString, dateFormat);
     }
     return null;
   }
