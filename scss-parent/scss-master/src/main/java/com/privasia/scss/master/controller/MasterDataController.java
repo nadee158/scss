@@ -5,7 +5,6 @@ package com.privasia.scss.master.controller;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -74,10 +73,10 @@ public class MasterDataController {
       consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public CustomResponseEntity<ApiResponseObject> getReferReasonList() {
     System.out.println("map dddd:");
-    Map<ReferReason, Set<ReferReason>> map = referReasonService.findAllReferReason();
+    Map<ReferReason, List<ReferReason>> map = referReasonService.findAllReferReason();
     System.out.println("map :" + map);
     return new CustomResponseEntity<ApiResponseObject>(
-        new ApiResponseObject<Map<ReferReason, Set<ReferReason>>>(HttpStatus.OK, map), HttpStatus.OK);
+        new ApiResponseObject<Map<ReferReason, List<ReferReason>>>(HttpStatus.OK, map), HttpStatus.OK);
   }
 
   @RequestMapping(value = "/oddlocation", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
