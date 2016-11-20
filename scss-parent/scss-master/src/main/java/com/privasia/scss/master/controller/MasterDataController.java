@@ -4,7 +4,6 @@
 package com.privasia.scss.master.controller;
 
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,8 +17,8 @@ import com.privasia.scss.common.dto.CustomResponseEntity;
 import com.privasia.scss.core.model.ODDExportReason;
 import com.privasia.scss.core.model.ODDImportReason;
 import com.privasia.scss.core.model.ODDLocation;
-import com.privasia.scss.core.model.ReferReason;
 import com.privasia.scss.core.util.service.CurrentDateTimeService;
+import com.privasia.scss.master.dto.ReferReasonDTO;
 import com.privasia.scss.master.service.GlobalSettingService;
 import com.privasia.scss.master.service.ODDMasterDataService;
 import com.privasia.scss.master.service.ReferReasonService;
@@ -72,11 +71,11 @@ public class MasterDataController {
   @RequestMapping(value = "/referreason", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
       consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public CustomResponseEntity<ApiResponseObject> getReferReasonList() {
-    System.out.println("map dddd:");
-    Map<ReferReason, List<ReferReason>> map = referReasonService.findAllReferReason();
-    System.out.println("map :" + map);
+    System.out.println("dtoList before:");
+    List<ReferReasonDTO> dtoList = referReasonService.findAllReferReason();
+    System.out.println("dtoList :" + dtoList);
     return new CustomResponseEntity<ApiResponseObject>(
-        new ApiResponseObject<Map<ReferReason, List<ReferReason>>>(HttpStatus.OK, map), HttpStatus.OK);
+        new ApiResponseObject<List<ReferReasonDTO>>(HttpStatus.OK, dtoList), HttpStatus.OK);
   }
 
   @RequestMapping(value = "/oddlocation", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE,

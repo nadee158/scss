@@ -3,6 +3,7 @@
  */
 package com.privasia.scss.master.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -17,6 +18,7 @@ import com.privasia.scss.common.enums.RecordStatus;
 import com.privasia.scss.core.exception.ResultsNotFoundException;
 import com.privasia.scss.core.model.ReferReason;
 import com.privasia.scss.core.repository.ReferReasonRepository;
+import com.privasia.scss.master.dto.ReferReasonDTO;
 
 /**
  * @author Janaka
@@ -30,12 +32,13 @@ public class ReferReasonService {
   private ReferReasonRepository referReasonRepository;
 
   @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-  public Map<ReferReason, List<ReferReason>> findAllReferReason() throws ResultsNotFoundException {
+  public List<ReferReasonDTO> findAllReferReason() throws ResultsNotFoundException {
 
     List<ReferReason> referReasonList =
         referReasonRepository.findByReferStatus(RecordStatus.fromCode(RecordStatus.ACTIVE.getValue()));
     System.out.println("referReasonList :" + referReasonList);
     if (!(referReasonList == null || referReasonList.isEmpty())) {
+      List<ReferReasonDTO> dtoList = new ArrayList<ReferReasonDTO>();
       try {
 
         Stream<ReferReason> parentStream = referReasonList.stream();
@@ -43,17 +46,23 @@ public class ReferReasonService {
         Map<ReferReason, List<ReferReason>> map = parentStream.filter(ch -> ch.getReferReason() != null)
             .collect(Collectors.groupingBy(ReferReason::getReferReason));
 
+
+        if (!(map == null || map.isEmpty())) {
+          map.forEach((key, val) -> {
+            dtoList.add(new ReferReasonDTO(key, val));
+          });
+        }
         Stream<ReferReason> aloneStream = referReasonList.stream();
 
         List<ReferReason> aloneList =
             aloneStream.filter(r -> r.getReferReason() == null && r.isParent() == false).collect(Collectors.toList());
         if (!(aloneList == null || aloneList.isEmpty())) {
           aloneList.forEach(rfr -> {
-            map.put(rfr, null);
+            dtoList.add(new ReferReasonDTO(rfr, null));
           });
         }
 
-        return map;
+        return dtoList;
       } catch (Exception e) {
         e.printStackTrace();
       }
