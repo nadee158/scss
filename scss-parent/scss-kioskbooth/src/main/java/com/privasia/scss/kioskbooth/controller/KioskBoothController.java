@@ -1,8 +1,6 @@
 package com.privasia.scss.kioskbooth.controller;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,7 +19,7 @@ import com.privasia.scss.kioskbooth.dto.KioskBoothRightInfo;
 import com.privasia.scss.kioskbooth.service.KioskBoothService;
 
 @RestController
-@RequestMapping("api/kioskbooth")
+@RequestMapping("**/kioskbooth")
 public class KioskBoothController {
 
   @Autowired
@@ -32,10 +30,8 @@ public class KioskBoothController {
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public CustomResponseEntity<ApiResponseObject> activateBoothsByKioskId(
       @RequestBody KioskBoothRightInfo kioskBoothRightInfo) {
-    Map<String, Object> resultMap = new HashMap<String, Object>();
     System.out.println("kioskBoothRightInfo :" + kioskBoothRightInfo);
     String status = kioskBoothService.activateBoothsByKioskId(kioskBoothRightInfo);
-    resultMap.put("STATUS", status);
     return new CustomResponseEntity<ApiResponseObject>(new ApiResponseObject<String>(HttpStatus.OK, status),
         HttpStatus.OK);
   }
@@ -44,26 +40,22 @@ public class KioskBoothController {
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public CustomResponseEntity<ApiResponseObject> lockBoothForKiosk(
       @RequestBody KioskBoothRightInfo kioskBoothRightInfo) {
-    Map<String, Object> resultMap = new HashMap<String, Object>();
     System.out.println("kioskID :" + kioskBoothRightInfo.getKioskID());
     System.out.println("boothID :" + kioskBoothRightInfo.getBoothID());
     String status = kioskBoothService.lockBoothForKiosk(kioskBoothRightInfo);
-    resultMap.put("STATUS", status);
-    return new CustomResponseEntity<ApiResponseObject>(
-        new ApiResponseObject<Map<String, Object>>(HttpStatus.OK, resultMap), HttpStatus.OK);
+    return new CustomResponseEntity<ApiResponseObject>(new ApiResponseObject<String>(HttpStatus.OK, status),
+        HttpStatus.OK);
   }
 
   @RequestMapping(value = "/completekioskbooth", method = RequestMethod.PUT,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public CustomResponseEntity<ApiResponseObject> completekioskbooth(
       @RequestBody KioskBoothRightInfo kioskBoothRightInfo) {
-    Map<String, Object> resultMap = new HashMap<String, Object>();
     System.out.println("kioskID :" + kioskBoothRightInfo.getKioskID());
     System.out.println("boothID :" + kioskBoothRightInfo.getBoothID());
     String status = kioskBoothService.completekioskbooth(kioskBoothRightInfo);
-    resultMap.put("STATUS", status);
-    return new CustomResponseEntity<ApiResponseObject>(
-        new ApiResponseObject<Map<String, Object>>(HttpStatus.OK, resultMap), HttpStatus.OK);
+    return new CustomResponseEntity<ApiResponseObject>(new ApiResponseObject<String>(HttpStatus.OK, status),
+        HttpStatus.OK);
   }
 
   @RequestMapping(value = "/getLockedKioskBoothInfo/{kioskID}", method = RequestMethod.GET,
