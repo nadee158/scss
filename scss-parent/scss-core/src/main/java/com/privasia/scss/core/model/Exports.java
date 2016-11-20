@@ -27,6 +27,8 @@ import org.hibernate.annotations.Type;
 import com.privasia.scss.common.enums.CompanyStatus;
 import com.privasia.scss.common.enums.ContainerPosition;
 import com.privasia.scss.common.enums.GCS_SSRBlockStatusType;
+import com.privasia.scss.common.enums.GateInOutStatus;
+import com.privasia.scss.common.enums.InOutType;
 import com.privasia.scss.common.enums.VesselStatus;
 
 /**
@@ -92,8 +94,8 @@ public class Exports implements Serializable {
 	private ShipSCN scn;
 
 	@Column(name = "EXP_IN_OUT", nullable = true)
-	@Type(type = "com.privasia.scss.core.util.enumusertype.InOutEnumUserType")
-	private CompanyStatus inOut;
+	@Type(type = "com.privasia.scss.core.util.enumusertype.GateInOutStatusEnumUserType")
+	private GateInOutStatus gateInOut;
 
 	@Column(name = "EXP_LINE")
 	private String expLine;

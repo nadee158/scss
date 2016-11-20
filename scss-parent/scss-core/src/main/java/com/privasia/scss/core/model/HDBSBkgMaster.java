@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -32,19 +33,23 @@ public class HDBSBkgMaster extends AuditEntity implements Serializable {
 	@Id
 	@Column(name = "BKG_MASTER_ID")
 	private String bkgMasterID;
-
+	
+	@Basic(fetch=FetchType.LAZY)
 	@Column(name = "APP_NAME")
 	private String appName;
 
 	@Column(name = "HDBS_BKG_SEQ")
 	private String hdbsBookingSeq;
-
+	
+	@Basic(fetch=FetchType.LAZY)
 	@Column(name = "CUS_ID")
 	private String customerID;
-
+	
+	@Basic(fetch=FetchType.LAZY)
 	@Column(name = "COM_NAME")
 	private String companyName;
-
+	
+	@Basic(fetch=FetchType.LAZY)
 	@Column(name = "CUS_CODE")
 	private String customerCode;
 
@@ -57,10 +62,12 @@ public class HDBSBkgMaster extends AuditEntity implements Serializable {
 
 	@Column(name = "DEPOT_LOCATION")
 	private String depotLocation;
-
+	
+	@Basic(fetch=FetchType.LAZY)
 	@Column(name = "DRIVER_IC_PP")
 	private String driverICOrPP;
-
+	
+	@Basic(fetch=FetchType.LAZY)
 	@Column(name = "SCU_NAME")
 	private String scuName;
 
@@ -83,7 +90,8 @@ public class HDBSBkgMaster extends AuditEntity implements Serializable {
 
 	@Column(name = "PLATE_NO")
 	private String plateNo;
-
+	
+	@Basic(fetch=FetchType.LAZY)
 	@Column(name = "DRAYAGE_BOOKING")
 	private Integer drayageBooking;
 

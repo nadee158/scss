@@ -29,7 +29,7 @@ public class CommonGateInOutAttribute extends BaseCommonGateInOutAttribute imple
 
   private Long eirNumber;
 
-  @Enumerated(EnumType.STRING)
+  @Type(type = "com.privasia.scss.core.util.enumusertype.ImpExpFlagEnumUserType")
   private ImpExpFlagStatus impExpFlag;
   
   @Type(type = "yes_no")
@@ -40,7 +40,7 @@ public class CommonGateInOutAttribute extends BaseCommonGateInOutAttribute imple
 
   private String rejectReason;
 
-  @Enumerated(EnumType.STRING)
+  @Type(type = "com.privasia.scss.core.util.enumusertype.TransactionStatusEnumUserType")
   private TransactionStatus gateInStatus;
 
   public Long getEirNumber() {

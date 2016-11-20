@@ -5,13 +5,13 @@ package com.privasia.scss.common.enumusertype;
 
 import java.io.Serializable;
 
-import com.privasia.scss.common.enums.TransactionType;
+import com.privasia.scss.common.enums.TransactionStatus;
 
 /**
  * @author Janaka
  *
  */
-public class TransactionStatusEnumUserType extends GeneralEnumMapUserType<TransactionType> implements Serializable {
+public class TransactionStatusEnumUserType extends GeneralEnumMapUserType<TransactionStatus> implements Serializable {
 	
 	/**
 	 * 
@@ -23,7 +23,7 @@ public class TransactionStatusEnumUserType extends GeneralEnumMapUserType<Transa
      *
      */
 	public TransactionStatusEnumUserType() {
-        super(TransactionType.class);
+        super(TransactionStatus.class);
     }
 
 }

@@ -10,6 +10,7 @@ import com.privasia.scss.common.dto.ImportContainer;
 import com.privasia.scss.common.dto.SealInfo;
 import com.privasia.scss.common.dto.TransactionDTO;
 import com.privasia.scss.common.enums.ContainerFullEmptyType;
+import com.privasia.scss.common.enums.ContainerSize;
 import com.privasia.scss.common.enums.GateInOutStatus;
 import com.privasia.scss.common.enums.HpatReferStatus;
 import com.privasia.scss.common.enums.Nationality;
@@ -106,7 +107,7 @@ public class PrintEirService {
     eirContainer.setContainerNumber(importContainer.getContainerNumber());
     eirContainer.setContainerLine(importContainer.getLine());
     eirContainer.setContainerISOCode(importContainer.getIsoCode());
-    eirContainer.setContainerLength(importContainer.getContainerLength());
+    eirContainer.setContainerLength(ContainerSize.fromValue(importContainer.getContainerLength()));
     eirContainer.setContainerHeight(importContainer.getContainerHeight());
     eirContainer.setContainerType(importContainer.getContainerType());
     eirContainer.setContainerNetWeight(weight);

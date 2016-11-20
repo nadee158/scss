@@ -6,7 +6,7 @@ import java.util.Map;
 
 public enum TransactionStatus implements Enumable {
 
-  NEW("N"), INPROGRESS("I"), APPROVED("A"), REJECT("R");
+  NEW("N"), INPROGRESS("I"), APPROVED("A"), REJECT("R"), COMPLETE("C");
 
   private final String transactionStatus;
 

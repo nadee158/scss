@@ -5,12 +5,14 @@ import java.time.LocalDateTime;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
+import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
@@ -34,7 +36,8 @@ public class HDBSBkgDetail extends AuditEntity implements Serializable {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "BKG_MASTER_ID", nullable = true)
 	private HDBSBkgMaster hDBSBkgMaster;
-
+	
+	@Basic(fetch=FetchType.LAZY)
 	@Column(name = "APP_NAME")
 	private String appName;
 
@@ -64,109 +67,138 @@ public class HDBSBkgDetail extends AuditEntity implements Serializable {
 
 	@Column(name = "APPT_DATETIME_TO_ACTUAL")
 	private LocalDateTime apptDateTimeToActual;
-
+	
+	@Basic(fetch=FetchType.LAZY)
 	@Column(name = "APPT_WINDOW")
 	private Integer apptWindow;
-
+	
+	@Basic(fetch=FetchType.LAZY)
 	@Column(name = "GRACE_PERIOD")
 	private Integer gracePeriod;
-
+	
+	@Basic(fetch=FetchType.LAZY)
 	@Column(name = "COMMODITY")
 	private String commodity;
-
+	
+	@Basic(fetch=FetchType.LAZY)
 	@Column(name = "SHIPPER_CODE")
 	private String shipperCode;
-
+	
+	@Basic(fetch=FetchType.LAZY)
 	@Column(name = "SHIPPER_NAME")
 	private String shipperName;
-
+	
+	@Basic(fetch=FetchType.LAZY)
 	@Column(name = "CONTAINER_WEIGHT")
 	private String containerWeight;
-
+	
+	@Basic(fetch=FetchType.LAZY)
 	@Column(name = "REEFER_MIN_TEMP")
 	private String reeferMinTemp;
-
+	
+	@Basic(fetch=FetchType.LAZY)
 	@Column(name = "REEFER_MAX_TEMP")
 	private String reeferMaxTemp;
-
+	
+	@Basic(fetch=FetchType.LAZY)
 	@Column(name = "REEFER_CARRIAGE_TEMP")
 	private String reeferCarriageTemp;
-
+	
+	@Basic(fetch=FetchType.LAZY)
 	@Column(name = "DG_UN_NUMBER")
 	private String dgUnNumber;
-
+	
+	@Basic(fetch=FetchType.LAZY)
 	@Column(name = "EQUIPMENT_REQ")
 	private String equipment;
-
+	
+	@Basic(fetch=FetchType.LAZY)
 	@Column(name = "CONTAINER_GRADE")
 	private String containerGrade;
 
 	@Column(name = "CONTAINER_LOCATION")
 	private String containerLocation;
-
+	
+	@Basic(fetch=FetchType.LAZY)
 	@Column(name = "GATE_IN_DATETIME")
 	private LocalDateTime gateInDateTime;
-
+	
+	@Basic(fetch=FetchType.LAZY)
 	@Column(name = "GATE_OUT_DATETIME")
 	private LocalDateTime gateOutDateTime;
 
 	@Column(name = "STATUS_CODE")
 	@Type(type = "com.privasia.scss.core.util.enumusertype.HDBSStatusEnumUserType")
 	private HDBSStatus statusCode;
-
+	
+	@Basic(fetch=FetchType.LAZY)
 	@Column(name = "EXCEL_DATA_SEQ")
 	private Integer excelDataSeq;
 
 	@Column(name = "REMARKS")
 	private String remarks;
-
+	
+	@Basic(fetch=FetchType.LAZY)
 	@Column(name = "TARE_WEIGHT")
 	private String tareWeight;
-
+	
+	@Basic(fetch=FetchType.LAZY)
 	@Column(name = "ISO_CODE")
 	private String isoCode;
-
+	
+	@Basic(fetch=FetchType.LAZY)
 	@Column(name = "ISO_DESCRIPTION")
 	private String isoDescription;
-
+	
+	@Basic(fetch=FetchType.LAZY)
 	@Column(name = "VESSEL_CODE")
 	private String vesselCode;
-
+	
+	@Basic(fetch=FetchType.LAZY)
 	@Column(name = "MANUFACTURE_DATE")
 	private String manufactureDate;
 
 	@Column(name = "SCSS_STATUS_CODE")
 	@Type(type = "com.privasia.scss.core.util.enumusertype.SCSSHDBSStatusEnumUserType")
 	private SCSSHDBSStatus scssStatusCode;
-
+	
+	@Basic(fetch=FetchType.LAZY)
 	@Column(name = "NEW_DATE")
 	private LocalDateTime newDate;
-
+	
+	@Basic(fetch=FetchType.LAZY)
 	@Column(name = "ACCEPTED_DATE")
 	private LocalDateTime accpetedDate;
-
+	
+	@Basic(fetch=FetchType.LAZY)
 	@Column(name = "APPROVED_DATE")
 	private LocalDateTime approvedDate;
-
+	
+	@Basic(fetch=FetchType.LAZY)
 	@Column(name = "COMPLETED_DATE")
 	private LocalDateTime completedDate;
-
+	
+	@Basic(fetch=FetchType.LAZY)
 	@Column(name = "CANCELLED_DATE")
 	private LocalDateTime cancelledDate;
-
+	
+	@Basic(fetch=FetchType.LAZY)
 	@Column(name = "REJECTED_DATE")
 	private LocalDateTime rejectedDate;
 
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
 	@JoinColumn(name = "ODD_ID_SEQ", nullable = true)
 	private WHODD oddIdSeq;
-
+	
+	@Basic(fetch=FetchType.LAZY)
 	@Column(name = "ODD_TIMEGATEINOK")
 	private LocalDateTime oddTimeGateInOk;
-
+	
+	@Basic(fetch=FetchType.LAZY)
 	@Column(name = "ODD_TIMEGATEOUTOK")
 	private LocalDateTime oddTimeGateOutOk;
-
+	
+	@Basic(fetch=FetchType.LAZY)
 	@Column(name = "HDBS_SYNC")
 	private String hdbsSynch;
 

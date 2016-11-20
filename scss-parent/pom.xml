@@ -141,6 +141,7 @@
     <module>scss-cosmos</module>
 	<module>scss-etpws</module>
 	<module>scss-hpat</module>
+	<module>scss-hdbs</module>
     <module>scss-scancard</module>
     <module>scss-kioskbooth</module>
     <module>scss-gatein</module>
@@ -149,6 +150,5 @@
 	<module>scss-refer</module>	
     <module>scss-client</module>
     <module>scss-auth</module>
-    <module>scss-hdbs</module>
   </modules>
 </project>

@@ -10,8 +10,7 @@ import javax.persistence.Embeddable;
 import org.hibernate.annotations.Type;
 
 import com.privasia.scss.common.enums.ContainerFullEmptyType;
-
-
+import com.privasia.scss.common.enums.ContainerSize;
 
 /**
  * @author Janaka
@@ -20,52 +19,51 @@ import com.privasia.scss.common.enums.ContainerFullEmptyType;
 @Embeddable
 public class CommonContainerAttribute implements Serializable {
 
-  /**
-   * 
-   */
-  private static final long serialVersionUID = 1L;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
-  private String containerNumber;
+	private String containerNumber;
 
-  private String containerLength;
+	@Type(type = "com.privasia.scss.core.util.enumusertype.ContainerSizeEnumUserType")
+	private ContainerSize containerLength;
 
-  private String containerISOCode;
+	private String containerISOCode;
 
-  @Type(type = "com.privasia.scss.core.util.enumusertype.ContainerFullEmptyTypeEnumUserType")
-  private ContainerFullEmptyType containerFullOrEmpty;
+	@Type(type = "com.privasia.scss.core.util.enumusertype.ContainerFullEmptyTypeEnumUserType")
+	private ContainerFullEmptyType containerFullOrEmpty;
 
-  public String getContainerNumber() {
-    return containerNumber;
-  }
+	public String getContainerNumber() {
+		return containerNumber;
+	}
 
-  public void setContainerNumber(String containerNumber) {
-    this.containerNumber = containerNumber;
-  }
+	public void setContainerNumber(String containerNumber) {
+		this.containerNumber = containerNumber;
+	}
 
-  public String getContainerLength() {
-    return containerLength;
-  }
+	public String getContainerISOCode() {
+		return containerISOCode;
+	}
 
-  public void setContainerLength(String containerLength) {
-    this.containerLength = containerLength;
-  }
+	public void setContainerISOCode(String containerISOCode) {
+		this.containerISOCode = containerISOCode;
+	}
 
-  public String getContainerISOCode() {
-    return containerISOCode;
-  }
+	public ContainerFullEmptyType getContainerFullOrEmpty() {
+		return containerFullOrEmpty;
+	}
 
-  public void setContainerISOCode(String containerISOCode) {
-    this.containerISOCode = containerISOCode;
-  }
+	public void setContainerFullOrEmpty(ContainerFullEmptyType containerFullOrEmpty) {
+		this.containerFullOrEmpty = containerFullOrEmpty;
+	}
 
-  public ContainerFullEmptyType getContainerFullOrEmpty() {
-    return containerFullOrEmpty;
-  }
+	public ContainerSize getContainerLength() {
+		return containerLength;
+	}
 
-  public void setContainerFullOrEmpty(ContainerFullEmptyType containerFullOrEmpty) {
-    this.containerFullOrEmpty = containerFullOrEmpty;
-  }
-
-
+	public void setContainerLength(ContainerSize containerLength) {
+		this.containerLength = containerLength;
+	}
 
 }
