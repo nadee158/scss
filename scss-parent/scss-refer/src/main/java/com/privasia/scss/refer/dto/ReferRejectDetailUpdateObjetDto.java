@@ -1,8 +1,9 @@
 package com.privasia.scss.refer.dto;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
 
 public class ReferRejectDetailUpdateObjetDto implements Serializable {
 
@@ -11,24 +12,24 @@ public class ReferRejectDetailUpdateObjetDto implements Serializable {
    */
   private static final long serialVersionUID = 1L;
 
-  private long referRejectDetailID;
+  private long referRejectDetailID = 0;
 
   // for saveReferReject method
-  private String status;
+  private String status = StringUtils.EMPTY;
 
-  private String supervisorRemarks;
+  private String supervisorRemarks = StringUtils.EMPTY;
 
-  private String containerNo;
+  private String containerNo = StringUtils.EMPTY;
 
-  private List<Long> referReasonIdList;
+  private List<Long> referReasonIdList = null;
 
 
   // for updateLineCodeAndGateInDateForReferRejectDetail method
-  private Long referRejectID;
+  private long referRejectID = 0;
 
-  private String lineCode;
+  private String lineCode = StringUtils.EMPTY;
 
-  private LocalDateTime gateInTime;
+  private String gateInTime = StringUtils.EMPTY;
 
 
   public long getReferRejectDetailID() {
@@ -71,11 +72,12 @@ public class ReferRejectDetailUpdateObjetDto implements Serializable {
     this.referReasonIdList = referReasonIdList;
   }
 
-  public Long getReferRejectID() {
+
+  public long getReferRejectID() {
     return referRejectID;
   }
 
-  public void setReferRejectID(Long referRejectID) {
+  public void setReferRejectID(long referRejectID) {
     this.referRejectID = referRejectID;
   }
 
@@ -87,11 +89,11 @@ public class ReferRejectDetailUpdateObjetDto implements Serializable {
     this.lineCode = lineCode;
   }
 
-  public LocalDateTime getGateInTime() {
+  public String getGateInTime() {
     return gateInTime;
   }
 
-  public void setGateInTime(LocalDateTime gateInTime) {
+  public void setGateInTime(String gateInTime) {
     this.gateInTime = gateInTime;
   }
 

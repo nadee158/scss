@@ -62,13 +62,13 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
         roles.stream().map(authority -> new SimpleGrantedAuthority(authority)).collect(Collectors.toList());
 
     List<Long> functions = jwsClaims.getBody().get("functions", List.class);
-    
+
     String staffName = jwsClaims.getBody().get("staffName", String.class);
-    
+
     String staffNumber = jwsClaims.getBody().get("staffNumber", String.class);
-    
-    Long userID = jwsClaims.getBody().get("userID", Long.class);
-    
+
+    Long userID = (jwsClaims.getBody().get("userID", Integer.class)).longValue();
+
 
     UserContext context = UserContext.create(userID, subject, authorities, functions, staffName, staffNumber);
 

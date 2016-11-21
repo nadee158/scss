@@ -37,51 +37,51 @@ public class ScanCardController {
 
   @RequestMapping(value = "/{cardNo}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
       consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-  public CustomResponseEntity<ApiResponseObject> scanCardByCardNo(@PathVariable("cardNo") String cardNo) {
+  public CustomResponseEntity<ApiResponseObject<?>> scanCardByCardNo(@PathVariable("cardNo") String cardNo) {
     CardValidationDto cardValidation = cardValidationService.validateCard(cardNo);
-    return new CustomResponseEntity<ApiResponseObject>(
+    return new CustomResponseEntity<ApiResponseObject<?>>(
         new ApiResponseObject<CardValidationDto>(HttpStatus.OK, cardValidation), HttpStatus.OK);
   }
 
   @RequestMapping(value = "/cardid/{cardID}", method = RequestMethod.GET,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-  public CustomResponseEntity<ApiResponseObject> validateCardByCardId(@PathVariable("cardID") Long cardID) {
+  public CustomResponseEntity<ApiResponseObject<?>> validateCardByCardId(@PathVariable("cardID") Long cardID) {
     CardValidationDto cardValidation = cardValidationService.validateCard(cardID);
-    return new CustomResponseEntity<ApiResponseObject>(
+    return new CustomResponseEntity<ApiResponseObject<?>>(
         new ApiResponseObject<CardValidationDto>(HttpStatus.OK, cardValidation), HttpStatus.OK);
   }
 
   @RequestMapping(value = "/cardid/{cardID}/scuinfo", method = RequestMethod.GET,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-  public CustomResponseEntity<ApiResponseObject> selectSCUInfo(@PathVariable("cardID") Long cardID,
+  public CustomResponseEntity<ApiResponseObject<?>> selectSCUInfo(@PathVariable("cardID") Long cardID,
       HttpServletRequest request) {
     SmartCardUserDTO dto = cardService.selectSCUInfo(cardID, null, request);
-    return new CustomResponseEntity<ApiResponseObject>(new ApiResponseObject<SmartCardUserDTO>(HttpStatus.OK, dto),
+    return new CustomResponseEntity<ApiResponseObject<?>>(new ApiResponseObject<SmartCardUserDTO>(HttpStatus.OK, dto),
         HttpStatus.OK);
   }
 
   @RequestMapping(value = "/cardno/{cardNo}/scuinfo", method = RequestMethod.GET,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-  public CustomResponseEntity<ApiResponseObject> selectSCUInfoByCardId(@PathVariable("cardNo") Long cardNo,
+  public CustomResponseEntity<ApiResponseObject<?>> selectSCUInfoByCardId(@PathVariable("cardNo") Long cardNo,
       HttpServletRequest request) {
     SmartCardUserDTO dto = cardService.selectSCUInfo(null, cardNo, request);
-    return new CustomResponseEntity<ApiResponseObject>(new ApiResponseObject<SmartCardUserDTO>(HttpStatus.OK, dto),
+    return new CustomResponseEntity<ApiResponseObject<?>>(new ApiResponseObject<SmartCardUserDTO>(HttpStatus.OK, dto),
         HttpStatus.OK);
   }
 
   @RequestMapping(value = "/cardno/{cardNo}/compnay/code", method = RequestMethod.GET,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-  public CustomResponseEntity<ApiResponseObject> selectCompanyCode(@PathVariable("cardNo") String cardNo) {
+  public CustomResponseEntity<ApiResponseObject<?>> selectCompanyCode(@PathVariable("cardNo") String cardNo) {
     String companyCode = cardService.selectCompanyCode(cardNo);
-    return new CustomResponseEntity<ApiResponseObject>(new ApiResponseObject<String>(HttpStatus.OK, companyCode),
+    return new CustomResponseEntity<ApiResponseObject<?>>(new ApiResponseObject<String>(HttpStatus.OK, companyCode),
         HttpStatus.OK);
   }
 
   @RequestMapping(value = "/cardid/{cardID}/compnay/code", method = RequestMethod.GET,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-  public CustomResponseEntity<ApiResponseObject> selectCompanyCodeByCardId(@PathVariable("cardID") Long cardID) {
+  public CustomResponseEntity<ApiResponseObject<?>> selectCompanyCodeByCardId(@PathVariable("cardID") Long cardID) {
     String companyCode = cardService.selectCompanyCode(cardID);
-    return new CustomResponseEntity<ApiResponseObject>(new ApiResponseObject<String>(HttpStatus.OK, companyCode),
+    return new CustomResponseEntity<ApiResponseObject<?>>(new ApiResponseObject<String>(HttpStatus.OK, companyCode),
         HttpStatus.OK);
   }
 

@@ -18,10 +18,7 @@ public class ReferRejectUpdateObjetDto implements Serializable {
   // HpatReferStatus
   private String statusCode = HpatReferStatus.COMPLETE.toString();
 
-  // rejectby & updated by
-  private long userId;
-
-  private List<ReferRejectDetailUpdateObjetDto> detailUpdateObjetDtos;
+  private List<ReferRejectDetailUpdateObjetDto> detailUpdateObjetDtos = null;
 
 
   public long getReferRejectID() {
@@ -30,14 +27,6 @@ public class ReferRejectUpdateObjetDto implements Serializable {
 
   public void setReferRejectID(long referRejectID) {
     this.referRejectID = referRejectID;
-  }
-
-  public long getUserId() {
-    return userId;
-  }
-
-  public void setUserId(long userId) {
-    this.userId = userId;
   }
 
   public String getStatusCode() {

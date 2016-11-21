@@ -1,16 +1,19 @@
 package com.privasia.scss.refer.dto;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.BeanUtils;
 
+import com.privasia.scss.common.enums.ContainerPosition;
 import com.privasia.scss.common.enums.ReferStatus;
 import com.privasia.scss.common.enums.SealOriginType;
 import com.privasia.scss.common.enums.SealType;
+import com.privasia.scss.common.enums.SolasInstructionType;
+import com.privasia.scss.common.util.CommonUtil;
+import com.privasia.scss.core.model.CommonSealAttribute;
+import com.privasia.scss.core.model.CommonSolasAttribute;
 import com.privasia.scss.core.model.ReferRejectDetail;
 
 public class ReferRejectDetailObjetDto implements Serializable {
@@ -21,60 +24,60 @@ public class ReferRejectDetailObjetDto implements Serializable {
   private static final long serialVersionUID = 1L;
 
   // ReferRejectDetail OBJECT ---------------------------------------
-  private Optional<Long> referRejectDetailID;
+  private Optional<Long> referRejectDetailID = null;
 
-  private String containerNo;
+  private String containerNo = StringUtils.EMPTY;
 
   // enum
-  private String position;
+  private String position = StringUtils.EMPTY;
 
-  private String containerIsoCode;
+  private String containerIsoCode = StringUtils.EMPTY;
 
   private String seal01Origin = SealOriginType.L.getValue();
 
   private String seal01Type = SealType.SL.getValue();
 
-  private String seal01Number;
+  private String seal01Number = StringUtils.EMPTY;
 
   private String seal02Origin = SealOriginType.S.getValue();
 
   private String seal02Type = SealType.SL.getValue();
 
-  private String seal02Number;
+  private String seal02Number = StringUtils.EMPTY;
 
-  private String remarks;
+  private String remarks = StringUtils.EMPTY;
 
   private String status = ReferStatus.NONE.getValue();
 
-  private int expPmBTM;
+  private int expPmBTM = 0;
 
-  private int expNetWeight;
+  private int expNetWeight = 0;
 
-  private String doubleBooking;
+  private String doubleBooking = StringUtils.EMPTY;
 
-  private int measuredWeightBridge;
+  private int measuredWeightBridge = 0;
 
-  private int mgw;
+  private int mgw = 0;
 
-  private String faLedgerCode;
+  private String faLedgerCode = StringUtils.EMPTY;
 
-  private String solasRefNumber;
+  private String solasRefNumber = StringUtils.EMPTY;
 
-  private String solasDetailID;
+  private String solasDetailID = StringUtils.EMPTY;
 
-  private String solasInstruction;
+  private String solasInstruction = StringUtils.EMPTY;
 
-  private String shipperVGM;
+  private String shipperVGM = StringUtils.EMPTY;
 
-  private String supervisorRemarks;
+  private String supervisorRemarks = StringUtils.EMPTY;
 
-  private String lineCode;
+  private String lineCode = StringUtils.EMPTY;
 
-  private LocalDateTime gateInTime;
+  private String gateInTime = StringUtils.EMPTY;
 
 
   // ReferRejectReason objects
-  private List<Long> referReasonIds;
+  private List<Long> referReasonIds = null;
 
 
   public Optional<Long> getReferRejectDetailID() {
@@ -317,12 +320,13 @@ public class ReferRejectDetailObjetDto implements Serializable {
   }
 
 
-  public LocalDateTime getGateInTime() {
+
+  public String getGateInTime() {
     return gateInTime;
   }
 
 
-  public void setGateInTime(LocalDateTime gateInTime) {
+  public void setGateInTime(String gateInTime) {
     this.gateInTime = gateInTime;
   }
 
@@ -341,8 +345,61 @@ public class ReferRejectDetailObjetDto implements Serializable {
     if (referRejectDetail == null) {
       referRejectDetail = new ReferRejectDetail();
     }
-    BeanUtils.copyProperties(this, referRejectDetail);
+
+    referRejectDetail.setContainerNo(containerNo);
+    referRejectDetail.setContainerIsoCode(containerIsoCode);
+
+    if (referRejectDetail.getSeal() == null) {
+      referRejectDetail.setSeal(new CommonSealAttribute());
+    }
+
+    referRejectDetail.setSeal(updateSeal(referRejectDetail.getSeal()));
+
+    referRejectDetail.setRemarks(remarks);
+    if (StringUtils.isNotEmpty(status)) {
+      referRejectDetail.setStatus(ReferStatus.fromValue(status));
+    }
+    referRejectDetail.setSupervisorRemarks(supervisorRemarks);
+    referRejectDetail.setExpPmBTM(expPmBTM);
+    referRejectDetail.setExpNetWeight(expNetWeight);
+    referRejectDetail.setDoubleBooking(doubleBooking);
+    referRejectDetail.setLineCode(lineCode);
+    referRejectDetail.setGateInTime(CommonUtil.getParsedDate(gateInTime));
+    if (StringUtils.isNotEmpty(position)) {
+      referRejectDetail.setPosition(ContainerPosition.fromValue(position));
+    }
+    referRejectDetail.setMeasuredWeightBridge(measuredWeightBridge);
+    referRejectDetail.setSolas(constructSolas(referRejectDetail.getSolas()));
+
+
     return referRejectDetail;
+  }
+
+
+  private CommonSolasAttribute constructSolas(CommonSolasAttribute solas) {
+    if (solas == null) {
+      solas = new CommonSolasAttribute();
+    }
+    solas.setFaLedgerCode(faLedgerCode);
+    solas.setMgw(mgw);
+    solas.setShipperVGM(shipperVGM);
+    solas.setSolasDetailID(solasDetailID);
+    if (StringUtils.isNotEmpty(solasInstruction)) {
+      solas.setSolasInstruction(SolasInstructionType.fromValue(solasInstruction));
+    }
+    solas.setSolasRefNumber(solasRefNumber);
+    return solas;
+  }
+
+
+  private CommonSealAttribute updateSeal(CommonSealAttribute seal) {
+    seal.setSeal01Origin(seal01Origin);
+    seal.setSeal01Type(seal01Type);
+    seal.setSeal01Number(seal01Number);
+    seal.setSeal02Origin(seal02Origin);
+    seal.setSeal02Type(seal02Type);
+    seal.setSeal02Number(seal02Number);
+    return seal;
   }
 
 

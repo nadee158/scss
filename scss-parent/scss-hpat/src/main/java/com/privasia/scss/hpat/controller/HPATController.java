@@ -35,7 +35,7 @@ public class HPATController {
 
   @RequestMapping(value = "/{cardID}/{bookingTypes}", method = RequestMethod.GET,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-  public CustomResponseEntity<ApiResponseObject> findEtpHpat4ImpAndExp(@PathVariable Long cardID,
+  public CustomResponseEntity<ApiResponseObject<?>> findEtpHpat4ImpAndExp(@PathVariable Long cardID,
       @PathVariable List<String> bookingTypes) {
 
     System.out.println(cardID + "cardID");
@@ -43,20 +43,20 @@ public class HPATController {
 
     List<HpatDto> dtos = hpatService.findEtpHpat4ImpAndExp(cardID, LocalDateTime.now(), bookingTypes);
 
-    return new CustomResponseEntity<ApiResponseObject>(new ApiResponseObject<List<HpatDto>>(HttpStatus.OK, dtos),
+    return new CustomResponseEntity<ApiResponseObject<?>>(new ApiResponseObject<List<HpatDto>>(HttpStatus.OK, dtos),
         HttpStatus.OK);
   }
 
 
   @RequestMapping(value = "/{bookingID}/details", method = RequestMethod.GET,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-  public CustomResponseEntity<ApiResponseObject> getEtpHpat4ImpAndExp(@PathVariable String bookingID) {
+  public CustomResponseEntity<ApiResponseObject<?>> getEtpHpat4ImpAndExp(@PathVariable String bookingID) {
 
     System.out.println(bookingID + "bookingID");
 
     TransactionDTO dto = hpatService.getEtpHpat4ImpAndExp(bookingID);
 
-    return new CustomResponseEntity<ApiResponseObject>(new ApiResponseObject<TransactionDTO>(HttpStatus.OK, dto),
+    return new CustomResponseEntity<ApiResponseObject<?>>(new ApiResponseObject<TransactionDTO>(HttpStatus.OK, dto),
         HttpStatus.OK);
   }
 

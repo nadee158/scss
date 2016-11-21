@@ -2,11 +2,14 @@ package com.privasia.scss.core.security.util;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.privasia.scss.core.config.WebSecurityConfig;
 import com.privasia.scss.core.security.jwt.extractor.TokenExtractor;
+import com.privasia.scss.core.security.model.UserContext;
 
 public final class SecurityHelper {
 
@@ -27,10 +30,47 @@ public final class SecurityHelper {
     return (SecurityContext) request.getAttribute(SECURITY_CONTEXT);
   }
 
+  public static Long getCurrentUserId() {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+    UserContext userContext = (UserContext) authentication.getPrincipal();
+
+    if (authentication == null || !authentication.isAuthenticated()) {
+      return null;
+    }
+
+    return ((UserContext) authentication.getPrincipal()).getUserID();
+
+  }
+
 
   private static HttpServletRequest getRequest() {
     ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
     return sra.getRequest();
+  }
+
+  public static String getStaffName() {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+    UserContext userContext = (UserContext) authentication.getPrincipal();
+
+    if (authentication == null || !authentication.isAuthenticated()) {
+      return null;
+    }
+
+    return ((UserContext) authentication.getPrincipal()).getStaffName();
+  }
+
+  public static String getStaffNumber() {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+    UserContext userContext = (UserContext) authentication.getPrincipal();
+
+    if (authentication == null || !authentication.isAuthenticated()) {
+      return null;
+    }
+
+    return ((UserContext) authentication.getPrincipal()).getStaffNumber();
   }
 
 

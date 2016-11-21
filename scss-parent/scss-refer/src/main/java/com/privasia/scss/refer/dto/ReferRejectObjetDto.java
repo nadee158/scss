@@ -1,14 +1,13 @@
 package com.privasia.scss.refer.dto;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 
 import com.privasia.scss.common.enums.HpatReferStatus;
+import com.privasia.scss.common.util.CommonUtil;
 import com.privasia.scss.core.model.BaseCommonGateInOutAttribute;
 import com.privasia.scss.core.model.ReferReject;
 
@@ -20,59 +19,52 @@ public class ReferRejectObjetDto implements Serializable {
   private static final long serialVersionUID = 1L;
 
   // Card
-  private long card;
-  private String transactionStatus;
+  private long card = 0;
+
+  private String transactionStatus = StringUtils.EMPTY;
 
   // ReferReject OBJECT ---------------------------------------
 
-  private Optional<Long> referId;
+  private Optional<Long> referId = null;
 
   // System User
-  private long gateInClerk;
+  private long gateInClerk = 0;
 
   // Client
-  private long gateInClient;
+  private long gateInClient = 0;
 
-  private String pmHeadNo;
+  private String pmHeadNo = StringUtils.EMPTY;
 
-  private int expWeightBridge;
+  private int expWeightBridge = 0;
 
-  private long hpatBooking;
+  private long hpatBooking = 0;
 
   private String statusCode = HpatReferStatus.ACTIVE.getValue();
 
-  private LocalDateTime referDateTime = LocalDateTime.now();
+  private String referDateTime = StringUtils.EMPTY;
 
-  private long addBy;
+  private Long cardUsageID = null;
 
-  private long updateBy;
-
-  private ZonedDateTime dateTimeAdd = ZonedDateTime.now();
-
-  private ZonedDateTime dateTimeUpdate = ZonedDateTime.now();
-
-  private Long cardUsageID;
-
-  private String pmPlateNo;
+  private String pmPlateNo = StringUtils.EMPTY;
 
   // Company
-  private Long companyID;
+  private Long companyID = null;
 
-  private LocalDateTime timeGateIn;
+  private String timeGateIn = StringUtils.EMPTY;
 
-  private LocalDateTime timeGateInOk = LocalDateTime.now();
+  private String timeGateInOk = StringUtils.EMPTY;
 
-  private int pmWeight;
+  private int pmWeight = 0;
 
-  private int trailerWeight;
+  private int trailerWeight = 0;
 
-  private String trailerPlateNo;
+  private String trailerPlateNo = StringUtils.EMPTY;
 
-  private boolean axleVerified;
+  private boolean axleVerified = false;
 
-  private boolean pmVerified;
+  private boolean pmVerified = false;
 
-  private ReferRejectDetailObjetDto referRejectDetail;
+  private ReferRejectDetailObjetDto referRejectDetail = null;
 
 
   public long getCard() {
@@ -165,55 +157,6 @@ public class ReferRejectObjetDto implements Serializable {
   }
 
 
-  public LocalDateTime getReferDateTime() {
-    return referDateTime;
-  }
-
-
-  public void setReferDateTime(LocalDateTime referDateTime) {
-    this.referDateTime = referDateTime;
-  }
-
-
-  public long getAddBy() {
-    return addBy;
-  }
-
-
-  public void setAddBy(long addBy) {
-    this.addBy = addBy;
-  }
-
-
-  public long getUpdateBy() {
-    return updateBy;
-  }
-
-
-  public void setUpdateBy(long updateBy) {
-    this.updateBy = updateBy;
-  }
-
-
-  public ZonedDateTime getDateTimeAdd() {
-    return dateTimeAdd;
-  }
-
-
-  public void setDateTimeAdd(ZonedDateTime dateTimeAdd) {
-    this.dateTimeAdd = dateTimeAdd;
-  }
-
-
-  public ZonedDateTime getDateTimeUpdate() {
-    return dateTimeUpdate;
-  }
-
-
-  public void setDateTimeUpdate(ZonedDateTime dateTimeUpdate) {
-    this.dateTimeUpdate = dateTimeUpdate;
-  }
-
 
   public Long getCardUsageID() {
     return cardUsageID;
@@ -243,27 +186,6 @@ public class ReferRejectObjetDto implements Serializable {
   public void setCompanyID(Long companyID) {
     this.companyID = companyID;
   }
-
-
-  public LocalDateTime getTimeGateIn() {
-    return timeGateIn;
-  }
-
-
-  public void setTimeGateIn(LocalDateTime timeGateIn) {
-    this.timeGateIn = timeGateIn;
-  }
-
-
-  public LocalDateTime getTimeGateInOk() {
-    return timeGateInOk;
-  }
-
-
-  public void setTimeGateInOk(LocalDateTime timeGateInOk) {
-    this.timeGateInOk = timeGateInOk;
-  }
-
 
   public int getPmWeight() {
     return pmWeight;
@@ -329,8 +251,16 @@ public class ReferRejectObjetDto implements Serializable {
     if (referReject == null) {
       referReject = new ReferReject();
     }
-    BeanUtils.copyProperties(this, referReject);
-
+    referReject.setExpWeightBridge(expWeightBridge);
+    if (StringUtils.isNotEmpty(statusCode)) {
+      referReject.setStatusCode(HpatReferStatus.fromCode(statusCode));
+    }
+    referReject.setReferDateTime(CommonUtil.getParsedDate(referDateTime));
+    referReject.setPmWeight(pmWeight);
+    referReject.setTrailerWeight(trailerWeight);
+    referReject.setTrailerPlateNo(trailerPlateNo);
+    referReject.setAxleVerified(axleVerified);
+    referReject.setPmVerified(pmVerified);
     return referReject;
   }
 
@@ -342,6 +272,36 @@ public class ReferRejectObjetDto implements Serializable {
     }
     BeanUtils.copyProperties(this, baseCommonGateInOut);
     return baseCommonGateInOut;
+  }
+
+
+  public String getReferDateTime() {
+    return referDateTime;
+  }
+
+
+  public void setReferDateTime(String referDateTime) {
+    this.referDateTime = referDateTime;
+  }
+
+
+  public String getTimeGateIn() {
+    return timeGateIn;
+  }
+
+
+  public void setTimeGateIn(String timeGateIn) {
+    this.timeGateIn = timeGateIn;
+  }
+
+
+  public String getTimeGateInOk() {
+    return timeGateInOk;
+  }
+
+
+  public void setTimeGateInOk(String timeGateInOk) {
+    this.timeGateInOk = timeGateInOk;
   }
 
 

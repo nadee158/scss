@@ -17,6 +17,11 @@
 
 	
 	<dependencies>
+	
+			<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+		</dependency>
 		
 		<!-- https://mvnrepository.com/artifact/org.jdom/jdom -->
 		<dependency>

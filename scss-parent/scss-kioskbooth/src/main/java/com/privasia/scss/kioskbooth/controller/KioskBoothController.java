@@ -28,73 +28,73 @@ public class KioskBoothController {
 
   @RequestMapping(value = "/activateBoothsByKioskId", method = RequestMethod.PUT,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-  public CustomResponseEntity<ApiResponseObject> activateBoothsByKioskId(
+  public CustomResponseEntity<ApiResponseObject<?>> activateBoothsByKioskId(
       @RequestBody KioskBoothRightInfo kioskBoothRightInfo) {
     System.out.println("kioskBoothRightInfo :" + kioskBoothRightInfo);
     String status = kioskBoothService.activateBoothsByKioskId(kioskBoothRightInfo);
-    return new CustomResponseEntity<ApiResponseObject>(new ApiResponseObject<String>(HttpStatus.OK, status),
+    return new CustomResponseEntity<ApiResponseObject<?>>(new ApiResponseObject<String>(HttpStatus.OK, status),
         HttpStatus.OK);
   }
 
   @RequestMapping(value = "/lockboothforkiosk", method = RequestMethod.PUT,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-  public CustomResponseEntity<ApiResponseObject> lockBoothForKiosk(
+  public CustomResponseEntity<ApiResponseObject<?>> lockBoothForKiosk(
       @RequestBody KioskBoothRightInfo kioskBoothRightInfo) {
     System.out.println("kioskID :" + kioskBoothRightInfo.getKioskID());
     System.out.println("boothID :" + kioskBoothRightInfo.getBoothID());
     String status = kioskBoothService.lockBoothForKiosk(kioskBoothRightInfo);
-    return new CustomResponseEntity<ApiResponseObject>(new ApiResponseObject<String>(HttpStatus.OK, status),
+    return new CustomResponseEntity<ApiResponseObject<?>>(new ApiResponseObject<String>(HttpStatus.OK, status),
         HttpStatus.OK);
   }
 
   @RequestMapping(value = "/completekioskbooth", method = RequestMethod.PUT,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-  public CustomResponseEntity<ApiResponseObject> completekioskbooth(
+  public CustomResponseEntity<ApiResponseObject<?>> completekioskbooth(
       @RequestBody KioskBoothRightInfo kioskBoothRightInfo) {
     System.out.println("kioskID :" + kioskBoothRightInfo.getKioskID());
     System.out.println("boothID :" + kioskBoothRightInfo.getBoothID());
     String status = kioskBoothService.completekioskbooth(kioskBoothRightInfo);
-    return new CustomResponseEntity<ApiResponseObject>(new ApiResponseObject<String>(HttpStatus.OK, status),
+    return new CustomResponseEntity<ApiResponseObject<?>>(new ApiResponseObject<String>(HttpStatus.OK, status),
         HttpStatus.OK);
   }
 
   @RequestMapping(value = "/getLockedKioskBoothInfo/{kioskID}", method = RequestMethod.GET,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-  public CustomResponseEntity<ApiResponseObject> getLockedKioskBoothInfo(@PathVariable String kioskID) {
+  public CustomResponseEntity<ApiResponseObject<?>> getLockedKioskBoothInfo(@PathVariable String kioskID) {
     System.out.println("kioskID :" + kioskID);
     KioskBoothRightInfo kioskBoothRightInfo = kioskBoothService.getLockedKioskBoothInfo(kioskID);
-    return new CustomResponseEntity<ApiResponseObject>(
+    return new CustomResponseEntity<ApiResponseObject<?>>(
         new ApiResponseObject<KioskBoothRightInfo>(HttpStatus.OK, kioskBoothRightInfo), HttpStatus.OK);
   }
 
   @RequestMapping(value = "/getBoothAccessRight/{boothID}/{kioskID}/{cardNumber}", method = RequestMethod.GET,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-  public CustomResponseEntity<ApiResponseObject> getBoothAccessRight(@PathVariable String boothID,
+  public CustomResponseEntity<ApiResponseObject<?>> getBoothAccessRight(@PathVariable String boothID,
       @PathVariable String kioskID, @PathVariable String cardNumber) {
     System.out.println("boothID :" + boothID);
     System.out.println("kioskID :" + kioskID);
     System.out.println("cardNumber :" + cardNumber);
     List<KioskBoothRightInfo> kioskBoothRightInfos =
         kioskBoothService.getBoothAccessRight(boothID, kioskID, cardNumber);
-    return new CustomResponseEntity<ApiResponseObject>(
+    return new CustomResponseEntity<ApiResponseObject<?>>(
         new ApiResponseObject<List<KioskBoothRightInfo>>(HttpStatus.OK, kioskBoothRightInfos), HttpStatus.OK);
   }
 
   @RequestMapping(value = "/getKioskInfoByBooth/{boothID}", method = RequestMethod.GET,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-  public ResponseEntity<ApiResponseObject> getKioskInfoByBooth(@PathVariable String boothID) {
+  public ResponseEntity<ApiResponseObject<?>> getKioskInfoByBooth(@PathVariable String boothID) {
     System.out.println("boothID :" + boothID);
     List<ClientInfo> clientInfo = kioskBoothService.getKioskInfoByBooth(boothID);
-    return new CustomResponseEntity<ApiResponseObject>(
+    return new CustomResponseEntity<ApiResponseObject<?>>(
         new ApiResponseObject<List<ClientInfo>>(HttpStatus.OK, clientInfo), HttpStatus.OK);
   }
 
   @RequestMapping(value = "/getclientinfo/{ipAddress}", method = RequestMethod.GET,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-  public ResponseEntity<ApiResponseObject> getKioskLoginInfo(@PathVariable String ipAddress) {
+  public ResponseEntity<ApiResponseObject<?>> getKioskLoginInfo(@PathVariable String ipAddress) {
     System.out.println("ipAddress :" + ipAddress);
     ClientInfo clientInfo = kioskBoothService.getKioskLoginInfo(ipAddress);
-    return new CustomResponseEntity<ApiResponseObject>(new ApiResponseObject<ClientInfo>(HttpStatus.OK, clientInfo),
+    return new CustomResponseEntity<ApiResponseObject<?>>(new ApiResponseObject<ClientInfo>(HttpStatus.OK, clientInfo),
         HttpStatus.OK);
   }
 

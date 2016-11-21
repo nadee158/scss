@@ -46,65 +46,65 @@ public class MasterDataController {
 
   @RequestMapping(value = "serverdate", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
       consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-  public CustomResponseEntity<ApiResponseObject> getServerDateTime() {
+  public CustomResponseEntity<ApiResponseObject<?>> getServerDateTime() {
 
     String date = currentDateTimeService.getFormattedCurrentDateAndTime();
 
     System.out.println("date : " + date);
 
-    return new CustomResponseEntity<ApiResponseObject>(new ApiResponseObject<String>(HttpStatus.OK, date),
+    return new CustomResponseEntity<ApiResponseObject<?>>(new ApiResponseObject<String>(HttpStatus.OK, date),
         HttpStatus.OK);
   }
 
   @RequestMapping(value = "customcheck", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
       consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-  public CustomResponseEntity<ApiResponseObject> isCustomCheckAfterTransaction() {
+  public CustomResponseEntity<ApiResponseObject<?>> isCustomCheckAfterTransaction() {
 
     boolean check = globalSettingService.isCustomCheckBeforeTransaction();
 
     System.out.println("check : " + check);
 
-    return new CustomResponseEntity<ApiResponseObject>(new ApiResponseObject<Boolean>(HttpStatus.OK, check),
+    return new CustomResponseEntity<ApiResponseObject<?>>(new ApiResponseObject<Boolean>(HttpStatus.OK, check),
         HttpStatus.OK);
   }
 
   @RequestMapping(value = "/referreason", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
       consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-  public CustomResponseEntity<ApiResponseObject> getReferReasonList() {
+  public CustomResponseEntity<ApiResponseObject<?>> getReferReasonList() {
     System.out.println("dtoList before:");
     List<ReferReasonDTO> dtoList = referReasonService.findAllReferReason();
     System.out.println("dtoList :" + dtoList);
-    return new CustomResponseEntity<ApiResponseObject>(
+    return new CustomResponseEntity<ApiResponseObject<?>>(
         new ApiResponseObject<List<ReferReasonDTO>>(HttpStatus.OK, dtoList), HttpStatus.OK);
   }
 
   @RequestMapping(value = "/oddlocation", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
       consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-  public CustomResponseEntity<ApiResponseObject> getODDActionLocation() {
+  public CustomResponseEntity<ApiResponseObject<?>> getODDActionLocation() {
 
     List<ODDLocation> locationList = oddMasterDataService.findActiveODDLocation();
 
-    return new CustomResponseEntity<ApiResponseObject>(
+    return new CustomResponseEntity<ApiResponseObject<?>>(
         new ApiResponseObject<List<ODDLocation>>(HttpStatus.OK, locationList), HttpStatus.OK);
   }
 
   @RequestMapping(value = "/oddexportreason", method = RequestMethod.GET,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-  public CustomResponseEntity<ApiResponseObject> getAllExportReason() {
+  public CustomResponseEntity<ApiResponseObject<?>> getAllExportReason() {
 
     List<ODDExportReason> oddExportReason = oddMasterDataService.findAllExporteason();
 
-    return new CustomResponseEntity<ApiResponseObject>(
+    return new CustomResponseEntity<ApiResponseObject<?>>(
         new ApiResponseObject<List<ODDExportReason>>(HttpStatus.OK, oddExportReason), HttpStatus.OK);
   }
 
   @RequestMapping(value = "/oddimportreason", method = RequestMethod.GET,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-  public CustomResponseEntity<ApiResponseObject> getAllImportReason() {
+  public CustomResponseEntity<ApiResponseObject<?>> getAllImportReason() {
 
     List<ODDImportReason> oddImportReason = oddMasterDataService.findAllImportReason();
 
-    return new CustomResponseEntity<ApiResponseObject>(
+    return new CustomResponseEntity<ApiResponseObject<?>>(
         new ApiResponseObject<List<ODDImportReason>>(HttpStatus.OK, oddImportReason), HttpStatus.OK);
   }
 
