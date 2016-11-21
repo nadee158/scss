@@ -12,14 +12,16 @@ import org.springframework.security.core.GrantedAuthority;
 
 public class UserContext {
 
+	private final Long userID;
 	private final String username;
 	private final String staffName;
 	private final String staffNumber;
 	private final List<GrantedAuthority> authorities;
-	private final List<Long> functions; 
+	private final List<Long> functions;
 
-	private UserContext(String username, List<GrantedAuthority> authorities, List<Long> functions, String staffName,
-			String staffNumber) {
+	private UserContext(Long userID, String username, List<GrantedAuthority> authorities, List<Long> functions,
+			String staffName, String staffNumber) {
+		this.userID = userID;
 		this.username = username;
 		this.authorities = authorities;
 		this.functions = functions;
@@ -27,11 +29,11 @@ public class UserContext {
 		this.staffNumber = staffNumber;
 	}
 
-	public static UserContext create(String username, List<GrantedAuthority> authorities, List<Long> functions,
-			String staffName, String staffNumber) {
+	public static UserContext create(Long userID, String username, List<GrantedAuthority> authorities,
+			List<Long> functions, String staffName, String staffNumber) {
 		if (StringUtils.isBlank(username))
 			throw new IllegalArgumentException("Username is blank: " + username);
-		return new UserContext(username, authorities, functions, staffName, staffNumber);
+		return new UserContext(userID, username, authorities, functions, staffName, staffNumber);
 	}
 
 	public String getUsername() {
@@ -52,6 +54,10 @@ public class UserContext {
 
 	public String getStaffNumber() {
 		return staffNumber;
+	}
+
+	public Long getUserID() {
+		return userID;
 	}
 
 }
