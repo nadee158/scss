@@ -16,51 +16,50 @@ import com.privasia.scss.core.repository.LoginRepository;
 import com.privasia.scss.core.security.jwt.verifier.TokenVerifier;
 import com.privasia.scss.core.security.model.token.RawAccessJwtToken;
 import com.privasia.scss.core.security.model.token.RefreshToken;
-import com.privasia.scss.core.security.util.AuditContext;
 import com.privasia.scss.core.security.util.SecurityContext;
 
 @Service("securityService")
 public class SecurityService {
 
-	@Autowired
-	private LoginRepository loginRepository;
+  @Autowired
+  private LoginRepository loginRepository;
 
-	@Autowired
-	private JwtSettings jwtSettings;
+  @Autowired
+  private JwtSettings jwtSettings;
 
-	@Autowired
-	private TokenVerifier tokenVerifier;
+  @Autowired
+  private TokenVerifier tokenVerifier;
 
-	@Autowired
-	private CachedTokenValidatorService cachedTokenValidatorService;
+  @Autowired
+  private CachedTokenValidatorService cachedTokenValidatorService;
 
-	@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-	public Optional<Login> getByUsername(String username) throws UsernameNotFoundException {
-		return this.loginRepository.findByUserNameContainingIgnoreCase(username);
-	}
+  @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
+  public Optional<Login> getByUsername(String username) throws UsernameNotFoundException {
+    return this.loginRepository.findByUserNameContainingIgnoreCase(username);
+  }
 
-	public SignOutResponse signOut(SecurityContext securityContext, AuditContext auditContext) {
+  public SignOutResponse signOut(SecurityContext securityContext) {
 
-		String token = securityContext.getToken();
-		RawAccessJwtToken rawToken = new RawAccessJwtToken(token);
-		RefreshToken refreshToken = RefreshToken.create(rawToken, jwtSettings.getTokenSigningKey())
-				.orElseThrow(() -> new InvalidJwtTokenException());
+    String token = securityContext.getToken();
+    RawAccessJwtToken rawToken = new RawAccessJwtToken(token);
+    RefreshToken refreshToken = RefreshToken.create(rawToken, jwtSettings.getTokenSigningKey())
+        .orElseThrow(() -> new InvalidJwtTokenException());
 
-		String jti = refreshToken.getJti();
-		if (!tokenVerifier.verify(jti)) {
-			throw new InvalidJwtTokenException();
-		}
+    String jti = refreshToken.getJti();
+    if (!tokenVerifier.verify(jti)) {
+      throw new InvalidJwtTokenException();
+    }
 
-		String subject = refreshToken.getSubject();
-		Login loguser = getByUsername(subject)
-				.orElseThrow(() -> new UsernameNotFoundException("User not found: " + subject));
+    String subject = refreshToken.getSubject();
+    Login loguser =
+        getByUsername(subject).orElseThrow(() -> new UsernameNotFoundException("User not found: " + subject));
 
-		cachedTokenValidatorService.deleteTokenDetailsFromCache(token, refreshToken.getToken(), loguser.getUserName());
+    cachedTokenValidatorService.deleteTokenDetailsFromCache(token, refreshToken.getToken(), loguser.getUserName());
 
-		SignOutResponse signOutResponse = new SignOutResponse();
-		signOutResponse.setMessage("SUCCESS");
-		signOutResponse.setStatusCode(200);
-		return signOutResponse;
-	}
+    SignOutResponse signOutResponse = new SignOutResponse();
+    signOutResponse.setMessage("SUCCESS");
+    signOutResponse.setStatusCode(200);
+    return signOutResponse;
+  }
 
 }

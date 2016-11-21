@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.privasia.scss.core.reponse.SignOutResponse;
 import com.privasia.scss.core.security.jwt.extractor.TokenExtractor;
-import com.privasia.scss.core.security.util.AuditContext;
 import com.privasia.scss.core.security.util.SecurityContext;
 import com.privasia.scss.core.security.util.SecurityHelper;
 import com.privasia.scss.core.service.SecurityService;
@@ -20,20 +19,19 @@ import com.privasia.scss.core.service.SecurityService;
 @RequestMapping(value = "**/secure")
 public class SecurityServiceController {
 
-	@Autowired
-	private SecurityService service;
+  @Autowired
+  private SecurityService service;
 
-	@Autowired
-	@Qualifier("jwtHeaderTokenExtractor")
-	private TokenExtractor tokenExtractor;
+  @Autowired
+  @Qualifier("jwtHeaderTokenExtractor")
+  private TokenExtractor tokenExtractor;
 
-	@RequestMapping(value = "/logout", method = RequestMethod.GET, produces = {
-			MediaType.APPLICATION_JSON_UTF8_VALUE }, consumes = { MediaType.APPLICATION_JSON_UTF8_VALUE })
-	public ResponseEntity<SignOutResponse> signOut() {
-		AuditContext auditContext = SecurityHelper.getAuditContext();
-		SecurityContext securityContext = SecurityHelper.getSecurityContext(tokenExtractor);
-		SignOutResponse signOutResponse = service.signOut(securityContext, auditContext);
-		return new ResponseEntity<SignOutResponse>(signOutResponse, HttpStatus.OK);
-	}
+  @RequestMapping(value = "/logout", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE},
+      consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
+  public ResponseEntity<SignOutResponse> signOut() {
+    SecurityContext securityContext = SecurityHelper.getSecurityContext(tokenExtractor);
+    SignOutResponse signOutResponse = service.signOut(securityContext);
+    return new ResponseEntity<SignOutResponse>(signOutResponse, HttpStatus.OK);
+  }
 
 }
