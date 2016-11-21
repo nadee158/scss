@@ -30,44 +30,47 @@ import com.privasia.scss.core.service.SecurityService;
 @Component
 public class SCSSAuthenticationProvider implements AuthenticationProvider {
 
-  private final SecurityService securityService;
-  private final PasswordEncoder encoder;
+	private final SecurityService securityService;
+	private final PasswordEncoder encoder;
 
-  @Autowired
-  public SCSSAuthenticationProvider(final SecurityService securityService, final PasswordEncoder encoder) {
-    this.securityService = securityService;
-    this.encoder = encoder;
-  }
+	@Autowired
+	public SCSSAuthenticationProvider(final SecurityService securityService, final PasswordEncoder encoder) {
+		this.securityService = securityService;
+		this.encoder = encoder;
+	}
 
-  @Override
-  public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-    Assert.notNull(authentication, "No authentication data provided");
+	@Override
+	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+		Assert.notNull(authentication, "No authentication data provided");
 
-    String username = (String) authentication.getPrincipal();
-    String password = (String) authentication.getCredentials();
+		String username = (String) authentication.getPrincipal();
+		String password = (String) authentication.getCredentials();
 
-    Login loguser = securityService.getByUsername(username)
-        .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+		Login loguser = securityService.getByUsername(username)
+				.orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
 
-    List<Long> functionList = loguser.getRole().getRoleRights().stream()
-        .map(roleRights -> roleRights.getRoleRightsID().getFunction().getFunctionID()).collect(Collectors.toList());
+		List<Long> functionList = loguser.getRole().getRoleRights().stream()
+				.map(roleRights -> roleRights.getRoleRightsID().getFunction().getFunctionID())
+				.collect(Collectors.toList());
 
-    if (!encoder.matches(password, loguser.getPassword())) {
-      throw new BadCredentialsException("Authentication Failed. Username or Password not valid.");
-    }
+		if (!encoder.matches(password, loguser.getPassword())) {
+			throw new BadCredentialsException("Authentication Failed. Username or Password not valid.");
+		}
 
-    if (loguser.getRole() == null)
-      throw new InsufficientAuthenticationException("User has no roles assigned");
+		if (loguser.getRole() == null)
+			throw new InsufficientAuthenticationException("User has no roles assigned");
 
-    UserContext userContext = UserContext.create(loguser.getUserName(),
-        AuthorityUtils.createAuthorityList(loguser.getRole().getRoleName()), functionList);
+		UserContext userContext = UserContext.create(loguser.getUserName(),
+				AuthorityUtils.createAuthorityList(loguser.getRole().getRoleName()), functionList,
+				loguser.getSystemUser().getCommonContactAttribute().getPersonName(),
+				loguser.getSystemUser().getStaffNumber());
 
-    return new UsernamePasswordAuthenticationToken(userContext, null, userContext.getAuthorities());
-  }
+		return new UsernamePasswordAuthenticationToken(userContext, null, userContext.getAuthorities());
+	}
 
-  @Override
-  public boolean supports(Class<?> authentication) {
-    return (UsernamePasswordAuthenticationToken.class.isAssignableFrom(authentication));
-  }
+	@Override
+	public boolean supports(Class<?> authentication) {
+		return (UsernamePasswordAuthenticationToken.class.isAssignableFrom(authentication));
+	}
 
 }

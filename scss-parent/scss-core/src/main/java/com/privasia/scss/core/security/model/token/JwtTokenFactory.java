@@ -49,6 +49,8 @@ public class JwtTokenFactory {
         Claims claims = Jwts.claims().setSubject(userContext.getUsername());
         claims.put("roles", userContext.getAuthorities().stream().map(s -> s.toString()).collect(Collectors.toList()));
         claims.put("functions", userContext.getFunctions());
+        claims.put("staffName", userContext.getStaffName());
+        claims.put("staffNumber", userContext.getStaffNumber());
 
         DateTime currentTime = new DateTime();
 
@@ -71,6 +73,8 @@ public class JwtTokenFactory {
         Claims claims = Jwts.claims().setSubject(userContext.getUsername());
         claims.put("roles", userContext.getAuthorities().stream().map(s -> s.toString()).collect(Collectors.toList()));
         claims.put("functions", userContext.getFunctions());
+        claims.put("staffName", userContext.getStaffName());
+        claims.put("staffNumber", userContext.getStaffNumber());
         
         DateTime currentTime = new DateTime();
         

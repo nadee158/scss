@@ -89,7 +89,7 @@ public class KioskBoothController {
         new ApiResponseObject<List<ClientInfo>>(HttpStatus.OK, clientInfo), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/getKioskLoginInfo/{ipAddress}", method = RequestMethod.GET,
+  @RequestMapping(value = "/getclientinfo/{ipAddress}", method = RequestMethod.GET,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public ResponseEntity<ApiResponseObject> getKioskLoginInfo(@PathVariable String ipAddress) {
     System.out.println("ipAddress :" + ipAddress);

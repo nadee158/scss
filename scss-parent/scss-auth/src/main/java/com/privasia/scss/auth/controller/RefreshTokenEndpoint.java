@@ -85,9 +85,11 @@ public class RefreshTokenEndpoint {
 
     if (loguser.getRole() == null)
       throw new InsufficientAuthenticationException("User has no roles assigned");
-
+    
     UserContext userContext = UserContext.create(loguser.getUserName(),
-        AuthorityUtils.createAuthorityList(loguser.getRole().getRoleName()), functionList);
+			AuthorityUtils.createAuthorityList(loguser.getRole().getRoleName()), functionList,
+			loguser.getSystemUser().getCommonContactAttribute().getPersonName(),
+			loguser.getSystemUser().getStaffNumber());
 
     JwtToken accessToken = tokenFactory.createAccessJwtToken(userContext);
 
