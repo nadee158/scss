@@ -30,7 +30,7 @@ public interface ClientRepository extends BaseRepository<Client, Long> {
       @Param("cosmosPortNo") int cosmosPortNo);
 
 
-  Optional<Client> findByWebIPAddress(String ipAddress);
+  public Optional<Client> findByWebIPAddress(String ipAddress);
 
 
 

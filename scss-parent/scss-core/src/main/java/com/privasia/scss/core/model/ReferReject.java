@@ -50,21 +50,21 @@ public class ReferReject extends AuditEntity implements Serializable {
 	@SequenceGenerator(name = "SEQ_SCSS_REFER_REJECT", sequenceName = "SEQ_SCSS_REFER_ID")
 	@Column(name = "REFER_ID")
 	private Long referRejectID;
-
+	
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
 	@JoinColumn(name = "REF_HCID", nullable = true, referencedColumnName = "COM_ID_SEQ")
 	private Company company;
 
-	@Column(name = "EXP_WEIGHT_BRIDGE")
-	private int expWeightBridge;
+	@Column(name = "EXP_WEIGHT_BRIDGE", nullable = true)
+	private Integer expWeightBridge;
 
-	@Column(name = "EXP_NET_WEIGHT")
-	private int expNetWeight;
-
-	@Column(name = "STATUS_CODE")
+	@Column(name = "EXP_NET_WEIGHT", nullable = true)
+	private Integer expNetWeight;
+	
+	@Column(name = "STATUS_CODE", nullable = true)
 	@Type(type = "com.privasia.scss.common.enumusertype.HPATReferStatusEnumUserType")
 	private HpatReferStatus statusCode;
-
+	
 	@Embedded
 	@AttributeOverrides({ @AttributeOverride(name = "timeGateIn", column = @Column(name = "REF_GATEIN_TIME")),
 			@AttributeOverride(name = "timeGateInOk", column = @Column(name = "REF_GATEIN_OK_TIME")),
@@ -73,7 +73,7 @@ public class ReferReject extends AuditEntity implements Serializable {
 			@AttributeOverride(name = "eirStatus", column = @Column(name = "REF_EIRSTATUS")),
 			@AttributeOverride(name = "pmHeadNo", column = @Column(name = "PM_HEAD_NO")),
 			@AttributeOverride(name = "pmPlateNo", column = @Column(name = "EXP_TRUCK_PLATE_NO")),
-			@AttributeOverride(name = "transactionSlipPrinted", column = @Column(name = "TRANSACTION_SLIP_PRINTED")),
+			@AttributeOverride(name = "transactionSlipPrinted", column = @Column(name = "TRANSACTION_SLIP_PRINTED", nullable = true)),
 			@AttributeOverride(name = "gateOutBoothNo", column = @Column(name = "REF_GATE_OUT_BOOTH_NO")),
 			@AttributeOverride(name = "gateOutBoothClerk", column = @Column(name = "REF_GATEOUT_BOOTH_CLERKID")),
 			@AttributeOverride(name = "timeGateOutBooth", column = @Column(name = "REF_TIMEGATEOUT_BOOTH")),
@@ -85,33 +85,34 @@ public class ReferReject extends AuditEntity implements Serializable {
 			@AssociationOverride(name = "gateInClerk", joinColumns = @JoinColumn(name = "GATE_CLERK_ID", referencedColumnName = "SYS_USERID_SEQ")),
 			@AssociationOverride(name = "gateOutClerk", joinColumns = @JoinColumn(name = "REF_GATEOUT_CLERKID", referencedColumnName = "SYS_USERID_SEQ")),
 			@AssociationOverride(name = "gateInClient", joinColumns = @JoinColumn(name = "CLI_CLIENT_SEQ", referencedColumnName = "CLI_CLIENTID_SEQ")),
-			@AssociationOverride(name = "gateOutClient", joinColumns = @JoinColumn(name = "CLI_CLIENTID_GATEOUT", referencedColumnName = "CLI_CLIENTID_SEQ")) })
+			@AssociationOverride(name = "gateOutClient", joinColumns = @JoinColumn(name = "CLI_CLIENTID_GATEOUT", referencedColumnName = "CLI_CLIENTID_SEQ")),
+			@AssociationOverride(name = "gateOutBoothClerk", joinColumns = @JoinColumn(name = "REF_GATEOUT_BOOTH_CLERKID", referencedColumnName = "SYS_USERID_SEQ"))})
 	private BaseCommonGateInOutAttribute baseCommonGateInOut;
 
 	@Column(name = "REFER_DATE_TIME")
 	private LocalDateTime referDateTime;
-
+	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "CUG_ID_SEQ", nullable = true, referencedColumnName = "CUG_ID_SEQ")
 	private CardUsage cardUsage;
 
 	@Column(name = "PM_WEIGHT")
-	private int pmWeight;
+	private Integer pmWeight;
 
 	@Column(name = "TRAILER_WEIGHT")
-	private int trailerWeight;
+	private Integer trailerWeight;
 
 	@Column(name = "TRAILER_PLATE_NO")
 	private String trailerPlateNo;
-
-	@Column(name = "AXLE_VERIFIED")
+	
+	@Column(name = "AXLE_VERIFIED", nullable = true)
 	@Type(type = "yes_no")
-	private boolean axleVerified;
-
-	@Column(name = "PM_VERIFIED")
+	private Boolean axleVerified;
+	
+	@Column(name = "PM_VERIFIED", nullable = true)
 	@Type(type = "yes_no")
-	private boolean pmVerified;
-
+	private Boolean pmVerified;
+	
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "referReject", cascade = CascadeType.ALL)
 	private Set<ReferRejectDetail> referRejectDetails;
 
@@ -131,19 +132,19 @@ public class ReferReject extends AuditEntity implements Serializable {
 		this.company = company;
 	}
 
-	public int getExpWeightBridge() {
+	public Integer getExpWeightBridge() {
 		return expWeightBridge;
 	}
 
-	public void setExpWeightBridge(int expWeightBridge) {
+	public void setExpWeightBridge(Integer expWeightBridge) {
 		this.expWeightBridge = expWeightBridge;
 	}
 
-	public int getExpNetWeight() {
+	public Integer getExpNetWeight() {
 		return expNetWeight;
 	}
 
-	public void setExpNetWeight(int expNetWeight) {
+	public void setExpNetWeight(Integer expNetWeight) {
 		this.expNetWeight = expNetWeight;
 	}
 
@@ -179,19 +180,19 @@ public class ReferReject extends AuditEntity implements Serializable {
 		this.cardUsage = cardUsage;
 	}
 
-	public int getPmWeight() {
+	public Integer getPmWeight() {
 		return pmWeight;
 	}
 
-	public void setPmWeight(int pmWeight) {
+	public void setPmWeight(Integer pmWeight) {
 		this.pmWeight = pmWeight;
 	}
 
-	public int getTrailerWeight() {
+	public Integer getTrailerWeight() {
 		return trailerWeight;
 	}
 
-	public void setTrailerWeight(int trailerWeight) {
+	public void setTrailerWeight(Integer trailerWeight) {
 		this.trailerWeight = trailerWeight;
 	}
 
@@ -203,19 +204,19 @@ public class ReferReject extends AuditEntity implements Serializable {
 		this.trailerPlateNo = trailerPlateNo;
 	}
 
-	public boolean isAxleVerified() {
+	public Boolean isAxleVerified() {
 		return axleVerified;
 	}
 
-	public void setAxleVerified(boolean axleVerified) {
+	public void setAxleVerified(Boolean axleVerified) {
 		this.axleVerified = axleVerified;
 	}
 
-	public boolean isPmVerified() {
+	public Boolean isPmVerified() {
 		return pmVerified;
 	}
 
-	public void setPmVerified(boolean pmVerified) {
+	public void setPmVerified(Boolean pmVerified) {
 		this.pmVerified = pmVerified;
 	}
 
@@ -227,4 +228,5 @@ public class ReferReject extends AuditEntity implements Serializable {
 		this.referRejectDetails = referRejectDetails;
 	}
 
+	
 }

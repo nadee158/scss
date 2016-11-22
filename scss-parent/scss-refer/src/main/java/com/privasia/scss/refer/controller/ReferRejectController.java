@@ -1,12 +1,11 @@
 package com.privasia.scss.refer.controller;
 
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,8 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.privasia.scss.common.dto.ApiResponseObject;
 import com.privasia.scss.common.dto.CustomResponseEntity;
 import com.privasia.scss.common.util.UserIpAddressUtil;
+import com.privasia.scss.core.model.ReferReject;
 import com.privasia.scss.refer.dto.ReferRejectDetailUpdateObjetDto;
-import com.privasia.scss.refer.dto.ReferRejectListDto;
 import com.privasia.scss.refer.dto.ReferRejectObjetDto;
 import com.privasia.scss.refer.dto.ReferRejectUpdateObjetDto;
 import com.privasia.scss.refer.service.ReferRejectService;
@@ -30,70 +29,66 @@ import com.privasia.scss.refer.service.ReferRejectService;
 @RequestMapping("**/referreject")
 public class ReferRejectController {
 
-  @Autowired
-  private ReferRejectService referRejectService;
+	@Autowired
+	private ReferRejectService referRejectService;
 
-  @RequestMapping(value = "/referrejectlist/{page}/{pageSize}", method = RequestMethod.GET,
-      produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-  public CustomResponseEntity<ApiResponseObject<?>> getReferRejectList(@PathVariable int page,
-      @PathVariable int pageSize) {
-    List<ReferRejectListDto> list = referRejectService.getReferRejectList(page, pageSize);
-    return new CustomResponseEntity<ApiResponseObject<?>>(
-        new ApiResponseObject<List<ReferRejectListDto>>(HttpStatus.OK, list), HttpStatus.OK);
-  }
+	@RequestMapping(value = "/referlist/{page}/{pageSize}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public CustomResponseEntity<ApiResponseObject<?>> getReferRejectList(ModelMap map, @PathVariable int page,
+			@PathVariable int pageSize) {
+		map = referRejectService.getReferRejectList(map, page, pageSize);
+		return new CustomResponseEntity<ApiResponseObject<?>>(new ApiResponseObject<ModelMap>(HttpStatus.OK, map),
+				HttpStatus.OK);
+	}
 
-  @RequestMapping(value = "/get/{referId}", method = RequestMethod.GET,
-      produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-  public CustomResponseEntity<ApiResponseObject<?>> getReferRejectById(@PathVariable long referId) {
+	@RequestMapping(value = "/get/{referId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public CustomResponseEntity<ApiResponseObject<?>> getReferRejectById(@PathVariable long referId) {
+		ReferReject referReject = null;
+		try{
+		referReject = referRejectService.getReferRejectByReferId(referId);
+		}catch(Exception ex){
+			ex.printStackTrace();
+		}
+		return new CustomResponseEntity<ApiResponseObject<?>>(
+				new ApiResponseObject<ReferReject>(HttpStatus.OK, referReject), HttpStatus.OK);
+	}
 
-    ReferRejectListDto referRejectListDto = referRejectService.getReferRejectByReferId(referId);
+	@RequestMapping(value = "/save", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public CustomResponseEntity<ApiResponseObject<?>> saveReferReject(
+			@RequestBody ReferRejectObjetDto referRejectObjetDto) {
 
-    return new CustomResponseEntity<ApiResponseObject<?>>(
-        new ApiResponseObject<ReferRejectListDto>(HttpStatus.OK, referRejectListDto), HttpStatus.OK);
-  }
+		Long referId = referRejectService.saveReferReject(referRejectObjetDto);
 
-  @RequestMapping(value = "/save", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
-      consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-  public CustomResponseEntity<ApiResponseObject<?>> saveReferReject(
-      @RequestBody ReferRejectObjetDto referRejectObjetDto) {
+		return new CustomResponseEntity<ApiResponseObject<?>>(new ApiResponseObject<Long>(HttpStatus.OK, referId),
+				HttpStatus.OK);
+	}
 
-    Long referId = referRejectService.saveReferReject(referRejectObjetDto);
+	@RequestMapping(value = "/update", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public CustomResponseEntity<ApiResponseObject<?>> updateReferReject(
+			@RequestBody ReferRejectUpdateObjetDto referRejectUpdateObjetDto) {
 
-    return new CustomResponseEntity<ApiResponseObject<?>>(new ApiResponseObject<Long>(HttpStatus.OK, referId),
-        HttpStatus.OK);
-  }
+		String status = referRejectService.updateReferReject(referRejectUpdateObjetDto);
 
-  @RequestMapping(value = "/update", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
-      consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-  public CustomResponseEntity<ApiResponseObject<?>> updateReferReject(
-      @RequestBody ReferRejectUpdateObjetDto referRejectUpdateObjetDto) {
+		return new CustomResponseEntity<ApiResponseObject<?>>(new ApiResponseObject<String>(HttpStatus.OK, status),
+				HttpStatus.OK);
+	}
 
-    String status = referRejectService.updateReferReject(referRejectUpdateObjetDto);
+	@RequestMapping(value = "/updatereferdetail", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public CustomResponseEntity<ApiResponseObject<?>> updateLineCodeANdGateInDateForReferRejectDetail(
+			@RequestBody ReferRejectDetailUpdateObjetDto dto) {
 
-    return new CustomResponseEntity<ApiResponseObject<?>>(new ApiResponseObject<String>(HttpStatus.OK, status),
-        HttpStatus.OK);
-  }
+		String status = referRejectService.updateLineCodeAndGateInDateForReferRejectDetail(dto);
 
-  @RequestMapping(value = "/updatereferdetail", method = RequestMethod.PUT,
-      produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-  public CustomResponseEntity<ApiResponseObject<?>> updateLineCodeANdGateInDateForReferRejectDetail(
-      @RequestBody ReferRejectDetailUpdateObjetDto dto) {
+		return new CustomResponseEntity<ApiResponseObject<?>>(new ApiResponseObject<String>(HttpStatus.OK, status),
+				HttpStatus.OK);
+	}
 
-    String status = referRejectService.updateLineCodeAndGateInDateForReferRejectDetail(dto);
-
-    return new CustomResponseEntity<ApiResponseObject<?>>(new ApiResponseObject<String>(HttpStatus.OK, status),
-        HttpStatus.OK);
-  }
-
-
-  @RequestMapping(value = "/{referId}/saveprintreject", method = RequestMethod.GET,
-      produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-  public CustomResponseEntity<ApiResponseObject<?>> savePrintReject(HttpServletRequest request,
-      @PathVariable("referId") long referId) {
-    String ipAddress = UserIpAddressUtil.getUserIp(request);
-    String status = referRejectService.savePrintReject(referId, ipAddress);
-    return new CustomResponseEntity<ApiResponseObject<?>>(new ApiResponseObject<String>(HttpStatus.OK, status),
-        HttpStatus.OK);
-  }
+	@RequestMapping(value = "/{referId}/saveprintreject", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public CustomResponseEntity<ApiResponseObject<?>> savePrintReject(HttpServletRequest request,
+			@PathVariable("referId") long referId) {
+		String ipAddress = UserIpAddressUtil.getUserIp(request);
+		String status = referRejectService.savePrintReject(referId, ipAddress);
+		return new CustomResponseEntity<ApiResponseObject<?>>(new ApiResponseObject<String>(HttpStatus.OK, status),
+				HttpStatus.OK);
+	}
 
 }

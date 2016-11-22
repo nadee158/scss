@@ -4,21 +4,25 @@
 package com.privasia.scss.master.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.privasia.scss.common.dto.ApiResponseObject;
 import com.privasia.scss.common.dto.CustomResponseEntity;
+import com.privasia.scss.core.model.Client;
 import com.privasia.scss.core.model.ODDExportReason;
 import com.privasia.scss.core.model.ODDImportReason;
 import com.privasia.scss.core.model.ODDLocation;
 import com.privasia.scss.core.util.service.CurrentDateTimeService;
 import com.privasia.scss.master.dto.ReferReasonDTO;
+import com.privasia.scss.master.service.ClientMasterDataService;
 import com.privasia.scss.master.service.GlobalSettingService;
 import com.privasia.scss.master.service.ODDMasterDataService;
 import com.privasia.scss.master.service.ReferReasonService;
@@ -43,6 +47,9 @@ public class MasterDataController {
 
   @Autowired
   private ODDMasterDataService oddMasterDataService;
+  
+  @Autowired
+  private ClientMasterDataService clientMasterDataService;
 
   @RequestMapping(value = "serverdate", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
       consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -107,5 +114,14 @@ public class MasterDataController {
     return new CustomResponseEntity<ApiResponseObject<?>>(
         new ApiResponseObject<List<ODDImportReason>>(HttpStatus.OK, oddImportReason), HttpStatus.OK);
   }
+  
+  @RequestMapping(value = "client/bywebip", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public CustomResponseEntity<ApiResponseObject<?>> getClientInfoByWebIP(@RequestBody Map<String, String> json) {
+		System.out.println("ipAddress :" + json.get("ipAddress"));
+		Client clientInfo = clientMasterDataService.getClientByWebIP(json.get("ipAddress"));
+		return new CustomResponseEntity<ApiResponseObject<?>>(new ApiResponseObject<Client>(HttpStatus.OK, clientInfo),
+				HttpStatus.OK);
+		
+	}
 
 }

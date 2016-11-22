@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
  *
  * @param <T>
  */
-public class ApiResponseObject<T> implements Serializable {
+public class ApiResponseObject<T> implements Serializable  {
 
   private static final long serialVersionUID = 1L;
 

@@ -6,6 +6,7 @@ package com.privasia.scss.core.model;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
@@ -40,7 +41,7 @@ public class BaseCommonGateInOutAttribute implements Serializable {
 	private TransactionStatus eirStatus;
 
 	@Type(type = "yes_no")
-	private boolean transactionSlipPrinted;
+	private Boolean transactionSlipPrinted;
 
 	private String gateOutBoothNo;
 
@@ -73,9 +74,9 @@ public class BaseCommonGateInOutAttribute implements Serializable {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "CLI_CLIENTID_GATEOUT", nullable = true, referencedColumnName = "CLI_CLIENTID_SEQ")
 	private Client gateOutClient;
-
+	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(nullable = true, referencedColumnName = "SYS_USERID_SEQ")
+	@JoinColumn(name = "GATEOUT_BOOTH_CLERKID", nullable = true, referencedColumnName = "SYS_USERID_SEQ")
 	private SystemUser gateOutBoothClerk;
 
 	public String getPmHeadNo() {
@@ -158,11 +159,11 @@ public class BaseCommonGateInOutAttribute implements Serializable {
 		this.gateOutBoothClerk = gateOutBoothClerk;
 	}
 
-	public boolean isTransactionSlipPrinted() {
+	public Boolean isTransactionSlipPrinted() {
 		return transactionSlipPrinted;
 	}
 
-	public void setTransactionSlipPrinted(boolean transactionSlipPrinted) {
+	public void setTransactionSlipPrinted(Boolean transactionSlipPrinted) {
 		this.transactionSlipPrinted = transactionSlipPrinted;
 	}
 

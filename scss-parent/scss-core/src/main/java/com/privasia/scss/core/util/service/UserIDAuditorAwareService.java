@@ -19,8 +19,6 @@ public class UserIDAuditorAwareService implements AuditorAware<Long> {
   public Long getCurrentAuditor() {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-    UserContext userContext = (UserContext) authentication.getPrincipal();
-
     if (authentication == null || !authentication.isAuthenticated()) {
       return null;
     }

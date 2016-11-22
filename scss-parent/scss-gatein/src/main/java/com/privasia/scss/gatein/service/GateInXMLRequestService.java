@@ -3,7 +3,7 @@ package com.privasia.scss.gatein.service;
 import java.io.ByteArrayInputStream;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 
 import javax.transaction.Transactional;
 
@@ -160,7 +160,7 @@ public class GateInXMLRequestService {
     AGSLog agsLog = new AGSLog();
     agsLog.setSendRCV(sendReceive);
     agsLog.setPortNumber(Integer.toString(portNo));
-    agsLog.setDateTimeAdd(ZonedDateTime.now());
+    agsLog.setDateTimeAdd(LocalDateTime.now());
     agsLog.setXmlData(requestXML);
     agsLogRepository.save(agsLog);
   }

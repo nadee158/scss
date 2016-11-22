@@ -3,6 +3,7 @@
  */
 package com.privasia.scss.core.util.service;
 
+import java.time.ZonedDateTime;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
@@ -25,7 +26,8 @@ public class AuditingDateTimeProvider implements DateTimeProvider {
 
 	@Override
 	public Calendar getNow() {
-		return GregorianCalendar.from(currentDateTimeService.getCurrentDateAndTime());
+		ZonedDateTime dateTime = ZonedDateTime.parse(currentDateTimeService.getFormattedCurrentDateAndTime());
+		return GregorianCalendar.from(dateTime);
 	}
 
 }

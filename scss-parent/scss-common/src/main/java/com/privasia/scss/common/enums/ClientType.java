@@ -7,6 +7,8 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 /**
  * @author Janaka
  *
@@ -25,6 +27,7 @@ public enum ClientType implements Enumable {
   /**
    * @return the clientType
    */
+  @JsonValue
   public String getValue() {
     return clientType;
   }

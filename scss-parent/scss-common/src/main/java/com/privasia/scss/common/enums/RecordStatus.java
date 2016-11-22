@@ -7,6 +7,8 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 /**
  * @author Janaka
  *
@@ -25,6 +27,7 @@ public enum RecordStatus implements Enumable {
 	/**
 	 * @return the recordStatus
 	 */
+    @JsonValue
 	public String getValue() {
 		return recordStatus;
 	}
