@@ -177,8 +177,11 @@ public class ReferRejectService {
         optionalReferRejectDetail =
             referRejectDetailRepository.findOne(referRejectDetailObjetDto.getReferRejectDetailID().orElse(null));
       }
-      ReferRejectDetail referRejectDetail =
-          convertToReferRejectDetailDomain(referRejectDetailObjetDto, optionalReferRejectDetail.get());
+      ReferRejectDetail fromDb = null;
+      if (!(optionalReferRejectDetail == null)) {
+        fromDb = optionalReferRejectDetail.get();
+      }
+      ReferRejectDetail referRejectDetail = convertToReferRejectDetailDomain(referRejectDetailObjetDto, fromDb);
       if (referReject.getReferRejectDetails() == null) {
         referReject.setReferRejectDetails(new HashSet<ReferRejectDetail>());
       }
