@@ -45,6 +45,7 @@ import com.privasia.scss.core.repository.ReferRejectRepository;
 import com.privasia.scss.core.repository.SupervisorReferRejectReasonRepository;
 import com.privasia.scss.core.repository.SystemUserRepository;
 import com.privasia.scss.core.security.util.SecurityHelper;
+import com.privasia.scss.refer.dto.ReferRejectDTO;
 import com.privasia.scss.refer.dto.ReferRejectDetailObjetDto;
 import com.privasia.scss.refer.dto.ReferRejectDetailUpdateObjetDto;
 import com.privasia.scss.refer.dto.ReferRejectListDto;
@@ -58,364 +59,356 @@ import com.privasia.scss.refer.dto.ReferRejectUpdateObjetDto;
 @Service("referRejectService")
 public class ReferRejectService {
 
-	@Autowired
-	private ReferRejectDetailRepository referRejectDetailRepository;
+  @Autowired
+  private ReferRejectDetailRepository referRejectDetailRepository;
 
-	@Autowired
-	private ReferRejectRepository referRejectRepository;
+  @Autowired
+  private ReferRejectRepository referRejectRepository;
 
-	@Autowired
-	private ReferReasonRepository referReasonRepository;
+  @Autowired
+  private ReferReasonRepository referReasonRepository;
 
-	@Autowired
-	private CardRepository cardRepository;
+  @Autowired
+  private CardRepository cardRepository;
 
-	@Autowired
-	private SystemUserRepository systemUserRepository;
+  @Autowired
+  private SystemUserRepository systemUserRepository;
 
-	@Autowired
-	private ClientRepository clientRepository;
+  @Autowired
+  private ClientRepository clientRepository;
 
-	@Autowired
-	private CardUsageRepository cardUsageRepository;
+  @Autowired
+  private CardUsageRepository cardUsageRepository;
 
-	@Autowired
-	private CompanyRepository companyRepository;
+  @Autowired
+  private CompanyRepository companyRepository;
 
-	@Autowired
-	private SupervisorReferRejectReasonRepository supervisorReferRejectReasonRepository;
+  @Autowired
+  private SupervisorReferRejectReasonRepository supervisorReferRejectReasonRepository;
 
-	@Autowired
-	private PrintRejectRepository printRejectRepository;
+  @Autowired
+  private PrintRejectRepository printRejectRepository;
 
-	@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-	public ModelMap getReferRejectList(ModelMap map, int page, int pageSize) {
+  @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
+  public ModelMap getReferRejectList(ModelMap map, int page, int pageSize) {
 
-		Pageable pageRequest = new PageRequest(page, pageSize, Sort.Direction.DESC, "referDateTime");
-		Page<ReferReject> referRejectPages = referRejectRepository.findByStatusCode(HpatReferStatus.ACTIVE, pageRequest);
+    Pageable pageRequest = new PageRequest(page, pageSize, Sort.Direction.DESC, "referDateTime");
+    Page<ReferReject> referRejectPages = referRejectRepository.findByStatusCode(HpatReferStatus.ACTIVE, pageRequest);
 
-		long totalcount = referRejectPages.getTotalElements();
+    long totalcount = referRejectPages.getTotalElements();
 
-		if (referRejectPages != null && !referRejectPages.getContent().isEmpty()) {
-			List<ReferRejectListDto> dtoList = new ArrayList<ReferRejectListDto>();
-			referRejectPages.getContent().forEach(referReject -> {
-				dtoList.add(new ReferRejectListDto(referReject));
-			});
-			map.put("totalcount", totalcount);
-			map.put("referList", dtoList);
-			return map;
-		} else {
-			throw new ResultsNotFoundException("No refer rejects were found!");
-		}
-	}
+    if (referRejectPages != null && !referRejectPages.getContent().isEmpty()) {
+      List<ReferRejectListDto> dtoList = new ArrayList<ReferRejectListDto>();
+      referRejectPages.getContent().forEach(referReject -> {
+        dtoList.add(new ReferRejectListDto(referReject));
+      });
+      map.put("totalcount", totalcount);
+      map.put("referList", dtoList);
+      return map;
+    } else {
+      throw new ResultsNotFoundException("No refer rejects were found!");
+    }
+  }
 
-	@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-	public ReferReject getReferRejectByReferId(long referId) {
-		Optional<ReferReject> optionalReferReject = referRejectRepository.findOne(referId);
-		System.out.println("&&&&&&&&&&&&&&&&&&&&&&&&&&&&77777  : "+optionalReferReject.get().getReferRejectID());
-		return optionalReferReject
-				.orElseThrow(() -> new ResultsNotFoundException("Refer reject was not found for ID : " + referId));
-	}
+  @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
+  public ReferRejectDTO getReferRejectByReferId(long referId) {
+    Optional<ReferReject> optionalReferReject = referRejectRepository.findOne(referId);
+    System.out.println("&&&&&&&&&&&&&&&&&&&&&&&&&&&&77777  : " + optionalReferReject.get().getReferRejectID());
+    ReferReject referReject = optionalReferReject
+        .orElseThrow(() -> new ResultsNotFoundException("Refer reject was not found for ID : " + referId));
+    return new ReferRejectDTO(referReject);
+  }
 
-	@Transactional(propagation = Propagation.REQUIRED, readOnly = false)
-	public Long saveReferReject(ReferRejectObjetDto referRejectObjetDto) {
-		if (!(referRejectObjetDto == null)) {
-			SystemUser systemUser = systemUserRepository.findOne(SecurityHelper.getCurrentUserId()).orElse(null);
-			if (!(systemUser == null)) {
-				ReferReject referReject = null;
-				if (referRejectObjetDto.getReferId().isPresent()) {
-					referReject = referRejectRepository.findOne(referRejectObjetDto.getReferId().orElse(null))
-							.orElse(null);
-				}
-				// bind details via beanutils
-				referReject = convertToReferRejectDomain(referRejectObjetDto, referReject, systemUser);
-				ReferReject persisted = referRejectRepository.save(referReject);
-				if (!(persisted == null || persisted.getReferRejectID() <= 0)) {
-					return persisted.getReferRejectID();
-				}
-				return 0L;
-			} else {
-				throw new ResultsNotFoundException("System User was not found!");
-			}
-		} else {
-			throw new BusinessException("No Data given to be updated!");
-		}
-	}
+  @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
+  public Long saveReferReject(ReferRejectObjetDto referRejectObjetDto) {
+    if (!(referRejectObjetDto == null)) {
+      SystemUser systemUser = systemUserRepository.findOne(SecurityHelper.getCurrentUserId()).orElse(null);
+      if (!(systemUser == null)) {
+        ReferReject referReject = null;
+        if (referRejectObjetDto.getReferId().isPresent()) {
+          referReject = referRejectRepository.findOne(referRejectObjetDto.getReferId().orElse(null)).orElse(null);
+        }
+        // bind details via beanutils
+        referReject = convertToReferRejectDomain(referRejectObjetDto, referReject, systemUser);
+        ReferReject persisted = referRejectRepository.save(referReject);
+        if (!(persisted == null || persisted.getReferRejectID() <= 0)) {
+          return persisted.getReferRejectID();
+        }
+        return 0L;
+      } else {
+        throw new ResultsNotFoundException("System User was not found!");
+      }
+    } else {
+      throw new BusinessException("No Data given to be updated!");
+    }
+  }
 
-	public ReferReject convertToReferRejectDomain(ReferRejectObjetDto referRejectObjetDto, ReferReject referReject,
-			SystemUser systemUser) {
-		// automated conversion
-		referReject = referRejectObjetDto.convertToReferRejectDomain(referReject);
+  public ReferReject convertToReferRejectDomain(ReferRejectObjetDto referRejectObjetDto, ReferReject referReject,
+      SystemUser systemUser) {
+    // automated conversion
+    referReject = referRejectObjetDto.convertToReferRejectDomain(referReject);
 
-		// manual conversion
-		BaseCommonGateInOutAttribute baseCommonGateInOut = referReject.getBaseCommonGateInOut();
+    // manual conversion
+    BaseCommonGateInOutAttribute baseCommonGateInOut = referReject.getBaseCommonGateInOut();
 
-		Optional<Card> card = cardRepository.findOne(referRejectObjetDto.getCard());
-		// automated conversion
-		baseCommonGateInOut = referRejectObjetDto.convertToBaseCommonGateInOutAttribute(baseCommonGateInOut);
+    Optional<Card> card = cardRepository.findOne(referRejectObjetDto.getCard());
+    // automated conversion
+    baseCommonGateInOut = referRejectObjetDto.convertToBaseCommonGateInOutAttribute(baseCommonGateInOut);
 
-		// manual conversion
-		baseCommonGateInOut.setEirStatus(TransactionStatus.fromCode(referRejectObjetDto.getTransactionStatus()));
-		baseCommonGateInOut
-				.setGateInClient(clientRepository.findOne(referRejectObjetDto.getGateInClient()).orElse(null));
-		baseCommonGateInOut
-				.setGateInClerk(systemUserRepository.findOne(referRejectObjetDto.getGateInClerk()).orElse(null));
-		baseCommonGateInOut.setCard(card.orElse(null));
-		baseCommonGateInOut.setTimeGateIn(CommonUtil.getParsedDate(referRejectObjetDto.getTimeGateIn()));
-		baseCommonGateInOut.setTimeGateInOk(CommonUtil.getParsedDate(referRejectObjetDto.getTimeGateInOk()));
-		referReject.setBaseCommonGateInOut(baseCommonGateInOut);
+    // manual conversion
+    baseCommonGateInOut.setEirStatus(TransactionStatus.fromCode(referRejectObjetDto.getTransactionStatus()));
+    baseCommonGateInOut.setGateInClient(clientRepository.findOne(referRejectObjetDto.getGateInClient()).orElse(null));
+    baseCommonGateInOut.setGateInClerk(systemUserRepository.findOne(referRejectObjetDto.getGateInClerk()).orElse(null));
+    baseCommonGateInOut.setCard(card.orElse(null));
+    baseCommonGateInOut.setTimeGateIn(CommonUtil.getParsedDate(referRejectObjetDto.getTimeGateIn()));
+    baseCommonGateInOut.setTimeGateInOk(CommonUtil.getParsedDate(referRejectObjetDto.getTimeGateInOk()));
+    referReject.setBaseCommonGateInOut(baseCommonGateInOut);
 
-		referReject.setStatusCode(HpatReferStatus.fromCode(referRejectObjetDto.getStatusCode()));
+    referReject.setStatusCode(HpatReferStatus.fromCode(referRejectObjetDto.getStatusCode()));
 
-		referReject.setCardUsage(cardUsageRepository.findOne(referRejectObjetDto.getCardUsageID()).orElse(null));
-		referReject.setCompany(companyRepository.findOne(referRejectObjetDto.getCompanyID()).orElse(null));
+    referReject.setCardUsage(cardUsageRepository.findOne(referRejectObjetDto.getCardUsageID()).orElse(null));
+    referReject.setCompany(companyRepository.findOne(referRejectObjetDto.getCompanyID()).orElse(null));
 
-		ReferRejectDetailObjetDto referRejectDetailObjetDto = referRejectObjetDto.getReferRejectDetail();
+    ReferRejectDetailObjetDto referRejectDetailObjetDto = referRejectObjetDto.getReferRejectDetail();
 
-		if (referRejectDetailObjetDto != null) {
-			Optional<ReferRejectDetail> optionalReferRejectDetail = null;
-			if (referRejectDetailObjetDto.getReferRejectDetailID().isPresent()) {
-				optionalReferRejectDetail = referRejectDetailRepository
-						.findOne(referRejectDetailObjetDto.getReferRejectDetailID().orElse(null));
-			}
-			ReferRejectDetail referRejectDetail = convertToReferRejectDetailDomain(referRejectDetailObjetDto, optionalReferRejectDetail.get());
-			if (referReject.getReferRejectDetails() == null) {
-				referReject.setReferRejectDetails(new HashSet<ReferRejectDetail>());
-			}
-			referRejectDetail.setReferBy(systemUser);
-			referRejectDetail.setReferReject(referReject);
-			referReject.getReferRejectDetails().add(referRejectDetail);
-		}
+    if (referRejectDetailObjetDto != null) {
+      Optional<ReferRejectDetail> optionalReferRejectDetail = null;
+      if (referRejectDetailObjetDto.getReferRejectDetailID().isPresent()) {
+        optionalReferRejectDetail =
+            referRejectDetailRepository.findOne(referRejectDetailObjetDto.getReferRejectDetailID().orElse(null));
+      }
+      ReferRejectDetail referRejectDetail =
+          convertToReferRejectDetailDomain(referRejectDetailObjetDto, optionalReferRejectDetail.get());
+      if (referReject.getReferRejectDetails() == null) {
+        referReject.setReferRejectDetails(new HashSet<ReferRejectDetail>());
+      }
+      referRejectDetail.setReferBy(systemUser);
+      referRejectDetail.setReferReject(referReject);
+      referReject.getReferRejectDetails().add(referRejectDetail);
+    }
 
-		return referReject;
-	}
+    return referReject;
+  }
 
-	public ReferRejectDetail convertToReferRejectDetailDomain(ReferRejectDetailObjetDto referRejectDetailObjetDto,
-			ReferRejectDetail referRejectDetail) {
-		// automated conversion
-		referRejectDetail = referRejectDetailObjetDto.convertToReferRejectDetailDomain(referRejectDetail);
+  public ReferRejectDetail convertToReferRejectDetailDomain(ReferRejectDetailObjetDto referRejectDetailObjetDto,
+      ReferRejectDetail referRejectDetail) {
+    // automated conversion
+    referRejectDetail = referRejectDetailObjetDto.convertToReferRejectDetailDomain(referRejectDetail);
 
-		// manual conversion
-		referRejectDetail.setPosition(ContainerPosition.fromValue(referRejectDetailObjetDto.getPosition()));
-		referRejectDetail.setStatus(ReferStatus.fromValue(referRejectDetailObjetDto.getStatus()));
+    // manual conversion
+    referRejectDetail.setPosition(ContainerPosition.fromValue(referRejectDetailObjetDto.getPosition()));
+    referRejectDetail.setStatus(ReferStatus.fromValue(referRejectDetailObjetDto.getStatus()));
 
-		// ReferRejectReason objects
-		constructReferRejectReasonList(referRejectDetailObjetDto.getReferReasonIds(), referRejectDetail);
+    // ReferRejectReason objects
+    constructReferRejectReasonList(referRejectDetailObjetDto.getReferReasonIds(), referRejectDetail);
 
-		return referRejectDetail;
-	}
+    return referRejectDetail;
+  }
 
-	public void constructReferRejectReasonList(List<Long> referReasonIds, ReferRejectDetail referRejectDetail) {
-		if (!(referReasonIds == null || referReasonIds.isEmpty())) {
-			if (referRejectDetail.getReferRejectReason() == null) {
-				referRejectDetail.setReferRejectReason(new HashSet<ReferRejectReason>());
-			}
-			referReasonIds.forEach(referReasonId -> {
-				ReferRejectReason reason = new ReferRejectReason();
-				ReferReason referReason = referReasonRepository.findOne(referReasonId).orElse(null);
-				reason.setReferReason(referReason);
-				reason.setReferRejectDetail(referRejectDetail);
-				referRejectDetail.getReferRejectReason().add(reason);
-			});
-		}
+  public void constructReferRejectReasonList(List<Long> referReasonIds, ReferRejectDetail referRejectDetail) {
+    if (!(referReasonIds == null || referReasonIds.isEmpty())) {
+      if (referRejectDetail.getReferRejectReason() == null) {
+        referRejectDetail.setReferRejectReason(new HashSet<ReferRejectReason>());
+      }
+      referReasonIds.forEach(referReasonId -> {
+        ReferRejectReason reason = new ReferRejectReason();
+        ReferReason referReason = referReasonRepository.findOne(referReasonId).orElse(null);
+        reason.setReferReason(referReason);
+        reason.setReferRejectDetail(referRejectDetail);
+        referRejectDetail.getReferRejectReason().add(reason);
+      });
+    }
 
-	}
+  }
 
-	@Transactional(propagation = Propagation.REQUIRED, readOnly = false)
-	public String updateReferReject(ReferRejectUpdateObjetDto dto) {
-		String status = "ERROR";
-		ReferReject persisted = null;
-		List<SupervisorReferRejectReason> supervisorReferRejectReasonList = new ArrayList<SupervisorReferRejectReason>();
-		if (!(dto == null || dto.getDetailUpdateObjetDtos() == null || dto.getDetailUpdateObjetDtos().isEmpty())) {
-			SystemUser systemUser = systemUserRepository.findOne(SecurityHelper.getCurrentUserId()).orElse(null);
-			if (!(systemUser == null)) {
-				ReferReject referReject = referRejectRepository.findOne(dto.getReferRejectID()).orElse(null);
-				if (!(referReject == null)) {
-					if (!(referReject.getReferRejectDetails() == null
-							|| referReject.getReferRejectDetails().isEmpty())) {
-						referReject.getReferRejectDetails().forEach(referRejectDetail -> {
-							dto.getDetailUpdateObjetDtos().forEach(detailUpdateDto -> {
-								if (referRejectDetail.getReferRejectDetailID() == detailUpdateDto
-										.getReferRejectDetailID()) {
-									// update detail
-									referRejectDetail.setStatus(ReferStatus.fromValue(detailUpdateDto.getStatus()));
-									referRejectDetail.setSupervisorRemarks(
-											StringUtils.upperCase(detailUpdateDto.getSupervisorRemarks()));
-									referRejectDetail.setRejectBy(systemUser);
-									referRejectDetail
-											.setContainerNo(StringUtils.upperCase(detailUpdateDto.getContainerNo()));
+  @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
+  public String updateReferReject(ReferRejectUpdateObjetDto dto) {
+    String status = "ERROR";
+    ReferReject persisted = null;
+    List<SupervisorReferRejectReason> supervisorReferRejectReasonList = new ArrayList<SupervisorReferRejectReason>();
+    if (!(dto == null || dto.getDetailUpdateObjetDtos() == null || dto.getDetailUpdateObjetDtos().isEmpty())) {
+      SystemUser systemUser = systemUserRepository.findOne(SecurityHelper.getCurrentUserId()).orElse(null);
+      if (!(systemUser == null)) {
+        ReferReject referReject = referRejectRepository.findOne(dto.getReferRejectID()).orElse(null);
+        if (!(referReject == null)) {
+          if (!(referReject.getReferRejectDetails() == null || referReject.getReferRejectDetails().isEmpty())) {
+            referReject.getReferRejectDetails().forEach(referRejectDetail -> {
+              dto.getDetailUpdateObjetDtos().forEach(detailUpdateDto -> {
+                if (referRejectDetail.getReferRejectDetailID() == detailUpdateDto.getReferRejectDetailID()) {
+                  // update detail
+                  referRejectDetail.setStatus(ReferStatus.fromValue(detailUpdateDto.getStatus()));
+                  referRejectDetail.setSupervisorRemarks(StringUtils.upperCase(detailUpdateDto.getSupervisorRemarks()));
+                  referRejectDetail.setRejectBy(systemUser);
+                  referRejectDetail.setContainerNo(StringUtils.upperCase(detailUpdateDto.getContainerNo()));
 
-									if (!(detailUpdateDto.getReferReasonIdList() == null
-											|| detailUpdateDto.getReferReasonIdList().isEmpty())) {
-										detailUpdateDto.getReferReasonIdList().forEach(referReasonId -> {
-											ReferReason referReason = referReasonRepository.findOne(referReasonId)
-													.orElse(null);
-											if (!(referReason == null)) {
-												SupervisorReferRejectReason reason = new SupervisorReferRejectReason();
-												reason.setReferReason(referReason);
-												reason.setReferRejectDetail(referRejectDetail);
-												supervisorReferRejectReasonList.add(reason);
-											} else {
-												throw new ResultsNotFoundException("Refer reason was not found!");
-											}
+                  if (!(detailUpdateDto.getReferReasonIdList() == null
+                      || detailUpdateDto.getReferReasonIdList().isEmpty())) {
+                    detailUpdateDto.getReferReasonIdList().forEach(referReasonId -> {
+                      ReferReason referReason = referReasonRepository.findOne(referReasonId).orElse(null);
+                      if (!(referReason == null)) {
+                        SupervisorReferRejectReason reason = new SupervisorReferRejectReason();
+                        reason.setReferReason(referReason);
+                        reason.setReferRejectDetail(referRejectDetail);
+                        supervisorReferRejectReasonList.add(reason);
+                      } else {
+                        throw new ResultsNotFoundException("Refer reason was not found!");
+                      }
 
-										});
-									}
-								}
-							});
-						});
-						// ReferReject -> update as completed
-						referReject.setStatusCode(HpatReferStatus.fromCode(dto.getStatusCode()));
+                    });
+                  }
+                }
+              });
+            });
+            // ReferReject -> update as completed
+            referReject.setStatusCode(HpatReferStatus.fromCode(dto.getStatusCode()));
 
-						persisted = referRejectRepository.save(referReject);
-						if (!(persisted == null || persisted.getReferRejectID() <= 0)) {
-							if (persisted.getReferRejectID() == dto.getReferRejectID()) {
-								status = "SUCCESS";
-							}
-						}
-					} else {
-						throw new ResultsNotFoundException("Refer reject detail was not found!");
-					}
-				} else {
-					throw new ResultsNotFoundException("Refer reject detail was not found!");
-				}
-			} else {
-				throw new ResultsNotFoundException("System User was not found!");
-			}
+            persisted = referRejectRepository.save(referReject);
+            if (!(persisted == null || persisted.getReferRejectID() <= 0)) {
+              if (persisted.getReferRejectID() == dto.getReferRejectID()) {
+                status = "SUCCESS";
+              }
+            }
+          } else {
+            throw new ResultsNotFoundException("Refer reject detail was not found!");
+          }
+        } else {
+          throw new ResultsNotFoundException("Refer reject detail was not found!");
+        }
+      } else {
+        throw new ResultsNotFoundException("System User was not found!");
+      }
 
-		}
+    }
 
-		// String sqlIns = "INSERT INTO SCSS_REJECT_SUP_REASON (" //
-		if (StringUtils.equals(status, "SUCCESS")) {
-			if (!(supervisorReferRejectReasonList == null || supervisorReferRejectReasonList.isEmpty())) {
-				for (SupervisorReferRejectReason reason : supervisorReferRejectReasonList) {
-					supervisorReferRejectReasonRepository.save(reason);
-				}
-			}
-		}
+    // String sqlIns = "INSERT INTO SCSS_REJECT_SUP_REASON (" //
+    if (StringUtils.equals(status, "SUCCESS")) {
+      if (!(supervisorReferRejectReasonList == null || supervisorReferRejectReasonList.isEmpty())) {
+        for (SupervisorReferRejectReason reason : supervisorReferRejectReasonList) {
+          supervisorReferRejectReasonRepository.save(reason);
+        }
+      }
+    }
 
-		return status;
-	}
+    return status;
+  }
 
-	@Transactional(propagation = Propagation.REQUIRED, readOnly = false)
-	public String updateLineCodeAndGateInDateForReferRejectDetail(ReferRejectDetailUpdateObjetDto dto) {
-		String status = "ERROR";
-		if (!(dto == null)) {
-			ReferRejectDetail referRejectDetail = referRejectDetailRepository
-					.findByReferReject_ReferRejectIDAndContainerNo(dto.getReferRejectID(), dto.getContainerNo());
-			if (!(referRejectDetail == null)) {
-				referRejectDetail.setLineCode(StringUtils.upperCase(dto.getLineCode()));
-				referRejectDetail.setGateInTime(CommonUtil.getParsedDate(dto.getGateInTime()));
-				ReferRejectDetail persisted = referRejectDetailRepository.save(referRejectDetail);
-				if (!(persisted == null || persisted.getReferRejectDetailID() <= 0)) {
-					if (persisted.getReferReject().getReferRejectID() == dto.getReferRejectID()) {
-						status = "SUCCESS";
-					}
-				}
-			} else {
-				throw new ResultsNotFoundException("Refer reject detail was not found!");
-			}
-		}
-		return status;
-	}
+  @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
+  public String updateLineCodeAndGateInDateForReferRejectDetail(ReferRejectDetailUpdateObjetDto dto) {
+    String status = "ERROR";
+    if (!(dto == null)) {
+      ReferRejectDetail referRejectDetail = referRejectDetailRepository
+          .findByReferReject_ReferRejectIDAndContainerNo(dto.getReferRejectID(), dto.getContainerNo());
+      if (!(referRejectDetail == null)) {
+        referRejectDetail.setLineCode(StringUtils.upperCase(dto.getLineCode()));
+        referRejectDetail.setGateInTime(CommonUtil.getParsedDate(dto.getGateInTime()));
+        ReferRejectDetail persisted = referRejectDetailRepository.save(referRejectDetail);
+        if (!(persisted == null || persisted.getReferRejectDetailID() <= 0)) {
+          if (persisted.getReferReject().getReferRejectID() == dto.getReferRejectID()) {
+            status = "SUCCESS";
+          }
+        }
+      } else {
+        throw new ResultsNotFoundException("Refer reject detail was not found!");
+      }
+    }
+    return status;
+  }
 
-	@Transactional(propagation = Propagation.REQUIRED, readOnly = false)
-	public String savePrintReject(long referId, String ipAddress) {
-		System.out.println("referId :" + referId);
-		String status = "ERROR";
-		ReferReject referReject = referRejectRepository.findOne(referId).orElse(null);
-		if (!(referReject == null)) {
-			if (!(referReject.getReferRejectDetails() == null || referReject.getReferRejectDetails().isEmpty())) {
-				Long systemUserId = SecurityHelper.getCurrentUserId();
-				if (!(systemUserId == null || systemUserId == 0)) {
-					PrintReject printReject = new PrintReject();
-					printReject.setClientIP(ipAddress);
-					if (referReject.getBaseCommonGateInOut().getCard() != null) {
-						SmartCardUser cardUser = referReject.getBaseCommonGateInOut().getCard().getSmartCardUser();
-						if (cardUser != null) {
-							printReject.setDriverIC(cardUser.getPassportNo());
-							printReject.setDriverName(cardUser.getCommonContactAttribute().getPersonName());
-						}
-					}
+  @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
+  public String savePrintReject(long referId, String ipAddress) {
+    System.out.println("referId :" + referId);
+    String status = "ERROR";
+    ReferReject referReject = referRejectRepository.findOne(referId).orElse(null);
+    if (!(referReject == null)) {
+      if (!(referReject.getReferRejectDetails() == null || referReject.getReferRejectDetails().isEmpty())) {
+        Long systemUserId = SecurityHelper.getCurrentUserId();
+        if (!(systemUserId == null || systemUserId == 0)) {
+          PrintReject printReject = new PrintReject();
+          printReject.setClientIP(ipAddress);
+          if (referReject.getBaseCommonGateInOut().getCard() != null) {
+            SmartCardUser cardUser = referReject.getBaseCommonGateInOut().getCard().getSmartCardUser();
+            if (cardUser != null) {
+              printReject.setDriverIC(cardUser.getPassportNo());
+              printReject.setDriverName(cardUser.getCommonContactAttribute().getPersonName());
+            }
+          }
 
-					printReject.setPmHeadNo(referReject.getBaseCommonGateInOut().getPmHeadNo());
-					printReject.setReferReject(referReject);
-					printReject.setStaffName(SecurityHelper.getStaffName());
-					printReject.setStaffNumber(SecurityHelper.getStaffNumber());
-					printReject.setStatus(status);
+          printReject.setPmHeadNo(referReject.getBaseCommonGateInOut().getPmHeadNo());
+          printReject.setReferReject(referReject);
+          printReject.setStaffName(SecurityHelper.getStaffName());
+          printReject.setStaffNumber(SecurityHelper.getStaffNumber());
+          printReject.setStatus(status);
 
-					int i = 0;
-					for (ReferRejectDetail referRejectDetail : referReject.getReferRejectDetails()) {
-						if (i == 0) {
-							// container 1
-							printReject.setContainer01(referRejectDetail.getContainerNo());
-							printReject.setContainer01Remarks(referRejectDetail.getSupervisorRemarks());
-							printReject = setRejectReasonsForPrentReject(printReject,
-									referRejectDetail.getReferRejectReason(), i);
-						} else {
-							// container 2
-							printReject.setContainer02(referRejectDetail.getContainerNo());
-							printReject.setContainer02Remarks(referRejectDetail.getSupervisorRemarks());
-							printReject = setRejectReasonsForPrentReject(printReject,
-									referRejectDetail.getReferRejectReason(), i);
-						}
-						i++;
-					}
+          int i = 0;
+          for (ReferRejectDetail referRejectDetail : referReject.getReferRejectDetails()) {
+            if (i == 0) {
+              // container 1
+              printReject.setContainer01(referRejectDetail.getContainerNo());
+              printReject.setContainer01Remarks(referRejectDetail.getSupervisorRemarks());
+              printReject = setRejectReasonsForPrentReject(printReject, referRejectDetail.getReferRejectReason(), i);
+            } else {
+              // container 2
+              printReject.setContainer02(referRejectDetail.getContainerNo());
+              printReject.setContainer02Remarks(referRejectDetail.getSupervisorRemarks());
+              printReject = setRejectReasonsForPrentReject(printReject, referRejectDetail.getReferRejectReason(), i);
+            }
+            i++;
+          }
 
-					PrintReject saved = printRejectRepository.save(printReject);
-					if (!(saved == null || saved.getPrientRejectID() == 0)) {
-						status = "SUCCESS";
-					}
+          PrintReject saved = printRejectRepository.save(printReject);
+          if (!(saved == null || saved.getPrientRejectID() == 0)) {
+            status = "SUCCESS";
+          }
 
-				}
+        }
 
-			} else {
-				throw new ResultsNotFoundException("System User detail was not found!");
-			}
-		} else {
-			throw new ResultsNotFoundException("Refer reject detail was not found!");
-		}
-		return status;
-	}
+      } else {
+        throw new ResultsNotFoundException("System User detail was not found!");
+      }
+    } else {
+      throw new ResultsNotFoundException("Refer reject detail was not found!");
+    }
+    return status;
+  }
 
-	private PrintReject setRejectReasonsForPrentReject(PrintReject printReject,
-			Set<ReferRejectReason> referRejectReasons, int i) {
+  private PrintReject setRejectReasonsForPrentReject(PrintReject printReject, Set<ReferRejectReason> referRejectReasons,
+      int i) {
 
-		String reason1C1 = "";
-		String reason2C1 = "";
-		String reason3C1 = "";
+    String reason1C1 = "";
+    String reason2C1 = "";
+    String reason3C1 = "";
 
-		if (!(referRejectReasons == null || referRejectReasons.isEmpty())) {
-			int count = 0;
-			for (ReferRejectReason referRejectReason : referRejectReasons) {
-				if (!(referRejectReason.getReferReason() == null)) {
-					String reason = referRejectReason.getReferReason().getReasonDescription();
-					if (count == 1) {
-						reason1C1 = "1) " + reason;
-					} else if (count == 2) {
-						reason2C1 = "2) " + reason;
-					} else {
-						if (StringUtils.isBlank(reason3C1)) {
-							reason3C1 = count + ")" + reason;
-						} else {
-							reason3C1 = reason3C1 + "," + count + ")" + reason;
-						}
-					}
-				}
+    if (!(referRejectReasons == null || referRejectReasons.isEmpty())) {
+      int count = 0;
+      for (ReferRejectReason referRejectReason : referRejectReasons) {
+        if (!(referRejectReason.getReferReason() == null)) {
+          String reason = referRejectReason.getReferReason().getReasonDescription();
+          if (count == 1) {
+            reason1C1 = "1) " + reason;
+          } else if (count == 2) {
+            reason2C1 = "2) " + reason;
+          } else {
+            if (StringUtils.isBlank(reason3C1)) {
+              reason3C1 = count + ")" + reason;
+            } else {
+              reason3C1 = reason3C1 + "," + count + ")" + reason;
+            }
+          }
+        }
 
-				count++;
-			}
-			if (i == 0) {
-				printReject.setRejectContainer01Due01(reason1C1);
-				printReject.setRejectContainer01Due02(reason2C1);
-				printReject.setRejectContainer01Due03(reason3C1);
-			} else {
-				printReject.setRejectContainer02Due01(reason1C1);
-				printReject.setRejectContainer02Due02(reason2C1);
-				printReject.setRejectContainer02Due03(reason3C1);
-			}
-		}
-		return printReject;
-	}
+        count++;
+      }
+      if (i == 0) {
+        printReject.setRejectContainer01Due01(reason1C1);
+        printReject.setRejectContainer01Due02(reason2C1);
+        printReject.setRejectContainer01Due03(reason3C1);
+      } else {
+        printReject.setRejectContainer02Due01(reason1C1);
+        printReject.setRejectContainer02Due02(reason2C1);
+        printReject.setRejectContainer02Due03(reason3C1);
+      }
+    }
+    return printReject;
+  }
 
 }
