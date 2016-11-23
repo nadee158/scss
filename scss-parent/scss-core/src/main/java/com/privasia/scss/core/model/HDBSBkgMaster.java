@@ -1,16 +1,19 @@
 package com.privasia.scss.core.model;
 
 import java.io.Serializable;
+import java.util.Set;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
@@ -94,6 +97,9 @@ public class HDBSBkgMaster extends AuditEntity implements Serializable {
 	@Basic(fetch=FetchType.LAZY)
 	@Column(name = "DRAYAGE_BOOKING")
 	private Integer drayageBooking;
+	
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "hDBSBkgMaster", cascade = CascadeType.ALL)
+	private Set<HDBSBkgDetail> hdbsBookingDetails;
 
 	public String getBkgMasterID() {
 		return bkgMasterID;
@@ -238,5 +244,15 @@ public class HDBSBkgMaster extends AuditEntity implements Serializable {
 	public void setDrayageBooking(Integer drayageBooking) {
 		this.drayageBooking = drayageBooking;
 	}
+
+	public Set<HDBSBkgDetail> getHdbsBookingDetails() {
+		return hdbsBookingDetails;
+	}
+
+	public void setHdbsBookingDetails(Set<HDBSBkgDetail> hdbsBookingDetails) {
+		this.hdbsBookingDetails = hdbsBookingDetails;
+	}
+	
+	
 
 }

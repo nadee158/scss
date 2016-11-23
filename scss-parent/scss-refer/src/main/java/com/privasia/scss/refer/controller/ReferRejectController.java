@@ -44,22 +44,16 @@ public class ReferRejectController {
   @RequestMapping(value = "/get/{referId}", method = RequestMethod.GET,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public CustomResponseEntity<ApiResponseObject<?>> getReferRejectById(@PathVariable long referId) {
-    ReferRejectDTO referReject = null;
-    try {
-      referReject = referRejectService.getReferRejectByReferId(referId);
-      System.out.println("referReject " + referReject);
-    } catch (Exception ex) {
-      ex.printStackTrace();
-    }
-    System.out.println("referReject || " + referReject);
+    
+	  ReferRejectDTO referReject = referRejectService.getReferRejectByReferId(referId);
+     
     return new CustomResponseEntity<ApiResponseObject<?>>(
         new ApiResponseObject<ReferRejectDTO>(HttpStatus.OK, referReject), HttpStatus.OK);
   }
 
   @RequestMapping(value = "/save", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
       consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-  public CustomResponseEntity<ApiResponseObject<?>> saveReferReject(
-      @RequestBody ReferRejectObjetDto referRejectObjetDto) {
+  public CustomResponseEntity<ApiResponseObject<?>> saveReferReject(@RequestBody ReferRejectObjetDto referRejectObjetDto) {
 
     Long referId = referRejectService.saveReferReject(referRejectObjetDto);
 

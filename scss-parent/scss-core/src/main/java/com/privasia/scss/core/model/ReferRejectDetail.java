@@ -25,7 +25,6 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.privasia.scss.common.enums.ContainerPosition;
 import com.privasia.scss.common.enums.ReferStatus;
 
@@ -58,8 +57,7 @@ public class ReferRejectDetail extends AuditEntity implements Serializable {
   @Column(name = "CONT_ISO_CODE")
   private String containerIsoCode;
 
-  @JsonIgnore
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = FetchType.LAZY, cascade=CascadeType.MERGE)
   @JoinColumn(name = "REFER_ID", nullable = false)
   private ReferReject referReject;
 

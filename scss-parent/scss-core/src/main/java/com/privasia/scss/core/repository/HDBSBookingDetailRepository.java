@@ -11,4 +11,5 @@ public interface HDBSBookingDetailRepository extends BaseRepository<HDBSBkgDetai
 
 	
 	public Stream<HDBSBkgDetail> findByHdbsBKGDetailIDIn(List<String> bkgDetailIDList);
+	
 }

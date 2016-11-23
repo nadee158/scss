@@ -47,7 +47,7 @@ public class ReferRejectReason extends AuditEntity implements Serializable {
   @JoinColumn(name = "REFER_REJECT_DET_ID", nullable = false)
   private ReferRejectDetail referRejectDetail;
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = FetchType.LAZY, cascade=CascadeType.MERGE)
   @JoinColumn(name = "REF_REASON_ID", nullable = false)
   private ReferReason referReason;
 

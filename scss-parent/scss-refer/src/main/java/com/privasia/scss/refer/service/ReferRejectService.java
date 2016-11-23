@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +27,7 @@ import com.privasia.scss.core.exception.BusinessException;
 import com.privasia.scss.core.exception.ResultsNotFoundException;
 import com.privasia.scss.core.model.BaseCommonGateInOutAttribute;
 import com.privasia.scss.core.model.Card;
+import com.privasia.scss.core.model.Client;
 import com.privasia.scss.core.model.PrintReject;
 import com.privasia.scss.core.model.ReferReason;
 import com.privasia.scss.core.model.ReferReject;
@@ -35,9 +37,7 @@ import com.privasia.scss.core.model.SmartCardUser;
 import com.privasia.scss.core.model.SupervisorReferRejectReason;
 import com.privasia.scss.core.model.SystemUser;
 import com.privasia.scss.core.repository.CardRepository;
-import com.privasia.scss.core.repository.CardUsageRepository;
 import com.privasia.scss.core.repository.ClientRepository;
-import com.privasia.scss.core.repository.CompanyRepository;
 import com.privasia.scss.core.repository.PrintRejectRepository;
 import com.privasia.scss.core.repository.ReferReasonRepository;
 import com.privasia.scss.core.repository.ReferRejectDetailRepository;
@@ -77,11 +77,6 @@ public class ReferRejectService {
   @Autowired
   private ClientRepository clientRepository;
 
-  @Autowired
-  private CardUsageRepository cardUsageRepository;
-
-  @Autowired
-  private CompanyRepository companyRepository;
 
   @Autowired
   private SupervisorReferRejectReasonRepository supervisorReferRejectReasonRepository;
@@ -122,8 +117,9 @@ public class ReferRejectService {
   @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
   public Long saveReferReject(ReferRejectObjetDto referRejectObjetDto) {
     if (!(referRejectObjetDto == null)) {
-      SystemUser systemUser = systemUserRepository.findOne(SecurityHelper.getCurrentUserId()).orElse(null);
-      if (!(systemUser == null)) {
+      SystemUser systemUser = systemUserRepository.findOne(SecurityHelper.getCurrentUserId())
+    		  	.orElseThrow(() -> new AuthenticationServiceException("Log in User Not Found : " + SecurityHelper.getCurrentUserId()));
+      
         ReferReject referReject = null;
         if (referRejectObjetDto.getReferId().isPresent()) {
           referReject = referRejectRepository.findOne(referRejectObjetDto.getReferId().orElse(null)).orElse(null);
@@ -135,39 +131,51 @@ public class ReferRejectService {
           return persisted.getReferRejectID();
         }
         return 0L;
-      } else {
-        throw new ResultsNotFoundException("System User was not found!");
-      }
+      
     } else {
       throw new BusinessException("No Data given to be updated!");
     }
   }
 
   public ReferReject convertToReferRejectDomain(ReferRejectObjetDto referRejectObjetDto, ReferReject referReject,
-      SystemUser systemUser) {
+      SystemUser logInUser) {
     // automated conversion
     referReject = referRejectObjetDto.convertToReferRejectDomain(referReject);
 
     // manual conversion
     BaseCommonGateInOutAttribute baseCommonGateInOut = referReject.getBaseCommonGateInOut();
 
-    Optional<Card> card = cardRepository.findOne(referRejectObjetDto.getCard());
+    Optional<Card> optionalCard = cardRepository.findOne(referRejectObjetDto.getCard());
     // automated conversion
     baseCommonGateInOut = referRejectObjetDto.convertToBaseCommonGateInOutAttribute(baseCommonGateInOut);
 
     // manual conversion
-    baseCommonGateInOut.setEirStatus(TransactionStatus.fromCode(referRejectObjetDto.getTransactionStatus()));
-    baseCommonGateInOut.setGateInClient(clientRepository.findOne(referRejectObjetDto.getGateInClient()).orElse(null));
-    baseCommonGateInOut.setGateInClerk(systemUserRepository.findOne(referRejectObjetDto.getGateInClerk()).orElse(null));
-    baseCommonGateInOut.setCard(card.orElse(null));
+    //set EIR STATUS to R
+    baseCommonGateInOut.setEirStatus(TransactionStatus.REJECT);
+    
+    //fetch from clientIP
+    Optional<Client> optionalClient = clientRepository.findByWebIPAddress(referRejectObjetDto.getGateInClientIP());
+    baseCommonGateInOut.setGateInClient(optionalClient.orElseThrow(() -> new BusinessException("Gate In Client not found "+ referRejectObjetDto.getGateInClientIP())));
+    baseCommonGateInOut.setGateInClerk(logInUser);
+    
+    //throw due to card not found
+    baseCommonGateInOut.setCard(optionalCard.orElseThrow(() -> new BusinessException("Scan Card was not found "+ referRejectObjetDto.getCard())));
+    
+    //gate in time should capture from client
+    //need to clarify from feroz this. here we need to save this time
+    if(StringUtils.isEmpty(referRejectObjetDto.getTimeGateIn())) throw new BusinessException("Gate In Time Required !");
     baseCommonGateInOut.setTimeGateIn(CommonUtil.getParsedDate(referRejectObjetDto.getTimeGateIn()));
+    
     baseCommonGateInOut.setTimeGateInOk(CommonUtil.getParsedDate(referRejectObjetDto.getTimeGateInOk()));
+    
     referReject.setBaseCommonGateInOut(baseCommonGateInOut);
-
-    referReject.setStatusCode(HpatReferStatus.fromCode(referRejectObjetDto.getStatusCode()));
-
-    referReject.setCardUsage(cardUsageRepository.findOne(referRejectObjetDto.getCardUsageID()).orElse(null));
-    referReject.setCompany(companyRepository.findOne(referRejectObjetDto.getCompanyID()).orElse(null));
+    
+    //Need to set to ACTV
+    referReject.setStatusCode(HpatReferStatus.ACTIVE);
+    
+    
+    //from card take the company
+    referReject.setCompany(optionalCard.get().getCompany());
 
     ReferRejectDetailObjetDto referRejectDetailObjetDto = referRejectObjetDto.getReferRejectDetail();
 
@@ -185,7 +193,7 @@ public class ReferRejectService {
       if (referReject.getReferRejectDetails() == null) {
         referReject.setReferRejectDetails(new HashSet<ReferRejectDetail>());
       }
-      referRejectDetail.setReferBy(systemUser);
+      referRejectDetail.setReferBy(logInUser);
       referRejectDetail.setReferReject(referReject);
       referReject.getReferRejectDetails().add(referRejectDetail);
     }

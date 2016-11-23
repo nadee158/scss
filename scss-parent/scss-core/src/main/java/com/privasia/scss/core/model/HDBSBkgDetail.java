@@ -35,7 +35,7 @@ public class HDBSBkgDetail extends AuditEntity implements Serializable {
   @Column(name = "BKG_DETAIL_ID")
   private String hdbsBKGDetailID;
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = FetchType.LAZY, cascade=CascadeType.MERGE)
   @JoinColumn(name = "BKG_MASTER_ID", nullable = true)
   private HDBSBkgMaster hDBSBkgMaster;
 

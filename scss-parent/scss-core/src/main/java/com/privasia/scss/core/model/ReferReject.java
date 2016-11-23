@@ -27,7 +27,6 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.privasia.scss.common.enums.HpatReferStatus;
 
 /**
@@ -79,31 +78,20 @@ public class ReferReject extends AuditEntity implements Serializable {
       @AttributeOverride(name = "gateOutBoothNo", column = @Column(name = "REF_GATE_OUT_BOOTH_NO") ),
       @AttributeOverride(name = "gateOutBoothClerk", column = @Column(name = "REF_GATEOUT_BOOTH_CLERKID") ),
       @AttributeOverride(name = "timeGateOutBooth", column = @Column(name = "REF_TIMEGATEOUT_BOOTH") ),
-      @AttributeOverride(name = "hpatBooking", column = @Column(name = "BOOKING_ID") )
+      @AttributeOverride(name = "hpatBooking", column = @Column(name = "BOOKING_ID"))
 
   })
   @AssociationOverrides({
-      @AssociationOverride(name = "card",
-          joinColumns = @JoinColumn(name = "CRD_CARDID_SEQ", referencedColumnName = "CRD_CARDID_SEQ") ),
-      @AssociationOverride(name = "gateInClerk",
-          joinColumns = @JoinColumn(name = "GATE_CLERK_ID", referencedColumnName = "SYS_USERID_SEQ") ),
-      @AssociationOverride(name = "gateOutClerk",
-          joinColumns = @JoinColumn(name = "REF_GATEOUT_CLERKID", referencedColumnName = "SYS_USERID_SEQ") ),
-      @AssociationOverride(name = "gateInClient",
-          joinColumns = @JoinColumn(name = "CLI_CLIENT_SEQ", referencedColumnName = "CLI_CLIENTID_SEQ") ),
-      @AssociationOverride(name = "gateOutClient",
-          joinColumns = @JoinColumn(name = "CLI_CLIENTID_GATEOUT", referencedColumnName = "CLI_CLIENTID_SEQ") ),
-      @AssociationOverride(name = "gateOutBoothClerk",
-          joinColumns = @JoinColumn(name = "REF_GATEOUT_BOOTH_CLERKID", referencedColumnName = "SYS_USERID_SEQ") )})
+      @AssociationOverride(name = "card", joinColumns = @JoinColumn(name = "CRD_CARDID_SEQ", referencedColumnName = "CRD_CARDID_SEQ") ),
+      @AssociationOverride(name = "gateInClerk", joinColumns = @JoinColumn(name = "GATE_CLERK_ID", referencedColumnName = "SYS_USERID_SEQ") ),
+      @AssociationOverride(name = "gateOutClerk", joinColumns = @JoinColumn(name = "REF_GATEOUT_CLERKID", referencedColumnName = "SYS_USERID_SEQ", nullable = true) ),
+      @AssociationOverride(name = "gateInClient", joinColumns = @JoinColumn(name = "CLI_CLIENT_SEQ", referencedColumnName = "CLI_CLIENTID_SEQ") ),
+      @AssociationOverride(name = "gateOutClient",joinColumns = @JoinColumn(name = "CLI_CLIENTID_GATEOUT", referencedColumnName = "CLI_CLIENTID_SEQ", nullable = true) ),
+      @AssociationOverride(name = "gateOutBoothClerk", joinColumns = @JoinColumn(name = "REF_GATEOUT_BOOTH_CLERKID", referencedColumnName = "SYS_USERID_SEQ", nullable = true) )})
   private BaseCommonGateInOutAttribute baseCommonGateInOut;
 
   @Column(name = "REFER_DATE_TIME")
   private LocalDateTime referDateTime;
-
-  @JsonIgnore
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "CUG_ID_SEQ", nullable = true, referencedColumnName = "CUG_ID_SEQ")
-  private CardUsage cardUsage;
 
   @Column(name = "PM_WEIGHT")
   private Integer pmWeight;
@@ -179,14 +167,6 @@ public class ReferReject extends AuditEntity implements Serializable {
 
   public void setReferDateTime(LocalDateTime referDateTime) {
     this.referDateTime = referDateTime;
-  }
-
-  public CardUsage getCardUsage() {
-    return cardUsage;
-  }
-
-  public void setCardUsage(CardUsage cardUsage) {
-    this.cardUsage = cardUsage;
   }
 
   public Integer getPmWeight() {
