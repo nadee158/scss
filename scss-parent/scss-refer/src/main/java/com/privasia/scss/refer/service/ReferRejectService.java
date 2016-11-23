@@ -12,7 +12,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -116,25 +115,33 @@ public class ReferRejectService {
 
   @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
   public Long saveReferReject(ReferRejectObjetDto referRejectObjetDto) {
-    if (!(referRejectObjetDto == null)) {
-      SystemUser systemUser = systemUserRepository.findOne(SecurityHelper.getCurrentUserId())
-    		  	.orElseThrow(() -> new AuthenticationServiceException("Log in User Not Found : " + SecurityHelper.getCurrentUserId()));
-      
-        ReferReject referReject = null;
-        if (referRejectObjetDto.getReferId().isPresent()) {
-          referReject = referRejectRepository.findOne(referRejectObjetDto.getReferId().orElse(null)).orElse(null);
-        }
-        // bind details via beanutils
-        referReject = convertToReferRejectDomain(referRejectObjetDto, referReject, systemUser);
-        ReferReject persisted = referRejectRepository.save(referReject);
-        if (!(persisted == null || persisted.getReferRejectID() <= 0)) {
-          return persisted.getReferRejectID();
-        }
-        return 0L;
-      
-    } else {
-      throw new BusinessException("No Data given to be updated!");
-    }
+    ReferReject referReject = new ReferReject();
+    // if (!(referRejectObjetDto == null)) {
+    // SystemUser systemUser =
+    // systemUserRepository.findOne(SecurityHelper.getCurrentUserId()).orElseThrow(
+    // () -> new AuthenticationServiceException("Log in User Not Found : " +
+    // SecurityHelper.getCurrentUserId()));
+    //
+    // ReferReject referReject = null;
+    // if (referRejectObjetDto.getReferId() > 0) {
+    // referReject = referRejectRepository.findOne(referRejectObjetDto.getReferId()).orElse(null);
+    // }
+    // // bind details via beanutils
+    // referReject = convertToReferRejectDomain(referRejectObjetDto, referReject, systemUser);
+    // System.out.println(referReject.getReferRejectID() + " &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
+    // ReferReject persisted = referRejectRepository.save(referReject);
+    // if (!(persisted == null || persisted.getReferRejectID() <= 0)) {
+    // return persisted.getReferRejectID();
+    // }
+    // return 0L;
+    //
+    // } else {
+    // throw new BusinessException("No Data given to be updated!");
+    // }
+    referReject.setAxleVerified(true);
+    ReferReject persisted = referRejectRepository.save(referReject);
+    System.out.println(persisted.getReferRejectID() + " &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
+    return 0l;
   }
 
   public ReferReject convertToReferRejectDomain(ReferRejectObjetDto referRejectObjetDto, ReferReject referReject,
@@ -150,44 +157,49 @@ public class ReferRejectService {
     baseCommonGateInOut = referRejectObjetDto.convertToBaseCommonGateInOutAttribute(baseCommonGateInOut);
 
     // manual conversion
-    //set EIR STATUS to R
+    // set EIR STATUS to R
     baseCommonGateInOut.setEirStatus(TransactionStatus.REJECT);
-    
-    //fetch from clientIP
+
+    // fetch from clientIP
     Optional<Client> optionalClient = clientRepository.findByWebIPAddress(referRejectObjetDto.getGateInClientIP());
-    baseCommonGateInOut.setGateInClient(optionalClient.orElseThrow(() -> new BusinessException("Gate In Client not found "+ referRejectObjetDto.getGateInClientIP())));
+    baseCommonGateInOut.setGateInClient(optionalClient.orElseThrow(
+        () -> new BusinessException("Gate In Client not found " + referRejectObjetDto.getGateInClientIP())));
     baseCommonGateInOut.setGateInClerk(logInUser);
-    
-    //throw due to card not found
-    baseCommonGateInOut.setCard(optionalCard.orElseThrow(() -> new BusinessException("Scan Card was not found "+ referRejectObjetDto.getCard())));
-    
-    //gate in time should capture from client
-    //need to clarify from feroz this. here we need to save this time
-    if(StringUtils.isEmpty(referRejectObjetDto.getTimeGateIn())) throw new BusinessException("Gate In Time Required !");
+
+    // throw due to card not found
+    baseCommonGateInOut.setCard(optionalCard
+        .orElseThrow(() -> new BusinessException("Scan Card was not found " + referRejectObjetDto.getCard())));
+
+    // gate in time should capture from client
+    // need to clarify from feroz this. here we need to save this time
+    if (StringUtils.isEmpty(referRejectObjetDto.getTimeGateIn()))
+      throw new BusinessException("Gate In Time Required !");
     baseCommonGateInOut.setTimeGateIn(CommonUtil.getParsedDate(referRejectObjetDto.getTimeGateIn()));
-    
+
     baseCommonGateInOut.setTimeGateInOk(CommonUtil.getParsedDate(referRejectObjetDto.getTimeGateInOk()));
-    
+
     referReject.setBaseCommonGateInOut(baseCommonGateInOut);
-    
-    //Need to set to ACTV
+
+    // Need to set to ACTV
     referReject.setStatusCode(HpatReferStatus.ACTIVE);
-    
-    
-    //from card take the company
+
+
+    // from card take the company
     referReject.setCompany(optionalCard.get().getCompany());
 
     ReferRejectDetailObjetDto referRejectDetailObjetDto = referRejectObjetDto.getReferRejectDetail();
 
     if (referRejectDetailObjetDto != null) {
       Optional<ReferRejectDetail> optionalReferRejectDetail = null;
-      if (referRejectDetailObjetDto.getReferRejectDetailID().isPresent()) {
+      if (referRejectDetailObjetDto.getReferRejectDetailID() > 0) {
         optionalReferRejectDetail =
-            referRejectDetailRepository.findOne(referRejectDetailObjetDto.getReferRejectDetailID().orElse(null));
+            referRejectDetailRepository.findOne(referRejectDetailObjetDto.getReferRejectDetailID());
       }
       ReferRejectDetail fromDb = null;
       if (!(optionalReferRejectDetail == null)) {
-        fromDb = optionalReferRejectDetail.get();
+        if (optionalReferRejectDetail.isPresent()) {
+          fromDb = optionalReferRejectDetail.get();
+        }
       }
       ReferRejectDetail referRejectDetail = convertToReferRejectDetailDomain(referRejectDetailObjetDto, fromDb);
       if (referReject.getReferRejectDetails() == null) {

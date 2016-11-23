@@ -2,7 +2,6 @@ package com.privasia.scss.refer.dto;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -24,7 +23,7 @@ public class ReferRejectDetailObjetDto implements Serializable {
   private static final long serialVersionUID = 1L;
 
   // ReferRejectDetail OBJECT ---------------------------------------
-  private Optional<Long> referRejectDetailID = null;
+  private long referRejectDetailID;
 
   private String containerNo = StringUtils.EMPTY;
 
@@ -80,12 +79,13 @@ public class ReferRejectDetailObjetDto implements Serializable {
   private List<Long> referReasonIds = null;
 
 
-  public Optional<Long> getReferRejectDetailID() {
+
+  public long getReferRejectDetailID() {
     return referRejectDetailID;
   }
 
 
-  public void setReferRejectDetailID(Optional<Long> referRejectDetailID) {
+  public void setReferRejectDetailID(long referRejectDetailID) {
     this.referRejectDetailID = referRejectDetailID;
   }
 
