@@ -23,13 +23,7 @@ public class FileDTO implements Serializable {
 
   private String trxType;
 
-  public String getFileType() {
-    return fileType;
-  }
-
-  public void setFileType(String fileType) {
-    this.fileType = fileType;
-  }
+  private String trxId;
 
   private byte[] file;
 
@@ -38,6 +32,8 @@ public class FileDTO implements Serializable {
   private InputStream cameraImage;
 
   private long folderSize;
+
+  private long fileSize;
 
   public String getOddIDSeq1() {
     return oddIDSeq1;
@@ -127,6 +123,28 @@ public class FileDTO implements Serializable {
     this.trxType = trxType;
   }
 
+  public String getFileType() {
+    return fileType;
+  }
 
+  public void setFileType(String fileType) {
+    this.fileType = fileType;
+  }
+
+  public String getTrxId() {
+    return trxId;
+  }
+
+  public void setTrxId(String trxId) {
+    this.trxId = trxId;
+  }
+
+  public long getFileSize() {
+    return fileSize;
+  }
+
+  public void setFileSize(long fileSize) {
+    this.fileSize = fileSize;
+  }
 
 }

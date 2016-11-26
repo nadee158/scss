@@ -1,19 +1,41 @@
 package com.privasia.scss.gateout.service;
 
 import org.apache.commons.lang3.StringUtils;
+import org.bson.Document;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
 import com.privasia.scss.common.util.ApplicationConstants;
 import com.privasia.scss.gateout.dto.FileDTO;
+import com.privasia.scss.gateout.mongo.repository.GridFSRepository;
 
 @Service("fileService")
 public class FileService {
 
+  @Autowired
+  private GridFSRepository gridFSRepository;
+
   public String saveFileToMongoDB(FileDTO fileDTO) {
     String uniqueId = createFileId(fileDTO);
+    DBObject metaData = new BasicDBObject();
+
+    Document doc = new Document().append("trxType", fileDTO.getTrxType()).append("trxId", fileDTO.getTrxId())
+        .append("fileSize", fileDTO.getFileSize());
+
+    metaData.put("trxType", fileDTO.getTrxType());
+    metaData.put("trxId", fileDTO.getTrxId());
+    metaData.put("fileSize", fileDTO.getFileSize());
+
+    metaData.put(fileDTO.getTrxId() + "_Info", doc);
+
+    gridFSRepository.storeFile(fileDTO.getCameraImage(), metaData);
 
     return uniqueId;
   }
+
+
 
   public String createFileId(FileDTO fileDTO) {
     String fileType = fileDTO.getFileType();
