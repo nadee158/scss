@@ -19,15 +19,13 @@ public class FileDTO implements Serializable {
 
   private String ExpExportNoSeq2;
 
-  private String fileType;
-
   private String trxType;
 
-  private String trxId;
+  private String fileName;
 
   private byte[] file;
 
-  private String collectionName;
+  private String collectionType;
 
   private InputStream cameraImage;
 
@@ -91,13 +89,6 @@ public class FileDTO implements Serializable {
     this.file = file;
   }
 
-  public String getCollectionName() {
-    return collectionName;
-  }
-
-  public void setCollectionName(String collectionName) {
-    this.collectionName = collectionName;
-  }
 
   public InputStream getCameraImage() {
     return cameraImage;
@@ -123,20 +114,14 @@ public class FileDTO implements Serializable {
     this.trxType = trxType;
   }
 
-  public String getFileType() {
-    return fileType;
+
+
+  public String getFileName() {
+    return fileName;
   }
 
-  public void setFileType(String fileType) {
-    this.fileType = fileType;
-  }
-
-  public String getTrxId() {
-    return trxId;
-  }
-
-  public void setTrxId(String trxId) {
-    this.trxId = trxId;
+  public void setFileName(String fileName) {
+    this.fileName = fileName;
   }
 
   public long getFileSize() {
@@ -145,6 +130,14 @@ public class FileDTO implements Serializable {
 
   public void setFileSize(long fileSize) {
     this.fileSize = fileSize;
+  }
+
+  public String getCollectionType() {
+    return collectionType;
+  }
+
+  public void setCollectionType(String collectionType) {
+    this.collectionType = collectionType;
   }
 
 }

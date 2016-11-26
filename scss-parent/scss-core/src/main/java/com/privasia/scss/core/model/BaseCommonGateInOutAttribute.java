@@ -6,7 +6,6 @@ package com.privasia.scss.core.model;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
@@ -24,195 +23,216 @@ import com.privasia.scss.common.enums.TransactionStatus;
 @Embeddable
 public class BaseCommonGateInOutAttribute implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 1L;
 
-	private String pmHeadNo;
+  private String pmHeadNo;
 
-	private String pmPlateNo;
+  private String pmPlateNo;
 
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
-	@JoinColumn(name = "BOOKING_ID", nullable = true, referencedColumnName = "BOOKING_ID")
-	private HPATBooking hpatBooking;
+  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+  @JoinColumn(name = "BOOKING_ID", nullable = true, referencedColumnName = "BOOKING_ID")
+  private HPATBooking hpatBooking;
 
-	@Type(type = "com.privasia.scss.common.enumusertype.TransactionStatusEnumUserType")
-	private TransactionStatus eirStatus;
+  @Type(type = "com.privasia.scss.common.enumusertype.TransactionStatusEnumUserType")
+  private TransactionStatus eirStatus;
 
-	@Type(type = "yes_no")
-	private Boolean transactionSlipPrinted;
+  @Type(type = "yes_no")
+  private Boolean transactionSlipPrinted;
 
-	private String gateOutBoothNo;
+  private String gateOutBoothNo;
 
-	private LocalDateTime timeGateIn;
+  private LocalDateTime timeGateIn;
 
-	private LocalDateTime timeGateInOk;
+  private LocalDateTime timeGateInOk;
 
-	private LocalDateTime timeGateOut;
+  private LocalDateTime timeGateOut;
 
-	private LocalDateTime timeGateOutOk;
+  private LocalDateTime timeGateOutOk;
 
-	private LocalDateTime timeGateOutBooth;
+  private LocalDateTime timeGateOutBooth;
 
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
-	@JoinColumn(name = "GTP_HCTDID", nullable = true, referencedColumnName = "CRD_CARDID_SEQ")
-	private Card card;
+  private String zipFileNo;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "GTP_GATEINCLERKID", nullable = true, referencedColumnName = "SYS_USERID_SEQ")
-	private SystemUser gateInClerk;
+  private String trxSlipNo;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "GTP_GATEOUTCLERKID", nullable = true, referencedColumnName = "SYS_USERID_SEQ")
-	private SystemUser gateOutClerk;
+  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+  @JoinColumn(name = "GTP_HCTDID", nullable = true, referencedColumnName = "CRD_CARDID_SEQ")
+  private Card card;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "CLI_CLIENTID_GATEIN", nullable = true, referencedColumnName = "CLI_CLIENTID_SEQ")
-	private Client gateInClient;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "GTP_GATEINCLERKID", nullable = true, referencedColumnName = "SYS_USERID_SEQ")
+  private SystemUser gateInClerk;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "CLI_CLIENTID_GATEOUT", nullable = true, referencedColumnName = "CLI_CLIENTID_SEQ")
-	private Client gateOutClient;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "GATEOUT_BOOTH_CLERKID", nullable = true, referencedColumnName = "SYS_USERID_SEQ")
-	private SystemUser gateOutBoothClerk;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "GTP_GATEOUTCLERKID", nullable = true, referencedColumnName = "SYS_USERID_SEQ")
+  private SystemUser gateOutClerk;
 
-	public String getPmHeadNo() {
-		return pmHeadNo;
-	}
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "CLI_CLIENTID_GATEIN", nullable = true, referencedColumnName = "CLI_CLIENTID_SEQ")
+  private Client gateInClient;
 
-	public void setPmHeadNo(String pmHeadNo) {
-		this.pmHeadNo = pmHeadNo;
-	}
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "CLI_CLIENTID_GATEOUT", nullable = true, referencedColumnName = "CLI_CLIENTID_SEQ")
+  private Client gateOutClient;
 
-	public String getPmPlateNo() {
-		return pmPlateNo;
-	}
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "GATEOUT_BOOTH_CLERKID", nullable = true, referencedColumnName = "SYS_USERID_SEQ")
+  private SystemUser gateOutBoothClerk;
 
-	public void setPmPlateNo(String pmPlateNo) {
-		this.pmPlateNo = pmPlateNo;
-	}
+  public String getPmHeadNo() {
+    return pmHeadNo;
+  }
 
-	public TransactionStatus getEirStatus() {
-		return eirStatus;
-	}
+  public void setPmHeadNo(String pmHeadNo) {
+    this.pmHeadNo = pmHeadNo;
+  }
 
-	public void setEirStatus(TransactionStatus eirStatus) {
-		this.eirStatus = eirStatus;
-	}
+  public String getPmPlateNo() {
+    return pmPlateNo;
+  }
 
-	public String getGateOutBoothNo() {
-		return gateOutBoothNo;
-	}
+  public void setPmPlateNo(String pmPlateNo) {
+    this.pmPlateNo = pmPlateNo;
+  }
 
-	public void setGateOutBoothNo(String gateOutBoothNo) {
-		this.gateOutBoothNo = gateOutBoothNo;
-	}
+  public TransactionStatus getEirStatus() {
+    return eirStatus;
+  }
 
-	public LocalDateTime getTimeGateIn() {
-		return timeGateIn;
-	}
+  public void setEirStatus(TransactionStatus eirStatus) {
+    this.eirStatus = eirStatus;
+  }
 
-	public void setTimeGateIn(LocalDateTime timeGateIn) {
-		this.timeGateIn = timeGateIn;
-	}
+  public String getGateOutBoothNo() {
+    return gateOutBoothNo;
+  }
 
-	public LocalDateTime getTimeGateInOk() {
-		return timeGateInOk;
-	}
+  public void setGateOutBoothNo(String gateOutBoothNo) {
+    this.gateOutBoothNo = gateOutBoothNo;
+  }
 
-	public void setTimeGateInOk(LocalDateTime timeGateInOk) {
-		this.timeGateInOk = timeGateInOk;
-	}
+  public LocalDateTime getTimeGateIn() {
+    return timeGateIn;
+  }
 
-	public LocalDateTime getTimeGateOut() {
-		return timeGateOut;
-	}
+  public void setTimeGateIn(LocalDateTime timeGateIn) {
+    this.timeGateIn = timeGateIn;
+  }
 
-	public void setTimeGateOut(LocalDateTime timeGateOut) {
-		this.timeGateOut = timeGateOut;
-	}
+  public LocalDateTime getTimeGateInOk() {
+    return timeGateInOk;
+  }
 
-	public LocalDateTime getTimeGateOutOk() {
-		return timeGateOutOk;
-	}
+  public void setTimeGateInOk(LocalDateTime timeGateInOk) {
+    this.timeGateInOk = timeGateInOk;
+  }
 
-	public void setTimeGateOutOk(LocalDateTime timeGateOutOk) {
-		this.timeGateOutOk = timeGateOutOk;
-	}
+  public LocalDateTime getTimeGateOut() {
+    return timeGateOut;
+  }
 
-	public LocalDateTime getTimeGateOutBooth() {
-		return timeGateOutBooth;
-	}
+  public void setTimeGateOut(LocalDateTime timeGateOut) {
+    this.timeGateOut = timeGateOut;
+  }
 
-	public void setTimeGateOutBooth(LocalDateTime timeGateOutBooth) {
-		this.timeGateOutBooth = timeGateOutBooth;
-	}
+  public LocalDateTime getTimeGateOutOk() {
+    return timeGateOutOk;
+  }
 
-	public SystemUser getGateOutBoothClerk() {
-		return gateOutBoothClerk;
-	}
+  public void setTimeGateOutOk(LocalDateTime timeGateOutOk) {
+    this.timeGateOutOk = timeGateOutOk;
+  }
 
-	public void setGateOutBoothClerk(SystemUser gateOutBoothClerk) {
-		this.gateOutBoothClerk = gateOutBoothClerk;
-	}
+  public LocalDateTime getTimeGateOutBooth() {
+    return timeGateOutBooth;
+  }
 
-	public Boolean isTransactionSlipPrinted() {
-		return transactionSlipPrinted;
-	}
+  public void setTimeGateOutBooth(LocalDateTime timeGateOutBooth) {
+    this.timeGateOutBooth = timeGateOutBooth;
+  }
 
-	public void setTransactionSlipPrinted(Boolean transactionSlipPrinted) {
-		this.transactionSlipPrinted = transactionSlipPrinted;
-	}
+  public SystemUser getGateOutBoothClerk() {
+    return gateOutBoothClerk;
+  }
 
-	public HPATBooking getHpatBooking() {
-		return hpatBooking;
-	}
+  public void setGateOutBoothClerk(SystemUser gateOutBoothClerk) {
+    this.gateOutBoothClerk = gateOutBoothClerk;
+  }
 
-	public void setHpatBooking(HPATBooking hpatBooking) {
-		this.hpatBooking = hpatBooking;
-	}
+  public Boolean isTransactionSlipPrinted() {
+    return transactionSlipPrinted;
+  }
 
-	public Card getCard() {
-		return card;
-	}
+  public void setTransactionSlipPrinted(Boolean transactionSlipPrinted) {
+    this.transactionSlipPrinted = transactionSlipPrinted;
+  }
 
-	public void setCard(Card card) {
-		this.card = card;
-	}
+  public HPATBooking getHpatBooking() {
+    return hpatBooking;
+  }
 
-	public SystemUser getGateInClerk() {
-		return gateInClerk;
-	}
+  public void setHpatBooking(HPATBooking hpatBooking) {
+    this.hpatBooking = hpatBooking;
+  }
 
-	public void setGateInClerk(SystemUser gateInClerk) {
-		this.gateInClerk = gateInClerk;
-	}
+  public Card getCard() {
+    return card;
+  }
 
-	public SystemUser getGateOutClerk() {
-		return gateOutClerk;
-	}
+  public void setCard(Card card) {
+    this.card = card;
+  }
 
-	public void setGateOutClerk(SystemUser gateOutClerk) {
-		this.gateOutClerk = gateOutClerk;
-	}
+  public SystemUser getGateInClerk() {
+    return gateInClerk;
+  }
 
-	public Client getGateInClient() {
-		return gateInClient;
-	}
+  public void setGateInClerk(SystemUser gateInClerk) {
+    this.gateInClerk = gateInClerk;
+  }
 
-	public void setGateInClient(Client gateInClient) {
-		this.gateInClient = gateInClient;
-	}
+  public SystemUser getGateOutClerk() {
+    return gateOutClerk;
+  }
 
-	public Client getGateOutClient() {
-		return gateOutClient;
-	}
+  public void setGateOutClerk(SystemUser gateOutClerk) {
+    this.gateOutClerk = gateOutClerk;
+  }
 
-	public void setGateOutClient(Client gateOutClient) {
-		this.gateOutClient = gateOutClient;
-	}
+  public Client getGateInClient() {
+    return gateInClient;
+  }
+
+  public void setGateInClient(Client gateInClient) {
+    this.gateInClient = gateInClient;
+  }
+
+  public Client getGateOutClient() {
+    return gateOutClient;
+  }
+
+  public void setGateOutClient(Client gateOutClient) {
+    this.gateOutClient = gateOutClient;
+  }
+
+  public String getZipFileNo() {
+    return zipFileNo;
+  }
+
+  public void setZipFileNo(String zipFileNo) {
+    this.zipFileNo = zipFileNo;
+  }
+
+  public String getTrxSlipNo() {
+    return trxSlipNo;
+  }
+
+  public void setTrxSlipNo(String trxSlipNo) {
+    this.trxSlipNo = trxSlipNo;
+  }
+
 
 }
