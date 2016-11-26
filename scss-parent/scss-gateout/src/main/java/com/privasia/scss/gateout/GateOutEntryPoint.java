@@ -20,14 +20,15 @@ import com.privasia.scss.cosmos.AS400DBConfig;
 @Configuration
 @EnableAutoConfiguration
 @ComponentScan(basePackages = {"com.privasia.scss.cosmos.*", "com.privasia.scss.gateout.*"})
-@PropertySource(value = {"classpath:cosmos_application.properties", "classpath:cosmos_sql-dev.properties"})
-@Import(AS400DBConfig.class) 
+@PropertySource(value = {"classpath:mongodb.properties", "classpath:cosmos_application.properties",
+    "classpath:cosmos_sql-dev.properties"})
+@Import(AS400DBConfig.class)
 public class GateOutEntryPoint extends SpringBootServletInitializer {
 
   public static void main(String[] args) {
     SpringApplication.run(GateOutEntryPoint.class, args);
   }
-  
+
   @Bean
   public static PropertySourcesPlaceholderConfigurer propertyConfig() {
     return new PropertySourcesPlaceholderConfigurer();
