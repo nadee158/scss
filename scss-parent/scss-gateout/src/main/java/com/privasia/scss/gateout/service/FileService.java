@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
+import com.mongodb.gridfs.GridFSFile;
 import com.privasia.scss.common.util.ApplicationConstants;
 import com.privasia.scss.core.model.Exports;
 import com.privasia.scss.core.model.GatePass;
@@ -51,7 +52,12 @@ public class FileService {
 
     metaData.put(fileDTO.getFileName() + "_Info", doc);
 
-    gridFSRepository.storeFile(fileDTO.getCameraImage(), metaData);
+    GridFSFile gridFSFile = gridFSRepository.storeFile(fileDTO.getCameraImage(), metaData);
+
+    if (!(gridFSFile == null)) {
+      saveReference(fileDTO);
+    }
+
 
     return uniqueId;
   }
