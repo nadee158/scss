@@ -23,236 +23,236 @@ import com.privasia.scss.common.enums.CompanyStatus;
 
 @Entity
 @Table(name = "HDBS_BKG_MASTER")
-@AttributeOverrides({ @AttributeOverride(name = "addBy", column = @Column(name = "ADD_BY")),
-		@AttributeOverride(name = "updateBy", column = @Column(name = "UPDATED_BY")),
-		@AttributeOverride(name = "dateTimeAdd", column = @Column(name = "DATETIME_ADD")),
-		@AttributeOverride(name = "dateTimeUpdate", column = @Column(name = "DATETIME_UPDATE")) })
+@AttributeOverrides({@AttributeOverride(name = "addBy", column = @Column(name = "ADD_BY") ),
+    @AttributeOverride(name = "updateBy", column = @Column(name = "UPDATED_BY") ),
+    @AttributeOverride(name = "dateTimeAdd", column = @Column(name = "DATETIME_ADD") ),
+    @AttributeOverride(name = "dateTimeUpdate", column = @Column(name = "DATETIME_UPDATE") )})
 public class HDBSBkgMaster extends AuditEntity implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	@Id
-	@Column(name = "BKG_MASTER_ID")
-	private String bkgMasterID;
-	
-	@Basic(fetch=FetchType.LAZY)
-	@Column(name = "APP_NAME")
-	private String appName;
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 1L;
+  @Id
+  @Column(name = "BKG_MASTER_ID")
+  private String bkgMasterID;
 
-	@Column(name = "HDBS_BKG_SEQ")
-	private String hdbsBookingSeq;
-	
-	@Basic(fetch=FetchType.LAZY)
-	@Column(name = "CUS_ID")
-	private String customerID;
-	
-	@Basic(fetch=FetchType.LAZY)
-	@Column(name = "COM_NAME")
-	private String companyName;
-	
-	@Basic(fetch=FetchType.LAZY)
-	@Column(name = "CUS_CODE")
-	private String customerCode;
+  @Basic(fetch = FetchType.LAZY)
+  @Column(name = "APP_NAME")
+  private String appName;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "COMPANY_ID", nullable = true, referencedColumnName = "COM_ID_SEQ")
-	private Company company;
+  @Column(name = "HDBS_BKG_SEQ")
+  private String hdbsBookingSeq;
 
-	@Column(name = "DEPOT_CODE")
-	private String depotCode;
+  @Basic(fetch = FetchType.LAZY)
+  @Column(name = "CUS_ID")
+  private String customerID;
 
-	@Column(name = "DEPOT_LOCATION")
-	private String depotLocation;
-	
-	@Basic(fetch=FetchType.LAZY)
-	@Column(name = "DRIVER_IC_PP")
-	private String driverICOrPP;
-	
-	@Basic(fetch=FetchType.LAZY)
-	@Column(name = "SCU_NAME")
-	private String scuName;
+  @Basic(fetch = FetchType.LAZY)
+  @Column(name = "COM_NAME")
+  private String companyName;
 
-	@Column(name = "CRD_SCARDNO")
-	private String cardNo;
+  @Basic(fetch = FetchType.LAZY)
+  @Column(name = "CUS_CODE")
+  private String customerCode;
 
-	@Column(name = "CRD_CARDSTATUS", nullable = true)
-	@Type(type = "com.privasia.scss.common.enumusertype.CardStatusEnumUserType")
-	private CardStatus cardStatus;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "COMPANY_ID", nullable = true, referencedColumnName = "COM_ID_SEQ")
+  private Company company;
 
-	@Column(name = "HDBS_BKG_REF_NO")
-	private String hdbsBkgRefNo;
+  @Column(name = "DEPOT_CODE")
+  private String depotCode;
 
-	@Column(name = "STATUS_CODE", nullable = true)
-	@Type(type = "com.privasia.scss.common.enumusertype.CompanyStatusEnumUserType")
-	private CompanyStatus statusCode;
+  @Column(name = "DEPOT_LOCATION")
+  private String depotLocation;
 
-	@Column(name = "PM_HEAD_NO")
-	private String pmHeadNo;
+  @Basic(fetch = FetchType.LAZY)
+  @Column(name = "DRIVER_IC_PP")
+  private String driverICOrPP;
 
-	@Column(name = "PLATE_NO")
-	private String plateNo;
-	
-	@Basic(fetch=FetchType.LAZY)
-	@Column(name = "DRAYAGE_BOOKING")
-	private Integer drayageBooking;
-	
-	@OneToMany(fetch = FetchType.EAGER, mappedBy = "hDBSBkgMaster", cascade = CascadeType.ALL)
-	private Set<HDBSBkgDetail> hdbsBookingDetails;
+  @Basic(fetch = FetchType.LAZY)
+  @Column(name = "SCU_NAME")
+  private String scuName;
 
-	public String getBkgMasterID() {
-		return bkgMasterID;
-	}
+  @Column(name = "CRD_SCARDNO")
+  private String cardNo;
 
-	public void setBkgMasterID(String bkgMasterID) {
-		this.bkgMasterID = bkgMasterID;
-	}
+  @Column(name = "CRD_CARDSTATUS", nullable = true)
+  @Type(type = "com.privasia.scss.common.enumusertype.CardStatusEnumUserType")
+  private CardStatus cardStatus;
 
-	public String getAppName() {
-		return appName;
-	}
+  @Column(name = "HDBS_BKG_REF_NO")
+  private String hdbsBkgRefNo;
 
-	public void setAppName(String appName) {
-		this.appName = appName;
-	}
+  @Column(name = "STATUS_CODE", nullable = true)
+  @Type(type = "com.privasia.scss.common.enumusertype.CompanyStatusEnumUserType")
+  private CompanyStatus statusCode;
 
-	public String getHdbsBookingSeq() {
-		return hdbsBookingSeq;
-	}
+  @Column(name = "PM_HEAD_NO")
+  private String pmHeadNo;
 
-	public void setHdbsBookingSeq(String hdbsBookingSeq) {
-		this.hdbsBookingSeq = hdbsBookingSeq;
-	}
+  @Column(name = "PLATE_NO")
+  private String plateNo;
 
-	public String getCustomerID() {
-		return customerID;
-	}
+  @Basic(fetch = FetchType.LAZY)
+  @Column(name = "DRAYAGE_BOOKING")
+  private Integer drayageBooking;
 
-	public void setCustomerID(String customerID) {
-		this.customerID = customerID;
-	}
+  @OneToMany(fetch = FetchType.EAGER, mappedBy = "hDBSBkgMaster", cascade = CascadeType.ALL)
+  private Set<HDBSBkgDetail> hdbsBookingDetails;
 
-	public String getCompanyName() {
-		return companyName;
-	}
+  public String getBkgMasterID() {
+    return bkgMasterID;
+  }
 
-	public void setCompanyName(String companyName) {
-		this.companyName = companyName;
-	}
+  public void setBkgMasterID(String bkgMasterID) {
+    this.bkgMasterID = bkgMasterID;
+  }
 
-	public String getCustomerCode() {
-		return customerCode;
-	}
+  public String getAppName() {
+    return appName;
+  }
 
-	public void setCustomerCode(String customerCode) {
-		this.customerCode = customerCode;
-	}
+  public void setAppName(String appName) {
+    this.appName = appName;
+  }
 
-	public Company getCompany() {
-		return company;
-	}
+  public String getHdbsBookingSeq() {
+    return hdbsBookingSeq;
+  }
 
-	public void setCompany(Company company) {
-		this.company = company;
-	}
+  public void setHdbsBookingSeq(String hdbsBookingSeq) {
+    this.hdbsBookingSeq = hdbsBookingSeq;
+  }
 
-	public String getDepotCode() {
-		return depotCode;
-	}
+  public String getCustomerID() {
+    return customerID;
+  }
 
-	public void setDepotCode(String depotCode) {
-		this.depotCode = depotCode;
-	}
+  public void setCustomerID(String customerID) {
+    this.customerID = customerID;
+  }
 
-	public String getDepotLocation() {
-		return depotLocation;
-	}
+  public String getCompanyName() {
+    return companyName;
+  }
 
-	public void setDepotLocation(String depotLocation) {
-		this.depotLocation = depotLocation;
-	}
+  public void setCompanyName(String companyName) {
+    this.companyName = companyName;
+  }
 
-	public String getDriverICOrPP() {
-		return driverICOrPP;
-	}
+  public String getCustomerCode() {
+    return customerCode;
+  }
 
-	public void setDriverICOrPP(String driverICOrPP) {
-		this.driverICOrPP = driverICOrPP;
-	}
+  public void setCustomerCode(String customerCode) {
+    this.customerCode = customerCode;
+  }
 
-	public String getScuName() {
-		return scuName;
-	}
+  public Company getCompany() {
+    return company;
+  }
 
-	public void setScuName(String scuName) {
-		this.scuName = scuName;
-	}
+  public void setCompany(Company company) {
+    this.company = company;
+  }
 
-	public String getCardNo() {
-		return cardNo;
-	}
+  public String getDepotCode() {
+    return depotCode;
+  }
 
-	public void setCardNo(String cardNo) {
-		this.cardNo = cardNo;
-	}
+  public void setDepotCode(String depotCode) {
+    this.depotCode = depotCode;
+  }
 
-	public CardStatus getCardStatus() {
-		return cardStatus;
-	}
+  public String getDepotLocation() {
+    return depotLocation;
+  }
 
-	public void setCardStatus(CardStatus cardStatus) {
-		this.cardStatus = cardStatus;
-	}
+  public void setDepotLocation(String depotLocation) {
+    this.depotLocation = depotLocation;
+  }
 
-	public String getHdbsBkgRefNo() {
-		return hdbsBkgRefNo;
-	}
+  public String getDriverICOrPP() {
+    return driverICOrPP;
+  }
 
-	public void setHdbsBkgRefNo(String hdbsBkgRefNo) {
-		this.hdbsBkgRefNo = hdbsBkgRefNo;
-	}
+  public void setDriverICOrPP(String driverICOrPP) {
+    this.driverICOrPP = driverICOrPP;
+  }
 
-	public CompanyStatus getStatusCode() {
-		return statusCode;
-	}
+  public String getScuName() {
+    return scuName;
+  }
 
-	public void setStatusCode(CompanyStatus statusCode) {
-		this.statusCode = statusCode;
-	}
+  public void setScuName(String scuName) {
+    this.scuName = scuName;
+  }
 
-	public String getPmHeadNo() {
-		return pmHeadNo;
-	}
+  public String getCardNo() {
+    return cardNo;
+  }
 
-	public void setPmHeadNo(String pmHeadNo) {
-		this.pmHeadNo = pmHeadNo;
-	}
+  public void setCardNo(String cardNo) {
+    this.cardNo = cardNo;
+  }
 
-	public String getPlateNo() {
-		return plateNo;
-	}
+  public CardStatus getCardStatus() {
+    return cardStatus;
+  }
 
-	public void setPlateNo(String plateNo) {
-		this.plateNo = plateNo;
-	}
+  public void setCardStatus(CardStatus cardStatus) {
+    this.cardStatus = cardStatus;
+  }
 
-	public Integer getDrayageBooking() {
-		return drayageBooking;
-	}
+  public String getHdbsBkgRefNo() {
+    return hdbsBkgRefNo;
+  }
 
-	public void setDrayageBooking(Integer drayageBooking) {
-		this.drayageBooking = drayageBooking;
-	}
+  public void setHdbsBkgRefNo(String hdbsBkgRefNo) {
+    this.hdbsBkgRefNo = hdbsBkgRefNo;
+  }
 
-	public Set<HDBSBkgDetail> getHdbsBookingDetails() {
-		return hdbsBookingDetails;
-	}
+  public CompanyStatus getStatusCode() {
+    return statusCode;
+  }
 
-	public void setHdbsBookingDetails(Set<HDBSBkgDetail> hdbsBookingDetails) {
-		this.hdbsBookingDetails = hdbsBookingDetails;
-	}
-	
-	
+  public void setStatusCode(CompanyStatus statusCode) {
+    this.statusCode = statusCode;
+  }
+
+  public String getPmHeadNo() {
+    return pmHeadNo;
+  }
+
+  public void setPmHeadNo(String pmHeadNo) {
+    this.pmHeadNo = pmHeadNo;
+  }
+
+  public String getPlateNo() {
+    return plateNo;
+  }
+
+  public void setPlateNo(String plateNo) {
+    this.plateNo = plateNo;
+  }
+
+  public Integer getDrayageBooking() {
+    return drayageBooking;
+  }
+
+  public void setDrayageBooking(Integer drayageBooking) {
+    this.drayageBooking = drayageBooking;
+  }
+
+  public Set<HDBSBkgDetail> getHdbsBookingDetails() {
+    return hdbsBookingDetails;
+  }
+
+  public void setHdbsBookingDetails(Set<HDBSBkgDetail> hdbsBookingDetails) {
+    this.hdbsBookingDetails = hdbsBookingDetails;
+  }
+
+
 
 }

@@ -3,6 +3,7 @@ package com.privasia.scss.core.config;
 import javax.servlet.Filter;
 import javax.servlet.MultipartConfigElement;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.MultipartConfigFactory;
@@ -20,6 +21,11 @@ import com.privasia.scss.core.util.service.CurrentDateTimeService;
 @Configuration
 @Import({PersistenceContext.class})
 public class SCSSEntryPoint {
+
+  @Bean
+  public ModelMapper modelMapper() {
+    return new ModelMapper();
+  }
 
   @Profile(Profiles.APPLICATION)
   @Bean

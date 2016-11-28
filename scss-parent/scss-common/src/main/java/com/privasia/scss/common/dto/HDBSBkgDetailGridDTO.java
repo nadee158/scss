@@ -1,208 +1,134 @@
-package com.privasia.scss.core.model;
+package com.privasia.scss.common.dto;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
-import javax.persistence.Basic;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
-import org.hibernate.annotations.Type;
-
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.privasia.scss.common.enums.HDBSStatus;
 import com.privasia.scss.common.enums.SCSSHDBSStatus;
+import com.privasia.scss.common.util.CommonUtil;
 
-@Entity
-@Table(name = "HDBS_BKG_DETAIL")
-@AttributeOverrides({@AttributeOverride(name = "addBy", column = @Column(name = "ADD_BY") ),
-    @AttributeOverride(name = "updateBy", column = @Column(name = "UPDATED_BY") ),
-    @AttributeOverride(name = "dateTimeAdd", column = @Column(name = "DATETIME_ADD") ),
-    @AttributeOverride(name = "dateTimeUpdate", column = @Column(name = "DATETIME_UPDATE") )})
-public class HDBSBkgDetail extends AuditEntity implements Serializable {
+public class HDBSBkgDetailGridDTO implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
-  @Id
-  @Column(name = "BKG_DETAIL_ID")
   private String hdbsBKGDetailID;
 
-  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
-  @JoinColumn(name = "BKG_MASTER_ID", nullable = true)
-  private HDBSBkgMaster hDBSBkgMaster;
+  private String hDBSBkgMasterPmHeadNo;
 
-  @Basic(fetch = FetchType.LAZY)
-  @Column(name = "APP_NAME")
+  private String hDBSBkgMasterPlateNo;
+
+  private String hDBSBkgMasterDepotCode;
+
+  private String hDBSBkgMasterCardNo;
+
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+  private LocalDateTime hDBSBkgMasterDateTimeAdd;
+
+  private String hDBSBkgMasterHdbsBookingSeq;
+
   private String appName;
 
-  @Column(name = "HDBS_BKG_DETAIL_NO")
   private String hdbsBkgDetailNo;
 
-  @Column(name = "HDBS_BKG_SEQ")
   private String hdbsBookingSeq;
 
-  @Column(name = "HDBS_BKG_TYPE")
   private String hdbsBkgType;
 
-  @Column(name = "CONTAINER_NO")
   private String containerNo;
 
-  @Column(name = "CONTAINER_TYPE")
   private String containerType;
 
-  @Column(name = "CONTAINER_SIZE")
   private String containerSize;
 
-  @Column(name = "APPT_DATETIME_FROM")
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
   private LocalDateTime apptDateTimeFrom;
 
-  @Column(name = "APPT_DATETIME_TO")
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
   private LocalDateTime apptDateTimeTo;
 
-  @Column(name = "APPT_DATETIME_TO_ACTUAL")
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
   private LocalDateTime apptDateTimeToActual;
 
-  @Basic(fetch = FetchType.LAZY)
-  @Column(name = "APPT_WINDOW")
   private Integer apptWindow;
 
-  @Basic(fetch = FetchType.LAZY)
-  @Column(name = "GRACE_PERIOD")
   private Integer gracePeriod;
 
-  @Basic(fetch = FetchType.LAZY)
-  @Column(name = "COMMODITY")
   private String commodity;
 
-  @Basic(fetch = FetchType.LAZY)
-  @Column(name = "SHIPPER_CODE")
   private String shipperCode;
 
-  @Basic(fetch = FetchType.LAZY)
-  @Column(name = "SHIPPER_NAME")
   private String shipperName;
 
-  @Basic(fetch = FetchType.LAZY)
-  @Column(name = "CONTAINER_WEIGHT")
   private String containerWeight;
 
-  @Basic(fetch = FetchType.LAZY)
-  @Column(name = "REEFER_MIN_TEMP")
   private String reeferMinTemp;
 
-  @Basic(fetch = FetchType.LAZY)
-  @Column(name = "REEFER_MAX_TEMP")
   private String reeferMaxTemp;
 
-  @Basic(fetch = FetchType.LAZY)
-  @Column(name = "REEFER_CARRIAGE_TEMP")
   private String reeferCarriageTemp;
 
-  @Basic(fetch = FetchType.LAZY)
-  @Column(name = "DG_UN_NUMBER")
   private String dgUnNumber;
 
-  @Basic(fetch = FetchType.LAZY)
-  @Column(name = "EQUIPMENT_REQ")
   private String equipment;
 
-  @Basic(fetch = FetchType.LAZY)
-  @Column(name = "CONTAINER_GRADE")
   private String containerGrade;
 
-  @Column(name = "CONTAINER_LOCATION")
   private String containerLocation;
 
-  @Basic(fetch = FetchType.LAZY)
-  @Column(name = "GATE_IN_DATETIME")
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
   private LocalDateTime gateInDateTime;
 
-  @Basic(fetch = FetchType.LAZY)
-  @Column(name = "GATE_OUT_DATETIME")
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
   private LocalDateTime gateOutDateTime;
 
-  @Column(name = "STATUS_CODE")
-  @Type(type = "com.privasia.scss.common.enumusertype.HDBSStatusEnumUserType")
   private HDBSStatus statusCode;
 
-  @Basic(fetch = FetchType.LAZY)
-  @Column(name = "EXCEL_DATA_SEQ")
   private Integer excelDataSeq;
 
-  @Column(name = "REMARKS")
   private String remarks;
 
-  @Basic(fetch = FetchType.LAZY)
-  @Column(name = "TARE_WEIGHT")
   private String tareWeight;
 
-  @Basic(fetch = FetchType.LAZY)
-  @Column(name = "ISO_CODE")
   private String isoCode;
 
-  @Basic(fetch = FetchType.LAZY)
-  @Column(name = "ISO_DESCRIPTION")
   private String isoDescription;
 
-  @Basic(fetch = FetchType.LAZY)
-  @Column(name = "VESSEL_CODE")
   private String vesselCode;
 
-  @Basic(fetch = FetchType.LAZY)
-  @Column(name = "MANUFACTURE_DATE")
   private String manufactureDate;
 
-  @Column(name = "SCSS_STATUS_CODE")
-  @Type(type = "com.privasia.scss.common.enumusertype.SCSSHDBSStatusEnumUserType")
   private SCSSHDBSStatus scssStatusCode;
 
-  @Basic(fetch = FetchType.LAZY)
-  @Column(name = "NEW_DATE")
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
   private LocalDateTime newDate;
 
-  @Basic(fetch = FetchType.LAZY)
-  @Column(name = "ACCEPTED_DATE")
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
   private LocalDateTime accpetedDate;
 
-  @Basic(fetch = FetchType.LAZY)
-  @Column(name = "APPROVED_DATE")
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
   private LocalDateTime approvedDate;
 
-  @Basic(fetch = FetchType.LAZY)
-  @Column(name = "COMPLETED_DATE")
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
   private LocalDateTime completedDate;
 
-  @Basic(fetch = FetchType.LAZY)
-  @Column(name = "CANCELLED_DATE")
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
   private LocalDateTime cancelledDate;
 
-  @Basic(fetch = FetchType.LAZY)
-  @Column(name = "REJECTED_DATE")
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
   private LocalDateTime rejectedDate;
 
-  @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
-  @JoinColumn(name = "ODD_ID_SEQ", nullable = true)
-  private WHODD oddIdSeq;
+  // private WHODD oddIdSeq;
 
-  @Basic(fetch = FetchType.LAZY)
-  @Column(name = "ODD_TIMEGATEINOK")
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
   private LocalDateTime oddTimeGateInOk;
 
-  @Basic(fetch = FetchType.LAZY)
-  @Column(name = "ODD_TIMEGATEOUTOK")
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
   private LocalDateTime oddTimeGateOutOk;
 
-  @Basic(fetch = FetchType.LAZY)
-  @Column(name = "HDBS_SYNC")
   private String hdbsSynch;
+
+
 
   public String getHdbsBKGDetailID() {
     return hdbsBKGDetailID;
@@ -212,12 +138,52 @@ public class HDBSBkgDetail extends AuditEntity implements Serializable {
     this.hdbsBKGDetailID = hdbsBKGDetailID;
   }
 
-  public HDBSBkgMaster gethDBSBkgMaster() {
-    return hDBSBkgMaster;
+  public String gethDBSBkgMasterPmHeadNo() {
+    return hDBSBkgMasterPmHeadNo;
   }
 
-  public void sethDBSBkgMaster(HDBSBkgMaster hDBSBkgMaster) {
-    this.hDBSBkgMaster = hDBSBkgMaster;
+  public void sethDBSBkgMasterPmHeadNo(String hDBSBkgMasterPmHeadNo) {
+    this.hDBSBkgMasterPmHeadNo = hDBSBkgMasterPmHeadNo;
+  }
+
+  public String gethDBSBkgMasterPlateNo() {
+    return hDBSBkgMasterPlateNo;
+  }
+
+  public void sethDBSBkgMasterPlateNo(String hDBSBkgMasterPlateNo) {
+    this.hDBSBkgMasterPlateNo = hDBSBkgMasterPlateNo;
+  }
+
+  public String gethDBSBkgMasterDepotCode() {
+    return hDBSBkgMasterDepotCode;
+  }
+
+  public void sethDBSBkgMasterDepotCode(String hDBSBkgMasterDepotCode) {
+    this.hDBSBkgMasterDepotCode = hDBSBkgMasterDepotCode;
+  }
+
+  public String gethDBSBkgMasterCardNo() {
+    return hDBSBkgMasterCardNo;
+  }
+
+  public void sethDBSBkgMasterCardNo(String hDBSBkgMasterCardNo) {
+    this.hDBSBkgMasterCardNo = hDBSBkgMasterCardNo;
+  }
+
+  public LocalDateTime gethDBSBkgMasterDateTimeAdd() {
+    return hDBSBkgMasterDateTimeAdd;
+  }
+
+  public void sethDBSBkgMasterDateTimeAdd(LocalDateTime hDBSBkgMasterDateTimeAdd) {
+    this.hDBSBkgMasterDateTimeAdd = hDBSBkgMasterDateTimeAdd;
+  }
+
+  public String gethDBSBkgMasterHdbsBookingSeq() {
+    return hDBSBkgMasterHdbsBookingSeq;
+  }
+
+  public void sethDBSBkgMasterHdbsBookingSeq(String hDBSBkgMasterHdbsBookingSeq) {
+    this.hDBSBkgMasterHdbsBookingSeq = hDBSBkgMasterHdbsBookingSeq;
   }
 
   public String getAppName() {
@@ -540,14 +506,6 @@ public class HDBSBkgDetail extends AuditEntity implements Serializable {
     this.rejectedDate = rejectedDate;
   }
 
-  public WHODD getOddIdSeq() {
-    return oddIdSeq;
-  }
-
-  public void setOddIdSeq(WHODD oddIdSeq) {
-    this.oddIdSeq = oddIdSeq;
-  }
-
   public LocalDateTime getOddTimeGateInOk() {
     return oddTimeGateInOk;
   }
@@ -572,5 +530,8 @@ public class HDBSBkgDetail extends AuditEntity implements Serializable {
     this.hdbsSynch = hdbsSynch;
   }
 
+  public static long getSerialversionuid() {
+    return serialVersionUID;
+  }
 
 }
