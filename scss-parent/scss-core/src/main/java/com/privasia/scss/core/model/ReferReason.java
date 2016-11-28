@@ -41,7 +41,7 @@ public class ReferReason extends AuditEntity implements Serializable {
 
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_SCSS_REFER_REASON")
-  @SequenceGenerator(name = "SEQ_SCSS_REFER_REASON", sequenceName = "REFER_REASON_SEQ")
+  @SequenceGenerator(name = "SEQ_SCSS_REFER_REASON", sequenceName = "REFER_REASON_SEQ", allocationSize=1)
   @Column(name = "REF_REASON_ID")
   private Long referReasonID;
 

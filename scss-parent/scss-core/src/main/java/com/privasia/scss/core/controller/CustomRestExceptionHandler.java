@@ -3,6 +3,7 @@ package com.privasia.scss.core.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.plaf.ButtonUI;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
@@ -33,6 +34,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.privasia.scss.common.dto.ApiError;
 import com.privasia.scss.common.dto.ApiResponseObject;
 import com.privasia.scss.common.dto.CustomResponseEntity;
+import com.privasia.scss.core.exception.BusinessException;
 import com.privasia.scss.core.exception.InvalidJwtTokenException;
 import com.privasia.scss.core.exception.JwtExpiredTokenException;
 import com.privasia.scss.core.exception.ResultsNotFoundException;
@@ -313,6 +315,17 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
     //
     HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
     return handleExceptionInternal(exception, httpStatus, webRequest, "Invalid json, Malformed!");
+  }
+  
+  
+  @ExceptionHandler(BusinessException.class)
+  public CustomResponseEntity<ApiResponseObject> businessExceptionHandler(Exception ex, final WebRequest webRequest) {
+	  
+	  logger.info(ex.getClass().getName());
+	  logger.error("error", ex);
+	    //
+	  HttpStatus httpStatus = HttpStatus.PRECONDITION_FAILED;
+	  return handleExceptionInternal(ex, httpStatus, webRequest, "Business Exception Occured!");
   }
 
 

@@ -57,8 +57,8 @@ public class ReferRejectController {
 
     Long referId = referRejectService.saveReferReject(referRejectObjetDto);
 
-    return new CustomResponseEntity<ApiResponseObject<?>>(new ApiResponseObject<Long>(HttpStatus.OK, referId),
-        HttpStatus.OK);
+    return new CustomResponseEntity<ApiResponseObject<?>>(new ApiResponseObject<Long>(HttpStatus.CREATED, referId),
+        HttpStatus.CREATED);
   }
 
   @RequestMapping(value = "/update", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
@@ -76,9 +76,7 @@ public class ReferRejectController {
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public CustomResponseEntity<ApiResponseObject<?>> updateLineCodeANdGateInDateForReferRejectDetail(
       @RequestBody ReferRejectDetailUpdateObjetDto dto) {
-
     String status = referRejectService.updateLineCodeAndGateInDateForReferRejectDetail(dto);
-
     return new CustomResponseEntity<ApiResponseObject<?>>(new ApiResponseObject<String>(HttpStatus.OK, status),
         HttpStatus.OK);
   }

@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -107,7 +108,6 @@ public class ReferRejectService {
   @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
   public ReferRejectDTO getReferRejectByReferId(long referId) {
     Optional<ReferReject> optionalReferReject = referRejectRepository.findOne(referId);
-    System.out.println("&&&&&&&&&&&&&&&&&&&&&&&&&&&&77777  : " + optionalReferReject.get().getReferRejectID());
     ReferReject referReject = optionalReferReject
         .orElseThrow(() -> new ResultsNotFoundException("Refer reject was not found for ID : " + referId));
     return new ReferRejectDTO(referReject);
@@ -115,38 +115,33 @@ public class ReferRejectService {
 
   @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
   public Long saveReferReject(ReferRejectObjetDto referRejectObjetDto) {
-    ReferReject referReject = new ReferReject();
-    // if (!(referRejectObjetDto == null)) {
-    // SystemUser systemUser =
-    // systemUserRepository.findOne(SecurityHelper.getCurrentUserId()).orElseThrow(
-    // () -> new AuthenticationServiceException("Log in User Not Found : " +
-    // SecurityHelper.getCurrentUserId()));
-    //
-    // ReferReject referReject = null;
-    // if (referRejectObjetDto.getReferId() > 0) {
-    // referReject = referRejectRepository.findOne(referRejectObjetDto.getReferId()).orElse(null);
-    // }
-    // // bind details via beanutils
-    // referReject = convertToReferRejectDomain(referRejectObjetDto, referReject, systemUser);
-    // System.out.println(referReject.getReferRejectID() + " &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
-    // ReferReject persisted = referRejectRepository.save(referReject);
-    // if (!(persisted == null || persisted.getReferRejectID() <= 0)) {
-    // return persisted.getReferRejectID();
-    // }
-    // return 0L;
-    //
-    // } else {
-    // throw new BusinessException("No Data given to be updated!");
-    // }
-    referReject.setAxleVerified(true);
+    
+    if (referRejectObjetDto != null) {
+    SystemUser systemUser = systemUserRepository.findOne(SecurityHelper.getCurrentUserId()).orElseThrow(
+    					() -> new AuthenticationServiceException("Log in User Not Found : " + SecurityHelper.getCurrentUserId()));
+    
+    // bind details via beanutils
+    ReferReject referReject = null;
+    referReject = convertToReferRejectDomain(referRejectObjetDto, referReject, systemUser);
+    
     ReferReject persisted = referRejectRepository.save(referReject);
-    System.out.println(persisted.getReferRejectID() + " &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
-    return 0l;
+    if (persisted != null) {
+    	return persisted.getReferRejectID();
+    }
+    return 0L;
+    
+    } else {
+    	throw new BusinessException("No Data given to be updated!");
+    }
+    
+   
   }
 
-  public ReferReject convertToReferRejectDomain(ReferRejectObjetDto referRejectObjetDto, ReferReject referReject,
-      SystemUser logInUser) {
-    // automated conversion
+  public ReferReject convertToReferRejectDomain(ReferRejectObjetDto referRejectObjetDto, ReferReject referReject, SystemUser logInUser) {
+    
+	if(referRejectObjetDto.getExpWeightBridge() == 0)
+		throw new BusinessException("Incorrect Weight Bridge !");
+	// automated conversion
     referReject = referRejectObjetDto.convertToReferRejectDomain(referReject);
 
     // manual conversion
@@ -190,25 +185,21 @@ public class ReferRejectService {
     ReferRejectDetailObjetDto referRejectDetailObjetDto = referRejectObjetDto.getReferRejectDetail();
 
     if (referRejectDetailObjetDto != null) {
-      Optional<ReferRejectDetail> optionalReferRejectDetail = null;
-      if (referRejectDetailObjetDto.getReferRejectDetailID() > 0) {
-        optionalReferRejectDetail =
-            referRejectDetailRepository.findOne(referRejectDetailObjetDto.getReferRejectDetailID());
-      }
-      ReferRejectDetail fromDb = null;
-      if (!(optionalReferRejectDetail == null)) {
-        if (optionalReferRejectDetail.isPresent()) {
-          fromDb = optionalReferRejectDetail.get();
-        }
-      }
-      ReferRejectDetail referRejectDetail = convertToReferRejectDetailDomain(referRejectDetailObjetDto, fromDb);
+      
+      ReferRejectDetail referRejectDetail = null;
+     
+      referRejectDetail = convertToReferRejectDetailDomain(referRejectDetailObjetDto, referRejectDetail);
       if (referReject.getReferRejectDetails() == null) {
         referReject.setReferRejectDetails(new HashSet<ReferRejectDetail>());
       }
       referRejectDetail.setReferBy(logInUser);
       referRejectDetail.setReferReject(referReject);
       referReject.getReferRejectDetails().add(referRejectDetail);
+    
+    }else{
+    	throw new BusinessException("No Refer Reject Data given to be updated!");
     }
+    
 
     return referReject;
   }
@@ -229,13 +220,13 @@ public class ReferRejectService {
   }
 
   public void constructReferRejectReasonList(List<Long> referReasonIds, ReferRejectDetail referRejectDetail) {
-    if (!(referReasonIds == null || referReasonIds.isEmpty())) {
+    if (referReasonIds != null &&  !referReasonIds.isEmpty()) {
       if (referRejectDetail.getReferRejectReason() == null) {
         referRejectDetail.setReferRejectReason(new HashSet<ReferRejectReason>());
       }
       referReasonIds.forEach(referReasonId -> {
         ReferRejectReason reason = new ReferRejectReason();
-        ReferReason referReason = referReasonRepository.findOne(referReasonId).orElse(null);
+        ReferReason referReason = referReasonRepository.findOne(referReasonId).orElseThrow(() -> new BusinessException("Provided Refer Reson Not Found " + referReasonId));
         reason.setReferReason(referReason);
         reason.setReferRejectDetail(referRejectDetail);
         referRejectDetail.getReferRejectReason().add(reason);

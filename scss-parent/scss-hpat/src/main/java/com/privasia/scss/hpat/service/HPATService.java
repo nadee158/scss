@@ -77,9 +77,8 @@ public class HPATService {
 
     List<BookingType> convertedBookingTypes = new ArrayList<>();
     System.out.println("bookingTypes :" + bookingTypes);
-    bookingTypes.forEach(bookingType -> {
-      BookingType bk = BookingType.fromValue(bookingType);
-      if (!(bk == null)) {
+    bookingTypes.forEach(bookingType -> {BookingType bk = BookingType.fromValue(bookingType);
+      if (bk != null) {
         convertedBookingTypes.add(bk);
       } else {
         throw new BusinessException("Invalid Booking Type!");

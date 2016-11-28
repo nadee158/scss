@@ -39,7 +39,7 @@ public class ReferRejectReason extends AuditEntity implements Serializable {
 
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_SCSS_REFER_REJECT_REASON")
-  @SequenceGenerator(name = "SEQ_SCSS_REFER_REJECT_REASON", sequenceName = "SEQ_SCSS_REFER_REJECT_REASON")
+  @SequenceGenerator(name = "SEQ_SCSS_REFER_REJECT_REASON", sequenceName = "SEQ_SCSS_REFER_REJECT_REASON", allocationSize=1)
   @Column(name = "REFER_REJECT_REASON_ID")
   private Long referRejectReasonID;
 
