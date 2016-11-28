@@ -44,8 +44,7 @@ public class HPATService {
   @Autowired
   private CardRepository cardRepository;
 
-  // @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-  public List<HpatDto> getEtpHpat4ImpAndExp(Long cardId, LocalDateTime date, List<BookingType> bookingTypes) {
+  public List<HpatDto> createPredicatesAndFindHpab4ImpAndExp(Long cardId, LocalDateTime date, List<BookingType> bookingTypes) {
     List<HpatDto> dtoList = new ArrayList<HpatDto>();
     Optional<Card> card = cardRepository.findOne(cardId); // need to handle optional
     if (card.isPresent()) {
@@ -63,14 +62,14 @@ public class HPATService {
       });
       return dtoList;
     } else {
-      throw new ResultsNotFoundException("No HPAT Bookings Founds !");
+      throw new ResultsNotFoundException("No HPAB Bookings Founds !");
     }
 
   }
 
 
   @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-  public List<HpatDto> findEtpHpat4ImpAndExp(Long cardId, LocalDateTime systemDateTime, List<String> bookingTypes)
+  public List<HpatDto> findEtpHpab4ImpAndExp(Long cardId, LocalDateTime systemDateTime, List<String> bookingTypes)
       throws ResultsNotFoundException {
 
     List<HpatDto> hpats = null;
@@ -85,8 +84,8 @@ public class HPATService {
       }
     });
     System.out.println("convertedBookingTypes :" + convertedBookingTypes);
-    hpats = getEtpHpat4ImpAndExp(cardId, systemDateTime, convertedBookingTypes);
-    if (!(hpats == null || hpats.isEmpty())) {
+    hpats = createPredicatesAndFindHpab4ImpAndExp(cardId, systemDateTime, convertedBookingTypes);
+    if (hpats != null && !hpats.isEmpty()) {
 
       for (HpatDto hpat : hpats) {
         if (StringUtils.isBlank(hpat.getApptStart()))
@@ -116,7 +115,7 @@ public class HPATService {
 
 
   @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-  public TransactionDTO getEtpHpat4ImpAndExp(String bookingID) {
+  public TransactionDTO getEtpHpab4ImpAndExp(String bookingID) {
 
     Optional<HPATBooking> hpatBooking =
         hpatBookingRepository.findByBookingIDAndStatus(bookingID, HpatReferStatus.ACTIVE);

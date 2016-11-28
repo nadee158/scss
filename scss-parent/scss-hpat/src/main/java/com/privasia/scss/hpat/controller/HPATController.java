@@ -41,7 +41,7 @@ public class HPATController {
     System.out.println(cardID + "cardID");
     System.out.println(bookingTypes + "bookingTypes");
 
-    List<HpatDto> dtos = hpatService.findEtpHpat4ImpAndExp(cardID, LocalDateTime.now(), bookingTypes);
+    List<HpatDto> dtos = hpatService.findEtpHpab4ImpAndExp(cardID, LocalDateTime.now(), bookingTypes);
 
     return new CustomResponseEntity<ApiResponseObject<?>>(new ApiResponseObject<List<HpatDto>>(HttpStatus.OK, dtos),
         HttpStatus.OK);
@@ -54,7 +54,7 @@ public class HPATController {
 
     System.out.println(bookingID + "bookingID");
 
-    TransactionDTO dto = hpatService.getEtpHpat4ImpAndExp(bookingID);
+    TransactionDTO dto = hpatService.getEtpHpab4ImpAndExp(bookingID);
 
     return new CustomResponseEntity<ApiResponseObject<?>>(new ApiResponseObject<TransactionDTO>(HttpStatus.OK, dto),
         HttpStatus.OK);

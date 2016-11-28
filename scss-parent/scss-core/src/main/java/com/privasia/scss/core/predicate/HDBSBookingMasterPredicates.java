@@ -10,7 +10,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import com.privasia.scss.common.enums.HDBSStatus;
-import com.privasia.scss.common.enums.SCSSHDBSStatus;
 import com.privasia.scss.core.model.QHDBSBkgMaster;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Predicate;
@@ -33,7 +32,7 @@ public final class HDBSBookingMasterPredicates {
 		}
 	}
 
-	public static Predicate byNullableSCSSStatusCode(SCSSHDBSStatus scsscode) {
+	public static Predicate byNullableSCSSStatusCode() {
 		return QHDBSBkgMaster.hDBSBkgMaster.hdbsBookingDetails.any().scssStatusCode.isNull();
 
 	}

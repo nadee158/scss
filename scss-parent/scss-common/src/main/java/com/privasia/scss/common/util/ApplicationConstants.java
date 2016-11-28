@@ -77,6 +77,11 @@ public interface ApplicationConstants {
   public static final String HDBS_ACCEPTED_START = "HDBS_ACC_S";
   public static final String HDBS_ACCEPTED_END = "HDBS_ACC_E";
   public static final String HDBS_MANUAL = "HDBS_MANU";
+  
+  public static final int DEFAULT_HDBS_START_HOUR_VALUE = -6;
+  public static final int DEFAULT_HDBS_END_HOUR_VALUE = 6;
+  public static final int DEFAULT_HDBS_ACCEPTED_START_VALUE = -6;
+  public static final int DEFAULT_HDBS_ACCEPTED_END_VALUE = 6;
 
   public static final String ZIP_FILE_COLLECTION = "zipFile";
 
