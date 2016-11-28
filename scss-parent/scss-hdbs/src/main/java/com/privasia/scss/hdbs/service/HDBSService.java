@@ -10,6 +10,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -98,6 +99,17 @@ public class HDBSService {
 		
 		List<HDBSBookingDTO> hdbsInfoList =  createPredicatesAndFindHDBS(optionalCard.get(), dateFrom, dateTo, hdbsStatusList);
 		
+		
+		LocalDateTime acceptDateFrom =  systemDateTime.plusMinutes(hdbsAcceptStart);
+		LocalDateTime acceptDateTo = systemDateTime.plusMinutes(hdbsAcceptEnd);
+		
+		hdbsInfoList.stream().filter(hdbs -> StringUtils.isNotBlank(hdbs.getApptStart()))
+								.forEach(hdbs -> {
+									if("ACCEPTED".equalsIgnoreCase(hdbs.getHdbsStatus())){
+										
+									}
+								});
+		
 		//return bkgDetails.collect(Collectors.toList());
 		
 		return null;
@@ -128,5 +140,17 @@ public class HDBSService {
 	    return hdbsBookingList;
 
 	  }
+	
+	private void setAcceptBooking(HDBSBookingDTO hdbsBookingDTO, LocalDateTime acceptDateFrom, LocalDateTime dateTo){
+		
+		if(StringUtils.equals(HDBSStatus.ACCEPTED.getValue(), hdbsBookingDTO.getHdbsStatus())){
+			
+			/*if (hdbsBookingDTO.getApptStartDateFormat().after(acceptDateFrom) && 
+					hdbsBookingForm.getApptStartDateFormat().before(acceptHdbsBookingDateTo)) {
+					hdbsBookingForm.setIsAcceptBooking(true);
+			}*/
+			
+		}
+	}
 
 }
