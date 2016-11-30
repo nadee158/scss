@@ -1,13 +1,9 @@
-/**
- * 
- */
+
 package com.privasia.scss.core.model;
 
 import java.io.Serializable;
 
 import javax.persistence.Embeddable;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 
 import org.hibernate.annotations.Type;
 
@@ -21,75 +17,93 @@ import com.privasia.scss.common.enums.TransactionStatus;
 @Embeddable
 public class CommonGateInOutAttribute extends BaseCommonGateInOutAttribute implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
-  /**
-   * 
-   */
-  private static final long serialVersionUID = 1L;
+	private Long eirNumber;
 
-  private Long eirNumber;
+	@Type(type = "com.privasia.scss.common.enumusertype.ImpExpFlagEnumUserType")
+	private ImpExpFlagStatus impExpFlag;
 
-  @Type(type = "com.privasia.scss.common.enumusertype.ImpExpFlagEnumUserType")
-  private ImpExpFlagStatus impExpFlag;
-  
-  @Type(type = "yes_no")
-  private boolean kioskCancelPickUp;
+	@Type(type = "yes_no")
+	private boolean kioskCancelPickUp;
 
-  @Type(type = "yes_no")
-  private boolean kioskConfirmed;
+	@Type(type = "yes_no")
+	private boolean kioskConfirmed;
 
-  private String rejectReason;
+	private String rejectReason;
 
-  @Type(type = "com.privasia.scss.common.enumusertype.TransactionStatusEnumUserType")
-  private TransactionStatus gateInStatus;
+	@Type(type = "com.privasia.scss.common.enumusertype.TransactionStatusEnumUserType")
+	private TransactionStatus gateInStatus;
 
-  public Long getEirNumber() {
-    return eirNumber;
-  }
+	private String zipFileNo;
 
-  public void setEirNumber(Long eirNumber) {
-    this.eirNumber = eirNumber;
-  }
+	private String trxSlipNo;
 
-  public ImpExpFlagStatus getImpExpFlag() {
-    return impExpFlag;
-  }
+	public Long getEirNumber() {
+		return eirNumber;
+	}
 
-  public void setImpExpFlag(ImpExpFlagStatus impExpFlag) {
-    this.impExpFlag = impExpFlag;
-  }
+	public void setEirNumber(Long eirNumber) {
+		this.eirNumber = eirNumber;
+	}
 
-  public boolean isKioskCancelPickUp() {
-    return kioskCancelPickUp;
-  }
+	public ImpExpFlagStatus getImpExpFlag() {
+		return impExpFlag;
+	}
 
-  public void setKioskCancelPickUp(boolean kioskCancelPickUp) {
-    this.kioskCancelPickUp = kioskCancelPickUp;
-  }
+	public void setImpExpFlag(ImpExpFlagStatus impExpFlag) {
+		this.impExpFlag = impExpFlag;
+	}
 
-  public boolean isKioskConfirmed() {
-    return kioskConfirmed;
-  }
+	public boolean isKioskCancelPickUp() {
+		return kioskCancelPickUp;
+	}
 
-  public void setKioskConfirmed(boolean kioskConfirmed) {
-    this.kioskConfirmed = kioskConfirmed;
-  }
+	public void setKioskCancelPickUp(boolean kioskCancelPickUp) {
+		this.kioskCancelPickUp = kioskCancelPickUp;
+	}
 
-  public String getRejectReason() {
-    return rejectReason;
-  }
+	public boolean isKioskConfirmed() {
+		return kioskConfirmed;
+	}
 
-  public void setRejectReason(String rejectReason) {
-    this.rejectReason = rejectReason;
-  }
+	public void setKioskConfirmed(boolean kioskConfirmed) {
+		this.kioskConfirmed = kioskConfirmed;
+	}
 
-  public TransactionStatus getGateInStatus() {
-    return gateInStatus;
-  }
+	public String getRejectReason() {
+		return rejectReason;
+	}
 
-  public void setGateInStatus(TransactionStatus gateInStatus) {
-    this.gateInStatus = gateInStatus;
-  }
+	public void setRejectReason(String rejectReason) {
+		this.rejectReason = rejectReason;
+	}
 
-  
+	public TransactionStatus getGateInStatus() {
+		return gateInStatus;
+	}
+
+	public void setGateInStatus(TransactionStatus gateInStatus) {
+		this.gateInStatus = gateInStatus;
+	}
+
+	public String getZipFileNo() {
+		return zipFileNo;
+	}
+
+	public void setZipFileNo(String zipFileNo) {
+		this.zipFileNo = zipFileNo;
+	}
+
+	public String getTrxSlipNo() {
+		return trxSlipNo;
+	}
+
+	public void setTrxSlipNo(String trxSlipNo) {
+		this.trxSlipNo = trxSlipNo;
+	}
+
 }

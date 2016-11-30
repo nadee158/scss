@@ -54,10 +54,6 @@ public class BaseCommonGateInOutAttribute implements Serializable {
 
   private LocalDateTime timeGateOutBooth;
 
-  private String zipFileNo;
-
-  private String trxSlipNo;
-
   @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
   @JoinColumn(name = "GTP_HCTDID", nullable = true, referencedColumnName = "CRD_CARDID_SEQ")
   private Card card;
@@ -216,22 +212,6 @@ public class BaseCommonGateInOutAttribute implements Serializable {
 
   public void setGateOutClient(Client gateOutClient) {
     this.gateOutClient = gateOutClient;
-  }
-
-  public String getZipFileNo() {
-    return zipFileNo;
-  }
-
-  public void setZipFileNo(String zipFileNo) {
-    this.zipFileNo = zipFileNo;
-  }
-
-  public String getTrxSlipNo() {
-    return trxSlipNo;
-  }
-
-  public void setTrxSlipNo(String trxSlipNo) {
-    this.trxSlipNo = trxSlipNo;
   }
 
 

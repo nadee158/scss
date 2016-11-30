@@ -10,6 +10,6 @@ import com.privasia.scss.core.model.HDBSBkgMaster;
 public interface HDBSBookingMasterRepository extends BaseRepository<HDBSBkgMaster, String>, QueryDslPredicateExecutor<HDBSBkgMaster> {
 
 	
-	public Stream<HDBSBkgMaster> findByHdbsBKGMasterIDIn(List<String> bkgMasterIDList);
+	public Stream<HDBSBkgMaster> findByBkgMasterIDIn(List<String> bkgMasterIDList);
 	
 }
