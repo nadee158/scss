@@ -2,6 +2,9 @@ package com.privasia.scss.common.dto;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Comparator;
+
+import org.apache.commons.lang3.StringUtils;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.privasia.scss.common.enums.HDBSStatus;
@@ -11,6 +14,22 @@ import com.privasia.scss.common.util.CommonUtil;
 public class HDBSBkgDetailGridDTO implements Serializable {
 
   private static final long serialVersionUID = 1L;
+
+  // form.setHdbsBkgDetailNo(rs.getString("BKG_DETAIL_ID"));
+  // form.setHdbsBkgType(rs.getString("HDBS_BKG_TYPE"));
+  // form.setContNo(rs.getString("CONTAINER_NO"));
+  // form.setContSize(rs.getDouble("CONTAINER_SIZE"));
+  // form.setApptStartDateFormat(rs.getTimestamp("APPT_DATETIME_FROM"));
+  // form.setApptEndDateFormat(rs.getTimestamp("APPT_DATETIME_TO_ACTUAL"));
+  // form.setPmHeadNo(rs.getString("PM_HEAD_NO"));
+  // form.setPlateNo(rs.getString("PLATE_NO"));
+  // form.setDepotCode(rs.getString("DEPOT_CODE"));
+  // form.setApptStart(this.convertDateToString(rs.getTimestamp("APPT_DATETIME_FROM")));
+  // form.setApptEnd(this.convertDateToString(rs.getTimestamp("APPT_DATETIME_TO_ACTUAL")));
+  // form.setSmartCardNo(rs.getString("CRD_SCARDNO"));
+  // form.setHdbsStatus(rs.getString("STATUS_CODE"));
+  // form.setHdbsSubmitDateStr(this.convertDateToDateHourMin(rs.getTimestamp("DATETIME_ADD")));
+  // form.setBookingNo(rs.getString("HDBS_BKG_SEQ"));
 
   private String hdbsBKGDetailID;
 
@@ -128,7 +147,11 @@ public class HDBSBkgDetailGridDTO implements Serializable {
 
   private String hdbsSynch;
 
+  private boolean acceptBooking;
 
+  private String durration = StringUtils.EMPTY;
+  private String status = StringUtils.EMPTY;
+  private String onTimeFlag = StringUtils.EMPTY;
 
   public String getHdbsBKGDetailID() {
     return hdbsBKGDetailID;
@@ -533,5 +556,62 @@ public class HDBSBkgDetailGridDTO implements Serializable {
   public static long getSerialversionuid() {
     return serialVersionUID;
   }
+
+  public boolean isAcceptBooking() {
+    return acceptBooking;
+  }
+
+  public void setAcceptBooking(boolean acceptBooking) {
+    this.acceptBooking = acceptBooking;
+  }
+
+  public String getDurration() {
+    return durration;
+  }
+
+  public void setDurration(String durration) {
+    this.durration = durration;
+  }
+
+  public String getStatus() {
+    return status;
+  }
+
+  public void setStatus(String status) {
+    this.status = status;
+  }
+
+  public String getOnTimeFlag() {
+    return onTimeFlag;
+  }
+
+  public void setOnTimeFlag(String onTimeFlag) {
+    this.onTimeFlag = onTimeFlag;
+  }
+
+  public static Comparator<HDBSBkgDetailGridDTO> ApptDateTimeFromComparator = new Comparator<HDBSBkgDetailGridDTO>() {
+
+    public int compare(HDBSBkgDetailGridDTO dto1, HDBSBkgDetailGridDTO dto2) {
+      if (!(dto1 == null || dto2 == null)) {
+        if (!(dto1.getApptDateTimeFrom() == null || dto2.getApptDateTimeFrom() == null)) {
+          return dto1.getApptDateTimeFrom().compareTo(dto2.getApptDateTimeFrom());
+        } else {
+          if (dto1.getApptDateTimeFrom() != null) {
+            return 1;
+          } else if (dto2.getApptDateTimeFrom() != null) {
+            return -1;
+          }
+        }
+      } else {
+        if (!(dto1 == null)) {
+          return 1;
+        } else if (!(dto2 == null)) {
+          return -1;
+        }
+      }
+      return 0;
+    }
+
+  };
 
 }
