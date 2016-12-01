@@ -1,6 +1,7 @@
 package com.privasia.scss.refer.dto;
 
 import java.io.Serializable;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -66,7 +67,7 @@ public class ReferRejectObjetDto implements Serializable {
 
   private boolean pmVerified = false;
 
-  private ReferRejectDetailObjetDto referRejectDetail = null;
+  private List<ReferRejectDetailObjetDto> referRejectDetails = null;
 
   public long getCard() {
     return card;
@@ -204,12 +205,13 @@ public class ReferRejectObjetDto implements Serializable {
     this.pmVerified = pmVerified;
   }
 
-  public ReferRejectDetailObjetDto getReferRejectDetail() {
-    return referRejectDetail;
+
+  public List<ReferRejectDetailObjetDto> getReferRejectDetails() {
+    return referRejectDetails;
   }
 
-  public void setReferRejectDetail(ReferRejectDetailObjetDto referRejectDetail) {
-    this.referRejectDetail = referRejectDetail;
+  public void setReferRejectDetails(List<ReferRejectDetailObjetDto> referRejectDetails) {
+    this.referRejectDetails = referRejectDetails;
   }
 
   public ReferReject convertToReferRejectDomain(ReferReject referReject) {
