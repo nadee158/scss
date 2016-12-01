@@ -11,7 +11,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
-//import org.modelmapper.ModelMapper;
+import org.modelmapper.ModelMapper;
+// import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -54,8 +55,8 @@ public class HDBSService {
   @Autowired
   private WDCGlobalSettingRepository wdcGlobalSettingRepository;
 
-  //@Autowired
- // private ModelMapper modelMapper;
+  @Autowired
+  private ModelMapper modelMapper;
 
   public List<HDBSBkgDetail> findHDBSBookingDetailByIDList(List<String> bkgDetailIDList) {
 
@@ -114,14 +115,14 @@ public class HDBSService {
     LocalDateTime acceptDateFrom = systemDateTime.plusMinutes(hdbsAcceptStart);
     LocalDateTime acceptDateTo = systemDateTime.plusMinutes(hdbsAcceptEnd);
 
-    /*gridDTO.getHdbsBkgDetailGridDTOList().stream().filter(hdbs -> StringUtils.isNotBlank(hdbs.getApptStart()))
-        .forEach(hdbs -> {
-          if ("ACCEPTED".equalsIgnoreCase(hdbs.getHdbsStatus())) {
-
-          }
-        });
-        
-        */
+    /*
+     * gridDTO.getHdbsBkgDetailGridDTOList().stream().filter(hdbs ->
+     * StringUtils.isNotBlank(hdbs.getApptStart())) .forEach(hdbs -> { if
+     * ("ACCEPTED".equalsIgnoreCase(hdbs.getHdbsStatus())) {
+     * 
+     * } });
+     * 
+     */
 
     // return bkgDetails.collect(Collectors.toList());
 
@@ -151,7 +152,7 @@ public class HDBSService {
     Iterable<HDBSBkgMaster> bookingList = hdbsBookingMasterRepository.findAll(condition, orderByAPPStartDate);
 
     bookingList.forEach((HDBSBkgMaster) -> {
-     // hdbsBookingList.add(constructDetailGridDTO(HDBSBkgMaster));
+      // hdbsBookingList.add(constructDetailGridDTO(HDBSBkgMaster));
     });
 
     hdbsBkgGridDTO.setHdbsBkgDetailGridDTOList(hdbsBookingList);
@@ -159,9 +160,11 @@ public class HDBSService {
 
   }
 
-  /*private HDBSBkgDetailGridDTO constructDetailGridDTO(HDBSBkgMaster hDBSBkgMaster) {
+
+  private HDBSBkgDetailGridDTO constructDetailGridDTO(HDBSBkgMaster hDBSBkgMaster) {
     return modelMapper.map(hDBSBkgMaster, HDBSBkgDetailGridDTO.class);;
-  }*/
+  }
+
 
   private void setAcceptBooking(HDBSBookingDTO hdbsBookingDTO, LocalDateTime acceptDateFrom, LocalDateTime dateTo) {
 
