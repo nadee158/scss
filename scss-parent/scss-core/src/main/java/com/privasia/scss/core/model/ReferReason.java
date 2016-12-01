@@ -41,7 +41,7 @@ public class ReferReason extends AuditEntity implements Serializable {
 
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_SCSS_REFER_REASON")
-  @SequenceGenerator(name = "SEQ_SCSS_REFER_REASON", sequenceName = "REFER_REASON_SEQ", allocationSize=1)
+  @SequenceGenerator(name = "SEQ_SCSS_REFER_REASON", sequenceName = "REFER_REASON_SEQ", allocationSize = 1)
   @Column(name = "REF_REASON_ID")
   private Long referReasonID;
 
@@ -50,7 +50,7 @@ public class ReferReason extends AuditEntity implements Serializable {
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "PARENT_ID", nullable = true, referencedColumnName = "REF_REASON_ID")
-  private ReferReason ReferReason;
+  private ReferReason referReason;
 
   @Column(name = "SORT_SEQ")
   private int sortSEQ;
@@ -79,12 +79,13 @@ public class ReferReason extends AuditEntity implements Serializable {
     this.reasonDescription = reasonDescription;
   }
 
+
   public ReferReason getReferReason() {
-    return ReferReason;
+    return referReason;
   }
 
   public void setReferReason(ReferReason referReason) {
-    ReferReason = referReason;
+    this.referReason = referReason;
   }
 
   public int getSortSEQ() {
