@@ -194,17 +194,17 @@ public class HDBSService {
     List<ChronoUnit> units = new ArrayList<>();
     units.add(ChronoUnit.HOURS);
     units.add(ChronoUnit.MINUTES);
-    units.add(ChronoUnit.SECONDS);
 
     if (systemDateTime.isAfter(hdbs.getApptDateTimeToActual())) {
 
-      durration = CommonUtil.getFormattedDiffrenceBetweenDays(hdbs.getApptDateTimeToActual(), systemDateTime, units);
+      durration =
+          CommonUtil.getFormattedDiffrenceBetweenDays(hdbs.getApptDateTimeToActual(), systemDateTime, units, false);
       status = ApplicationConstants.LATE;
       onTimeFlag = "N";
 
     } else if (systemDateTime.isBefore(hdbs.getApptDateTimeFrom())) {
 
-      durration = CommonUtil.getFormattedDiffrenceBetweenDays(systemDateTime, hdbs.getApptDateTimeFrom(), units);
+      durration = CommonUtil.getFormattedDiffrenceBetweenDays(systemDateTime, hdbs.getApptDateTimeFrom(), units, false);
       status = ApplicationConstants.EARLY;
       onTimeFlag = "N";
 
