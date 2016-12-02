@@ -120,13 +120,60 @@ public class HDBSService {
     LocalDateTime acceptDateTo = systemDateTime.plusMinutes(hdbsAcceptEnd);
 
 
-    setAcceptBookingDurationAndStatus(gridDTo, acceptDateFrom, acceptDateTo);;
+    setAcceptBookingStatus(gridDTo, acceptDateFrom, acceptDateTo);;
 
     Collections.sort(gridDTo.getHdbsBkgDetailGridDTOList(), HDBSBkgDetailGridDTO.ApptDateTimeFromComparator);
 
     return gridDTo;
   }
 
+  public HDBSBkgGridDTO createPredicatesAndFindHDBS(long cardNo) {
+    //@formatter:off
+//    + " WHERE mas.DRAYAGE_BOOKING ='0' AND SCSS_STATUS_CODE is null AND (det.STATUS_CODE = 'ACCEPTED') " //
+//    + " AND  card.CRD_CARDID_SEQ = " //
+//    + SQL.format(cardIdSeq) 
+//    + " AND APPT_DATETIME_FROM <= sysdate+0.0416 " // 1 hour earlier
+//    + " AND APPT_DATETIME_FROM >= sysdate-0.0833 " // 2 hour late
+//    + " order by APPT_DATETIME_TO_ACTUAL "; //
+    //@formatter:on
+
+    LocalDateTime dateFrom = LocalDateTime.now().minus(1, ChronoUnit.HOURS);
+    LocalDateTime dateTo = LocalDateTime.now().plus(2, ChronoUnit.HOURS);
+
+    HDBSBkgGridDTO gridDTo = new HDBSBkgGridDTO();
+
+    List<HDBSBkgDetailGridDTO> hdbsBookingList = new ArrayList<HDBSBkgDetailGridDTO>();
+
+    List<HDBSStatus> hdbsStatusList = new ArrayList<>();
+    hdbsStatusList.add(HDBSStatus.ACCEPTED);
+
+    Predicate byCardNo = HDBSBookingMasterPredicates.byCardNo(String.valueOf(cardNo));
+    Predicate byAPPTDateFrom = HDBSBookingMasterPredicates.byApptDateTimeFromBetween(dateFrom, dateTo);
+    Predicate byDrayageBooking = HDBSBookingMasterPredicates.byDrayageBooking(0);
+    Predicate byHDBSStatus = HDBSBookingMasterPredicates.byHDBSStatusTypes(hdbsStatusList);
+    Predicate byNullableSCSS = HDBSBookingMasterPredicates.byNullableSCSSStatusCode();
+
+    Predicate condition =
+        ExpressionUtils.allOf(byCardNo, byAPPTDateFrom, byDrayageBooking, byHDBSStatus, byNullableSCSS);
+
+    OrderSpecifier<LocalDateTime> orderByAPPStartDate = HDBSBookingMasterPredicates.orderByAppointmentStartDateAsc();
+
+    Iterable<HDBSBkgMaster> bookingList = hdbsBookingMasterRepository.findAll(condition, orderByAPPStartDate);
+
+    bookingList.forEach((hdbsbkgMaster) -> {
+      if (!(hdbsbkgMaster.getHdbsBookingDetails() == null || hdbsbkgMaster.getHdbsBookingDetails().isEmpty())) {
+        hdbsbkgMaster.getHdbsBookingDetails().forEach(detail -> {
+          HDBSBkgDetailGridDTO hdbs = constructDetailGridDetailDTO(detail);
+          setDuration(hdbs);
+          hdbsBookingList.add(hdbs);
+        });
+      }
+    });
+
+    gridDTo.setHdbsBkgDetailGridDTOList(hdbsBookingList);
+    return gridDTo;
+
+  }
 
   public HDBSBkgGridDTO createPredicatesAndFindHDBS(Card card, LocalDateTime dateFrom, LocalDateTime dateTo,
       List<HDBSStatus> statusList, HDBSBkgGridDTO gridDTo) {
@@ -150,7 +197,9 @@ public class HDBSService {
     bookingList.forEach((hdbsbkgMaster) -> {
       if (!(hdbsbkgMaster.getHdbsBookingDetails() == null || hdbsbkgMaster.getHdbsBookingDetails().isEmpty())) {
         hdbsbkgMaster.getHdbsBookingDetails().forEach(detail -> {
-          hdbsBookingList.add(constructDetailGridDetailDTO(detail));
+          HDBSBkgDetailGridDTO hdbs = constructDetailGridDetailDTO(detail);
+          setDuration(hdbs);
+          hdbsBookingList.add(hdbs);
         });
       }
     });
@@ -167,8 +216,7 @@ public class HDBSService {
 
 
 
-  private void setAcceptBookingDurationAndStatus(HDBSBkgGridDTO gridDTo, LocalDateTime acceptDateFrom,
-      LocalDateTime dateTo) {
+  private void setAcceptBookingStatus(HDBSBkgGridDTO gridDTo, LocalDateTime acceptDateFrom, LocalDateTime dateTo) {
 
     gridDTo.getHdbsBkgDetailGridDTOList().stream().filter(hdbs -> (hdbs.getApptDateTimeFrom() != null))
         .forEach(hdbs -> {
@@ -177,14 +225,11 @@ public class HDBSService {
             if (hdbs.getApptDateTimeFrom().isAfter(acceptDateFrom) && hdbs.getApptDateTimeToActual().isBefore(dateTo)) {
               hdbs.setAcceptBooking(true);
             }
-
-            setDuration(hdbs, acceptDateFrom, dateTo);
-
           }
         });
   }
 
-  private void setDuration(HDBSBkgDetailGridDTO hdbs, LocalDateTime acceptDateFrom, LocalDateTime dateTo) {
+  private void setDuration(HDBSBkgDetailGridDTO hdbs) {
     LocalDateTime systemDateTime = LocalDateTime.now();
 
     String durration = StringUtils.EMPTY;

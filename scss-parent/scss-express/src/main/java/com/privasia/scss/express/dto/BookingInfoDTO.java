@@ -11,6 +11,21 @@ public class BookingInfoDTO implements Serializable {
   public static final String NOK = "NOK";
   public static final String CUS_CHECKING = "CUSTOM_CHECKING";
 
+  public static final String BLACKLISTED_CARD_MESSAGE =
+      "Maaf, Port Pass anda sudah di senarai hitam.\nSila letakkan kenderaan anda di kawasan yang disediakan dan dapatkan bantuan kerani gate di booth 1.";
+
+  public static final String INVALID_CARD_MESSAGE =
+      "Maaf, Port Pass anda sudah tamat tempoh.\nSila letakkan kenderaan anda di kawasan yang disediakan dan dapatkan bantuan kerani gate di booth 1.";
+
+  public static final String CARD_NOT_FOUND_MESSAGE =
+      "Maaf, Port Pass anda tidak sah (tiada di dalam sistem / tidak dapat dibaca).\nSila letakkan kenderaan anda di kawasan yang disediakan dan dapatkan bantuan kerani gate di booth 1.";
+
+  public static final String IMPEXP_NOT_COMPLETED_MESSAGE =
+      "Maaf, anda tidak melengkapkan proses transaksi.\nSila letakkan kenderaan anda di kawasan yang disediakan dan dapatkan bantuan kerani gate di booth 1.";
+
+  public static final String NO_BOOKING_MESSAGE =
+      "Maaf, tiada sebarang tempahan untuk anda di dalam system.\nSila letakkan kenderaan anda di kawasan yang disediakan dan dapatkan bantuan kerani gate di booth 1.";
+
   private String messageCode; // OK, NOK
   private String messageDesc;
 

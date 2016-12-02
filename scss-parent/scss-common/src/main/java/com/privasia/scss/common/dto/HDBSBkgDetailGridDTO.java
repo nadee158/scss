@@ -149,6 +149,8 @@ public class HDBSBkgDetailGridDTO implements Serializable {
 
   private boolean acceptBooking;
 
+  private String pmHeadNo;
+
   private String durration = StringUtils.EMPTY;
   private String status = StringUtils.EMPTY;
   private String onTimeFlag = StringUtils.EMPTY;
@@ -588,6 +590,16 @@ public class HDBSBkgDetailGridDTO implements Serializable {
   public void setOnTimeFlag(String onTimeFlag) {
     this.onTimeFlag = onTimeFlag;
   }
+
+
+  public String getPmHeadNo() {
+    return pmHeadNo;
+  }
+
+  public void setPmHeadNo(String pmHeadNo) {
+    this.pmHeadNo = pmHeadNo;
+  }
+
 
   public static Comparator<HDBSBkgDetailGridDTO> ApptDateTimeFromComparator = new Comparator<HDBSBkgDetailGridDTO>() {
 

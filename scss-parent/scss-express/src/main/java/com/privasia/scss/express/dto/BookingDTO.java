@@ -2,6 +2,13 @@ package com.privasia.scss.express.dto;
 
 import java.io.Serializable;
 
+import org.apache.commons.lang3.StringUtils;
+
+import com.privasia.scss.common.dto.HDBSBkgDetailGridDTO;
+import com.privasia.scss.common.enums.HpatReferStatus;
+import com.privasia.scss.common.util.CommonUtil;
+import com.privasia.scss.hpat.dto.HpatDto;
+
 public class BookingDTO implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -20,6 +27,101 @@ public class BookingDTO implements Serializable {
 
   private String location;
   private String bookingType;// "CY" or "ODDPICKUP" OR "ODDDROP"
+
+  public BookingDTO() {
+
+  }
+
+  public BookingDTO(HpatDto hpat) {
+
+    this.setBookingId(hpat.getBookingId());
+
+    if (StringUtils.isNotBlank(hpat.getExpContainer01())) {
+      this.setContainer1(hpat.getExpContainer01());
+    } else {
+      this.setContainer1("");
+    }
+
+    if (StringUtils.isNotBlank(hpat.getExpContainer02())) {
+      this.setContainer2(hpat.getExpContainer02());
+    } else {
+      this.setContainer2("");
+    }
+
+    if (StringUtils.isNotBlank(hpat.getImpGatePass01())) {
+      this.setGatePass1(hpat.getImpGatePass01());
+    } else {
+      this.setGatePass1("");
+    }
+
+    if (StringUtils.isNotBlank(hpat.getImpGatePass02())) {
+      this.setGatePass2(hpat.getImpGatePass02());
+    } else {
+      this.setGatePass2("");
+    }
+
+    if (StringUtils.equals(HpatReferStatus.ACTIVE.getValue(), hpat.getStatus())) {
+      this.setBookingStatus("ON TIME");
+    } else {
+      this.setBookingStatus(hpat.getStatus());
+    }
+
+    // if (StringUtils.isNotBlank(hpatForm.getImpContSize1())) {
+    // this.setLength1(hpatForm.getImpContSize1());
+    // } else {
+    // this.setLength1("");
+    // }
+    //
+    // if (StringUtils.isNotBlank(hpatForm.getImpContSize2())) {
+    // this.setLength2(hpatForm.getImpContSize2());
+    // } else {
+    // this.setLength2("");
+    // }
+
+    this.setBookingType("CY");
+    // this.setBookingStartTime(this.getBookingDateTime(hpatForm.getApptStartDateFormat()));
+    // this.setBookingEndTime(this.getBookingDateTime(hpatForm.getApptEndDateFormat()));
+
+    this.setTruckHeadNo(hpat.getPmNo());
+  }
+
+  public BookingDTO(HDBSBkgDetailGridDTO gridDtoItem) {
+    this.setBookingId(gridDtoItem.getHdbsBkgDetailNo());
+
+    if (StringUtils.isNotBlank(gridDtoItem.getContainerNo())) {
+      this.setContainer1(gridDtoItem.getContainerNo());
+    } else {
+      this.setContainer1("");
+    }
+
+    if (StringUtils.equals(HpatReferStatus.ACTIVE.getValue(), gridDtoItem.getStatus())) {
+      this.setBookingStatus("ON TIME");
+    } else {
+      this.setBookingStatus(gridDtoItem.getStatus());
+    }
+
+
+    if (StringUtils.isNotBlank(gridDtoItem.getContainerSize())) {
+      this.setLength1(gridDtoItem.getContainerSize());
+    } else {
+      this.setLength1("");
+    }
+
+    if (StringUtils.isNotBlank(gridDtoItem.gethDBSBkgMasterDepotCode())) {
+      this.setLocation(gridDtoItem.gethDBSBkgMasterDepotCode());
+    } else {
+      this.setLocation("");
+    }
+
+    if (StringUtils.isNotBlank(gridDtoItem.getHdbsBkgType())) {
+      this.setBookingType("ODD" + gridDtoItem.getHdbsBkgType());
+    }
+
+    this.setBookingStartTime(CommonUtil.getFormatteDate(gridDtoItem.getApptDateTimeFrom()));
+    this.setBookingEndTime(CommonUtil.getFormatteDate(gridDtoItem.getApptDateTimeToActual()));
+
+    this.setTruckHeadNo(gridDtoItem.getPmHeadNo());
+  }
 
   public String getBookingId() {
     return bookingId;
