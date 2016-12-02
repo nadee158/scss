@@ -8,13 +8,13 @@
     <version>1.0</version>
   </parent>
   
-  <artifactId>scss-gatein</artifactId>
-  <name>scss-gatein</name>
+  <artifactId>scss-express</artifactId>
+  <name>scss-express</name>
   <url>http://maven.apache.org</url>
   <packaging>war</packaging>
   
   <properties>
-    <start-class>com.privasia.scss.gatein.GateInEntryPoint</start-class>
+    <start-class>com.privasia.scss.express.ExpressEntryPoint</start-class>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
   
@@ -31,11 +31,6 @@
 			<version>1.0</version>
 	</dependency>
 	
-	<dependency>
-			<groupId>com.privasia.scss</groupId>
-  			<artifactId>scss-cosmos</artifactId>
-			<version>1.0</version>
-	</dependency>
 	
 	<dependency>
 			<groupId>com.privasia.scss</groupId>
@@ -64,6 +59,6 @@
 				</plugin>				
 			</plugins>
 		</pluginManagement>
-		<finalName>scss-gatein</finalName>
+		<finalName>scss-express</finalName>
 	</build>
 </project>
