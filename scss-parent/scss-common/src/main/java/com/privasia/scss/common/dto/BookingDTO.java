@@ -1,13 +1,11 @@
-package com.privasia.scss.express.dto;
+package com.privasia.scss.common.dto;
 
 import java.io.Serializable;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.privasia.scss.common.dto.HDBSBkgDetailGridDTO;
 import com.privasia.scss.common.enums.HpatReferStatus;
 import com.privasia.scss.common.util.CommonUtil;
-import com.privasia.scss.hpat.dto.HpatDto;
 
 public class BookingDTO implements Serializable {
 

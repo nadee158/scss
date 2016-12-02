@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.privasia.scss.common.dto.ApiResponseObject;
+import com.privasia.scss.common.dto.BookingInfoDTO;
 import com.privasia.scss.common.dto.CustomResponseEntity;
-import com.privasia.scss.express.dto.BookingInfoDTO;
 import com.privasia.scss.express.service.ExpressService;
 
 

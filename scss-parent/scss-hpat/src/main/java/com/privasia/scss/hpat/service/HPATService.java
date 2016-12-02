@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.privasia.scss.common.dto.HpatDto;
 import com.privasia.scss.common.dto.TransactionDTO;
 import com.privasia.scss.common.enums.BookingType;
 import com.privasia.scss.common.enums.HpatReferStatus;
@@ -26,7 +27,6 @@ import com.privasia.scss.core.model.HPATBooking;
 import com.privasia.scss.core.predicate.HPATBookingPredicates;
 import com.privasia.scss.core.repository.CardRepository;
 import com.privasia.scss.core.repository.HPATBookingRepository;
-import com.privasia.scss.hpat.dto.HpatDto;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Predicate;
@@ -44,7 +44,8 @@ public class HPATService {
   @Autowired
   private CardRepository cardRepository;
 
-  public List<HpatDto> createPredicatesAndFindHpab4ImpAndExp(Long cardId, LocalDateTime date, List<BookingType> bookingTypes) {
+  public List<HpatDto> createPredicatesAndFindHpab4ImpAndExp(Long cardId, LocalDateTime date,
+      List<BookingType> bookingTypes) {
     List<HpatDto> dtoList = new ArrayList<HpatDto>();
     Optional<Card> card = cardRepository.findOne(cardId); // need to handle optional
     if (card.isPresent()) {
@@ -58,7 +59,7 @@ public class HPATService {
       Iterable<HPATBooking> bookingList = hpatBookingRepository.findAll(condition, sortSpec);
 
       bookingList.forEach((HPATBooking b) -> {
-        dtoList.add(new HpatDto(b));
+        dtoList.add(b.constructHpatDto());
       });
       return dtoList;
     } else {
@@ -76,7 +77,8 @@ public class HPATService {
 
     List<BookingType> convertedBookingTypes = new ArrayList<>();
     System.out.println("bookingTypes :" + bookingTypes);
-    bookingTypes.forEach(bookingType -> {BookingType bk = BookingType.fromValue(bookingType);
+    bookingTypes.forEach(bookingType -> {
+      BookingType bk = BookingType.fromValue(bookingType);
       if (bk != null) {
         convertedBookingTypes.add(bk);
       } else {

@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.privasia.scss.common.dto.ApiResponseObject;
 import com.privasia.scss.common.dto.CustomResponseEntity;
+import com.privasia.scss.common.dto.HpatDto;
 import com.privasia.scss.common.dto.TransactionDTO;
-import com.privasia.scss.hpat.dto.HpatDto;
 import com.privasia.scss.hpat.service.HPATService;
 
 /**

@@ -11,7 +11,10 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.privasia.scss.common.dto.BookingDTO;
+import com.privasia.scss.common.dto.BookingInfoDTO;
 import com.privasia.scss.common.dto.HDBSBkgGridDTO;
+import com.privasia.scss.common.dto.HpatDto;
 import com.privasia.scss.common.enums.BookingType;
 import com.privasia.scss.common.enums.CardStatus;
 import com.privasia.scss.common.enums.CompanyType;
@@ -21,10 +24,7 @@ import com.privasia.scss.core.exception.ResultsNotFoundException;
 import com.privasia.scss.core.model.Card;
 import com.privasia.scss.core.model.SmartCardUser;
 import com.privasia.scss.core.service.CommonCardService;
-import com.privasia.scss.express.dto.BookingDTO;
-import com.privasia.scss.express.dto.BookingInfoDTO;
 import com.privasia.scss.hdbs.service.HDBSService;
-import com.privasia.scss.hpat.dto.HpatDto;
 import com.privasia.scss.hpat.service.HPATService;
 
 /**

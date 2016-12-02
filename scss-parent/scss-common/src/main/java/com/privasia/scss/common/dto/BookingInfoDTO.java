@@ -1,4 +1,4 @@
-package com.privasia.scss.express.dto;
+package com.privasia.scss.common.dto;
 
 import java.io.Serializable;
 import java.util.List;
