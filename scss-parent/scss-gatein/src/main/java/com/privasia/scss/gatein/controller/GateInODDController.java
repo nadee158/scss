@@ -16,6 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.privasia.scss.common.dto.ApiResponseObject;
+import com.privasia.scss.common.dto.CustomResponseEntity;
+import com.privasia.scss.common.dto.WHODDDTO;
 import com.privasia.scss.core.model.HDBSBkgDetail;
 import com.privasia.scss.hdbs.service.HDBSService;
 
@@ -28,14 +31,26 @@ import com.privasia.scss.hdbs.service.HDBSService;
 @RequestMapping("**/odd")
 public class GateInODDController {
 
-	@Autowired
-	private HDBSService hdbsService;
+  @Autowired
+  private HDBSService hdbsService;
 
-	@RequestMapping(value = "/hdbs/bkgdetails/ids", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<HDBSBkgDetail>> gateInImpNormal(@RequestBody List<String> bkgDetailIDList,
-			HttpServletRequest request) {
-		List<HDBSBkgDetail> hdbsDetails = hdbsService.findHDBSBookingDetailByIDList(bkgDetailIDList);
-		return new ResponseEntity<List<HDBSBkgDetail>>(hdbsDetails, HttpStatus.OK);
-	}
+  @RequestMapping(value = "/whodd/save", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
+      consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+  public CustomResponseEntity<ApiResponseObject<?>> saveWhodd(@RequestBody WHODDDTO whodddto) {
+
+    System.out.println("whodddto :" + whodddto);
+
+    return new CustomResponseEntity<ApiResponseObject<?>>(new ApiResponseObject<Long>(HttpStatus.CREATED, 0l),
+        HttpStatus.CREATED);
+  }
+
+
+  @RequestMapping(value = "/hdbs/bkgdetails/ids", method = RequestMethod.POST,
+      produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<List<HDBSBkgDetail>> gateInImpNormal(@RequestBody List<String> bkgDetailIDList,
+      HttpServletRequest request) {
+    List<HDBSBkgDetail> hdbsDetails = hdbsService.findHDBSBookingDetailByIDList(bkgDetailIDList);
+    return new ResponseEntity<List<HDBSBkgDetail>>(hdbsDetails, HttpStatus.OK);
+  }
 
 }

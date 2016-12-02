@@ -4,6 +4,8 @@ package com.privasia.scss.core.repository;
 
 import java.util.Optional;
 
+import org.springframework.data.jpa.repository.Query;
+
 import com.privasia.scss.common.enums.TransactionStatus;
 import com.privasia.scss.core.model.GatePass;
 
@@ -13,7 +15,8 @@ public interface GatePassRepository extends BaseRepository<GatePass, Long> {
 
   public Optional<GatePass> findByGatePassNoAndCompany_companyID(long gatePassNo1, long companyID);
 
-  public Long countByCommonGateInOut_Card_CardIDAndCommonGateInOut_EirStatus(long cardId,
-      TransactionStatus transactionStatus);
+  @Query(name = "GatePass.countRecordsByCardIdAndEirStatus", nativeQuery = true)
+  public Long countRecordsByCardIdAndEirStatus(long cardId, TransactionStatus eirStatus);
+
 
 }

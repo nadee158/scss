@@ -1,11 +1,13 @@
 package com.privasia.scss.core.repository;
 
+import org.springframework.data.jpa.repository.Query;
+
 import com.privasia.scss.common.enums.TransactionStatus;
 import com.privasia.scss.core.model.Exports;
 
 public interface ExportsRepository extends BaseRepository<Exports, Long> {
 
-  public Long countByCommonGateInOut_Card_CardIDAndCommonGateInOut_EirStatus(long cardId,
-      TransactionStatus transactionStatus);
+  @Query(name = "Exports.countRecordsByCardIdAndEirStatus", nativeQuery = true)
+  public Long countRecordsByCardIdAndEirStatus(long cardId, TransactionStatus eirStatus);
 
 }

@@ -62,14 +62,12 @@ public class CommonCardService {
   public boolean isImpExpCompleted(long cardId) {
     TransactionStatus transactionStatus = TransactionStatus.INPROGRESS;
 
-    long importRecordCount =
-        gatePassRepository.countByCommonGateInOut_Card_CardIDAndCommonGateInOut_EirStatus(cardId, transactionStatus);
+    long importRecordCount = gatePassRepository.countRecordsByCardIdAndEirStatus(cardId, transactionStatus);
     if (importRecordCount > 0) {
       return false;
     }
 
-    long exportRecordCount =
-        exportsRepository.countByCommonGateInOut_Card_CardIDAndCommonGateInOut_EirStatus(cardId, transactionStatus);
+    long exportRecordCount = exportsRepository.countRecordsByCardIdAndEirStatus(cardId, transactionStatus);
     if (exportRecordCount > 0) {
       return false;
     }
