@@ -10,8 +10,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +22,7 @@ import com.privasia.scss.common.util.ApplicationConstants;
 import com.privasia.scss.common.util.CommonUtil;
 import com.privasia.scss.core.model.Client;
 import com.privasia.scss.core.model.KioskHLTCheck;
+import com.privasia.scss.core.model.ReferReject;
 import com.privasia.scss.core.repository.ClientRepository;
 import com.privasia.scss.core.repository.KioskHLTCheckRepository;
 
@@ -40,9 +43,14 @@ public class HealthCheckService {
     if (size <= 0) {
       size = 14;
     }
-    log.info("******* Request for Get Health Check Info ******* ");
+    log.info("******* Request for Get Health Check Info ******* "); 
     Pageable page = new PageRequest(pageNo, size);
-    List<KioskHLTCheck> kioskHealthCheckInfoList = kioskHLTCheckRepository.listLimitedEntities(size);
+    
+    Pageable pageRequest = new PageRequest(0, 15, Sort.Direction.ASC, "dateTimeAdd");
+    
+    Page<KioskHLTCheck> kioskHealthCheckPages = kioskHLTCheckRepository.listLimitedEntities(pageRequest);
+    
+    List<KioskHLTCheck> kioskHealthCheckInfoList = kioskHealthCheckPages.getContent();
     log.info("******* Response for Get Kiosk Health Check Info******* ");
     if (!(kioskHealthCheckInfoList == null || kioskHealthCheckInfoList.isEmpty())) {
       log.info("Response  HealthCheckInfo Size : " + kioskHealthCheckInfoList.size());
