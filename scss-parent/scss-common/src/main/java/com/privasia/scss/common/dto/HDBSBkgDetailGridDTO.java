@@ -15,22 +15,6 @@ public class HDBSBkgDetailGridDTO implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
-  // form.setHdbsBkgDetailNo(rs.getString("BKG_DETAIL_ID"));
-  // form.setHdbsBkgType(rs.getString("HDBS_BKG_TYPE"));
-  // form.setContNo(rs.getString("CONTAINER_NO"));
-  // form.setContSize(rs.getDouble("CONTAINER_SIZE"));
-  // form.setApptStartDateFormat(rs.getTimestamp("APPT_DATETIME_FROM"));
-  // form.setApptEndDateFormat(rs.getTimestamp("APPT_DATETIME_TO_ACTUAL"));
-  // form.setPmHeadNo(rs.getString("PM_HEAD_NO"));
-  // form.setPlateNo(rs.getString("PLATE_NO"));
-  // form.setDepotCode(rs.getString("DEPOT_CODE"));
-  // form.setApptStart(this.convertDateToString(rs.getTimestamp("APPT_DATETIME_FROM")));
-  // form.setApptEnd(this.convertDateToString(rs.getTimestamp("APPT_DATETIME_TO_ACTUAL")));
-  // form.setSmartCardNo(rs.getString("CRD_SCARDNO"));
-  // form.setHdbsStatus(rs.getString("STATUS_CODE"));
-  // form.setHdbsSubmitDateStr(this.convertDateToDateHourMin(rs.getTimestamp("DATETIME_ADD")));
-  // form.setBookingNo(rs.getString("HDBS_BKG_SEQ"));
-
   private String hdbsBKGDetailID;
 
   private String hDBSBkgMasterPmHeadNo;
@@ -604,8 +588,8 @@ public class HDBSBkgDetailGridDTO implements Serializable {
   public static Comparator<HDBSBkgDetailGridDTO> ApptDateTimeFromComparator = new Comparator<HDBSBkgDetailGridDTO>() {
 
     public int compare(HDBSBkgDetailGridDTO dto1, HDBSBkgDetailGridDTO dto2) {
-      if (!(dto1 == null || dto2 == null)) {
-        if (!(dto1.getApptDateTimeFrom() == null || dto2.getApptDateTimeFrom() == null)) {
+      if (dto1 != null && dto2 != null) {
+        if (dto1.getApptDateTimeFrom() != null && dto2.getApptDateTimeFrom() != null) {
           return dto1.getApptDateTimeFrom().compareTo(dto2.getApptDateTimeFrom());
         } else {
           if (dto1.getApptDateTimeFrom() != null) {
@@ -615,9 +599,9 @@ public class HDBSBkgDetailGridDTO implements Serializable {
           }
         }
       } else {
-        if (!(dto1 == null)) {
+        if (dto1 != null) {
           return 1;
-        } else if (!(dto2 == null)) {
+        } else if (dto2 != null) {
           return -1;
         }
       }

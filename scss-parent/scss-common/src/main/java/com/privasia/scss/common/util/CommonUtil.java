@@ -204,7 +204,7 @@ public final class CommonUtil {
   public static String getFormattedDiffrenceBetweenDays(LocalDateTime startDate, LocalDateTime endDate,
       List<ChronoUnit> units, boolean doAppendChronoUnit) {
     tempDateTime = null;
-    if (!(startDate == null || endDate == null)) {
+    if (startDate != null && endDate != null) {
       StringBuilder time = new StringBuilder("");
       tempDateTime = LocalDateTime.from(startDate);
       if (units == null || units.isEmpty()) {
@@ -231,19 +231,5 @@ public final class CommonUtil {
     }
     return null;
   }
-
-  public static void main(String... ardgs) {
-    LocalDateTime startDate = LocalDateTime.now();
-    LocalDateTime endDate = LocalDateTime.now();
-    endDate = endDate.plus(2, ChronoUnit.HOURS);
-    endDate = endDate.plus(30, ChronoUnit.MINUTES);
-    endDate = endDate.plus(15, ChronoUnit.SECONDS);
-    List<ChronoUnit> units = new ArrayList<>();
-    units.add(ChronoUnit.HOURS);
-    units.add(ChronoUnit.MINUTES);
-    units.add(ChronoUnit.SECONDS);
-    System.err.println(getFormattedDiffrenceBetweenDays(startDate, endDate, units, false));
-  }
-
 
 }

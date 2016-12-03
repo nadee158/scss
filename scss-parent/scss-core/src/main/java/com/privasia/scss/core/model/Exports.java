@@ -28,6 +28,7 @@ import com.privasia.scss.common.enums.ContainerPosition;
 import com.privasia.scss.common.enums.ExportOPTFlagType;
 import com.privasia.scss.common.enums.GCS_SSRBlockStatusType;
 import com.privasia.scss.common.enums.GateInOutStatus;
+import com.privasia.scss.common.enums.ReferTempType;
 import com.privasia.scss.common.enums.VesselStatus;
 
 /**
@@ -132,8 +133,38 @@ public class Exports implements Serializable {
 
   @Column(name = "EXP_NET_WEIGHT")
   private Integer expNetWeight;
-
-  // EXP_OVERSIZE_FLAG
+  
+  @Column(name = "EXP_REEFER_FLAG", nullable = true)
+  @Type(type = "yes_no")
+  private Boolean referFlag;
+  
+  @Column(name = "EXP_REEFER_TEMP_TYPE")
+  @Type(type = "com.privasia.scss.common.enumusertype.ReferTempEnumUserType")
+  private ReferTempType referTempType;
+  
+  @Column(name = "EXP_REEFER_TEMP")
+  private Integer referTemp;
+  
+  @Column(name = "EXP_IMDG")
+  private String imdg;
+  
+  @Column(name = "EXP_UN")
+  private String expUN;
+  
+  @Column(name = "EXP_IMDG_LABEL_ID")
+  private String imdgLabelID;
+  
+  @Column(name = "EXP_OOG_OH")
+  private Integer oogOH;
+  
+  @Column(name = "EXP_OOG_OL")
+  private Integer oogOL;
+  
+  @Column(name = "EXP_OOG_OF")
+  private Integer oogOF;
+  
+  @Column(name = "EXP_OOG_OA")
+  private Integer oogOA;
 
   @Column(name = "EXP_TRUCK_POS", nullable = true)
   @Type(type = "com.privasia.scss.common.enumusertype.ContainerPositionEnumUserType")

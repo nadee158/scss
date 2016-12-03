@@ -127,6 +127,7 @@ public class HDBSService {
     LocalDateTime systemDateTime = LocalDateTime.now();
     // set the value in the hdbsbooking dto
     gridDTo.setArrivalTime(systemDateTime);
+    gridDTo.setSmartCardNo(String.valueOf(optionalCard.get().getCardNo()));
 
     Optional<Integer> optionalHdbsStart =
         wdcGlobalSettingRepository.fetchGlobalItemsByGlobalCode(ApplicationConstants.HDBS_START_HOUR);
@@ -148,7 +149,7 @@ public class HDBSService {
         wdcGlobalSettingRepository.fetchGlobalStringByGlobalCode(ApplicationConstants.HDBS_MANUAL);
 
     // need to do
-    gridDTo.setShowManual(optionalHdbsManual.orElse(StringUtils.EMPTY));
+    gridDTo.setShowManual(optionalHdbsManual.orElse("N"));
 
 
     LocalDateTime dateFrom = systemDateTime.plusHours(hdbsStart);// hpatStart
@@ -163,14 +164,12 @@ public class HDBSService {
 
     gridDTo = createPredicatesAndFindHDBS(optionalCard.get(), dateFrom, dateTo, hdbsStatusList, gridDTo);
 
-
     LocalDateTime acceptDateFrom = systemDateTime.plusMinutes(hdbsAcceptStart);
     LocalDateTime acceptDateTo = systemDateTime.plusMinutes(hdbsAcceptEnd);
 
-
-    setAcceptBookingStatus(gridDTo, acceptDateFrom, acceptDateTo);;
-
-    Collections.sort(gridDTo.getHdbsBkgDetailGridDTOList(), HDBSBkgDetailGridDTO.ApptDateTimeFromComparator);
+    setAcceptBookingStatus(gridDTo, acceptDateFrom, acceptDateTo);
+    
+    Collections.sort(gridDTo.getHdbsBkgDetailGridDTOList(), (d1, d2) -> d1.getApptDateTimeFrom().compareTo(d2.getApptDateTimeFrom()));
 
     return gridDTo;
   }
@@ -222,7 +221,8 @@ public class HDBSService {
     return gridDTo;
 
   }
-
+  
+  @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
   public HDBSBkgGridDTO createPredicatesAndFindHDBS(Card card, LocalDateTime dateFrom, LocalDateTime dateTo,
       List<HDBSStatus> statusList, HDBSBkgGridDTO gridDTo) {
 
@@ -243,13 +243,12 @@ public class HDBSService {
     Iterable<HDBSBkgMaster> bookingList = hdbsBookingMasterRepository.findAll(condition, orderByAPPStartDate);
 
     bookingList.forEach((hdbsbkgMaster) -> {
-      if (!(hdbsbkgMaster.getHdbsBookingDetails() == null || hdbsbkgMaster.getHdbsBookingDetails().isEmpty())) {
         hdbsbkgMaster.getHdbsBookingDetails().forEach(detail -> {
           HDBSBkgDetailGridDTO hdbs = constructDetailGridDetailDTO(detail);
           setDuration(hdbs);
           hdbsBookingList.add(hdbs);
         });
-      }
+      
     });
 
     gridDTo.setHdbsBkgDetailGridDTOList(hdbsBookingList);
