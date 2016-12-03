@@ -77,7 +77,7 @@ public interface ApplicationConstants {
   public static final String HDBS_ACCEPTED_START = "HDBS_ACC_S";
   public static final String HDBS_ACCEPTED_END = "HDBS_ACC_E";
   public static final String HDBS_MANUAL = "HDBS_MANU";
-  
+
   public static final int DEFAULT_HDBS_START_HOUR_VALUE = -6;
   public static final int DEFAULT_HDBS_END_HOUR_VALUE = 6;
   public static final int DEFAULT_HDBS_ACCEPTED_START_VALUE = -6;
@@ -95,4 +95,12 @@ public interface ApplicationConstants {
   public static final String IMP_EXP_TRANSACTION = "importExportTransaction";
   public static final String REFER_TRANSACTION = "referTransaction";
   public static final String NO_TRANSACTION = "noTransaction";
+
+  public static final String ON_TIME = "ON-TIME";
+  public static final String ACTIVE = "ACTIVE";
+  public static final String LATE = "LATE";
+  public static final String COMPLETE = "COMP";
+  public static final String EXPIRED = "EXPIRED";
+  public static final String EARLY = "EARLY";
+  public static final String CANCEL = "CAN";
 }

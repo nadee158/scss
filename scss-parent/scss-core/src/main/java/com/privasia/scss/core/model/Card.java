@@ -22,6 +22,7 @@ import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.Type;
 
+import com.privasia.scss.common.dto.CardDto;
 import com.privasia.scss.common.enums.CardIssuedStatus;
 import com.privasia.scss.common.enums.CardPrintStatus;
 import com.privasia.scss.common.enums.CardStatus;
@@ -289,5 +290,15 @@ public class Card extends AuditEntity implements Serializable {
     this.cardType = cardType;
   }
 
+  public CardDto constructCardDto() {
+    CardDto dto = new CardDto();
+    dto.setCrdScardNo(Long.toString(this.getCardID()));
+    dto.setCompId(Long.toString(this.getCompany().getCompanyID()));
+    dto.setCompCode(this.getCompany().getCompanyCode());
+    dto.setNewICNo(this.getSmartCardUser().getCommonContactAttribute().getNewNRICNO());
+    dto.setOldICNo(this.getSmartCardUser().getCommonContactAttribute().getOldNRICNO());
+    dto.setPassportNo(this.getSmartCardUser().getPassportNo());
+    return dto;
+  }
 
 }

@@ -16,11 +16,15 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.Type;
 import org.springframework.beans.BeanUtils;
 
+import com.privasia.scss.common.dto.HpatDto;
 import com.privasia.scss.common.dto.TransactionDTO;
+import com.privasia.scss.common.enums.BookingType;
 import com.privasia.scss.common.enums.HpatReferStatus;
+import com.privasia.scss.common.util.CommonUtil;
 
 /**
  * @author Janaka
@@ -102,6 +106,63 @@ public class HPATBooking extends AuditEntity implements Serializable {
 
   @OneToMany(fetch = FetchType.EAGER, mappedBy = "hpatBooking")
   private Set<HPATBookingDetail> hpatBookingDetails;
+
+  public HpatDto constructHpatDto() {
+    HpatDto dto = new HpatDto();
+    dto.setBookingId(this.getBookingID());
+    dto.setDriverId(this.getDriverICNumber());
+    dto.setBuffer(this.getBuffer());
+    dto.setComId(this.getHaulierCode());
+    dto.setCrdScardno(this.getCardNo());
+    dto.setPmNo(this.getPmNumber());
+    dto.setFromScss("Y");
+    dto.setStatus(this.getStatus().getValue());
+    dto.setTrlrNo(this.getTrailerNo());
+    dto.setTrlrType(this.getTrailerType());
+    dto.setApptStartDate(this.getAppointmentStartDate());
+    dto.setApptEndDate(this.getAppointmentEndDate());
+
+
+    if (this.getAppointmentStartDate() != null) {
+      dto.setApptStart(CommonUtil.getFormatteDate(this.getAppointmentStartDate()));
+    }
+    if (this.getAppointmentEndDate() != null) {
+      dto.setApptEnd(CommonUtil.getFormatteDate(this.getAppointmentEndDate()));
+    }
+
+    this.getHpatBookingDetails().forEach(detail -> setGatePassAndContainDetail(detail, dto));
+    return dto;
+  }
+
+  public void setGatePassAndContainDetail(HPATBookingDetail hpabBookingDetail, HpatDto dto) {
+
+    if (StringUtils.isEmpty(dto.getExpContainer01())) {
+      dto.setExpContainer01(hpabBookingDetail.getContainerNumber());
+    } else {
+      dto.setExpContainer02(hpabBookingDetail.getContainerNumber());
+    }
+
+    if (StringUtils.equals(BookingType.IMPORT.getValue(), hpabBookingDetail.getBookingType().getValue())) {
+
+      if (StringUtils.isEmpty(dto.getImpGatePass01())) {
+        dto.setImpGatePass01(hpabBookingDetail.getImpGatePassNumber());
+
+      } else {
+        dto.setImpGatePass02(hpabBookingDetail.getImpGatePassNumber());
+
+      }
+    }
+
+    if (StringUtils.equals(BookingType.IMPORT_ITT.getValue(), hpabBookingDetail.getBookingType().getValue())) {
+      if (StringUtils.isEmpty(dto.getIttGatePass01())) {
+        dto.setIttGatePass01(hpabBookingDetail.getImpGatePassNumber());
+
+      } else {
+        dto.setIttGatePass02(hpabBookingDetail.getImpGatePassNumber());
+      }
+    }
+
+  }
 
   public String getBookingID() {
     return bookingID;

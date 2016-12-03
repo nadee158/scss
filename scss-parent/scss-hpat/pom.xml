@@ -12,7 +12,7 @@
 
 	<artifactId>scss-hpat</artifactId>
 	<name>scss-hpat</name>
-	<packaging>war</packaging>
+	<packaging>jar</packaging>
 	<url>http://maven.apache.org</url>
 
 	<properties>

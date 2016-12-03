@@ -2,49 +2,18 @@ package com.privasia.scss.common.dto;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Comparator;
-
-import org.apache.commons.lang3.StringUtils;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.privasia.scss.common.enums.HDBSStatus;
-import com.privasia.scss.common.enums.SCSSHDBSStatus;
 import com.privasia.scss.common.util.CommonUtil;
 
-public class HDBSBkgDetailGridDTO implements Serializable {
+public class HDBSBkgDetailDTO implements Serializable {
 
+  /**
+   * 
+   */
   private static final long serialVersionUID = 1L;
 
-  // form.setHdbsBkgDetailNo(rs.getString("BKG_DETAIL_ID"));
-  // form.setHdbsBkgType(rs.getString("HDBS_BKG_TYPE"));
-  // form.setContNo(rs.getString("CONTAINER_NO"));
-  // form.setContSize(rs.getDouble("CONTAINER_SIZE"));
-  // form.setApptStartDateFormat(rs.getTimestamp("APPT_DATETIME_FROM"));
-  // form.setApptEndDateFormat(rs.getTimestamp("APPT_DATETIME_TO_ACTUAL"));
-  // form.setPmHeadNo(rs.getString("PM_HEAD_NO"));
-  // form.setPlateNo(rs.getString("PLATE_NO"));
-  // form.setDepotCode(rs.getString("DEPOT_CODE"));
-  // form.setApptStart(this.convertDateToString(rs.getTimestamp("APPT_DATETIME_FROM")));
-  // form.setApptEnd(this.convertDateToString(rs.getTimestamp("APPT_DATETIME_TO_ACTUAL")));
-  // form.setSmartCardNo(rs.getString("CRD_SCARDNO"));
-  // form.setHdbsStatus(rs.getString("STATUS_CODE"));
-  // form.setHdbsSubmitDateStr(this.convertDateToDateHourMin(rs.getTimestamp("DATETIME_ADD")));
-  // form.setBookingNo(rs.getString("HDBS_BKG_SEQ"));
-
   private String hdbsBKGDetailID;
-
-  private String hDBSBkgMasterPmHeadNo;
-
-  private String hDBSBkgMasterPlateNo;
-
-  private String hDBSBkgMasterDepotCode;
-
-  private String hDBSBkgMasterCardNo;
-
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
-  private LocalDateTime hDBSBkgMasterDateTimeAdd;
-
-  private String hDBSBkgMasterHdbsBookingSeq;
 
   private String appName;
 
@@ -101,7 +70,7 @@ public class HDBSBkgDetailGridDTO implements Serializable {
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
   private LocalDateTime gateOutDateTime;
 
-  private HDBSStatus statusCode;
+  private String statusCode;
 
   private Integer excelDataSeq;
 
@@ -117,7 +86,7 @@ public class HDBSBkgDetailGridDTO implements Serializable {
 
   private String manufactureDate;
 
-  private SCSSHDBSStatus scssStatusCode;
+  private String scssStatusCode;
 
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
   private LocalDateTime newDate;
@@ -147,68 +116,12 @@ public class HDBSBkgDetailGridDTO implements Serializable {
 
   private String hdbsSynch;
 
-  private boolean acceptBooking;
-
-  private String pmHeadNo;
-
-  private String durration = StringUtils.EMPTY;
-  private String status = StringUtils.EMPTY;
-  private String onTimeFlag = StringUtils.EMPTY;
-
   public String getHdbsBKGDetailID() {
     return hdbsBKGDetailID;
   }
 
   public void setHdbsBKGDetailID(String hdbsBKGDetailID) {
     this.hdbsBKGDetailID = hdbsBKGDetailID;
-  }
-
-  public String gethDBSBkgMasterPmHeadNo() {
-    return hDBSBkgMasterPmHeadNo;
-  }
-
-  public void sethDBSBkgMasterPmHeadNo(String hDBSBkgMasterPmHeadNo) {
-    this.hDBSBkgMasterPmHeadNo = hDBSBkgMasterPmHeadNo;
-  }
-
-  public String gethDBSBkgMasterPlateNo() {
-    return hDBSBkgMasterPlateNo;
-  }
-
-  public void sethDBSBkgMasterPlateNo(String hDBSBkgMasterPlateNo) {
-    this.hDBSBkgMasterPlateNo = hDBSBkgMasterPlateNo;
-  }
-
-  public String gethDBSBkgMasterDepotCode() {
-    return hDBSBkgMasterDepotCode;
-  }
-
-  public void sethDBSBkgMasterDepotCode(String hDBSBkgMasterDepotCode) {
-    this.hDBSBkgMasterDepotCode = hDBSBkgMasterDepotCode;
-  }
-
-  public String gethDBSBkgMasterCardNo() {
-    return hDBSBkgMasterCardNo;
-  }
-
-  public void sethDBSBkgMasterCardNo(String hDBSBkgMasterCardNo) {
-    this.hDBSBkgMasterCardNo = hDBSBkgMasterCardNo;
-  }
-
-  public LocalDateTime gethDBSBkgMasterDateTimeAdd() {
-    return hDBSBkgMasterDateTimeAdd;
-  }
-
-  public void sethDBSBkgMasterDateTimeAdd(LocalDateTime hDBSBkgMasterDateTimeAdd) {
-    this.hDBSBkgMasterDateTimeAdd = hDBSBkgMasterDateTimeAdd;
-  }
-
-  public String gethDBSBkgMasterHdbsBookingSeq() {
-    return hDBSBkgMasterHdbsBookingSeq;
-  }
-
-  public void sethDBSBkgMasterHdbsBookingSeq(String hDBSBkgMasterHdbsBookingSeq) {
-    this.hDBSBkgMasterHdbsBookingSeq = hDBSBkgMasterHdbsBookingSeq;
   }
 
   public String getAppName() {
@@ -411,11 +324,11 @@ public class HDBSBkgDetailGridDTO implements Serializable {
     this.gateOutDateTime = gateOutDateTime;
   }
 
-  public HDBSStatus getStatusCode() {
+  public String getStatusCode() {
     return statusCode;
   }
 
-  public void setStatusCode(HDBSStatus statusCode) {
+  public void setStatusCode(String statusCode) {
     this.statusCode = statusCode;
   }
 
@@ -475,11 +388,11 @@ public class HDBSBkgDetailGridDTO implements Serializable {
     this.manufactureDate = manufactureDate;
   }
 
-  public SCSSHDBSStatus getScssStatusCode() {
+  public String getScssStatusCode() {
     return scssStatusCode;
   }
 
-  public void setScssStatusCode(SCSSHDBSStatus scssStatusCode) {
+  public void setScssStatusCode(String scssStatusCode) {
     this.scssStatusCode = scssStatusCode;
   }
 
@@ -554,76 +467,5 @@ public class HDBSBkgDetailGridDTO implements Serializable {
   public void setHdbsSynch(String hdbsSynch) {
     this.hdbsSynch = hdbsSynch;
   }
-
-  public static long getSerialversionuid() {
-    return serialVersionUID;
-  }
-
-  public boolean isAcceptBooking() {
-    return acceptBooking;
-  }
-
-  public void setAcceptBooking(boolean acceptBooking) {
-    this.acceptBooking = acceptBooking;
-  }
-
-  public String getDurration() {
-    return durration;
-  }
-
-  public void setDurration(String durration) {
-    this.durration = durration;
-  }
-
-  public String getStatus() {
-    return status;
-  }
-
-  public void setStatus(String status) {
-    this.status = status;
-  }
-
-  public String getOnTimeFlag() {
-    return onTimeFlag;
-  }
-
-  public void setOnTimeFlag(String onTimeFlag) {
-    this.onTimeFlag = onTimeFlag;
-  }
-
-
-  public String getPmHeadNo() {
-    return pmHeadNo;
-  }
-
-  public void setPmHeadNo(String pmHeadNo) {
-    this.pmHeadNo = pmHeadNo;
-  }
-
-
-  public static Comparator<HDBSBkgDetailGridDTO> ApptDateTimeFromComparator = new Comparator<HDBSBkgDetailGridDTO>() {
-
-    public int compare(HDBSBkgDetailGridDTO dto1, HDBSBkgDetailGridDTO dto2) {
-      if (!(dto1 == null || dto2 == null)) {
-        if (!(dto1.getApptDateTimeFrom() == null || dto2.getApptDateTimeFrom() == null)) {
-          return dto1.getApptDateTimeFrom().compareTo(dto2.getApptDateTimeFrom());
-        } else {
-          if (dto1.getApptDateTimeFrom() != null) {
-            return 1;
-          } else if (dto2.getApptDateTimeFrom() != null) {
-            return -1;
-          }
-        }
-      } else {
-        if (!(dto1 == null)) {
-          return 1;
-        } else if (!(dto2 == null)) {
-          return -1;
-        }
-      }
-      return 0;
-    }
-
-  };
 
 }

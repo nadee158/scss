@@ -1,7 +1,11 @@
 package com.privasia.scss.common.dto;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.privasia.scss.common.util.CommonUtil;
 
 public class HDBSBkgGridDTO implements Serializable {
 
@@ -15,6 +19,9 @@ public class HDBSBkgGridDTO implements Serializable {
   private String smartCardNo;
 
   private String showManual;
+
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+  private LocalDateTime arrivalTime;
 
   private List<HDBSBkgDetailGridDTO> hdbsBkgDetailGridDTOList;
 
@@ -48,6 +55,14 @@ public class HDBSBkgGridDTO implements Serializable {
 
   public void setHdbsBkgDetailGridDTOList(List<HDBSBkgDetailGridDTO> hdbsBkgDetailGridDTOList) {
     this.hdbsBkgDetailGridDTOList = hdbsBkgDetailGridDTOList;
+  }
+
+  public LocalDateTime getArrivalTime() {
+    return arrivalTime;
+  }
+
+  public void setArrivalTime(LocalDateTime arrivalTime) {
+    this.arrivalTime = arrivalTime;
   }
 
 

@@ -115,33 +115,34 @@ public class ReferRejectService {
 
   @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
   public Long saveReferReject(ReferRejectObjetDto referRejectObjetDto) {
-    
+
     if (referRejectObjetDto != null) {
-    SystemUser systemUser = systemUserRepository.findOne(SecurityHelper.getCurrentUserId()).orElseThrow(
-    					() -> new AuthenticationServiceException("Log in User Not Found : " + SecurityHelper.getCurrentUserId()));
-    
-    // bind details via beanutils
-    ReferReject referReject = null;
-    referReject = convertToReferRejectDomain(referRejectObjetDto, referReject, systemUser);
-    
-    ReferReject persisted = referRejectRepository.save(referReject);
-    if (persisted != null) {
-    	return persisted.getReferRejectID();
-    }
-    return 0L;
-    
+      SystemUser systemUser = systemUserRepository.findOne(SecurityHelper.getCurrentUserId()).orElseThrow(
+          () -> new AuthenticationServiceException("Log in User Not Found : " + SecurityHelper.getCurrentUserId()));
+
+      // bind details via beanutils
+      ReferReject referReject = null;
+      referReject = convertToReferRejectDomain(referRejectObjetDto, referReject, systemUser);
+
+      ReferReject persisted = referRejectRepository.save(referReject);
+      if (persisted != null) {
+        return persisted.getReferRejectID();
+      }
+      return 0L;
+
     } else {
-    	throw new BusinessException("No Data given to be updated!");
+      throw new BusinessException("No Data given to be updated!");
     }
-    
-   
+
+
   }
 
-  public ReferReject convertToReferRejectDomain(ReferRejectObjetDto referRejectObjetDto, ReferReject referReject, SystemUser logInUser) {
-    
-	if(referRejectObjetDto.getExpWeightBridge() == 0)
-		throw new BusinessException("Incorrect Weight Bridge !");
-	// automated conversion
+  public ReferReject convertToReferRejectDomain(ReferRejectObjetDto referRejectObjetDto, ReferReject referReject,
+      SystemUser logInUser) {
+
+    if (referRejectObjetDto.getExpWeightBridge() == 0)
+      throw new BusinessException("Incorrect Weight Bridge !");
+    // automated conversion
     referReject = referRejectObjetDto.convertToReferRejectDomain(referReject);
 
     // manual conversion
@@ -182,26 +183,30 @@ public class ReferRejectService {
     // from card take the company
     referReject.setCompany(optionalCard.get().getCompany());
 
-    ReferRejectDetailObjetDto referRejectDetailObjetDto = referRejectObjetDto.getReferRejectDetail();
+    List<ReferRejectDetailObjetDto> referRejectDetailObjetDtos = referRejectObjetDto.getReferRejectDetails();
 
-    if (referRejectDetailObjetDto != null) {
-      
-      ReferRejectDetail referRejectDetail = null;
-     
-      referRejectDetail = convertToReferRejectDetailDomain(referRejectDetailObjetDto, referRejectDetail);
+    if (!(referRejectDetailObjetDtos == null || referRejectDetailObjetDtos.isEmpty())) {
+
       if (referReject.getReferRejectDetails() == null) {
         referReject.setReferRejectDetails(new HashSet<ReferRejectDetail>());
       }
-      referRejectDetail.setReferBy(logInUser);
-      referRejectDetail.setReferReject(referReject);
-      referReject.getReferRejectDetails().add(referRejectDetail);
-    
-    }else{
-    	throw new BusinessException("No Refer Reject Data given to be updated!");
-    }
-    
 
-    return referReject;
+      final ReferReject referRejectF = referReject;
+
+      referRejectDetailObjetDtos.forEach(referRejectDetailObjetDto -> {
+        ReferRejectDetail referRejectDetail = null;
+        referRejectDetail = convertToReferRejectDetailDomain(referRejectDetailObjetDto, referRejectDetail);
+        referRejectDetail.setReferBy(logInUser);
+        referRejectDetail.setReferReject(referRejectF);
+        referRejectF.getReferRejectDetails().add(referRejectDetail);
+      });
+
+      return referRejectF;
+
+    } else {
+      throw new BusinessException("No Refer Reject Data given to be updated!");
+    }
+
   }
 
   public ReferRejectDetail convertToReferRejectDetailDomain(ReferRejectDetailObjetDto referRejectDetailObjetDto,
@@ -220,13 +225,14 @@ public class ReferRejectService {
   }
 
   public void constructReferRejectReasonList(List<Long> referReasonIds, ReferRejectDetail referRejectDetail) {
-    if (referReasonIds != null &&  !referReasonIds.isEmpty()) {
+    if (referReasonIds != null && !referReasonIds.isEmpty()) {
       if (referRejectDetail.getReferRejectReason() == null) {
         referRejectDetail.setReferRejectReason(new HashSet<ReferRejectReason>());
       }
       referReasonIds.forEach(referReasonId -> {
         ReferRejectReason reason = new ReferRejectReason();
-        ReferReason referReason = referReasonRepository.findOne(referReasonId).orElseThrow(() -> new BusinessException("Provided Refer Reson Not Found " + referReasonId));
+        ReferReason referReason = referReasonRepository.findOne(referReasonId)
+            .orElseThrow(() -> new BusinessException("Provided Refer Reson Not Found " + referReasonId));
         reason.setReferReason(referReason);
         reason.setReferRejectDetail(referRejectDetail);
         referRejectDetail.getReferRejectReason().add(reason);

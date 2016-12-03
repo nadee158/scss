@@ -5,9 +5,13 @@ import java.sql.Timestamp;
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.Properties;
@@ -193,6 +197,52 @@ public final class CommonUtil {
       return LocalDateTime.parse(dateString, dateFormat);
     }
     return null;
+  }
+
+  private static LocalDateTime tempDateTime;
+
+  public static String getFormattedDiffrenceBetweenDays(LocalDateTime startDate, LocalDateTime endDate,
+      List<ChronoUnit> units, boolean doAppendChronoUnit) {
+    tempDateTime = null;
+    if (!(startDate == null || endDate == null)) {
+      StringBuilder time = new StringBuilder("");
+      tempDateTime = LocalDateTime.from(startDate);
+      if (units == null || units.isEmpty()) {
+        ChronoUnit[] construtedUnits = {ChronoUnit.YEARS, ChronoUnit.MONTHS, ChronoUnit.DAYS, ChronoUnit.HOURS,
+            ChronoUnit.MINUTES, ChronoUnit.SECONDS, ChronoUnit.MILLIS};
+        units = Arrays.asList(construtedUnits);
+      }
+      units.forEach(chronoUnit -> {
+        long amount = tempDateTime.until(endDate, chronoUnit);
+        tempDateTime = tempDateTime.plus(amount, chronoUnit);
+        if (doAppendChronoUnit) {
+          time.append(String.format("%02d %s", amount, chronoUnit.toString()));
+          time.append(" : ");
+        } else {
+          time.append(String.format("%02d", amount));
+          time.append(":");
+        }
+      });
+      String constructedTime = StringUtils.trim(time.toString());
+      if (constructedTime.endsWith(":")) {
+        constructedTime = constructedTime.substring(0, constructedTime.length() - 1);
+      }
+      return constructedTime;
+    }
+    return null;
+  }
+
+  public static void main(String... ardgs) {
+    LocalDateTime startDate = LocalDateTime.now();
+    LocalDateTime endDate = LocalDateTime.now();
+    endDate = endDate.plus(2, ChronoUnit.HOURS);
+    endDate = endDate.plus(30, ChronoUnit.MINUTES);
+    endDate = endDate.plus(15, ChronoUnit.SECONDS);
+    List<ChronoUnit> units = new ArrayList<>();
+    units.add(ChronoUnit.HOURS);
+    units.add(ChronoUnit.MINUTES);
+    units.add(ChronoUnit.SECONDS);
+    System.err.println(getFormattedDiffrenceBetweenDays(startDate, endDate, units, false));
   }
 
 
