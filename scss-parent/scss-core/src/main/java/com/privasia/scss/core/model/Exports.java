@@ -44,7 +44,7 @@ public class Exports implements Serializable {
 
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_SCSS_EXPORTS")
-  @SequenceGenerator(name = "SEQ_SCSS_EXPORTS", sequenceName = "EXP_EXPORTNO_SEQ")
+  @SequenceGenerator(name = "SEQ_SCSS_EXPORTS", sequenceName = "EXP_EXPORTNO_SEQ", allocationSize = 1)
   @Column(name = "EXP_EXPORTNO_SEQ")
   private Long exportID;
 

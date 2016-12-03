@@ -30,8 +30,19 @@ public class HDBSController {
 	@Autowired
 	private HDBSService hdbsService;
 
-	@RequestMapping(value = "/findbooking/{cardID}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/findbooking/{cardID}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<HDBSBkgDetail>> getHDBSBooking(@PathVariable Long cardID, HttpServletRequest request) {
+		
+		System.out.println("cardID : "+cardID);
+		
+		//List<HDBSBkgDetail> hdbsDetails = hdbsService.findHDBSBookingDetailByIDList(bkgDetailIDList);
+		//return new ResponseEntity<List<HDBSBkgDetail>>(hdbsDetails, HttpStatus.OK);
+		
+		return null;
+	}
+	
+	@RequestMapping(value = "/validate", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<HDBSBkgDetail>> validateBookingSelection(@PathVariable Long cardID, HttpServletRequest request) {
 		
 		System.out.println("cardID : "+cardID);
 		
