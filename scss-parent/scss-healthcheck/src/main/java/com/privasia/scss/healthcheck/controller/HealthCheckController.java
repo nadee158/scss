@@ -36,8 +36,8 @@ public class HealthCheckController {
 
   @RequestMapping(value = "/getinfo/{pageno}/{pagesize}", method = RequestMethod.GET,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-  public CustomResponseEntity<ApiResponseObject<?>> getHealthCheckInfo(@PathVariable int pageNo,
-      @PathVariable int pagesize, HttpServletRequest request) {
+  public CustomResponseEntity<ApiResponseObject<?>> getHealthCheckInfo(@PathVariable Integer pageNo,
+      @PathVariable Integer pagesize, HttpServletRequest request) {
 
     System.out.println("pageNo : " + pageNo);
     System.out.println("pagesize : " + pagesize);

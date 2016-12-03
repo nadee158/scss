@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,7 @@ public class HealthCheckService {
 
   private static final Log log = LogFactory.getLog(HealthCheckService.class);
 
+  @Autowired
   private KioskHLTCheckRepository kioskHLTCheckRepository;
 
   @Transactional(readOnly = true)
