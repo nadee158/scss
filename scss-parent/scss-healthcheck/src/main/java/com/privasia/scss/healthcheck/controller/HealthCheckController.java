@@ -6,8 +6,6 @@ package com.privasia.scss.healthcheck.controller;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -34,15 +32,15 @@ public class HealthCheckController {
   @Autowired
   private HealthCheckService healthCheckService;
 
-  @RequestMapping(value = "/getinfo/{pageno}/{pagesize}", method = RequestMethod.GET,
+  @RequestMapping(value = "/getinfo/{pageNo}/{pageSize}", method = RequestMethod.GET,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-  public CustomResponseEntity<ApiResponseObject<?>> getHealthCheckInfo(@PathVariable Integer pageNo,
-      @PathVariable Integer pagesize, HttpServletRequest request) {
+  public CustomResponseEntity<ApiResponseObject<?>> getHealthCheckInfo(@PathVariable("pageNo") Integer pageNo,
+      @PathVariable("pageSize") Integer pageSize) {
 
     System.out.println("pageNo : " + pageNo);
-    System.out.println("pagesize : " + pagesize);
+    System.out.println("pagesize : " + pageSize);
 
-    List<HealthCheckInfoDTO> list = healthCheckService.getHealthCheckInfo(pageNo, pagesize);
+    List<HealthCheckInfoDTO> list = healthCheckService.getHealthCheckInfo(pageNo, pageSize);
 
     return new CustomResponseEntity<ApiResponseObject<?>>(
         new ApiResponseObject<List<HealthCheckInfoDTO>>(HttpStatus.OK, list), HttpStatus.OK);

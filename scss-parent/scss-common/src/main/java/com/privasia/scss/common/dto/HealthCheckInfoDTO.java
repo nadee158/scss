@@ -23,6 +23,39 @@ public class HealthCheckInfoDTO implements Serializable {
   private String laneNo = StringUtils.EMPTY;
   private String notificationStatus = "N";
 
+
+  // SELECT t1.health_check_seq, t1.kiosk_id, t1.pc_status, t1.creation_time, t1.card_reader_status,
+  // t1.intercom_status, t1.printer_status, \
+  // t1.paper_status, t1.lcd_status, t1.camera_status, t1.web_service_status, t1.booth_id,
+  // t1.lane_number
+
+  public HealthCheckInfoDTO(String healthCheckSeq, String kioskID, String pcStatus, String creationTime,
+      String cardReaderStatus, String intercomStatus, String printerStatus, String paperStatus, String lcdStatus,
+      String cameraStatus, String webServiceStatus, String boothID, String laneNo) {
+    super();
+    this.healthCheckSeq = healthCheckSeq;
+    this.kioskID = kioskID;
+    this.boothID = boothID;
+    this.creationTime = creationTime;
+    this.cardReaderStatus = cardReaderStatus;
+    this.pcStatus = pcStatus;
+    this.intercomStatus = intercomStatus;
+    this.printerStatus = printerStatus;
+    this.paperStatus = paperStatus;
+    this.lcdStatus = lcdStatus;
+    this.cameraStatus = cameraStatus;
+    this.webServiceStatus = webServiceStatus;
+    this.laneNo = laneNo;
+  }
+
+
+
+  public HealthCheckInfoDTO() {
+    super();
+  }
+
+
+
   public String getHealthCheckSeq() {
     return healthCheckSeq;
   }

@@ -1,6 +1,5 @@
 package com.privasia.scss.healthcheck.service;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,17 +41,17 @@ public class HealthCheckService {
     }
     log.info("******* Request for Get Health Check Info ******* ");
     Pageable page = new PageRequest(pageNo, size);
-    List<KioskHLTCheck> kioskHealthCheckInfoList = kioskHLTCheckRepository.listLimitedEntities(page);
-    log.info("******* Response for Get Kiosk Health Check Info******* ");
-    if (!(kioskHealthCheckInfoList == null || kioskHealthCheckInfoList.isEmpty())) {
-      log.info("Response  HealthCheckInfo Size : " + kioskHealthCheckInfoList.size());
-      List<HealthCheckInfoDTO> dtoList = new ArrayList<HealthCheckInfoDTO>();
-      kioskHealthCheckInfoList.forEach(info -> {
-        dtoList.add(info.constructDto());
-      });
-      return dtoList;
-    }
-    return null;
+    return kioskHLTCheckRepository.listLimitedEntities(size);
+    // log.info("******* Response for Get Kiosk Health Check Info******* ");
+    // if (!(kioskHealthCheckInfoList == null || kioskHealthCheckInfoList.isEmpty())) {
+    // log.info("Response HealthCheckInfo Size : " + kioskHealthCheckInfoList.size());
+    // List<HealthCheckInfoDTO> dtoList = new ArrayList<HealthCheckInfoDTO>();
+    // kioskHealthCheckInfoList.forEach(info -> {
+    // dtoList.add(info.constructDto());
+    // });
+    // return dtoList;
+    // }
+    // return null;
   }
 
   @Transactional(readOnly = false)

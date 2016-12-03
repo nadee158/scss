@@ -121,29 +121,6 @@ public class KioskHLTCheck extends AuditEntity implements Serializable {
   }
 
 
-
-  public KioskHLTCheck(Long addBy, Long updateBy, LocalDateTime dateTimeAdd, LocalDateTime dateTimeUpdate, Long version,
-      Client kioskID, KioskHLTCheckStatus cardReaderStatus, KioskHLTCheckStatus pCStatus,
-      KioskHLTCheckStatus intercomStatus, KioskHLTCheckStatus printerStatus, String paperStatus, String lCDStatus,
-      KioskHLTCheckStatus cameraStatus, String webServiceStatus, Client boothID, String laneNumber,
-      Boolean notificationStatus) {
-    super(addBy, updateBy, dateTimeAdd, dateTimeUpdate, version);
-    this.kioskID = kioskID;
-    this.cardReaderStatus = cardReaderStatus;
-    this.pCStatus = pCStatus;
-    this.intercomStatus = intercomStatus;
-    this.printerStatus = printerStatus;
-    this.paperStatus = paperStatus;
-    this.lCDStatus = lCDStatus;
-    this.cameraStatus = cameraStatus;
-    this.webServiceStatus = webServiceStatus;
-    this.boothID = boothID;
-    this.laneNumber = laneNumber;
-    this.notificationStatus = notificationStatus;
-  }
-
-
-
   public KioskHLTCheck() {
     super();
   }
