@@ -25,6 +25,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Type;
 
 import com.privasia.scss.common.enums.ContainerPosition;
+import com.privasia.scss.common.enums.ExportOPTFlagType;
 import com.privasia.scss.common.enums.GCS_SSRBlockStatusType;
 import com.privasia.scss.common.enums.GateInOutStatus;
 import com.privasia.scss.common.enums.VesselStatus;
@@ -52,17 +53,17 @@ public class Exports implements Serializable {
   @AttributeOverrides({@AttributeOverride(name = "containerNumber", column = @Column(name = "EXP_CONTAINERNO") ),
       @AttributeOverride(name = "containerISOCode", column = @Column(name = "EXP_CONT_ISO_CODE") ),
       @AttributeOverride(name = "containerLength", column = @Column(name = "CONT_LENGTH") ),
-      @AttributeOverride(name = "containerFullOrEmpty", column = @Column(name = "EXP_FULL_EMPTY_FLAG") )})
+      @AttributeOverride(name = "containerFullOrEmpty", column = @Column(name = "EXP_FULL_EMPTY_FLAG", nullable = true) )})
   private CommonContainerAttribute container;
 
   @Embedded
   @AttributeOverrides({@AttributeOverride(name = "timeGateIn", column = @Column(name = "EXP_TIMEGATEIN") ),
-      @AttributeOverride(name = "timeGateInOk", column = @Column(name = "GTP_TIMEGATEINOK") ),
+      @AttributeOverride(name = "timeGateInOk", column = @Column(name = "EXP_TIMEGATEINOK") ),
       @AttributeOverride(name = "timeGateOut", column = @Column(name = "EXP_TIMEGATEOUT") ),
       @AttributeOverride(name = "timeGateOutOk", column = @Column(name = "EXP_TIMEGATEOUTOK") ),
       @AttributeOverride(name = "eirNumber", column = @Column(name = "EXP_EIRNO") ),
-      @AttributeOverride(name = "eirStatus", column = @Column(name = "EXP_EIRSTATUS") ),
-      @AttributeOverride(name = "impExpFlag", column = @Column(name = "EXP_IMPEXPFLAG") ),
+      @AttributeOverride(name = "eirStatus", column = @Column(name = "EXP_EIRSTATUS", nullable = true) ),
+      @AttributeOverride(name = "impExpFlag", column = @Column(name = "EXP_IMPEXPFLAG", nullable = true) ),
       @AttributeOverride(name = "rejectReason", column = @Column(name = "EXP_REJECTREASON") ),
       @AttributeOverride(name = "pmHeadNo", column = @Column(name = "EXP_TRUCK_HEAD_NO") ),
       @AttributeOverride(name = "pmPlateNo", column = @Column(name = "EXP_TRUCK_PLATE_NO") ),
@@ -78,16 +79,21 @@ public class Exports implements Serializable {
   })
   @AssociationOverrides({
       @AssociationOverride(name = "card",
-          joinColumns = @JoinColumn(name = "EXP_HCTDID", referencedColumnName = "CRD_CARDID_SEQ") ),
+          joinColumns = @JoinColumn(name = "EXP_HCTDID", referencedColumnName = "CRD_CARDID_SEQ", nullable = true) ),
       @AssociationOverride(name = "gateInClerk",
-          joinColumns = @JoinColumn(name = "EXP_GATEINCLERKID", referencedColumnName = "SYS_USERID_SEQ") ),
+          joinColumns = @JoinColumn(name = "EXP_GATEINCLERKID", referencedColumnName = "SYS_USERID_SEQ", nullable = true) ),
       @AssociationOverride(name = "gateOutClerk",
-          joinColumns = @JoinColumn(name = "EXP_GATEOUTCLERKID", referencedColumnName = "SYS_USERID_SEQ") ),
+          joinColumns = @JoinColumn(name = "EXP_GATEOUTCLERKID", referencedColumnName = "SYS_USERID_SEQ", nullable = true) ),
       @AssociationOverride(name = "gateInClient",
-          joinColumns = @JoinColumn(name = "CLI_CLIENTID_GATEIN", referencedColumnName = "CLI_CLIENTID_SEQ") ),
+          joinColumns = @JoinColumn(name = "CLI_CLIENTID_GATEIN", referencedColumnName = "CLI_CLIENTID_SEQ", nullable = true) ),
       @AssociationOverride(name = "gateOutClient",
-          joinColumns = @JoinColumn(name = "CLI_CLIENTID_GATEOUT", referencedColumnName = "CLI_CLIENTID_SEQ") )})
+          joinColumns = @JoinColumn(name = "CLI_CLIENTID_GATEOUT", referencedColumnName = "CLI_CLIENTID_SEQ", nullable = true) )})
   private CommonGateInOutAttribute commonGateInOut;
+  
+  
+  @Column(name = "EXP_MANUALOPTFLAG", nullable = true)
+  @Type(type = "com.privasia.scss.common.enumusertype.ExportOPTFlagEnumUserType")
+  private ExportOPTFlagType optFlag;
 
   @Column(name = "EXP_BOOKINGNO")
   private String bookingNo;

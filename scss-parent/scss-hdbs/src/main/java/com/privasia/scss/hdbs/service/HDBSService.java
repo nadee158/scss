@@ -22,6 +22,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.privasia.scss.common.dto.HDBSBkgDetailGridDTO;
 import com.privasia.scss.common.dto.HDBSBkgGridDTO;
+import com.privasia.scss.common.enums.ContainerSize;
+import com.privasia.scss.common.enums.HDBSBookingType;
 import com.privasia.scss.common.enums.HDBSStatus;
 import com.privasia.scss.common.util.ApplicationConstants;
 import com.privasia.scss.common.util.CommonUtil;
@@ -59,12 +61,58 @@ public class HDBSService {
 
   @Autowired
   private ModelMapper modelMapper;
-
+  
+  @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
   public List<HDBSBkgDetail> findHDBSBookingDetailByIDList(List<String> bkgDetailIDList) {
 
     Stream<HDBSBkgDetail> bkgDetails = hdbsBookingDetailRepository.findByHdbsBKGDetailIDIn(bkgDetailIDList);
 
     return bkgDetails.collect(Collectors.toList());
+  }
+  
+  
+  @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
+  public String validateSelectedHDBSBookingDetails(List<String> bkgDetailIDList) {
+
+	List<HDBSBkgDetail> bkgDetails = findHDBSBookingDetailByIDList(bkgDetailIDList);
+    
+	Long import40Count = bkgDetails.stream().filter(bkgDetail -> {
+		return bkgDetail.getHdbsBkgType().equals(HDBSBookingType.PICKUP) && bkgDetail.getContainerSize().equals(ContainerSize.SIZE_40);
+	}).count();
+	
+	if(import40Count > 1)
+		throw new BusinessException("Two Import 40ft Length Container");
+	
+	Long import20Count = bkgDetails.stream().filter(bkgDetail -> {
+		return bkgDetail.getHdbsBkgType().equals(HDBSBookingType.PICKUP) && bkgDetail.getContainerSize().equals(ContainerSize.SIZE_20);
+	}).count();
+	
+	if(import20Count > 2)
+		throw new BusinessException("More than two 20ft Length Container");
+	
+	if(import40Count == 1 && import20Count == 1)
+		throw new BusinessException("Invalid transaction with two container sizes exceeding 40ft");
+	
+	Long export40Count = bkgDetails.stream().filter(bkgDetail -> {
+		return bkgDetail.getHdbsBkgType().equals(HDBSBookingType.DROP) && bkgDetail.getContainerSize().equals(ContainerSize.SIZE_40);
+	}).count();
+	
+	if(export40Count > 1)
+		throw new BusinessException("Two Export 40ft Length Container");
+	
+	Long export20Count = bkgDetails.stream().filter(bkgDetail -> {
+		return bkgDetail.getHdbsBkgType().equals(HDBSBookingType.PICKUP) && bkgDetail.getContainerSize().equals(ContainerSize.SIZE_20);
+	}).count();
+	
+	
+	if(export20Count > 2)
+		throw new BusinessException("More than two Export 20ft Length Container");
+    
+	if(export40Count == 1 && export20Count == 1)
+		throw new BusinessException("Invalid transaction with two container sizes exceeding 40ft");
+	
+	return "validation success";
+    
   }
 
   @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
