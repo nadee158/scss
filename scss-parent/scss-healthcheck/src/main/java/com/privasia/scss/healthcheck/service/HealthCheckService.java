@@ -1,5 +1,6 @@
 package com.privasia.scss.healthcheck.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,17 +42,17 @@ public class HealthCheckService {
     }
     log.info("******* Request for Get Health Check Info ******* ");
     Pageable page = new PageRequest(pageNo, size);
-    return kioskHLTCheckRepository.listLimitedEntities(size);
-    // log.info("******* Response for Get Kiosk Health Check Info******* ");
-    // if (!(kioskHealthCheckInfoList == null || kioskHealthCheckInfoList.isEmpty())) {
-    // log.info("Response HealthCheckInfo Size : " + kioskHealthCheckInfoList.size());
-    // List<HealthCheckInfoDTO> dtoList = new ArrayList<HealthCheckInfoDTO>();
-    // kioskHealthCheckInfoList.forEach(info -> {
-    // dtoList.add(info.constructDto());
-    // });
-    // return dtoList;
-    // }
-    // return null;
+    List<KioskHLTCheck> kioskHealthCheckInfoList = kioskHLTCheckRepository.listLimitedEntities(size);
+    log.info("******* Response for Get Kiosk Health Check Info******* ");
+    if (!(kioskHealthCheckInfoList == null || kioskHealthCheckInfoList.isEmpty())) {
+      log.info("Response  HealthCheckInfo Size : " + kioskHealthCheckInfoList.size());
+      List<HealthCheckInfoDTO> dtoList = new ArrayList<HealthCheckInfoDTO>();
+      kioskHealthCheckInfoList.forEach(info -> {
+        dtoList.add(info.constructDto());
+      });
+      return dtoList;
+    }
+    return null;
   }
 
   @Transactional(readOnly = false)
@@ -61,7 +62,7 @@ public class HealthCheckService {
     log.info("******* Request for Save Kiosk Health Check Info ******* ");
     log.info("Request  Health Check Info : " + healthCheckInfo);
 
-    KioskHLTCheck kioskHLTCheck = new KioskHLTCheck(healthCheckInfo);
+    KioskHLTCheck kioskHLTCheck = new KioskHLTCheck();
     if (StringUtils.isNotEmpty(healthCheckInfo.getKioskID())) {
       long kioskId = Long.parseLong(healthCheckInfo.getKioskID());
       Optional<Client> client = clientRepository.findOne(kioskId);

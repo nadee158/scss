@@ -127,18 +127,18 @@ public class KioskHLTCheck extends AuditEntity implements Serializable {
 
 
 
-  public KioskHLTCheck(HealthCheckInfoDTO healthCheckInfo) {
-    this.cardReaderStatus = KioskHLTCheckStatus.fromValue(healthCheckInfo.getCardReaderStatus());
-    this.pCStatus = KioskHLTCheckStatus.fromValue(healthCheckInfo.getPcStatus());
-    this.intercomStatus = KioskHLTCheckStatus.fromValue(healthCheckInfo.getIntercomStatus());
-    this.printerStatus = KioskHLTCheckStatus.fromValue(healthCheckInfo.getPrinterStatus());
-    this.paperStatus = healthCheckInfo.getPaperStatus();
-    this.lCDStatus = healthCheckInfo.getLcdStatus();
-    this.cameraStatus = KioskHLTCheckStatus.fromValue(healthCheckInfo.getCameraStatus());
-    this.webServiceStatus = healthCheckInfo.getWebServiceStatus();
-    this.laneNumber = healthCheckInfo.getLaneNo();
-    this.notificationStatus = Boolean.valueOf(healthCheckInfo.getNotificationStatus());
-  }
+  // public KioskHLTCheck(HealthCheckInfoDTO healthCheckInfo) {
+  // this.cardReaderStatus = KioskHLTCheckStatus.fromValue(healthCheckInfo.getCardReaderStatus());
+  // this.pCStatus = KioskHLTCheckStatus.fromValue(healthCheckInfo.getPcStatus());
+  // this.intercomStatus = KioskHLTCheckStatus.fromValue(healthCheckInfo.getIntercomStatus());
+  // this.printerStatus = KioskHLTCheckStatus.fromValue(healthCheckInfo.getPrinterStatus());
+  // this.paperStatus = healthCheckInfo.getPaperStatus();
+  // this.lCDStatus = healthCheckInfo.getLcdStatus();
+  // this.cameraStatus = KioskHLTCheckStatus.fromValue(healthCheckInfo.getCameraStatus());
+  // this.webServiceStatus = healthCheckInfo.getWebServiceStatus();
+  // this.laneNumber = healthCheckInfo.getLaneNo();
+  // this.notificationStatus = Boolean.valueOf(healthCheckInfo.getNotificationStatus());
+  // }
 
 
 
