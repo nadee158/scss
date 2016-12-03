@@ -17,7 +17,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.Type;
 
 import com.privasia.scss.common.dto.HealthCheckInfoDTO;
@@ -39,7 +38,7 @@ public class KioskHLTCheck extends AuditEntity implements Serializable {
 
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_SCSS_KIOSK_HLT_CHECK")
-  @SequenceGenerator(name = "SEQ_SCSS_KIOSK_HLT_CHECK", sequenceName = "HEALTH_CHECK_SEQ")
+  @SequenceGenerator(name = "SEQ_SCSS_KIOSK_HLT_CHECK", sequenceName = "HEALTH_CHECK_SEQ", allocationSize = 1)
   @Column(name = "HEALTH_CHECK_SEQ")
   private Long healthCheckSeq;
 
@@ -82,7 +81,7 @@ public class KioskHLTCheck extends AuditEntity implements Serializable {
   // Camera Down
   @Column(name = "CAMERA_STATUS")
   @Type(type = "com.privasia.scss.common.enumusertype.KioskHLTCheckStatusEnumUserType")
-  private String cameraStatus;
+  private KioskHLTCheckStatus cameraStatus;
 
   @Column(name = "WEB_SERVICE_STATUS")
   private String webServiceStatus;
@@ -104,7 +103,7 @@ public class KioskHLTCheck extends AuditEntity implements Serializable {
   // t1.LANE_NUMBER
   public KioskHLTCheck(Long healthCheckSeq, Client kioskID, KioskHLTCheckStatus pCStatus, LocalDateTime dateTimeAdd,
       KioskHLTCheckStatus cardReaderStatus, KioskHLTCheckStatus intercomStatus, KioskHLTCheckStatus printerStatus,
-      String paperStatus, String lCDStatus, String cameraStatus, String webServiceStatus, Client boothID,
+      String paperStatus, String lCDStatus, KioskHLTCheckStatus cameraStatus, String webServiceStatus, Client boothID,
       String laneNumber) {
     super();
     this.healthCheckSeq = healthCheckSeq;
@@ -126,7 +125,8 @@ public class KioskHLTCheck extends AuditEntity implements Serializable {
   public KioskHLTCheck(Long addBy, Long updateBy, LocalDateTime dateTimeAdd, LocalDateTime dateTimeUpdate, Long version,
       Client kioskID, KioskHLTCheckStatus cardReaderStatus, KioskHLTCheckStatus pCStatus,
       KioskHLTCheckStatus intercomStatus, KioskHLTCheckStatus printerStatus, String paperStatus, String lCDStatus,
-      String cameraStatus, String webServiceStatus, Client boothID, String laneNumber, Boolean notificationStatus) {
+      KioskHLTCheckStatus cameraStatus, String webServiceStatus, Client boothID, String laneNumber,
+      Boolean notificationStatus) {
     super(addBy, updateBy, dateTimeAdd, dateTimeUpdate, version);
     this.kioskID = kioskID;
     this.cardReaderStatus = cardReaderStatus;
@@ -151,26 +151,14 @@ public class KioskHLTCheck extends AuditEntity implements Serializable {
 
 
   public KioskHLTCheck(HealthCheckInfoDTO healthCheckInfo) {
-    if (StringUtils.isNotEmpty(healthCheckInfo.getKioskID())) {
-      long kioskId = Long.parseLong(healthCheckInfo.getKioskID());
-      Client client = new Client();
-      client.setClientID(kioskId);
-      this.kioskID = client;
-    }
     this.cardReaderStatus = KioskHLTCheckStatus.fromValue(healthCheckInfo.getCardReaderStatus());
     this.pCStatus = KioskHLTCheckStatus.fromValue(healthCheckInfo.getPcStatus());
     this.intercomStatus = KioskHLTCheckStatus.fromValue(healthCheckInfo.getIntercomStatus());
     this.printerStatus = KioskHLTCheckStatus.fromValue(healthCheckInfo.getPrinterStatus());
     this.paperStatus = healthCheckInfo.getPaperStatus();
     this.lCDStatus = healthCheckInfo.getLcdStatus();
-    this.cameraStatus = healthCheckInfo.getCameraStatus();
+    this.cameraStatus = KioskHLTCheckStatus.fromValue(healthCheckInfo.getCameraStatus());
     this.webServiceStatus = healthCheckInfo.getWebServiceStatus();
-    if (StringUtils.isNotEmpty(healthCheckInfo.getBoothID())) {
-      long boothId = Long.parseLong(healthCheckInfo.getBoothID());
-      Client client = new Client();
-      client.setClientID(boothId);
-      this.boothID = client;
-    }
     this.laneNumber = healthCheckInfo.getLaneNo();
     this.notificationStatus = Boolean.valueOf(healthCheckInfo.getNotificationStatus());
   }
@@ -241,13 +229,18 @@ public class KioskHLTCheck extends AuditEntity implements Serializable {
     this.lCDStatus = lCDStatus;
   }
 
-  public String getCameraStatus() {
+
+  public KioskHLTCheckStatus getCameraStatus() {
     return cameraStatus;
   }
 
-  public void setCameraStatus(String cameraStatus) {
+
+
+  public void setCameraStatus(KioskHLTCheckStatus cameraStatus) {
     this.cameraStatus = cameraStatus;
   }
+
+
 
   public String getWebServiceStatus() {
     return webServiceStatus;
@@ -288,7 +281,10 @@ public class KioskHLTCheck extends AuditEntity implements Serializable {
     if (!(this.boothID == null)) {
       dto.setBoothID(Long.toString(boothID.getClientID()));
     }
-    dto.setCameraStatus(cameraStatus);
+    if (!(cameraStatus == null)) {
+      dto.setCameraStatus(cameraStatus.getValue());
+    }
+
     if (!(this.cardReaderStatus == null)) {
       dto.setCardReaderStatus(cardReaderStatus.getValue());
     }

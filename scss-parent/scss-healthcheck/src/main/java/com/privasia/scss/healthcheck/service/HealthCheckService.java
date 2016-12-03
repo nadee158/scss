@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +18,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.privasia.scss.common.dto.HealthCheckInfoDTO;
 import com.privasia.scss.common.util.ApplicationConstants;
 import com.privasia.scss.common.util.CommonUtil;
+import com.privasia.scss.core.model.Client;
 import com.privasia.scss.core.model.KioskHLTCheck;
+import com.privasia.scss.core.repository.ClientRepository;
 import com.privasia.scss.core.repository.KioskHLTCheckRepository;
 
 @Service("healthCheckService")
@@ -27,6 +31,9 @@ public class HealthCheckService {
 
   @Autowired
   private KioskHLTCheckRepository kioskHLTCheckRepository;
+
+  @Autowired
+  private ClientRepository clientRepository;
 
   @Transactional(readOnly = true)
   public List<HealthCheckInfoDTO> getHealthCheckInfo(int pageNo, int size) {
@@ -56,6 +63,21 @@ public class HealthCheckService {
     log.info("Request  Health Check Info : " + healthCheckInfo);
 
     KioskHLTCheck kioskHLTCheck = new KioskHLTCheck(healthCheckInfo);
+    if (StringUtils.isNotEmpty(healthCheckInfo.getKioskID())) {
+      long kioskId = Long.parseLong(healthCheckInfo.getKioskID());
+      Optional<Client> client = clientRepository.findOne(kioskId);
+      if (client.isPresent()) {
+        kioskHLTCheck.setKioskID(client.get());
+      }
+    }
+
+    if (StringUtils.isNotEmpty(healthCheckInfo.getBoothID())) {
+      long boothId = Long.parseLong(healthCheckInfo.getBoothID());
+      Optional<Client> client = clientRepository.findOne(boothId);
+      if (client.isPresent()) {
+        kioskHLTCheck.setBoothID(client.get());
+      }
+    }
 
     KioskHLTCheck persisted = kioskHLTCheckRepository.save(kioskHLTCheck);
 
