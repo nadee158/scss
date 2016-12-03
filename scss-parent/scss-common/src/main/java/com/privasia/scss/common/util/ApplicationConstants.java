@@ -103,4 +103,9 @@ public interface ApplicationConstants {
   public static final String EXPIRED = "EXPIRED";
   public static final String EARLY = "EARLY";
   public static final String CANCEL = "CAN";
+
+  public static final String MESSAGE_OK = "OK";
+  public static final String MESSAGE_NOK = "NOK";
+  public static final String MESSAGE_CODE = "code";
+  public static final String MESSAGE_DESCRIPTION = "description";
 }

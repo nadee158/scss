@@ -156,5 +156,6 @@
     <module>scss-client</module>
     <module>scss-auth</module>
 	<module>scss-express</module>
+	<module>scss-healthcheck</module>
   </modules>
 </project>
