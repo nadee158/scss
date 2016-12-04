@@ -13,6 +13,16 @@ public class NotificationDTO implements Serializable {
   private String root;
   private String description;
 
+  public NotificationDTO() {
+    super();
+  }
+
+  public NotificationDTO(String kioskId, String root, String description) {
+    this.id = kioskId;
+    this.root = root;
+    this.description = description;
+  }
+
   public String getId() {
     return id;
   }

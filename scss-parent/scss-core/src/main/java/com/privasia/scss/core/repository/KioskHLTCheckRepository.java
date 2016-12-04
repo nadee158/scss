@@ -1,6 +1,8 @@
 package com.privasia.scss.core.repository;
 
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
@@ -12,11 +14,11 @@ public interface KioskHLTCheckRepository extends BaseRepository<KioskHLTCheck, L
   @Query(name = "KioskHLTCheck.KioskHealthCheckInfo")
   public Page<KioskHLTCheck> kioskHealthCheckInfo(Pageable pageRequest);
 
-  @Query(name = "KioskHLTCheck.KioskHealthCheckInfoForNofitication")
-  public Page<KioskHLTCheck> getKioskHealthCheckInfoForNofitication(Boolean notificationStatus, Pageable pageRequest);
+  // @Query(name = "KioskHLTCheck.KioskHealthCheckInfoForNofitication")
+  public List<KioskHLTCheck> findByNotificationStatus(Boolean notificationStatus, Pageable pageRequest);
 
   @Query(name = "KioskHLTCheck.CountHealthCheckInfoForNofitication")
-  public Long countHealthCheckInfoForNofitication(Boolean notificationStatus);
+  public Long getCountHealthCheckInfoForNofitication(Boolean notificationStatus);
 
 
 
