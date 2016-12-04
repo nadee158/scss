@@ -27,12 +27,12 @@ import com.privasia.scss.common.enums.ButtonType;
 import com.privasia.scss.common.util.CommonUtil;
 import com.privasia.scss.common.util.DateUtil;
 import com.privasia.scss.common.util.ReturnMsg;
+import com.privasia.scss.core.service.WDCGlobalSettingService;
 import com.privasia.scss.gatein.dto.ExportSSR;
 import com.privasia.scss.gatein.service.ClientService;
 import com.privasia.scss.gatein.service.ContainerService;
 import com.privasia.scss.gatein.service.IsoCodeService;
 import com.privasia.scss.gatein.service.VesselOmitService;
-import com.privasia.scss.gatein.service.WDCGlobalSettingService;
 import com.privasia.scss.gatein.util.DGContDesc;
 
 
@@ -266,7 +266,7 @@ public class GateInExpNormalController {
     }
 
     String globalCode = "LPK_EDI";
-    String globalSetting = wDCGlobalSettingService.getWDCGlobalSeeting(globalCode);
+    String globalSetting = wDCGlobalSettingService.getWDCGlobalSetting(globalCode);
     if ("Y".equalsIgnoreCase(globalSetting)) {
 
       c.setLpkEdiEnabled("Y");

@@ -47,7 +47,7 @@ public class MasterDataController {
 
   @Autowired
   private ODDMasterDataService oddMasterDataService;
-  
+
   @Autowired
   private ClientMasterDataService clientMasterDataService;
 
@@ -114,14 +114,15 @@ public class MasterDataController {
     return new CustomResponseEntity<ApiResponseObject<?>>(
         new ApiResponseObject<List<ODDImportReason>>(HttpStatus.OK, oddImportReason), HttpStatus.OK);
   }
-  
-  @RequestMapping(value = "client/bywebip", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public CustomResponseEntity<ApiResponseObject<?>> getClientInfoByWebIP(@RequestBody Map<String, String> json) {
-		System.out.println("ipAddress :" + json.get("ipAddress"));
-		Client clientInfo = clientMasterDataService.getClientByWebIP(json.get("ipAddress"));
-		return new CustomResponseEntity<ApiResponseObject<?>>(new ApiResponseObject<Client>(HttpStatus.OK, clientInfo),
-				HttpStatus.OK);
-		
-	}
+
+  @RequestMapping(value = "client/bywebip", method = RequestMethod.POST,
+      produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+  public CustomResponseEntity<ApiResponseObject<?>> getClientInfoByWebIP(@RequestBody Map<String, String> json) {
+    System.out.println("ipAddress :" + json.get("ipAddress"));
+    Client clientInfo = clientMasterDataService.getClientByWebIP(json.get("ipAddress"));
+    return new CustomResponseEntity<ApiResponseObject<?>>(new ApiResponseObject<Client>(HttpStatus.OK, clientInfo),
+        HttpStatus.OK);
+
+  }
 
 }

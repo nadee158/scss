@@ -21,8 +21,10 @@ import org.springframework.stereotype.Service;
 
 import com.privasia.scss.common.dto.NotificationDTO;
 import com.privasia.scss.common.enums.KioskHLTCheckStatus;
+import com.privasia.scss.common.util.NotificationSentStatus;
 import com.privasia.scss.core.model.KioskHLTCheck;
 import com.privasia.scss.core.repository.KioskHLTCheckRepository;
+import com.privasia.scss.core.util.service.MailUtil;
 
 @Service("notificationService")
 public class NotificationService {
@@ -33,19 +35,25 @@ public class NotificationService {
   @Value("${kioskhealthcheckmails.pagesize}")
   private int pageSize;
 
+  @Autowired
+  private MailUtil mailUtil;
+
   public void sendKioskHealthCheckMails() {
     Boolean notificationStatus = false;
 
     long totalPendingNotificationCount =
         kioskHLTCheckRepository.getCountHealthCheckInfoForNofitication(notificationStatus);
-
+    System.out.println("totalPendingNotificationCount :" + totalPendingNotificationCount);
     if (totalPendingNotificationCount > 0) {
       long fetchedCount = 0;
       while (fetchedCount <= totalPendingNotificationCount) {
+        System.out.println("fetchedCount BEFORE :" + fetchedCount);
         fetchedCount = fetchedCount + pageSize;
+        System.out.println("fetchedCount AFTER :" + fetchedCount);
         Map<String, List<NotificationDTO>> notifications = getNotifications(notificationStatus);
         if (!(notifications == null || notifications.isEmpty())) {
-
+          NotificationSentStatus status = mailUtil.sendEmail(notifications);
+          System.out.println("NotificationSentStatus :" + status);
         }
       }
 
@@ -124,6 +132,7 @@ public class NotificationService {
 
         });
       }
+      return results;
     }
     return null;
   }
