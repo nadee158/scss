@@ -157,5 +157,6 @@
     <module>scss-auth</module>
 	<module>scss-express</module>
 	<module>scss-healthcheck</module>
+	<module>scss-scheduler</module>
   </modules>
 </project>
