@@ -221,7 +221,10 @@ public class Exports implements Serializable {
 
   @Column(name = "DATE_VESSEL_ATA")
   private LocalDateTime vesselATADate;
-
+  
+  @Column(name = "EXP_AGENT_CODE")
+  private String agentCode;
+  
   @Column(name = " EXP_HAS_OOG_SSR", nullable = true)
   @Type(type = "yes_no")
   private Boolean oogSSR;

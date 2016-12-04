@@ -1,28 +1,32 @@
 package com.privasia.scss.healthcheck.service;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.PropertyMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.privasia.scss.common.dto.HealthCheckInfoDTO;
+import com.privasia.scss.common.dto.HealthCheckInfoDTO2;
+import com.privasia.scss.common.enums.KioskHLTCheckStatus;
 import com.privasia.scss.common.util.ApplicationConstants;
 import com.privasia.scss.common.util.CommonUtil;
 import com.privasia.scss.core.model.Client;
 import com.privasia.scss.core.model.KioskHLTCheck;
-import com.privasia.scss.core.model.ReferReject;
 import com.privasia.scss.core.repository.ClientRepository;
 import com.privasia.scss.core.repository.KioskHLTCheckRepository;
 
@@ -37,45 +41,55 @@ public class HealthCheckService {
 
   @Autowired
   private ClientRepository clientRepository;
+  
+  @Autowired
+  private ModelMapper modelMapper;
 
-  @Transactional(readOnly = true)
-  public List<HealthCheckInfoDTO> getHealthCheckInfo(int pageNo, int size) {
-    if (size <= 0) {
-      size = 14;
-    }
+
+  @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
+  public List<HealthCheckInfoDTO2> getHealthCheckInfo(int size) {
+    
     log.info("******* Request for Get Health Check Info ******* "); 
-    Pageable page = new PageRequest(pageNo, size);
+ 
+    Pageable pageRequest = new PageRequest(0, size, Sort.Direction.ASC, "dateTimeAdd");
     
-    Pageable pageRequest = new PageRequest(0, 15, Sort.Direction.ASC, "dateTimeAdd");
-    
-    Page<KioskHLTCheck> kioskHealthCheckPages = kioskHLTCheckRepository.listLimitedEntities(pageRequest);
+    Page<KioskHLTCheck> kioskHealthCheckPages = kioskHLTCheckRepository.kioskHealthCheckInfo(pageRequest);
     
     List<KioskHLTCheck> kioskHealthCheckInfoList = kioskHealthCheckPages.getContent();
     log.info("******* Response for Get Kiosk Health Check Info******* ");
-    if (!(kioskHealthCheckInfoList == null || kioskHealthCheckInfoList.isEmpty())) {
+    
+    if (kioskHealthCheckInfoList != null && !kioskHealthCheckInfoList.isEmpty()) {
       log.info("Response  HealthCheckInfo Size : " + kioskHealthCheckInfoList.size());
-      List<HealthCheckInfoDTO> dtoList = new ArrayList<HealthCheckInfoDTO>();
-      kioskHealthCheckInfoList.forEach(info -> {
-        dtoList.add(info.constructDto());
-      });
-      return dtoList;
+      
+     return kioskHealthCheckInfoList.stream()
+      					.map(kioskHLTCheck -> convertDomainToDto(kioskHLTCheck)).collect(Collectors.toList());
+     
     }
     return null;
   }
 
-  @Transactional(readOnly = false)
-  public Map<String, String> saveKioskHealthCheckInfo(HealthCheckInfoDTO healthCheckInfo) {
+  @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
+  public Map<String, String> saveKioskHealthCheckInfo(HealthCheckInfoDTO2 healthCheckInfo) {
     Map<String, String> resultMap = new HashMap<String, String>();
 
     log.info("******* Request for Save Kiosk Health Check Info ******* ");
     log.info("Request  Health Check Info : " + healthCheckInfo);
+    
+    
+    KioskHLTCheck kioskHLTCheck = convertDTOToDomain(healthCheckInfo);
+    
+    System.out.println("getLaneNumber : " + kioskHLTCheck.getLaneNumber());
+    System.out.println("getCardReaderStatus : " + kioskHLTCheck.getCardReaderStatus());
+    System.out.println("getKiosk().getClientID() : " + kioskHLTCheck.getKiosk().getClientID());
+    System.out.println("getBooth().getClientID() : " + kioskHLTCheck.getBooth().getClientID());
+    System.out.println("getCameraStatus : " + kioskHLTCheck.getCameraStatus());
 
-    KioskHLTCheck kioskHLTCheck = new KioskHLTCheck();
+    /*KioskHLTCheck kioskHLTCheck = new KioskHLTCheck();
     if (StringUtils.isNotEmpty(healthCheckInfo.getKioskID())) {
       long kioskId = Long.parseLong(healthCheckInfo.getKioskID());
       Optional<Client> client = clientRepository.findOne(kioskId);
       if (client.isPresent()) {
-        kioskHLTCheck.setKioskID(client.get());
+        kioskHLTCheck.setKiosk(client.get());
       }
     }
 
@@ -83,7 +97,7 @@ public class HealthCheckService {
       long boothId = Long.parseLong(healthCheckInfo.getBoothID());
       Optional<Client> client = clientRepository.findOne(boothId);
       if (client.isPresent()) {
-        kioskHLTCheck.setBoothID(client.get());
+        kioskHLTCheck.setBooth(client.get());
       }
     }
 
@@ -100,10 +114,45 @@ public class HealthCheckService {
     }
 
     log.info("******* Response for Save Kiosk Health Check Info******* ");
-    log.info("Response  resultMap Info : " + resultMap);
+    log.info("Response  resultMap Info : " + resultMap);*/
 
     return resultMap;
 
+  }
+  
+  
+  private HealthCheckInfoDTO2 convertDomainToDto(KioskHLTCheck healthCheckInfo) {
+	  HealthCheckInfoDTO2 healthCheckInfoDTO2 = modelMapper.map(healthCheckInfo, HealthCheckInfoDTO2.class);
+	  return healthCheckInfoDTO2;
+  }
+  
+  private KioskHLTCheck convertDTOToDomain(HealthCheckInfoDTO2 healthCheckInfoDTO2) {
+	  KioskHLTCheck healthCheckInfo = modelMapper.map(healthCheckInfoDTO2, KioskHLTCheck.class);
+	  PropertyMap<HealthCheckInfoDTO2, KioskHLTCheck> healthCheckMap = new PropertyMap<HealthCheckInfoDTO2, KioskHLTCheck>() {
+		  protected void configure() {
+			System.out.println("source.getCardReaderStatus() : "+ healthCheckInfoDTO2.getCardReaderStatus());
+			if(StringUtils.isNotBlank(healthCheckInfoDTO2.getCardReaderStatus()))
+				map().setCardReaderStatus(KioskHLTCheckStatus.fromValue(healthCheckInfoDTO2.getCardReaderStatus()));
+			
+			if(StringUtils.isNotBlank(healthCheckInfoDTO2.getPcStatus()))
+				map().setPcStatus(KioskHLTCheckStatus.fromValue(healthCheckInfoDTO2.getPcStatus()));
+			
+			if(StringUtils.isNotBlank(healthCheckInfoDTO2.getIntercomStatus()))
+				map().setIntercomStatus(KioskHLTCheckStatus.fromValue(healthCheckInfoDTO2.getIntercomStatus()));
+			
+			if(StringUtils.isNotBlank(healthCheckInfoDTO2.getPrinterStatus()))
+				map().setPrinterStatus(KioskHLTCheckStatus.fromValue(healthCheckInfoDTO2.getPrinterStatus()));
+			
+			if(StringUtils.isNotBlank(healthCheckInfoDTO2.getCameraStatus()))
+				map().setCameraStatus(KioskHLTCheckStatus.fromValue(healthCheckInfoDTO2.getCameraStatus()));
+		  }
+		};
+		
+	  if(healthCheckMap != null){
+		  modelMapper.addMappings(healthCheckMap);
+	  }
+	  
+	  return healthCheckInfo;
   }
 
 

@@ -7,6 +7,8 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 /**
  * @author Janaka
  *
@@ -16,17 +18,18 @@ public enum KioskHLTCheckStatus implements Enumable {
   OK("OK"), CARD_READER_DOWN("Card Reader Down"), PC_DOWN("PC Down"), INTERCOM_DOWN("Intercom Down"), PRINTER_DOWN(
       "Printer Down"), CAMERA_DOWN("Camera Down");
 
-  private final String bookingType;
+  private final String kioskHLTStatus;
 
-  private KioskHLTCheckStatus(String bookingType) {
-    this.bookingType = bookingType;
+  private KioskHLTCheckStatus(String kioskHLTStatus) {
+    this.kioskHLTStatus = kioskHLTStatus;
   }
 
   /**
-   * @return the bookingType
+   * @return the kioskHLTStatus
    */
+  @JsonValue
   public String getValue() {
-    return bookingType;
+    return kioskHLTStatus;
   }
 
   public Enum<?> getEnumFromValue(String value) {
@@ -36,8 +39,8 @@ public enum KioskHLTCheckStatus implements Enumable {
   private static final Map<String, KioskHLTCheckStatus> LOOKUP = new HashMap<String, KioskHLTCheckStatus>();
 
   static {
-    for (KioskHLTCheckStatus bookingType : EnumSet.allOf(KioskHLTCheckStatus.class)) {
-      LOOKUP.put(bookingType.getValue(), bookingType);
+    for (KioskHLTCheckStatus kioskHLTStatus : EnumSet.allOf(KioskHLTCheckStatus.class)) {
+      LOOKUP.put(kioskHLTStatus.getValue(), kioskHLTStatus);
     }
   }
 

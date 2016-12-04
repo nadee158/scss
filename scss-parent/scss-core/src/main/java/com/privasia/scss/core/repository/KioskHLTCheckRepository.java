@@ -10,6 +10,6 @@ import com.privasia.scss.core.model.KioskHLTCheck;
 public interface KioskHLTCheckRepository extends BaseRepository<KioskHLTCheck, Long> {
 
   @Query(name = "KioskHLTCheck.KioskHealthCheckInfo")
-  public Page<KioskHLTCheck> listLimitedEntities(Pageable pageRequest);
+  public Page<KioskHLTCheck> kioskHealthCheckInfo(Pageable pageRequest);
 
 }
