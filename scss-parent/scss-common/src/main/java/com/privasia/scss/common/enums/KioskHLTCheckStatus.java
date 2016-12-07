@@ -44,7 +44,6 @@ public enum KioskHLTCheckStatus implements Enumable {
   }
 
   public static KioskHLTCheckStatus fromValue(String value) {
-	System.out.println("value : "+value);
     return LOOKUP.get(value);
   }
 

@@ -108,4 +108,11 @@ public interface ApplicationConstants {
   public static final String MESSAGE_NOK = "NOK";
   public static final String MESSAGE_CODE = "code";
   public static final String MESSAGE_DESCRIPTION = "description";
+
+  public static final String SMTP_SUBJECT = "SMTP_SUBJ";
+  public static final String SMTP_HOST = "SMTP_HOST";
+  public static final String SMTP_FROM = "SMTP_FROM";
+  public static final String SMTP_TO = "SMTP_TO";
+  public static final String SMTP_CC = "SMTP_CC";
+  public static final String SMTP_BCC = "SMTP_BCC";
 }
