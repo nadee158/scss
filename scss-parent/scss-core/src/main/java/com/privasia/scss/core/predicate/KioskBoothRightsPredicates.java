@@ -30,34 +30,34 @@ public final class KioskBoothRightsPredicates {
 
   }
 
-  public static Predicate KioskBoothInfoByKioskID(String kioskID) {
-    if (StringUtils.isEmpty(kioskID)) {
+  public static Predicate KioskBoothInfoByKioskID(Long kioskID) {
+    if (kioskID == null) {
       return QKioskBoothRights.kioskBoothRights.isNull();
     } else {
       QClient client = QClient.client;
-      client.clientID.eq(Long.valueOf(kioskID));
-      return QKioskBoothRights.kioskBoothRights.kioskBoothRightsID.kioskID.clientID.eq(Long.valueOf(kioskID));
+      client.clientID.eq(kioskID);
+      return QKioskBoothRights.kioskBoothRights.kioskBoothRightsID.kiosk.clientID.eq(kioskID);
     }
 
   }
 
 
-  public static Predicate KioskBoothInfoByBoothID(String boothID) {
-    if (StringUtils.isEmpty(boothID)) {
+  public static Predicate KioskBoothInfoByBoothID(Long boothID) {
+    if (boothID == null) {
       return QKioskBoothRights.kioskBoothRights.isNull();
     } else {
       QClient client = QClient.client;
-      client.clientID.eq(Long.valueOf(boothID));
-      return QKioskBoothRights.kioskBoothRights.kioskBoothRightsID.boothID.clientID.eq(Long.valueOf(boothID));
+      client.clientID.eq(boothID);
+      return QKioskBoothRights.kioskBoothRights.kioskBoothRightsID.booth.clientID.eq(boothID);
     }
   }
 
 
-  public static Predicate KioskBoothInfoByCardNumber(String cardNumber) {
-    if (StringUtils.isEmpty(cardNumber)) {
+  public static Predicate KioskBoothInfoByCardNumber(Integer cardNumber) {
+    if (cardNumber == null) {
       return QKioskBoothRights.kioskBoothRights.isNull();
     } else {
-      return QKioskBoothRights.kioskBoothRights.cardNumber.eq(Integer.parseInt(cardNumber));
+      return QKioskBoothRights.kioskBoothRights.cardNumber.eq(cardNumber);
     }
   }
 

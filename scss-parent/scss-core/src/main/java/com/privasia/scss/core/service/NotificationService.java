@@ -21,10 +21,8 @@ import org.springframework.stereotype.Service;
 
 import com.privasia.scss.common.dto.NotificationDTO;
 import com.privasia.scss.common.enums.KioskHLTCheckStatus;
-import com.privasia.scss.common.util.NotificationSentStatus;
 import com.privasia.scss.core.model.KioskHLTCheck;
 import com.privasia.scss.core.repository.KioskHLTCheckRepository;
-import com.privasia.scss.core.util.service.MailUtil;
 
 @Service("notificationService")
 public class NotificationService {
@@ -35,8 +33,8 @@ public class NotificationService {
   @Value("${kioskhealthcheckmails.pagesize}")
   private int pageSize;
 
-  @Autowired
-  private MailUtil mailUtil;
+  //@Autowired
+  //private MailUtil mailUtil;
 
   public void sendKioskHealthCheckMails() {
     Boolean notificationStatus = false;
@@ -52,8 +50,8 @@ public class NotificationService {
         System.out.println("fetchedCount AFTER :" + fetchedCount);
         Map<String, List<NotificationDTO>> notifications = getNotifications(notificationStatus);
         if (!(notifications == null || notifications.isEmpty())) {
-          NotificationSentStatus status = mailUtil.sendEmail(notifications);
-          System.out.println("NotificationSentStatus :" + status);
+          //NotificationSentStatus status = mailUtil.sendEmail(notifications);
+          //System.out.println("NotificationSentStatus :" + status);
         }
       }
 

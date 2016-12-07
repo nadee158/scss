@@ -1,44 +1,30 @@
 package com.privasia.scss.core.util.service;
 
 import java.io.Serializable;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
+//import javax.mail.internet.InternetAddress;
+//import javax.mail.internet.MimeMessage;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.MailException;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.mail.javamail.MimeMessagePreparator;
-import org.springframework.stereotype.Component;
 
-import com.privasia.scss.common.dto.NotificationDTO;
-import com.privasia.scss.common.util.ApplicationConstants;
-import com.privasia.scss.common.util.NotificationSentStatus;
 import com.privasia.scss.core.service.WDCGlobalSettingService;
 
-import freemarker.template.Configuration;
-import freemarker.template.Template;
+//import freemarker.template.Configuration;
+//import freemarker.template.Template;
 
-@Component("MailUtil")
+//@Component("MailUtil")
 public class MailUtil implements Serializable {
 
   private static final long serialVersionUID = 649816335599665740L;
   private static final Logger LOG = Logger.getLogger(MailUtil.class);
 
-  @Autowired
-  private JavaMailSender javaMailService;
+  //@Autowired
+  //private JavaMailSender javaMailService;
 
-  @Autowired
-  private Configuration freemarkerConfiguration;
+  //@Autowired
+  //private Configuration freemarkerConfiguration;
 
   @Value("${mail.sender}")
   private String senderEmail;
@@ -54,7 +40,7 @@ public class MailUtil implements Serializable {
    * @param emailMessage
    * @param recieverEmailAddresses
    */
-  public NotificationSentStatus sendEmail(Map<String, List<NotificationDTO>> resultsMap) throws MailException {
+  /*public NotificationSentStatus sendEmail(Map<String, List<NotificationDTO>> resultsMap) throws MailException {
 
     NotificationSentStatus sentStatus = new NotificationSentStatus();
 
@@ -65,7 +51,7 @@ public class MailUtil implements Serializable {
         javaMailService.send(new MimeMessagePreparator() {
 
           @Override
-          public void prepare(MimeMessage mimeMessage) throws Exception {
+          public void prepare(MimeMessage mimeMessage) throws Exception { 
 
             MimeMessageHelper message = new MimeMessageHelper(mimeMessage, true, "UTF-8");
 
@@ -109,7 +95,7 @@ public class MailUtil implements Serializable {
     }
     sentStatus.setStatus(ApplicationConstants.SUCCESS);
     return sentStatus;
-  }
+  }*/
 
 
 

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.privasia.scss.common.dto.ApiResponseObject;
 import com.privasia.scss.common.dto.ClientInfo;
 import com.privasia.scss.common.dto.CustomResponseEntity;
+import com.privasia.scss.common.dto.KioskBoothRightsDTO;
 import com.privasia.scss.kioskbooth.dto.KioskBoothRightInfo;
 import com.privasia.scss.kioskbooth.service.KioskBoothService;
 
@@ -26,7 +27,7 @@ public class KioskBoothController {
   private KioskBoothService kioskBoothService;
 
 
-  @RequestMapping(value = "/activateboothsbybiosk", method = RequestMethod.PUT,
+  @RequestMapping(value = "/activatetransaction", method = RequestMethod.PUT,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public CustomResponseEntity<ApiResponseObject<?>> activateBoothsByKioskId(
       @RequestBody KioskBoothRightInfo kioskBoothRightInfo) {
@@ -36,7 +37,7 @@ public class KioskBoothController {
         HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/lockboothforkiosk", method = RequestMethod.PUT,
+  @RequestMapping(value = "/locktransaction", method = RequestMethod.PUT,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public CustomResponseEntity<ApiResponseObject<?>> lockBoothForKiosk(
       @RequestBody KioskBoothRightInfo kioskBoothRightInfo) {
@@ -47,7 +48,7 @@ public class KioskBoothController {
         HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/completekioskbooth", method = RequestMethod.PUT,
+  @RequestMapping(value = "/completetransaction", method = RequestMethod.PUT,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public CustomResponseEntity<ApiResponseObject<?>> completekioskbooth(
       @RequestBody KioskBoothRightInfo kioskBoothRightInfo) {
@@ -60,24 +61,27 @@ public class KioskBoothController {
 
   @RequestMapping(value = "/lockedkioskboothinfo/{kioskID}", method = RequestMethod.GET,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-  public CustomResponseEntity<ApiResponseObject<?>> getLockedKioskBoothInfo(@PathVariable String kioskID) {
+  public CustomResponseEntity<ApiResponseObject<?>> getLockedKioskBoothInfo(@PathVariable Long kioskID) {
     System.out.println("kioskID :" + kioskID);
-    KioskBoothRightInfo kioskBoothRightInfo = kioskBoothService.getLockedKioskBoothInfo(kioskID);
+    KioskBoothRightInfo kioskBoothRightInfo = kioskBoothService.getLockedKioskBoothInfo(kioskID); 
     return new CustomResponseEntity<ApiResponseObject<?>>(
         new ApiResponseObject<KioskBoothRightInfo>(HttpStatus.OK, kioskBoothRightInfo), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/getboothaccessright/{boothID}/{kioskID}/{cardNumber}", method = RequestMethod.GET,
+  @RequestMapping(value = "/boothaccessright", method = RequestMethod.PUT,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-  public CustomResponseEntity<ApiResponseObject<?>> getBoothAccessRight(@PathVariable String boothID,
-      @PathVariable String kioskID, @PathVariable String cardNumber) {
-    System.out.println("boothID :" + boothID);
-    System.out.println("kioskID :" + kioskID);
-    System.out.println("cardNumber :" + cardNumber);
-    List<KioskBoothRightInfo> kioskBoothRightInfos =
-        kioskBoothService.getBoothAccessRight(boothID, kioskID, cardNumber);
+  public CustomResponseEntity<ApiResponseObject<?>> getBoothAccessRight(@RequestBody KioskBoothRightsDTO kioskBoothRightInfo) {
+	
+	Long boothID = kioskBoothRightInfo.getBoothClientID();
+	Long kioskID = kioskBoothRightInfo.getKioskClientID();
+	Integer cardNumber= kioskBoothRightInfo.getCardNumber(); 
+	
+    System.out.println("boothID :" + kioskBoothRightInfo.getBoothClientID());  
+    System.out.println("kioskID :" + kioskBoothRightInfo.getKioskClientID());
+    System.out.println("cardNumber :" + kioskBoothRightInfo.getCardNumber());
+    List<KioskBoothRightsDTO> kioskBoothRightInfos = kioskBoothService.getBoothAccessRight(boothID, kioskID, cardNumber); 
     return new CustomResponseEntity<ApiResponseObject<?>>(
-        new ApiResponseObject<List<KioskBoothRightInfo>>(HttpStatus.OK, kioskBoothRightInfos), HttpStatus.OK);
+        new ApiResponseObject<List<KioskBoothRightsDTO>>(HttpStatus.OK, kioskBoothRightInfos), HttpStatus.OK);
   }
 
   @RequestMapping(value = "/kioskinfo/{boothID}", method = RequestMethod.GET,

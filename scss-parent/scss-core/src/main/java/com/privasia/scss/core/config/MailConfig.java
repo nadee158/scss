@@ -13,7 +13,7 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 import com.privasia.scss.common.util.ApplicationConstants;
 import com.privasia.scss.core.service.WDCGlobalSettingService;
 
-@Configuration
+//@Configuration
 public class MailConfig {
 
   @Value("${mail.host}")
@@ -37,7 +37,7 @@ public class MailConfig {
   @Autowired
   private WDCGlobalSettingService wdcGlobalSettingService;
 
-  @Bean(name = "JavaMailSender")
+  //@Bean(name = "JavaMailSender")
   public JavaMailSender javaMailService() {
     JavaMailSenderImpl javaMailSender = new JavaMailSenderImpl();
 

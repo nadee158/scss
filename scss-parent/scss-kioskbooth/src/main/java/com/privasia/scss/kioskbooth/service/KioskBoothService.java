@@ -5,10 +5,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Spliterator;
 import java.util.Spliterators;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import org.apache.commons.lang3.StringUtils;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -17,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.privasia.scss.common.dto.ClientInfo;
 import com.privasia.scss.common.dto.GateOutMessage;
+import com.privasia.scss.common.dto.KioskBoothRightsDTO;
 import com.privasia.scss.common.enums.KioskLockStatus;
 import com.privasia.scss.common.util.CommonUtil;
 import com.privasia.scss.core.exception.BusinessException;
@@ -39,12 +42,15 @@ public class KioskBoothService {
 
   @Autowired
   private ClientRepository clientRepository;
+  
+  @Autowired
+  private ModelMapper modelMapper;
 
 
   @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, readOnly = false)
   public String activateBoothsByKioskId(KioskBoothRightInfo kioskBoothRightInfo) {
     String result = "ERROR";
-    if (!(kioskBoothRightInfo == null || StringUtils.isEmpty(kioskBoothRightInfo.getKioskID()))) {
+    if (!(kioskBoothRightInfo == null || kioskBoothRightInfo.getKioskID() == null)) {
       Iterable<KioskBoothRights> allKiosks = getKioskBoothInfoById(kioskBoothRightInfo.getKioskID());
       if (!(allKiosks == null)) {
         Stream<KioskBoothRights> allKiosksStrem = stream(allKiosks);
@@ -76,15 +82,14 @@ public class KioskBoothService {
   public String lockBoothForKiosk(KioskBoothRightInfo kioskBoothRightInfo) {
     String result = "ERROR";
     if (!(kioskBoothRightInfo == null)) {
-      if (!(StringUtils.isEmpty(kioskBoothRightInfo.getKioskID())
-          || StringUtils.isEmpty(kioskBoothRightInfo.getBoothID()))) {
+      if (kioskBoothRightInfo.getKioskID() !=null || kioskBoothRightInfo.getBoothID() != null) {
         Iterable<KioskBoothRights> allKiosks = getKioskBoothInfoById(kioskBoothRightInfo.getKioskID());
         if (!(allKiosks == null)) {
           Stream<KioskBoothRights> allKiosksStrem = stream(allKiosks);
           if (allKiosksStrem.count() > 0) {
             allKiosks.forEach(kioskBoothright -> {
-              long boothIDl = Long.parseLong(kioskBoothRightInfo.getBoothID());
-              if (boothIDl == kioskBoothright.getKioskBoothRightsID().getBoothID().getClientID()) {
+              long boothIDl = kioskBoothRightInfo.getBoothID();
+              if (boothIDl == kioskBoothright.getKioskBoothRightsID().getBooth().getClientID()) {
                 kioskBoothright = updateKioskBoothRightsFromDTO(kioskBoothright, kioskBoothRightInfo);
                 kioskBoothright.setKioskLockStatus(KioskLockStatus.LOCK);
               } else {
@@ -113,14 +118,13 @@ public class KioskBoothService {
   public String completekioskbooth(KioskBoothRightInfo kioskBoothRightInfo) {
     String result = "ERROR";
     if (!(kioskBoothRightInfo == null)) {
-      if (!(StringUtils.isEmpty(kioskBoothRightInfo.getKioskID())
-          || StringUtils.isEmpty(kioskBoothRightInfo.getBoothID()))) {
+      if (!(kioskBoothRightInfo.getKioskID() == null || kioskBoothRightInfo.getBoothID() == null)) {
         Optional<KioskBoothRights> completedKioskOpt =
-            kioskBoothRightsRepository.findByKioskBoothRightsID_KioskID_ClientIDAndKioskBoothRightsID_BoothID_ClientID(
-                Long.parseLong(kioskBoothRightInfo.getKioskID()), Long.parseLong(kioskBoothRightInfo.getBoothID()));
+            kioskBoothRightsRepository.findByKioskBoothRightsID_Kiosk_ClientIDAndKioskBoothRightsID_Booth_ClientID(
+                kioskBoothRightInfo.getKioskID(), kioskBoothRightInfo.getBoothID());
         if ((completedKioskOpt.isPresent())) {
           KioskBoothRights completedKiosk = completedKioskOpt.get();
-          completedKiosk = updateKioskBoothRightsFromDTO(completedKiosk, kioskBoothRightInfo);
+          completedKiosk = updateKioskBoothRightsFromDTO(completedKiosk, kioskBoothRightInfo); 
           completedKiosk.setKioskLockStatus(KioskLockStatus.COMPLETE);
           kioskBoothRightsRepository.save(completedKiosk);
           result = "SUCCESS";
@@ -142,7 +146,7 @@ public class KioskBoothService {
     List<ClientInfo> clientInfoList = new ArrayList<ClientInfo>();
 
     Optional<List<KioskBoothRights>> KioskBoothRightListOpt = kioskBoothRightsRepository
-        .findByKioskBoothRightsID_BoothID_ClientIDOrderByKioskBoothRightsID_KioskID_LaneNoAsc(Long.parseLong(boothID));
+        .findByKioskBoothRightsID_Booth_ClientIDOrderByKioskBoothRightsID_Kiosk_LaneNoAsc(Long.parseLong(boothID));
 
     List<KioskBoothRights> KioskBoothRightList = KioskBoothRightListOpt.orElse(null);
 
@@ -152,9 +156,9 @@ public class KioskBoothService {
 
         KioskBoothRightsPK kioskBoothRightsID = kioskBoothRights.getKioskBoothRightsID();
 
-        Client kioskID = kioskBoothRightsID.getKioskID();
+        Client kiosk = kioskBoothRightsID.getKiosk();
 
-        ClientInfo clientInfo = constructClientInfoFromClient(kioskID);
+        ClientInfo clientInfo = constructClientInfoFromClient(kiosk);
         clientInfo.setDisplayScreenId(Integer.toString(kioskBoothRights.getDisplayScreenID()));
         clientInfo.setKioskLockStatus(kioskBoothRights.getKioskLockStatus().getValue());
         clientInfoList.add(clientInfo);
@@ -194,8 +198,8 @@ public class KioskBoothService {
   }
 
   @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-  public KioskBoothRightInfo getLockedKioskBoothInfo(String kioskID) {
-    if (StringUtils.isNotEmpty(kioskID)) {
+  public KioskBoothRightInfo getLockedKioskBoothInfo(Long kioskID) {
+    if (kioskID != null) {
       Iterable<KioskBoothRights> kioskList = getKioskBoothInfoByIdAndStatus(kioskID, KioskLockStatus.LOCK.getValue());
       if (!(kioskList == null)) {
         Stream<KioskBoothRights> kioskListStrem = stream(kioskList);
@@ -224,25 +228,20 @@ public class KioskBoothService {
 
 
   @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-  public List<KioskBoothRightInfo> getBoothAccessRight(String boothID, String kioskID, String cardNumber) {
-    if (StringUtils.isNotEmpty(boothID)) {
-      Iterable<KioskBoothRights> kioskList = getKioskBoothInfoByIdAndCard(boothID, kioskID, cardNumber);
-      if (!(kioskList == null)) {
+  public List<KioskBoothRightsDTO> getBoothAccessRight(Long boothID, Long kioskID, Integer cardNumber) {
+    if (boothID != null) {
+      Iterable<KioskBoothRights> kioskList = applyBoothAccessRightPredicate(boothID, kioskID, cardNumber);
+      if (kioskList != null) {
         Stream<KioskBoothRights> kioskListStrem = stream(kioskList);
-        if (kioskListStrem.count() > 0) {
-          List<KioskBoothRightInfo> infos = new ArrayList<KioskBoothRightInfo>();
-          kioskList.forEach(kisokBooth -> {
-            infos.add(new KioskBoothRightInfo(kisokBooth));
-          });
-          return infos;
-        } else {
-          throw new ResultsNotFoundException("Kiosk Booth information could not be found!");
-        }
+        List<KioskBoothRightsDTO> resultMap = kioskListStrem.map(kisokBooth -> convertDomainToDto(kisokBooth)).collect(Collectors.toList());
+        if (resultMap.isEmpty())  
+        	throw new ResultsNotFoundException("Access Rights for Booth could not be found!");
+          return resultMap;
       } else {
-        throw new ResultsNotFoundException("Kiosk Booth information could not be found!");
+        throw new ResultsNotFoundException("Access Rights for Booth could not be found!");
       }
     } else {
-      throw new BusinessException("Kiosk ID was null!");
+      throw new BusinessException("booth ID was null!");
     }
   }
 
@@ -271,32 +270,32 @@ public class KioskBoothService {
   }
 
 
-  public Iterable<KioskBoothRights> getKioskBoothInfoByIdAndStatus(String kioskID, String status) {
+  public Iterable<KioskBoothRights> getKioskBoothInfoByIdAndStatus(Long kioskID, String status) {
     Predicate kioskBoothInfoByKioskID = KioskBoothRightsPredicates.KioskBoothInfoByKioskID(kioskID);
     Predicate kioskBoothStatus = KioskBoothRightsPredicates.KioskBoothStatus(status);
     Predicate finalPredicate = ExpressionUtils.allOf(kioskBoothInfoByKioskID, kioskBoothStatus);
     return kioskBoothRightsRepository.findAll(finalPredicate);
   }
 
-  public Iterable<KioskBoothRights> getKioskBoothInfoById(String kioskID) {
+  public Iterable<KioskBoothRights> getKioskBoothInfoById(Long kioskID) {
     Predicate kioskBoothInfoByKioskID = KioskBoothRightsPredicates.KioskBoothInfoByKioskID(kioskID);
     return kioskBoothRightsRepository.findAll(kioskBoothInfoByKioskID);
   }
 
-  private Iterable<KioskBoothRights> getKioskBoothInfoByIdAndCard(String boothID, String kioskID, String cardNumber) {
+  public Iterable<KioskBoothRights> applyBoothAccessRightPredicate(Long boothID, Long kioskID, Integer cardNumber) {
     Predicate kioskBoothInfoByBoothID = null;
     Predicate kioskBoothInfoByKioskID = null;
     Predicate kioskBoothInfoByCardNo = null;
     List<Predicate> predicated = new ArrayList<Predicate>();
-    if (StringUtils.isNotEmpty(boothID)) {
-      kioskBoothInfoByBoothID = KioskBoothRightsPredicates.KioskBoothInfoByBoothID(boothID);
-      predicated.add(kioskBoothInfoByBoothID);
-    }
-    if (StringUtils.isNotEmpty(kioskID)) {
+    
+    kioskBoothInfoByBoothID = KioskBoothRightsPredicates.KioskBoothInfoByBoothID(boothID);
+    predicated.add(kioskBoothInfoByBoothID);
+    
+    if (kioskID != null) {
       kioskBoothInfoByKioskID = KioskBoothRightsPredicates.KioskBoothInfoByKioskID(kioskID);
       predicated.add(kioskBoothInfoByKioskID);
     }
-    if (StringUtils.isNotEmpty(cardNumber)) {
+    if (cardNumber != null) {
       kioskBoothInfoByCardNo = KioskBoothRightsPredicates.KioskBoothInfoByCardNumber(cardNumber);
       predicated.add(kioskBoothInfoByCardNo);
     }
@@ -345,11 +344,11 @@ public class KioskBoothService {
 
 
 
-  public KioskBoothRights convertDtoToDomain(KioskBoothRightInfo kioskBoothRightInfo) {
+  public KioskBoothRights convertDtoToDomain(KioskBoothRightInfo kioskBoothRightInfo) { 
     if (!(kioskBoothRightInfo == null)) {
       KioskBoothRightsPK pk = new KioskBoothRightsPK();
-      pk.setBoothID(clientRepository.findOne(Long.parseLong(kioskBoothRightInfo.getBoothID())).orElse(null));
-      pk.setKioskID(clientRepository.findOne(Long.parseLong(kioskBoothRightInfo.getKioskID())).orElse(null));
+      pk.setBooth(clientRepository.findOne(kioskBoothRightInfo.getBoothID()).orElse(null));
+      pk.setKiosk(clientRepository.findOne(kioskBoothRightInfo.getKioskID()).orElse(null));
       KioskBoothRights kioskBoothRights = kioskBoothRightInfo.constructKioskBoothRights(pk);
       if (!(kioskBoothRightInfo.getContainer01() == null)) {
         kioskBoothRights.setContainer01(kioskBoothRightInfo.getContainer01().constructContainerAttribute());
@@ -370,6 +369,12 @@ public class KioskBoothService {
 
   public static <T> Stream<T> stream(Iterable<T> iterable) {
     return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterable.iterator(), Spliterator.ORDERED), false);
+  }
+  
+  private KioskBoothRightsDTO convertDomainToDto(KioskBoothRights kioskBoothRights) {
+	  KioskBoothRightsDTO kioskBoothRightsDTO = modelMapper.map(kioskBoothRights, KioskBoothRightsDTO.class);
+	  System.out.println("kioskBoothRightsDTO.getKioskLockStatus() "+ kioskBoothRightsDTO.getKioskLockStatus());
+	  return kioskBoothRightsDTO;
   }
 
 

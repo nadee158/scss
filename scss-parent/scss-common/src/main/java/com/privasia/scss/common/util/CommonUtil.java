@@ -184,7 +184,7 @@ public final class CommonUtil {
   }
 
   public static String getFormatteDate(LocalDateTime localDateTime) {
-    if (!(localDateTime == null)) {
+    if (localDateTime != null) {
       DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern(GLOBAL_DATE_PATTERN);
       return localDateTime.format(dateFormat);
     }

@@ -46,7 +46,7 @@ public class KioskBoothRights extends AuditEntity implements Serializable {
   private KioskLockStatus kioskLockStatus;
 
   @Column(name = "CARDNUMBER")
-  private int cardNumber;
+  private Integer cardNumber;
 
   @Column(name = "CARD_SCAN_TIME")
   private LocalDateTime cardScanTime;
@@ -55,7 +55,7 @@ public class KioskBoothRights extends AuditEntity implements Serializable {
   private LocalDateTime kioskSelectedTime;
 
   @Column(name = "DISPLAY_SCREEN_ID")
-  private int displayScreenID;
+  private Integer displayScreenID;
 
   @Column(name = "TRANSID")
   private String transactionIDList;
@@ -87,7 +87,7 @@ public class KioskBoothRights extends AuditEntity implements Serializable {
 
   @Column(name = "RE_TAKE_PHOTO")
   @Type(type = "yes_no")
-  private boolean retakePhoto;
+  private Boolean retakePhoto;
 
   @Column(name = "TRX_COMPLETE_TIME")
   private LocalDateTime trxCompleteTime;
@@ -180,11 +180,11 @@ public class KioskBoothRights extends AuditEntity implements Serializable {
     this.kioskLockStatus = kioskLockStatus;
   }
 
-  public int getCardNumber() {
+  public Integer getCardNumber() {
     return cardNumber;
   }
 
-  public void setCardNumber(int cardNumber) {
+  public void setCardNumber(Integer cardNumber) {
     this.cardNumber = cardNumber;
   }
 
@@ -204,11 +204,11 @@ public class KioskBoothRights extends AuditEntity implements Serializable {
     this.kioskSelectedTime = kioskSelectedTime;
   }
 
-  public int getDisplayScreenID() {
+  public Integer getDisplayScreenID() {
     return displayScreenID;
   }
 
-  public void setDisplayScreenID(int displayScreenID) {
+  public void setDisplayScreenID(Integer displayScreenID) {
     this.displayScreenID = displayScreenID;
   }
 
@@ -284,11 +284,11 @@ public class KioskBoothRights extends AuditEntity implements Serializable {
     this.reviseHeadNoRemarks = reviseHeadNoRemarks;
   }
 
-  public boolean isRetakePhoto() {
+  public Boolean isRetakePhoto() {
     return retakePhoto;
   }
 
-  public void setRetakePhoto(boolean retakePhoto) {
+  public void setRetakePhoto(Boolean retakePhoto) {
     this.retakePhoto = retakePhoto;
   }
 
