@@ -6,11 +6,15 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import javax.persistence.EnumType;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
+import org.modelmapper.spi.MappingContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -83,6 +87,7 @@ public class HealthCheckService {
     System.out.println("getKiosk().getClientID() : " + kioskHLTCheck.getKiosk().getClientID());
     System.out.println("getBooth().getClientID() : " + kioskHLTCheck.getBooth().getClientID());
     System.out.println("getCameraStatus : " + kioskHLTCheck.getCameraStatus());
+    System.out.println("getPaperStatus : " + kioskHLTCheck.getPaperStatus());
 
     /*KioskHLTCheck kioskHLTCheck = new KioskHLTCheck();
     if (StringUtils.isNotEmpty(healthCheckInfo.getKioskID())) {
@@ -127,34 +132,33 @@ public class HealthCheckService {
   }
   
   private KioskHLTCheck convertDTOToDomain(HealthCheckInfoDTO2 healthCheckInfoDTO2) {
-	  KioskHLTCheck healthCheckInfo = modelMapper.map(healthCheckInfoDTO2, KioskHLTCheck.class);
-	  PropertyMap<HealthCheckInfoDTO2, KioskHLTCheck> healthCheckMap = new PropertyMap<HealthCheckInfoDTO2, KioskHLTCheck>() {
-		  protected void configure() {
-			System.out.println("source.getCardReaderStatus() : "+ healthCheckInfoDTO2.getCardReaderStatus());
-			if(StringUtils.isNotBlank(healthCheckInfoDTO2.getCardReaderStatus()))
-				map().setCardReaderStatus(KioskHLTCheckStatus.fromValue(healthCheckInfoDTO2.getCardReaderStatus()));
-			
-			if(StringUtils.isNotBlank(healthCheckInfoDTO2.getPcStatus()))
-				map().setPcStatus(KioskHLTCheckStatus.fromValue(healthCheckInfoDTO2.getPcStatus()));
-			
-			if(StringUtils.isNotBlank(healthCheckInfoDTO2.getIntercomStatus()))
-				map().setIntercomStatus(KioskHLTCheckStatus.fromValue(healthCheckInfoDTO2.getIntercomStatus()));
-			
-			if(StringUtils.isNotBlank(healthCheckInfoDTO2.getPrinterStatus()))
-				map().setPrinterStatus(KioskHLTCheckStatus.fromValue(healthCheckInfoDTO2.getPrinterStatus()));
-			
-			if(StringUtils.isNotBlank(healthCheckInfoDTO2.getCameraStatus()))
-				map().setCameraStatus(KioskHLTCheckStatus.fromValue(healthCheckInfoDTO2.getCameraStatus()));
-		  }
-		};
+	  ModelMapper mapper = new ModelMapper();
+	  mapper.createTypeMap(String.class, KioskHLTCheckStatus.class).setConverter(new Converter<String, KioskHLTCheckStatus>() { 
+			@Override
+			public KioskHLTCheckStatus convert(MappingContext<String, KioskHLTCheckStatus> context) {
+				switch (context.getSource()) { 
+		          case "Card Reader Down": 
+		            return KioskHLTCheckStatus.CARD_READER_DOWN; 
+		          case "PC Down": 
+			            return KioskHLTCheckStatus.PC_DOWN;  
+		          case "Intercom Down": 
+			            return KioskHLTCheckStatus.INTERCOM_DOWN;
+		          case "Printer Down": 
+			            return KioskHLTCheckStatus.PRINTER_DOWN;  
+		          case "Camera Down": 
+			            return KioskHLTCheckStatus.CAMERA_DOWN;  
+		          case "OK": 
+			            return KioskHLTCheckStatus.OK;   
+		          default: 
+		            return null; 
+		        } 
+			} 
+      }); 
 		
-	  if(healthCheckMap != null){
-		  modelMapper.addMappings(healthCheckMap);
-	  }
+	  KioskHLTCheck healthCheckInfo = mapper.map(healthCheckInfoDTO2, KioskHLTCheck.class);
 	  
 	  return healthCheckInfo;
   }
-
-
-
+  
+  
 }

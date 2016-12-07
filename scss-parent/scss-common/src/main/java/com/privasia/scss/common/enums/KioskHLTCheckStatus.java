@@ -15,8 +15,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
  */
 public enum KioskHLTCheckStatus implements Enumable {
 
-  OK("OK"), CARD_READER_DOWN("Card Reader Down"), PC_DOWN("PC Down"), INTERCOM_DOWN("Intercom Down"), PRINTER_DOWN(
-      "Printer Down"), CAMERA_DOWN("Camera Down");
+  OK("OK"), CARD_READER_DOWN("Card Reader Down"), PC_DOWN("PC Down"), INTERCOM_DOWN("Intercom Down"), PRINTER_DOWN("Printer Down"), CAMERA_DOWN("Camera Down");
 
   private final String kioskHLTStatus;
 
@@ -45,6 +44,7 @@ public enum KioskHLTCheckStatus implements Enumable {
   }
 
   public static KioskHLTCheckStatus fromValue(String value) {
+	System.out.println("value : "+value);
     return LOOKUP.get(value);
   }
 
