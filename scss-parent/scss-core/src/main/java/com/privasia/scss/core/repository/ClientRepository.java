@@ -1,5 +1,6 @@
 package com.privasia.scss.core.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.Query;
@@ -25,6 +26,9 @@ public interface ClientRepository extends BaseRepository<Client, Long> {
   @Query(name = "Client.getClientUnitNoByClientID")
   Optional<ClientDTO> getClientUnitNoByClientID(@Param("clientID") long clientID);
 
+  @Query(name = "Client.getKioskListByBooth")
+  public Optional<List<Client>> getKioskListByBooth(@Param("boothID") long boothID);
+  
   @Query(name = "Client.getClientUnitNoAndCosmosPortNoByClientID")
   Optional<ClientDTO> getClientUnitNoAndCosmosPortNoByClientID(@Param("clientID") long clientID,
       @Param("cosmosPortNo") int cosmosPortNo);

@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.privasia.scss.common.dto.ClientDTO;
 import com.privasia.scss.common.dto.ClientInfo;
 import com.privasia.scss.common.dto.GateOutMessage;
 import com.privasia.scss.common.dto.KioskBoothRightsDTO;
@@ -142,31 +143,16 @@ public class KioskBoothService {
   }
 
   @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-  public List<ClientInfo> getKioskInfoByBooth(String boothID) {
-    List<ClientInfo> clientInfoList = new ArrayList<ClientInfo>();
-
-    Optional<List<KioskBoothRights>> KioskBoothRightListOpt = kioskBoothRightsRepository
-        .findByKioskBoothRightsID_Booth_ClientIDOrderByKioskBoothRightsID_Kiosk_LaneNoAsc(Long.parseLong(boothID));
-
-    List<KioskBoothRights> KioskBoothRightList = KioskBoothRightListOpt.orElse(null);
-
-    if (!(KioskBoothRightList == null || KioskBoothRightList.isEmpty())) {
-
-      for (KioskBoothRights kioskBoothRights : KioskBoothRightList) {
-
-        KioskBoothRightsPK kioskBoothRightsID = kioskBoothRights.getKioskBoothRightsID();
-
-        Client kiosk = kioskBoothRightsID.getKiosk();
-
-        ClientInfo clientInfo = constructClientInfoFromClient(kiosk);
-        clientInfo.setDisplayScreenId(Integer.toString(kioskBoothRights.getDisplayScreenID()));
-        clientInfo.setKioskLockStatus(kioskBoothRights.getKioskLockStatus().getValue());
-        clientInfoList.add(clientInfo);
-      }
-    } else {
-      throw new ResultsNotFoundException("No kiosk booth information was found!");
-    }
-    return clientInfoList;
+  public List<ClientDTO> getKioskListByBooth(Long boothID) {
+	 
+   Optional<List<Client>> KioskListForBooth = clientRepository.getKioskListByBooth(boothID);  
+    
+   List<Client> clientInfoList = KioskListForBooth.orElseThrow(() -> new BusinessException("Invalid boothID : "+boothID));
+   
+   if(clientInfoList.isEmpty())
+	   throw new ResultsNotFoundException("Kiosk has not assign for the given boothID "+ boothID);
+   
+   return clientInfoList.stream().map(Client -> modelMapper.map(Client, ClientDTO.class)).collect(Collectors.toList());
   }
 
 

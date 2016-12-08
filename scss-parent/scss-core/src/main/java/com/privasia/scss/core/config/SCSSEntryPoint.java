@@ -6,7 +6,6 @@ import java.time.format.DateTimeFormatter;
 import javax.servlet.Filter;
 import javax.servlet.MultipartConfigElement;
 
-import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.AbstractConverter;
 import org.modelmapper.AbstractProvider;
 import org.modelmapper.Converter;
@@ -26,8 +25,10 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
 import com.privasia.scss.common.dto.KioskBoothRightsDTO;
+import com.privasia.scss.common.enums.ClientType;
 import com.privasia.scss.common.enums.KioskLockStatus;
 import com.privasia.scss.common.enums.Profiles;
+import com.privasia.scss.common.enums.RecordStatus;
 import com.privasia.scss.common.enums.TransactionType;
 import com.privasia.scss.common.util.CommonUtil;
 import com.privasia.scss.core.model.KioskBoothRights;
@@ -88,6 +89,54 @@ public class SCSSEntryPoint {
 				
 			} 
 	  });
+	  
+	  modelMapper.createTypeMap(RecordStatus.class, String.class).setConverter(new Converter<RecordStatus, String>() { 
+			@Override
+			public String convert(MappingContext<RecordStatus, String> context) {
+				if(context.getSource() != null){
+					switch (context.getSource()) { 
+			          case ACTIVE: 
+			            return RecordStatus.ACTIVE.getValue(); 
+			          case INACTIVE: 
+			        	  return RecordStatus.INACTIVE.getValue(); 
+			          default: 
+			            return null; 
+			        } 
+				}else{
+					return null; 
+				}
+			} 
+      });  
+	  
+	  modelMapper.createTypeMap(ClientType.class, String.class).setConverter(new Converter<ClientType, String>() { 
+			@Override
+			public String convert(MappingContext<ClientType, String> context) {
+				if(context.getSource() != null){
+					switch (context.getSource()) { 
+			          case GATE_IN: 
+			            return ClientType.GATE_IN.getValue(); 
+			          case CCC: 
+			        	  return ClientType.CCC.getValue(); 
+			          case GREEN_GATE: 
+			        	  return ClientType.GREEN_GATE.getValue(); 
+			          case OTHERS: 
+			        	  return ClientType.OTHERS.getValue(); 
+			          case SPV: 
+			        	  return ClientType.SPV.getValue(); 
+			          case SECOND_GBOOTH: 
+			        	  return ClientType.SECOND_GBOOTH.getValue(); 
+			          case GATE_OUT: 
+			        	  return ClientType.GATE_OUT.getValue(); 
+			          case SECOND_GKIOSK: 
+			        	  return ClientType.SECOND_GKIOSK.getValue();
+			          default: 
+			            return null; 
+			        } 
+				}else{
+					return null; 
+				}
+			} 
+	  }); 
 	  
 	  
 	  Provider<LocalDateTime> localDateProvider = new AbstractProvider<LocalDateTime>() {

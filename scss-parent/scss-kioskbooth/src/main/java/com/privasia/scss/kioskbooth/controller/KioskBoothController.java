@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.privasia.scss.common.dto.ApiResponseObject;
+import com.privasia.scss.common.dto.ClientDTO;
 import com.privasia.scss.common.dto.ClientInfo;
 import com.privasia.scss.common.dto.CustomResponseEntity;
 import com.privasia.scss.common.dto.KioskBoothRightsDTO;
@@ -84,13 +85,13 @@ public class KioskBoothController {
         new ApiResponseObject<List<KioskBoothRightsDTO>>(HttpStatus.OK, kioskBoothRightInfos), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/kioskinfo/{boothID}", method = RequestMethod.GET,
+  @RequestMapping(value = "/kiosklistbybooth/{boothID}", method = RequestMethod.GET,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-  public ResponseEntity<ApiResponseObject<?>> getKioskInfoByBooth(@PathVariable String boothID) {
+  public ResponseEntity<ApiResponseObject<?>> getKioskListByBooth(@PathVariable long boothID) {
     System.out.println("boothID :" + boothID);
-    List<ClientInfo> clientInfo = kioskBoothService.getKioskInfoByBooth(boothID);
+    List<ClientDTO> clientDTO = kioskBoothService.getKioskListByBooth(boothID);
     return new CustomResponseEntity<ApiResponseObject<?>>(
-        new ApiResponseObject<List<ClientInfo>>(HttpStatus.OK, clientInfo), HttpStatus.OK);
+        new ApiResponseObject<List<ClientDTO>>(HttpStatus.OK, clientDTO), HttpStatus.OK);
   }
 
 }
