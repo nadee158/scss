@@ -7,9 +7,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.spi.MappingContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,7 +18,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.privasia.scss.common.dto.HealthCheckInfoDTO2;
-import com.privasia.scss.common.enums.KioskHLTCheckStatus;
 import com.privasia.scss.core.model.KioskHLTCheck;
 import com.privasia.scss.core.repository.ClientRepository;
 import com.privasia.scss.core.repository.KioskHLTCheckRepository;
@@ -117,30 +114,7 @@ public class HealthCheckService {
 
   private KioskHLTCheck convertDTOToDomain(HealthCheckInfoDTO2 healthCheckInfoDTO2) {
 
-	  ModelMapper mapper = new ModelMapper();
-	  mapper.createTypeMap(String.class, KioskHLTCheckStatus.class).setConverter(new Converter<String, KioskHLTCheckStatus>() { 
-			@Override
-			public KioskHLTCheckStatus convert(MappingContext<String, KioskHLTCheckStatus> context) {
-				switch (context.getSource()) { 
-		          case "Card Reader Down": 
-		            return KioskHLTCheckStatus.CARD_READER_DOWN; 
-		          case "PC Down": 
-			            return KioskHLTCheckStatus.PC_DOWN;  
-		          case "Intercom Down": 
-			            return KioskHLTCheckStatus.INTERCOM_DOWN;
-		          case "Printer Down": 
-			            return KioskHLTCheckStatus.PRINTER_DOWN;  
-		          case "Camera Down": 
-			            return KioskHLTCheckStatus.CAMERA_DOWN;  
-		          case "OK": 
-			            return KioskHLTCheckStatus.OK;   
-		          default: 
-		            return null; 
-		        } 
-			} 
-      }); 
-		
-	  KioskHLTCheck healthCheckInfo = mapper.map(healthCheckInfoDTO2, KioskHLTCheck.class);
+	  KioskHLTCheck healthCheckInfo = modelMapper.map(healthCheckInfoDTO2, KioskHLTCheck.class);
 	  
 	  return healthCheckInfo;
 

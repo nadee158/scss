@@ -54,7 +54,7 @@ public class KioskBoothContainerAttribute extends CommonContainerAttribute imple
     return location;
   }
 
-  public void setLocation(String location) {
+  public void setLocation(String location) { 
     this.location = location;
   }
 

@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.privasia.scss.common.dto.ApiResponseObject;
 import com.privasia.scss.common.dto.ClientDTO;
-import com.privasia.scss.common.dto.ClientInfo;
 import com.privasia.scss.common.dto.CustomResponseEntity;
 import com.privasia.scss.common.dto.KioskBoothRightsDTO;
 import com.privasia.scss.kioskbooth.dto.KioskBoothRightInfo;
@@ -28,12 +27,14 @@ public class KioskBoothController {
   private KioskBoothService kioskBoothService;
 
 
-  @RequestMapping(value = "/activatetransaction", method = RequestMethod.PUT,
+  @RequestMapping(value = "/activatetrx", method = RequestMethod.PUT,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public CustomResponseEntity<ApiResponseObject<?>> activateBoothsByKioskId(
-      @RequestBody KioskBoothRightInfo kioskBoothRightInfo) {
-    System.out.println("kioskBoothRightInfo :" + kioskBoothRightInfo);
-    String status = kioskBoothService.activateBoothsByKioskId(kioskBoothRightInfo);
+      @RequestBody KioskBoothRightsDTO kioskBoothRightsDTO) {
+    System.out.println("kioskBoothRightInfo kioskID :" + kioskBoothRightsDTO.getKioskClientID());
+    System.out.println("kioskBoothRightInfo CardScanTime :" + kioskBoothRightsDTO.getCardScanTime());
+    System.out.println("kioskBoothRightInfo ContainerNumber :" + kioskBoothRightsDTO.getContainer01().getContainerNumber());
+    String status = kioskBoothService.activateBoothsTrxByKiosk(kioskBoothRightsDTO);
     return new CustomResponseEntity<ApiResponseObject<?>>(new ApiResponseObject<String>(HttpStatus.OK, status),
         HttpStatus.OK);
   }

@@ -1,5 +1,7 @@
 package com.privasia.scss.kioskbooth.service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -9,8 +11,14 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import org.apache.commons.collections4.IteratorUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.modelmapper.AbstractConverter;
+import org.modelmapper.AbstractProvider;
+import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.PropertyMap;
+import org.modelmapper.Provider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -28,6 +36,7 @@ import com.privasia.scss.core.exception.ResultsNotFoundException;
 import com.privasia.scss.core.model.Client;
 import com.privasia.scss.core.model.KioskBoothRights;
 import com.privasia.scss.core.model.KioskBoothRightsPK;
+import com.privasia.scss.core.modelmap.config.ModelMapLocalDateConverter;
 import com.privasia.scss.core.predicate.KioskBoothRightsPredicates;
 import com.privasia.scss.core.repository.ClientRepository;
 import com.privasia.scss.core.repository.KioskBoothRightsRepository;
@@ -46,13 +55,55 @@ public class KioskBoothService {
   
   @Autowired
   private ModelMapper modelMapper;
-
+  
+  
+  @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, readOnly = false)
+  public String activateBoothsTrxByKiosk(KioskBoothRightsDTO kioskBoothRightDTO) {
+	  
+	List<KioskBoothRights> boothListToActive = fetchBoothsToActivateTrx(kioskBoothRightDTO.getKioskClientID());
+	
+	if(boothListToActive.isEmpty()) throw new ResultsNotFoundException("No Booth Info Found to Update!");
+	kioskBoothRightDTO.setCardScanTime("01/01/2016 11:05:55 AM");
+	boothListToActive.stream().forEach(KioskBoothRights -> {
+		//kioskBoothRightDTO.setKioskLockStatus(KioskLockStatus.ACTIVE.getValue());
+		kioskBoothRightDTO.setBoothClientID(KioskBoothRights.getKioskBoothRightsID().getBooth().getClientID());
+		KioskBoothRights = convertDTOToDomain(kioskBoothRightDTO);
+		
+		System.out.println("KioskBoothRights.getCardScanTime() : "+KioskBoothRights.getCardScanTime());
+		System.out.println("KioskBoothRights.getContainerNumber() : "+KioskBoothRights.getContainer01().getContainerNumber());
+		System.out.println("KioskBoothRights.getTransactionType().getValue() : "+KioskBoothRights.getTransactionType());
+		
+		//kioskBoothRightsRepository.save(KioskBoothRights);
+	});
+	
+	return "SUCCESS";
+	
+  }
+  
+  @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, readOnly = true)
+  public List<KioskBoothRights> fetchBoothsToActivateTrx(Long kioskID) {
+	  
+	  List<KioskLockStatus> kioskStatusList = new ArrayList<>();
+	  kioskStatusList.add(KioskLockStatus.ACTIVE);
+	  kioskStatusList.add(KioskLockStatus.COMPLETE);
+	  
+	  Predicate byStatus = KioskBoothRightsPredicates.KioskBoothStatusIN(kioskStatusList);
+	  Predicate byNullStatus = KioskBoothRightsPredicates.KioskBoothStatusNull();
+      Predicate byKioskID = KioskBoothRightsPredicates.KioskBoothInfoByKioskID(kioskID);
+      Predicate statusOR = ExpressionUtils.or(byStatus, byNullStatus);
+      Predicate condition = ExpressionUtils.allOf(byKioskID, statusOR);
+      
+      Iterable<KioskBoothRights> boothIterator = kioskBoothRightsRepository.findAll(condition);
+      
+	  return IteratorUtils.toList(boothIterator.iterator());   
+  }
+  
 
   @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, readOnly = false)
   public String activateBoothsByKioskId(KioskBoothRightInfo kioskBoothRightInfo) {
     String result = "ERROR";
     if (!(kioskBoothRightInfo == null || kioskBoothRightInfo.getKioskID() == null)) {
-      Iterable<KioskBoothRights> allKiosks = getKioskBoothInfoById(kioskBoothRightInfo.getKioskID());
+      Iterable<KioskBoothRights> allKiosks = getKioskBoothInfoByKiosk(kioskBoothRightInfo.getKioskID());
       if (!(allKiosks == null)) {
         Stream<KioskBoothRights> allKiosksStrem = stream(allKiosks);
         if (allKiosksStrem.count() > 0) {
@@ -84,7 +135,7 @@ public class KioskBoothService {
     String result = "ERROR";
     if (!(kioskBoothRightInfo == null)) {
       if (kioskBoothRightInfo.getKioskID() !=null || kioskBoothRightInfo.getBoothID() != null) {
-        Iterable<KioskBoothRights> allKiosks = getKioskBoothInfoById(kioskBoothRightInfo.getKioskID());
+        Iterable<KioskBoothRights> allKiosks = getKioskBoothInfoByKiosk(kioskBoothRightInfo.getKioskID());
         if (!(allKiosks == null)) {
           Stream<KioskBoothRights> allKiosksStrem = stream(allKiosks);
           if (allKiosksStrem.count() > 0) {
@@ -219,7 +270,7 @@ public class KioskBoothService {
       Iterable<KioskBoothRights> kioskList = applyBoothAccessRightPredicate(boothID, kioskID, cardNumber);
       if (kioskList != null) {
         Stream<KioskBoothRights> kioskListStrem = stream(kioskList);
-        List<KioskBoothRightsDTO> resultMap = kioskListStrem.map(kisokBooth -> convertDomainToDto(kisokBooth)).collect(Collectors.toList());
+        List<KioskBoothRightsDTO> resultMap = kioskListStrem.map(kisokBooth -> convertDomainToDTO(kisokBooth)).collect(Collectors.toList());
         if (resultMap.isEmpty())  
         	throw new ResultsNotFoundException("Access Rights for Booth could not be found!");
           return resultMap;
@@ -263,7 +314,7 @@ public class KioskBoothService {
     return kioskBoothRightsRepository.findAll(finalPredicate);
   }
 
-  public Iterable<KioskBoothRights> getKioskBoothInfoById(Long kioskID) {
+  public Iterable<KioskBoothRights> getKioskBoothInfoByKiosk(Long kioskID) {
     Predicate kioskBoothInfoByKioskID = KioskBoothRightsPredicates.KioskBoothInfoByKioskID(kioskID);
     return kioskBoothRightsRepository.findAll(kioskBoothInfoByKioskID);
   }
@@ -300,26 +351,26 @@ public class KioskBoothService {
     if (!(kioskBoothRightInfo == null)) {
       KioskBoothRights kioskBoothRights = kioskBoothRightInfo.updateKioskBoothRights(kiosk);
       if (!(kioskBoothRightInfo.getContainer01() == null)) {
-        kioskBoothRights.setContainer01(
-            kioskBoothRightInfo.getContainer01().updateContainerAttribute(kioskBoothRights.getContainer01()));
+        ///kioskBoothRights.setContainer01(
+            //kioskBoothRightInfo.getContainer01().updateContainerAttribute(kioskBoothRights.getContainer01()));
       } else {
         kioskBoothRights.setContainer01(null);
       }
       if (!(kioskBoothRightInfo.getContainer02() == null)) {
-        kioskBoothRights.setContainer02(
-            kioskBoothRightInfo.getContainer02().updateContainerAttribute(kioskBoothRights.getContainer02()));
+        //kioskBoothRights.setContainer02(
+            //kioskBoothRightInfo.getContainer02().updateContainerAttribute(kioskBoothRights.getContainer02()));
       } else {
         kioskBoothRights.setContainer02(null);
       }
       if (!(kioskBoothRightInfo.getContainer03() == null)) {
-        kioskBoothRights.setContainer03(
-            kioskBoothRightInfo.getContainer03().updateContainerAttribute(kioskBoothRights.getContainer03()));
+        //kioskBoothRights.setContainer03(
+            //kioskBoothRightInfo.getContainer03().updateContainerAttribute(kioskBoothRights.getContainer03()));
       } else {
         kioskBoothRights.setContainer03(null);
       }
       if (!(kioskBoothRightInfo.getContainer04() == null)) {
-        kioskBoothRights.setContainer04(
-            kioskBoothRightInfo.getContainer04().updateContainerAttribute(kioskBoothRights.getContainer04()));
+        //kioskBoothRights.setContainer04(
+            //kioskBoothRightInfo.getContainer04().updateContainerAttribute(kioskBoothRights.getContainer04()));
       } else {
         kioskBoothRights.setContainer04(null);
       }
@@ -337,16 +388,16 @@ public class KioskBoothService {
       pk.setKiosk(clientRepository.findOne(kioskBoothRightInfo.getKioskID()).orElse(null));
       KioskBoothRights kioskBoothRights = kioskBoothRightInfo.constructKioskBoothRights(pk);
       if (!(kioskBoothRightInfo.getContainer01() == null)) {
-        kioskBoothRights.setContainer01(kioskBoothRightInfo.getContainer01().constructContainerAttribute());
+        //kioskBoothRights.setContainer01(kioskBoothRightInfo.getContainer01().constructContainerAttribute());
       }
       if (!(kioskBoothRightInfo.getContainer02() == null)) {
-        kioskBoothRights.setContainer02(kioskBoothRightInfo.getContainer02().constructContainerAttribute());
+        //kioskBoothRights.setContainer02(kioskBoothRightInfo.getContainer02().constructContainerAttribute());
       }
       if (!(kioskBoothRightInfo.getContainer03() == null)) {
-        kioskBoothRights.setContainer03(kioskBoothRightInfo.getContainer03().constructContainerAttribute());
+        //kioskBoothRights.setContainer03(kioskBoothRightInfo.getContainer03().constructContainerAttribute());
       }
       if (!(kioskBoothRightInfo.getContainer04() == null)) {
-        kioskBoothRights.setContainer04(kioskBoothRightInfo.getContainer04().constructContainerAttribute());
+        //kioskBoothRights.setContainer04(kioskBoothRightInfo.getContainer04().constructContainerAttribute());
       }
       return kioskBoothRights;
     }
@@ -357,11 +408,57 @@ public class KioskBoothService {
     return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterable.iterator(), Spliterator.ORDERED), false);
   }
   
-  private KioskBoothRightsDTO convertDomainToDto(KioskBoothRights kioskBoothRights) {
+  private KioskBoothRightsDTO convertDomainToDTO(KioskBoothRights kioskBoothRights) {
 	  KioskBoothRightsDTO kioskBoothRightsDTO = modelMapper.map(kioskBoothRights, KioskBoothRightsDTO.class);
-	  System.out.println("kioskBoothRightsDTO.getKioskLockStatus() "+ kioskBoothRightsDTO.getKioskLockStatus());
 	  return kioskBoothRightsDTO;
   }
+  
+  private KioskBoothRights convertDTOToDomain(KioskBoothRightsDTO kioskBoothRightsDTO) {
+	  KioskBoothRights kioskBoothRights = modelMapper.map(kioskBoothRightsDTO, KioskBoothRights.class);
+	  return kioskBoothRights;
+  }
+  
+  
+  public static void main(String args[]){
+	  
+	  ModelMapper modelmapper = new ModelMapper();
+
+	    Converter<String, LocalDateTime> toStringDate = new AbstractConverter<String, LocalDateTime>() {
+	        @Override
+	        protected LocalDateTime convert(String source) {
+	        	if(StringUtils.isNotBlank(source)){
+	        		DateTimeFormatter format = DateTimeFormatter.ofPattern(CommonUtil.GLOBAL_DATE_PATTERN);
+		            LocalDateTime localDate = LocalDateTime.parse(source, format);
+		            return localDate;
+	        	}else{
+	        		return null;
+	        	}
+	            
+	        }
+	    };
+
+
+	    modelmapper.createTypeMap(String.class, LocalDateTime.class).setProvider(ModelMapLocalDateConverter.getLocalDateTimeProvider());
+	    modelmapper.addConverter(toStringDate);
+	    modelmapper.addMappings(new PropertyMap<KioskBoothRightsDTO, KioskBoothRights>() { 
+			  protected void configure() {
+				  map().getKioskBoothRightsID().getKiosk().setClientID(source.getKioskClientID());
+				  map().getKioskBoothRightsID().getBooth().setClientID(source.getBoothClientID());
+			  }
+		  });
+	    
+	    KioskBoothRightsDTO kioskBoothRightDTO = new KioskBoothRightsDTO();
+	    kioskBoothRightDTO.setCardScanTime("01/01/2016 11:05:55 AM");
+	    kioskBoothRightDTO.setKioskSelectedTime(null);
+	    
+	    
+	    KioskBoothRights dateConverted = modelmapper.map(kioskBoothRightDTO, KioskBoothRights.class);
+
+	    System.out.println(dateConverted.getCardScanTime());
+	    System.out.println(dateConverted.getKioskSelectedTime());
+  }
+  
+  
 
 
 

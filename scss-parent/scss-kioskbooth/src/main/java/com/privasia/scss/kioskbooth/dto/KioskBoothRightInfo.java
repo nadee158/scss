@@ -9,6 +9,7 @@ import java.time.format.DateTimeFormatter;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.privasia.scss.common.dto.KioskBoothContainerDTO;
 import com.privasia.scss.common.enums.KioskLockStatus;
 import com.privasia.scss.common.enums.TransactionType;
 import com.privasia.scss.core.model.KioskBoothRights;
@@ -116,19 +117,19 @@ public class KioskBoothRightInfo implements Serializable {
 			this.referReason01List = boothRights.getReferReason01List();
 			this.referReason02List = boothRights.getReferReason02List();
 			if (!(boothRights.getContainer01() == null)) {
-				KioskBoothContainerDTO container01 = new KioskBoothContainerDTO(boothRights.getContainer01());
+				//KioskBoothContainerDTO container01 = new KioskBoothContainerDTO(boothRights.getContainer01());
 				this.setContainer01(container01);
 			}
 			if (!(boothRights.getContainer02() == null)) {
-				KioskBoothContainerDTO container02 = new KioskBoothContainerDTO(boothRights.getContainer02());
+				//KioskBoothContainerDTO container02 = new KioskBoothContainerDTO(boothRights.getContainer02());
 				this.setContainer01(container02);
 			}
 			if (!(boothRights.getContainer03() == null)) {
-				KioskBoothContainerDTO container03 = new KioskBoothContainerDTO(boothRights.getContainer03());
+				//KioskBoothContainerDTO container03 = new KioskBoothContainerDTO(boothRights.getContainer03());
 				this.setContainer01(container03);
 			}
 			if (!(boothRights.getContainer04() == null)) {
-				KioskBoothContainerDTO container04 = new KioskBoothContainerDTO(boothRights.getContainer04());
+				//KioskBoothContainerDTO container04 = new KioskBoothContainerDTO(boothRights.getContainer04());
 				this.setContainer01(container04);
 			}
 		}

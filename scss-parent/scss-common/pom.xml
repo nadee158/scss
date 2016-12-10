@@ -18,7 +18,7 @@
 	
 	<dependencies>
 	
-			<dependency>
+		<dependency>
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
 		</dependency>
@@ -40,7 +40,6 @@
 			<artifactId>spring-boot-starter-freemarker</artifactId>
 		</dependency>
 		
-
 	</dependencies>
 
 
