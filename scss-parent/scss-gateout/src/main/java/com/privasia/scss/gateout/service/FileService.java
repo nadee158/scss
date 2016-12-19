@@ -17,7 +17,7 @@ import com.privasia.scss.core.model.GatePass;
 import com.privasia.scss.core.model.WHODD;
 import com.privasia.scss.core.repository.ExportsRepository;
 import com.privasia.scss.core.repository.GatePassRepository;
-import com.privasia.scss.core.repository.WHODDRepository;
+import com.privasia.scss.core.repository.ODDRepository;
 import com.privasia.scss.gateout.dto.FileDTO;
 import com.privasia.scss.gateout.mongo.repository.GridFSRepository;
 
@@ -28,7 +28,7 @@ public class FileService {
   private GridFSRepository gridFSRepository;
 
   @Autowired
-  private WHODDRepository whoddRepository;
+  private ODDRepository oddRepository;
 
   @Autowired
   private GatePassRepository gatePassRepository;
@@ -228,19 +228,19 @@ public class FileService {
 
   public void updateODDReference(FileDTO fileDTO) {
     if (StringUtils.isNotEmpty(fileDTO.getOddIDSeq1())) {
-      Optional<WHODD> whodd = whoddRepository.findOne(Long.parseLong(fileDTO.getOddIDSeq1()));
+      Optional<WHODD> whodd = oddRepository.findOne(Long.parseLong(fileDTO.getOddIDSeq1()));
       if (whodd.isPresent()) {
         WHODD whoDDobj = whodd.get();
         whoDDobj = assignUpdatedValuedWHODDobj(whoDDobj, fileDTO);
-        whoddRepository.save(whoDDobj);
+        oddRepository.save(whoDDobj);
       }
     }
     if (StringUtils.isNotEmpty(fileDTO.getOddIDSeq2())) {
-      Optional<WHODD> whodd = whoddRepository.findOne(Long.parseLong(fileDTO.getOddIDSeq2()));
+      Optional<WHODD> whodd = oddRepository.findOne(Long.parseLong(fileDTO.getOddIDSeq2()));
       if (whodd.isPresent()) {
         WHODD whoDDobj = whodd.get();
         whoDDobj = assignUpdatedValuedWHODDobj(whoDDobj, fileDTO);
-        whoddRepository.save(whoDDobj);
+        oddRepository.save(whoDDobj);
       }
     }
   }

@@ -13,7 +13,7 @@ import com.privasia.scss.core.model.KioskBoothRights;
  *
  */
 
-public class ModelMapPropertyMap {
+public final class ModelMapPropertyMap {
 
 	public static PropertyMap<KioskBoothRights, KioskBoothRightsDTO> kioskBoothRightsDomainToDto() {
 

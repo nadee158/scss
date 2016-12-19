@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.privasia.scss.common.dto.ExportContainer;
 
 @Repository
-public class ExportRepository {
+public class CosmosExportRepository {
 
 	@Autowired
 	@Qualifier("as400JdbcTemplate")

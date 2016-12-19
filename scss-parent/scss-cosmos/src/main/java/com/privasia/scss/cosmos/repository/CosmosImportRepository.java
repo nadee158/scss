@@ -20,7 +20,7 @@ import com.privasia.scss.common.dto.SealInfo;
 import com.privasia.scss.cosmos.util.TextString;
 
 @Repository
-public class ImportRepository {
+public class CosmosImportRepository {
 
 	@Autowired
 	@Qualifier("as400JdbcTemplate")

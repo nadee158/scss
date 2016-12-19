@@ -21,8 +21,8 @@ public interface ODDRepository extends BaseRepository<WHODD, Long> {
 	@Query(name="WHODD.countByPMHeadNoAndOddStatus")
 	public int countByPMHeadNoAndOddStatus(@Param("headNumber") String headNumber, @Param("oddStatus") TransactionStatus oddStatus);
 	
-	@Query(name="WHODD.countByCardIDAndOddStatus")
-	public int countByCardIDAndOddStatus(@Param("cardID") Long ca, @Param("cardID") TransactionStatus oddStatus);
+	@Query(name="WHODD.countByCardIDAndOddStatus", nativeQuery = true)
+	public Long countByCardIDAndEirStatus(@Param("cardID") long cardId, @Param("eirStatus") String eirStatus);
 	
 
 }

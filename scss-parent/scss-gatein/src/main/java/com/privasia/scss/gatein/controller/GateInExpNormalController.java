@@ -134,7 +134,7 @@ public class GateInExpNormalController {
               // no place to use this info - previously assigned to the UI form
               // SCUInfo scuInfo = cardService.selectSCUInfo(gateInInfo.getCardIdSeq());
               // no place to use this info - previously assigned to the UI form
-              String laneNo = clientService.getLaneNo(gateInInfo.getClientId());
+              //String laneNo = clientService.getLaneNo(gateInInfo.getClientId());
 
               /**
                * Query Export Information
@@ -434,7 +434,7 @@ public class GateInExpNormalController {
                 + ReturnMsg.SEPARATOR;
       }
 
-      ExportSSR ssr = new ExportSSR(gateInInfo.getTimeGateIn(), c.getVesselDateEta_ddMMyyyyHHmmss());
+      ExportSSR ssr = new ExportSSR("", c.getVesselDateEta_ddMMyyyyHHmmss());
       c.setExpHasReplanSSR(ssr.getHasReplan());
       c.setExpHasOverClosingSSR(ssr.getHasOverClosing());
       if (ssr.getSSRBlockStatus()) {
@@ -442,7 +442,7 @@ public class GateInExpNormalController {
       } else {
         c.setExpSSRBlockStatus("RLS");
       }
-      if (StringUtils.isNotEmpty(gateInInfo.getWeightBridge())) {
+      if (StringUtils.isNotEmpty("")) {
         // c.setNetWeight(gateInInfo.getWeightBridge());
       }
     }

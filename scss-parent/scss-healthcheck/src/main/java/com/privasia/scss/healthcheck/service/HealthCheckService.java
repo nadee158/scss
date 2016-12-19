@@ -1,8 +1,6 @@
 package com.privasia.scss.healthcheck.service;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.logging.Log;
@@ -17,7 +15,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.privasia.scss.common.dto.HealthCheckInfoDTO2;
+import com.privasia.scss.common.dto.HealthCheckInfoDTO;
+import com.privasia.scss.core.exception.BusinessException;
 import com.privasia.scss.core.model.KioskHLTCheck;
 import com.privasia.scss.core.repository.ClientRepository;
 import com.privasia.scss.core.repository.KioskHLTCheckRepository;
@@ -39,7 +38,7 @@ public class HealthCheckService {
 
 
   @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-  public List<HealthCheckInfoDTO2> getHealthCheckInfo(int size) {
+  public List<HealthCheckInfoDTO> getHealthCheckInfo(int size) {
 
     log.info("******* Request for Get Health Check Info ******* ");
 
@@ -61,61 +60,44 @@ public class HealthCheckService {
   }
 
   @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
-  public Map<String, String> saveKioskHealthCheckInfo(HealthCheckInfoDTO2 healthCheckInfo) {
-    Map<String, String> resultMap = new HashMap<String, String>();
+  public Long saveKioskHealthCheckInfo(HealthCheckInfoDTO healthCheckInfo) {
 
     log.info("******* Request for Save Kiosk Health Check Info ******* ");
     log.info("Request  Health Check Info : " + healthCheckInfo);
-
-
+    
     KioskHLTCheck kioskHLTCheck = convertDTOToDomain(healthCheckInfo);
-
-    System.out.println("getLaneNumber : " + kioskHLTCheck.getLaneNumber());
+    
+    kioskHLTCheck.setNotificationStatus(false);
+    kioskHLTCheck.setBooth(clientRepository.findOne(healthCheckInfo.getBoothClientID()).orElseGet(null));
+    kioskHLTCheck.setKiosk(clientRepository.findOne(healthCheckInfo.getKioskClientID()).orElseGet(null));
+    
     System.out.println("getCardReaderStatus : " + kioskHLTCheck.getCardReaderStatus());
     System.out.println("getKiosk().getClientID() : " + kioskHLTCheck.getKiosk().getClientID());
     System.out.println("getBooth().getClientID() : " + kioskHLTCheck.getBooth().getClientID());
-    System.out.println("getCameraStatus : " + kioskHLTCheck.getCameraStatus());
+    System.out.println("getPcStatus : " + kioskHLTCheck.getPcStatus());
+    System.out.println("getIntercomStatus : " + kioskHLTCheck.getIntercomStatus());
     System.out.println("getPaperStatus : " + kioskHLTCheck.getPaperStatus());
+    System.out.println("getLcdStatus : " + kioskHLTCheck.getLcdStatus());
+    System.out.println("getCameraStatus : " + kioskHLTCheck.getCameraStatus());
+    System.out.println("getWebServiceStatus : " + kioskHLTCheck.getWebServiceStatus());
+    System.out.println("getLaneNumber : " + kioskHLTCheck.getLaneNumber());
+    
+    kioskHLTCheck = kioskHLTCheckRepository.save(kioskHLTCheck);
 
-    /*
-     * KioskHLTCheck kioskHLTCheck = new KioskHLTCheck(); if
-     * (StringUtils.isNotEmpty(healthCheckInfo.getKioskID())) { long kioskId =
-     * Long.parseLong(healthCheckInfo.getKioskID()); Optional<Client> client =
-     * clientRepository.findOne(kioskId); if (client.isPresent()) {
-     * kioskHLTCheck.setKiosk(client.get()); } }
-     * 
-     * if (StringUtils.isNotEmpty(healthCheckInfo.getBoothID())) { long boothId =
-     * Long.parseLong(healthCheckInfo.getBoothID()); Optional<Client> client =
-     * clientRepository.findOne(boothId); if (client.isPresent()) {
-     * kioskHLTCheck.setBooth(client.get()); } }
-     * 
-     * KioskHLTCheck persisted = kioskHLTCheckRepository.save(kioskHLTCheck);
-     * 
-     * if (persisted.getHealthCheckSeq() > 0) { resultMap.put(ApplicationConstants.MESSAGE_CODE,
-     * ApplicationConstants.MESSAGE_OK); resultMap.put(ApplicationConstants.MESSAGE_DESCRIPTION,
-     * CommonUtil.formatMessageCode("SCSS_KIOSK_HEALTH_CHECK_CODE01", null)); } else {
-     * resultMap.put(ApplicationConstants.MESSAGE_CODE, ApplicationConstants.MESSAGE_NOK);
-     * resultMap.put(ApplicationConstants.MESSAGE_DESCRIPTION,
-     * CommonUtil.formatMessageCode("SCSS_KIOSK_HEALTH_CHECK_ERR_CODE02", null)); }
-     * 
-     * log.info("******* Response for Save Kiosk Health Check Info******* "); log.info(
-     * "Response  resultMap Info : " + resultMap);
-     */
-
-    return resultMap;
+    if(kioskHLTCheck.getHealthCheckSeq() == null)
+    	throw new BusinessException("Error saving Kiosk Health Check info ! ");
+    return kioskHLTCheck.getHealthCheckSeq();
 
   }
 
 
-  private HealthCheckInfoDTO2 convertDomainToDto(KioskHLTCheck healthCheckInfo) {
-    HealthCheckInfoDTO2 healthCheckInfoDTO2 = modelMapper.map(healthCheckInfo, HealthCheckInfoDTO2.class);
-    return healthCheckInfoDTO2;
+  private HealthCheckInfoDTO convertDomainToDto(KioskHLTCheck healthCheckInfo) {
+    HealthCheckInfoDTO healthCheckInfoDTO = modelMapper.map(healthCheckInfo, HealthCheckInfoDTO.class);
+    return healthCheckInfoDTO;
   }
 
-  private KioskHLTCheck convertDTOToDomain(HealthCheckInfoDTO2 healthCheckInfoDTO2) {
-
-	  KioskHLTCheck healthCheckInfo = modelMapper.map(healthCheckInfoDTO2, KioskHLTCheck.class);
-	  
+  private KioskHLTCheck convertDTOToDomain(HealthCheckInfoDTO healthCheckInfoDTO) {
+	  KioskHLTCheck healthCheckInfo = modelMapper.map(healthCheckInfoDTO, KioskHLTCheck.class);
 	  return healthCheckInfo;
 
   }

@@ -51,17 +51,18 @@ public class AuditEntity implements Serializable {
 	private LocalDateTime dateTimeUpdate;
 
 	@Version
-	@Column(name = "VERSION", nullable = true)
-	private Long version;
+	@Column(name = "VERSION")
+	private Integer version;
 
 	public AuditEntity(Long addBy, Long updateBy, LocalDateTime dateTimeAdd, LocalDateTime dateTimeUpdate,
-			Long version) {
+			Integer version) {
 		super();
 		this.addBy = addBy;
 		this.updateBy = updateBy;
 		this.dateTimeAdd = dateTimeAdd;
 		this.dateTimeUpdate = dateTimeUpdate;
 		this.version = version;
+		
 	}
 
 	public AuditEntity() {
@@ -99,12 +100,12 @@ public class AuditEntity implements Serializable {
 		this.dateTimeUpdate = dateTimeUpdate;
 	}
 
-	public Long getVersion() {
+	public Integer getVersion() {
 		return version;
 	}
 
-	public void setVersion(Long version) {
+	public void setVersion(Integer version) {
 		this.version = version;
 	}
-
+	
 }

@@ -54,7 +54,7 @@ public class ExpressService {
       if (isCardValid) {
         if (!(card.getCompany() == null || card.getCompany().getCompanyType() == null)) {
           if (StringUtils.equals(card.getCompany().getCompanyType().getValue(), CompanyType.HAULAGE.getValue())) {
-            boolean isImpExpCompleted = commonCardService.isImpExpCompleted(card.getCardID());
+            boolean isImpExpCompleted = commonCardService.isTrxInProgress(card.getCardID());
             if (isImpExpCompleted) {
               log.error("Seq:" + card.getCardID());
 

@@ -8,10 +8,8 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.privasia.scss.common.dto.GateInfo;
 import com.privasia.scss.common.dto.ScssClientDto;
 import com.privasia.scss.common.enums.CardStatus;
-import com.privasia.scss.common.enums.CardUsageStatus;
 import com.privasia.scss.core.model.Card;
 import com.privasia.scss.core.model.CardUsage;
 import com.privasia.scss.core.repository.CardRepository;
@@ -27,7 +25,7 @@ public class CardUsageService {
 
   private static final String STATUS_LOCK = "L";
   private static final String STATUS_COMPLETE = "C";
-  private static final String STATUS_RESET = "R";
+  private static final String STATUS_RESET = "R"; 
 
   private static Logger logger = Logger.getLogger(CardUsage.class.getName());
 
@@ -57,29 +55,6 @@ public class CardUsageService {
     // + "AND (cug_time_end IS NULL OR cug_time_end = '')";
 
     return ret;
-  }
-
-  /**
-   * Method's return type was modified to GateInfo dto object - older version had a string array
-   * Returned information is the same
-   * 
-   * @author nadee158
-   * @param webIP
-   * @return
-   */
-  public GateInfo lookupGateInfo(String webIP) {
-    // ret = new String[] {cardId, clientId, timeInOut, mcFlag, weightBridge, cugIdSeq};
-
-    String clientId = selectClientId(webIP);
-
-    CardUsage cardUsage = cardUsageRepository.findByClient_ClientIDAndUsageStatusAndDateTimeUpdateIsNull(clientId,
-        CardUsageStatus.STATUS_LOCK);
-
-    if (!(cardUsage == null)) {
-      return cardUsage.constructGateInfo();
-    }
-
-    return null;
   }
 
   public boolean saveStartCardUsage(String cardId, String clientId, boolean isMC, String weight) {

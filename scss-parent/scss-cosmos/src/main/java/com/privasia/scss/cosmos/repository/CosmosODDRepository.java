@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 @Repository
-public class ODDRepository {
+public class CosmosODDRepository {
 
 	@Autowired
 	@Qualifier("as400JdbcTemplate")

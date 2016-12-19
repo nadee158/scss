@@ -6,67 +6,44 @@ import org.apache.commons.lang3.StringUtils;
 
 public class GateInfo implements Serializable {
 
-  /**
-   * 
-   */
-  private static final long serialVersionUID = 1L;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
-  String cardIdSeq = StringUtils.EMPTY;
-  String clientId = StringUtils.EMPTY;
-  String timeGateIn = StringUtils.EMPTY;
+	private boolean allowGateIn = true;
 
-  String weightBridge = StringUtils.EMPTY;
-  String cugIdSeq = StringUtils.EMPTY;
+	private String message = StringUtils.EMPTY;
+	
+	private Long cardID = null;
 
-  public GateInfo() {
-    super();
+	public GateInfo() {
+		super();
 
-  }
+	}
 
-  public String getCardIdSeq() {
-    return cardIdSeq;
-  }
+	public boolean isAllowGateIn() {
+		return allowGateIn;
+	}
 
-  public void setCardIdSeq(String cardIdSeq) {
-    this.cardIdSeq = cardIdSeq;
-  }
+	public void setAllowGateIn(boolean allowGateIn) {
+		this.allowGateIn = allowGateIn;
+	}
 
-  public String getClientId() {
-    return clientId;
-  }
+	public String getMessage() {
+		return message;
+	}
 
-  public void setClientId(String clientId) {
-    this.clientId = clientId;
-  }
+	public void setMessage(String message) {
+		this.message = message;
+	}
 
-  public String getTimeGateIn() {
-    return timeGateIn;
-  }
+	public Long getCardID() {
+		return cardID;
+	}
 
-  public void setTimeGateIn(String timeGateIn) {
-    this.timeGateIn = timeGateIn;
-  }
-
-  public String getWeightBridge() {
-    return weightBridge;
-  }
-
-  public void setWeightBridge(String weightBridge) {
-    this.weightBridge = weightBridge;
-  }
-
-  public String getCugIdSeq() {
-    return cugIdSeq;
-  }
-
-  public void setCugIdSeq(String cugIdSeq) {
-    this.cugIdSeq = cugIdSeq;
-  }
-
-  public static long getSerialversionuid() {
-    return serialVersionUID;
-  }
-
-
-
+	public void setCardID(Long cardID) {
+		this.cardID = cardID;
+	}
+	
 }

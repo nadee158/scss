@@ -4,7 +4,6 @@
 package com.privasia.scss.core.model;
 
 import java.io.Serializable;
-import java.time.format.DateTimeFormatter;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
@@ -21,7 +20,6 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
 
-import com.privasia.scss.common.dto.GateInfo;
 import com.privasia.scss.common.enums.CardUsageStatus;
 
 /**
@@ -100,32 +98,6 @@ public class CardUsage extends AuditEntity implements Serializable {
 
   public void setExpWeightBridge(int expWeightBridge) {
     this.expWeightBridge = expWeightBridge;
-  }
-
-  public GateInfo constructGateInfo() {
-    GateInfo gateInfo = new GateInfo();
-    // String cardId = rs.getString("crd_cardid");
-    // String timeInOut = rs.getString("cug_time_start");
-    // String mcFlag = rs.getString("cug_mc_flag");
-    // mcFlag = mcFlag.equals(Card.MASTER_CARD) ? mcFlag = "true" : "false";
-    // String weightBridge = rs.getString("exp_weight_bridge");
-    // String cugIdSeq = rs.getString("cug_id_seq");
-
-    DateTimeFormatter format = DateTimeFormatter.ofPattern("dd-MM-yyyy hh:mm a");
-    gateInfo.setCardIdSeq(Long.toString(this.getCard().getCardID()));
-    gateInfo.setClientId(Long.toString(this.getClient().getClientID()));
-
-    gateInfo.setWeightBridge(Integer.toString(this.getExpWeightBridge()));
-
-    gateInfo.setCugIdSeq(Long.toString(this.getCardUsageID()));
-
-    if (!(this.getDateTimeAdd() == null)) {
-      String timeGateIn = format.format(this.getDateTimeAdd());
-      gateInfo.setTimeGateIn(timeGateIn);
-    }
-
-
-    return gateInfo;
   }
 
 }

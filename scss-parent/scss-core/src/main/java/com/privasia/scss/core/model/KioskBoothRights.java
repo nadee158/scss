@@ -5,6 +5,7 @@ package com.privasia.scss.core.model;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
@@ -362,6 +363,29 @@ public class KioskBoothRights extends AuditEntity implements Serializable {
 
   public void setContainer04(KioskBoothContainerAttribute container04) {
     this.container04 = container04;
+  }
+  
+  @Override
+  public boolean equals(Object other) {
+      if (this == other) return true;
+      if (!(other instanceof KioskBoothRights)) return false;
+      
+      KioskBoothRights otherKBR = (KioskBoothRights) other;
+      
+      boolean boothIDEquals = Objects.equals(getKioskBoothRightsID().getBooth().getClientID(), otherKBR.getKioskBoothRightsID().getBooth().getClientID());
+      boolean kioskIDEquals = Objects.equals(getKioskBoothRightsID().getKiosk().getClientID(), otherKBR.getKioskBoothRightsID().getKiosk().getClientID());
+      
+      if(boothIDEquals && kioskIDEquals){
+    	  return true;
+      }else{
+    	  return false; 
+      }
+  }
+
+  @Override
+  public int hashCode() {
+	  int result = Objects.hash(getKioskBoothRightsID().getBooth().getClientID());
+      return result += Objects.hash(getKioskBoothRightsID().getKiosk().getClientID());
   }
 
 

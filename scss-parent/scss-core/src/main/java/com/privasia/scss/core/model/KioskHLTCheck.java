@@ -38,12 +38,12 @@ public class KioskHLTCheck extends AuditEntity implements Serializable {
 
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_SCSS_KIOSK_HLT_CHECK")
-  @SequenceGenerator(name = "SEQ_SCSS_KIOSK_HLT_CHECK", sequenceName = "HEALTH_CHECK_SEQ", allocationSize = 1)
+  @SequenceGenerator(name = "SEQ_SCSS_KIOSK_HLT_CHECK", sequenceName = "HEALTH_CHECK_SEQ", allocationSize = 1) 
   @Column(name = "HEALTH_CHECK_SEQ")
   private Long healthCheckSeq;
 
   @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.REFRESH)
-  @JoinColumn(name = "KIOSK_ID", nullable = false, referencedColumnName = "CLI_CLIENTID_SEQ")
+  @JoinColumn(name = "KIOSK_ID", nullable = true, referencedColumnName = "CLI_CLIENTID_SEQ")
   private Client kiosk;
 
   @Column(name = "CARD_READER_STATUS")
@@ -76,7 +76,7 @@ public class KioskHLTCheck extends AuditEntity implements Serializable {
   private String webServiceStatus;
 
   @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.REFRESH)
-  @JoinColumn(name = "BOOTH_ID", nullable = false, referencedColumnName = "CLI_CLIENTID_SEQ")
+  @JoinColumn(name = "BOOTH_ID", nullable = true, referencedColumnName = "CLI_CLIENTID_SEQ")
   private Client booth;
 
   @Column(name = "LANE_NUMBER")
@@ -213,45 +213,7 @@ public class KioskHLTCheck extends AuditEntity implements Serializable {
     this.booth = booth;
   }
 
-  public HealthCheckInfoDTO constructDto() {
-    HealthCheckInfoDTO dto = new HealthCheckInfoDTO();
-    if (this.booth != null) {
-      dto.setBoothID(Long.toString(booth.getClientID()));
-    }
-    if (cameraStatus != null) {
-      dto.setCameraStatus(cameraStatus.getValue());
-    }
-
-    if (!(this.cardReaderStatus == null)) {
-      dto.setCardReaderStatus(cardReaderStatus.getValue());
-    }
-    dto.setCreationTime(CommonUtil.getFormatteDate(this.getDateTimeAdd()));
-
-    if (!(this.healthCheckSeq == null)) {
-      dto.setHealthCheckSeq(Long.toString(healthCheckSeq));
-    }
-    if (!(this.intercomStatus == null)) {
-      dto.setIntercomStatus(intercomStatus.getValue());
-    }
-    if (!(this.kiosk == null)) {
-      dto.setKioskID(Long.toString(kiosk.getClientID()));
-    }
-    dto.setLaneNo(laneNumber);
-    dto.setLcdStatus(lcdStatus);
-
-    if (!(this.notificationStatus == null)) {
-      dto.setNotificationStatus(Boolean.toString(notificationStatus));
-    }
-    dto.setPaperStatus(paperStatus);
-    if (!(this.pcStatus == null)) {
-      dto.setPcStatus(pcStatus.getValue());
-    }
-    if (!(this.printerStatus == null)) {
-      dto.setPrinterStatus(printerStatus.getValue());
-    }
-    dto.setWebServiceStatus(webServiceStatus);
-    return dto;
-  }
+  
 
   @Override
   public String toString() {
