@@ -1,7 +1,6 @@
 package com.privasia.scss.core.model;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
@@ -18,10 +17,8 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
-
-import com.privasia.scss.common.dto.HealthCheckInfoDTO;
 import com.privasia.scss.common.enums.KioskHLTCheckStatus;
-import com.privasia.scss.common.util.CommonUtil;
+
 
 @Entity
 @Table(name = "SCSS_KIOSK_HLT_CHECK")
@@ -85,25 +82,6 @@ public class KioskHLTCheck extends AuditEntity implements Serializable {
   @Column(name = "NOTIFICATION_STATUS")
   @Type(type = "yes_no")
   private Boolean notificationStatus;
-
-  public KioskHLTCheck(Long healthCheckSeq, Client kioskID, KioskHLTCheckStatus pCStatus, LocalDateTime dateTimeAdd,
-      KioskHLTCheckStatus cardReaderStatus, KioskHLTCheckStatus intercomStatus, KioskHLTCheckStatus printerStatus,
-      String paperStatus, String lCDStatus, KioskHLTCheckStatus cameraStatus, String webServiceStatus, Client boothID,
-      String laneNumber) {
-    super();
-    this.healthCheckSeq = healthCheckSeq;
-    this.kiosk = kioskID;
-    this.cardReaderStatus = cardReaderStatus;
-    this.pcStatus = pCStatus;
-    this.intercomStatus = intercomStatus;
-    this.printerStatus = printerStatus;
-    this.paperStatus = paperStatus;
-    this.lcdStatus = lCDStatus;
-    this.cameraStatus = cameraStatus;
-    this.webServiceStatus = webServiceStatus;
-    this.booth = boothID;
-    this.laneNumber = laneNumber;
-  }
 
   public KioskHLTCheck() {
     super();

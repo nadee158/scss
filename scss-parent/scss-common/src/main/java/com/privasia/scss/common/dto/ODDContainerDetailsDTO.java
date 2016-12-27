@@ -25,7 +25,7 @@ public class ODDContainerDetailsDTO implements Serializable {
 
   private String containerSize = StringUtils.EMPTY;
 
-  private long hdbsBkgDetailNoId;
+  private String hdbsBkgDetailNoId = StringUtils.EMPTY;
 
   private String hdbsStatus = StringUtils.EMPTY;
 
@@ -103,11 +103,11 @@ public class ODDContainerDetailsDTO implements Serializable {
     this.hdbsArrivalStatus = hdbsArrivalStatus;
   }
 
-  public long getHdbsBkgDetailNoId() {
+  public String getHdbsBkgDetailNoId() {
     return hdbsBkgDetailNoId;
   }
 
-  public void setHdbsBkgDetailNoId(long hdbsBkgDetailNoId) {
+  public void setHdbsBkgDetailNoId(String hdbsBkgDetailNoId) {
     this.hdbsBkgDetailNoId = hdbsBkgDetailNoId;
   }
 

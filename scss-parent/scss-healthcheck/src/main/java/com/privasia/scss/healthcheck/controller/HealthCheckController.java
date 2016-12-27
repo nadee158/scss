@@ -31,7 +31,7 @@ public class HealthCheckController {
   @Autowired
   private HealthCheckService healthCheckService;
 
-  @RequestMapping(value = "/getinfo/{pagesize}", method = RequestMethod.GET,
+  @RequestMapping(value = "/info/{pagesize}", method = RequestMethod.GET,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
   public CustomResponseEntity<ApiResponseObject<?>> getHealthCheckInfo(@PathVariable("pagesize") Integer pageSize) {
 

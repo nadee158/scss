@@ -22,9 +22,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.privasia.scss.common.dto.HDBSBkgDetailGridDTO;
 import com.privasia.scss.common.dto.HDBSBkgGridDTO;
+import com.privasia.scss.common.dto.ODDContainerDetailsDTO;
+import com.privasia.scss.common.dto.WHODDDTO;
 import com.privasia.scss.common.enums.ContainerSize;
 import com.privasia.scss.common.enums.HDBSBookingType;
 import com.privasia.scss.common.enums.HDBSStatus;
+import com.privasia.scss.common.enums.ImpExpFlagStatus;
 import com.privasia.scss.common.util.ApplicationConstants;
 import com.privasia.scss.common.util.CommonUtil;
 import com.privasia.scss.core.exception.BusinessException;
@@ -310,6 +313,67 @@ public class HDBSService {
     hdbs.setStatus(status);
     hdbs.setOnTimeFlag(onTimeFlag);
 
+  }
+  
+  @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
+  public List<WHODDDTO> populateODDInfo(String timeGateIn, List<String> bkgDetailIDList){
+	  
+	  List<HDBSBkgDetail> bkgDetails = findHDBSBookingDetailByIDList(bkgDetailIDList);
+	  List<WHODDDTO> oddInfoList = new ArrayList<WHODDDTO>();
+	  
+	  WHODDDTO importODDDTO = new WHODDDTO();
+	  WHODDDTO exportODDDTO = new WHODDDTO();
+	 
+	  bkgDetails.stream().filter(bkgDetail -> {
+			return bkgDetail.getHdbsBkgType().equals(HDBSBookingType.PICKUP);
+	  }).forEach(bkgDetail->{
+		  importODDDTO.setTimeGateIn(CommonUtil.getParsedDate(timeGateIn));
+		  setODDContainerInfo(importODDDTO, bkgDetail, ImpExpFlagStatus.IMPORT);
+		  oddInfoList.add(importODDDTO);
+		  
+	  });
+	  
+	  bkgDetails.stream().filter(bkgDetail -> {
+			return bkgDetail.getHdbsBkgType().equals(HDBSBookingType.DROP);
+	  }).forEach(bkgDetail->{
+		  exportODDDTO.setTimeGateIn(CommonUtil.getParsedDate(timeGateIn));
+		  setODDContainerInfo(exportODDDTO, bkgDetail, ImpExpFlagStatus.EXPORT);
+		  oddInfoList.add(exportODDDTO);
+	  });
+	  
+	  return oddInfoList;
+		
+  }
+  
+  @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
+  public WHODDDTO setODDContainerInfo (WHODDDTO oddDTO, HDBSBkgDetail bkgDetails, ImpExpFlagStatus impExpFlag){
+	  
+	  ODDContainerDetailsDTO containerDetailsDTO = new ODDContainerDetailsDTO();
+	  containerDetailsDTO.setContainerNo(bkgDetails.getContainerNo());
+	  containerDetailsDTO.setLocation(bkgDetails.gethDBSBkgMaster().getDepotCode());
+	  containerDetailsDTO.setHdbsBkgDetailNoId(bkgDetails.getHdbsBKGDetailID());
+	  containerDetailsDTO.setHdbsStatus(bkgDetails.getStatusCode().getValue());
+	  containerDetailsDTO.setContainerSize(bkgDetails.getContainerSize() == null ? "" : bkgDetails.getContainerSize().getValue());
+	 
+	  if (oddDTO.getTimeGateIn().isAfter(bkgDetails.getApptDateTimeToActual())){
+		  containerDetailsDTO.setHdbsArrivalStatus(ApplicationConstants.LATE);
+	  }else if (oddDTO.getTimeGateIn().isAfter(bkgDetails.getApptDateTimeFrom()) && oddDTO.getTimeGateIn().isBefore(bkgDetails.getApptDateTimeToActual())) {
+		  containerDetailsDTO.setHdbsArrivalStatus(ApplicationConstants.ACTIVE);
+	  } else if (oddDTO.getTimeGateIn().isBefore(bkgDetails.getApptDateTimeFrom())) {
+		  containerDetailsDTO.setHdbsArrivalStatus(ApplicationConstants.EARLY);
+	  }	
+	  
+	  if(oddDTO.getContainer01() == null){
+		  oddDTO.setPmHeadNo(bkgDetails.gethDBSBkgMaster().getPmHeadNo());
+		  oddDTO.setPmPlateNo(bkgDetails.gethDBSBkgMaster().getPlateNo());
+		  oddDTO.setImpExpFlag(impExpFlag.getValue());
+		  oddDTO.setContainer01(containerDetailsDTO);
+	  }else{
+		  oddDTO.setContainer02(containerDetailsDTO); 
+	  }
+	 
+	  return oddDTO;
+		
   }
 
 }

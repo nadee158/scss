@@ -42,8 +42,7 @@ public class HDBSController {
 
     HDBSBkgGridDTO hdbsBkgGridDTO = hdbsService.findHDBSBookingDetailByCard(cardID);
 
-    return new CustomResponseEntity<ApiResponseObject<?>>(
-        new ApiResponseObject<HDBSBkgGridDTO>(HttpStatus.OK, hdbsBkgGridDTO), HttpStatus.OK);
+    return new CustomResponseEntity<ApiResponseObject<?>>(new ApiResponseObject<HDBSBkgGridDTO>(HttpStatus.OK, hdbsBkgGridDTO), HttpStatus.OK);
   }
 
   @RequestMapping(value = "/validateselection", method = RequestMethod.PUT,

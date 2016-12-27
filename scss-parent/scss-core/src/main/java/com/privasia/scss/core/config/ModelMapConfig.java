@@ -35,6 +35,7 @@ public class ModelMapConfig {
 		modelMapper.addConverter(ModelMapEnumConverter.convertTransactionTypeToString());
 		modelMapper.addConverter(ModelMapEnumConverter.convertRecordStatusToString());
 		modelMapper.addConverter(ModelMapEnumConverter.convertClientTypeToString());
+		modelMapper.addConverter(ModelMapEnumConverter.convertKioskHLTCheckStatusToString());
 		modelMapper.addConverter(ModelMapEnumConverter.convertStringToKioskHLTCheckStatus());
 		modelMapper.addConverter(ModelMapEnumConverter.convertStringToKioskLockStatus());
 		modelMapper.addConverter(ModelMapEnumConverter.convertStringToTransactionType());
