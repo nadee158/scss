@@ -14,7 +14,7 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import com.privasia.scss.cosmos.AS400DBConfig;
 
 /**
- * Hello world!
+ * Janaka Wanigatunga
  *
  */
 @Configuration

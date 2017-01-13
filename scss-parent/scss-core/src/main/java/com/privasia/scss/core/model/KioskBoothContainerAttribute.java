@@ -7,105 +7,145 @@ import java.io.Serializable;
 
 import javax.persistence.Embeddable;
 
+import org.hibernate.annotations.Type;
 
+import com.privasia.scss.common.enums.ContainerFullEmptyType;
+import com.privasia.scss.common.enums.ContainerSize;
 
 /**
  * @author Janaka
  *
  */
 @Embeddable
-public class KioskBoothContainerAttribute extends CommonContainerAttribute implements Serializable {
+public class KioskBoothContainerAttribute  implements Serializable {
 
-  /**
-   * 
-   */
-  private static final long serialVersionUID = 1L;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
-  private String cancelPickup;
+	private String cancelPickup;
 
-  private String location;
+	private String location;
 
-  private String status;
+	private String status;
 
-  private String others;
+	private String others;
 
-  private String rejectRemarks;
+	private String rejectRemarks;
 
-  private String customCheck;
+	private String customCheck;
 
-  private String shipper;
+	// private String shipper;
 
-  private String line;
+	private String line;
 
+	private String containerNumber;
 
-  public KioskBoothContainerAttribute() {
-    super();
-  }
+	@Type(type = "com.privasia.scss.common.enumusertype.ContainerSizeEnumUserType")
+	private ContainerSize containerLength;
 
-  public String getCancelPickup() {
-    return cancelPickup;
-  }
+	private String containerISOCode;
 
-  public void setCancelPickup(String cancelPickup) {
-    this.cancelPickup = cancelPickup;
-  }
+	@Type(type = "com.privasia.scss.common.enumusertype.ContainerFullEmptyTypeEnumUserType")
+	private ContainerFullEmptyType containerFullOrEmpty;
 
-  public String getLocation() {
-    return location;
-  }
+	public KioskBoothContainerAttribute() {
+		super();
+	}
 
-  public void setLocation(String location) { 
-    this.location = location;
-  }
+	public String getCancelPickup() {
+		return cancelPickup;
+	}
 
-  public String getStatus() {
-    return status;
-  }
+	public void setCancelPickup(String cancelPickup) {
+		this.cancelPickup = cancelPickup;
+	}
 
-  public void setStatus(String status) {
-    this.status = status;
-  }
+	public String getLocation() {
+		return location;
+	}
 
-  public String getOthers() {
-    return others;
-  }
+	public void setLocation(String location) {
+		this.location = location;
+	}
 
-  public void setOthers(String others) {
-    this.others = others;
-  }
+	public String getStatus() {
+		return status;
+	}
 
-  public String getRejectRemarks() {
-    return rejectRemarks;
-  }
+	public void setStatus(String status) {
+		this.status = status;
+	}
 
-  public void setRejectRemarks(String rejectRemarks) {
-    this.rejectRemarks = rejectRemarks;
-  }
+	public String getOthers() {
+		return others;
+	}
 
-  public String getCustomCheck() {
-    return customCheck;
-  }
+	public void setOthers(String others) {
+		this.others = others;
+	}
 
-  public void setCustomCheck(String customCheck) {
-    this.customCheck = customCheck;
-  }
+	public String getRejectRemarks() {
+		return rejectRemarks;
+	}
 
-  public String getShipper() {
-    return shipper;
-  }
+	public void setRejectRemarks(String rejectRemarks) {
+		this.rejectRemarks = rejectRemarks;
+	}
 
-  public void setShipper(String shipper) {
-    this.shipper = shipper;
-  }
+	public String getCustomCheck() {
+		return customCheck;
+	}
 
-  public String getLine() {
-    return line;
-  }
+	public void setCustomCheck(String customCheck) {
+		this.customCheck = customCheck;
+	}
 
-  public void setLine(String line) {
-    this.line = line;
-  }
+	/*
+	 * public String getShipper() { return shipper; }
+	 * 
+	 * public void setShipper(String shipper) { this.shipper = shipper; }
+	 */
 
+	public String getLine() {
+		return line;
+	}
 
+	public void setLine(String line) {
+		this.line = line;
+	}
+
+	public String getContainerNumber() {
+		return containerNumber;
+	}
+
+	public void setContainerNumber(String containerNumber) {
+		this.containerNumber = containerNumber;
+	}
+
+	public ContainerSize getContainerLength() {
+		return containerLength;
+	}
+
+	public void setContainerLength(ContainerSize containerLength) {
+		this.containerLength = containerLength;
+	}
+
+	public String getContainerISOCode() {
+		return containerISOCode;
+	}
+
+	public void setContainerISOCode(String containerISOCode) {
+		this.containerISOCode = containerISOCode;
+	}
+
+	public ContainerFullEmptyType getContainerFullOrEmpty() {
+		return containerFullOrEmpty;
+	}
+
+	public void setContainerFullOrEmpty(ContainerFullEmptyType containerFullOrEmpty) {
+		this.containerFullOrEmpty = containerFullOrEmpty;
+	}
 
 }

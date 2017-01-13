@@ -75,11 +75,13 @@ public class KioskBoothService {
 
 		if (activeKioskBoothList.isEmpty())
 			throw new ResultsNotFoundException("Invalid Kiosk ID !" + kioskBoothRightDTO.getKioskClientID());
-
+		
 		activeKioskBoothList.stream().forEach(KioskBoothRights -> {
+			
+			int retval =  KioskBoothRights.getKioskBoothRightsID().getBooth().getClientID().compareTo(kioskBoothRightDTO
+					.getBoothClientID());
 
-			if (KioskBoothRights.getKioskBoothRightsID().getBooth().getClientID() != kioskBoothRightDTO
-					.getBoothClientID()) {
+			if (retval != 0) {
 				KioskBoothRights.setKioskLockStatus(KioskLockStatus.RELEASED);
 				kioskBoothRightsRepository.save(KioskBoothRights);
 			} else {
@@ -100,16 +102,18 @@ public class KioskBoothService {
 		if (kioskBoothRightDTO.getKioskClientID() == null || kioskBoothRightDTO.getBoothClientID() == null)
 			throw new BusinessException("Kiosk Information and/or booth information is null!");
 
-		List<KioskBoothRights> kioskBoothList = fetchCompleteReleasedKioskBoothByKiosk(
+		List<KioskBoothRights> kioskBoothList = fetchLockReleasedKioskBoothByKiosk(
 				kioskBoothRightDTO.getKioskClientID());
 
 		if (kioskBoothList.isEmpty())
 			throw new ResultsNotFoundException("Invalid Kiosk ID !" + kioskBoothRightDTO.getKioskClientID());
 
 		kioskBoothList.stream().forEach(KioskBoothRights -> {
+			
+			int retval =  KioskBoothRights.getKioskBoothRightsID().getBooth().getClientID().compareTo(kioskBoothRightDTO
+					.getBoothClientID());
 
-			if ((KioskBoothRights.getKioskBoothRightsID().getBooth().getClientID() != kioskBoothRightDTO
-					.getBoothClientID()) && KioskBoothRights.getKioskLockStatus().equals(KioskLockStatus.RELEASED)) {
+			if ((retval != 0) && KioskBoothRights.getKioskLockStatus().equals(KioskLockStatus.RELEASED)) {
 				KioskBoothRights.setKioskLockStatus(KioskLockStatus.ACTIVE);
 				kioskBoothRightsRepository.save(KioskBoothRights);
 			} else {
@@ -156,10 +160,10 @@ public class KioskBoothService {
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, readOnly = true)
-	public List<KioskBoothRights> fetchCompleteReleasedKioskBoothByKiosk(Long kioskID) {
+	public List<KioskBoothRights> fetchLockReleasedKioskBoothByKiosk(Long kioskID) {
 
 		List<KioskLockStatus> kioskStatusList = new ArrayList<>();
-		kioskStatusList.add(KioskLockStatus.COMPLETE);
+		kioskStatusList.add(KioskLockStatus.LOCK);
 		kioskStatusList.add(KioskLockStatus.RELEASED);
 
 		Predicate byStatus = KioskBoothRightsPredicates.KioskBoothStatusIN(kioskStatusList);

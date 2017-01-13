@@ -7,7 +7,6 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.privasia.scss.common.enums.TransactionStatus;
 import com.privasia.scss.core.model.GatePass;
 
 public interface GatePassRepository extends BaseRepository<GatePass, Long> {

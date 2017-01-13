@@ -29,7 +29,7 @@ public class KioskBoothContainerDTO implements Serializable {
 
 	private String line = StringUtils.EMPTY;
 
-	private Integer containerLength = null;
+	private String containerLength = null;
 
 	private String containerISOCode = StringUtils.EMPTY;
 
@@ -111,11 +111,11 @@ public class KioskBoothContainerDTO implements Serializable {
 		this.containerNumber = containerNumber;
 	}
 
-	public Integer getContainerLength() {
+	public String getContainerLength() {
 		return containerLength;
 	}
 
-	public void setContainerLength(Integer containerLength) {
+	public void setContainerLength(String containerLength) {
 		this.containerLength = containerLength;
 	}
 

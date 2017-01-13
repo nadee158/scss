@@ -28,7 +28,7 @@ import com.privasia.scss.hdbs.service.HDBSService;
  */
 
 @RestController
-@RequestMapping("**/odd")
+@RequestMapping("**/gatein/odd")
 public class GateInODDController {
 
   @Autowired

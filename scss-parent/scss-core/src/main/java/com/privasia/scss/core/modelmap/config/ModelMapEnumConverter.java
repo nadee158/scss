@@ -10,9 +10,12 @@ import org.modelmapper.spi.MappingContext;
 import com.privasia.scss.common.enums.ClientType;
 import com.privasia.scss.common.enums.ContainerFullEmptyType;
 import com.privasia.scss.common.enums.ContainerSize;
+import com.privasia.scss.common.enums.GateInOutStatus;
+import com.privasia.scss.common.enums.ImpExpFlagStatus;
 import com.privasia.scss.common.enums.KioskHLTCheckStatus;
 import com.privasia.scss.common.enums.KioskLockStatus;
 import com.privasia.scss.common.enums.RecordStatus;
+import com.privasia.scss.common.enums.TransactionStatus;
 import com.privasia.scss.common.enums.TransactionType;
 
 /**
@@ -26,7 +29,7 @@ public class ModelMapEnumConverter {
 
 		return new Converter<KioskLockStatus, String>() {
 			@Override
-			public String convert(MappingContext<KioskLockStatus, String> context) {
+			public String convert(MappingContext<KioskLockStatus, String> context) { 
 				if (context.getSource() != null) {
 					switch (context.getSource()) {
 					case ACTIVE:
@@ -322,6 +325,148 @@ public class ModelMapEnumConverter {
 						return ContainerFullEmptyType.FULL;
 					case "E":
 						return ContainerFullEmptyType.EMPTY;
+					default:
+						return null;
+					}
+				} else {
+					return null;
+				}
+			}
+		};
+	}
+	
+	public static Converter<String, ImpExpFlagStatus> convertStringToImpExpFlagStatus() {
+
+		return new Converter<String, ImpExpFlagStatus>() {
+			@Override
+			public ImpExpFlagStatus convert(MappingContext<String, ImpExpFlagStatus> context) {
+				if (StringUtils.isNotEmpty(context.getSource())) {
+					switch (context.getSource()) {
+					case "I":
+						return ImpExpFlagStatus.IMPORT;
+					case "E":
+						return ImpExpFlagStatus.EXPORT;
+					case "IE":
+						return ImpExpFlagStatus.IMPORT_EXPORT;
+					default:
+						return null;
+					}
+				} else {
+					return null;
+				}
+			}
+		};
+	}
+	
+	public static Converter<ImpExpFlagStatus, String> convertImpExpFlagStatusToString() {
+
+		return new Converter<ImpExpFlagStatus, String>() {
+			@Override
+			public String convert(MappingContext<ImpExpFlagStatus, String> context) {
+				if (context.getSource() != null) {
+					switch (context.getSource()) {
+					case IMPORT:
+						return ImpExpFlagStatus.IMPORT.getValue();
+					case EXPORT:
+						return ImpExpFlagStatus.EXPORT.getValue();
+					case IMPORT_EXPORT:
+						return ImpExpFlagStatus.IMPORT_EXPORT.getValue();
+					default:
+						return null;
+					}
+				} else {
+					return null;
+				}
+			}
+		};
+	}
+	
+	public static Converter<TransactionStatus, String> convertTransactionStatusToString() {
+
+		return new Converter<TransactionStatus, String>() {
+			@Override
+			public String convert(MappingContext<TransactionStatus, String> context) {
+				if (context.getSource() != null) {
+					switch (context.getSource()) {
+					case APPROVED:
+						return TransactionStatus.APPROVED.getValue();
+					case REJECT:
+						return TransactionStatus.REJECT.getValue();
+					case COMPLETE:
+						return TransactionStatus.COMPLETE.getValue();
+					case INPROGRESS:
+						return TransactionStatus.INPROGRESS.getValue();
+					case NEW:
+						return TransactionStatus.NEW.getValue();
+					default:
+						return null;
+					}
+				} else {
+					return null;
+				}
+			}
+		};
+	}
+	
+	public static Converter<String, TransactionStatus> convertStringToTransactionStatus() {
+
+		return new Converter<String, TransactionStatus>() {
+			@Override
+			public TransactionStatus convert(MappingContext<String, TransactionStatus> context) {
+				if (StringUtils.isNotBlank(context.getSource())) {
+					switch (context.getSource()) {
+					case "A":
+						return TransactionStatus.APPROVED;
+					case "R":
+						return TransactionStatus.REJECT;
+					case "C":
+						return TransactionStatus.COMPLETE;
+					case "I":
+						return TransactionStatus.INPROGRESS;
+					case "N":
+						return TransactionStatus.NEW;
+					default:
+						return null;
+					}
+				} else {
+					return null;
+				}
+			}
+		};
+	}
+	
+	public static Converter<String, GateInOutStatus> convertStringToGateInOutStatus() {
+
+		return new Converter<String, GateInOutStatus>() {
+			@Override
+			public GateInOutStatus convert(MappingContext<String, GateInOutStatus> context) {
+				if (StringUtils.isNotBlank(context.getSource())) {
+					switch (context.getSource()) {
+					case "IN":
+						return GateInOutStatus.IN;
+					case "OUT":
+						return GateInOutStatus.OUT;
+					default:
+						return null;
+					}
+				} else {
+					return null;
+				}
+			}
+		};
+	}
+	
+	public static Converter<GateInOutStatus, String> convertGateInOutStatusToString() {
+
+		return new Converter<GateInOutStatus, String>() {
+			@Override
+			public String convert(MappingContext<GateInOutStatus, String> context) {
+				if (context.getSource()!= null) {
+					switch (context.getSource()) {
+					case IN:
+						return GateInOutStatus.IN.getValue();
+					case OUT:
+						return GateInOutStatus.OUT.getValue();
 					default:
 						return null;
 					}

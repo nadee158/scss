@@ -30,8 +30,6 @@ public class KioskBoothController {
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public CustomResponseEntity<ApiResponseObject<?>> activateBoothsByKioskId(
       @RequestBody KioskBoothRightsDTO kioskBoothRightsDTO) {
-    System.out.println("kioskBoothRightInfo kioskID :" + kioskBoothRightsDTO.getKioskClientID());
-    System.out.println("kioskBoothRightInfo CardScanTime :" + kioskBoothRightsDTO.getCardScanTime());
     String status = kioskBoothService.activateBoothsForTransaction(kioskBoothRightsDTO);
     return new CustomResponseEntity<ApiResponseObject<?>>(new ApiResponseObject<String>(HttpStatus.OK, status),
         HttpStatus.OK);
@@ -40,8 +38,6 @@ public class KioskBoothController {
   @RequestMapping(value = "/locktrx", method = RequestMethod.PUT,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public CustomResponseEntity<ApiResponseObject<?>> lockBoothForKiosk(@RequestBody KioskBoothRightsDTO kioskBoothRightsDTO) {
-    System.out.println("kioskID :" + kioskBoothRightsDTO.getKioskClientID());
-    System.out.println("boothID :" + kioskBoothRightsDTO.getBoothClientID());
     String status = kioskBoothService.lockBoothTransaction(kioskBoothRightsDTO);
     return new CustomResponseEntity<ApiResponseObject<?>>(new ApiResponseObject<String>(HttpStatus.OK, status),
         HttpStatus.OK);
@@ -50,8 +46,6 @@ public class KioskBoothController {
   @RequestMapping(value = "/completetrx", method = RequestMethod.PUT,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public CustomResponseEntity<ApiResponseObject<?>> completekioskbooth(@RequestBody KioskBoothRightsDTO kioskBoothRightsDTO) {
-	  System.out.println("kioskID :" + kioskBoothRightsDTO.getKioskClientID());
-	  System.out.println("boothID :" + kioskBoothRightsDTO.getBoothClientID());
 	  String status = kioskBoothService.completeBoothTransaction(kioskBoothRightsDTO);
     return new CustomResponseEntity<ApiResponseObject<?>>(new ApiResponseObject<String>(HttpStatus.OK, status),
         HttpStatus.OK);
@@ -60,7 +54,6 @@ public class KioskBoothController {
   @RequestMapping(value = "/lockedkioskboothinfo/{kioskID}", method = RequestMethod.GET,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public CustomResponseEntity<ApiResponseObject<?>> getLockedKioskBoothInfo(@PathVariable Long kioskID) {
-    System.out.println("kioskID :" + kioskID);
     KioskBoothRightsDTO kioskBoothRightDTO = kioskBoothService.getLockedKioskBoothInfo(kioskID); 
     return new CustomResponseEntity<ApiResponseObject<?>>(
         new ApiResponseObject<KioskBoothRightsDTO>(HttpStatus.OK, kioskBoothRightDTO), HttpStatus.OK);
@@ -74,9 +67,6 @@ public class KioskBoothController {
 	Long kioskID = kioskBoothRightsDTO.getKioskClientID();
 	Integer cardNumber= kioskBoothRightsDTO.getCardNumber(); 
 	
-    System.out.println("boothID :" + kioskBoothRightsDTO.getBoothClientID());  
-    System.out.println("kioskID :" + kioskBoothRightsDTO.getKioskClientID());
-    System.out.println("cardNumber :" + kioskBoothRightsDTO.getCardNumber());
     List<KioskBoothRightsDTO> kioskBoothRightInfos = kioskBoothService.getBoothAccessRight(boothID, kioskID, cardNumber); 
     return new CustomResponseEntity<ApiResponseObject<?>>(
         new ApiResponseObject<List<KioskBoothRightsDTO>>(HttpStatus.OK, kioskBoothRightInfos), HttpStatus.OK);
