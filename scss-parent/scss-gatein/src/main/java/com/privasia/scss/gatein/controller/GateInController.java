@@ -28,7 +28,7 @@ public class GateInController {
   private GateInService gateInService;
 
 
-  @RequestMapping(value = "/allowgatein", method = RequestMethod.PUT,
+  @RequestMapping(value = "/allow", method = RequestMethod.PUT,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
   public  CustomResponseEntity<ApiResponseObject<?>> gateInImpNormal(@RequestBody GateInfo gateInfo) {
 

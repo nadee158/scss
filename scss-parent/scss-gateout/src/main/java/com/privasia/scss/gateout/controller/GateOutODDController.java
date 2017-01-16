@@ -35,8 +35,6 @@ public class GateOutODDController {
 	@RequestMapping(value = "/validatecontainer", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, 
 															consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public CustomResponseEntity<ApiResponseObject<?>> validateContainers(@RequestBody ContainerValidationInfo validationInfo) {
-		System.out.println(validationInfo.getContainerNo1());
-		System.out.println(validationInfo.getContainerNo2());
 		validationInfo = gateOutODDService.validateODDContainers(validationInfo);
 		return new CustomResponseEntity<ApiResponseObject<?>>(
 				new ApiResponseObject<ContainerValidationInfo>(HttpStatus.OK, validationInfo), HttpStatus.OK);

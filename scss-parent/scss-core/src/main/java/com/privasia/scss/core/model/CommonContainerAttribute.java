@@ -5,6 +5,8 @@ package com.privasia.scss.core.model;
 
 import java.io.Serializable;
 
+import javax.persistence.Embeddable;
+
 import org.hibernate.annotations.Type;
 
 import com.privasia.scss.common.enums.ContainerFullEmptyType;
@@ -14,7 +16,7 @@ import com.privasia.scss.common.enums.ContainerSize;
  * @author Janaka
  *
  */
-
+@Embeddable
 public class CommonContainerAttribute implements Serializable {
 
 	/**
