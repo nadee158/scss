@@ -10,20 +10,16 @@ import org.springframework.boot.web.support.ErrorPageFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.Profile;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
 
-import com.privasia.scss.common.enums.Profiles;
 import com.privasia.scss.core.util.service.CurrentDateTimeService;
 
 @Configuration
 @Import({PersistenceContext.class, ModelMapConfig.class})
 public class SCSSEntryPoint {
 
-
-  @Profile(Profiles.APPLICATION)
   @Bean
   CurrentDateTimeService getCurrentDateTimeService() {
     return new CurrentDateTimeService();

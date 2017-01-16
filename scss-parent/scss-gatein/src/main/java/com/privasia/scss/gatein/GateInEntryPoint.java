@@ -14,6 +14,7 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 import com.privasia.scss.core.config.PersistenceContext;
+import com.privasia.scss.core.config.SCSSEntryPoint;
 import com.privasia.scss.cosmos.AS400DBConfig;
 
 /**
@@ -28,7 +29,7 @@ import com.privasia.scss.cosmos.AS400DBConfig;
     					"com.privasia.scss.gatein.*", "com.privasia.scss.core.model"})
 @EntityScan(basePackages = {"com.privasia.scss.core.model"})
 @PropertySource(value = {"classpath:cosmos_application.properties", "classpath:cosmos_sql-dev.properties"})
-@Import({AS400DBConfig.class, PersistenceContext.class})
+@Import({AS400DBConfig.class, SCSSEntryPoint.class})
 @EnableJpaRepositories(basePackages = {"com.privasia.scss.core.repository"})
 public class GateInEntryPoint extends SpringBootServletInitializer {
 
