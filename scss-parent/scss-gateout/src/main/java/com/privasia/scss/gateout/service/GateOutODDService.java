@@ -19,7 +19,7 @@ public class GateOutODDService {
 		this.cosmosODDRepository = cosmosODDRepository;
 	}
 
-	@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = true, value="as400TransactionManager")
 	public ContainerValidationInfo validateODDContainers(ContainerValidationInfo containerValidationInfo) {
 
 		containerValidationInfo.setContainerNo1Status(

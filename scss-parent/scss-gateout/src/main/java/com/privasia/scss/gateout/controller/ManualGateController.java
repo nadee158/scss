@@ -32,7 +32,6 @@ public class ManualGateController {
 															consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public CustomResponseEntity<ApiResponseObject<?>> updateOpenGate(@PathVariable Long openGateSEQ) {
 
-		System.out.println(openGateSEQ + "openGateSEQ");
 		String responseMessage = laneOpenService.updateOpenGate(openGateSEQ);
 		return new CustomResponseEntity<ApiResponseObject<?>>(
 				new ApiResponseObject<String>(HttpStatus.OK, responseMessage), HttpStatus.OK);

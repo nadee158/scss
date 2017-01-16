@@ -20,21 +20,16 @@ import com.privasia.scss.cosmos.AS400DBConfig;
  * Janaka Wanigatunga
  *
  */
-/*@Configuration
-@ComponentScan(basePackages = {"com.privasia.scss.*"})
-@EnableAutoConfiguration*/
-
-
 
 @Configuration
 @EnableAutoConfiguration
 @ComponentScan(
-    basePackages = {"com.privasia.scss.cosmos.*", "com.privasia.scss.gatein.*", "com.privasia.scss.core.model"})
+    basePackages = {"com.privasia.scss.hdbs.*", "com.privasia.scss.cosmos.*", "com.privasia.scss.hpat.*", 
+    					"com.privasia.scss.gatein.*", "com.privasia.scss.core.model"})
 @EntityScan(basePackages = {"com.privasia.scss.core.model"})
 @PropertySource(value = {"classpath:cosmos_application.properties", "classpath:cosmos_sql-dev.properties"})
 @Import({AS400DBConfig.class, PersistenceContext.class})
 @EnableJpaRepositories(basePackages = {"com.privasia.scss.core.repository"})
-
 public class GateInEntryPoint extends SpringBootServletInitializer {
 
   public static void main(String[] args) {

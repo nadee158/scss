@@ -19,7 +19,6 @@ import com.privasia.scss.core.repository.GatePassRepository;
 import com.privasia.scss.core.repository.ODDRepository;
 
 @Service("commonCardService")
-@Transactional
 public class CommonCardService {
 
 	@Autowired
@@ -60,24 +59,24 @@ public class CommonCardService {
 		throw new ResultsNotFoundException("Card was not found!");
 	}
 
-	@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = true, value="transactionManager")
 	public boolean isTrxInProgress(Long cardID) {
 
 		long count = 0;
 
 		count = oddRepository.countByCardIDAndEirStatus(cardID, TransactionStatus.INPROGRESS.getValue());
 		if (count > 0)
-			return false;
+			return true;
 
 		count = gatePassRepository.countRecordsByCardIdAndEirStatus(cardID, TransactionStatus.INPROGRESS.getValue());
 		if (count > 0)
-			return false;
+			return true;
 
 		count = exportsRepository.countRecordsByCardIdAndEirStatus(cardID, TransactionStatus.INPROGRESS.getValue());
 		if (count > 0)
-			return false;
+			return true;
 
-		return true;
+		return false;
 
 	}
 

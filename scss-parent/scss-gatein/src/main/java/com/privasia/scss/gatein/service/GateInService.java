@@ -19,14 +19,19 @@ import com.privasia.scss.core.service.CommonCardService;
 @Service("gateInService")
 public class GateInService {
 
-	@Autowired
+	
 	private CommonCardService commonCardService;
 
-	@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
+	@Autowired
+	public void setCommonCardService(CommonCardService commonCardService) {
+		this.commonCardService = commonCardService;
+	}
+
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = true, value="transactionManager")
 	public GateInfo checkGateInAllow(GateInfo gateInfo) {
 
 		boolean trxInProgress = commonCardService.isTrxInProgress(gateInfo.getCardID());
-		gateInfo.setAllowGateIn(trxInProgress);
+		gateInfo.setAllowGateIn(!trxInProgress);
 
 		if (trxInProgress) {
 			gateInfo.setMessage("Driver has not completed a full cycle process");

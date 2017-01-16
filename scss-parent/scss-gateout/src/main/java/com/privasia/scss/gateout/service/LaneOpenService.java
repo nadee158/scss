@@ -15,17 +15,21 @@ import com.privasia.scss.core.repository.LaneOpenRepository;
 @Service("laneOpenService")
 public class LaneOpenService {
 	
-	/*@Autowired
-	private LaneOpenRepository laneOpenRepository;*/
+	private LaneOpenRepository laneOpenRepository;
+	
+	@Autowired
+	public void setLaneOpenRepository(LaneOpenRepository laneOpenRepository) {
+		this.laneOpenRepository = laneOpenRepository;
+	}
 
-	@Transactional(propagation = Propagation.REQUIRED, readOnly = false)
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, value="transactionManager")
 	public String updateOpenGate(Long openGateSEQ) {
-		/*Optional<LaneOpen> laneOpenOptional = laneOpenRepository.findOne(openGateSEQ);
+		Optional<LaneOpen> laneOpenOptional = laneOpenRepository.findOne(openGateSEQ);
 
 		LaneOpen laneOpen = laneOpenOptional
 				.orElseThrow(() -> new ResultsNotFoundException("Invalid Gate Open SEQ ! " + openGateSEQ));
 		laneOpen.setLaneOpenFlag(LaneOpenFlag.OPENED);
-		laneOpenRepository.save(laneOpen);*/
+		laneOpenRepository.save(laneOpen);
 
 		return "SCSS TRANSACTION SUCCESS";
 	}

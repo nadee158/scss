@@ -41,17 +41,17 @@ public class PersistenceContext {
 
 
   @Bean
-  AuditorAware<Long> auditorProvider() {
+  public AuditorAware<Long> auditorProvider() {
     return new UserIDAuditorAwareService();
   }
 
   @Bean
-  DateTimeProvider dateTimeProvider(CurrentDateTimeService currentDateTimeService) {
+  public DateTimeProvider dateTimeProvider(CurrentDateTimeService currentDateTimeService) {
     return new AuditingDateTimeProvider(currentDateTimeService);
   }
 
   @Bean(destroyMethod = "close")
-  DataSource dataSource(Environment env)  {
+  public DataSource dataSource(Environment env)  {
 	  
 		HikariConfig dataSourceConfig = new HikariConfig();
 	    dataSourceConfig.setDriverClassName(env.getRequiredProperty("spring.datasource.driver"));
@@ -64,7 +64,7 @@ public class PersistenceContext {
   }
 
   @Bean
-  LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource, Environment env) {
+  public LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource, Environment env) {
     LocalContainerEntityManagerFactoryBean entityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();
     entityManagerFactoryBean.setDataSource(dataSource);
     entityManagerFactoryBean.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
@@ -97,8 +97,8 @@ public class PersistenceContext {
     return entityManagerFactoryBean;
   }
 
-  
-  JpaTransactionManager transactionManager(EntityManagerFactory entityManagerFactory) {
+  @Bean(name = "transactionManager")
+  public JpaTransactionManager transactionManager(EntityManagerFactory entityManagerFactory) {
     JpaTransactionManager transactionManager = new JpaTransactionManager();
     transactionManager.setEntityManagerFactory(entityManagerFactory);
     return transactionManager;

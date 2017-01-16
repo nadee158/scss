@@ -13,6 +13,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
+import com.privasia.scss.core.config.PersistenceContext;
 import com.privasia.scss.cosmos.AS400DBConfig;
 
 /**
@@ -26,7 +27,7 @@ import com.privasia.scss.cosmos.AS400DBConfig;
 @EntityScan(basePackages = {"com.privasia.scss.core.model"})
 @PropertySource(value = {"classpath:mongodb.properties", "classpath:cosmos_application.properties",
     "classpath:cosmos_sql-dev.properties"})
-@Import(AS400DBConfig.class)
+@Import({AS400DBConfig.class, PersistenceContext.class})
 @EnableJpaRepositories(basePackages = {"com.privasia.scss.core.repository"})
 public class GateOutEntryPoint extends SpringBootServletInitializer {
 
