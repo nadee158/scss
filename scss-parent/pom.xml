@@ -164,5 +164,6 @@
 	<module>scss-express</module>
 	<module>scss-healthcheck</module>
 	<module>scss-scheduler</module>
+	<module>scss-opus</module>	
   </modules>
 </project>

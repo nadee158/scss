@@ -17,7 +17,6 @@ import com.privasia.scss.gatein.service.GateInService;
 
 
 
-
 @RestController
 @RequestMapping("**/gatein")
 public class GateInController {
@@ -28,15 +27,29 @@ public class GateInController {
   private GateInService gateInService;
 
 
-  @RequestMapping(value = "/allow", method = RequestMethod.PUT,
-      produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-  public  CustomResponseEntity<ApiResponseObject<?>> gateInImpNormal(@RequestBody GateInfo gateInfo) {
+  @Autowired
+  private OpusService opusService;
 
-	  gateInfo = gateInService.checkGateInAllow(gateInfo);
-	  return new CustomResponseEntity<ApiResponseObject<?>>(new ApiResponseObject<GateInfo>(HttpStatus.OK, gateInfo),
-		        HttpStatus.OK);
+  @RequestMapping(value = "/allow", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
+      consumes = MediaType.APPLICATION_JSON_VALUE)
+  public CustomResponseEntity<ApiResponseObject<?>> gateInImpNormal(@RequestBody GateInfo gateInfo) {
+
+    gateInfo = gateInService.checkGateInAllow(gateInfo);
+    return new CustomResponseEntity<ApiResponseObject<?>>(new ApiResponseObject<GateInfo>(HttpStatus.OK, gateInfo),
+        HttpStatus.OK);
   }
 
-  
+  @RequestMapping(value = "/test", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
+      consumes = MediaType.APPLICATION_JSON_VALUE)
+  public CustomResponseEntity<ApiResponseObject<?>> testOpus() {
+
+    // gateInfo = gateInService.checkGateInAllow(gateInfo);
+    // return new CustomResponseEntity<ApiResponseObject<?>>(new
+    // ApiResponseObject<GateInfo>(HttpStatus.OK, gateInfo),
+    // HttpStatus.OK);
+    return null;
+  }
+
+
 
 }

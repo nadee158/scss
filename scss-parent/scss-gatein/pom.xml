@@ -39,6 +39,12 @@
 	
 	<dependency>
 			<groupId>com.privasia.scss</groupId>
+  			<artifactId>scss-opus</artifactId>
+			<version>1.0</version>
+	</dependency> 
+	
+	<dependency>
+			<groupId>com.privasia.scss</groupId>
   			<artifactId>scss-hdbs</artifactId>
 			<version>1.0</version>
 	</dependency>
