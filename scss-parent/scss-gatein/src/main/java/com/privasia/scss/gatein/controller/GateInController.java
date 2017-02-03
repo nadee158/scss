@@ -14,6 +14,11 @@ import com.privasia.scss.common.dto.ApiResponseObject;
 import com.privasia.scss.common.dto.CustomResponseEntity;
 import com.privasia.scss.common.dto.GateInfo;
 import com.privasia.scss.gatein.service.GateInService;
+import com.privasia.scss.opus.dto.GIR01Request;
+import com.privasia.scss.opus.dto.GIR01Response;
+import com.privasia.scss.opus.dto.GIW01Request;
+import com.privasia.scss.opus.dto.GIW01Response;
+import com.privasia.scss.opus.service.OpusService;
 
 
 
@@ -26,9 +31,6 @@ public class GateInController {
   @Autowired
   private GateInService gateInService;
 
-
-  @Autowired
-  private OpusService opusService;
 
   @RequestMapping(value = "/allow", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
       consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -50,6 +52,36 @@ public class GateInController {
     return null;
   }
 
+  @Autowired
+  private OpusService opusService;
 
+
+  @RequestMapping(value = "gir01", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
+      consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+  public CustomResponseEntity<ApiResponseObject<?>> gir01() {
+
+    GIR01Request gir01Request = GIR01Request.constructObjectWithTestValues();
+
+    GIR01Response gir01Response = opusService.getGIR01Response(gir01Request);
+
+    System.out.println("gir01Response : " + gir01Response);
+
+    return new CustomResponseEntity<ApiResponseObject<?>>(
+        new ApiResponseObject<GIR01Response>(HttpStatus.OK, gir01Response), HttpStatus.OK);
+  }
+
+  @RequestMapping(value = "giw01", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
+      consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+  public CustomResponseEntity<ApiResponseObject<?>> giw01() {
+
+    GIW01Request giW01Request = GIW01Request.constructObjectWithTestValues();
+
+    GIW01Response giW01Response = opusService.getGIW01Response(giW01Request);
+
+    System.out.println("giW01Response : " + giW01Response);
+
+    return new CustomResponseEntity<ApiResponseObject<?>>(
+        new ApiResponseObject<GIW01Response>(HttpStatus.OK, giW01Response), HttpStatus.OK);
+  }
 
 }

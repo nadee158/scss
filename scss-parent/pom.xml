@@ -150,6 +150,7 @@
     <module>scss-common</module>    
     <module>scss-core</module>
     <module>scss-cosmos</module>
+    <module>scss-opus</module>	
 	<module>scss-etpws</module>
 	<module>scss-hpat</module>
 	<module>scss-hdbs</module>
@@ -164,6 +165,5 @@
 	<module>scss-express</module>
 	<module>scss-healthcheck</module>
 	<module>scss-scheduler</module>
-	<module>scss-opus</module>	
   </modules>
 </project>
