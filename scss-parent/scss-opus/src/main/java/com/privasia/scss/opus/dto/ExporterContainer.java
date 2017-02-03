@@ -1,5 +1,8 @@
 package com.privasia.scss.opus.dto;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -44,6 +47,199 @@ public class ExporterContainer {
   private double containerOOG_OF;// 1.0,
   private double containerOOG_OA;// 2.0,
   private double containerOOG_OR;// 4.0
+
+  // For W
+  private String containerDamageCode1;//
+  private String containerDamageCode2;//
+  private String containerDamageCode3;//
+  private String containerDamageCode4;//
+  private String containerDamageCode5;//
+  private String containerDamageCode6;//
+  private String containerDamageCode7;//
+  private String containerDamageCode8;//
+  private String containerDamageCode9;//
+  private String positionOnTruck;// M
+  private String wrongDoorIndicator;//
+  private String containerHasOCSSR;// Y
+  private String containerHasRPSSR;// Y
+  private String vgmType;// S
+  private String vgmWeighingStation;//
+  private String vgmWitnessName;//
+  private String vgmWitnessID;//
+  private String vgmRefNo;//
+  private String vgmMGW;// 1
+  private String vgmNetWeight;//
+  private String vgmVerificationDatetime;//
+
+  public String getContainerDamageCode1() {
+    return containerDamageCode1;
+  }
+
+  public void setContainerDamageCode1(String containerDamageCode1) {
+    this.containerDamageCode1 = containerDamageCode1;
+  }
+
+  public String getContainerDamageCode2() {
+    return containerDamageCode2;
+  }
+
+  public void setContainerDamageCode2(String containerDamageCode2) {
+    this.containerDamageCode2 = containerDamageCode2;
+  }
+
+  public String getContainerDamageCode3() {
+    return containerDamageCode3;
+  }
+
+  public void setContainerDamageCode3(String containerDamageCode3) {
+    this.containerDamageCode3 = containerDamageCode3;
+  }
+
+  public String getContainerDamageCode4() {
+    return containerDamageCode4;
+  }
+
+  public void setContainerDamageCode4(String containerDamageCode4) {
+    this.containerDamageCode4 = containerDamageCode4;
+  }
+
+  public String getContainerDamageCode5() {
+    return containerDamageCode5;
+  }
+
+  public void setContainerDamageCode5(String containerDamageCode5) {
+    this.containerDamageCode5 = containerDamageCode5;
+  }
+
+  public String getContainerDamageCode6() {
+    return containerDamageCode6;
+  }
+
+  public void setContainerDamageCode6(String containerDamageCode6) {
+    this.containerDamageCode6 = containerDamageCode6;
+  }
+
+  public String getContainerDamageCode7() {
+    return containerDamageCode7;
+  }
+
+  public void setContainerDamageCode7(String containerDamageCode7) {
+    this.containerDamageCode7 = containerDamageCode7;
+  }
+
+  public String getContainerDamageCode8() {
+    return containerDamageCode8;
+  }
+
+  public void setContainerDamageCode8(String containerDamageCode8) {
+    this.containerDamageCode8 = containerDamageCode8;
+  }
+
+  public String getContainerDamageCode9() {
+    return containerDamageCode9;
+  }
+
+  public void setContainerDamageCode9(String containerDamageCode9) {
+    this.containerDamageCode9 = containerDamageCode9;
+  }
+
+  public String getPositionOnTruck() {
+    return positionOnTruck;
+  }
+
+  public void setPositionOnTruck(String positionOnTruck) {
+    this.positionOnTruck = positionOnTruck;
+  }
+
+  public String getWrongDoorIndicator() {
+    return wrongDoorIndicator;
+  }
+
+  public void setWrongDoorIndicator(String wrongDoorIndicator) {
+    this.wrongDoorIndicator = wrongDoorIndicator;
+  }
+
+  public String getContainerHasOCSSR() {
+    return containerHasOCSSR;
+  }
+
+  public void setContainerHasOCSSR(String containerHasOCSSR) {
+    this.containerHasOCSSR = containerHasOCSSR;
+  }
+
+  public String getContainerHasRPSSR() {
+    return containerHasRPSSR;
+  }
+
+  public void setContainerHasRPSSR(String containerHasRPSSR) {
+    this.containerHasRPSSR = containerHasRPSSR;
+  }
+
+  public String getVgmType() {
+    return vgmType;
+  }
+
+  public void setVgmType(String vgmType) {
+    this.vgmType = vgmType;
+  }
+
+  public String getVgmWeighingStation() {
+    return vgmWeighingStation;
+  }
+
+  public void setVgmWeighingStation(String vgmWeighingStation) {
+    this.vgmWeighingStation = vgmWeighingStation;
+  }
+
+  public String getVgmWitnessName() {
+    return vgmWitnessName;
+  }
+
+  public void setVgmWitnessName(String vgmWitnessName) {
+    this.vgmWitnessName = vgmWitnessName;
+  }
+
+  public String getVgmWitnessID() {
+    return vgmWitnessID;
+  }
+
+  public void setVgmWitnessID(String vgmWitnessID) {
+    this.vgmWitnessID = vgmWitnessID;
+  }
+
+  public String getVgmRefNo() {
+    return vgmRefNo;
+  }
+
+  public void setVgmRefNo(String vgmRefNo) {
+    this.vgmRefNo = vgmRefNo;
+  }
+
+  public String getVgmMGW() {
+    return vgmMGW;
+  }
+
+  public void setVgmMGW(String vgmMGW) {
+    this.vgmMGW = vgmMGW;
+  }
+
+  public String getVgmNetWeight() {
+    return vgmNetWeight;
+  }
+
+  public void setVgmNetWeight(String vgmNetWeight) {
+    this.vgmNetWeight = vgmNetWeight;
+  }
+
+  public String getVgmVerificationDatetime() {
+    return vgmVerificationDatetime;
+  }
+
+  public void setVgmVerificationDatetime(String vgmVerificationDatetime) {
+    this.vgmVerificationDatetime = vgmVerificationDatetime;
+  }
+
+
 
   public String getContainerNo() {
     return containerNo;
@@ -375,7 +571,46 @@ public class ExporterContainer {
         + containerDGImdg + ", containerDGUNCode=" + containerDGUNCode + ", containerDGImdgLabel="
         + containerDGImdgLabel + ", yardDGOpeningDateTime=" + yardDGOpeningDateTime + ", containerOOG_OH="
         + containerOOG_OH + ", containerOOG_OL=" + containerOOG_OL + ", containerOOG_OF=" + containerOOG_OF
-        + ", containerOOG_OA=" + containerOOG_OA + ", containerOOG_OR=" + containerOOG_OR + "]";
+        + ", containerOOG_OA=" + containerOOG_OA + ", containerOOG_OR=" + containerOOG_OR + ", containerDamageCode1="
+        + containerDamageCode1 + ", containerDamageCode2=" + containerDamageCode2 + ", containerDamageCode3="
+        + containerDamageCode3 + ", containerDamageCode4=" + containerDamageCode4 + ", containerDamageCode5="
+        + containerDamageCode5 + ", containerDamageCode6=" + containerDamageCode6 + ", containerDamageCode7="
+        + containerDamageCode7 + ", containerDamageCode8=" + containerDamageCode8 + ", containerDamageCode9="
+        + containerDamageCode9 + ", positionOnTruck=" + positionOnTruck + ", wrongDoorIndicator=" + wrongDoorIndicator
+        + ", containerHasOCSSR=" + containerHasOCSSR + ", containerHasRPSSR=" + containerHasRPSSR + ", vgmType="
+        + vgmType + ", vgmWeighingStation=" + vgmWeighingStation + ", vgmWitnessName=" + vgmWitnessName
+        + ", vgmWitnessID=" + vgmWitnessID + ", vgmRefNo=" + vgmRefNo + ", vgmMGW=" + vgmMGW + ", vgmNetWeight="
+        + vgmNetWeight + ", vgmVerificationDatetime=" + vgmVerificationDatetime + "]";
+  }
+
+  public static List<ExporterContainer> constructGIW01RequestTestList() {
+    List<ExporterContainer> list = new ArrayList<ExporterContainer>();
+    ExporterContainer exporterContainer = new ExporterContainer();
+    // "containerNo":"NH161219003"
+    // ,"containerIso":"40G1"
+    // ,"containerNetWeight":"8000"
+    // ,"containerSeal1_SL":"C"
+    // ,"containerSeal1_NO":"SL1901"
+    // ,"containerReeferIndicator":"N"
+    // ,"positionOnTruck":"M"
+    // ,"containerHasOCSSR":"Y"
+    // ,"containerHasRPSSR":"Y"
+    // ,"vgmType":"S"
+    // ,"vgmMGW":"1"
+
+    exporterContainer.setContainerNo("NH161219003");
+    exporterContainer.setContainerIso("40G1");
+    exporterContainer.setContainerNetWeight(8000);
+    exporterContainer.setContainerSeal1_SL("C");
+    exporterContainer.setContainerSeal1_NO("SL1901");
+    exporterContainer.setContainerReeferIndicator("N");
+    exporterContainer.setPositionOnTruck("M");
+    exporterContainer.setContainerHasOCSSR("Y");
+    exporterContainer.setContainerHasRPSSR("Y");
+    exporterContainer.setVgmType("S");
+    exporterContainer.setVgmMGW("1");
+    list.add(exporterContainer);
+    return list;
   }
 
 

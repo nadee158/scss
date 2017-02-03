@@ -5,13 +5,14 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class GIR01Response extends BaseResponse {
+public class GIW01Response extends BaseResponse {
 
 
   /**
    * 
    */
   private static final long serialVersionUID = 1L;
+  private String callCardNo;// 99999,
   private String laneNo;// LNO01,
   private String haulageCode;// HAUCD,
   private String truckHeadNo;// TRUCK,
@@ -21,6 +22,8 @@ public class GIR01Response extends BaseResponse {
   private List<ImportContainer> importContainerListCY;
   private List<ExporterContainer> exportContainerListCFS;
   private List<ImportContainer> importContainerListCFS;
+
+
 
   public String getLaneNo() {
     return laneNo;
@@ -96,10 +99,19 @@ public class GIR01Response extends BaseResponse {
 
   @Override
   public String toString() {
-    return "GIR01Response [laneNo=" + laneNo + ", haulageCode=" + haulageCode + ", truckHeadNo=" + truckHeadNo
-        + ", truckPlateNo=" + truckPlateNo + ", gateINDateTime=" + gateINDateTime + ", exportContainerListCY="
-        + exportContainerListCY + ", importContainerListCY=" + importContainerListCY + ", exportContainerListCFS="
-        + exportContainerListCFS + ", importContainerListCFS=" + importContainerListCFS + "]";
+    return "GIW01Response [callCardNo=" + callCardNo + ", laneNo=" + laneNo + ", haulageCode=" + haulageCode
+        + ", truckHeadNo=" + truckHeadNo + ", truckPlateNo=" + truckPlateNo + ", gateINDateTime=" + gateINDateTime
+        + ", exportContainerListCY=" + exportContainerListCY + ", importContainerListCY=" + importContainerListCY
+        + ", exportContainerListCFS=" + exportContainerListCFS + ", importContainerListCFS=" + importContainerListCFS
+        + "]";
+  }
+
+  public String getCallCardNo() {
+    return callCardNo;
+  }
+
+  public void setCallCardNo(String callCardNo) {
+    this.callCardNo = callCardNo;
   }
 
 
