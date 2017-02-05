@@ -2,6 +2,7 @@ package com.privasia.scss.core.repository;
 
 
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.Query;
@@ -18,5 +19,6 @@ public interface GatePassRepository extends BaseRepository<GatePass, Long> {
   @Query(name = "GatePass.countByCardIdAndEirStatus", nativeQuery = true)
   public Long countRecordsByCardIdAndEirStatus(@Param("cardID") long cardId, @Param("eirStatus") String eirStatus);
 
- 
+  public Optional<List<GatePass>> findByGatePassNoIn(List<Long> gatePassNumberList);
+  
 }

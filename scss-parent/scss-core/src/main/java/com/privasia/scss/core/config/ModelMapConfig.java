@@ -43,6 +43,16 @@ public class ModelMapConfig {
 		modelMapper.addConverter(ModelMapEnumConverter.convertStringToContainerSize());
 		modelMapper.addConverter(ModelMapEnumConverter.convertStringToContainerFullEmptyType());
 		modelMapper.addConverter(ModelMapEnumConverter.convertContainerFullEmptyTypeToString());
+		modelMapper.addConverter(ModelMapEnumConverter.convertImpExpFlagStatusToString());
+		modelMapper.addConverter(ModelMapEnumConverter.convertStringToImpExpFlagStatus());
+		modelMapper.addConverter(ModelMapEnumConverter.convertStringToGateInOutStatus());
+		modelMapper.addConverter(ModelMapEnumConverter.convertGateInOutStatusToString());
+		modelMapper.addConverter(ModelMapEnumConverter.convertStringToTransactionStatus());
+		modelMapper.addConverter(ModelMapEnumConverter.convertTransactionStatusToString());
+		modelMapper.addConverter(ModelMapEnumConverter.convertStringToGatePassStatus());
+		modelMapper.addConverter(ModelMapEnumConverter.convertGatePassStatusToString());
+		modelMapper.addConverter(ModelMapEnumConverter.convertStringToContainerPosition());
+		modelMapper.addConverter(ModelMapEnumConverter.convertContainerPositionToString());
 		
 		return modelMapper;
 	}

@@ -9,8 +9,10 @@ import org.modelmapper.spi.MappingContext;
 
 import com.privasia.scss.common.enums.ClientType;
 import com.privasia.scss.common.enums.ContainerFullEmptyType;
+import com.privasia.scss.common.enums.ContainerPosition;
 import com.privasia.scss.common.enums.ContainerSize;
 import com.privasia.scss.common.enums.GateInOutStatus;
+import com.privasia.scss.common.enums.GatePassStatus;
 import com.privasia.scss.common.enums.ImpExpFlagStatus;
 import com.privasia.scss.common.enums.KioskHLTCheckStatus;
 import com.privasia.scss.common.enums.KioskLockStatus;
@@ -467,6 +469,94 @@ public class ModelMapEnumConverter {
 						return GateInOutStatus.IN.getValue();
 					case OUT:
 						return GateInOutStatus.OUT.getValue();
+					default:
+						return null;
+					}
+				} else {
+					return null;
+				}
+			}
+		};
+	}
+	
+	public static Converter<String, GatePassStatus> convertStringToGatePassStatus() {
+
+		return new Converter<String, GatePassStatus>() {
+			@Override
+			public GatePassStatus convert(MappingContext<String, GatePassStatus> context) {
+				if (StringUtils.isNotBlank(context.getSource())) {
+					switch (context.getSource()) {
+					case "ACTIVE":
+						return GatePassStatus.ACTIVE;
+					case "CANCEL":
+						return GatePassStatus.CANCEL;
+					default:
+						return null;
+					}
+				} else {
+					return null;
+				}
+			}
+		};
+	}
+	
+	public static Converter<GatePassStatus, String> convertGatePassStatusToString() {
+
+		return new Converter<GatePassStatus, String>() {
+			@Override
+			public String convert(MappingContext<GatePassStatus, String> context) {
+				if (context.getSource()!= null) {
+					switch (context.getSource()) {
+					case ACTIVE:
+						return GatePassStatus.ACTIVE.getValue();
+					case CANCEL:
+						return GatePassStatus.CANCEL.getValue();
+					default:
+						return null;
+					}
+				} else {
+					return null;
+				}
+			}
+		};
+	}
+	
+	public static Converter<String, ContainerPosition> convertStringToContainerPosition() {
+
+		return new Converter<String, ContainerPosition>() {
+			@Override
+			public ContainerPosition convert(MappingContext<String, ContainerPosition> context) {
+				if (StringUtils.isNotBlank(context.getSource())) {
+					switch (context.getSource()) {
+					case "AFTER":
+						return ContainerPosition.AFTER;
+					case "FRONT":
+						return ContainerPosition.FRONT;
+					case "MIDDLE":
+						return ContainerPosition.MIDDLE;
+					default:
+						return null;
+					}
+				} else {
+					return null;
+				}
+			}
+		};
+	}
+	
+	public static Converter<ContainerPosition, String> convertContainerPositionToString() {
+
+		return new Converter<ContainerPosition, String>() {
+			@Override
+			public String convert(MappingContext<ContainerPosition, String> context) {
+				if (context.getSource()!= null) {
+					switch (context.getSource()) {
+					case AFTER:
+						return ContainerPosition.AFTER.getValue();
+					case FRONT:
+						return ContainerPosition.FRONT.getValue();
+					case MIDDLE:
+						return ContainerPosition.MIDDLE.getValue();
 					default:
 						return null;
 					}

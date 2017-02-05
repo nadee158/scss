@@ -16,6 +16,10 @@ public class GateInfo implements Serializable {
 	private String message = StringUtils.EMPTY;
 	
 	private Long cardID = null;
+	
+	private Long gatePass01;
+	
+	private Long gatePass02;
 
 	public GateInfo() {
 		super();
@@ -45,5 +49,23 @@ public class GateInfo implements Serializable {
 	public void setCardID(Long cardID) {
 		this.cardID = cardID;
 	}
+
+	public Long getGatePass01() {
+		return gatePass01;
+	}
+
+	public void setGatePass01(Long gatePass01) {
+		this.gatePass01 = gatePass01;
+	}
+
+	public Long getGatePass02() {
+		return gatePass02;
+	}
+
+	public void setGatePass02(Long gatePass02) {
+		this.gatePass02 = gatePass02;
+	}
+	
+	
 	
 }
