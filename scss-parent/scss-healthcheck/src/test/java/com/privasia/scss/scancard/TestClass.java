@@ -7,14 +7,14 @@ import org.junit.Test;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
-import com.privasia.scss.common.dto.HealthCheckInfoDTO;
+import com.privasia.scss.common.dto.GateInRequest;
 
 public class TestClass {
 
   @Test
   public void testMethod() throws JsonIOException, IOException {
     Gson gson = new Gson();
-    HealthCheckInfoDTO obj = new HealthCheckInfoDTO();
+    GateInRequest obj = new GateInRequest();
 
     // 1. Java object to JSON, and save into a file
     gson.toJson(obj, new FileWriter("D:\\file.json"));

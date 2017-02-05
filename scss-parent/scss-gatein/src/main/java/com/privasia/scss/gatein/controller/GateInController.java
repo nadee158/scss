@@ -15,6 +15,7 @@ import com.privasia.scss.common.dto.CustomResponseEntity;
 import com.privasia.scss.common.dto.GateInReponse;
 import com.privasia.scss.common.dto.GateInRequest;
 import com.privasia.scss.common.dto.GateInfo;
+import com.privasia.scss.core.security.util.SecurityHelper;
 import com.privasia.scss.gatein.service.GateInService;
 import com.privasia.scss.gatein.service.ImportGateInService;
 
@@ -43,10 +44,11 @@ public class GateInController {
   }
 
 
-  @RequestMapping(value = "/populateGateIn", method = RequestMethod.PUT,
+  @RequestMapping(value = "/populategatein", method = RequestMethod.PUT,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public CustomResponseEntity<ApiResponseObject<?>> populateGateIn(@RequestBody GateInRequest gateInRequest) {
 
+    gateInRequest.setUserId(Long.toString(SecurityHelper.getCurrentUserId()));
     GateInReponse gateInReponse = importGateInService.populateGateIn(gateInRequest);
 
     return new CustomResponseEntity<ApiResponseObject<?>>(
