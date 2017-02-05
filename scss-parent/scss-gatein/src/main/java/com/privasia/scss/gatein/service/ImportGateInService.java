@@ -29,6 +29,7 @@ import com.privasia.scss.core.repository.ShipCodeRepository;
 import com.privasia.scss.core.repository.ShipSCNRepository;
 import com.privasia.scss.opus.dto.GIR01Request;
 import com.privasia.scss.opus.dto.GIR01Response;
+import com.privasia.scss.opus.dto.OpusImportContainer;
 import com.privasia.scss.opus.service.OpusService;
 
 @Service("importGateInService")
@@ -160,19 +161,18 @@ public class ImportGateInService {
     return gateInReponse;
   }
 
-  private List<ImportContainer> constructImportContainers(
-      List<com.privasia.scss.opus.dto.ImportContainer> importContainerListCY) {
+  private List<ImportContainer> constructImportContainers(List<OpusImportContainer> importContainerListCY) {
     if (!(importContainerListCY == null || importContainerListCY.isEmpty())) {
       List<ImportContainer> importContainers = new ArrayList<ImportContainer>();
-      for (com.privasia.scss.opus.dto.ImportContainer importContainer : importContainerListCY) {
-        importContainers.add(constructImportContainer(importContainer));
+      for (OpusImportContainer opusImportContainer : importContainerListCY) {
+        importContainers.add(constructImportContainer(opusImportContainer));
       }
       return importContainers;
     }
     return null;
   }
 
-  private ImportContainer constructImportContainer(com.privasia.scss.opus.dto.ImportContainer importContainer) {
+  private ImportContainer constructImportContainer(OpusImportContainer opusImportContainer) {
     ImportContainer container = new ImportContainer();
 
     // not currently available- added to importcontainer
@@ -185,35 +185,35 @@ public class ImportGateInService {
     // private String vesselScn;// DB0899,
     // private String vesselName;// AL NEFUD,
     // private String vesselATA;// 20161124161800
-    modelMapper.map(importContainer, container);
+    modelMapper.map(opusImportContainer, container);
 
     // private double containerHeight;// 8,
-    container.setContainerHeight(importContainer.getContainerHeight());
+    container.setContainerHeight(opusImportContainer.getContainerHeight());
     // private double containerSize;// 40,
-    container.setContainerLength(importContainer.getContainerSize());
+    container.setContainerLength(opusImportContainer.getContainerSize());
     // private String containerNo;// QASS1234566,
-    container.setContainerNumber(importContainer.getContainerNo());
+    container.setContainerNumber(opusImportContainer.getContainerNo());
 
     // private String containerInOrOut;// OUT,
-    container.setInOrOut(importContainer.getContainerInOrOut());
+    container.setInOrOut(opusImportContainer.getContainerInOrOut());
 
     // private String impOrderNo;// ORDER0001,
-    container.setOrderFOT(importContainer.getImpOrderNo());
+    container.setOrderFOT(opusImportContainer.getImpOrderNo());
 
     // private String containerShippingLine;// CMA,
-    container.setLine(importContainer.getContainerShippingLine());
+    container.setLine(opusImportContainer.getContainerShippingLine());
 
     // private String containerFullOrEmpty;// F,
-    container.setFullOrEmpty(importContainer.getContainerFullOrEmpty());
+    container.setFullOrEmpty(opusImportContainer.getContainerFullOrEmpty());
 
     // private String containerIso;// 4001,
-    container.setIsoCode(importContainer.getContainerIso());
+    container.setIsoCode(opusImportContainer.getContainerIso());
 
     // private String containerType;// GE,
-    container.setContainerType(importContainer.getContainerType());
+    container.setContainerType(opusImportContainer.getContainerType());
 
     // private String currentYardPosition;// 02S-0102-C-1,
-    container.setYardPosition(importContainer.getCurrentYardPosition());
+    container.setYardPosition(opusImportContainer.getCurrentYardPosition());
 
     return container;
   }

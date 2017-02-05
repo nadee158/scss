@@ -16,15 +16,15 @@ public class GIW01Request implements Serializable {
   private String trailerNo;// "1122"
   private double trailerWeight;// "4000"
   private long gateINDateTime;// "20161219100000"
-  private List<ExporterContainer> exportContainerListCY;//
-  private List<ImportContainer> importContainerListCY;//
-  private List<ExporterContainer> exportContainerListCFS;// []
-  private List<ImportContainer> importContainerListCFS;// []
+  private List<OpusExporterContainer> exportContainerListCY;//
+  private List<OpusImportContainer> importContainerListCY;//
+  private List<OpusExporterContainer> exportContainerListCFS;// []
+  private List<OpusImportContainer> importContainerListCFS;// []
 
   public static GIW01Request constructObjectWithTestValues() {
     GIW01Request giw01Request = new GIW01Request();
     giw01Request.setExportContainerListCFS(null);
-    giw01Request.setExportContainerListCY(ExporterContainer.constructGIW01RequestTestList());
+    giw01Request.setExportContainerListCY(OpusExporterContainer.constructGIW01RequestTestList());
     giw01Request.setGateINDateTime(20161219100000l);
     giw01Request.setHaulageCode("HAN");
     giw01Request.setImportContainerListCFS(null);
@@ -111,35 +111,35 @@ public class GIW01Request implements Serializable {
     this.gateINDateTime = gateINDateTime;
   }
 
-  public List<ExporterContainer> getExportContainerListCY() {
+  public List<OpusExporterContainer> getExportContainerListCY() {
     return exportContainerListCY;
   }
 
-  public void setExportContainerListCY(List<ExporterContainer> exportContainerListCY) {
+  public void setExportContainerListCY(List<OpusExporterContainer> exportContainerListCY) {
     this.exportContainerListCY = exportContainerListCY;
   }
 
-  public List<ImportContainer> getImportContainerListCY() {
+  public List<OpusImportContainer> getImportContainerListCY() {
     return importContainerListCY;
   }
 
-  public void setImportContainerListCY(List<ImportContainer> importContainerListCY) {
+  public void setImportContainerListCY(List<OpusImportContainer> importContainerListCY) {
     this.importContainerListCY = importContainerListCY;
   }
 
-  public List<ExporterContainer> getExportContainerListCFS() {
+  public List<OpusExporterContainer> getExportContainerListCFS() {
     return exportContainerListCFS;
   }
 
-  public void setExportContainerListCFS(List<ExporterContainer> exportContainerListCFS) {
+  public void setExportContainerListCFS(List<OpusExporterContainer> exportContainerListCFS) {
     this.exportContainerListCFS = exportContainerListCFS;
   }
 
-  public List<ImportContainer> getImportContainerListCFS() {
+  public List<OpusImportContainer> getImportContainerListCFS() {
     return importContainerListCFS;
   }
 
-  public void setImportContainerListCFS(List<ImportContainer> importContainerListCFS) {
+  public void setImportContainerListCFS(List<OpusImportContainer> importContainerListCFS) {
     this.importContainerListCFS = importContainerListCFS;
   }
 

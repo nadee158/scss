@@ -3,7 +3,7 @@ package com.privasia.scss.opus.dto;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ImportContainer {
+public class OpusImportContainer {
 
   private String containerNo;// QASS1234566,
   private String impOrderNo;// ORDER0001,
@@ -181,7 +181,7 @@ public class ImportContainer {
 
   @Override
   public String toString() {
-    return "ImportContainer [containerNo=" + containerNo + ", impOrderNo=" + impOrderNo + ", containerInOrOut="
+    return "OpusImportContainer [containerNo=" + containerNo + ", impOrderNo=" + impOrderNo + ", containerInOrOut="
         + containerInOrOut + ", containerShippingLine=" + containerShippingLine + ", containerFullOrEmpty="
         + containerFullOrEmpty + ", containerIso=" + containerIso + ", containerSize=" + containerSize
         + ", containerHeight=" + containerHeight + ", containerType=" + containerType + ", containerDischargeDateTime="

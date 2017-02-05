@@ -6,7 +6,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ExporterContainer {
+public class OpusExporterContainer {
 
   private String containerNo;// ;//AZHA0000001,
   private String exportBookingNo;// BOOK20001,
@@ -555,7 +555,7 @@ public class ExporterContainer {
 
   @Override
   public String toString() {
-    return "ExporterContainer [containerNo=" + containerNo + ", exportBookingNo=" + exportBookingNo
+    return "OpusExporterContainer [containerNo=" + containerNo + ", exportBookingNo=" + exportBookingNo
         + ", containerInOrOut=" + containerInOrOut + ", containerShippingLine=" + containerShippingLine
         + ", containerFullOrEmpty=" + containerFullOrEmpty + ", subHandlingType=" + subHandlingType
         + ", expCarrierType=" + expCarrierType + ", expCarrier=" + expCarrier + ", vesselCode=" + vesselCode
@@ -583,9 +583,9 @@ public class ExporterContainer {
         + vgmNetWeight + ", vgmVerificationDatetime=" + vgmVerificationDatetime + "]";
   }
 
-  public static List<ExporterContainer> constructGIW01RequestTestList() {
-    List<ExporterContainer> list = new ArrayList<ExporterContainer>();
-    ExporterContainer exporterContainer = new ExporterContainer();
+  public static List<OpusExporterContainer> constructGIW01RequestTestList() {
+    List<OpusExporterContainer> list = new ArrayList<OpusExporterContainer>();
+    OpusExporterContainer opusExporterContainer = new OpusExporterContainer();
     // "containerNo":"NH161219003"
     // ,"containerIso":"40G1"
     // ,"containerNetWeight":"8000"
@@ -598,18 +598,18 @@ public class ExporterContainer {
     // ,"vgmType":"S"
     // ,"vgmMGW":"1"
 
-    exporterContainer.setContainerNo("NH161219003");
-    exporterContainer.setContainerIso("40G1");
-    exporterContainer.setContainerNetWeight(8000);
-    exporterContainer.setContainerSeal1_SL("C");
-    exporterContainer.setContainerSeal1_NO("SL1901");
-    exporterContainer.setContainerReeferIndicator("N");
-    exporterContainer.setPositionOnTruck("M");
-    exporterContainer.setContainerHasOCSSR("Y");
-    exporterContainer.setContainerHasRPSSR("Y");
-    exporterContainer.setVgmType("S");
-    exporterContainer.setVgmMGW("1");
-    list.add(exporterContainer);
+    opusExporterContainer.setContainerNo("NH161219003");
+    opusExporterContainer.setContainerIso("40G1");
+    opusExporterContainer.setContainerNetWeight(8000);
+    opusExporterContainer.setContainerSeal1_SL("C");
+    opusExporterContainer.setContainerSeal1_NO("SL1901");
+    opusExporterContainer.setContainerReeferIndicator("N");
+    opusExporterContainer.setPositionOnTruck("M");
+    opusExporterContainer.setContainerHasOCSSR("Y");
+    opusExporterContainer.setContainerHasRPSSR("Y");
+    opusExporterContainer.setVgmType("S");
+    opusExporterContainer.setVgmMGW("1");
+    list.add(opusExporterContainer);
     return list;
   }
 

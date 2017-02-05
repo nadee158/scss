@@ -17,10 +17,10 @@ public class GIR01Response extends BaseResponse {
   private String truckHeadNo;// TRUCK,
   private String truckPlateNo;// null,
   private String gateINDateTime;// 20161130112233,
-  private List<ExporterContainer> exportContainerListCY;
-  private List<ImportContainer> importContainerListCY;
-  private List<ExporterContainer> exportContainerListCFS;
-  private List<ImportContainer> importContainerListCFS;
+  private List<OpusExporterContainer> exportContainerListCY;
+  private List<OpusImportContainer> importContainerListCY;
+  private List<OpusExporterContainer> exportContainerListCFS;
+  private List<OpusImportContainer> importContainerListCFS;
 
   public String getLaneNo() {
     return laneNo;
@@ -63,35 +63,35 @@ public class GIR01Response extends BaseResponse {
     this.gateINDateTime = gateINDateTime;
   }
 
-  public List<ExporterContainer> getExportContainerListCY() {
+  public List<OpusExporterContainer> getExportContainerListCY() {
     return exportContainerListCY;
   }
 
-  public void setExportContainerListCY(List<ExporterContainer> exportContainerListCY) {
+  public void setExportContainerListCY(List<OpusExporterContainer> exportContainerListCY) {
     this.exportContainerListCY = exportContainerListCY;
   }
 
-  public List<ImportContainer> getImportContainerListCY() {
+  public List<OpusImportContainer> getImportContainerListCY() {
     return importContainerListCY;
   }
 
-  public void setImportContainerListCY(List<ImportContainer> importContainerListCY) {
+  public void setImportContainerListCY(List<OpusImportContainer> importContainerListCY) {
     this.importContainerListCY = importContainerListCY;
   }
 
-  public List<ExporterContainer> getExportContainerListCFS() {
+  public List<OpusExporterContainer> getExportContainerListCFS() {
     return exportContainerListCFS;
   }
 
-  public void setExportContainerListCFS(List<ExporterContainer> exportContainerListCFS) {
+  public void setExportContainerListCFS(List<OpusExporterContainer> exportContainerListCFS) {
     this.exportContainerListCFS = exportContainerListCFS;
   }
 
-  public List<ImportContainer> getImportContainerListCFS() {
+  public List<OpusImportContainer> getImportContainerListCFS() {
     return importContainerListCFS;
   }
 
-  public void setImportContainerListCFS(List<ImportContainer> importContainerListCFS) {
+  public void setImportContainerListCFS(List<OpusImportContainer> importContainerListCFS) {
     this.importContainerListCFS = importContainerListCFS;
   }
 
