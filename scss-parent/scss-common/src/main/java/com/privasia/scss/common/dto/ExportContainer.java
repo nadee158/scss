@@ -195,6 +195,7 @@ public class ExportContainer {
   private double emptyWeight;
 
 
+
   public String getSeq() {
     return seq;
   }

@@ -16,7 +16,7 @@ public class GIR01Response extends BaseResponse {
   private String haulageCode;// HAUCD,
   private String truckHeadNo;// TRUCK,
   private String truckPlateNo;// null,
-  private long gateINDateTime;// 20161130112233,
+  private String gateINDateTime;// 20161130112233,
   private List<ExporterContainer> exportContainerListCY;
   private List<ImportContainer> importContainerListCY;
   private List<ExporterContainer> exportContainerListCFS;
@@ -54,11 +54,12 @@ public class GIR01Response extends BaseResponse {
     this.truckPlateNo = truckPlateNo;
   }
 
-  public long getGateINDateTime() {
+
+  public String getGateINDateTime() {
     return gateINDateTime;
   }
 
-  public void setGateINDateTime(long gateINDateTime) {
+  public void setGateINDateTime(String gateINDateTime) {
     this.gateINDateTime = gateINDateTime;
   }
 

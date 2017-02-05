@@ -2,6 +2,10 @@ package com.privasia.scss.opus.service;
 
 
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
@@ -53,5 +57,32 @@ public class OpusService {
     log.info(response.toString());
     return response.getBody();
   }
+
+  public static String getJsonDateFromDate(LocalDateTime localDateTime) {
+    try {
+      if (!(localDateTime == null)) {
+        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+        return localDateTime.format(dateFormat);
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return null;
+  }
+
+
+  public static LocalDateTime getLocalDategFromString(String gateINDateTime) {
+    try {
+      if (StringUtils.isNotEmpty(gateINDateTime)) {
+        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+        return LocalDateTime.parse(gateINDateTime, dateFormat);
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return null;
+  }
+
+
 
 }

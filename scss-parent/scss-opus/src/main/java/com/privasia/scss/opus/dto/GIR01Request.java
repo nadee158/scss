@@ -10,7 +10,7 @@ public class GIR01Request implements Serializable {
   private String laneNo;// LNO01"
   private String haulageCode;// HAUCD"
   private String truckHeadNo;// TRUCK"
-  private long gateINDateTime;// 20161130112233"
+  private String gateINDateTime;// 20161130112233"
   private String containerNo1ExportCY;// AZHA0000001"
   private String containerNo2ExportCY;// CCMO1000031"
   private String containerNo1ImportCY;// QASS1234566"
@@ -52,11 +52,12 @@ public class GIR01Request implements Serializable {
     this.truckHeadNo = truckHeadNo;
   }
 
-  public long getGateINDateTime() {
+
+  public String getGateINDateTime() {
     return gateINDateTime;
   }
 
-  public void setGateINDateTime(long gateINDateTime) {
+  public void setGateINDateTime(String gateINDateTime) {
     this.gateINDateTime = gateINDateTime;
   }
 
@@ -163,7 +164,7 @@ public class GIR01Request implements Serializable {
     gir01Request.setContainerNo2ExportCFS("");
     gir01Request.setContainerNo2ImportCFS("");
     gir01Request.setContainerNo2ImportCY("EPLA0000002");
-    gir01Request.setGateINDateTime(20161130112233l);
+    gir01Request.setGateINDateTime("20161130112233l");
     gir01Request.setHaulageCode("HAUCD");
     gir01Request.setLaneNo("LNO01");
     gir01Request.setTruckHeadNo("TRUCK");

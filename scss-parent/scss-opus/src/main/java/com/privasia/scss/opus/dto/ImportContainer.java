@@ -11,10 +11,10 @@ public class ImportContainer {
   private String containerShippingLine;// CMA,
   private String containerFullOrEmpty;// F,
   private String containerIso;// 4001,
-  private double containerSize;// 40,
-  private double containerHeight;// 8,
+  private String containerSize;// 40,
+  private String containerHeight;// 8,
   private String containerType;// GE,
-  private long containerDischargeDateTime;// 20161124162510,
+  private String containerDischargeDateTime;// 20161124162510,
   private String currentYardPosition;// 02S-0102-C-1,
   private String impCarrierType;// null,
   private String impCarrier;// null,
@@ -73,21 +73,6 @@ public class ImportContainer {
     this.containerIso = containerIso;
   }
 
-  public double getContainerSize() {
-    return containerSize;
-  }
-
-  public void setContainerSize(double containerSize) {
-    this.containerSize = containerSize;
-  }
-
-  public double getContainerHeight() {
-    return containerHeight;
-  }
-
-  public void setContainerHeight(double containerHeight) {
-    this.containerHeight = containerHeight;
-  }
 
   public String getContainerType() {
     return containerType;
@@ -97,13 +82,6 @@ public class ImportContainer {
     this.containerType = containerType;
   }
 
-  public long getContainerDischargeDateTime() {
-    return containerDischargeDateTime;
-  }
-
-  public void setContainerDischargeDateTime(long containerDischargeDateTime) {
-    this.containerDischargeDateTime = containerDischargeDateTime;
-  }
 
   public String getCurrentYardPosition() {
     return currentYardPosition;
@@ -175,6 +153,30 @@ public class ImportContainer {
 
   public void setVesselATA(String vesselATA) {
     this.vesselATA = vesselATA;
+  }
+
+  public String getContainerSize() {
+    return containerSize;
+  }
+
+  public void setContainerSize(String containerSize) {
+    this.containerSize = containerSize;
+  }
+
+  public String getContainerHeight() {
+    return containerHeight;
+  }
+
+  public void setContainerHeight(String containerHeight) {
+    this.containerHeight = containerHeight;
+  }
+
+  public String getContainerDischargeDateTime() {
+    return containerDischargeDateTime;
+  }
+
+  public void setContainerDischargeDateTime(String containerDischargeDateTime) {
+    this.containerDischargeDateTime = containerDischargeDateTime;
   }
 
   @Override

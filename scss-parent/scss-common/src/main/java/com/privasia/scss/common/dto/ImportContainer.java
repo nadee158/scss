@@ -103,6 +103,18 @@ public class ImportContainer implements Serializable {
 
   private String contRefer;
 
+
+  // from opus import container
+  private long containerDischargeDateTime;// 20161124162510,
+  private String impCarrierType;// null,
+  private String impCarrier;// null,
+  private String vesselCode;// UANE,
+  private String vesselVoyage;// 003/2016,
+  private String visitId;// 121212,
+  private String vesselScn;// DB0899,
+  private String vesselName;// AL NEFUD,
+  private String vesselATA;// 20161124161800
+
   public String getContRefer() {
     return contRefer;
   }
@@ -450,6 +462,82 @@ public class ImportContainer implements Serializable {
 
   public void setFOTBKGFlag(boolean fOTBKGFlag) {
     FOTBKGFlag = fOTBKGFlag;
+  }
+
+  public long getContainerDischargeDateTime() {
+    return containerDischargeDateTime;
+  }
+
+  public void setContainerDischargeDateTime(long containerDischargeDateTime) {
+    this.containerDischargeDateTime = containerDischargeDateTime;
+  }
+
+  public String getImpCarrierType() {
+    return impCarrierType;
+  }
+
+  public void setImpCarrierType(String impCarrierType) {
+    this.impCarrierType = impCarrierType;
+  }
+
+  public String getImpCarrier() {
+    return impCarrier;
+  }
+
+  public void setImpCarrier(String impCarrier) {
+    this.impCarrier = impCarrier;
+  }
+
+  public String getVesselCode() {
+    return vesselCode;
+  }
+
+  public void setVesselCode(String vesselCode) {
+    this.vesselCode = vesselCode;
+  }
+
+  public String getVesselVoyage() {
+    return vesselVoyage;
+  }
+
+  public void setVesselVoyage(String vesselVoyage) {
+    this.vesselVoyage = vesselVoyage;
+  }
+
+  public String getVisitId() {
+    return visitId;
+  }
+
+  public void setVisitId(String visitId) {
+    this.visitId = visitId;
+  }
+
+  public String getVesselScn() {
+    return vesselScn;
+  }
+
+  public void setVesselScn(String vesselScn) {
+    this.vesselScn = vesselScn;
+  }
+
+  public String getVesselName() {
+    return vesselName;
+  }
+
+  public void setVesselName(String vesselName) {
+    this.vesselName = vesselName;
+  }
+
+  public String getVesselATA() {
+    return vesselATA;
+  }
+
+  public void setVesselATA(String vesselATA) {
+    this.vesselATA = vesselATA;
+  }
+
+  public static long getSerialversionuid() {
+    return serialVersionUID;
   }
 
 
