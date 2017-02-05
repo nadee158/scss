@@ -64,35 +64,36 @@ public class GatePass extends AuditEntity implements Serializable {
 	private Company company;
 
 	@Embedded
-	@AttributeOverrides({ @AttributeOverride(name = "timeGateIn", column = @Column(name = "GTP_TIMEGATEIN")),
-			@AttributeOverride(name = "timeGateInOk", column = @Column(name = "GTP_TIMEGATEINOK")),
-			@AttributeOverride(name = "timeGateOut", column = @Column(name = "GTP_TIMEGATEOUT")),
-			@AttributeOverride(name = "timeGateOutOk", column = @Column(name = "GTP_TIMEGATEOUTOK")),
-			@AttributeOverride(name = "eirNumber", column = @Column(name = "GTP_EIRNO")),
-			@AttributeOverride(name = "eirStatus", column = @Column(name = "GTP_EIRSTATUS")),
-			@AttributeOverride(name = "impExpFlag", column = @Column(name = "GTP_IMPEXPFLAG")),
-			@AttributeOverride(name = "rejectReason", column = @Column(name = "GTP_REJECTREASON")),
-			@AttributeOverride(name = "pmHeadNo", column = @Column(name = "GTP_TRUCK_HEAD_NO")),
-			@AttributeOverride(name = "pmPlateNo", column = @Column(name = "GTP_TRUCK_PLATE_NO")),
+	@AttributeOverrides({ @AttributeOverride(name = "eirNumber", column = @Column(name = "EXP_EIRNO")),
+			@AttributeOverride(name = "impExpFlag", column = @Column(name = "EXP_IMPEXPFLAG", nullable = true)),
+			@AttributeOverride(name = "rejectReason", column = @Column(name = "EXP_REJECTREASON")),
 			@AttributeOverride(name = "kioskConfirmed", column = @Column(name = "KIOSK_CONFIRMED")),
 			@AttributeOverride(name = "kioskCancelPickUp", column = @Column(name = "KIOSK_CANCEL_PICKUP")),
-			@AttributeOverride(name = "transactionSlipPrinted", column = @Column(name = "TRANSACTION_SLIP_PRINTED")),
-			@AttributeOverride(name = "gateOutBoothNo", column = @Column(name = "GTP_GATE_OUT_BOOTH_NO")),
-			@AttributeOverride(name = "gateOutBoothClerk", column = @Column(name = "GTP_GATEOUT_BOOTH_CLERKID")),
-			@AttributeOverride(name = "timeGateOutBooth", column = @Column(name = "GTP_TIMEGATEOUT_BOOTH")),
-			@AttributeOverride(name = "gateInStatus", column = @Column(name = "GTP_GATEIN_STATUS")),
-			@AttributeOverride(name = "hpatBooking", column = @Column(name = "BOOKING_ID")),
+			@AttributeOverride(name = "gateInStatus", column = @Column(name = "EXP_GATEIN_STATUS")),
 			@AttributeOverride(name = "zipFileNo", column = @Column(name = "ZIP_FILE_NO")),
-			@AttributeOverride(name = "trxSlipNo", column = @Column(name = "TRX_SLIP_NO"))
-
-	})
-	@AssociationOverrides({
-			@AssociationOverride(name = "card", joinColumns = @JoinColumn(name = "GTP_HCTDID", referencedColumnName = "CRD_CARDID_SEQ")),
-			@AssociationOverride(name = "gateInClerk", joinColumns = @JoinColumn(name = "GTP_GATEINCLERKID", referencedColumnName = "SYS_USERID_SEQ")),
-			@AssociationOverride(name = "gateOutClerk", joinColumns = @JoinColumn(name = "GTP_GATEOUTCLERKID", referencedColumnName = "SYS_USERID_SEQ")),
-			@AssociationOverride(name = "gateInClient", joinColumns = @JoinColumn(name = "CLI_CLIENTID_GATEIN", referencedColumnName = "CLI_CLIENTID_SEQ")),
-			@AssociationOverride(name = "gateOutClient", joinColumns = @JoinColumn(name = "CLI_CLIENTID_GATEOUT", referencedColumnName = "CLI_CLIENTID_SEQ")) })
+			@AttributeOverride(name = "trxSlipNo", column = @Column(name = "TRX_SLIP_NO")) })
 	private CommonGateInOutAttribute commonGateInOut;
+
+	@Embedded
+	@AttributeOverrides({ @AttributeOverride(name = "pmHeadNo", column = @Column(name = "EXP_TRUCK_HEAD_NO")),
+			@AttributeOverride(name = "pmPlateNo", column = @Column(name = "EXP_TRUCK_PLATE_NO")),
+			@AttributeOverride(name = "hpatBooking", column = @Column(name = "BOOKING_ID")),
+			@AttributeOverride(name = "eirStatus", column = @Column(name = "EXP_EIRSTATUS", nullable = true)),
+			@AttributeOverride(name = "transactionSlipPrinted", column = @Column(name = "TRANSACTION_SLIP_PRINTED")),
+			@AttributeOverride(name = "gateOutBoothNo", column = @Column(name = "EXP_GATE_OUT_BOOTH_NO")),
+			@AttributeOverride(name = "timeGateIn", column = @Column(name = "EXP_TIMEGATEIN")),
+			@AttributeOverride(name = "timeGateInOk", column = @Column(name = "EXP_TIMEGATEINOK")),
+			@AttributeOverride(name = "timeGateOut", column = @Column(name = "EXP_TIMEGATEOUT")),
+			@AttributeOverride(name = "timeGateOutOk", column = @Column(name = "EXP_TIMEGATEOUTOK")),
+			@AttributeOverride(name = "timeGateOutBooth", column = @Column(name = "EXP_TIMEGATEOUT_BOOTH")),
+			@AttributeOverride(name = "gateOutBoothClerk", column = @Column(name = "EXP_GATEOUT_BOOTH_CLERKID")) })
+	@AssociationOverrides({
+			@AssociationOverride(name = "card", joinColumns = @JoinColumn(name = "EXP_HCTDID", referencedColumnName = "CRD_CARDID_SEQ", nullable = true)),
+			@AssociationOverride(name = "gateInClerk", joinColumns = @JoinColumn(name = "EXP_GATEINCLERKID", referencedColumnName = "SYS_USERID_SEQ", nullable = true)),
+			@AssociationOverride(name = "gateOutClerk", joinColumns = @JoinColumn(name = "EXP_GATEOUTCLERKID", referencedColumnName = "SYS_USERID_SEQ", nullable = true)),
+			@AssociationOverride(name = "gateInClient", joinColumns = @JoinColumn(name = "CLI_CLIENTID_GATEIN", referencedColumnName = "CLI_CLIENTID_SEQ", nullable = true)),
+			@AssociationOverride(name = "gateOutClient", joinColumns = @JoinColumn(name = "CLI_CLIENTID_GATEOUT", referencedColumnName = "CLI_CLIENTID_SEQ", nullable = true)) })
+	private BaseCommonGateInOutAttribute baseCommonGateInOutAttribute;
 
 	@Column(name = "GTP_GATEPASSSTATUS")
 	@Type(type = "com.privasia.scss.common.enumusertype.GatePassStatusEnumUserType")
@@ -440,6 +441,14 @@ public class GatePass extends AuditEntity implements Serializable {
 
 	public void setGatePassValidDate(LocalDateTime gatePassValidDate) {
 		this.gatePassValidDate = gatePassValidDate;
+	}
+
+	public BaseCommonGateInOutAttribute getBaseCommonGateInOutAttribute() {
+		return baseCommonGateInOutAttribute;
+	}
+
+	public void setBaseCommonGateInOutAttribute(BaseCommonGateInOutAttribute baseCommonGateInOutAttribute) {
+		this.baseCommonGateInOutAttribute = baseCommonGateInOutAttribute;
 	}
 
 }

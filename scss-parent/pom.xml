@@ -150,6 +150,7 @@
     <module>scss-common</module>    
     <module>scss-core</module>
     <module>scss-cosmos</module>
+    <module>scss-opus</module>	
 	<module>scss-etpws</module>
 	<module>scss-hpat</module>
 	<module>scss-hdbs</module>

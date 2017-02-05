@@ -51,47 +51,52 @@ public class Exports implements Serializable {
   private Long exportID;
 
   @Embedded
-  @AttributeOverrides({@AttributeOverride(name = "containerNumber", column = @Column(name = "EXP_CONTAINERNO") ),
-      @AttributeOverride(name = "containerISOCode", column = @Column(name = "EXP_CONT_ISO_CODE") ),
-      @AttributeOverride(name = "containerLength", column = @Column(name = "CONT_LENGTH") ),
-      @AttributeOverride(name = "containerFullOrEmpty", column = @Column(name = "EXP_FULL_EMPTY_FLAG", nullable = true) )})
+  @AttributeOverrides({@AttributeOverride(name = "containerNumber", column = @Column(name = "EXP_CONTAINERNO")),
+      @AttributeOverride(name = "containerISOCode", column = @Column(name = "EXP_CONT_ISO_CODE")),
+      @AttributeOverride(name = "containerLength", column = @Column(name = "CONT_LENGTH")), @AttributeOverride(
+          name = "containerFullOrEmpty", column = @Column(name = "EXP_FULL_EMPTY_FLAG", nullable = true))})
   private CommonContainerAttribute container;
 
   @Embedded
-  @AttributeOverrides({@AttributeOverride(name = "timeGateIn", column = @Column(name = "EXP_TIMEGATEIN") ),
-      @AttributeOverride(name = "timeGateInOk", column = @Column(name = "EXP_TIMEGATEINOK") ),
-      @AttributeOverride(name = "timeGateOut", column = @Column(name = "EXP_TIMEGATEOUT") ),
-      @AttributeOverride(name = "timeGateOutOk", column = @Column(name = "EXP_TIMEGATEOUTOK") ),
-      @AttributeOverride(name = "eirNumber", column = @Column(name = "EXP_EIRNO") ),
-      @AttributeOverride(name = "eirStatus", column = @Column(name = "EXP_EIRSTATUS", nullable = true) ),
-      @AttributeOverride(name = "impExpFlag", column = @Column(name = "EXP_IMPEXPFLAG", nullable = true) ),
-      @AttributeOverride(name = "rejectReason", column = @Column(name = "EXP_REJECTREASON") ),
-      @AttributeOverride(name = "pmHeadNo", column = @Column(name = "EXP_TRUCK_HEAD_NO") ),
-      @AttributeOverride(name = "pmPlateNo", column = @Column(name = "EXP_TRUCK_PLATE_NO") ),
-      @AttributeOverride(name = "kioskConfirmed", column = @Column(name = "KIOSK_CONFIRMED") ),
-      @AttributeOverride(name = "kioskCancelPickUp", column = @Column(name = "KIOSK_CANCEL_PICKUP") ),
-      @AttributeOverride(name = "transactionSlipPrinted", column = @Column(name = "TRANSACTION_SLIP_PRINTED") ),
-      @AttributeOverride(name = "gateOutBoothNo", column = @Column(name = "EXP_GATE_OUT_BOOTH_NO") ),
-      @AttributeOverride(name = "gateOutBoothClerk", column = @Column(name = "EXP_GATEOUT_BOOTH_CLERKID") ),
-      @AttributeOverride(name = "timeGateOutBooth", column = @Column(name = "EXP_TIMEGATEOUT_BOOTH") ),
-      @AttributeOverride(name = "gateInStatus", column = @Column(name = "EXP_GATEIN_STATUS") ),
-      @AttributeOverride(name = "hpatBooking", column = @Column(name = "BOOKING_ID") )
+  @AttributeOverrides({@AttributeOverride(name = "eirNumber", column = @Column(name = "EXP_EIRNO")),
+      @AttributeOverride(name = "impExpFlag", column = @Column(name = "EXP_IMPEXPFLAG", nullable = true)),
+      @AttributeOverride(name = "rejectReason", column = @Column(name = "EXP_REJECTREASON")),
+      @AttributeOverride(name = "kioskConfirmed", column = @Column(name = "KIOSK_CONFIRMED")),
+      @AttributeOverride(name = "kioskCancelPickUp", column = @Column(name = "KIOSK_CANCEL_PICKUP")),
+      @AttributeOverride(name = "gateInStatus", column = @Column(name = "EXP_GATEIN_STATUS"))})
+  private CommonGateInOutAttribute commonGateInOut;
 
-  })
+
+  @Embedded
+  @AttributeOverrides({@AttributeOverride(name = "pmHeadNo", column = @Column(name = "EXP_TRUCK_HEAD_NO")),
+      @AttributeOverride(name = "pmPlateNo", column = @Column(name = "EXP_TRUCK_PLATE_NO")),
+      @AttributeOverride(name = "hpatBooking", column = @Column(name = "BOOKING_ID")),
+      @AttributeOverride(name = "eirStatus", column = @Column(name = "EXP_EIRSTATUS", nullable = true)),
+      @AttributeOverride(name = "transactionSlipPrinted", column = @Column(name = "TRANSACTION_SLIP_PRINTED")),
+      @AttributeOverride(name = "gateOutBoothNo", column = @Column(name = "EXP_GATE_OUT_BOOTH_NO")),
+      @AttributeOverride(name = "timeGateIn", column = @Column(name = "EXP_TIMEGATEIN")),
+      @AttributeOverride(name = "timeGateInOk", column = @Column(name = "EXP_TIMEGATEINOK")),
+      @AttributeOverride(name = "timeGateOut", column = @Column(name = "EXP_TIMEGATEOUT")),
+      @AttributeOverride(name = "timeGateOutOk", column = @Column(name = "EXP_TIMEGATEOUTOK")),
+      @AttributeOverride(name = "timeGateOutBooth", column = @Column(name = "EXP_TIMEGATEOUT_BOOTH")),
+      @AttributeOverride(name = "gateOutBoothClerk", column = @Column(name = "EXP_GATEOUT_BOOTH_CLERKID"))})
   @AssociationOverrides({
       @AssociationOverride(name = "card",
-          joinColumns = @JoinColumn(name = "EXP_HCTDID", referencedColumnName = "CRD_CARDID_SEQ", nullable = true) ),
+          joinColumns = @JoinColumn(name = "EXP_HCTDID", referencedColumnName = "CRD_CARDID_SEQ", nullable = true)),
       @AssociationOverride(name = "gateInClerk",
-          joinColumns = @JoinColumn(name = "EXP_GATEINCLERKID", referencedColumnName = "SYS_USERID_SEQ", nullable = true) ),
+          joinColumns = @JoinColumn(name = "EXP_GATEINCLERKID", referencedColumnName = "SYS_USERID_SEQ",
+              nullable = true)),
       @AssociationOverride(name = "gateOutClerk",
-          joinColumns = @JoinColumn(name = "EXP_GATEOUTCLERKID", referencedColumnName = "SYS_USERID_SEQ", nullable = true) ),
+          joinColumns = @JoinColumn(name = "EXP_GATEOUTCLERKID", referencedColumnName = "SYS_USERID_SEQ",
+              nullable = true)),
       @AssociationOverride(name = "gateInClient",
-          joinColumns = @JoinColumn(name = "CLI_CLIENTID_GATEIN", referencedColumnName = "CLI_CLIENTID_SEQ", nullable = true) ),
-      @AssociationOverride(name = "gateOutClient",
-          joinColumns = @JoinColumn(name = "CLI_CLIENTID_GATEOUT", referencedColumnName = "CLI_CLIENTID_SEQ", nullable = true) )})
-  private CommonGateInOutAttribute commonGateInOut;
-  
-  
+          joinColumns = @JoinColumn(name = "CLI_CLIENTID_GATEIN", referencedColumnName = "CLI_CLIENTID_SEQ",
+              nullable = true)),
+      @AssociationOverride(name = "gateOutClient", joinColumns = @JoinColumn(name = "CLI_CLIENTID_GATEOUT",
+          referencedColumnName = "CLI_CLIENTID_SEQ", nullable = true))})
+  private BaseCommonGateInOutAttribute baseCommonGateInOutAttribute;
+
+
   @Column(name = "EXP_MANUALOPTFLAG", nullable = true)
   @Type(type = "com.privasia.scss.common.enumusertype.ExportOPTFlagEnumUserType")
   private ExportOPTFlagType optFlag;
@@ -120,12 +125,12 @@ public class Exports implements Serializable {
   private String expSpod;
 
   @Embedded
-  @AttributeOverrides({@AttributeOverride(name = "seal01Origin", column = @Column(name = "EXP_SEAL_1_ORIGIN") ),
-      @AttributeOverride(name = "seal01Type", column = @Column(name = "EXP_SEAL_1_TYPE") ),
-      @AttributeOverride(name = "seal01Number", column = @Column(name = "EXP_SEAL_1_NUMBER") ),
-      @AttributeOverride(name = "seal02Origin", column = @Column(name = "EXP_SEAL_2_ORIGIN") ),
-      @AttributeOverride(name = "seal02Type", column = @Column(name = "EXP_SEAL_2_TYPE") ),
-      @AttributeOverride(name = "seal02Number", column = @Column(name = "EXP_SEAL_2_NUMBER") )})
+  @AttributeOverrides({@AttributeOverride(name = "seal01Origin", column = @Column(name = "EXP_SEAL_1_ORIGIN")),
+      @AttributeOverride(name = "seal01Type", column = @Column(name = "EXP_SEAL_1_TYPE")),
+      @AttributeOverride(name = "seal01Number", column = @Column(name = "EXP_SEAL_1_NUMBER")),
+      @AttributeOverride(name = "seal02Origin", column = @Column(name = "EXP_SEAL_2_ORIGIN")),
+      @AttributeOverride(name = "seal02Type", column = @Column(name = "EXP_SEAL_2_TYPE")),
+      @AttributeOverride(name = "seal02Number", column = @Column(name = "EXP_SEAL_2_NUMBER"))})
   private CommonSealAttribute sealAttribute;
 
   @Column(name = "EXP_WEIGHT_BRIDGE")
@@ -133,36 +138,36 @@ public class Exports implements Serializable {
 
   @Column(name = "EXP_NET_WEIGHT")
   private Integer expNetWeight;
-  
+
   @Column(name = "EXP_REEFER_FLAG", nullable = true)
   @Type(type = "yes_no")
   private Boolean referFlag;
-  
+
   @Column(name = "EXP_REEFER_TEMP_TYPE")
   @Type(type = "com.privasia.scss.common.enumusertype.ReferTempEnumUserType")
   private ReferTempType referTempType;
-  
+
   @Column(name = "EXP_REEFER_TEMP")
   private Integer referTemp;
-  
+
   @Column(name = "EXP_IMDG")
   private String imdg;
-  
+
   @Column(name = "EXP_UN")
   private String expUN;
-  
+
   @Column(name = "EXP_IMDG_LABEL_ID")
   private String imdgLabelID;
-  
+
   @Column(name = "EXP_OOG_OH")
   private Integer oogOH;
-  
+
   @Column(name = "EXP_OOG_OL")
   private Integer oogOL;
-  
+
   @Column(name = "EXP_OOG_OF")
   private Integer oogOF;
-  
+
   @Column(name = "EXP_OOG_OA")
   private Integer oogOA;
 
@@ -221,10 +226,10 @@ public class Exports implements Serializable {
 
   @Column(name = "DATE_VESSEL_ATA")
   private LocalDateTime vesselATADate;
-  
+
   @Column(name = "EXP_AGENT_CODE")
   private String agentCode;
-  
+
   @Column(name = " EXP_HAS_OOG_SSR", nullable = true)
   @Type(type = "yes_no")
   private Boolean oogSSR;
@@ -381,12 +386,12 @@ public class Exports implements Serializable {
   private String solasCertNo;
 
   @Embedded
-  @AttributeOverrides({@AttributeOverride(name = "mgw", column = @Column(name = "MGW") ),
-      @AttributeOverride(name = "faLedgerCode", column = @Column(name = "FA_LEDGER_CODE") ),
-      @AttributeOverride(name = "solasRefNumber", column = @Column(name = "SOLAS_REF_NO") ),
-      @AttributeOverride(name = "solasDetailID", column = @Column(name = "SOLAS_DETAIL_NO") ),
-      @AttributeOverride(name = "solasInstruction", column = @Column(name = "VGM_TYPE") ),
-      @AttributeOverride(name = "shipperVGM", column = @Column(name = "SHIPPER_VGM") )})
+  @AttributeOverrides({@AttributeOverride(name = "mgw", column = @Column(name = "MGW")),
+      @AttributeOverride(name = "faLedgerCode", column = @Column(name = "FA_LEDGER_CODE")),
+      @AttributeOverride(name = "solasRefNumber", column = @Column(name = "SOLAS_REF_NO")),
+      @AttributeOverride(name = "solasDetailID", column = @Column(name = "SOLAS_DETAIL_NO")),
+      @AttributeOverride(name = "solasInstruction", column = @Column(name = "VGM_TYPE")),
+      @AttributeOverride(name = "shipperVGM", column = @Column(name = "SHIPPER_VGM"))})
   private CommonSolasAttribute solas;
 
   public Long getExportID() {
@@ -1007,6 +1012,110 @@ public class Exports implements Serializable {
 
   public static long getSerialversionuid() {
     return serialVersionUID;
+  }
+
+  public BaseCommonGateInOutAttribute getBaseCommonGateInOutAttribute() {
+    return baseCommonGateInOutAttribute;
+  }
+
+  public void setBaseCommonGateInOutAttribute(BaseCommonGateInOutAttribute baseCommonGateInOutAttribute) {
+    this.baseCommonGateInOutAttribute = baseCommonGateInOutAttribute;
+  }
+
+  public ExportOPTFlagType getOptFlag() {
+    return optFlag;
+  }
+
+  public void setOptFlag(ExportOPTFlagType optFlag) {
+    this.optFlag = optFlag;
+  }
+
+  public Boolean getReferFlag() {
+    return referFlag;
+  }
+
+  public void setReferFlag(Boolean referFlag) {
+    this.referFlag = referFlag;
+  }
+
+  public ReferTempType getReferTempType() {
+    return referTempType;
+  }
+
+  public void setReferTempType(ReferTempType referTempType) {
+    this.referTempType = referTempType;
+  }
+
+  public Integer getReferTemp() {
+    return referTemp;
+  }
+
+  public void setReferTemp(Integer referTemp) {
+    this.referTemp = referTemp;
+  }
+
+  public String getImdg() {
+    return imdg;
+  }
+
+  public void setImdg(String imdg) {
+    this.imdg = imdg;
+  }
+
+  public String getExpUN() {
+    return expUN;
+  }
+
+  public void setExpUN(String expUN) {
+    this.expUN = expUN;
+  }
+
+  public String getImdgLabelID() {
+    return imdgLabelID;
+  }
+
+  public void setImdgLabelID(String imdgLabelID) {
+    this.imdgLabelID = imdgLabelID;
+  }
+
+  public Integer getOogOH() {
+    return oogOH;
+  }
+
+  public void setOogOH(Integer oogOH) {
+    this.oogOH = oogOH;
+  }
+
+  public Integer getOogOL() {
+    return oogOL;
+  }
+
+  public void setOogOL(Integer oogOL) {
+    this.oogOL = oogOL;
+  }
+
+  public Integer getOogOF() {
+    return oogOF;
+  }
+
+  public void setOogOF(Integer oogOF) {
+    this.oogOF = oogOF;
+  }
+
+  public Integer getOogOA() {
+    return oogOA;
+  }
+
+  public void setOogOA(Integer oogOA) {
+    this.oogOA = oogOA;
+  }
+
+  public String getAgentCode() {
+    return agentCode;
+  }
+
+  public void setAgentCode(String agentCode) {
+    this.agentCode = agentCode;
   }
 
 

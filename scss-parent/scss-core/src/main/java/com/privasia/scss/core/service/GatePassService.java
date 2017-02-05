@@ -30,6 +30,7 @@ import com.privasia.scss.common.util.ApplicationConstants;
 import com.privasia.scss.common.util.CommonUtil;
 import com.privasia.scss.core.exception.BusinessException;
 import com.privasia.scss.core.exception.ResultsNotFoundException;
+import com.privasia.scss.core.model.BaseCommonGateInOutAttribute;
 import com.privasia.scss.core.model.Card;
 import com.privasia.scss.core.model.CardUsage;
 import com.privasia.scss.core.model.Client;
@@ -122,8 +123,9 @@ public class GatePassService {
       // check gatepass no approved, EIRStatus = A?
       log.debug("-----START check gatepass no approved, EIRStatus = A? ----" + gatePassNo + ":" + truckHeadNo);
       eirStatus = TransactionStatus.APPROVED;
-      if (!(gatePass.getCommonGateInOut() == null || gatePass.getCommonGateInOut().getEirStatus() == null)) {
-        if (gatePass.getCommonGateInOut().getEirStatus().equals(eirStatus)) {
+      if (!(gatePass.getCommonGateInOut() == null
+          || gatePass.getBaseCommonGateInOutAttribute().getEirStatus() == null)) {
+        if (gatePass.getBaseCommonGateInOutAttribute().getEirStatus().equals(eirStatus)) {
           throw new BusinessException(
               CommonUtil.formatMessageCode(ApplicationConstants.GATE_PASS_IS_USED, new Object[] {gatePassNo}));
         }
@@ -133,8 +135,9 @@ public class GatePassService {
       // check gatepass is in progress (in using), EIRStatus = I?
       log.debug("--START check gatepass is in progress (in using), EIRStatus = I? --" + gatePassNo + ":" + truckHeadNo);
       eirStatus = TransactionStatus.INPROGRESS;
-      if (!(gatePass.getCommonGateInOut() == null || gatePass.getCommonGateInOut().getEirStatus() == null)) {
-        if (gatePass.getCommonGateInOut().getEirStatus().equals(eirStatus)) {
+      if (!(gatePass.getCommonGateInOut() == null
+          || gatePass.getBaseCommonGateInOutAttribute().getEirStatus() == null)) {
+        if (gatePass.getBaseCommonGateInOutAttribute().getEirStatus().equals(eirStatus)) {
           throw new BusinessException(
               CommonUtil.formatMessageCode(ApplicationConstants.GATE_PASS_IN_PROGRESS, new Object[] {gatePassNo}));
         }
@@ -156,9 +159,9 @@ public class GatePassService {
         log.error("------START check gatepass is valid , EIRStatus = N? ----" + gatePassNo + ":" + truckHeadNo);
         eirStatus = TransactionStatus.NEW;
         gatePassStatus = GatePassStatus.ACTIVE;
-        if (!(gatePass.getCommonGateInOut() == null || gatePass.getCommonGateInOut().getEirStatus() == null
+        if (!(gatePass.getCommonGateInOut() == null || gatePass.getBaseCommonGateInOutAttribute().getEirStatus() == null
             || gatePass.getGatePassStatus() == null)) {
-          if (gatePass.getCommonGateInOut().getEirStatus().equals(eirStatus)
+          if (gatePass.getBaseCommonGateInOutAttribute().getEirStatus().equals(eirStatus)
               && gatePass.getGatePassStatus().equals(gatePassStatus)) {
             throw new BusinessException(
                 CommonUtil.formatMessageCode(ApplicationConstants.GATE_PASS_INVALID, new Object[] {gatePassNo}));
@@ -534,6 +537,7 @@ public class GatePassService {
       throws Exception {
 
     CommonGateInOutAttribute commonGateInOut = null;
+    BaseCommonGateInOutAttribute baseCommonGateInOutAttribute = null;
 
     log.error("-------START selectGatePassInfo----------" + transactionDTO.getImportContainer01() + "::"
         + transactionDTO.getImportContainer02());
@@ -545,6 +549,7 @@ public class GatePassService {
     if (!(gpForC1 == null)) {
       transactionDTO = assignValuesToImportContainer(transactionDTO, gpForC1, true);
       commonGateInOut = gpForC1.getCommonGateInOut();
+      baseCommonGateInOutAttribute = gpForC1.getBaseCommonGateInOutAttribute();
     }
 
     // try to find by gatePassNo1
@@ -559,9 +564,9 @@ public class GatePassService {
     }
 
     if (!(commonGateInOut == null)) {
-      transactionDTO.setPmHeadNo(commonGateInOut.getPmHeadNo());
-      transactionDTO.setPmPlateNo(commonGateInOut.getPmPlateNo());
-      Client gateInClient = commonGateInOut.getGateInClient();
+      transactionDTO.setPmHeadNo(baseCommonGateInOutAttribute.getPmHeadNo());
+      transactionDTO.setPmPlateNo(baseCommonGateInOutAttribute.getPmPlateNo());
+      Client gateInClient = baseCommonGateInOutAttribute.getGateInClient();
       if (!(gateInClient == null)) {
         int portNo = gateInClient.getCosmosPortNo();
         transactionDTO.setCosmosPortNo(portNo);
@@ -764,17 +769,18 @@ public class GatePassService {
       if (gatePassOpt.isPresent()) {
         GatePass gatePass = gatePassOpt.get();
         CommonGateInOutAttribute commonGateInOut = gatePass.getCommonGateInOut();
+        BaseCommonGateInOutAttribute baseCommonGateInOutAttribute = gatePass.getBaseCommonGateInOutAttribute();
         if (commonGateInOut == null) {
           commonGateInOut = new CommonGateInOutAttribute();
         }
         commonGateInOut.setEirNumber(container.getEirNo());
-        commonGateInOut.setEirStatus(TransactionStatus.INPROGRESS);
+        baseCommonGateInOutAttribute.setEirStatus(TransactionStatus.INPROGRESS);
 
         if (StringUtils.isNotEmpty(cardIdSeq)) {
           long cardId = Long.parseLong(cardIdSeq);
           Optional<Card> card = cardRepository.findOne(cardId);
           if (card.isPresent()) {
-            commonGateInOut.setCard(card.get());
+            baseCommonGateInOutAttribute.setCard(card.get());
           }
         }
 
@@ -782,24 +788,24 @@ public class GatePassService {
           Optional<SystemUser> gateInClerkOpt = systemUserRepository.findOne(container.getUserSessionId());
           if (gateInClerkOpt.isPresent()) {
             SystemUser gateInClerk = gateInClerkOpt.get();
-            commonGateInOut.setGateInClerk(gateInClerk);
+            baseCommonGateInOutAttribute.setGateInClerk(gateInClerk);
           }
         }
 
-        commonGateInOut.setTimeGateIn(timeGateIn);
-        commonGateInOut.setTimeGateInOk(LocalDateTime.now());
+        baseCommonGateInOutAttribute.setTimeGateIn(timeGateIn);
+        baseCommonGateInOutAttribute.setTimeGateInOk(LocalDateTime.now());
 
         if (StringUtils.isNotEmpty(clientId)) {
           Optional<Client> gateInClientOpt = clientRepository.findOne(Long.parseLong(clientId));
           if (gateInClientOpt.isPresent()) {
             Client gateInClient = gateInClientOpt.get();
-            commonGateInOut.setGateInClient(gateInClient);
+            baseCommonGateInOutAttribute.setGateInClient(gateInClient);
           }
         }
         commonGateInOut.setImpExpFlag(ImpExpFlagStatus.fromValue(StringUtils.upperCase(expImpFlag)));
 
-        commonGateInOut.setPmHeadNo(StringUtils.upperCase(transactionDTO.getPmHeadNo()));
-        commonGateInOut.setPmPlateNo(StringUtils.upperCase(transactionDTO.getPmPlateNo()));
+        baseCommonGateInOutAttribute.setPmHeadNo(StringUtils.upperCase(transactionDTO.getPmHeadNo()));
+        baseCommonGateInOutAttribute.setPmPlateNo(StringUtils.upperCase(transactionDTO.getPmPlateNo()));
 
 
         gatePass.setYardPosition(StringUtils.upperCase(container.getYardPosition()));
@@ -833,7 +839,7 @@ public class GatePassService {
         if (StringUtils.isNotEmpty(container.getHpat())) {
           Optional<HPATBooking> hpatBooking = hpatBookingRepository.findOne(StringUtils.upperCase(container.getHpat()));
           if (hpatBooking.isPresent()) {
-            commonGateInOut.setHpatBooking(hpatBooking.get());
+            baseCommonGateInOutAttribute.setHpatBooking(hpatBooking.get());
           }
         }
         commonGateInOut.setRejectReason(StringUtils.upperCase(container.getRejectRemarks()));
