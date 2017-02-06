@@ -6,6 +6,8 @@ package com.privasia.scss.core.model;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -27,6 +29,10 @@ import javax.persistence.UniqueConstraint;
  */
 @Entity
 @Table(name = "SCSS_LOGIN", uniqueConstraints = {@UniqueConstraint(columnNames = {"LGN_LOGINNAME"})})
+@AttributeOverrides({ @AttributeOverride(name = "addBy", column = @Column(name = "CREATED_BY")),
+	@AttributeOverride(name = "updateBy", column = @Column(name = "UPDATED_BY")),
+	@AttributeOverride(name = "dateTimeAdd", column = @Column(name = "DATE_TIME_CREATED")),
+	@AttributeOverride(name = "dateTimeUpdate", column = @Column(name = "DATE_TIME_UPDATE")) })
 public class Login extends AuditEntity implements Serializable {
 
   /**

@@ -42,7 +42,7 @@ public class GlobalSetting extends AuditEntity implements Serializable {
 
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_SCSS_GLOBAL_SETTINGS")
-  @SequenceGenerator(name = "SEQ_SCSS_GLOBAL_SETTINGS", sequenceName = "GLOBAL_SETTINGS_SEQ")
+  @SequenceGenerator(name = "SEQ_SCSS_GLOBAL_SETTINGS", sequenceName = "SEQ_GLOBAL_SETTINGS_PKEY")
   @Column(name = "GLOBAL_SETTINGS_SEQ")
   private Long globalSettingID;
 

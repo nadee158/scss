@@ -18,11 +18,11 @@ import javax.persistence.Table;
 public class ShipSeal extends AuditEntity implements Serializable {
 
 	private static final long serialVersionUID = 1L;
+	
 	@Id
 	@Column(name = "LINE_CODE")
 	private String lineCode;
 
-	@Id
 	@Column(name = "RULES")
 	private String rules;
 

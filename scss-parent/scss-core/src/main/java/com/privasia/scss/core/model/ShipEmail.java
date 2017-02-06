@@ -67,7 +67,7 @@ public class ShipEmail extends AuditEntity implements Serializable {
   private boolean notifySealLine;
 
   @Column(name = "TYPE_CODE")
-  @Enumerated(EnumType.STRING)
+  @Type(type = "com.privasia.scss.common.enumusertype.ShippingLineReportEnumUserType")
   private ShippingLineReportType typeCode;
 
   public String getLineCode() {

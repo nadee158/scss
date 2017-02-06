@@ -20,10 +20,10 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "SCSS_ROLE_RIGHTS")
-@AttributeOverrides({@AttributeOverride(name = "addBy", column = @Column(name = "ADD_BY")),
-    @AttributeOverride(name = "updateBy", column = @Column(name = "UPDATE_BY")),
-    @AttributeOverride(name = "dateTimeAdd", column = @Column(name = "DATETIME_ADD")),
-    @AttributeOverride(name = "dateTimeUpdate", column = @Column(name = "DATETIME_UPDATE"))})
+@AttributeOverrides({@AttributeOverride(name = "addBy", column = @Column(name = "CREATED_BY")),
+    @AttributeOverride(name = "updateBy", column = @Column(name = "UPDATED_BY")),
+    @AttributeOverride(name = "dateTimeAdd", column = @Column(name = "DATE_TIME_CREATED")),
+    @AttributeOverride(name = "dateTimeUpdate", column = @Column(name = "DATE_TIME_UPDATE"))})
 public class RoleRights extends AuditEntity implements Serializable {
 
   /**
