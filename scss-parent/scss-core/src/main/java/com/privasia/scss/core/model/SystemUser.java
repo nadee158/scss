@@ -37,10 +37,10 @@ import com.privasia.scss.common.enums.UserType;
 		@UniqueConstraint(columnNames = { "SYS_EMAILADDR" }), @UniqueConstraint(columnNames = { "SYS_NEWNRICNO" }),
 		@UniqueConstraint(columnNames = { "SYS_OLDNRICNO" }) })
 
-@AttributeOverrides({ @AttributeOverride(name = "addBy", column = @Column(name = "ADD_BY")),
-		@AttributeOverride(name = "updateBy", column = @Column(name = "UPDATE_BY")),
-		@AttributeOverride(name = "dateTimeAdd", column = @Column(name = "DATETIME_ADD")),
-		@AttributeOverride(name = "dateTimeUpdate", column = @Column(name = "DATETIME_UPDATE")) })
+@AttributeOverrides({ @AttributeOverride(name = "addBy", column = @Column(name = "SYS_CREATEDBY")),
+		@AttributeOverride(name = "updateBy", column = @Column(name = "SYS_UPDATEDBY")),
+		@AttributeOverride(name = "dateTimeAdd", column = @Column(name = "SYS_DATECREATE")),
+		@AttributeOverride(name = "dateTimeUpdate", column = @Column(name = "SYS_DATEUPDATE")) })
 public class SystemUser extends AuditEntity implements Serializable {
 
 	/**
