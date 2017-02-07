@@ -76,7 +76,7 @@ public class XPathErrorReader {
         }
         ImportContainer importContainer01 = transactionDTO.getImportContainer01();
         if (!(importContainer01 == null)) {
-          if (StringUtils.isNotBlank(importContainer01.getImpGatePassNumber())) {
+          if (importContainer01.getGatePassNo()!=null) {
             ImportContainer importContainer02 = transactionDTO.getImportContainer01();
             if (importContainer02 == null) {
               importContainer02 = new ImportContainer();

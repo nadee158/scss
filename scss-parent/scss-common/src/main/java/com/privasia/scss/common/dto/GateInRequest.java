@@ -4,108 +4,117 @@ import java.io.Serializable;
 
 public class GateInRequest implements Serializable {
 
-  private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-  private String userId;
-  private long gatePass1;// -long
-  private long gatePass2;// -long
-  private String expContainer1;// -string
-  private String expContainer2;// -string
-  private String truckHeadNo;// -string
-  private String gateInDateTime;// -string
-  private String laneId;// -long (clientID)
-  private long weighBridge;// -long
-  private boolean checkPreArrival;// -boolean
-  private String hpabSeqId;// -string
+	private String userId;
+	private Long gatePass1;// -long
+	private Long gatePass2;// -long
+	private Long cardID;
+	private String expContainer1;// -string
+	private String expContainer2;// -string
+	private String truckHeadNo;// -string
+	private String gateInDateTime;// -string
+	private String laneId;// -long (clientID)
+	private Integer expWeightBridge;// -long
+	private boolean checkPreArrival;// -boolean
+	private String hpabSeqId;// -string
 
-  public long getGatePass1() {
-    return gatePass1;
-  }
+	public String getExpContainer1() {
+		return expContainer1;
+	}
 
-  public void setGatePass1(long gatePass1) {
-    this.gatePass1 = gatePass1;
-  }
+	public void setExpContainer1(String expContainer1) {
+		this.expContainer1 = expContainer1;
+	}
 
-  public long getGatePass2() {
-    return gatePass2;
-  }
+	public String getExpContainer2() {
+		return expContainer2;
+	}
 
-  public void setGatePass2(long gatePass2) {
-    this.gatePass2 = gatePass2;
-  }
+	public void setExpContainer2(String expContainer2) {
+		this.expContainer2 = expContainer2;
+	}
 
-  public String getExpContainer1() {
-    return expContainer1;
-  }
+	public String getTruckHeadNo() {
+		return truckHeadNo;
+	}
 
-  public void setExpContainer1(String expContainer1) {
-    this.expContainer1 = expContainer1;
-  }
+	public void setTruckHeadNo(String truckHeadNo) {
+		this.truckHeadNo = truckHeadNo;
+	}
 
-  public String getExpContainer2() {
-    return expContainer2;
-  }
+	public String getGateInDateTime() {
+		return gateInDateTime;
+	}
 
-  public void setExpContainer2(String expContainer2) {
-    this.expContainer2 = expContainer2;
-  }
+	public void setGateInDateTime(String gateInDateTime) {
+		this.gateInDateTime = gateInDateTime;
+	}
 
-  public String getTruckHeadNo() {
-    return truckHeadNo;
-  }
+	public String getLaneId() {
+		return laneId;
+	}
 
-  public void setTruckHeadNo(String truckHeadNo) {
-    this.truckHeadNo = truckHeadNo;
-  }
+	public void setLaneId(String laneId) {
+		this.laneId = laneId;
+	}
 
-  public String getGateInDateTime() {
-    return gateInDateTime;
-  }
+	public boolean isCheckPreArrival() {
+		return checkPreArrival;
+	}
 
-  public void setGateInDateTime(String gateInDateTime) {
-    this.gateInDateTime = gateInDateTime;
-  }
+	public void setCheckPreArrival(boolean checkPreArrival) {
+		this.checkPreArrival = checkPreArrival;
+	}
 
-  public String getLaneId() {
-    return laneId;
-  }
+	public String getHpabSeqId() {
+		return hpabSeqId;
+	}
 
-  public void setLaneId(String laneId) {
-    this.laneId = laneId;
-  }
+	public void setHpabSeqId(String hpabSeqId) {
+		this.hpabSeqId = hpabSeqId;
+	}
 
-  public long getWeighBridge() {
-    return weighBridge;
-  }
+	public String getUserId() {
+		return userId;
+	}
 
-  public void setWeighBridge(long weighBridge) {
-    this.weighBridge = weighBridge;
-  }
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
 
-  public boolean isCheckPreArrival() {
-    return checkPreArrival;
-  }
+	public Long getGatePass1() {
+		return gatePass1;
+	}
 
-  public void setCheckPreArrival(boolean checkPreArrival) {
-    this.checkPreArrival = checkPreArrival;
-  }
+	public void setGatePass1(Long gatePass1) {
+		this.gatePass1 = gatePass1;
+	}
 
-  public String getHpabSeqId() {
-    return hpabSeqId;
-  }
+	public Long getGatePass2() {
+		return gatePass2;
+	}
 
-  public void setHpabSeqId(String hpabSeqId) {
-    this.hpabSeqId = hpabSeqId;
-  }
+	public void setGatePass2(Long gatePass2) {
+		this.gatePass2 = gatePass2;
+	}
 
-  public String getUserId() {
-    return userId;
-  }
+	public Integer getExpWeightBridge() {
+		return expWeightBridge;
+	}
 
-  public void setUserId(String userId) {
-    this.userId = userId;
-  }
+	public void setExpWeightBridge(Integer expWeightBridge) {
+		this.expWeightBridge = expWeightBridge;
+	}
 
+	public Long getCardID() {
+		return cardID;
+	}
 
+	public void setCardID(Long cardID) {
+		this.cardID = cardID;
+	}
+	
+	
 
 }

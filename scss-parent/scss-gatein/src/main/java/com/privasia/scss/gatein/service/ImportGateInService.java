@@ -59,26 +59,30 @@ public class ImportGateInService {
 
   @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
   public GateInReponse populateGateIn(GateInRequest gateInRequest) {
-    if (!(gateInRequest == null)) {
+   
       List<Long> gatePassNumberList = new ArrayList<Long>();
-      if (!(gateInRequest.getGatePass1() <= 0)) {
+      if (gateInRequest.getGatePass1() != null && gateInRequest.getGatePass1() != 0) { 
         gatePassNumberList.add(gateInRequest.getGatePass1());
       }
-      if (!(gateInRequest.getGatePass2() <= 0)) {
+      if (gateInRequest.getGatePass2() != null && gateInRequest.getGatePass2() != 0) {
         gatePassNumberList.add(gateInRequest.getGatePass2());
       }
       List<ImportContainer> importContainers = fetchContainerInfo(gatePassNumberList);
+      
+      boolean isValid = true;
+      importContainers.forEach(importContainer -> {
+    	  isValid = validateGatePass(gateInRequest.getCardID(), gateInRequest.getGatePass1(), gateInRequest.isCheckPreArrival(),
+                  gateInRequest.getHpabSeqId(), gateInRequest.getTruckHeadNo());
+          if (!isValid) {
+             break;
+             throw new ResultsNotFoundException("Invalid gate pass ! "+gateInRequest.getGatePass1());
+          }
+      });
+      
+      
       if (!(importContainers == null || importContainers.isEmpty())) {
         // call validategatepass
-        boolean isValid = true;
-        for (ImportContainer importContainer : importContainers) {
-          isValid = validateGatePass(Long.parseLong(importContainer.getCugId()),
-              Long.parseLong(importContainer.getImpGatePassNumber()), gateInRequest.isCheckPreArrival(),
-              gateInRequest.getHpabSeqId(), gateInRequest.getTruckHeadNo());
-          if (!(isValid)) {
-            break;
-          }
-        }
+       
 
         if (isValid) {
           // call opus -
@@ -90,7 +94,7 @@ public class ImportGateInService {
           return gateInReponse;
         }
       }
-    }
+    
     throw new ResultsNotFoundException("No results could be found for the given details!");
   }
 
@@ -105,20 +109,17 @@ public class ImportGateInService {
 
   @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
   public List<ImportContainer> fetchContainerInfo(List<Long> gatePassNumberList) {
-    Optional<List<GatePass>> optionalGatePassList = gatePassRepository.findByGatePassNoIn(gatePassNumberList);
-    if (optionalGatePassList.isPresent()) {
-      List<GatePass> gatePassList = optionalGatePassList.orElse(null);
-      if (!(gatePassList == null || gatePassList.isEmpty())) {
-        List<ImportContainer> importContainers = new ArrayList<ImportContainer>();
-        gatePassList.forEach(item -> {
-          ImportContainer importContainer = new ImportContainer();
-          modelMapper.map(item, importContainer);
-          importContainers.add(importContainer);
-        });
-        return importContainers;
-      }
-    }
-    throw new ResultsNotFoundException("No Import Containers could be found for the given Gate Pass Numbers!");
+    
+	Optional<List<GatePass>> optionalGatePassList = gatePassRepository.findByGatePassNoIn(gatePassNumberList);
+    
+    List<GatePass> gatePassList = optionalGatePassList.orElseThrow(() -> new ResultsNotFoundException("No Import Containers could be found for the given Gate Pass Numbers!"));
+    List<ImportContainer> importContainers = new ArrayList<ImportContainer>();
+    gatePassList.forEach(item -> {
+        ImportContainer importContainer = new ImportContainer();
+        modelMapper.map(item, importContainer);
+        importContainers.add(importContainer);
+    });
+    return importContainers;
 
   }
 
