@@ -5,7 +5,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class GIW01Response extends BaseResponse {
+public class OpusGateInWriteResponse extends BaseResponse {
 
 
   /**
@@ -99,7 +99,7 @@ public class GIW01Response extends BaseResponse {
 
   @Override
   public String toString() {
-    return "GIW01Response [callCardNo=" + callCardNo + ", laneNo=" + laneNo + ", haulageCode=" + haulageCode
+    return "OpusGateInWriteResponse [callCardNo=" + callCardNo + ", laneNo=" + laneNo + ", haulageCode=" + haulageCode
         + ", truckHeadNo=" + truckHeadNo + ", truckPlateNo=" + truckPlateNo + ", gateINDateTime=" + gateINDateTime
         + ", exportContainerListCY=" + exportContainerListCY + ", importContainerListCY=" + importContainerListCY
         + ", exportContainerListCFS=" + exportContainerListCFS + ", importContainerListCFS=" + importContainerListCFS

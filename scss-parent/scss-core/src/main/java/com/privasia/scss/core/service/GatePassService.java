@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.privasia.scss.common.dto.ClientDTO;
+import com.privasia.scss.common.dto.CommonSealDTO;
 import com.privasia.scss.common.dto.ISOInfo;
 import com.privasia.scss.common.dto.ImportContainer;
 import com.privasia.scss.common.dto.SealInfo;
@@ -58,7 +59,6 @@ import com.privasia.scss.core.repository.PrintEirRepository;
 import com.privasia.scss.core.repository.SystemUserRepository;
 import com.privasia.scss.core.repository.WDCGatePassRepository;
 import com.privasia.scss.core.repository.WDCGlobalSettingRepository;
-import com.privasia.scss.etpws.service.EdoExpiryForLineResponseType;
 import com.privasia.scss.etpws.service.client.ETPWebserviceClient;
 
 
@@ -603,7 +603,7 @@ public class GatePassService {
     }
     CommonContainerAttribute containerComm = gatePass.getContainer();
     if (!(containerComm == null)) {
-      container.setContainerNumber(containerComm.getContainerNumber());
+      container.getContainer().setContainerNumber(containerComm.getContainerNumber());
     }
     GateInOutStatus gateInOut = gatePass.getGateInOut();
     if (!(gateInOut == null)) {
@@ -627,7 +627,7 @@ public class GatePassService {
       container = transactionDTO.getImportContainer02();
     }
 
-    String containerNo = container.getContainerNumber();
+    String containerNo = container.getContainer().getContainerNumber();
 
 
     // sql = "SELECT cnid03" + ", hdtp03" + ", cnbt03" + ", lynd05" + ", orgv05" + ", cnis03" + ",
@@ -666,7 +666,11 @@ public class GatePassService {
     // TextString.format(rs.getString("hdid10"))
     String handlingId = null;
     SealInfo sealInfo = selectSealInfo(handlingId);
-    container.setSealInfo01(sealInfo);
+    CommonSealDTO commonSealDTO = new CommonSealDTO();
+    commonSealDTO.setSeal01Number(sealInfo.getSealNo());
+    commonSealDTO.setSeal01Origin(sealInfo.getSealOrigin());
+    commonSealDTO.setSeal01Type(sealInfo.getSealType());
+    container.setSealAttribute(commonSealDTO);
 
     // if (rs.getRow() == 0) {
     // f.setFOTBKGFlag(false);
@@ -718,7 +722,7 @@ public class GatePassService {
   public GatePass getGatePassForImportContainer(ImportContainer container, long companyID) {
     if (!(container == null)) {
       // get gate pass 01
-      long gatePassNo = Long.parseLong(container.getImpGatePassNumber());
+      long gatePassNo = container.getGatePassNo();
 
       // try to find by gatePassNo1
       Optional<GatePass> gatePassOptional =
@@ -740,17 +744,17 @@ public class GatePassService {
       ImportContainer container01 = transactionDTO.getImportContainer01();
       ImportContainer container02 = transactionDTO.getImportContainer02();
 
-      if (!(container01 == null || StringUtils.isEmpty(container01.getContainerNumber()))) {
-        container01.setPositionOnTruck("M");
-        container01.setIsoInfo(selectISOInfo(container02.getIsoCode()));
+      if (!(container01 == null || StringUtils.isEmpty(container01.getContainer().getContainerNumber()))) {
+        container01.setContainerPosition("M");
+        container01.setIsoInfo(selectISOInfo(container02.getContainer().getContainerISOCode()));
         updateGatePassIntoDb(transactionDTO, container02, cardIdSeq, timeGateIn, clientId, expImpFlag);
       }
 
-      if (!(container02 == null || StringUtils.isEmpty(container02.getContainerNumber()))) {
-        container02.setPositionOnTruck("F");
-        container02.setIsoInfo(selectISOInfo(container02.getIsoCode()));
-        if (StringUtils.isNotEmpty(container02.getImpGatePassNumber())) {
-          container02.setPositionOnTruck("A");
+      if (!(container02 == null || StringUtils.isEmpty(container02.getContainer().getContainerNumber()))) {
+        container02.setContainerPosition("F");
+        container02.setIsoInfo(selectISOInfo(container02.getContainer().getContainerISOCode()));
+        if (container02.getGatePassNo() != null) {
+          container02.setContainerPosition("A");
           updateGatePassIntoDb(transactionDTO, container02, cardIdSeq, timeGateIn, clientId, expImpFlag);
         }
       }
@@ -763,8 +767,8 @@ public class GatePassService {
   public void updateGatePassIntoDb(TransactionDTO transactionDTO, ImportContainer container, String cardIdSeq,
       LocalDateTime timeGateIn, String clientId, String expImpFlag) {
 
-    if (!(container == null || StringUtils.isBlank(container.getImpGatePassNumber()))) {
-      long gatePassNo = Long.parseLong(container.getImpGatePassNumber());
+    if (!(container == null || container.getGatePassNo() == null)) {
+      long gatePassNo = container.getGatePassNo();
       Optional<GatePass> gatePassOpt = gatePassRepository.findByGatePassNo(gatePassNo);
       if (gatePassOpt.isPresent()) {
         GatePass gatePass = gatePassOpt.get();
@@ -773,7 +777,7 @@ public class GatePassService {
         if (commonGateInOut == null) {
           commonGateInOut = new CommonGateInOutAttribute();
         }
-        commonGateInOut.setEirNumber(container.getEirNo());
+        commonGateInOut.setEirNumber(container.getCommonGateInOut().getEirNumber());
         baseCommonGateInOutAttribute.setEirStatus(TransactionStatus.INPROGRESS);
 
         if (StringUtils.isNotEmpty(cardIdSeq)) {
@@ -811,7 +815,7 @@ public class GatePassService {
         gatePass.setYardPosition(StringUtils.upperCase(container.getYardPosition()));
         gatePass.setBayCode(StringUtils.upperCase(container.getBayCode()));
         gatePass
-            .setContainerPosition(ContainerPosition.fromValue(StringUtils.upperCase(container.getPositionOnTruck())));
+            .setContainerPosition(ContainerPosition.fromValue(StringUtils.upperCase(container.getContainerPosition())));
 
 
 
@@ -820,29 +824,27 @@ public class GatePassService {
           sealAttribute = new CommonSealAttribute();
         }
 
-        SealInfo sealInfo01 = container.getSealInfo01();
-        if (!(sealInfo01 == null)) {
-          sealAttribute.setSeal01Number(sealInfo01.getSealNo());
-          sealAttribute.setSeal01Origin(sealInfo01.getSealOrigin());
-          sealAttribute.setSeal01Type(sealInfo01.getSealType());
+        CommonSealDTO commonSealAttribute = container.getSealAttribute();
+        if (!(commonSealAttribute == null)) {
+          sealAttribute.setSeal01Number(commonSealAttribute.getSeal01Number());
+          sealAttribute.setSeal01Origin(commonSealAttribute.getSeal01Origin());
+          sealAttribute.setSeal01Type(commonSealAttribute.getSeal01Type());
+          sealAttribute.setSeal02Number(commonSealAttribute.getSeal02Number());
+          sealAttribute.setSeal02Origin(commonSealAttribute.getSeal02Origin());
+          sealAttribute.setSeal02Type(commonSealAttribute.getSeal02Type());
         }
 
-        SealInfo sealInfo02 = container.getSealInfo02();
-        if (!(sealInfo02 == null)) {
-          sealAttribute.setSeal02Number(sealInfo02.getSealNo());
-          sealAttribute.setSeal02Origin(sealInfo02.getSealOrigin());
-          sealAttribute.setSeal02Type(sealInfo02.getSealType());
-        }
 
         gatePass.setSealAttribute(sealAttribute);
 
-        if (StringUtils.isNotEmpty(container.getHpat())) {
-          Optional<HPATBooking> hpatBooking = hpatBookingRepository.findOne(StringUtils.upperCase(container.getHpat()));
+        if (StringUtils.isNotEmpty(container.getBaseCommonGateInOutAttribute().getHpatBooking())) {
+          Optional<HPATBooking> hpatBooking = hpatBookingRepository
+              .findOne(StringUtils.upperCase(container.getBaseCommonGateInOutAttribute().getHpatBooking()));
           if (hpatBooking.isPresent()) {
             baseCommonGateInOutAttribute.setHpatBooking(hpatBooking.get());
           }
         }
-        commonGateInOut.setRejectReason(StringUtils.upperCase(container.getRejectRemarks()));
+        commonGateInOut.setRejectReason(StringUtils.upperCase(container.getCommonGateInOut().getRejectReason()));
         commonGateInOut
             .setGateInStatus(TransactionStatus.fromCode(StringUtils.upperCase(container.getAcceptOrReject())));
         gatePass.setCommonGateInOut(commonGateInOut);
@@ -858,8 +860,10 @@ public class GatePassService {
           containerCommonAttribute = new CommonContainerAttribute();
 
         }
-        containerCommonAttribute.setContainerFullOrEmpty(ContainerFullEmptyType.fromValue(container.getFullOrEmpty()));
-        container.setIsoCode(StringUtils.upperCase(container.getIsoCode()));
+        containerCommonAttribute.setContainerFullOrEmpty(
+            ContainerFullEmptyType.fromValue(container.getContainer().getContainerFullOrEmpty()));
+        container.getContainer()
+            .setContainerISOCode(StringUtils.upperCase(container.getContainer().getContainerISOCode()));
         gatePass.setContainer(containerCommonAttribute);
 
         gatePass.setLine(StringUtils.upperCase(container.getLine()));

@@ -2,7 +2,7 @@ package com.privasia.scss.opus.dto;
 
 import java.io.Serializable;
 
-public class GIR01Request implements Serializable {
+public class OpusGateInReadRequest implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
@@ -131,7 +131,7 @@ public class GIR01Request implements Serializable {
 
   @Override
   public String toString() {
-    return "GIR01Request [userID=" + userID + ", laneNo=" + laneNo + ", haulageCode=" + haulageCode + ", truckHeadNo="
+    return "OpusGateInReadRequest [userID=" + userID + ", laneNo=" + laneNo + ", haulageCode=" + haulageCode + ", truckHeadNo="
         + truckHeadNo + ", gateINDateTime=" + gateINDateTime + ", containerNo1ExportCY=" + containerNo1ExportCY
         + ", containerNo2ExportCY=" + containerNo2ExportCY + ", containerNo1ImportCY=" + containerNo1ImportCY
         + ", containerNo2ImportCY=" + containerNo2ImportCY + ", containerNo1ExportCFS=" + containerNo1ExportCFS
@@ -154,8 +154,8 @@ public class GIR01Request implements Serializable {
   // ,"containerNo1ImportCFS":""
   // ,"containerNo2ImportCFS":""
 
-  public static GIR01Request constructObjectWithTestValues() {
-    GIR01Request gir01Request = new GIR01Request();
+  public static OpusGateInReadRequest constructObjectWithTestValues() {
+    OpusGateInReadRequest gir01Request = new OpusGateInReadRequest();
     gir01Request.setContainerNo1ExportCFS("");
     gir01Request.setContainerNo1ExportCY("AZHA0000001");
     gir01Request.setContainerNo1ImportCFS("");

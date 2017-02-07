@@ -86,7 +86,7 @@ public class GateInXMLRequestService {
     
     String errXMLMsg = "";
 
-    if (StringUtils.isNotEmpty(importContainer.getContainerNumber())) {
+    if (StringUtils.isNotEmpty(importContainer.getContainer().getContainerNumber())) {
       if (StringUtils.isNotBlank(importContainer.getErrXMLMsg())) {
         errXMLMsg = "<ERRI>" + importContainer.getErrXMLMsg() + "</ERRI>\n";
       }
@@ -105,9 +105,9 @@ public class GateInXMLRequestService {
                  .append("</CSMCTL>\n")
                  .append("<GINCNTPUP>\n") // For Gate Incontainer pick up
                  .append("<MSGTSE>GINCNTPUP</MSGTSE>\n") // Message Type : To hard code
-                 .append("<UNITSE>").append(toEscapeXmlUpperCase(importContainer.getContainerNumber())).append("</UNITSE>\n") // Container No : To capture
-                 .append("<UNBTSE>").append(toUpperCase(importContainer.getFullOrEmpty())).append("</UNBTSE>\n") // (E)mpty or (F)ull : To capture E or F
-                 .append("<CNPVSE>").append(toUpperCase(importContainer.getPositionOnTruck())).append("</CNPVSE>\n") // Position on Truck : To capture F = Front, A = Aft or M = Middle
+                 .append("<UNITSE>").append(toEscapeXmlUpperCase(importContainer.getContainer().getContainerNumber())).append("</UNITSE>\n") // Container No : To capture
+                 .append("<UNBTSE>").append(toUpperCase(importContainer.getContainer().getContainerFullOrEmpty())).append("</UNBTSE>\n") // (E)mpty or (F)ull : To capture E or F
+                 .append("<CNPVSE>").append(toUpperCase(importContainer.getContainerPosition())).append("</CNPVSE>\n") // Position on Truck : To capture F = Front, A = Aft or M = Middle
                  .append("<UPLKSE>MY</UPLKSE>\n")
                  .append("<UPPKSE>PKG</UPPKSE>\n")
                  .append("<UPOMSE>PKG</UPOMSE>\n") //Changed by feroz on 11 OCT 2007
@@ -181,26 +181,30 @@ public class GateInXMLRequestService {
 
     if (StringUtils.equals(IMPEXP_FLAG, transactionDTO.getGateImpOrExp())) {
       if (!(importContainer01 == null)) {
-        if (StringUtils.isEmpty(importContainer01.getContainerNumber())) {
-          importContainer01.setContainerNumber(
-              importContainer01.getContainerNumber() == null ? "" : importContainer01.getContainerNumber());
-          importContainer01
-              .setFullOrEmpty(importContainer01.getFullOrEmpty() == null ? "" : importContainer01.getFullOrEmpty());
-          importContainer01.setPositionOnTruck(
-              importContainer01.getPositionOnTruck() == null ? "" : importContainer01.getPositionOnTruck());
+        if (StringUtils.isEmpty(importContainer01.getContainer().getContainerNumber())) {
+          importContainer01.getContainer()
+              .setContainerNumber(importContainer01.getContainer().getContainerNumber() == null ? ""
+                  : importContainer01.getContainer().getContainerNumber());
+          importContainer01.getContainer()
+              .setContainerFullOrEmpty(importContainer01.getContainer().getContainerFullOrEmpty() == null ? ""
+                  : importContainer01.getContainer().getContainerFullOrEmpty());
+          importContainer01.setContainerPosition(
+              importContainer01.getContainerPosition() == null ? "" : importContainer01.getContainerPosition());
           importContainer01
               .setErrXMLMsg(importContainer01.getErrXMLMsg() == null ? "" : importContainer01.getErrXMLMsg());
         }
       }
 
       if (!(importContainer02 == null)) {
-        if (StringUtils.isEmpty(importContainer02.getContainerNumber())) {
-          importContainer02.setContainerNumber(
-              importContainer02.getContainerNumber() == null ? "" : importContainer02.getContainerNumber());
-          importContainer02
-              .setFullOrEmpty(importContainer02.getFullOrEmpty() == null ? "" : importContainer02.getFullOrEmpty());
-          importContainer02.setPositionOnTruck(
-              importContainer02.getPositionOnTruck() == null ? "" : importContainer02.getPositionOnTruck());
+        if (StringUtils.isEmpty(importContainer02.getContainer().getContainerNumber())) {
+          importContainer02.getContainer()
+              .setContainerNumber(importContainer02.getContainer().getContainerNumber() == null ? ""
+                  : importContainer02.getContainer().getContainerNumber());
+          importContainer02.getContainer()
+              .setContainerFullOrEmpty(importContainer02.getContainer().getContainerFullOrEmpty() == null ? ""
+                  : importContainer02.getContainer().getContainerFullOrEmpty());
+          importContainer02.setContainerPosition(
+              importContainer02.getContainerPosition() == null ? "" : importContainer02.getContainerPosition());
           importContainer02
               .setErrXMLMsg(importContainer02.getErrXMLMsg() == null ? "" : importContainer02.getErrXMLMsg());
         }
@@ -215,20 +219,20 @@ public class GateInXMLRequestService {
           sentExport = true;
         }
       } else if (!(importContainer01 == null)) {
-        if (StringUtils.isNotBlank(importContainer01.getContainerNumber())) {
+        if (StringUtils.isNotBlank(importContainer01.getContainer().getContainerNumber())) {
           if (StringUtils.isBlank(importContainer01.getContRefer())) {
             sentExport = true;
           }
         }
       }
 
-      if (StringUtils.isNotBlank(importContainer01.getContainerNumber()) && sentExport) {
+      if (StringUtils.isNotBlank(importContainer01.getContainer().getContainerNumber()) && sentExport) {
         String impRequestXML = createImpRequestXML(transactionDTO, userName, msgUniqueId, true, "2", "3");
         createRequestXML.append(impRequestXML);
         String cont1Index = "4";
         String cont2Index = "5";
 
-        if (StringUtils.isBlank(importContainer02.getContainerNumber())) {
+        if (StringUtils.isBlank(importContainer02.getContainer().getContainerNumber())) {
           cont1Index = "3";
           cont2Index = "4";
         }
@@ -237,7 +241,7 @@ public class GateInXMLRequestService {
       } else if (sentExport) {
         String expRequestXML = createExpRequestXML(transactionDTO, userName, msgUniqueId);
         createRequestXML.append(expRequestXML);
-      } else if (StringUtils.isNotBlank(importContainer01.getContainerNumber())) {
+      } else if (StringUtils.isNotBlank(importContainer01.getContainer().getContainerNumber())) {
         String impRequestXML = createImpRequestXML(transactionDTO, userName, msgUniqueId);
         createRequestXML.append(impRequestXML);
       }

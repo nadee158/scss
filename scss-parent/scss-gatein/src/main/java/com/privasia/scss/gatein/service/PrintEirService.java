@@ -5,9 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.privasia.scss.common.dto.CommonSealDTO;
 import com.privasia.scss.common.dto.DGInfo;
 import com.privasia.scss.common.dto.ImportContainer;
-import com.privasia.scss.common.dto.SealInfo;
 import com.privasia.scss.common.dto.TransactionDTO;
 import com.privasia.scss.common.enums.ContainerFullEmptyType;
 import com.privasia.scss.common.enums.ContainerSize;
@@ -102,13 +102,15 @@ public class PrintEirService {
     PrintEIRContainerInfo eirContainer = new PrintEIRContainerInfo();
     eirContainer.setContainerBayCode(importContainer.getBayCode());
     eirContainer.setContainerInOrOut(GateInOutStatus.fromValue(importContainer.getGateInOut()));
-    eirContainer.setContainerFullOrEmpty(ContainerFullEmptyType.fromValue(importContainer.getFullOrEmpty()));
-    eirContainer.setContainerPositionOnTruck(importContainer.getPositionOnTruck());
-    eirContainer.setContainerNumber(importContainer.getContainerNumber());
+    eirContainer.setContainerFullOrEmpty(
+        ContainerFullEmptyType.fromValue(importContainer.getContainer().getContainerFullOrEmpty()));
+    eirContainer.setContainerPositionOnTruck(importContainer.getContainerPosition());
+    eirContainer.setContainerNumber(importContainer.getContainer().getContainerNumber());
     eirContainer.setContainerLine(importContainer.getLine());
-    eirContainer.setContainerISOCode(importContainer.getIsoCode());
-    eirContainer.setContainerLength(ContainerSize.fromValue(importContainer.getContainerLength()));
-    eirContainer.setContainerHeight(importContainer.getContainerHeight());
+    eirContainer.setContainerISOCode(importContainer.getContainer().getContainerISOCode());
+    eirContainer.setContainerLength(
+        ContainerSize.fromValue(Integer.toString(importContainer.getContainer().getContainerLength())));
+    eirContainer.setContainerHeight(Integer.toString(importContainer.getContainer().getContainerHeight()));
     eirContainer.setContainerType(importContainer.getContainerType());
     eirContainer.setContainerNetWeight(weight);
     if (!(lineInfo == null)) {
@@ -130,23 +132,20 @@ public class PrintEirService {
 
     if (!(importContainer == null)) {
 
-      if (StringUtils.equals(importContainer.getFullOrEmpty(), "F")) {
+      if (StringUtils.equals(importContainer.getContainer().getContainerFullOrEmpty(), "F")) {
 
-        if (!(importContainer.getSealInfo01() == null)) {
-          SealInfo sealInfo01 = importContainer.getSealInfo01();
-          lineInfo = constructSealString(sealInfo01, lineInfo);
-          seal = constructSealString(sealInfo01, lineInfo);
-        }
+        if (!(importContainer.getSealAttribute() == null)) {
+          CommonSealDTO sealAttribute = importContainer.getSealAttribute();
+          lineInfo = constructSealString(sealAttribute, lineInfo, 1);
+          seal = constructSealString(sealAttribute, lineInfo, 1);
 
-        if (!(importContainer.getSealInfo02() == null)) {
-          SealInfo sealInfo02 = importContainer.getSealInfo02();
-          lineInfo = constructSealString(sealInfo02, lineInfo);
-
+          lineInfo = constructSealString(sealAttribute, lineInfo, 2);
           if (!(seal == null || StringUtils.isEmpty(seal.toString()))) {
             seal.append(PIPELINE_SEPERATOR);
           }
-          seal = constructSealString(sealInfo02, lineInfo);
+          seal = constructSealString(sealAttribute, lineInfo, 2);
         }
+
 
       }
 
@@ -214,16 +213,23 @@ public class PrintEirService {
 
   }
 
-  private StringBuilder constructSealString(SealInfo sealInfo, StringBuilder stringBuilder) {
+  private StringBuilder constructSealString(CommonSealDTO sealAttribute, StringBuilder stringBuilder, int i) {
     if (stringBuilder == null) {
       stringBuilder = new StringBuilder("");
     }
-    if (!(sealInfo == null)) {
-      stringBuilder.append(sealInfo.getSealOrigin()).append(BLANK).append(sealInfo.getSealType()).append(BLANK)
-          .append(sealInfo.getSealNo()).append(BLANK);
+    if (!(sealAttribute == null)) {
+      if (i == 1) {
+        stringBuilder.append(sealAttribute.getSeal01Origin()).append(BLANK).append(sealAttribute.getSeal01Type())
+            .append(BLANK).append(sealAttribute.getSeal01Number()).append(BLANK);
+      } else {
+        stringBuilder.append(sealAttribute.getSeal02Origin()).append(BLANK).append(sealAttribute.getSeal02Type())
+            .append(BLANK).append(sealAttribute.getSeal02Number()).append(BLANK);
+      }
     }
     return stringBuilder;
   }
+
+
 
   private StringBuilder appendToLine(String prefix, String property, StringBuilder stringBuilder) {
     if (stringBuilder == null) {
@@ -241,13 +247,12 @@ public class PrintEirService {
 
   private String getContainerWeight(ImportContainer importContainer, TransactionDTO transactionDTO) {
     String weight = "";
-    /*if (transactionDTO.isShipperVGM() && importContainer.isWithInTolerance()) {
-      weight = String.valueOf(importContainer.getShipperVGM());
-    } else {
-      if (StringUtils.isNotBlank(importContainer.getNetWeight())) {
-        weight = importContainer.getNetWeight();
-      }
-    }*/
+    /*
+     * if (transactionDTO.isShipperVGM() && importContainer.isWithInTolerance()) { weight =
+     * String.valueOf(importContainer.getShipperVGM()); } else { if
+     * (StringUtils.isNotBlank(importContainer.getNetWeight())) { weight =
+     * importContainer.getNetWeight(); } }
+     */
     return weight;
   }
 

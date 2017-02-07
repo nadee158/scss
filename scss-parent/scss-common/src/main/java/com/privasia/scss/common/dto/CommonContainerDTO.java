@@ -12,54 +12,62 @@ import java.io.Serializable;
  */
 public class CommonContainerDTO implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	
-	
-	private String containerNumber;
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 1L;
 
-	private int containerLength;
 
-	private String containerISOCode;
+  private String containerNumber;
 
-	private String containerFullOrEmpty;
+  private int containerLength;
 
-	public String getContainerNumber() {
-		return containerNumber;
-	}
+  private int containerHeight;
 
-	public void setContainerNumber(String containerNumber) {
-		this.containerNumber = containerNumber;
-	}
+  private String containerISOCode;
 
-	public int getContainerLength() {
-		return containerLength;
-	}
+  private String containerFullOrEmpty;
 
-	public void setContainerLength(int containerLength) {
-		this.containerLength = containerLength;
-	}
+  public String getContainerNumber() {
+    return containerNumber;
+  }
 
-	public String getContainerISOCode() {
-		return containerISOCode;
-	}
+  public void setContainerNumber(String containerNumber) {
+    this.containerNumber = containerNumber;
+  }
 
-	public void setContainerISOCode(String containerISOCode) {
-		this.containerISOCode = containerISOCode;
-	}
+  public int getContainerLength() {
+    return containerLength;
+  }
 
-	public String getContainerFullOrEmpty() {
-		return containerFullOrEmpty;
-	}
+  public void setContainerLength(int containerLength) {
+    this.containerLength = containerLength;
+  }
 
-	public void setContainerFullOrEmpty(String containerFullOrEmpty) {
-		this.containerFullOrEmpty = containerFullOrEmpty;
-	}
-	
-	
-	
-	
+  public String getContainerISOCode() {
+    return containerISOCode;
+  }
+
+  public void setContainerISOCode(String containerISOCode) {
+    this.containerISOCode = containerISOCode;
+  }
+
+  public String getContainerFullOrEmpty() {
+    return containerFullOrEmpty;
+  }
+
+  public void setContainerFullOrEmpty(String containerFullOrEmpty) {
+    this.containerFullOrEmpty = containerFullOrEmpty;
+  }
+
+  public int getContainerHeight() {
+    return containerHeight;
+  }
+
+  public void setContainerHeight(int containerHeight) {
+    this.containerHeight = containerHeight;
+  }
+
+
 
 }

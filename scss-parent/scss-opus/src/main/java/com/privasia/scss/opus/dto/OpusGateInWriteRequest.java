@@ -3,7 +3,7 @@ package com.privasia.scss.opus.dto;
 import java.io.Serializable;
 import java.util.List;
 
-public class GIW01Request implements Serializable {
+public class OpusGateInWriteRequest implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
@@ -21,8 +21,8 @@ public class GIW01Request implements Serializable {
   private List<OpusExporterContainer> exportContainerListCFS;// []
   private List<OpusImportContainer> importContainerListCFS;// []
 
-  public static GIW01Request constructObjectWithTestValues() {
-    GIW01Request giw01Request = new GIW01Request();
+  public static OpusGateInWriteRequest constructObjectWithTestValues() {
+    OpusGateInWriteRequest giw01Request = new OpusGateInWriteRequest();
     giw01Request.setExportContainerListCFS(null);
     giw01Request.setExportContainerListCY(OpusExporterContainer.constructGIW01RequestTestList());
     giw01Request.setGateINDateTime(20161219100000l);
@@ -149,7 +149,7 @@ public class GIW01Request implements Serializable {
 
   @Override
   public String toString() {
-    return "GIW01Request [userID=" + userID + ", laneNo=" + laneNo + ", haulageCode=" + haulageCode + ", truckHeadNo="
+    return "OpusGateInWriteRequest [userID=" + userID + ", laneNo=" + laneNo + ", haulageCode=" + haulageCode + ", truckHeadNo="
         + truckHeadNo + ", truckPlateNo=" + truckPlateNo + ", truckWeight=" + truckWeight + ", trailerNo=" + trailerNo
         + ", trailerWeight=" + trailerWeight + ", gateINDateTime=" + gateINDateTime + ", exportContainerListCY="
         + exportContainerListCY + ", importContainerListCY=" + importContainerListCY + ", exportContainerListCFS="
