@@ -2,6 +2,7 @@ package com.privasia.scss.core.service;
 
 import java.util.Optional;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -35,7 +36,7 @@ public class SecurityService {
 
   @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
   public Optional<Login> getByUsername(String username) throws UsernameNotFoundException {
-    return this.loginRepository.findByUserNameContainingIgnoreCase(username);
+    return this.loginRepository.findByUserName(StringUtils.upperCase(username));
   }
 
   public SignOutResponse signOut(SecurityContext securityContext) {
