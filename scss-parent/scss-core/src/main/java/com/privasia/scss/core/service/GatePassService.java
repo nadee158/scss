@@ -59,6 +59,7 @@ import com.privasia.scss.core.repository.PrintEirRepository;
 import com.privasia.scss.core.repository.SystemUserRepository;
 import com.privasia.scss.core.repository.WDCGatePassRepository;
 import com.privasia.scss.core.repository.WDCGlobalSettingRepository;
+import com.privasia.scss.etpws.service.EdoExpiryForLineResponseType;
 import com.privasia.scss.etpws.service.client.ETPWebserviceClient;
 
 
