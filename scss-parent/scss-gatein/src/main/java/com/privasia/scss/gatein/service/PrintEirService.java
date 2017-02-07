@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.privasia.scss.common.dto.CommonSealDTO;
-import com.privasia.scss.common.dto.DGInfo;
+import com.privasia.scss.common.dto.DamageCodeInfo;
 import com.privasia.scss.common.dto.ImportContainer;
 import com.privasia.scss.common.dto.TransactionDTO;
 import com.privasia.scss.common.enums.ContainerFullEmptyType;
@@ -184,8 +184,8 @@ public class PrintEirService {
         lineInfo2 = appendToLine("OR :", importContainer.getOogor(), lineInfo2);
       }
 
-      if (!(importContainer.getDgInfo() == null)) {
-        DGInfo dgInfo = importContainer.getDgInfo();
+      if (!(importContainer.getDamageCodeInfo() == null)) {
+        DamageCodeInfo dgInfo = importContainer.getDamageCodeInfo();
 
         if (StringUtils.isNotEmpty(dgInfo.getDamage1())) {
           lineInfo2 = appendToLine("Damage: ", dgInfo.getDamage1(), lineInfo2);

@@ -30,7 +30,7 @@ public class ExportContainer {
   private String expBookingNo;
 
   // -------------------END OF RESOLVED PROPERTIES -------------------------
-  private DGInfo dgInfo;
+  private DamageCodeInfo dgInfo;
 
   //////////////////////////// TO createImpRequestXML
   private String errXMLMsg;
@@ -924,11 +924,11 @@ public class ExportContainer {
     this.solasInfo = solasInfo;
   }
 
-  public DGInfo getDgInfo() {
+  public DamageCodeInfo getDgInfo() {
     return dgInfo;
   }
 
-  public void setDgInfo(DGInfo dgInfo) {
+  public void setDgInfo(DamageCodeInfo dgInfo) {
     this.dgInfo = dgInfo;
   }
 

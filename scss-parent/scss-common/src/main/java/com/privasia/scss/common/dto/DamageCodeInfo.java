@@ -6,7 +6,7 @@ import java.io.Serializable;
  * @author Nadeeshani Senevirathna
  *
  */
-public class DGInfo implements Serializable {
+public class DamageCodeInfo implements Serializable {
 
   /**
    * 

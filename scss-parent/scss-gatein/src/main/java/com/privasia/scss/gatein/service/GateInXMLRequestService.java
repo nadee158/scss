@@ -12,7 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.privasia.scss.common.dto.DGInfo;
+import com.privasia.scss.common.dto.DamageCodeInfo;
 import com.privasia.scss.common.dto.ExportContainer;
 import com.privasia.scss.common.dto.ImportContainer;
 import com.privasia.scss.common.dto.SealInfo;
@@ -587,7 +587,7 @@ public class GateInXMLRequestService {
   private StringBuilder constructExportContainerDamageInfo(ExportContainer exportContainer, StringBuilder damage) {
     if (!(exportContainer.getDgInfo() == null)) {
 
-      DGInfo dgInfo = exportContainer.getDgInfo();
+      DamageCodeInfo dgInfo = exportContainer.getDgInfo();
 
       if (StringUtils.isNotBlank(dgInfo.getDamage1())) {
         damage.append("<DM01SE>").append(toUpperCase(dgInfo.getDamage1())).append("</DM01SE>\n");

@@ -124,7 +124,7 @@ public class ImportContainer implements Serializable {
   private String vesselName;// AL NEFUD,
   private String vesselATA;// 20161124161800
 
-  private DGInfo dgInfo;
+  private DamageCodeInfo damageCodeInfo;
 
   public Long getGatePassID() {
     return gatePassID;
@@ -598,12 +598,13 @@ public class ImportContainer implements Serializable {
     this.vesselATA = vesselATA;
   }
 
-  public DGInfo getDgInfo() {
-    return dgInfo;
+  public DamageCodeInfo getDamageCodeInfo() {
+    return damageCodeInfo;
   }
 
-  public void setDgInfo(DGInfo dgInfo) {
-    this.dgInfo = dgInfo;
+  public void setDamageCodeInfo(DamageCodeInfo damageCodeInfo) {
+    this.damageCodeInfo = damageCodeInfo;
   }
+
 
 }
