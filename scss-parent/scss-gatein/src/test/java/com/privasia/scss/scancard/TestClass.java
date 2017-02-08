@@ -13,8 +13,11 @@ public class TestClass {
   public void testMethod() {
     modelMapper = new ModelMapper();
     modelMapper.addMappings(new TestUserMap());
+    // all properties are set inside constructor
     TestUserSource testUserSource = new TestUserSource();
+
     TestUserDestination testUserDestination = new TestUserDestination();
+    testUserDestination.setName("NADEESHANI");
     System.out.println("testUserSource before " + testUserSource);
     System.out.println("testUserDestination before " + testUserDestination);
     modelMapper.map(testUserSource, testUserDestination);
