@@ -10,6 +10,11 @@ public class TestUserSource {
     return name;
   }
 
+  @Override
+  public String toString() {
+    return "TestUserSource [name=" + name + ", age=" + age + ", testText=" + testText + "]";
+  }
+
   public void setName(String name) {
     this.name = name;
   }

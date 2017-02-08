@@ -2,6 +2,11 @@ package com.privasia.scss.scancard;
 
 public class TestUserDestination {
 
+  @Override
+  public String toString() {
+    return "TestUserDestination [name=" + name + ", age=" + age + ", testText=" + testText + "]";
+  }
+
   private String name;
   private String age;
   private String testText;

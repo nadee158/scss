@@ -1,24 +1,28 @@
 package com.privasia.scss.scancard;
 
-import java.io.IOException;
-
 import org.junit.Test;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import com.google.gson.JsonIOException;
 
 public class TestClass {
 
-  @Autowired
+
   private ModelMapper modelMapper;
 
   @Test
-  public void testMethod()
-      throws JsonIOException, IOException /* throws JsonIOException, IOException */ {
-
+  public void testMethod() {
+    modelMapper = new ModelMapper();
     modelMapper.addMappings(new TestUserMap());
+    TestUserSource testUserSource = new TestUserSource();
+    TestUserDestination testUserDestination = new TestUserDestination();
+    System.out.println("testUserSource before " + testUserSource);
+    System.out.println("testUserDestination before " + testUserDestination);
+    modelMapper.map(testUserSource, testUserDestination);
+    System.out.println("_______________________________________");
+    System.out.println("_______________________________________");
+    System.out.println("testUserSource after " + testUserSource);
+    System.out.println("testUserDestination after " + testUserDestination);
+
   }
 
   class TestUserMap extends PropertyMap<TestUserSource, TestUserDestination> {
