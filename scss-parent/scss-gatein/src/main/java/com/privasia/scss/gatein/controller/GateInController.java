@@ -48,7 +48,6 @@ public class GateInController {
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public CustomResponseEntity<ApiResponseObject<?>> populateGateIn(@RequestBody GateInRequest gateInRequest) {
 
-    gateInRequest.setUserId(Long.toString(SecurityHelper.getCurrentUserId()));
     GateInReponse gateInReponse = importGateInService.populateGateIn(gateInRequest);
 
     return new CustomResponseEntity<ApiResponseObject<?>>(

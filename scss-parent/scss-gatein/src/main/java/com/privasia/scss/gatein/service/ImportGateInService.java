@@ -9,6 +9,8 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,247 +19,186 @@ import com.privasia.scss.common.dto.CommonContainerDTO;
 import com.privasia.scss.common.dto.ExportContainer;
 import com.privasia.scss.common.dto.GateInReponse;
 import com.privasia.scss.common.dto.GateInRequest;
+import com.privasia.scss.common.dto.GatePassValidateDTO;
 import com.privasia.scss.common.dto.ImportContainer;
 import com.privasia.scss.common.util.CommonUtil;
+import com.privasia.scss.core.exception.BusinessException;
 import com.privasia.scss.core.exception.ResultsNotFoundException;
 import com.privasia.scss.core.model.Client;
 import com.privasia.scss.core.model.GatePass;
 import com.privasia.scss.core.model.ShipCode;
 import com.privasia.scss.core.model.ShipSCN;
+import com.privasia.scss.core.model.SystemUser;
 import com.privasia.scss.core.repository.ClientRepository;
 import com.privasia.scss.core.repository.GatePassRepository;
 import com.privasia.scss.core.repository.ShipCodeRepository;
 import com.privasia.scss.core.repository.ShipSCNRepository;
+import com.privasia.scss.core.repository.SystemUserRepository;
+import com.privasia.scss.core.security.model.UserContext;
+import com.privasia.scss.core.security.util.SecurityHelper;
 import com.privasia.scss.opus.dto.OpusGateInReadRequest;
 import com.privasia.scss.opus.dto.OpusGateInReadResponse;
 import com.privasia.scss.opus.dto.OpusImportContainer;
+import com.privasia.scss.opus.service.OpusGateInReadService;
 import com.privasia.scss.opus.service.OpusService;
 
 @Service("importGateInService")
 public class ImportGateInService {
 
-  private GatePassRepository gatePassRepository;
+	private GatePassRepository gatePassRepository;
 
-  @Autowired
-  private ModelMapper modelMapper;
+	private ModelMapper modelMapper;
 
-  @Autowired
-  private OpusService opusService;
+	private OpusService opusService;
 
-  @Autowired
-  private ClientRepository clientRepository;
+	private OpusGateInReadService opusGateInReadService;
 
-  @Autowired
-  private ShipCodeRepository shipCodeRepository;
+	private ClientRepository clientRepository;
 
-  @Autowired
-  private ShipSCNRepository shipSCNRepository;
+	private ShipCodeRepository shipCodeRepository;
 
-  @Autowired
-  public void setGatePassRepository(GatePassRepository gatePassRepository) {
-    this.gatePassRepository = gatePassRepository;
-  }
+	private ShipSCNRepository shipSCNRepository;
 
-  boolean isValid = true;
+	@Autowired
+	public void setGatePassRepository(GatePassRepository gatePassRepository) {
+		this.gatePassRepository = gatePassRepository;
+	}
 
-  @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-  public GateInReponse populateGateIn(GateInRequest gateInRequest) {
-    isValid = true;
-    List<Long> gatePassNumberList = new ArrayList<Long>();
-    if (gateInRequest.getGatePass1() != null && gateInRequest.getGatePass1() != 0) {
-      gatePassNumberList.add(gateInRequest.getGatePass1());
-    }
-    if (gateInRequest.getGatePass2() != null && gateInRequest.getGatePass2() != 0) {
-      gatePassNumberList.add(gateInRequest.getGatePass2());
-    }
-    List<ImportContainer> importContainers = fetchContainerInfo(gatePassNumberList);
+	@Autowired
+	public void setModelMapper(ModelMapper modelMapper) {
+		this.modelMapper = modelMapper;
+	}
 
-    importContainers.forEach(importContainer -> {
-      isValid = validateGatePass(gateInRequest.getCardID(), gateInRequest.getGatePass1(),
-          gateInRequest.isCheckPreArrival(), gateInRequest.getHpabSeqId(), gateInRequest.getTruckHeadNo());
-      if (!isValid) {
-        throw new ResultsNotFoundException("Invalid gate pass ! " + gateInRequest.getGatePass1());
-      }
-    });
+	@Autowired
+	public void setOpusService(OpusService opusService) {
+		this.opusService = opusService;
+	}
 
+	@Autowired
+	public void setShipCodeRepository(ShipCodeRepository shipCodeRepository) {
+		this.shipCodeRepository = shipCodeRepository;
+	}
 
-    if (!(importContainers == null || importContainers.isEmpty())) {
-      // call validategatepass
+	@Autowired
+	public void setShipSCNRepository(ShipSCNRepository shipSCNRepository) {
+		this.shipSCNRepository = shipSCNRepository;
+	}
 
+	@Autowired
+	public void setClientRepository(ClientRepository clientRepository) {
+		this.clientRepository = clientRepository;
+	}
 
-      if (isValid) {
-        // call opus -
-        OpusGateInReadRequest gir01Request = constructGIR01Request(gateInRequest, importContainers);
-        OpusGateInReadResponse gir01Response = opusService.getGIR01Response(gir01Request);
-        // response - gateinresponse- list of import container/list of export container
-        GateInReponse gateInReponse = constructGateInReponse(gir01Response, gateInRequest);
+	@Autowired
+	public void setOpusGateInReadService(OpusGateInReadService opusGateInReadService) {
+		this.opusGateInReadService = opusGateInReadService;
+	}
 
-        return gateInReponse;
-      }
-    }
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
+	public GateInReponse populateGateIn(GateInRequest gateInRequest) {
 
-    throw new ResultsNotFoundException("No results could be found for the given details!");
-  }
+		List<Long> gatePassNumberList = new ArrayList<Long>();
+		if (gateInRequest.getGatePass1() != null && gateInRequest.getGatePass1() != 0) {
+			gatePassNumberList.add(gateInRequest.getGatePass1());
+		}
+		if (gateInRequest.getGatePass2() != null && gateInRequest.getGatePass2() != 0) {
+			gatePassNumberList.add(gateInRequest.getGatePass2());
+		}
+		List<ImportContainer> importContainers = fetchContainerInfo(gatePassNumberList);
 
+		importContainers.forEach(importContainer -> {
+			GatePassValidateDTO gatePassValidateDTO = validateGatePass(gateInRequest.getCardID(),
+					gateInRequest.getGatePass1(), gateInRequest.isCheckPreArrival(), gateInRequest.getHpabSeqId(),
+					gateInRequest.getTruckHeadNo());
+			if (gatePassValidateDTO.isValidGatePass()) {
+				if (importContainer.getGatePassNo() == gateInRequest.getGatePass1()) {
+					gateInRequest.setImpContainer1(importContainer.getContainer().getContainerNumber());
+				} else {
+					gateInRequest.setImpContainer2(importContainer.getContainer().getContainerNumber());
+				}
+			} else {
+				throw new ResultsNotFoundException(
+						gatePassValidateDTO.getGatePassErrorMessage() + gateInRequest.getGatePass1());
+			}
+		});
 
-  @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-  public boolean validateGatePass(Long cardIdSeq, Long gatePassNo, boolean checkPreArrival, String hpatSeqId,
-      String truckHeadNo) {
+		Optional<Client> clientOpt = clientRepository.findOne(gateInRequest.getLaneId());
+		Client client = clientOpt
+				.orElseThrow(() -> new ResultsNotFoundException("Invalid lane ID ! " + gateInRequest.getLaneId()));
+		gateInRequest.setLaneNo(client.getLaneNo());
 
-    return true;
-  }
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		UserContext userContext = (UserContext) authentication.getPrincipal();
+		gateInRequest.setUserName(userContext.getUsername());
 
+		// call opus -
+		OpusGateInReadRequest gateInReadRequest = opusGateInReadService.constructOpenGateInRequest(gateInRequest);
+		OpusGateInReadResponse gateInReadResponse = opusGateInReadService.getGateInReadResponse(gateInReadRequest);
+		GateInReponse gateInReponse = new GateInReponse();
+		gateInReponse.setImportContainers(importContainers);
+		gateInReponse = opusGateInReadService.constructGateInReponse(gateInReadResponse, gateInReponse);
 
-  @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-  public List<ImportContainer> fetchContainerInfo(List<Long> gatePassNumberList) {
+		return gateInReponse;
 
-    Optional<List<GatePass>> optionalGatePassList = gatePassRepository.findByGatePassNoIn(gatePassNumberList);
+	}
 
-    List<GatePass> gatePassList = optionalGatePassList.orElseThrow(
-        () -> new ResultsNotFoundException("No Import Containers could be found for the given Gate Pass Numbers!"));
-    List<ImportContainer> importContainers = new ArrayList<ImportContainer>();
-    gatePassList.forEach(item -> {
-      ImportContainer importContainer = new ImportContainer();
-      modelMapper.map(item, importContainer);
-      importContainers.add(importContainer);
-    });
-    return importContainers;
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
+	public GatePassValidateDTO validateGatePass(Long cardIdSeq, Long gatePassNo, boolean checkPreArrival,
+			String hpatSeqId, String truckHeadNo) {
 
-  }
+		return new GatePassValidateDTO();
+	}
 
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
+	public List<ImportContainer> fetchContainerInfo(List<Long> gatePassNumberList) {
 
-  private OpusGateInReadRequest constructGIR01Request(GateInRequest gateInRequest,
-      List<ImportContainer> importContainers) {
-    OpusGateInReadRequest gir01Request = new OpusGateInReadRequest();
-    if (!(importContainers == null || importContainers.isEmpty())) {
-      gir01Request.setContainerNo1ImportCY(importContainers.get(0).getContainer().getContainerNumber());
-      if (importContainers.size() > 1) {
-        gir01Request.setContainerNo2ImportCY(importContainers.get(1).getContainer().getContainerNumber());
-      }
+		Optional<List<GatePass>> optionalGatePassList = gatePassRepository.findByGatePassNoIn(gatePassNumberList);
 
-    }
-    // 20161130112233 - yyyyMMddHHmmss
-    LocalDateTime gateInDateTime = CommonUtil.getParsedDate(gateInRequest.getGateInDateTime());
-    gir01Request.setGateINDateTime(OpusService.getJsonDateFromDate(gateInDateTime));
-    gir01Request.setHaulageCode("HAUCD");
-    long laneId = Long.parseLong(gateInRequest.getLaneId());
-    Optional<Client> clientOpt = clientRepository.findOne(laneId);
-    if (clientOpt.isPresent()) {
-      Client client = clientOpt.orElse(null);
-      if (!(client == null)) {
-        gir01Request.setLaneNo(client.getLaneNo());
-      }
-    }
-    gir01Request.setTruckHeadNo(gateInRequest.getTruckHeadNo());
-    gir01Request.setUserID(gateInRequest.getUserId());
-    return gir01Request;
-  }
+		List<GatePass> gatePassList = optionalGatePassList.orElseThrow(() -> new ResultsNotFoundException(
+				"No Import Containers could be found for the given Gate Pass Numbers!"));
+		List<ImportContainer> importContainers = new ArrayList<ImportContainer>();
+		gatePassList.forEach(item -> {
+			ImportContainer importContainer = new ImportContainer();
+			modelMapper.map(item, importContainer);
+			importContainers.add(importContainer);
+		});
+		return importContainers;
 
-  private GateInReponse constructGateInReponse(OpusGateInReadResponse gir01Response, GateInRequest gateInRequest) {
-    GateInReponse gateInReponse = new GateInReponse();
-    LocalDateTime localDateTime = OpusService.getLocalDategFromString(gir01Response.getGateINDateTime());
-    gateInReponse.setGateINDateTime(CommonUtil.getFormatteDate(localDateTime));
-    gateInReponse.setHaulageCode(gir01Response.getHaulageCode());
-    gateInReponse.setImportContainers(constructImportContainers(gir01Response.getImportContainerListCY()));
-    gateInReponse.setLaneNo(gir01Response.getLaneNo());
-    gateInReponse.setTruckHeadNo(gir01Response.getTruckHeadNo());
-    gateInReponse.setTruckPlateNo(gir01Response.getTruckPlateNo());
-    return gateInReponse;
-  }
+	}
 
-  private List<ImportContainer> constructImportContainers(List<OpusImportContainer> importContainerListCY) {
-    if (!(importContainerListCY == null || importContainerListCY.isEmpty())) {
-      List<ImportContainer> importContainers = new ArrayList<ImportContainer>();
-      for (OpusImportContainer opusImportContainer : importContainerListCY) {
-        importContainers.add(constructImportContainer(opusImportContainer));
-      }
-      return importContainers;
-    }
-    return null;
-  }
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
+	public List<ShipCode> checkContainer(List<ExportContainer> exportContainers) {
+		if (!(exportContainers == null || exportContainers.isEmpty())) {
+			List<String> shippingCodes = exportContainers.stream().map(ExportContainer::getShipCode)
+					.collect(Collectors.toList());
 
-  private ImportContainer constructImportContainer(OpusImportContainer opusImportContainer) {
-    ImportContainer container = new ImportContainer();
+			Optional<List<ShipCode>> list = shipCodeRepository.findByShippingCodeIn(shippingCodes);
+			if (list.isPresent()) {
+				List<ShipCode> codes = list.orElse(null);
+				for (ShipCode shipCode : codes) {
+					for (ExportContainer item : exportContainers) {
+						if (StringUtils.equals(shipCode.getShippingCode(), item.getShipCode())) {
+							item.setStoragePeriod(shipCode.getStoragePeriod());
+						}
+					}
+				}
 
-    // not currently available- added to importcontainer
-    // private long containerDischargeDateTime;// 20161124162510,
-    // private String impCarrierType;// null,
-    // private String impCarrier;// null,
-    // private String vesselCode;// UANE,
-    // private String vesselVoyage;// 003/2016,
-    // private String visitId;// 121212,
-    // private String vesselScn;// DB0899,
-    // private String vesselName;// AL NEFUD,
-    // private String vesselATA;// 20161124161800
-    modelMapper.map(opusImportContainer, container);
+				return codes;
+			}
+		}
+		return null;
+	}
 
-    CommonContainerDTO commonContainerDTO = new CommonContainerDTO();
-    // private double containerHeight;// 8,
-    commonContainerDTO.setContainerHeight(Integer.parseInt(opusImportContainer.getContainerHeight()));
-    // private double containerSize;// 40,
-    commonContainerDTO.setContainerLength(Integer.parseInt(opusImportContainer.getContainerSize()));
-    // private String containerNo;// QASS1234566,
-    commonContainerDTO.setContainerNumber(opusImportContainer.getContainerNo());
-    // private String containerFullOrEmpty;// F,
-    commonContainerDTO.setContainerFullOrEmpty(opusImportContainer.getContainerFullOrEmpty());
-    // private String containerIso;// 4001,
-    commonContainerDTO.setContainerISOCode(opusImportContainer.getContainerIso());
-
-    // private String containerInOrOut;// OUT,
-    container.setGateInOut(opusImportContainer.getContainerInOrOut());
-
-    // private String impOrderNo;// ORDER0001,
-    container.setOrderFOT(opusImportContainer.getImpOrderNo());
-
-    // private String containerShippingLine;// CMA,
-    container.setLine(opusImportContainer.getContainerShippingLine());
-
-    // private String containerType;// GE,
-    container.setContainerType(opusImportContainer.getContainerType());
-
-    // private String currentYardPosition;// 02S-0102-C-1,
-    container.setYardPosition(opusImportContainer.getCurrentYardPosition());
-
-    container.setContainer(commonContainerDTO);
-
-    return container;
-  }
-
-  @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-  public List<ShipCode> checkContainer(List<ExportContainer> exportContainers) {
-    if (!(exportContainers == null || exportContainers.isEmpty())) {
-      List<String> shippingCodes =
-          exportContainers.stream().map(ExportContainer::getShipCode).collect(Collectors.toList());
-
-      Optional<List<ShipCode>> list = shipCodeRepository.findByShippingCodeIn(shippingCodes);
-      if (list.isPresent()) {
-        List<ShipCode> codes = list.orElse(null);
-        for (ShipCode shipCode : codes) {
-          for (ExportContainer item : exportContainers) {
-            if (StringUtils.equals(shipCode.getShippingCode(), item.getShipCode())) {
-              item.setStoragePeriod(shipCode.getStoragePeriod());
-            }
-          }
-        }
-
-        return codes;
-      }
-    }
-    return null;
-  }
-
-
-  public void checkSCN(ExportContainer exportContainer) throws Exception {
-    Optional<ShipSCN> shipSCNOpt = shipSCNRepository.findByContainerNo(exportContainer.getContainerNumber());
-    if (shipSCNOpt.isPresent()) {
-      ShipSCN shipSCN = shipSCNOpt.orElse(null);
-      if (!(shipSCN == null)) {
-        exportContainer.setBypassEEntry(shipSCN.getScnByPass());
-        exportContainer.setRegisteredInEarlyEntry(true);
-        exportContainer.setSeq(Long.toString(shipSCN.getShipSCNID()));
-      }
-    }
-  }
-
+	public void checkSCN(ExportContainer exportContainer) throws Exception {
+		Optional<ShipSCN> shipSCNOpt = shipSCNRepository.findByContainerNo(exportContainer.getContainerNumber());
+		if (shipSCNOpt.isPresent()) {
+			ShipSCN shipSCN = shipSCNOpt.orElse(null);
+			if (!(shipSCN == null)) {
+				exportContainer.setBypassEEntry(shipSCN.getScnByPass());
+				exportContainer.setRegisteredInEarlyEntry(true);
+				exportContainer.setSeq(Long.toString(shipSCN.getShipSCNID()));
+			}
+		}
+	}
 
 }

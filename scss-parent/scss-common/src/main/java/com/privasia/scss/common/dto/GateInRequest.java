@@ -6,15 +6,19 @@ public class GateInRequest implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	private String userId;
+	private Long userId;
+	private String userName;
 	private Long gatePass1;// -long
 	private Long gatePass2;// -long
 	private Long cardID;
 	private String expContainer1;// -string
 	private String expContainer2;// -string
+	private String impContainer1;// -string
+	private String impContainer2;// -string
 	private String truckHeadNo;// -string
 	private String gateInDateTime;// -string
-	private String laneId;// -long (clientID)
+	private Long laneId;// -long (clientID)
+	private String laneNo;// -long (clientID)
 	private Integer expWeightBridge;// -long
 	private boolean checkPreArrival;// -boolean
 	private String hpabSeqId;// -string
@@ -51,12 +55,20 @@ public class GateInRequest implements Serializable {
 		this.gateInDateTime = gateInDateTime;
 	}
 
-	public String getLaneId() {
+	public Long getLaneId() {
 		return laneId;
 	}
 
-	public void setLaneId(String laneId) {
+	public void setLaneId(Long laneId) {
 		this.laneId = laneId;
+	}
+	
+	public String getLaneNo() {
+		return laneNo;
+	}
+
+	public void setLaneNo(String laneNo) {
+		this.laneNo = laneNo;
 	}
 
 	public boolean isCheckPreArrival() {
@@ -75,12 +87,20 @@ public class GateInRequest implements Serializable {
 		this.hpabSeqId = hpabSeqId;
 	}
 
-	public String getUserId() {
+	public Long getUserId() {
 		return userId;
 	}
 
-	public void setUserId(String userId) {
+	public void setUserId(Long userId) {
 		this.userId = userId;
+	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
 	}
 
 	public Long getGatePass1() {
@@ -113,6 +133,22 @@ public class GateInRequest implements Serializable {
 
 	public void setCardID(Long cardID) {
 		this.cardID = cardID;
+	}
+
+	public String getImpContainer1() {
+		return impContainer1;
+	}
+
+	public void setImpContainer1(String impContainer1) {
+		this.impContainer1 = impContainer1;
+	}
+
+	public String getImpContainer2() {
+		return impContainer2;
+	}
+
+	public void setImpContainer2(String impContainer2) {
+		this.impContainer2 = impContainer2;
 	}
 	
 	

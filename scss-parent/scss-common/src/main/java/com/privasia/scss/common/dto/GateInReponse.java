@@ -1,6 +1,7 @@
 package com.privasia.scss.common.dto;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class GateInReponse implements Serializable {
@@ -17,9 +18,9 @@ public class GateInReponse implements Serializable {
   private String truckPlateNo;// null,
   private String gateINDateTime;// 20161130112233,
 
-  List<ImportContainer> importContainers;
+  List<ImportContainer> importContainers = new ArrayList<ImportContainer>();
 
-  List<ExportContainer> exportContainers;
+  List<ExportContainer> exportContainers = new ArrayList<ExportContainer>();
 
   public String getLaneNo() {
     return laneNo;

@@ -7,102 +7,99 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class OpusGateInReadResponse extends BaseResponse {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private String laneNo;// LNO01,
+	private String haulageCode;// HAUCD,
+	private String truckHeadNo;// TRUCK,
+	private String truckPlateNo;// null,
+	private String gateInDateTime;// 20161130112233,
+	private List<OpusExporterContainer> exportContainerListCY;
+	private List<OpusImportContainer> importContainerListCY;
+	private List<OpusExporterContainer> exportContainerListCFS;
+	private List<OpusImportContainer> importContainerListCFS;
 
-  /**
-   * 
-   */
-  private static final long serialVersionUID = 1L;
-  private String laneNo;// LNO01,
-  private String haulageCode;// HAUCD,
-  private String truckHeadNo;// TRUCK,
-  private String truckPlateNo;// null,
-  private String gateINDateTime;// 20161130112233,
-  private List<OpusExporterContainer> exportContainerListCY;
-  private List<OpusImportContainer> importContainerListCY;
-  private List<OpusExporterContainer> exportContainerListCFS;
-  private List<OpusImportContainer> importContainerListCFS;
+	public String getLaneNo() {
+		return laneNo;
+	}
 
-  public String getLaneNo() {
-    return laneNo;
-  }
+	public void setLaneNo(String laneNo) {
+		this.laneNo = laneNo;
+	}
 
-  public void setLaneNo(String laneNo) {
-    this.laneNo = laneNo;
-  }
+	public String getHaulageCode() {
+		return haulageCode;
+	}
 
-  public String getHaulageCode() {
-    return haulageCode;
-  }
+	public void setHaulageCode(String haulageCode) {
+		this.haulageCode = haulageCode;
+	}
 
-  public void setHaulageCode(String haulageCode) {
-    this.haulageCode = haulageCode;
-  }
+	public String getTruckHeadNo() {
+		return truckHeadNo;
+	}
 
-  public String getTruckHeadNo() {
-    return truckHeadNo;
-  }
+	public void setTruckHeadNo(String truckHeadNo) {
+		this.truckHeadNo = truckHeadNo;
+	}
 
-  public void setTruckHeadNo(String truckHeadNo) {
-    this.truckHeadNo = truckHeadNo;
-  }
+	public String getTruckPlateNo() {
+		return truckPlateNo;
+	}
 
-  public String getTruckPlateNo() {
-    return truckPlateNo;
-  }
+	public void setTruckPlateNo(String truckPlateNo) {
+		this.truckPlateNo = truckPlateNo;
+	}
 
-  public void setTruckPlateNo(String truckPlateNo) {
-    this.truckPlateNo = truckPlateNo;
-  }
+	public String getGateInDateTime() {
+		return gateInDateTime;
+	}
 
+	public void setGateInDateTime(String gateInDateTime) {
+		this.gateInDateTime = gateInDateTime;
+	}
 
-  public String getGateINDateTime() {
-    return gateINDateTime;
-  }
+	public List<OpusExporterContainer> getExportContainerListCY() {
+		return exportContainerListCY;
+	}
 
-  public void setGateINDateTime(String gateINDateTime) {
-    this.gateINDateTime = gateINDateTime;
-  }
+	public void setExportContainerListCY(List<OpusExporterContainer> exportContainerListCY) {
+		this.exportContainerListCY = exportContainerListCY;
+	}
 
-  public List<OpusExporterContainer> getExportContainerListCY() {
-    return exportContainerListCY;
-  }
+	public List<OpusImportContainer> getImportContainerListCY() {
+		return importContainerListCY;
+	}
 
-  public void setExportContainerListCY(List<OpusExporterContainer> exportContainerListCY) {
-    this.exportContainerListCY = exportContainerListCY;
-  }
+	public void setImportContainerListCY(List<OpusImportContainer> importContainerListCY) {
+		this.importContainerListCY = importContainerListCY;
+	}
 
-  public List<OpusImportContainer> getImportContainerListCY() {
-    return importContainerListCY;
-  }
+	public List<OpusExporterContainer> getExportContainerListCFS() {
+		return exportContainerListCFS;
+	}
 
-  public void setImportContainerListCY(List<OpusImportContainer> importContainerListCY) {
-    this.importContainerListCY = importContainerListCY;
-  }
+	public void setExportContainerListCFS(List<OpusExporterContainer> exportContainerListCFS) {
+		this.exportContainerListCFS = exportContainerListCFS;
+	}
 
-  public List<OpusExporterContainer> getExportContainerListCFS() {
-    return exportContainerListCFS;
-  }
+	public List<OpusImportContainer> getImportContainerListCFS() {
+		return importContainerListCFS;
+	}
 
-  public void setExportContainerListCFS(List<OpusExporterContainer> exportContainerListCFS) {
-    this.exportContainerListCFS = exportContainerListCFS;
-  }
+	public void setImportContainerListCFS(List<OpusImportContainer> importContainerListCFS) {
+		this.importContainerListCFS = importContainerListCFS;
+	}
 
-  public List<OpusImportContainer> getImportContainerListCFS() {
-    return importContainerListCFS;
-  }
-
-  public void setImportContainerListCFS(List<OpusImportContainer> importContainerListCFS) {
-    this.importContainerListCFS = importContainerListCFS;
-  }
-
-  @Override
-  public String toString() {
-    return "OpusGateInReadResponse [laneNo=" + laneNo + ", haulageCode=" + haulageCode + ", truckHeadNo=" + truckHeadNo
-        + ", truckPlateNo=" + truckPlateNo + ", gateINDateTime=" + gateINDateTime + ", exportContainerListCY="
-        + exportContainerListCY + ", importContainerListCY=" + importContainerListCY + ", exportContainerListCFS="
-        + exportContainerListCFS + ", importContainerListCFS=" + importContainerListCFS + "]";
-  }
-
-
+	@Override
+	public String toString() {
+		return "OpusGateInReadResponse [laneNo=" + laneNo + ", haulageCode=" + haulageCode + ", truckHeadNo="
+				+ truckHeadNo + ", truckPlateNo=" + truckPlateNo + ", gateINDateTime=" + gateInDateTime
+				+ ", exportContainerListCY=" + exportContainerListCY + ", importContainerListCY="
+				+ importContainerListCY + ", exportContainerListCFS=" + exportContainerListCFS
+				+ ", importContainerListCFS=" + importContainerListCFS + "]";
+	}
 
 }
