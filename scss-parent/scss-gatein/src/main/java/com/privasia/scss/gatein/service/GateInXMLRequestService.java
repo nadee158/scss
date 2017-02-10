@@ -12,10 +12,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.privasia.scss.common.dto.DamageCodeInfo;
+import com.privasia.scss.common.dto.CommonSealDTO;
 import com.privasia.scss.common.dto.ExportContainer;
 import com.privasia.scss.common.dto.ImportContainer;
-import com.privasia.scss.common.dto.SealInfo;
 import com.privasia.scss.common.dto.TransactionDTO;
 import com.privasia.scss.common.util.AGSClient;
 import com.privasia.scss.common.util.ApplicationConstants;
@@ -330,7 +329,7 @@ public class GateInXMLRequestService {
 
     if (!(exportContainer02 == null)) {
 
-      if (StringUtils.isNotEmpty(exportContainer02.getContainerNumber())
+      if (StringUtils.isNotEmpty(exportContainer02.getContainer().getContainerNumber())
           && StringUtils.isEmpty(exportContainer02.getContRefer())) {
 
         StringBuilder errXMLMsg3 = new StringBuilder("");
@@ -355,8 +354,9 @@ public class GateInXMLRequestService {
 
         UNC2 = constructExportContainerUNCInfo(exportContainer02, UNC2);
 
+        // getContRefer -- >getReferFlag
         if (isImpExp) {
-          if (StringUtils.isNotBlank(exportContainer02.getContainerNumber())
+          if (StringUtils.isNotBlank(exportContainer02.getContainer().getContainerNumber())
               && StringUtils.isNotBlank(exportContainer02.getContRefer())) {
             requestXMLC2.append("<Message Index=\"").append(cont1Index).append("\">\n");
           } else {
@@ -380,7 +380,7 @@ public class GateInXMLRequestService {
     StringBuilder requestXML = new StringBuilder("");
 
     if (StringUtils.isBlank(exportContainer01.getContRefer())
-        && StringUtils.isNotBlank(exportContainer01.getContainerNumber())) {
+        && StringUtils.isNotBlank(exportContainer01.getContainer().getContainerNumber())) {
       if (isImpExp) {
         requestXML.append("<Message Index=\"").append(cont1Index).append("\">\n");
       } else {
@@ -405,10 +405,10 @@ public class GateInXMLRequestService {
   private String constructWeightForExportContainer(TransactionDTO transactionDTO, ExportContainer exportContainer) {
     String weight = "0";
     DecimalFormat df = new DecimalFormat("#");
-    if (transactionDTO.isShipperVGM() && exportContainer.isWithInTolerance()) {
-      weight = String.valueOf(exportContainer.getShipperVGM());
+    if (transactionDTO.isShipperVGM() && exportContainer.isWithinTolerance()) {
+      weight = Integer.toString(exportContainer.getShipperVGM());
     } else {
-      weight = Double.toString(exportContainer.getNetWeight());
+      weight = Integer.toString(exportContainer.getExpNetWeight());
     }
     weight = df.format(Double.valueOf(weight));
     return weight;
@@ -431,13 +431,13 @@ public class GateInXMLRequestService {
         .append("</CSMCTL>\n")
         .append("<GINCNTDRP>\n") // For Gate In container drop off
         .append("<MSGTSE>GINCNTDRP</MSGTSE>\n") // Message Type : To hard code
-        .append("<UNITSE>").append(toEscapeXmlUpperCase(exportContainer.getContainerNumber())).append("</UNITSE>\n") // Container No : To capture
+        .append("<UNITSE>").append(toEscapeXmlUpperCase(exportContainer.getContainer().getContainerNumber())).append("</UNITSE>\n") // Container No : To capture
         .append("<ORRFSE>").append(toEscapeXmlUpperCase(exportContainer.getBookingNo())).append("</ORRFSE>\n") // Order Reference : To capture Booking Ref no
-        .append("<UNISSE>").append(toUpperCase(exportContainer.getContainerISO())).append("</UNISSE>\n") // Container ISO code : To capture container ISO code
-        .append("<UNBTSE>").append(toUpperCase(exportContainer.getFullOrEmpty())).append("</UNBTSE>\n") // (E)mpty or (F)ull : To capture E or F
-        .append("<CNPVSE>").append(toUpperCase(exportContainer.getPositionOnTruck())).append("</CNPVSE>\n") // Position on Truck : To capture F, A or M
+        .append("<UNISSE>").append(toUpperCase(exportContainer.getContainer().getContainerISOCode())).append("</UNISSE>\n") // Container ISO code : To capture container ISO code
+        .append("<UNBTSE>").append(toUpperCase(exportContainer.getContainer().getContainerFullOrEmpty())).append("</UNBTSE>\n") // (E)mpty or (F)ull : To capture E or F
+        .append("<CNPVSE>").append(toUpperCase(exportContainer.getContainerPosition())).append("</CNPVSE>\n") // Position on Truck : To capture F, A or M
         .append("<ORGVSE>").append(toUpperCase(exportContainer.getExpAgent())).append("</ORGVSE>\n") // Order supplier : To capture Agent code??
-        .append("<LYNDSE>").append(toUpperCase(exportContainer.getLine())).append("</LYNDSE>\n") // Line code : To capture line code
+        .append("<LYNDSE>").append(toUpperCase(exportContainer.getExpLine())).append("</LYNDSE>\n") // Line code : To capture line code
         .append(damage.toString()) // Damage Code 1 : To capture damage code 1, To loop if more than 1
         .append(seal.toString()) // Seal Origin 1 : To capture seal origin, seal type and seal no 1, To loop if more than 1
         .append("<UNBGSE>").append(weight).append("</UNBGSE>\n") // Unit Gross Weight : To capture Gross Weight
@@ -467,23 +467,23 @@ public class GateInXMLRequestService {
 
   //@formatter:on
   private StringBuilder constructExportContainerUNCInfo(ExportContainer exportContainer, StringBuilder uN) {
-    if (StringUtils.isNotEmpty(exportContainer.getUN())) {
-      uN.append("<CUN1SE>").append(exportContainer.getUN()).append("</CUN1SE>\n");
+    if (StringUtils.isNotEmpty(exportContainer.getExpUN())) {
+      uN.append("<CUN1SE>").append(exportContainer.getExpUN()).append("</CUN1SE>\n");
     }
     return uN;
   }
 
   //@formatter:on
   private StringBuilder constructExportContainerIMDGInfo(ExportContainer exportContainer, StringBuilder iMDG) {
-    if (StringUtils.isNotEmpty(exportContainer.getIMDG())) {
-      iMDG.append("<CNIMSE>").append(exportContainer.getIMDG()).append("</CNIMSE>\n"); // Testing
-      iMDG.append("<CIM1SE>").append(exportContainer.getIMDG()).append("</CIM1SE>\n");
-      iMDG.append("<ISA1SE>").append(exportContainer.getIMDGlabels()).append("</ISA1SE>\n");
+    if (StringUtils.isNotEmpty(exportContainer.getImdg())) {
+      iMDG.append("<CNIMSE>").append(exportContainer.getImdg()).append("</CNIMSE>\n"); // Testing
+      iMDG.append("<CIM1SE>").append(exportContainer.getImdg()).append("</CIM1SE>\n");
+      iMDG.append("<ISA1SE>").append(exportContainer.getImdgLabelID()).append("</ISA1SE>\n");
 
-      if (exportContainer.getIMDG().equals("5.1") || exportContainer.getIMDG().equals("5.2")) {
-        iMDG.append("<ISI1SE>").append(exportContainer.getIMDG()).append("</ISI1SE>\n");
+      if (exportContainer.getImdg().equals("5.1") || exportContainer.getImdg().equals("5.2")) {
+        iMDG.append("<ISI1SE>").append(exportContainer.getImdg()).append("</ISI1SE>\n");
       } else {
-        iMDG.append("<ISI1SE>").append(exportContainer.getIMDG().substring(0, 1)).append("</ISI1SE>\n");
+        iMDG.append("<ISI1SE>").append(exportContainer.getImdg().substring(0, 1)).append("</ISI1SE>\n");
       }
     }
     return iMDG;
@@ -495,9 +495,8 @@ public class GateInXMLRequestService {
     String OOGindicator = "N";
 
 
-    if (!(StringUtils.isEmpty(exportContainer.getOOGOA()) || StringUtils.isEmpty(exportContainer.getOOGOF())
-        || StringUtils.isEmpty(exportContainer.getOOGOH()) || StringUtils.isEmpty(exportContainer.getOOGOL())
-        || StringUtils.isEmpty(exportContainer.getOOGOR()))) {
+    if (!(exportContainer.getOogOA() <= 0 || exportContainer.getOogOF() <= 0 || exportContainer.getOogOH() <= 0
+        || exportContainer.getOogOL() <= 0 || exportContainer.getOogOR() <= 0)) {
       OOGindicator = "Y";
     }
   //@formatter:off
@@ -506,26 +505,26 @@ public class GateInXMLRequestService {
       OOG.append("<OOGISE>").append(OOGindicator).append("</OOGISE>\n"); // OOG indicator : To // capture Y or N,
       // Conditional if exist
 
-      if (StringUtils.isNotEmpty(exportContainer.getOOGOF())) {
-        OOG.append("<OVSVSE>").append(exportContainer.getOOGOF()).append("</OVSVSE>\n"); // Oversize Fore (in cm) : 5,0,
+      if (exportContainer.getOogOF()>0) {
+        OOG.append("<OVSVSE>").append(exportContainer.getOogOF()).append("</OVSVSE>\n"); // Oversize Fore (in cm) : 5,0,
                                                             // Conditional if exist
       }
 
-      if (StringUtils.isNotEmpty(exportContainer.getOOGOA())) {
-        OOG.append("<OVSASE>").append(exportContainer.getOOGOA()).append("</OVSASE>\n"); // Oversize Aft (in cm) : 5,0,
+      if (exportContainer.getOogOA()>0) {
+        OOG.append("<OVSASE>").append(exportContainer.getOogOA()).append("</OVSASE>\n"); // Oversize Aft (in cm) : 5,0,
                                                             // Conditional if exist
       }
 
-      if (StringUtils.isNotEmpty(exportContainer.getOOGOL())) {
-        OOG.append("<OVSLSE>").append(exportContainer.getOOGOL()).append("</OVSLSE>\n"); // // Oversize Left (in cm) : 5,0,
+      if (exportContainer.getOogOL()>0) {
+        OOG.append("<OVSLSE>").append(exportContainer.getOogOL()).append("</OVSLSE>\n"); // // Oversize Left (in cm) : 5,0,
                                                             // Conditional if exist
       }
-      if (StringUtils.isNotEmpty(exportContainer.getOOGOH())) {
-        OOG.append("<OVHGSE>").append(exportContainer.getOOGOH()).append("</OVHGSE>\n"); // Oversize Height (in cm) : 5,0,
+      if (exportContainer.getOogOH()>0) {
+        OOG.append("<OVHGSE>").append(exportContainer.getOogOH()).append("</OVHGSE>\n"); // Oversize Height (in cm) : 5,0,
                                                             // Conditional if exist
       }
-      if (StringUtils.isNotEmpty(exportContainer.getOOGOR())) {
-        OOG.append("<OVSRSE>").append(exportContainer.getOOGOR()).append("</OVSRSE>\n"); // Oversize Rare (in cm) : 5,0,
+      if (exportContainer.getOogOR()>0) {
+        OOG.append("<OVSRSE>").append(exportContainer.getOogOR()).append("</OVSRSE>\n"); // Oversize Rare (in cm) : 5,0,
                                                             // Conditional if exist
       }
     }
@@ -561,22 +560,19 @@ public class GateInXMLRequestService {
   }
 
   private StringBuilder constructExportContainerSealInfo(ExportContainer exportContainer, StringBuilder seal) {
-    if ("F".equals(exportContainer.getFullOrEmpty())) {
+    if ("F".equals(exportContainer.getContainer().getContainerFullOrEmpty())) {
       //@formatter:off
-      if(!(exportContainer.getSealInfo01()==null)){
-        SealInfo sealInfo=exportContainer.getSealInfo01();
-        if (StringUtils.isNotBlank(sealInfo.getSealNo())) {
-          seal.append("<SO01SE>").append(toUpperCase(sealInfo.getSealOrigin())).append("</SO01SE>\n")
-              .append("<ST01SE>").append(toUpperCase(sealInfo.getSealType())).append("</ST01SE>\n")
-              .append("<SN01SE>").append(toUpperCase(sealInfo.getSealNo())).append("</SN01SE>\n");
+      CommonSealDTO sealAttribute=exportContainer.getSealAttribute();
+      if(!(sealAttribute==null)){
+        if (StringUtils.isNotBlank(sealAttribute.getSeal01Number())) {
+          seal.append("<SO01SE>").append(toUpperCase(sealAttribute.getSeal01Origin())).append("</SO01SE>\n")
+              .append("<ST01SE>").append(toUpperCase(sealAttribute.getSeal01Type())).append("</ST01SE>\n")
+              .append("<SN01SE>").append(toUpperCase(sealAttribute.getSeal01Number())).append("</SN01SE>\n");
         }
-      }
-      if(!(exportContainer.getSealInfo02()==null)){
-        SealInfo sealInfo=exportContainer.getSealInfo02();
-        if (StringUtils.isNotBlank(sealInfo.getSealNo())) {
-          seal.append("<SO02SE>").append(toUpperCase(sealInfo.getSealOrigin())).append("</SO02SE>\n")
-               .append("<ST02SE>").append(toUpperCase(sealInfo.getSealType())).append("</ST02SE>\n")
-               .append("<SN02SE>").append(toUpperCase(sealInfo.getSealNo())).append("</SN02SE>\n");
+        if (StringUtils.isNotBlank(sealAttribute.getSeal02Number())) {
+          seal.append("<SO02SE>").append(toUpperCase(sealAttribute.getSeal02Origin())).append("</SO02SE>\n")
+               .append("<ST02SE>").append(toUpperCase(sealAttribute.getSeal02Type())).append("</ST02SE>\n")
+               .append("<SN02SE>").append(toUpperCase(sealAttribute.getSeal02Number())).append("</SN02SE>\n");
         }
       }
     //@formatter:on
@@ -585,40 +581,69 @@ public class GateInXMLRequestService {
   }
 
   private StringBuilder constructExportContainerDamageInfo(ExportContainer exportContainer, StringBuilder damage) {
-    if (!(exportContainer.getDgInfo() == null)) {
-
-      DamageCodeInfo dgInfo = exportContainer.getDgInfo();
-
-      if (StringUtils.isNotBlank(dgInfo.getDamage1())) {
-        damage.append("<DM01SE>").append(toUpperCase(dgInfo.getDamage1())).append("</DM01SE>\n");
+    if (!(exportContainer.getDamageCode_01() == null)) {
+      if (StringUtils.isNotBlank(exportContainer.getDamageCode_01().getDamageCode())) {
+        damage.append("<DM01SE>").append(toUpperCase(exportContainer.getDamageCode_01().getDamageCode()))
+            .append("</DM01SE>\n");
       }
-
-      if (StringUtils.isNotBlank(dgInfo.getDamage2())) {
-        damage.append("<DM02SE>").append(toUpperCase(dgInfo.getDamage2())).append("</DM02SE>\n");
-      }
-      if (StringUtils.isNotBlank(dgInfo.getDamage3())) {
-        damage.append("<DM03SE>").append(toUpperCase(dgInfo.getDamage3())).append("</DM03SE>\n");
-      }
-      if (StringUtils.isNotBlank(dgInfo.getDamage4())) {
-        damage.append("<DM04SE>").append(toUpperCase(dgInfo.getDamage4())).append("</DM04SE>\n");
-      }
-      if (StringUtils.isNotBlank(dgInfo.getDamage5())) {
-        damage.append("<DM05SE>").append(toUpperCase(dgInfo.getDamage5())).append("</DM05SE>\n");
-      }
-      if (StringUtils.isNotBlank(dgInfo.getDamage6())) {
-        damage.append("<DM06SE>").append(toUpperCase(dgInfo.getDamage6())).append("</DM06SE>\n");
-      }
-      if (StringUtils.isNotBlank(dgInfo.getDamage7())) {
-        damage.append("<DM07SE>").append(toUpperCase(dgInfo.getDamage7())).append("</DM07SE>\n");
-      }
-      if (StringUtils.isNotBlank(dgInfo.getDamage8())) {
-        damage.append("<DM08SE>").append(toUpperCase(dgInfo.getDamage8())).append("</DM08SE>\n");
-      }
-      if (StringUtils.isNotBlank(dgInfo.getDamage9())) {
-        damage.append("<DM09SE>").append(toUpperCase(dgInfo.getDamage9())).append("</DM09SE>\n");
-      }
-
     }
+
+    if (!(exportContainer.getDamageCode_02() == null)) {
+      if (StringUtils.isNotBlank(exportContainer.getDamageCode_02().getDamageCode())) {
+        damage.append("<DM02SE>").append(toUpperCase(exportContainer.getDamageCode_02().getDamageCode()))
+            .append("</DM02SE>\n");
+      }
+    }
+
+    if (!(exportContainer.getDamageCode_03() == null)) {
+      if (StringUtils.isNotBlank(exportContainer.getDamageCode_03().getDamageCode())) {
+        damage.append("<DM03SE>").append(toUpperCase(exportContainer.getDamageCode_03().getDamageCode()))
+            .append("</DM03SE>\n");
+      }
+    }
+
+    if (!(exportContainer.getDamageCode_04() == null)) {
+      if (StringUtils.isNotBlank(exportContainer.getDamageCode_04().getDamageCode())) {
+        damage.append("<DM04SE>").append(toUpperCase(exportContainer.getDamageCode_04().getDamageCode()))
+            .append("</DM04SE>\n");
+      }
+    }
+
+    if (!(exportContainer.getDamageCode_05() == null)) {
+      if (StringUtils.isNotBlank(exportContainer.getDamageCode_05().getDamageCode())) {
+        damage.append("<DM05SE>").append(toUpperCase(exportContainer.getDamageCode_05().getDamageCode()))
+            .append("</DM05SE>\n");
+      }
+    }
+
+    if (!(exportContainer.getDamageCode_06() == null)) {
+      if (StringUtils.isNotBlank(exportContainer.getDamageCode_06().getDamageCode())) {
+        damage.append("<DM06SE>").append(toUpperCase(exportContainer.getDamageCode_06().getDamageCode()))
+            .append("</DM06SE>\n");
+      }
+    }
+
+    if (!(exportContainer.getDamageCode_07() == null)) {
+      if (StringUtils.isNotBlank(exportContainer.getDamageCode_07().getDamageCode())) {
+        damage.append("<DM07SE>").append(toUpperCase(exportContainer.getDamageCode_07().getDamageCode()))
+            .append("</DM07SE>\n");
+      }
+    }
+
+    if (!(exportContainer.getDamageCode_08() == null)) {
+      if (StringUtils.isNotBlank(exportContainer.getDamageCode_08().getDamageCode())) {
+        damage.append("<DM08SE>").append(toUpperCase(exportContainer.getDamageCode_08().getDamageCode()))
+            .append("</DM08SE>\n");
+      }
+    }
+
+    if (!(exportContainer.getDamageCode_09() == null)) {
+      if (StringUtils.isNotBlank(exportContainer.getDamageCode_09().getDamageCode())) {
+        damage.append("<DM09SE>").append(toUpperCase(exportContainer.getDamageCode_09().getDamageCode()))
+            .append("</DM09SE>\n");
+      }
+    }
+
     return damage;
   }
 

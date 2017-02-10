@@ -2,6 +2,8 @@ package com.privasia.scss.gatein.service;
 
 import java.sql.Connection;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -9,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import com.privasia.scss.common.dto.ExportContainer;
 import com.privasia.scss.common.dto.GateInForm;
-import com.privasia.scss.common.util.DateUtil;
 
 /**
  * @author nadee158
@@ -503,8 +504,10 @@ public class ContainerService {
     }
 
     long earlyEnrtyDate = 0;
-    exportContainer.setEtad(DateUtil.addDate(exportContainer.getEtad(), -1));
-    earlyEnrtyDate = DateUtil.getDaysBetween2Dates(now, exportContainer.getEtad());
+    exportContainer.setVesselETADate(exportContainer.getVesselATADate().plusDays(-1));
+
+    LocalDateTime tempDateTime = LocalDateTime.from(exportContainer.getVesselATADate());
+    earlyEnrtyDate = tempDateTime.until(LocalDateTime.now(), ChronoUnit.DAYS);
 
     // Before Eta Date
     if (earlyEnrtyDate > 1) {
@@ -514,7 +517,7 @@ public class ContainerService {
         /**
          * Check if it is allowed for early entry
          */
-        if (!exportContainer.getSeq().equals("")) {
+        if (!(exportContainer.getExportID() == null)) {
           /**
            * check if container coming during early entry window.
            */

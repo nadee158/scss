@@ -2,6 +2,8 @@ package com.privasia.scss.gatein.controller;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.privasia.scss.common.dto.DamageCodeDTO;
 import com.privasia.scss.common.dto.ExportContainer;
 import com.privasia.scss.common.dto.GateInForm;
 import com.privasia.scss.common.dto.GateInfo;
@@ -99,12 +102,14 @@ public class GateInExpNormalController {
           case CONTINUE_BTN_PRESSED:
 
             String containerNoC1 = StringUtils.EMPTY;
-            if (!(f.getContainer1() == null || StringUtils.isEmpty(f.getContainer1().getContainerNumber()))) {
-              containerNoC1 = f.getContainer1().getContainerNumber();
+            if (!(f.getContainer1() == null
+                || StringUtils.isEmpty(f.getContainer1().getContainer().getContainerNumber()))) {
+              containerNoC1 = f.getContainer1().getContainer().getContainerNumber();
             }
             String containerNoC2 = StringUtils.EMPTY;
-            if (!(f.getContainer2() == null || StringUtils.isEmpty(f.getContainer2().getContainerNumber()))) {
-              containerNoC2 = f.getContainer1().getContainerNumber();
+            if (!(f.getContainer2() == null
+                || StringUtils.isEmpty(f.getContainer2().getContainer().getContainerNumber()))) {
+              containerNoC2 = f.getContainer1().getContainer().getContainerNumber();
             }
 
             c1 = findContainer(containerNoC1);
@@ -134,7 +139,7 @@ public class GateInExpNormalController {
               // no place to use this info - previously assigned to the UI form
               // SCUInfo scuInfo = cardService.selectSCUInfo(gateInInfo.getCardIdSeq());
               // no place to use this info - previously assigned to the UI form
-              //String laneNo = clientService.getLaneNo(gateInInfo.getClientId());
+              // String laneNo = clientService.getLaneNo(gateInInfo.getClientId());
 
               /**
                * Query Export Information
@@ -223,40 +228,25 @@ public class GateInExpNormalController {
   }
 
   private List<String> getClearedDamageCodes(ExportContainer c, String returnMessage, String returnedView) {
-    List<String> originalDamagedCodes = c.getDamage();
-    long duplicateCount =
-        originalDamagedCodes.stream().filter(i -> Collections.frequency(originalDamagedCodes, i) > 1).count();
+    List<DamageCodeDTO> damages = c.getDamages();
+    if (!(damages == null || damages.isEmpty())) {
 
-    if (duplicateCount == 0) {
-      return c.getDamage();
+      List<String> originalDamagedCodes =
+          damages.stream().map(DamageCodeDTO::getDamageCode).collect(Collectors.toList());
+
+      long duplicateCount =
+          originalDamagedCodes.stream().filter(i -> Collections.frequency(originalDamagedCodes, i) > 1).count();
+
+      if (duplicateCount == 0) {
+        return originalDamagedCodes;
+      }
+      List<String> clearedDamageCodes = originalDamagedCodes.stream()
+          .filter(i -> Collections.frequency(originalDamagedCodes, i) == 1).collect(Collectors.toList());
+      return clearedDamageCodes;
+
     }
-    List<String> clearedDamageCodes = originalDamagedCodes.stream()
-        .filter(i -> Collections.frequency(originalDamagedCodes, i) == 1).collect(Collectors.toList());
-    return clearedDamageCodes;
+    return null;
 
-//@formatter:off    
-//    List<String> clearedDamageCodes = new ArrayList<String>();
-    
-//    if (!(c.getDamage() == null || c.getDamage().isEmpty())) {
-//      for (String damage : c.getDamage()) {
-//
-//        if (StringUtils.isNotBlank(damage)) {
-//          if (clearedDamageCodes != null && clearedDamageCodes.size() > 0) {
-//            if (clearedDamageCodes.contains(damage)) {
-//              returnMessage = returnMessage + CommonUtil.formatMessageCode("ERR_MSG_089", new Object[] {"ExportContainer 1", damage});
-//              // session.setAttribute("f", f);
-//              returnedView = "VIEW.NORMAL";
-//            } else {
-//              clearedDamageCodes.add(damage);
-//            }
-//          } else {
-//            clearedDamageCodes.add(damage);
-//          }
-//        }
-//
-//      }
-//    }
-  //@formatter:on
   }
 
   private String checkIfDGContainer(ExportContainer c, String returnMessage) throws Exception {
@@ -273,7 +263,7 @@ public class GateInExpNormalController {
       /**
        * Step 1: Check if container 1 is a DG container
        */
-      if (StringUtils.isNotBlank(c.getIMDG())) {
+      if (StringUtils.isNotBlank(c.getImdg())) {
         /**
          * Step 1.5: Check if container 1 has approval to bypass
          */
@@ -285,8 +275,8 @@ public class GateInExpNormalController {
             /**
              * No approval from LPK
              */
-            returnMessage =
-                returnMessage + " DG container " + c.getContainerNumber() + " approval record not found<br/>";
+            returnMessage = returnMessage + " DG container " + c.getContainer().getContainerNumber()
+                + " approval record not found<br/>";
 
             c.setDgWithinWindowEntry(false);
 
@@ -300,7 +290,7 @@ public class GateInExpNormalController {
 
               returnMessage =
                   returnMessage + "Class 1 block. Please call supervisor for entry confirmation for container no:"
-                      + c.getContainerNumber();
+                      + c.getContainer().getContainerNumber();
 
               c.setDgWithinWindowEntry(false);
 
@@ -310,22 +300,23 @@ public class GateInExpNormalController {
                */
               // int hours = parseHoursToGateInForDG(f.getGoodsHdlDescC1());
               DGContDesc dgContDesc = new DGContDesc();
-              int hours = dgContDesc.parseHoursToGateInForDG(c.getGoodsHdlDesc());
+              int hours = dgContDesc.parseHoursToGateInForDG(c.getDgDescription());
 
-              Date newEta = getNewEta(c.getVesselDateEta());
-              Date allowedGateInDate = DateUtil.addHours(newEta, -hours);
-              Date now = new Date();
+              LocalDateTime newEta = getNewEta(c.getVesselETADate());
+              LocalDateTime allowedGateInDate = newEta.plusHours(-hours);
+              LocalDateTime now = LocalDateTime.now();
               // Class 2 block. CC not within TT hours allowed window (XX - YY)
-              if (now.before(allowedGateInDate) || now.after(newEta)) {
+              if (now.isBefore(allowedGateInDate) || now.isAfter(newEta)) {
 
-                returnMessage = returnMessage + "Class " + c.getKpaClass() + " block. " + c.getContainerNumber()
-                    + " not within " + hours + " hours allowed window (" + allowedGateInDate + " - " + newEta + ")";
+                returnMessage =
+                    returnMessage + "Class " + c.getKpaClass() + " block. " + c.getContainer().getContainerNumber()
+                        + " not within " + hours + " hours allowed window (" + allowedGateInDate + " - " + newEta + ")";
                 c.setDgWithinWindowEntry(false);
 
               } else {
 
-                returnMessage = returnMessage + "<div style='color: green;'>ExportContainer  " + c.getContainerNumber()
-                    + "  has arrived within the assigned entry slot</div>";
+                returnMessage = returnMessage + "<div style='color: green;'>ExportContainer  "
+                    + c.getContainer().getContainerNumber() + "  has arrived within the assigned entry slot</div>";
 
               }
 
@@ -333,14 +324,14 @@ public class GateInExpNormalController {
 
               int hours = 72;
 
-              Date newEta = getNewEta(c.getVesselDateEta());
-              Date allowedGateInDate = DateUtil.addHours(newEta, -hours);
-              Date now = new Date();
+              LocalDateTime newEta = getNewEta(c.getVesselETADate());
+              LocalDateTime allowedGateInDate = newEta.plusHours(-hours);
+              LocalDateTime now = LocalDateTime.now();
               // Class 2 block. CC not within TT hours allowed window (XX - YY)
-              if (now.before(allowedGateInDate) || now.after(newEta)) {
+              if (now.isBefore(allowedGateInDate) || now.isAfter(newEta)) {
                 if (c.isRegisteredInEarlyEntry()) {
 
-                  if (!c.isBypassEEntry()) {
+                  if (!c.isBypassDg()) {
                     /**
                      * did not tick bypass early entry window
                      */
@@ -357,9 +348,8 @@ public class GateInExpNormalController {
                       /**
                        * generate message for early entry window
                        */
-                      returnMessage = returnMessage
-                          + CommonUtil.formatMessageCode("ERR_MSG_101",
-                              new Object[] {c.getContainerNumber(), time.format(strtFullDate), time.format(edFullDate)})
+                      returnMessage = returnMessage + CommonUtil.formatMessageCode("ERR_MSG_101", new Object[] {
+                          c.getContainer().getContainerNumber(), time.format(strtFullDate), time.format(edFullDate)})
                           + ReturnMsg.SEPARATOR;
 
                       c.setDgWithinWindowEntry(false);
@@ -370,16 +360,15 @@ public class GateInExpNormalController {
                   /*
                    * did not register as early entry
                    */
-                  returnMessage =
-                      returnMessage + CommonUtil.formatMessageCode("ERR_MSG_094", new Object[] {c.getContainerNumber()})
-                          + ReturnMsg.SEPARATOR;
+                  returnMessage = returnMessage + CommonUtil.formatMessageCode("ERR_MSG_094",
+                      new Object[] {c.getContainer().getContainerNumber()}) + ReturnMsg.SEPARATOR;
                   c.setDgWithinWindowEntry(false);
                   // return mapping.findForward(VIEW.INPUT);
                 }
 
               } else {
-                returnMessage = returnMessage + "<div style='color: green;'>ExportContainer  " + c.getContainerNumber()
-                    + "  has arrived within the assigned entry slot</div>";
+                returnMessage = returnMessage + "<div style='color: green;'>ExportContainer  "
+                    + c.getContainer().getContainerNumber() + "  has arrived within the assigned entry slot</div>";
               }
             } // end of dg class type
           }
@@ -400,11 +389,11 @@ public class GateInExpNormalController {
     return dateTime.parse(startFullDate);
   }
 
-  private Date getNewEta(Date eta) throws ParseException {
+  private LocalDateTime getNewEta(LocalDateTime eta) throws ParseException {
     // SimpleDateFormat sdf_ddMMyyyyHHmmss = new SimpleDateFormat("ddMMyyyyHHmmss");
     // SimpleDateFormat out_msg = new SimpleDateFormat("dd/MM/yyyy HH:mm");
     // Date eta = sdf_ddMMyyyyHHmmss.parse(vesselDateEta);
-    return DateUtil.addHours(eta, 2);
+    return eta.plusHours(2l);
   }
 
   private String validateContainer(ExportContainer c, GateInfo gateInInfo) throws Exception {
@@ -415,12 +404,12 @@ public class GateInExpNormalController {
        * WPTSCSSSUP-163: check multiple booking
        */
       if (c.getTotalBooking() > 1) {
-        returnmsg +=
-            CommonUtil.formatMessageCode("ERR_MSG_095", new Object[] {c.getContainerNumber()}) + ReturnMsg.SEPARATOR;
+        returnmsg += CommonUtil.formatMessageCode("ERR_MSG_095", new Object[] {c.getContainer().getContainerNumber()})
+            + ReturnMsg.SEPARATOR;
       }
       if (!c.isBookingNoExist()) {
-        returnmsg +=
-            CommonUtil.formatMessageCode("ERR_MSG_015", new Object[] {c.getContainerNumber()}) + ReturnMsg.SEPARATOR;
+        returnmsg += CommonUtil.formatMessageCode("ERR_MSG_015", new Object[] {c.getContainer().getContainerNumber()})
+            + ReturnMsg.SEPARATOR;
       }
 
 
@@ -429,18 +418,21 @@ public class GateInExpNormalController {
 
       if (c.isInternalBlock()) {
         c.setInternalBlock(true);
-        returnmsg +=
-            CommonUtil.formatMessageCode("ERR_MSG_082", new Object[] {c.getContainerNumber(), c.getInternalBlockDesc()})
-                + ReturnMsg.SEPARATOR;
+        returnmsg += CommonUtil.formatMessageCode("ERR_MSG_082",
+            new Object[] {c.getContainer().getContainerNumber(), c.getInternalBlockDesc()}) + ReturnMsg.SEPARATOR;
       }
 
-      ExportSSR ssr = new ExportSSR("", c.getVesselDateEta_ddMMyyyyHHmmss());
-      c.setExpHasReplanSSR(ssr.getHasReplan());
-      c.setExpHasOverClosingSSR(ssr.getHasOverClosing());
+
+      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ddMMyyyyHHmmss");
+      String formatDateTime = c.getVesselETADate().format(formatter);
+
+      ExportSSR ssr = new ExportSSR("", formatDateTime);
+      c.setReplanSSR(Boolean.parseBoolean(ssr.getHasReplan()));
+      c.setOverClosingSSR(Boolean.parseBoolean(ssr.getHasOverClosing()));
       if (ssr.getSSRBlockStatus()) {
-        c.setExpSSRBlockStatus("BLK");
+        c.setSsrBlockStatus("BLK");
       } else {
-        c.setExpSSRBlockStatus("RLS");
+        c.setSsrBlockStatus("RLS");
       }
       if (StringUtils.isNotEmpty("")) {
         // c.setNetWeight(gateInInfo.getWeightBridge());
@@ -468,11 +460,11 @@ public class GateInExpNormalController {
           edFullDate = DateUtil.addDate(edFullDate, 1);
         }
         returnmsg += CommonUtil.formatMessageCode("ERR_MSG_100",
-            new Object[] {c.getContainerNumber(), time.format(strtFullDate), time.format(edFullDate)})
+            new Object[] {c.getContainer().getContainerNumber(), time.format(strtFullDate), time.format(edFullDate)})
             + ReturnMsg.SEPARATOR;
       } else {
-        returnmsg +=
-            CommonUtil.formatMessageCode("ERR_MSG_064", new Object[] {c.getContainerNumber()}) + ReturnMsg.SEPARATOR;
+        returnmsg += CommonUtil.formatMessageCode("ERR_MSG_064", new Object[] {c.getContainer().getContainerNumber()})
+            + ReturnMsg.SEPARATOR;
       }
     }
     return returnmsg;

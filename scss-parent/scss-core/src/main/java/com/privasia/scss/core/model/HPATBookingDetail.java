@@ -23,8 +23,12 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Type;
 import org.springframework.beans.BeanUtils;
 
+import com.privasia.scss.common.dto.CommonContainerDTO;
+import com.privasia.scss.common.dto.CommonSealDTO;
+import com.privasia.scss.common.dto.CommonSolasDTO;
 import com.privasia.scss.common.dto.ExportContainer;
 import com.privasia.scss.common.dto.ImportContainer;
+import com.privasia.scss.common.dto.SolasInfo;
 import com.privasia.scss.common.enums.BookingType;
 
 
@@ -285,14 +289,25 @@ public class HPATBookingDetail extends AuditEntity implements Serializable {
 
   public ExportContainer constructExportContainer() {
     ExportContainer exportContainer = new ExportContainer();
+    exportContainer.setContainer(new CommonContainerDTO());
+
     if (!(this.getSolas() == null)) {
-      exportContainer.setSolasInfo(this.getSolas().constructSolasInfo());
+      CommonSolasDTO commonSolasDTO = new CommonSolasDTO();
+      SolasInfo solasInfo = this.getSolas().constructSolasInfo();
+      commonSolasDTO.setFaLedgerCode(solasInfo.getFaLedgerCode());
+      commonSolasDTO.setMgw(solasInfo.getMgw());
+      commonSolasDTO.setShipperVGM(solasInfo.getShipperVGM());
+      commonSolasDTO.setSolasDetailID(solasInfo.getSolasDetailID());
+      commonSolasDTO.setSolasInstruction(solasInfo.getSolasInstruction());
+      commonSolasDTO.setSolasRefNumber(solasInfo.getSolasRefNumber());
+      exportContainer.setSolas(commonSolasDTO);
     }
-    exportContainer.setContainerNumber(containerNumber);
-    exportContainer.setExpSealNo01(expSealNo01);
-    exportContainer.setExpSealNo02(expSealNo02);
-    exportContainer.setContainerISO(containerISO);
-    exportContainer.setExpBookingNo(expBookingNo);
+    exportContainer.getContainer().setContainerNumber(containerNumber);
+    exportContainer.setSealAttribute(new CommonSealDTO());
+    exportContainer.getSealAttribute().setSeal01Number(expSealNo01);
+    exportContainer.getSealAttribute().setSeal02Number(expSealNo02);
+    exportContainer.getContainer().setContainerISOCode(containerISO);
+    exportContainer.setBookingNo(expBookingNo);
     return exportContainer;
   }
 

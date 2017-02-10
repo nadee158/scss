@@ -54,6 +54,21 @@ public class ModelMapConfig {
     modelMapper.addConverter(ModelMapEnumConverter.convertStringToContainerPosition());
     modelMapper.addConverter(ModelMapEnumConverter.convertContainerPositionToString());
 
+    modelMapper.addConverter(ModelMapEnumConverter.convertStringToExportOPTFlagType());
+    modelMapper.addConverter(ModelMapEnumConverter.convertExportOPTFlagTypeToString());
+    modelMapper.addConverter(ModelMapEnumConverter.convertStringToReferTempType());
+    modelMapper.addConverter(ModelMapEnumConverter.convertReferTempTypeToString());
+    modelMapper.addConverter(ModelMapEnumConverter.convertStringToVesselStatus());
+    modelMapper.addConverter(ModelMapEnumConverter.convertVesselStatusToString());
+    modelMapper.addConverter(ModelMapEnumConverter.convertStringToGCS_SSRBlockStatusType());
+    modelMapper.addConverter(ModelMapEnumConverter.convertGCS_SSRBlockStatusTypeToString());
+    modelMapper.addConverter(ModelMapEnumConverter.convertStringToHpatReferStatus());
+    modelMapper.addConverter(ModelMapEnumConverter.convertHpatReferStatusToString());
+    modelMapper.addConverter(ModelMapEnumConverter.convertStringToCardUsageStatus());
+    modelMapper.addConverter(ModelMapEnumConverter.convertCardUsageStatusToString());
+    modelMapper.addConverter(ModelMapEnumConverter.convertStringToSolasInstructionType());
+    modelMapper.addConverter(ModelMapEnumConverter.convertSolasInstructionTypeToString());
+
     return modelMapper;
   }
 

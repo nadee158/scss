@@ -65,7 +65,7 @@ public class XPathErrorReader {
       if (transactionDTO.getGateImpOrExp().equals("B")) {
         ExportContainer exportContainer01 = transactionDTO.getExportContainer01();
         if (!(exportContainer01 == null)) {
-          if (StringUtils.isNotBlank(exportContainer01.getContainerNumber())) {
+          if (StringUtils.isNotBlank(exportContainer01.getContainer().getContainerNumber())) {
             ExportContainer exportContainer02 = transactionDTO.getExportContainer02();
             if (exportContainer02 == null) {
               exportContainer02 = new ExportContainer();
@@ -76,7 +76,7 @@ public class XPathErrorReader {
         }
         ImportContainer importContainer01 = transactionDTO.getImportContainer01();
         if (!(importContainer01 == null)) {
-          if (importContainer01.getGatePassNo()!=null) {
+          if (importContainer01.getGatePassNo() != null) {
             ImportContainer importContainer02 = transactionDTO.getImportContainer01();
             if (importContainer02 == null) {
               importContainer02 = new ImportContainer();

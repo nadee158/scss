@@ -19,6 +19,7 @@ import com.privasia.scss.common.dto.GateInReponse;
 import com.privasia.scss.common.dto.GateInRequest;
 import com.privasia.scss.common.dto.GatePassValidateDTO;
 import com.privasia.scss.common.dto.ImportContainer;
+import com.privasia.scss.common.dto.ShipSCNDTO;
 import com.privasia.scss.core.exception.ResultsNotFoundException;
 import com.privasia.scss.core.model.Client;
 import com.privasia.scss.core.model.GatePass;
@@ -157,14 +158,14 @@ public class ImportGateInService {
   public List<ShipCode> checkContainer(List<ExportContainer> exportContainers) {
     if (!(exportContainers == null || exportContainers.isEmpty())) {
       List<String> shippingCodes =
-          exportContainers.stream().map(ExportContainer::getShipCode).collect(Collectors.toList());
+          exportContainers.stream().map(ExportContainer::getShipID).collect(Collectors.toList());
 
       Optional<List<ShipCode>> list = shipCodeRepository.findByShippingCodeIn(shippingCodes);
       if (list.isPresent()) {
         List<ShipCode> codes = list.orElse(null);
         for (ShipCode shipCode : codes) {
           for (ExportContainer item : exportContainers) {
-            if (StringUtils.equals(shipCode.getShippingCode(), item.getShipCode())) {
+            if (StringUtils.equals(shipCode.getShippingCode(), item.getShipID())) {
               item.setStoragePeriod(shipCode.getStoragePeriod());
             }
           }
@@ -177,13 +178,16 @@ public class ImportGateInService {
   }
 
   public void checkSCN(ExportContainer exportContainer) throws Exception {
-    Optional<ShipSCN> shipSCNOpt = shipSCNRepository.findByContainerNo(exportContainer.getContainerNumber());
+    Optional<ShipSCN> shipSCNOpt =
+        shipSCNRepository.findByContainerNo(exportContainer.getContainer().getContainerNumber());
     if (shipSCNOpt.isPresent()) {
       ShipSCN shipSCN = shipSCNOpt.orElse(null);
       if (!(shipSCN == null)) {
+        ShipSCNDTO shipSCNDTO = new ShipSCNDTO();
+        modelMapper.map(shipSCN, shipSCNDTO);
+        exportContainer.setScn(shipSCNDTO);
         exportContainer.setBypassEEntry(shipSCN.getScnByPass());
         exportContainer.setRegisteredInEarlyEntry(true);
-        exportContainer.setSeq(Long.toString(shipSCN.getShipSCNID()));
       }
     }
   }
