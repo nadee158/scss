@@ -28,7 +28,6 @@ import com.privasia.scss.core.repository.ClientRepository;
 import com.privasia.scss.core.repository.GatePassRepository;
 import com.privasia.scss.core.repository.ShipCodeRepository;
 import com.privasia.scss.core.repository.ShipSCNRepository;
-import com.privasia.scss.core.security.model.UserContext;
 import com.privasia.scss.opus.dto.OpusGateInReadRequest;
 import com.privasia.scss.opus.dto.OpusGateInReadResponse;
 import com.privasia.scss.opus.service.OpusGateInReadService;
@@ -112,8 +111,8 @@ public class ImportGateInService {
     gateInRequest.setLaneNo(client.getLaneNo());
 
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    UserContext userContext = (UserContext) authentication.getPrincipal();
-    gateInRequest.setUserName(userContext.getUsername());
+    // UserContext userContext = (UserContext) authentication.getPrincipal();
+    gateInRequest.setUserName((String) authentication.getPrincipal());
 
     // call opus -
     OpusGateInReadRequest gateInReadRequest = opusGateInReadService.constructOpenGateInRequest(gateInRequest);
@@ -143,7 +142,6 @@ public class ImportGateInService {
     List<ImportContainer> importContainers = new ArrayList<ImportContainer>();
     gatePassList.forEach(item -> {
       ImportContainer importContainer = new ImportContainer();
-
       modelMapper.map(item, importContainer);
 
       System.out.println("item " + item);

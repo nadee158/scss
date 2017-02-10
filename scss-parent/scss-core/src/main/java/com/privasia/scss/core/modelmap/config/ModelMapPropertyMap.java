@@ -5,6 +5,7 @@ package com.privasia.scss.core.modelmap.config;
 
 import org.modelmapper.PropertyMap;
 
+import com.privasia.scss.common.dto.ImportContainer;
 import com.privasia.scss.common.dto.KioskBoothRightsDTO;
 import com.privasia.scss.core.model.GatePass;
 import com.privasia.scss.core.model.KioskBoothRights;
@@ -65,6 +66,17 @@ public final class ModelMapPropertyMap {
         // gatePassStatus
         // gateInOut;
 
+      }
+    };
+
+  }
+
+  public static PropertyMap<GatePass, ImportContainer> gatePassToImportContainer() {
+
+    return new PropertyMap<GatePass, ImportContainer>() {
+      protected void configure() {
+        map().setCompany(source.getCompany().getCompanyID());
+        map().getBaseCommonGateInOutAttribute().setCard(source.getBaseCommonGateInOutAttribute().getCard().getCardID());
       }
     };
 
