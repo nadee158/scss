@@ -15,32 +15,25 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.privasia.scss.common.dto.CommonContainerDTO;
 import com.privasia.scss.common.dto.ExportContainer;
 import com.privasia.scss.common.dto.GateInReponse;
 import com.privasia.scss.common.dto.GateInRequest;
 import com.privasia.scss.common.dto.GatePassValidateDTO;
 import com.privasia.scss.common.dto.ImportContainer;
-import com.privasia.scss.common.util.CommonUtil;
-import com.privasia.scss.core.exception.BusinessException;
+
 import com.privasia.scss.core.exception.ResultsNotFoundException;
 import com.privasia.scss.core.model.Client;
 import com.privasia.scss.core.model.GatePass;
 import com.privasia.scss.core.model.ShipCode;
 import com.privasia.scss.core.model.ShipSCN;
-import com.privasia.scss.core.model.SystemUser;
 import com.privasia.scss.core.repository.ClientRepository;
 import com.privasia.scss.core.repository.GatePassRepository;
 import com.privasia.scss.core.repository.ShipCodeRepository;
 import com.privasia.scss.core.repository.ShipSCNRepository;
-import com.privasia.scss.core.repository.SystemUserRepository;
 import com.privasia.scss.core.security.model.UserContext;
-import com.privasia.scss.core.security.util.SecurityHelper;
 import com.privasia.scss.opus.dto.OpusGateInReadRequest;
 import com.privasia.scss.opus.dto.OpusGateInReadResponse;
-import com.privasia.scss.opus.dto.OpusImportContainer;
 import com.privasia.scss.opus.service.OpusGateInReadService;
-import com.privasia.scss.opus.service.OpusService;
 
 @Service("importGateInService")
 public class ImportGateInService {
@@ -48,8 +41,6 @@ public class ImportGateInService {
 	private GatePassRepository gatePassRepository;
 
 	private ModelMapper modelMapper;
-
-	private OpusService opusService;
 
 	private OpusGateInReadService opusGateInReadService;
 
@@ -67,11 +58,6 @@ public class ImportGateInService {
 	@Autowired
 	public void setModelMapper(ModelMapper modelMapper) {
 		this.modelMapper = modelMapper;
-	}
-
-	@Autowired
-	public void setOpusService(OpusService opusService) {
-		this.opusService = opusService;
 	}
 
 	@Autowired
@@ -105,6 +91,8 @@ public class ImportGateInService {
 			gatePassNumberList.add(gateInRequest.getGatePass2());
 		}
 		List<ImportContainer> importContainers = fetchContainerInfo(gatePassNumberList);
+		
+		//check for hpab booking
 
 		importContainers.forEach(importContainer -> {
 			GatePassValidateDTO gatePassValidateDTO = validateGatePass(gateInRequest.getCardID(),
@@ -157,9 +145,9 @@ public class ImportGateInService {
 		List<GatePass> gatePassList = optionalGatePassList.orElseThrow(() -> new ResultsNotFoundException(
 				"No Import Containers could be found for the given Gate Pass Numbers!"));
 		List<ImportContainer> importContainers = new ArrayList<ImportContainer>();
-		gatePassList.forEach(item -> {
+		gatePassList.forEach(gatePass -> {
 			ImportContainer importContainer = new ImportContainer();
-			modelMapper.map(item, importContainer);
+			modelMapper.map(gatePass, importContainer);
 			importContainers.add(importContainer);
 		});
 		return importContainers;
