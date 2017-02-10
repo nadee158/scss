@@ -13,7 +13,6 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
-import com.privasia.scss.core.config.PersistenceContext;
 import com.privasia.scss.core.config.SCSSEntryPoint;
 import com.privasia.scss.cosmos.AS400DBConfig;
 
@@ -24,11 +23,11 @@ import com.privasia.scss.cosmos.AS400DBConfig;
 
 @Configuration
 @EnableAutoConfiguration
-@ComponentScan(
-    basePackages = {"com.privasia.scss.hdbs.*", "com.privasia.scss.cosmos.*", "com.privasia.scss.hpat.*", 
-    					"com.privasia.scss.gatein.*", "com.privasia.scss.core.model"})
+@ComponentScan(basePackages = {"com.privasia.scss.hdbs.*", "com.privasia.scss.cosmos.*", "com.privasia.scss.hpat.*",
+    "com.privasia.scss.gatein.*", "com.privasia.scss.core.*", "com.privasia.scss.opus.*", "com.privasia.scss.etpws.*"})
 @EntityScan(basePackages = {"com.privasia.scss.core.model"})
-@PropertySource(value = {"classpath:cosmos_application.properties", "classpath:cosmos_sql-dev.properties"})
+@PropertySource(value = {"classpath:cosmos_application.properties", "classpath:cosmos_sql-dev.properties",
+    "classpath:opus_application.properties"})
 @Import({AS400DBConfig.class, SCSSEntryPoint.class})
 @EnableJpaRepositories(basePackages = {"com.privasia.scss.core.repository"})
 public class GateInEntryPoint extends SpringBootServletInitializer {
@@ -36,7 +35,7 @@ public class GateInEntryPoint extends SpringBootServletInitializer {
   public static void main(String[] args) {
     SpringApplication.run(GateInEntryPoint.class, args);
   }
-  
+
   @Bean
   public static PropertySourcesPlaceholderConfigurer propertyConfig() {
     return new PropertySourcesPlaceholderConfigurer();
