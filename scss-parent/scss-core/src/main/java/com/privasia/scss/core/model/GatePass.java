@@ -87,9 +87,13 @@ public class GatePass extends AuditEntity implements Serializable {
       @AttributeOverride(name = "timeGateInOk", column = @Column(name = "GTP_TIMEGATEINOK")),
       @AttributeOverride(name = "timeGateOut", column = @Column(name = "GTP_TIMEGATEOUT")),
       @AttributeOverride(name = "timeGateOutOk", column = @Column(name = "GTP_TIMEGATEOUTOK")),
-      @AttributeOverride(name = "timeGateOutBooth", column = @Column(name = "GTP_TIMEGATEOUT_BOOTH")),
-      @AttributeOverride(name = "gateOutBoothClerk", column = @Column(name = "GTP_GATEOUT_BOOTH_CLERKID"))})
+      @AttributeOverride(name = "timeGateOutBooth", column = @Column(name = "GTP_TIMEGATEOUT_BOOTH"))})
+  // @AttributeOverride(name = "gateOutBoothClerk", column = @Column(name =
+  // "GTP_GATEOUT_BOOTH_CLERKID"))})
   @AssociationOverrides({
+      @AssociationOverride(name = "gateOutBoothClerk",
+          joinColumns = @JoinColumn(name = "GTP_GATEOUT_BOOTH_CLERKID", referencedColumnName = "SYS_USERID_SEQ",
+              nullable = true)),
       @AssociationOverride(name = "card",
           joinColumns = @JoinColumn(name = "GTP_HCTDID", referencedColumnName = "CRD_CARDID_SEQ", nullable = true)),
       @AssociationOverride(name = "gateInClerk",
@@ -187,11 +191,11 @@ public class GatePass extends AuditEntity implements Serializable {
 
   @Column(name = "IS_RETRIEVED_COSMOS", columnDefinition = "TINYINT")
   @Type(type = "org.hibernate.type.NumericBooleanType")
-  private boolean retrievedCosmos;
+  private Boolean retrievedCosmos;
 
   @Column(name = "IS_CHANGE_SEAL", columnDefinition = "TINYINT")
   @Type(type = "org.hibernate.type.NumericBooleanType")
-  private boolean sealChange;
+  private Boolean sealChange;
 
   @Column(name = "FORCED_SEAL")
   @Type(type = "yes_no")
@@ -421,20 +425,25 @@ public class GatePass extends AuditEntity implements Serializable {
     this.cosmosSeal02Number = cosmosSeal02Number;
   }
 
-  public boolean isRetrievedCosmos() {
+
+  public Boolean getRetrievedCosmos() {
     return retrievedCosmos;
   }
 
-  public void setRetrievedCosmos(boolean retrievedCosmos) {
+  public void setRetrievedCosmos(Boolean retrievedCosmos) {
     this.retrievedCosmos = retrievedCosmos;
   }
 
-  public boolean isSealChange() {
+  public Boolean getSealChange() {
     return sealChange;
   }
 
-  public void setSealChange(boolean sealChange) {
+  public void setSealChange(Boolean sealChange) {
     this.sealChange = sealChange;
+  }
+
+  public static long getSerialversionuid() {
+    return serialVersionUID;
   }
 
   public Boolean getForcedSeal() {

@@ -4,6 +4,7 @@ import javax.xml.bind.JAXBElement;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 import org.springframework.ws.client.core.support.WebServiceGatewaySupport;
 import org.springframework.ws.soap.client.core.SoapActionCallback;
 
@@ -11,7 +12,7 @@ import com.privasia.scss.etpws.service.EdoExpiryForLineRequestType;
 import com.privasia.scss.etpws.service.EdoExpiryForLineResponseType;
 import com.privasia.scss.etpws.service.ObjectFactory;
 
-
+@Service(value = "etpWebserviceClient")
 public class ETPWebserviceClient extends WebServiceGatewaySupport {
 
   private static final Logger log = Logger.getLogger(ETPWebserviceClient.class);
