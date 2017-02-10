@@ -32,7 +32,6 @@ import com.privasia.scss.core.security.model.UserContext;
 import com.privasia.scss.opus.dto.OpusGateInReadRequest;
 import com.privasia.scss.opus.dto.OpusGateInReadResponse;
 import com.privasia.scss.opus.service.OpusGateInReadService;
-import com.privasia.scss.opus.service.OpusService;
 
 @Service("importGateInService")
 public class ImportGateInService {
@@ -146,6 +145,7 @@ public class ImportGateInService {
       ImportContainer importContainer = new ImportContainer();
 
       modelMapper.map(item, importContainer);
+
       System.out.println("item " + item);
       System.out.println("importContainer " + importContainer);
 
