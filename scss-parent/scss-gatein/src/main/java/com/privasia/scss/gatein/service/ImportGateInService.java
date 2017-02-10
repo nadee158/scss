@@ -41,8 +41,6 @@ public class ImportGateInService {
 
   private ModelMapper modelMapper;
 
-  private OpusService opusService;
-
   private OpusGateInReadService opusGateInReadService;
 
   private ClientRepository clientRepository;
@@ -59,11 +57,6 @@ public class ImportGateInService {
   @Autowired
   public void setModelMapper(ModelMapper modelMapper) {
     this.modelMapper = modelMapper;
-  }
-
-  @Autowired
-  public void setOpusService(OpusService opusService) {
-    this.opusService = opusService;
   }
 
   @Autowired
