@@ -58,7 +58,7 @@ public class OpusGateInReadService {
   }
 
   public OpusGateInReadResponse getGateInReadResponse(OpusGateInReadRequest opusGateInReadRequest) {
-
+    System.out.println("gateInReadResponseURL " + gateInReadResponseURL);
     RestTemplate restTemplate = new RestTemplate();
     HttpHeaders headers = new HttpHeaders();
 

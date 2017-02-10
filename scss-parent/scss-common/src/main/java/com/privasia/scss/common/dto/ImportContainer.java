@@ -606,5 +606,29 @@ public class ImportContainer implements Serializable {
     this.damageCodeInfo = damageCodeInfo;
   }
 
+  @Override
+  public String toString() {
+    return "ImportContainer [gatePassID=" + gatePassID + ", gatePassNo=" + gatePassNo + ", gateOrderNo=" + gateOrderNo
+        + ", container=" + container + ", company=" + company + ", commonGateInOut=" + commonGateInOut
+        + ", baseCommonGateInOutAttribute=" + baseCommonGateInOutAttribute + ", gatePassStatus=" + gatePassStatus
+        + ", handlingID=" + handlingID + ", orderNo=" + orderNo + ", gateInOut=" + gateInOut + ", line=" + line
+        + ", currentPosition=" + currentPosition + ", containerPosition=" + containerPosition + ", gateInLaneNo="
+        + gateInLaneNo + ", gateOutLaneNo=" + gateOutLaneNo + ", sealAttribute=" + sealAttribute + ", gateOutRemarks="
+        + gateOutRemarks + ", yardPosition=" + yardPosition + ", bayCode=" + bayCode + ", callCard=" + callCard
+        + ", cosmosSeal01Origin=" + cosmosSeal01Origin + ", cosmosSeal01Type=" + cosmosSeal01Type
+        + ", cosmosSeal01Number=" + cosmosSeal01Number + ", cosmosSeal02Origin=" + cosmosSeal02Origin
+        + ", cosmosSeal02Type=" + cosmosSeal02Type + ", cosmosSeal02Number=" + cosmosSeal02Number
+        + ", gatePassValidDate=" + gatePassValidDate + ", isoInfo=" + isoInfo + ", agentCode=" + agentCode
+        + ", orderFOT=" + orderFOT + ", userSessionId=" + userSessionId + ", printEIRNo=" + printEIRNo
+        + ", acceptOrReject=" + acceptOrReject + ", cugId=" + cugId + ", operationReefer=" + operationReefer + ", temp="
+        + temp + ", tempUnit=" + tempUnit + ", imdg=" + imdg + ", unc=" + unc + ", oogoh=" + oogoh + ", oogol=" + oogol
+        + ", oogof=" + oogof + ", oogoa=" + oogoa + ", oogor=" + oogor + ", FOTBKGFlag=" + FOTBKGFlag + ", netWeight="
+        + netWeight + ", containerType=" + containerType + ", errXMLMsg=" + errXMLMsg + ", contRefer=" + contRefer
+        + ", containerDischargeDateTime=" + containerDischargeDateTime + ", impCarrierType=" + impCarrierType
+        + ", impCarrier=" + impCarrier + ", vesselCode=" + vesselCode + ", vesselVoyage=" + vesselVoyage + ", visitId="
+        + visitId + ", vesselScn=" + vesselScn + ", vesselName=" + vesselName + ", vesselATA=" + vesselATA
+        + ", damageCodeInfo=" + damageCodeInfo + "]";
+  }
+
 
 }
