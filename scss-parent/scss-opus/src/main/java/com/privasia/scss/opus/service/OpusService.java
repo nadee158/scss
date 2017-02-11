@@ -123,6 +123,8 @@ public class OpusService {
       opusImportContainer.setContainerShippingLine(importContainer.getLine());
       opusImportContainer.setContainerType(importContainer.getContainerType());
       opusImportContainer.setCurrentYardPosition(importContainer.getYardPosition());
+      opusImportContainer.setRtgExecustionDateTime(getJsonDateFromDate(importContainer.getRtgExecustionDateTime()));
+      opusImportContainer.setRtgExecustionStatus(importContainer.getRtgExecustionStatus());
       return opusImportContainer;
     }
     return null;
@@ -156,6 +158,9 @@ public class OpusService {
       importContainer.setYardPosition(opusImportContainer.getCurrentYardPosition());
       importContainer.setContainer(commonContainerDTO);
 
+      importContainer.setRtgExecustionDateTime(getLocalDategFromString(opusImportContainer.getRtgExecustionDateTime()));
+      importContainer.setRtgExecustionStatus(opusImportContainer.getRtgExecustionStatus());
+
     }
     return importContainer;
   }
@@ -165,8 +170,10 @@ public class OpusService {
     opusExporterContainer.setExportBookingNo(exportContainer.getBookingNo());
     opusExporterContainer.setContainerInOrOut(exportContainer.getGateInOut());
     opusExporterContainer.setContainerShippingLine(exportContainer.getShippingLine());
-    opusExporterContainer.setSubHandlingType(exportContainer.getSubType());
+    opusExporterContainer.setSubHandlingType(exportContainer.getSubHandlingType());
     opusExporterContainer.setExpCarrierType(exportContainer.getExpCarrierType());
+    opusExporterContainer.setRtgExecustionDateTime(getJsonDateFromDate(exportContainer.getRtgExecustionDateTime()));
+    opusExporterContainer.setRtgExecustionStatus(exportContainer.getRtgExecustionStatus());
     opusExporterContainer.setExpCarrier(exportContainer.getExpCar());
     opusExporterContainer.setVesselCode(exportContainer.getVesselCode());
     opusExporterContainer.setVesselVoyage(exportContainer.getVesselVoyage());
@@ -248,7 +255,10 @@ public class OpusService {
         // private String containerFullOrEmpty;// F,
         containerDTO.setContainerFullOrEmpty(opusExporterContainer.getContainerFullOrEmpty());
         // private String subHandlingType;// null,
-        exportContainer.setSubType(opusExporterContainer.getSubHandlingType());
+        exportContainer.setSubHandlingType(opusExporterContainer.getSubHandlingType());
+        exportContainer
+            .setRtgExecustionDateTime(getLocalDategFromString(opusExporterContainer.getRtgExecustionDateTime()));
+        exportContainer.setRtgExecustionStatus(opusExporterContainer.getRtgExecustionStatus());
         // private String expCarrierType;// null,
         exportContainer.setExpCarrierType(opusExporterContainer.getExpCarrierType());
         // private String expCarrier;// null,

@@ -1,6 +1,7 @@
 package com.privasia.scss.common.dto;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 public class ImportContainer implements Serializable {
 
@@ -125,6 +126,25 @@ public class ImportContainer implements Serializable {
   private String vesselATA;// 20161124161800
 
   private DamageCodeInfo damageCodeInfo;
+
+  private String rtgExecustionStatus;// ":"RGS"
+  private LocalDateTime rtgExecustionDateTime;// ;":"20161212101010"
+
+  public String getRtgExecustionStatus() {
+    return rtgExecustionStatus;
+  }
+
+  public void setRtgExecustionStatus(String rtgExecustionStatus) {
+    this.rtgExecustionStatus = rtgExecustionStatus;
+  }
+
+  public LocalDateTime getRtgExecustionDateTime() {
+    return rtgExecustionDateTime;
+  }
+
+  public void setRtgExecustionDateTime(LocalDateTime rtgExecustionDateTime) {
+    this.rtgExecustionDateTime = rtgExecustionDateTime;
+  }
 
   public Long getGatePassID() {
     return gatePassID;
@@ -628,6 +648,21 @@ public class ImportContainer implements Serializable {
         + ", impCarrier=" + impCarrier + ", vesselCode=" + vesselCode + ", vesselVoyage=" + vesselVoyage + ", visitId="
         + visitId + ", vesselScn=" + vesselScn + ", vesselName=" + vesselName + ", vesselATA=" + vesselATA
         + ", damageCodeInfo=" + damageCodeInfo + "]";
+  }
+
+  public static ImportContainer emptyImportContainer() {
+    ImportContainer importContainer = new ImportContainer();
+    importContainer.setContainer(new CommonContainerDTO());
+    importContainer.getContainer().setContainerNumber("FSCU8145801");
+    importContainer.getContainer().setContainerFullOrEmpty("E");
+    importContainer.setSealAttribute(new CommonSealDTO());
+    importContainer.getSealAttribute().setSeal01Number("SL191");
+    importContainer.getSealAttribute().setSeal01Origin("C");
+    importContainer.getSealAttribute().setSeal02Number("SL192");
+    importContainer.getSealAttribute().setSeal02Origin("C");
+    importContainer.setRtgExecustionDateTime(LocalDateTime.now());
+    importContainer.setRtgExecustionStatus("RGS");
+    return importContainer;
   }
 
 

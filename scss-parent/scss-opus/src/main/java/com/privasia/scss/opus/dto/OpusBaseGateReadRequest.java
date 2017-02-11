@@ -21,6 +21,7 @@ public class OpusBaseGateReadRequest implements Serializable {
   private String containerNo1ImportCFS;// "
   private String containerNo2ImportCFS;// "
 
+
   public String getUserID() {
     return userID;
   }

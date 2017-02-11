@@ -25,6 +25,25 @@ public class OpusImportContainer {
   private String vesselName;// AL NEFUD,
   private String vesselATA;// 20161124161800
 
+  private String rtgExecustionStatus;// ":"RGS"
+  private String rtgExecustionDateTime;// ;":"20161212101010"
+
+  public String getRtgExecustionStatus() {
+    return rtgExecustionStatus;
+  }
+
+  public void setRtgExecustionStatus(String rtgExecustionStatus) {
+    this.rtgExecustionStatus = rtgExecustionStatus;
+  }
+
+  public String getRtgExecustionDateTime() {
+    return rtgExecustionDateTime;
+  }
+
+  public void setRtgExecustionDateTime(String rtgExecustionDateTime) {
+    this.rtgExecustionDateTime = rtgExecustionDateTime;
+  }
+
   public String getContainerNo() {
     return containerNo;
   }
@@ -188,7 +207,8 @@ public class OpusImportContainer {
         + containerDischargeDateTime + ", currentYardPosition=" + currentYardPosition + ", impCarrierType="
         + impCarrierType + ", impCarrier=" + impCarrier + ", vesselCode=" + vesselCode + ", vesselVoyage="
         + vesselVoyage + ", visitId=" + visitId + ", vesselScn=" + vesselScn + ", vesselName=" + vesselName
-        + ", vesselATA=" + vesselATA + "]";
+        + ", vesselATA=" + vesselATA + ", rtgExecustionStatus=" + rtgExecustionStatus + ", rtgExecustionDateTime="
+        + rtgExecustionDateTime + "]";
   }
 
 

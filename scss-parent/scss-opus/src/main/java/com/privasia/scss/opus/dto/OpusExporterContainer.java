@@ -71,6 +71,9 @@ public class OpusExporterContainer {
   private String vgmNetWeight;//
   private String vgmVerificationDatetime;//
 
+  private String rtgExecustionStatus;// ":"RGS"
+  private String rtgExecustionDateTime;// ;":"20161212101010"
+
   public String getContainerDamageCode1() {
     return containerDamageCode1;
   }
@@ -557,6 +560,22 @@ public class OpusExporterContainer {
     this.containerHeight = containerHeight;
   }
 
+  public String getRtgExecustionStatus() {
+    return rtgExecustionStatus;
+  }
+
+  public void setRtgExecustionStatus(String rtgExecustionStatus) {
+    this.rtgExecustionStatus = rtgExecustionStatus;
+  }
+
+  public String getRtgExecustionDateTime() {
+    return rtgExecustionDateTime;
+  }
+
+  public void setRtgExecustionDateTime(String rtgExecustionDateTime) {
+    this.rtgExecustionDateTime = rtgExecustionDateTime;
+  }
+
   @Override
   public String toString() {
     return "OpusExporterContainer [containerNo=" + containerNo + ", exportBookingNo=" + exportBookingNo
@@ -584,7 +603,8 @@ public class OpusExporterContainer {
         + ", containerHasOCSSR=" + containerHasOCSSR + ", containerHasRPSSR=" + containerHasRPSSR + ", vgmType="
         + vgmType + ", vgmWeighingStation=" + vgmWeighingStation + ", vgmWitnessName=" + vgmWitnessName
         + ", vgmWitnessID=" + vgmWitnessID + ", vgmRefNo=" + vgmRefNo + ", vgmMGW=" + vgmMGW + ", vgmNetWeight="
-        + vgmNetWeight + ", vgmVerificationDatetime=" + vgmVerificationDatetime + "]";
+        + vgmNetWeight + ", vgmVerificationDatetime=" + vgmVerificationDatetime + ", rtgExecustionStatus="
+        + rtgExecustionStatus + ", rtgExecustionDateTime=" + rtgExecustionDateTime + "]";
   }
 
   public static List<OpusExporterContainer> constructGIW01RequestTestList() {

@@ -274,6 +274,10 @@ public class ExportContainer {
 
   private String shippingLine;
 
+  private String subHandlingType;// ":"1"
+  private String rtgExecustionStatus;// ":"RGS"
+  private LocalDateTime rtgExecustionDateTime;// ;":"20161212101010"
+
   //////////////////////////////////////
 
 
@@ -1330,6 +1334,31 @@ public class ExportContainer {
     this.shippingLine = shippingLine;
   }
 
+  public String getSubHandlingType() {
+    return subHandlingType;
+  }
+
+  public void setSubHandlingType(String subHandlingType) {
+    this.subHandlingType = subHandlingType;
+  }
+
+  public String getRtgExecustionStatus() {
+    return rtgExecustionStatus;
+  }
+
+  public void setRtgExecustionStatus(String rtgExecustionStatus) {
+    this.rtgExecustionStatus = rtgExecustionStatus;
+  }
+
+
+  public LocalDateTime getRtgExecustionDateTime() {
+    return rtgExecustionDateTime;
+  }
+
+  public void setRtgExecustionDateTime(LocalDateTime rtgExecustionDateTime) {
+    this.rtgExecustionDateTime = rtgExecustionDateTime;
+  }
+
   @Override
   public String toString() {
     return "ExportContainer [exportID=" + exportID + ", container=" + container + ", commonGateInOut=" + commonGateInOut
@@ -1361,6 +1390,25 @@ public class ExportContainer {
         + ", tireWeight=" + tireWeight + ", variance=" + variance + ", subType=" + subType + ", withinTolerance="
         + withinTolerance + ", calculatedVariance=" + calculatedVariance + ", solasCertNo=" + solasCertNo + ", solas="
         + solas + "]";
+  }
+
+  public static ExportContainer emptyExportContainer() {
+    // TODO Auto-generated method stub
+    // "containerNo":"WANG0000112"
+    // ,"exportBookingNo":"BKG193"
+    // ,"containerFullOrEmpty":"E"
+    // ,"subHandlingType":"1"
+    // ,"rtgExecustionStatus":"RGS"
+    // ,"rtgExecustionDateTime":"20161212101010"
+    ExportContainer exportContainer = new ExportContainer();
+    exportContainer.setContainer(new CommonContainerDTO());
+    exportContainer.getContainer().setContainerNumber("WANG0000112");
+    exportContainer.setBookingNo("BKG193");
+    exportContainer.getContainer().setContainerFullOrEmpty("E");
+    exportContainer.setSubHandlingType("1");
+    exportContainer.setRtgExecustionDateTime(LocalDateTime.now());
+    exportContainer.setRtgExecustionStatus("RGS");
+    return exportContainer;
   }
 
 

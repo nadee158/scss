@@ -6,22 +6,23 @@ public class OpusGateOutWriteRequest extends OpusBaseGateWriteRequest implements
 
   private static final long serialVersionUID = 1L;
 
-  private long gateOUTDateTime;// "20161219100000"
+  private String gateOUTDateTime;// "20161219100000"
 
-  public long getGateOUTDateTime() {
+
+
+  public String getGateOUTDateTime() {
     return gateOUTDateTime;
   }
 
-  public void setGateOUTDateTime(long gateOUTDateTime) {
+  public void setGateOUTDateTime(String gateOUTDateTime) {
     this.gateOUTDateTime = gateOUTDateTime;
   }
-
 
   public static OpusGateOutWriteRequest constructObjectWithTestValues() {
     OpusGateOutWriteRequest giw01Request = new OpusGateOutWriteRequest();
     giw01Request.setExportContainerListCFS(null);
     giw01Request.setExportContainerListCY(OpusExporterContainer.constructGIW01RequestTestList());
-    giw01Request.setGateOUTDateTime(20161219100000l);
+    giw01Request.setGateOUTDateTime("20161219100000l");
     giw01Request.setHaulageCode("HAN");
     giw01Request.setImportContainerListCFS(null);
     giw01Request.setImportContainerListCY(null);

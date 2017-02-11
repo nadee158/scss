@@ -22,11 +22,11 @@ import com.privasia.scss.cosmos.AS400DBConfig;
  */
 @Configuration
 @EnableAutoConfiguration
-@ComponentScan(
-    basePackages = {"com.privasia.scss.cosmos.*", "com.privasia.scss.gateout.*", "com.privasia.scss.core.model"})
+@ComponentScan(basePackages = {"com.privasia.scss.cosmos.*", "com.privasia.scss.gateout.*", "com.privasia.scss.core.*",
+    "com.privasia.scss.opus.*", "com.privasia.scss.etpws.*"})
 @EntityScan(basePackages = {"com.privasia.scss.core.model"})
 @PropertySource(value = {"classpath:mongodb.properties", "classpath:cosmos_application.properties",
-    "classpath:cosmos_sql-dev.properties"})
+    "classpath:cosmos_sql-dev.properties", "classpath:opus_application.properties"})
 @Import({AS400DBConfig.class, SCSSEntryPoint.class})
 @EnableJpaRepositories(basePackages = {"com.privasia.scss.core.repository"})
 public class GateOutEntryPoint extends SpringBootServletInitializer {
