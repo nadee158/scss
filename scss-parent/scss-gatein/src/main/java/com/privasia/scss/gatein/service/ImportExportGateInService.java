@@ -15,12 +15,14 @@ import com.privasia.scss.common.dto.GateInReponse;
 import com.privasia.scss.common.dto.GateInRequest;
 import com.privasia.scss.common.dto.GateInWriteRequest;
 import com.privasia.scss.common.dto.ImportContainer;
+import com.privasia.scss.core.exception.BusinessException;
 import com.privasia.scss.opus.dto.OpusGateInReadRequest;
 import com.privasia.scss.opus.dto.OpusGateInReadResponse;
 import com.privasia.scss.opus.dto.OpusGateInWriteRequest;
 import com.privasia.scss.opus.dto.OpusGateInWriteResponse;
 import com.privasia.scss.opus.service.OpusGateInReadService;
 import com.privasia.scss.opus.service.OpusGateInWriteService;
+import com.privasia.scss.opus.service.OpusService;
 
 @Service("importExportGateInService")
 public class ImportExportGateInService {
@@ -83,9 +85,23 @@ public class ImportExportGateInService {
     return gateInReponse;
   }
 
+  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
   public GateInReponse saveGateInInfo(GateInWriteRequest gateInWriteRequest) {
     List<ImportContainer> importContainers = null;
     List<ExportContainer> exportContainers = null;
+
+    // call opus -
+    OpusGateInWriteRequest opusGateInWriteRequest =
+        opusGateInWriteService.constructOpusGateInWriteRequest(gateInWriteRequest);
+    OpusGateInWriteResponse opusGateInWriteResponse =
+        opusGateInWriteService.getGateInWriteResponse(opusGateInWriteRequest);
+
+    String errorMessage = OpusService.hasErrorMessage(opusGateInWriteResponse.getErrorList());
+    if (StringUtils.isNotEmpty(errorMessage)) {
+      // throw new business exception with constructed message - there is an error
+      throw new BusinessException(errorMessage);
+    }
+
     if (!(gateInWriteRequest.getExportContainers() == null || gateInWriteRequest.getExportContainers().isEmpty())) {
       exportContainers = exportGateInService.saveGateInInfo(gateInWriteRequest);
     }
@@ -94,15 +110,12 @@ public class ImportExportGateInService {
       importContainers = importGateInService.saveGateInInfo(gateInWriteRequest);
     }
 
-    // call opus -
-    OpusGateInWriteRequest opusGateInWriteRequest =
-        opusGateInWriteService.constructOpusGateInWriteRequest(gateInWriteRequest);
-    OpusGateInWriteResponse opusGateInWriteResponse =
-        opusGateInWriteService.getGateInWriteResponse(opusGateInWriteRequest);
     GateInReponse gateInReponse = new GateInReponse();
     gateInReponse.setImportContainers(importContainers);
     gateInReponse.setExportContainers(exportContainers);
     gateInReponse = opusGateInWriteService.constructGateInReponse(opusGateInWriteResponse, gateInReponse);
+
+
     return gateInReponse;
   }
 

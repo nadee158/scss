@@ -17,6 +17,7 @@ import com.privasia.scss.common.dto.CommonSealDTO;
 import com.privasia.scss.common.dto.DamageCodeDTO;
 import com.privasia.scss.common.dto.ExportContainer;
 import com.privasia.scss.common.dto.ImportContainer;
+import com.privasia.scss.opus.dto.ErrorListItem;
 import com.privasia.scss.opus.dto.OpusExporterContainer;
 import com.privasia.scss.opus.dto.OpusImportContainer;
 
@@ -24,6 +25,9 @@ import com.privasia.scss.opus.dto.OpusImportContainer;
 public class OpusService {
 
   private static final Logger log = LoggerFactory.getLogger(OpusService.class);
+
+  private static final String EMPTY_SPACE = StringUtils.EMPTY;
+  private static final String SEPERATOR = ",";
 
 
   public static String getJsonDateFromDate(LocalDateTime localDateTime) {
@@ -398,6 +402,32 @@ public class OpusService {
   private static String getDamageCodeFromObject(DamageCodeDTO damageCode) {
     if (!(damageCode == null)) {
       return damageCode.getDamageCode();
+    }
+    return null;
+  }
+
+
+  public static String hasErrorMessage(List<ErrorListItem> errorList) {
+    // String hasErrorMessage(List<Error>) in opus service
+    // check if error list object is empty
+    if (!(errorList == null || errorList.isEmpty())) {
+      StringBuilder sb = new StringBuilder("");
+      // if not empty construct error string
+      // container number + error description, other eg:- NH161219003 There does no Truck In plan
+      // for
+      errorList.forEach(error -> {
+        sb.append(EMPTY_SPACE).append(error.getContainerNo()).append(EMPTY_SPACE).append(error.getErrorDescription())
+            .append(SEPERATOR);
+      });
+      String errorMessage = sb.toString();
+      if (errorMessage.startsWith(EMPTY_SPACE)) {
+        errorMessage = errorMessage.substring(1, errorMessage.length());
+      }
+      if (errorMessage.endsWith(SEPERATOR)) {
+        errorMessage = errorMessage.substring(0, (errorMessage.length() - 1));
+      }
+      System.out.println("errorMessage " + errorMessage);
+      return errorMessage;
     }
     return null;
   }
