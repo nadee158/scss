@@ -18,9 +18,12 @@ public class GateInReponse implements Serializable {
   private String truckPlateNo;// null,
   private String gateINDateTime;// 20161130112233,
 
-  List<ImportContainer> importContainers = new ArrayList<ImportContainer>();
+  private List<ImportContainer> importContainers = new ArrayList<ImportContainer>();
 
-  List<ExportContainer> exportContainers = new ArrayList<ExportContainer>();
+  private List<ExportContainer> exportContainers = new ArrayList<ExportContainer>();
+
+  // for gate in write
+  private String callCardNo;// 20161130112233,
 
   public String getLaneNo() {
     return laneNo;
@@ -68,6 +71,22 @@ public class GateInReponse implements Serializable {
 
   public void setImportContainers(List<ImportContainer> importContainers) {
     this.importContainers = importContainers;
+  }
+
+  public List<ExportContainer> getExportContainers() {
+    return exportContainers;
+  }
+
+  public void setExportContainers(List<ExportContainer> exportContainers) {
+    this.exportContainers = exportContainers;
+  }
+
+  public String getCallCardNo() {
+    return callCardNo;
+  }
+
+  public void setCallCardNo(String callCardNo) {
+    this.callCardNo = callCardNo;
   }
 
 

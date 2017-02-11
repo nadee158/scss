@@ -17,7 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import com.privasia.scss.common.dto.CommonContainerDTO;
 import com.privasia.scss.common.dto.GateInReponse;
 import com.privasia.scss.common.dto.GateInRequest;
 import com.privasia.scss.common.dto.ImportContainer;
@@ -110,48 +109,5 @@ public class OpusGateInReadService {
     return null;
   }
 
-  private ImportContainer constructImportContainer(OpusImportContainer opusImportContainer, ImportContainer container) {
-
-    // not currently available- added to importcontainer
-    // private long containerDischargeDateTime;// 20161124162510,
-    // private String impCarrierType;// null,
-    // private String impCarrier;// null,
-    // private String vesselCode;// UANE,
-    // private String vesselVoyage;// 003/2016,
-    // private String visitId;// 121212,
-    // private String vesselScn;// DB0899,
-    // private String vesselName;// AL NEFUD,
-    // private String vesselATA;// 20161124161800
-    // modelMapper.map(opusImportContainer, container);
-
-    CommonContainerDTO commonContainerDTO = new CommonContainerDTO();
-    // private double containerHeight;// 8,
-    commonContainerDTO.setContainerHeight(Integer.parseInt(opusImportContainer.getContainerHeight()));
-    // private double containerSize;// 40,
-    commonContainerDTO.setContainerLength(Integer.parseInt(opusImportContainer.getContainerSize()));
-    // private String containerFullOrEmpty;// F,
-    commonContainerDTO.setContainerFullOrEmpty(opusImportContainer.getContainerFullOrEmpty());
-    // private String containerIso;// 4001,
-    commonContainerDTO.setContainerISOCode(opusImportContainer.getContainerIso());
-
-    // private String containerInOrOut;// OUT,
-    container.setGateInOut(opusImportContainer.getContainerInOrOut());
-
-    // private String impOrderNo;// ORDER0001,
-    container.setOrderFOT(opusImportContainer.getImpOrderNo());
-
-    // private String containerShippingLine;// CMA,
-    container.setLine(opusImportContainer.getContainerShippingLine());
-
-    // private String containerType;// GE,
-    container.setContainerType(opusImportContainer.getContainerType());
-
-    // private String currentYardPosition;// 02S-0102-C-1,
-    container.setYardPosition(opusImportContainer.getCurrentYardPosition());
-
-    container.setContainer(commonContainerDTO);
-
-    return container;
-  }
 
 }

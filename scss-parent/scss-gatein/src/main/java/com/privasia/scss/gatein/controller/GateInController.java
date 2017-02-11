@@ -14,10 +14,10 @@ import com.privasia.scss.common.dto.ApiResponseObject;
 import com.privasia.scss.common.dto.CustomResponseEntity;
 import com.privasia.scss.common.dto.GateInReponse;
 import com.privasia.scss.common.dto.GateInRequest;
+import com.privasia.scss.common.dto.GateInWriteRequest;
 import com.privasia.scss.common.dto.GateInfo;
-import com.privasia.scss.core.security.util.SecurityHelper;
 import com.privasia.scss.gatein.service.GateInService;
-import com.privasia.scss.gatein.service.ImportGateInService;
+import com.privasia.scss.gatein.service.ImportExportGateInService;
 
 
 
@@ -31,7 +31,7 @@ public class GateInController {
   private GateInService gateInService;
 
   @Autowired
-  private ImportGateInService importGateInService;
+  private ImportExportGateInService importExportGateInService;
 
 
   @RequestMapping(value = "/allow", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
@@ -48,10 +48,21 @@ public class GateInController {
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public CustomResponseEntity<ApiResponseObject<?>> populateGateIn(@RequestBody GateInRequest gateInRequest) {
 
-    GateInReponse gateInReponse = importGateInService.populateGateIn(gateInRequest);
+    GateInReponse gateInReponse = importExportGateInService.populateGateIn(gateInRequest);
 
     return new CustomResponseEntity<ApiResponseObject<?>>(
         new ApiResponseObject<GateInReponse>(HttpStatus.OK, gateInReponse), HttpStatus.OK);
+  }
+
+
+  @RequestMapping(value = "/savegateininfo", method = RequestMethod.PUT,
+      produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+  public CustomResponseEntity<ApiResponseObject<?>> saveGateInInfo(@RequestBody GateInWriteRequest gateInWriteRequest) {
+
+    GateInReponse gateInWriteReponse = importExportGateInService.saveGateInInfo(gateInWriteRequest);
+
+    return new CustomResponseEntity<ApiResponseObject<?>>(
+        new ApiResponseObject<GateInReponse>(HttpStatus.OK, gateInWriteReponse), HttpStatus.OK);
   }
 
 

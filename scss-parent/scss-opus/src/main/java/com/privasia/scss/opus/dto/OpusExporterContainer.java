@@ -25,11 +25,11 @@ public class OpusExporterContainer {
   private String yardOpeningDateTime;// 20160902080000,
   private String containerSpod;// USSVN,
   private String containerIso;// 22G0,
-  private double containerSize;// 20,
-  private double containerHeight;// 8.6,
+  private int containerSize;// 20,
+  private int containerHeight;// 8.6,
   private String containerType;// GE,
-  private double grossWeight;// 11000,
-  private double containerNetWeight;// 9000,
+  private int grossWeight;// 11000,
+  private int containerNetWeight;// 9000,
   private String containerSeal1_SL;// null,
   private String containerSeal1_NO;// SEAL001,
   private String containerSeal2_SL;// null,
@@ -42,11 +42,11 @@ public class OpusExporterContainer {
   private String containerDGUNCode;// null,
   private String containerDGImdgLabel;// null,
   private String yardDGOpeningDateTime;// 20160904080000,
-  private double containerOOG_OH;// 5.0,
-  private double containerOOG_OL;// 3.0,
-  private double containerOOG_OF;// 1.0,
-  private double containerOOG_OA;// 2.0,
-  private double containerOOG_OR;// 4.0
+  private String containerOOG_OH;// 5.0,
+  private String containerOOG_OL;// 3.0,
+  private String containerOOG_OF;// 1.0,
+  private String containerOOG_OA;// 2.0,
+  private String containerOOG_OR;// 4.0
 
   // For W
   private String containerDamageCode1;//
@@ -377,20 +377,14 @@ public class OpusExporterContainer {
     this.containerIso = containerIso;
   }
 
-  public double getContainerSize() {
+
+
+  public int getContainerSize() {
     return containerSize;
   }
 
-  public void setContainerSize(double containerSize) {
+  public void setContainerSize(int containerSize) {
     this.containerSize = containerSize;
-  }
-
-  public double getContainerHeight() {
-    return containerHeight;
-  }
-
-  public void setContainerHeight(double containerHeight) {
-    this.containerHeight = containerHeight;
   }
 
   public String getContainerType() {
@@ -401,19 +395,20 @@ public class OpusExporterContainer {
     this.containerType = containerType;
   }
 
-  public double getGrossWeight() {
+
+  public int getGrossWeight() {
     return grossWeight;
   }
 
-  public void setGrossWeight(double grossWeight) {
+  public void setGrossWeight(int grossWeight) {
     this.grossWeight = grossWeight;
   }
 
-  public double getContainerNetWeight() {
+  public int getContainerNetWeight() {
     return containerNetWeight;
   }
 
-  public void setContainerNetWeight(double containerNetWeight) {
+  public void setContainerNetWeight(int containerNetWeight) {
     this.containerNetWeight = containerNetWeight;
   }
 
@@ -513,44 +508,53 @@ public class OpusExporterContainer {
     this.yardDGOpeningDateTime = yardDGOpeningDateTime;
   }
 
-  public double getContainerOOG_OH() {
+
+  public String getContainerOOG_OH() {
     return containerOOG_OH;
   }
 
-  public void setContainerOOG_OH(double containerOOG_OH) {
+  public void setContainerOOG_OH(String containerOOG_OH) {
     this.containerOOG_OH = containerOOG_OH;
   }
 
-  public double getContainerOOG_OL() {
+  public String getContainerOOG_OL() {
     return containerOOG_OL;
   }
 
-  public void setContainerOOG_OL(double containerOOG_OL) {
+  public void setContainerOOG_OL(String containerOOG_OL) {
     this.containerOOG_OL = containerOOG_OL;
   }
 
-  public double getContainerOOG_OF() {
+  public String getContainerOOG_OF() {
     return containerOOG_OF;
   }
 
-  public void setContainerOOG_OF(double containerOOG_OF) {
+  public void setContainerOOG_OF(String containerOOG_OF) {
     this.containerOOG_OF = containerOOG_OF;
   }
 
-  public double getContainerOOG_OA() {
+  public String getContainerOOG_OA() {
     return containerOOG_OA;
   }
 
-  public void setContainerOOG_OA(double containerOOG_OA) {
+  public void setContainerOOG_OA(String containerOOG_OA) {
     this.containerOOG_OA = containerOOG_OA;
   }
 
-  public double getContainerOOG_OR() {
+  public String getContainerOOG_OR() {
     return containerOOG_OR;
   }
 
-  public void setContainerOOG_OR(double containerOOG_OR) {
+  public void setContainerOOG_OR(String containerOOG_OR) {
     this.containerOOG_OR = containerOOG_OR;
+  }
+
+  public int getContainerHeight() {
+    return containerHeight;
+  }
+
+  public void setContainerHeight(int containerHeight) {
+    this.containerHeight = containerHeight;
   }
 
   @Override

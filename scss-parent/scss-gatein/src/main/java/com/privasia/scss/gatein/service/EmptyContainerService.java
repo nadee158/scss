@@ -39,27 +39,27 @@ public class EmptyContainerService {
    * Calculate the WeightBridge For Empty ExportContainer
    */
   public void calculateWeightBridgeForEmptyContainer(ExportContainer c1, ExportContainer c2) {
-    /*
-     * if (StringUtils.isNotBlank(c1.getContainer().getContainerNumber()) &&
-     * StringUtils.isNotBlank(c2.getContainer().getContainerNumber())) { if
-     * ("E".equals(c1.getContainer().getContainerFullOrEmpty()) &&
-     * "E".equals(c2.getContainer().getContainerFullOrEmpty())) {
-     * 
-     * c1.setNetWeight(c1.getEmptyWeight()); c2.setNetWeight(c2.getEmptyWeight());
-     * 
-     * double totalWeightBridge = new Double(c1.getEmptyWeight()) + new Double(c2.getEmptyWeight());
-     * c1.setTotalWeightBridge(totalWeightBridge); c2.setTotalWeightBridge(totalWeightBridge);
-     * 
-     * } else if (StringUtils.isNotBlank(c1.getContainer().getContainerNumber())) {
-     * c1.setNetWeight(c1.getEmptyWeight()); c1.setTotalWeightBridge(c1.getEmptyWeight());
-     * 
-     * } else if (StringUtils.isNotBlank(c2.getContainer().getContainerNumber())) {
-     * c2.setNetWeight(c2.getEmptyWeight()); c2.setTotalWeightBridge(c2.getEmptyWeight());
-     * 
-     * }
-     * 
-     * }
-     */
+    
+     /* if (StringUtils.isNotBlank(c1.getContainer().getContainerNumber()) &&
+      StringUtils.isNotBlank(c2.getContainer().getContainerNumber())) { if
+      ("E".equals(c1.getContainer().getContainerFullOrEmpty()) &&
+      "E".equals(c2.getContainer().getContainerFullOrEmpty())) {
+      
+      c1.setNetWeight(c1.getEmptyWeight()); c2.setNetWeight(c2.getEmptyWeight());
+      
+      double totalWeightBridge = new Double(c1.getEmptyWeight()) + new Double(c2.getEmptyWeight());
+      c1.setTotalWeightBridge(totalWeightBridge); c2.setTotalWeightBridge(totalWeightBridge);
+      
+      } else if (StringUtils.isNotBlank(c1.getContainer().getContainerNumber())) {
+      c1.setNetWeight(c1.getEmptyWeight()); c1.setTotalWeightBridge(c1.getEmptyWeight());
+      
+      } else if (StringUtils.isNotBlank(c2.getContainer().getContainerNumber())) {
+      c2.setNetWeight(c2.getEmptyWeight()); c2.setTotalWeightBridge(c2.getEmptyWeight());
+      
+      }
+      
+      }*/
+     
   }
 
 }

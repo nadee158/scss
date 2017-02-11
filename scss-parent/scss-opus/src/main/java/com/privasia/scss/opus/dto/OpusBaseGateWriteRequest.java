@@ -1,29 +1,31 @@
 package com.privasia.scss.opus.dto;
 
+import java.io.Serializable;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+public class OpusBaseGateWriteRequest implements Serializable {
 
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class OpusGateInWriteResponse extends BaseResponse {
-
-
-  /**
-   * 
-   */
   private static final long serialVersionUID = 1L;
-  private String callCardNo;// 99999,
-  private String laneNo;// LNO01,
-  private String haulageCode;// HAUCD,
-  private String truckHeadNo;// TRUCK,
-  private String truckPlateNo;// null,
-  private String gateINDateTime;// 20161130112233,
-  private List<OpusExporterContainer> exportContainerListCY;
-  private List<OpusImportContainer> importContainerListCY;
-  private List<OpusExporterContainer> exportContainerListCFS;
-  private List<OpusImportContainer> importContainerListCFS;
 
+  // common fileds in write requests
 
+  private String userID;// "PRABU"
+  private String laneNo;// "GATE00"
+  private String haulageCode;// "HAN"
+  private String truckHeadNo;// "NTK193"
+  private String truckPlateNo;// "60P1-2933"
+  private List<OpusExporterContainer> exportContainerListCY;//
+  private List<OpusImportContainer> importContainerListCY;//
+  private List<OpusExporterContainer> exportContainerListCFS;// []
+  private List<OpusImportContainer> importContainerListCFS;// []
+
+  public String getUserID() {
+    return userID;
+  }
+
+  public void setUserID(String userID) {
+    this.userID = userID;
+  }
 
   public String getLaneNo() {
     return laneNo;
@@ -55,15 +57,6 @@ public class OpusGateInWriteResponse extends BaseResponse {
 
   public void setTruckPlateNo(String truckPlateNo) {
     this.truckPlateNo = truckPlateNo;
-  }
-
-
-  public String getGateINDateTime() {
-    return gateINDateTime;
-  }
-
-  public void setGateINDateTime(String gateINDateTime) {
-    this.gateINDateTime = gateINDateTime;
   }
 
   public List<OpusExporterContainer> getExportContainerListCY() {
@@ -98,21 +91,8 @@ public class OpusGateInWriteResponse extends BaseResponse {
     this.importContainerListCFS = importContainerListCFS;
   }
 
-  @Override
-  public String toString() {
-    return "OpusGateInWriteResponse [callCardNo=" + callCardNo + ", laneNo=" + laneNo + ", haulageCode=" + haulageCode
-        + ", truckHeadNo=" + truckHeadNo + ", truckPlateNo=" + truckPlateNo + ", gateINDateTime=" + gateINDateTime
-        + ", exportContainerListCY=" + exportContainerListCY + ", importContainerListCY=" + importContainerListCY
-        + ", exportContainerListCFS=" + exportContainerListCFS + ", importContainerListCFS=" + importContainerListCFS
-        + "]";
-  }
-
-  public String getCallCardNo() {
-    return callCardNo;
-  }
-
-  public void setCallCardNo(String callCardNo) {
-    this.callCardNo = callCardNo;
+  public static long getSerialversionuid() {
+    return serialVersionUID;
   }
 
 

@@ -250,6 +250,31 @@ public class ExportContainer {
 
   private List<DamageCodeDTO> damages;
   /////////////////////////////////////
+  // FOR OPUS SERVICE
+  private String expCarrierType;
+
+  private LocalDateTime yardOpeningDateTime;
+
+  private String containerType;
+
+  private String reeferTempUnit;
+
+  private String containerDGUNCode;
+
+  private LocalDateTime yardDGOpeningDateTime;
+
+  private String vgmType;// S
+  private String vgmWeighingStation;//
+  private String vgmWitnessName;//
+  private String vgmWitnessID;//
+  private String vgmRefNo;//
+  private String vgmMGW;// 1
+  private String vgmNetWeight;//
+  private String vgmVerificationDatetime;//
+
+  private String shippingLine;
+
+  //////////////////////////////////////
 
 
   public Long getExportID() {
@@ -1182,6 +1207,127 @@ public class ExportContainer {
 
   public void setTempUnit(String tempUnit) {
     this.tempUnit = tempUnit;
+  }
+
+
+  public String getExpCarrierType() {
+    return expCarrierType;
+  }
+
+  public void setExpCarrierType(String expCarrierType) {
+    this.expCarrierType = expCarrierType;
+  }
+
+  public LocalDateTime getYardOpeningDateTime() {
+    return yardOpeningDateTime;
+  }
+
+  public void setYardOpeningDateTime(LocalDateTime yardOpeningDateTime) {
+    this.yardOpeningDateTime = yardOpeningDateTime;
+  }
+
+  public String getContainerType() {
+    return containerType;
+  }
+
+  public void setContainerType(String containerType) {
+    this.containerType = containerType;
+  }
+
+  public String getReeferTempUnit() {
+    return reeferTempUnit;
+  }
+
+  public void setReeferTempUnit(String reeferTempUnit) {
+    this.reeferTempUnit = reeferTempUnit;
+  }
+
+  public String getContainerDGUNCode() {
+    return containerDGUNCode;
+  }
+
+  public void setContainerDGUNCode(String containerDGUNCode) {
+    this.containerDGUNCode = containerDGUNCode;
+  }
+
+  public LocalDateTime getYardDGOpeningDateTime() {
+    return yardDGOpeningDateTime;
+  }
+
+  public void setYardDGOpeningDateTime(LocalDateTime yardDGOpeningDateTime) {
+    this.yardDGOpeningDateTime = yardDGOpeningDateTime;
+  }
+
+  public String getVgmType() {
+    return vgmType;
+  }
+
+  public void setVgmType(String vgmType) {
+    this.vgmType = vgmType;
+  }
+
+  public String getVgmWeighingStation() {
+    return vgmWeighingStation;
+  }
+
+  public void setVgmWeighingStation(String vgmWeighingStation) {
+    this.vgmWeighingStation = vgmWeighingStation;
+  }
+
+  public String getVgmWitnessName() {
+    return vgmWitnessName;
+  }
+
+  public void setVgmWitnessName(String vgmWitnessName) {
+    this.vgmWitnessName = vgmWitnessName;
+  }
+
+  public String getVgmWitnessID() {
+    return vgmWitnessID;
+  }
+
+  public void setVgmWitnessID(String vgmWitnessID) {
+    this.vgmWitnessID = vgmWitnessID;
+  }
+
+  public String getVgmRefNo() {
+    return vgmRefNo;
+  }
+
+  public void setVgmRefNo(String vgmRefNo) {
+    this.vgmRefNo = vgmRefNo;
+  }
+
+  public String getVgmMGW() {
+    return vgmMGW;
+  }
+
+  public void setVgmMGW(String vgmMGW) {
+    this.vgmMGW = vgmMGW;
+  }
+
+  public String getVgmNetWeight() {
+    return vgmNetWeight;
+  }
+
+  public void setVgmNetWeight(String vgmNetWeight) {
+    this.vgmNetWeight = vgmNetWeight;
+  }
+
+  public String getVgmVerificationDatetime() {
+    return vgmVerificationDatetime;
+  }
+
+  public void setVgmVerificationDatetime(String vgmVerificationDatetime) {
+    this.vgmVerificationDatetime = vgmVerificationDatetime;
+  }
+
+  public String getShippingLine() {
+    return shippingLine;
+  }
+
+  public void setShippingLine(String shippingLine) {
+    this.shippingLine = shippingLine;
   }
 
   @Override
