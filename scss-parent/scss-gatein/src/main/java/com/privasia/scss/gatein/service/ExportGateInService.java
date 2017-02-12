@@ -15,9 +15,13 @@ import com.privasia.scss.common.dto.GateInWriteRequest;
 import com.privasia.scss.common.dto.ShipSCNDTO;
 import com.privasia.scss.core.exception.ResultsNotFoundException;
 import com.privasia.scss.core.model.Client;
+import com.privasia.scss.core.model.Exports;
+import com.privasia.scss.core.model.ExportsQ;
 import com.privasia.scss.core.model.ShipCode;
 import com.privasia.scss.core.model.ShipSCN;
 import com.privasia.scss.core.repository.ClientRepository;
+import com.privasia.scss.core.repository.ExportsQRepository;
+import com.privasia.scss.core.repository.ExportsRepository;
 import com.privasia.scss.core.repository.ShipCodeRepository;
 import com.privasia.scss.core.repository.ShipSCNRepository;
 
@@ -31,6 +35,10 @@ public class ExportGateInService {
   private ShipCodeRepository shipCodeRepository;
 
   private ShipSCNRepository shipSCNRepository;
+
+  private ExportsRepository exportsRepository;
+
+  private ExportsQRepository exportsQRepository;
 
 
   @Autowired
@@ -52,6 +60,17 @@ public class ExportGateInService {
   public void setClientRepository(ClientRepository clientRepository) {
     this.clientRepository = clientRepository;
   }
+
+  @Autowired
+  public void setExportsRepository(ExportsRepository exportsRepository) {
+    this.exportsRepository = exportsRepository;
+  }
+
+  @Autowired
+  public void setExportsQRepository(ExportsQRepository exportsQRepository) {
+    this.exportsQRepository = exportsQRepository;
+  }
+
 
 
   public List<ExportContainer> populateGateIn(GateInRequest gateInRequest) {
@@ -112,8 +131,21 @@ public class ExportGateInService {
   }
 
   public List<ExportContainer> saveGateInInfo(GateInWriteRequest gateInWriteRequest) {
-
-
+    // construct a new export entity for each exportcontainer and save
+    if (!(gateInWriteRequest.getExportContainers() == null || gateInWriteRequest.getExportContainers().isEmpty())) {
+      gateInWriteRequest.getExportContainers().forEach(exportContainer -> {
+        Exports exports = new Exports();
+        System.out.println("exportContainer " + exportContainer);
+        modelMapper.map(exportContainer, exports);
+        System.out.println("exports " + exports);
+        exports = exportsRepository.save(exports);
+        ExportsQ exportsQ = new ExportsQ();
+        modelMapper.map(exports, exportsQ);
+        System.out.println("exportsQ " + exportsQ);
+        exportsQRepository.save(exportsQ);
+      });
+      return gateInWriteRequest.getExportContainers();
+    }
 
     return null;
   }

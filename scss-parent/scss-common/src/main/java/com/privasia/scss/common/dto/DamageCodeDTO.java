@@ -2,6 +2,8 @@ package com.privasia.scss.common.dto;
 
 import java.io.Serializable;
 
+import org.apache.commons.lang3.StringUtils;
+
 public class DamageCodeDTO implements Serializable {
 
   /**
@@ -9,9 +11,9 @@ public class DamageCodeDTO implements Serializable {
    */
   private static final long serialVersionUID = 1L;
 
-  private String damageCode;
+  private String damageCode = StringUtils.EMPTY;
 
-  private String damageDesc;
+  private String damageDesc = StringUtils.EMPTY;
 
   public String getDamageCode() {
     return damageCode;

@@ -3,6 +3,9 @@ package com.privasia.scss.common.dto;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.privasia.scss.common.util.CommonUtil;
+
 public class ImportContainer implements Serializable {
 
   /**
@@ -128,6 +131,8 @@ public class ImportContainer implements Serializable {
   private DamageCodeInfo damageCodeInfo;
 
   private String rtgExecustionStatus;// ":"RGS"
+
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
   private LocalDateTime rtgExecustionDateTime;// ;":"20161212101010"
 
   public String getRtgExecustionStatus() {

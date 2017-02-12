@@ -373,7 +373,7 @@ public class Exports implements Serializable {
   private String variance;
 
   @Column(name = "EXP_SUB_TYPE")
-  private String subType;
+  private String subHandlingType;
 
   @Column(name = "WITHIN_TOLERANCE", nullable = true)
   @Type(type = "true_false")
@@ -970,12 +970,13 @@ public class Exports implements Serializable {
     this.variance = variance;
   }
 
-  public String getSubType() {
-    return subType;
+
+  public String getSubHandlingType() {
+    return subHandlingType;
   }
 
-  public void setSubType(String subType) {
-    this.subType = subType;
+  public void setSubHandlingType(String subHandlingType) {
+    this.subHandlingType = subHandlingType;
   }
 
   public boolean isWithinTolerance() {
@@ -1116,6 +1117,39 @@ public class Exports implements Serializable {
 
   public void setAgentCode(String agentCode) {
     this.agentCode = agentCode;
+  }
+
+  @Override
+  public String toString() {
+    return "Exports [exportID=" + exportID + ", container=" + container + ", commonGateInOut=" + commonGateInOut
+        + ", baseCommonGateInOutAttribute=" + baseCommonGateInOutAttribute + ", optFlag=" + optFlag + ", bookingNo="
+        + bookingNo + ", scn=" + scn + ", gateInOut=" + gateInOut + ", expLine=" + expLine + ", expOut=" + expOut
+        + ", expCar=" + expCar + ", expSpod=" + expSpod + ", sealAttribute=" + sealAttribute + ", expWeightBridge="
+        + expWeightBridge + ", expNetWeight=" + expNetWeight + ", referFlag=" + referFlag + ", referTempType="
+        + referTempType + ", referTemp=" + referTemp + ", imdg=" + imdg + ", expUN=" + expUN + ", imdgLabelID="
+        + imdgLabelID + ", oogOH=" + oogOH + ", oogOL=" + oogOL + ", oogOF=" + oogOF + ", oogOA=" + oogOA
+        + ", containerPosition=" + containerPosition + ", preCheckDate=" + preCheckDate + ", yardPosition="
+        + yardPosition + ", bayCode=" + bayCode + ", pmBTM=" + pmBTM + ", trBTM=" + trBTM + ", oogOR=" + oogOR
+        + ", callCard=" + callCard + ", vesselVisitID=" + vesselVisitID + ", vesselVoyage=" + vesselVoyage
+        + ", vesselCode=" + vesselCode + ", vesselName=" + vesselName + ", expAgent=" + expAgent + ", vesselStatus="
+        + vesselStatus + ", shipID=" + shipID + ", vesselSCN=" + vesselSCN + ", vesselETADate=" + vesselETADate
+        + ", vesselATADate=" + vesselATADate + ", agentCode=" + agentCode + ", oogSSR=" + oogSSR + ", overClosingSSR="
+        + overClosingSSR + ", replanSSR=" + replanSSR + ", ssrBlockStatus=" + ssrBlockStatus + ", ssrBlockStatusDate="
+        + ssrBlockStatusDate + ", gcsBlockStatus=" + gcsBlockStatus + ", gcsBlockStatusDate=" + gcsBlockStatusDate
+        + ", gcsDeclareNo=" + gcsDeclareNo + ", gcsLastCheck=" + gcsLastCheck + ", printEir=" + printEir
+        + ", userRemarks=" + userRemarks + ", kpaApproval=" + kpaApproval + ", hdlGoodsCode=" + hdlGoodsCode
+        + ", dgDescription=" + dgDescription + ", hdlGoodsDescription=" + hdlGoodsDescription + ", cosmosTareWeight="
+        + cosmosTareWeight + ", cosmosGrossWeight=" + cosmosGrossWeight + ", cosmosNetWeight=" + cosmosNetWeight
+        + ", cardUsage=" + cardUsage + ", backToback=" + backToback + ", weightDiffPercentage=" + weightDiffPercentage
+        + ", weightDifference=" + weightDifference + ", damageCode_01=" + damageCode_01 + ", damageCode_02="
+        + damageCode_02 + ", damageCode_03=" + damageCode_03 + ", damageCode_04=" + damageCode_04 + ", damageCode_05="
+        + damageCode_05 + ", damageCode_06=" + damageCode_06 + ", damageCode_07=" + damageCode_07 + ", damageCode_08="
+        + damageCode_08 + ", damageCode_09=" + damageCode_09 + ", dontValidateSeal=" + dontValidateSeal + ", wrongDoor="
+        + wrongDoor + ", hpabISOCode=" + hpabISOCode + ", cosmosISOCode=" + cosmosISOCode + ", pmWeight=" + pmWeight
+        + ", trailerWeight=" + trailerWeight + ", trailerPlateNo=" + trailerPlateNo + ", fuelWeight=" + fuelWeight
+        + ", tireWeight=" + tireWeight + ", variance=" + variance + ", subHandlingType=" + subHandlingType
+        + ", withinTolerance=" + withinTolerance + ", calculatedVariance=" + calculatedVariance + ", solasCertNo="
+        + solasCertNo + ", solas=" + solas + "]";
   }
 
 

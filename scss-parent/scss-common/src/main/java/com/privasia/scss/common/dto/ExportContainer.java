@@ -7,6 +7,9 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.privasia.scss.common.util.CommonUtil;
+
 /**
  * @author nadee158
  *
@@ -67,6 +70,7 @@ public class ExportContainer {
 
   private String containerPosition;
 
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
   private LocalDateTime preCheckDate;
 
   private String yardPosition;
@@ -97,8 +101,10 @@ public class ExportContainer {
 
   private String vesselSCN;
 
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
   private LocalDateTime vesselETADate;
 
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
   private LocalDateTime vesselATADate;
 
   private String agentCode;
@@ -111,14 +117,17 @@ public class ExportContainer {
 
   private String ssrBlockStatus;
 
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
   private LocalDateTime ssrBlockStatusDate;
 
   private String gcsBlockStatus;
 
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
   private LocalDateTime gcsBlockStatusDate;
 
   private String gcsDeclareNo;
 
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
   private LocalDateTime gcsLastCheck;
 
   private PrintEirDTO printEir;
@@ -185,7 +194,6 @@ public class ExportContainer {
 
   private String variance;
 
-  private String subType;
 
   private boolean withinTolerance;
 
@@ -253,6 +261,7 @@ public class ExportContainer {
   // FOR OPUS SERVICE
   private String expCarrierType;
 
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
   private LocalDateTime yardOpeningDateTime;
 
   private String containerType;
@@ -261,6 +270,7 @@ public class ExportContainer {
 
   private String containerDGUNCode;
 
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
   private LocalDateTime yardDGOpeningDateTime;
 
   private String vgmType;// S
@@ -276,6 +286,7 @@ public class ExportContainer {
 
   private String subHandlingType;// ":"1"
   private String rtgExecustionStatus;// ":"RGS"
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
   private LocalDateTime rtgExecustionDateTime;// ;":"20161212101010"
 
   //////////////////////////////////////
@@ -961,14 +972,6 @@ public class ExportContainer {
     this.variance = variance;
   }
 
-  public String getSubType() {
-    return subType;
-  }
-
-  public void setSubType(String subType) {
-    this.subType = subType;
-  }
-
   public boolean isWithinTolerance() {
     return withinTolerance;
   }
@@ -1387,9 +1390,8 @@ public class ExportContainer {
         + damageCode_08 + ", damageCode_09=" + damageCode_09 + ", dontValidateSeal=" + dontValidateSeal + ", wrongDoor="
         + wrongDoor + ", hpabISOCode=" + hpabISOCode + ", cosmosISOCode=" + cosmosISOCode + ", pmWeight=" + pmWeight
         + ", trailerWeight=" + trailerWeight + ", trailerPlateNo=" + trailerPlateNo + ", fuelWeight=" + fuelWeight
-        + ", tireWeight=" + tireWeight + ", variance=" + variance + ", subType=" + subType + ", withinTolerance="
-        + withinTolerance + ", calculatedVariance=" + calculatedVariance + ", solasCertNo=" + solasCertNo + ", solas="
-        + solas + "]";
+        + ", tireWeight=" + tireWeight + ", variance=" + variance + ", withinTolerance=" + withinTolerance
+        + ", calculatedVariance=" + calculatedVariance + ", solasCertNo=" + solasCertNo + ", solas=" + solas + "]";
   }
 
   public static ExportContainer emptyExportContainer() {
@@ -1408,6 +1410,19 @@ public class ExportContainer {
     exportContainer.setSubHandlingType("1");
     exportContainer.setRtgExecustionDateTime(LocalDateTime.now());
     exportContainer.setRtgExecustionStatus("RGS");
+    exportContainer.setScn(new ShipSCNDTO());
+    exportContainer.setSealAttribute(new CommonSealDTO());
+    exportContainer.setPrintEir(new PrintEirDTO());
+    exportContainer.setSolas(new CommonSolasDTO());
+    exportContainer.setDamageCode_01(new DamageCodeDTO());
+    exportContainer.setDamageCode_02(new DamageCodeDTO());
+    exportContainer.setDamageCode_03(new DamageCodeDTO());
+    exportContainer.setDamageCode_04(new DamageCodeDTO());
+    exportContainer.setDamageCode_05(new DamageCodeDTO());
+    exportContainer.setDamageCode_06(new DamageCodeDTO());
+    exportContainer.setDamageCode_07(new DamageCodeDTO());
+    exportContainer.setDamageCode_08(new DamageCodeDTO());
+    exportContainer.setDamageCode_09(new DamageCodeDTO());
     return exportContainer;
   }
 
