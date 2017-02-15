@@ -6,116 +6,127 @@ import javax.persistence.Embeddable;
 
 import org.hibernate.annotations.Type;
 
+import com.privasia.scss.common.enums.ContainerSize;
 import com.privasia.scss.common.enums.GateInOutStatus;
 
 @Embeddable
 public class PrintEIRContainerInfo extends CommonContainerAttribute implements Serializable {
 
-	/**
-	 * 
-	 */
+  /**
+   * 
+   */
 
-	private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-	private String containerBayCode;
-	
-	@Type(type = "com.privasia.scss.common.enumusertype.GateInOutStatusEnumUserType")
-	private GateInOutStatus containerInOrOut;
+  private String containerBayCode;
 
-	private String containerPositionOnTruck;
+  @Type(type = "com.privasia.scss.common.enumusertype.GateInOutStatusEnumUserType")
+  private GateInOutStatus containerInOrOut;
 
-	private String containerLine;
+  private String containerPositionOnTruck;
 
-	private String containerHeight;
+  private String containerLine;
 
-	private String containerNetWeight;
+  private String containerHeight;
 
-	private String containerType;
+  private String containerNetWeight;
 
-	private String lineOneInfo;
+  private String containerType;
 
-	private String lineTwoInfo;
+  private String lineOneInfo;
 
-	private String containerSeal;
+  private String lineTwoInfo;
 
-	public String getContainerBayCode() {
-		return containerBayCode;
-	}
+  private String containerSeal;
 
-	public void setContainerBayCode(String containerBayCode) {
-		this.containerBayCode = containerBayCode;
-	}
+  private ContainerSize containerLength;
 
-	public GateInOutStatus getContainerInOrOut() {
-		return containerInOrOut;
-	}
+  public String getContainerBayCode() {
+    return containerBayCode;
+  }
 
-	public void setContainerInOrOut(GateInOutStatus containerInOrOut) {
-		this.containerInOrOut = containerInOrOut;
-	}
+  public void setContainerBayCode(String containerBayCode) {
+    this.containerBayCode = containerBayCode;
+  }
 
-	public String getContainerPositionOnTruck() {
-		return containerPositionOnTruck;
-	}
+  public GateInOutStatus getContainerInOrOut() {
+    return containerInOrOut;
+  }
 
-	public void setContainerPositionOnTruck(String containerPositionOnTruck) {
-		this.containerPositionOnTruck = containerPositionOnTruck;
-	}
+  public void setContainerInOrOut(GateInOutStatus containerInOrOut) {
+    this.containerInOrOut = containerInOrOut;
+  }
 
-	public String getContainerLine() {
-		return containerLine;
-	}
+  public String getContainerPositionOnTruck() {
+    return containerPositionOnTruck;
+  }
 
-	public void setContainerLine(String containerLine) {
-		this.containerLine = containerLine;
-	}
+  public void setContainerPositionOnTruck(String containerPositionOnTruck) {
+    this.containerPositionOnTruck = containerPositionOnTruck;
+  }
 
-	public String getContainerHeight() {
-		return containerHeight;
-	}
+  public String getContainerLine() {
+    return containerLine;
+  }
 
-	public void setContainerHeight(String containerHeight) {
-		this.containerHeight = containerHeight;
-	}
+  public void setContainerLine(String containerLine) {
+    this.containerLine = containerLine;
+  }
 
-	public String getContainerNetWeight() {
-		return containerNetWeight;
-	}
+  public String getContainerHeight() {
+    return containerHeight;
+  }
 
-	public void setContainerNetWeight(String containerNetWeight) {
-		this.containerNetWeight = containerNetWeight;
-	}
+  public void setContainerHeight(String containerHeight) {
+    this.containerHeight = containerHeight;
+  }
 
-	public String getContainerType() {
-		return containerType;
-	}
+  public String getContainerNetWeight() {
+    return containerNetWeight;
+  }
 
-	public void setContainerType(String containerType) {
-		this.containerType = containerType;
-	}
+  public void setContainerNetWeight(String containerNetWeight) {
+    this.containerNetWeight = containerNetWeight;
+  }
 
-	public String getContainerSeal() {
-		return containerSeal;
-	}
+  public String getContainerType() {
+    return containerType;
+  }
 
-	public void setContainerSeal(String containerSeal) {
-		this.containerSeal = containerSeal;
-	}
+  public void setContainerType(String containerType) {
+    this.containerType = containerType;
+  }
 
-	public String getLineOneInfo() {
-		return lineOneInfo;
-	}
+  public String getContainerSeal() {
+    return containerSeal;
+  }
 
-	public void setLineOneInfo(String lineOneInfo) {
-		this.lineOneInfo = lineOneInfo;
-	}
+  public void setContainerSeal(String containerSeal) {
+    this.containerSeal = containerSeal;
+  }
 
-	public String getLineTwoInfo() {
-		return lineTwoInfo;
-	}
+  public String getLineOneInfo() {
+    return lineOneInfo;
+  }
 
-	public void setLineTwoInfo(String lineTwoInfo) {
-		this.lineTwoInfo = lineTwoInfo;
-	}
+  public void setLineOneInfo(String lineOneInfo) {
+    this.lineOneInfo = lineOneInfo;
+  }
+
+  public String getLineTwoInfo() {
+    return lineTwoInfo;
+  }
+
+  public void setLineTwoInfo(String lineTwoInfo) {
+    this.lineTwoInfo = lineTwoInfo;
+  }
+
+  public ContainerSize getContainerLength() {
+    return containerLength;
+  }
+
+  public void setContainerLength(ContainerSize containerLength) {
+    this.containerLength = containerLength;
+  }
 
 }

@@ -53,7 +53,6 @@ public class Exports implements Serializable {
 	@Embedded
 	@AttributeOverrides({ @AttributeOverride(name = "containerNumber", column = @Column(name = "EXP_CONTAINERNO")),
 			@AttributeOverride(name = "containerISOCode", column = @Column(name = "EXP_CONT_ISO_CODE")),
-			@AttributeOverride(name = "containerLength", column = @Column(name = "CONT_LENGTH")),
 			@AttributeOverride(name = "containerFullOrEmpty", column = @Column(name = "EXP_FULL_EMPTY_FLAG", nullable = true)) })
 	private CommonContainerAttribute container;
 
