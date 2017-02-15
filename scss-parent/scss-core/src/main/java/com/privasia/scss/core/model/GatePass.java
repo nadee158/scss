@@ -92,8 +92,6 @@ public class GatePass extends AuditEntity implements Serializable {
       @AttributeOverride(name = "timeGateOut", column = @Column(name = "GTP_TIMEGATEOUT") ),
       @AttributeOverride(name = "timeGateOutOk", column = @Column(name = "GTP_TIMEGATEOUTOK") ),
       @AttributeOverride(name = "timeGateOutBooth", column = @Column(name = "GTP_TIMEGATEOUT_BOOTH") )})
-  // @AttributeOverride(name = "gateOutBoothClerk", column = @Column(name =
-  // "GTP_GATEOUT_BOOTH_CLERKID"))})
   @AssociationOverrides({
       @AssociationOverride(name = "gateOutBoothClerk",
           joinColumns = @JoinColumn(name = "GTP_GATEOUT_BOOTH_CLERKID", referencedColumnName = "SYS_USERID_SEQ",

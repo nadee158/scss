@@ -62,7 +62,9 @@ public class Exports implements Serializable {
 			@AttributeOverride(name = "rejectReason", column = @Column(name = "EXP_REJECTREASON")),
 			@AttributeOverride(name = "kioskConfirmed", column = @Column(name = "KIOSK_CONFIRMED")),
 			@AttributeOverride(name = "kioskCancelPickUp", column = @Column(name = "KIOSK_CANCEL_PICKUP")),
-			@AttributeOverride(name = "gateInStatus", column = @Column(name = "EXP_GATEIN_STATUS")) })
+			@AttributeOverride(name = "gateInStatus", column = @Column(name = "EXP_GATEIN_STATUS")),
+			@AttributeOverride(name = "zipFileNo", column = @Column(name = "ZIP_FILE_NO") ),
+		    @AttributeOverride(name = "trxSlipNo", column = @Column(name = "TRX_SLIP_NO") )})
 	private CommonGateInOutAttribute commonGateInOut;
 
 	@Embedded

@@ -61,7 +61,9 @@ public class ExportsQ implements Serializable {
   @AttributeOverrides({@AttributeOverride(name = "eirNumber", column = @Column(name = "EXP_EIRNO")),
       @AttributeOverride(name = "impExpFlag", column = @Column(name = "EXP_IMPEXPFLAG", nullable = true)),
       @AttributeOverride(name = "rejectReason", column = @Column(name = "EXP_REJECTREASON")),
-      @AttributeOverride(name = "gateInStatus", column = @Column(name = "EXP_GATEIN_STATUS"))})
+      @AttributeOverride(name = "gateInStatus", column = @Column(name = "EXP_GATEIN_STATUS")),
+      @AttributeOverride(name = "zipFileNo", column = @Column(name = "ZIP_FILE_NO") ),
+	  @AttributeOverride(name = "trxSlipNo", column = @Column(name = "TRX_SLIP_NO") )})
   private CommonGateInOutAttribute commonGateInOut;
 
 
