@@ -21,4 +21,7 @@ public interface GatePassRepository extends BaseRepository<GatePass, Long> {
 
   public Optional<List<GatePass>> findByGatePassNoIn(List<Long> gatePassNumberList);
   
+  @Query(name = "GatePass.findContainerNoByGatePassNo")
+  public String findContainerNoByGatePassNo(@Param("gatePassNo") long gatePassNo);
+  
 }

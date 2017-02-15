@@ -81,10 +81,9 @@ public class ImportExportGateInService {
 		gateInRequest.setUserName((String) authentication.getPrincipal());
 
 		if (gateInRequest.getGatePass1() > 0 || gateInRequest.getGatePass2() > 0) {
-			importContainers = importGateInService.populateGateInImport(gateInRequest);
+			importGateInService.findContainerNoByGatePass(gateInRequest);
 		}
 		
-
 		// call opus -
 		OpusGateInReadRequest gateInReadRequest = opusGateInReadService.constructOpenGateInRequest(gateInRequest);
 		OpusGateInReadResponse gateInReadResponse = opusGateInReadService.getGateInReadResponse(gateInReadRequest);

@@ -1,5 +1,6 @@
 package com.privasia.scss.gatein.service;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -104,45 +105,48 @@ public class ExportGateInService {
     
   }
 
-  String exportContainer01 = "";
-  String scn01 = null;
-  String exportContainer02 = null;
-  String scn02 = null;
+  
   
   @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
   public void setSCN(List<ExportContainer> exportContainers) {
 	  
-	  
+	  String exportContainer01 = null;
+	  String scn01 = null;
+	  String exportContainer02 = null;
+	  String scn02 = null;
 	  
 	  if (!(exportContainers == null || exportContainers.isEmpty())) {
 		  
-		  exportContainers.forEach(container -> {
-			  if(StringUtils.isBlank(exportContainer01)){
+		 for(ExportContainer container : exportContainers){
+			 if(StringUtils.isBlank(exportContainer01)){
 				  exportContainer01 = container.getContainer().getContainerNumber();
 				  scn01 = container.getScn().getScnNo();
 			  }else{
 				  exportContainer02 = container.getContainer().getContainerNumber();
 				  scn02 = container.getScn().getScnNo();
 			  }
-		  });
-		  
+		 }
+		
 		  Optional<List<ShipSCN>> optionalshipSCN = shipSCNRepository.fetchContainerSCN(scn01, exportContainer01, scn02, exportContainer02);
 		  
-		  List<ShipSCN> shipSCNlist  =  optionalshipSCN.orElseThrow(
-	    	        () -> new ResultsNotFoundException("Ship SCN could be found for the given "
-	    	        		+ "	SCN /ContainerNo Info! " + scn01 +" / "+exportContainer01 +" OR "+scn02 +" / "+exportContainer02));
+		  if(optionalshipSCN.isPresent()){
+			  List<ShipSCN> shipSCNlist  =  optionalshipSCN.get();
+			  exportContainers.forEach(exportContainer -> {
+				  shipSCNlist.forEach(shipSCN -> {
+		    		  if(StringUtils.equals(exportContainer.getContainer().getContainerNumber(), shipSCN.getContainerNo())){
+		    			  ShipSCNDTO shipSCNDTO = new ShipSCNDTO();
+		    			  modelMapper.map(shipSCN, shipSCNDTO);
+		    			  exportContainer.setScn(shipSCNDTO);
+		    		      exportContainer.setBypassEEntry(shipSCN.getScnByPass());
+		    		      exportContainer.setRegisteredInEarlyEntry(true);
+		    		  }
+		    	  });
+		      });
+		  }else{
+			  throw new ResultsNotFoundException("Ship SCN could be found for the given "
+  	        		+ "	SCN / ContainerNo Info! " + scn01 +" / "+exportContainer01 +" OR "+scn02 +" / "+exportContainer02);
+		  }
 		  
-		  exportContainers.forEach(exportContainer -> {
-			  shipSCNlist.forEach(shipSCN -> {
-	    		  if(StringUtils.equals(exportContainer.getContainer().getContainerNumber(), shipSCN.getContainerNo())){
-	    			  ShipSCNDTO shipSCNDTO = new ShipSCNDTO();
-	    			  modelMapper.map(shipSCN, shipSCNDTO);
-	    			  exportContainer.setScn(shipSCNDTO);
-	    		      exportContainer.setBypassEEntry(shipSCN.getScnByPass());
-	    		      exportContainer.setRegisteredInEarlyEntry(true);
-	    		  }
-	    	  });
-	      });
 	  }  
 	
   }
