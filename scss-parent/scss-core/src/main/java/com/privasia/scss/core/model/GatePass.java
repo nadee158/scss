@@ -22,6 +22,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Type;
 
 import com.privasia.scss.common.enums.ContainerPosition;
+import com.privasia.scss.common.enums.ContainerSize;
 import com.privasia.scss.common.enums.GateInOutStatus;
 import com.privasia.scss.common.enums.GatePassStatus;
 
@@ -31,10 +32,10 @@ import com.privasia.scss.common.enums.GatePassStatus;
  */
 @Entity
 @Table(name = "SCSS_GATE_PASS")
-@AttributeOverrides({@AttributeOverride(name = "addBy", column = @Column(name = "GTP_ADD_BY")),
-    @AttributeOverride(name = "updateBy", column = @Column(name = "GTP_UPDATE_BY")),
-    @AttributeOverride(name = "dateTimeAdd", column = @Column(name = "GTP_DATECREATE")),
-    @AttributeOverride(name = "dateTimeUpdate", column = @Column(name = "GTP_DATEUPDATE"))})
+@AttributeOverrides({@AttributeOverride(name = "addBy", column = @Column(name = "GTP_ADD_BY") ),
+    @AttributeOverride(name = "updateBy", column = @Column(name = "GTP_UPDATE_BY") ),
+    @AttributeOverride(name = "dateTimeAdd", column = @Column(name = "GTP_DATECREATE") ),
+    @AttributeOverride(name = "dateTimeUpdate", column = @Column(name = "GTP_DATEUPDATE") )})
 public class GatePass extends AuditEntity implements Serializable {
 
   /**
@@ -52,11 +53,14 @@ public class GatePass extends AuditEntity implements Serializable {
   @Column(name = "GTP_GATEPASSNO")
   private Long gatePassNo;
 
+  @Column(name = "CONT_LENGTH")
+  @Type(type = "com.privasia.scss.common.enumusertype.ContainerSizeEnumUserType")
+  private ContainerSize containerLength;
+
   @Embedded
-  @AttributeOverrides({@AttributeOverride(name = "containerNumber", column = @Column(name = "GTP_CONTAINERNO")),
-      @AttributeOverride(name = "containerISOCode", column = @Column(name = "GTP_CONT_ISO_CODE")),
-      @AttributeOverride(name = "containerLength", column = @Column(name = "CONT_LENGTH")),
-      @AttributeOverride(name = "containerFullOrEmpty", column = @Column(name = "GTP_FULLEMPTYFLAG"))})
+  @AttributeOverrides({@AttributeOverride(name = "containerNumber", column = @Column(name = "GTP_CONTAINERNO") ),
+      @AttributeOverride(name = "containerISOCode", column = @Column(name = "GTP_CONT_ISO_CODE") ),
+      @AttributeOverride(name = "containerFullOrEmpty", column = @Column(name = "GTP_FULLEMPTYFLAG") )})
   private CommonContainerAttribute container;
 
   @ManyToOne(fetch = FetchType.LAZY)
@@ -65,48 +69,48 @@ public class GatePass extends AuditEntity implements Serializable {
 
 
   @Embedded
-  @AttributeOverrides({@AttributeOverride(name = "eirNumber", column = @Column(name = "GTP_EIRNO")),
-      @AttributeOverride(name = "impExpFlag", column = @Column(name = "GTP_IMPEXPFLAG", nullable = true)),
-      @AttributeOverride(name = "rejectReason", column = @Column(name = "GTP_REJECTREASON")),
-      @AttributeOverride(name = "kioskConfirmed", column = @Column(name = "KIOSK_CONFIRMED")),
-      @AttributeOverride(name = "kioskCancelPickUp", column = @Column(name = "KIOSK_CANCEL_PICKUP")),
-      @AttributeOverride(name = "gateInStatus", column = @Column(name = "GTP_GATEIN_STATUS")),
-      @AttributeOverride(name = "zipFileNo", column = @Column(name = "ZIP_FILE_NO")),
-      @AttributeOverride(name = "trxSlipNo", column = @Column(name = "TRX_SLIP_NO"))})
+  @AttributeOverrides({@AttributeOverride(name = "eirNumber", column = @Column(name = "GTP_EIRNO") ),
+      @AttributeOverride(name = "impExpFlag", column = @Column(name = "GTP_IMPEXPFLAG", nullable = true) ),
+      @AttributeOverride(name = "rejectReason", column = @Column(name = "GTP_REJECTREASON") ),
+      @AttributeOverride(name = "kioskConfirmed", column = @Column(name = "KIOSK_CONFIRMED") ),
+      @AttributeOverride(name = "kioskCancelPickUp", column = @Column(name = "KIOSK_CANCEL_PICKUP") ),
+      @AttributeOverride(name = "gateInStatus", column = @Column(name = "GTP_GATEIN_STATUS") ),
+      @AttributeOverride(name = "zipFileNo", column = @Column(name = "ZIP_FILE_NO") ),
+      @AttributeOverride(name = "trxSlipNo", column = @Column(name = "TRX_SLIP_NO") )})
   private CommonGateInOutAttribute commonGateInOut;
 
 
   @Embedded
-  @AttributeOverrides({@AttributeOverride(name = "pmHeadNo", column = @Column(name = "GTP_TRUCK_HEAD_NO")),
-      @AttributeOverride(name = "pmPlateNo", column = @Column(name = "GTP_TRUCK_PLATE_NO")),
-      @AttributeOverride(name = "hpatBooking", column = @Column(name = "BOOKING_ID")),
-      @AttributeOverride(name = "eirStatus", column = @Column(name = "GTP_EIRSTATUS", nullable = true)),
-      @AttributeOverride(name = "transactionSlipPrinted", column = @Column(name = "TRANSACTION_SLIP_PRINTED")),
-      @AttributeOverride(name = "gateOutBoothNo", column = @Column(name = "GTP_GATE_OUT_BOOTH_NO")),
-      @AttributeOverride(name = "timeGateIn", column = @Column(name = "GTP_TIMEGATEIN")),
-      @AttributeOverride(name = "timeGateInOk", column = @Column(name = "GTP_TIMEGATEINOK")),
-      @AttributeOverride(name = "timeGateOut", column = @Column(name = "GTP_TIMEGATEOUT")),
-      @AttributeOverride(name = "timeGateOutOk", column = @Column(name = "GTP_TIMEGATEOUTOK")),
-      @AttributeOverride(name = "timeGateOutBooth", column = @Column(name = "GTP_TIMEGATEOUT_BOOTH"))})
+  @AttributeOverrides({@AttributeOverride(name = "pmHeadNo", column = @Column(name = "GTP_TRUCK_HEAD_NO") ),
+      @AttributeOverride(name = "pmPlateNo", column = @Column(name = "GTP_TRUCK_PLATE_NO") ),
+      @AttributeOverride(name = "hpatBooking", column = @Column(name = "BOOKING_ID") ),
+      @AttributeOverride(name = "eirStatus", column = @Column(name = "GTP_EIRSTATUS", nullable = true) ),
+      @AttributeOverride(name = "transactionSlipPrinted", column = @Column(name = "TRANSACTION_SLIP_PRINTED") ),
+      @AttributeOverride(name = "gateOutBoothNo", column = @Column(name = "GTP_GATE_OUT_BOOTH_NO") ),
+      @AttributeOverride(name = "timeGateIn", column = @Column(name = "GTP_TIMEGATEIN") ),
+      @AttributeOverride(name = "timeGateInOk", column = @Column(name = "GTP_TIMEGATEINOK") ),
+      @AttributeOverride(name = "timeGateOut", column = @Column(name = "GTP_TIMEGATEOUT") ),
+      @AttributeOverride(name = "timeGateOutOk", column = @Column(name = "GTP_TIMEGATEOUTOK") ),
+      @AttributeOverride(name = "timeGateOutBooth", column = @Column(name = "GTP_TIMEGATEOUT_BOOTH") )})
   // @AttributeOverride(name = "gateOutBoothClerk", column = @Column(name =
   // "GTP_GATEOUT_BOOTH_CLERKID"))})
   @AssociationOverrides({
       @AssociationOverride(name = "gateOutBoothClerk",
           joinColumns = @JoinColumn(name = "GTP_GATEOUT_BOOTH_CLERKID", referencedColumnName = "SYS_USERID_SEQ",
-              nullable = true)),
+              nullable = true) ),
       @AssociationOverride(name = "card",
-          joinColumns = @JoinColumn(name = "GTP_HCTDID", referencedColumnName = "CRD_CARDID_SEQ", nullable = true)),
+          joinColumns = @JoinColumn(name = "GTP_HCTDID", referencedColumnName = "CRD_CARDID_SEQ", nullable = true) ),
       @AssociationOverride(name = "gateInClerk",
           joinColumns = @JoinColumn(name = "GTP_GATEINCLERKID", referencedColumnName = "SYS_USERID_SEQ",
-              nullable = true)),
+              nullable = true) ),
       @AssociationOverride(name = "gateOutClerk",
           joinColumns = @JoinColumn(name = "GTP_GATEOUTCLERKID", referencedColumnName = "SYS_USERID_SEQ",
-              nullable = true)),
+              nullable = true) ),
       @AssociationOverride(name = "gateInClient",
           joinColumns = @JoinColumn(name = "CLI_CLIENTID_GATEIN", referencedColumnName = "CLI_CLIENTID_SEQ",
-              nullable = true)),
+              nullable = true) ),
       @AssociationOverride(name = "gateOutClient", joinColumns = @JoinColumn(name = "CLI_CLIENTID_GATEOUT",
-          referencedColumnName = "CLI_CLIENTID_SEQ", nullable = true))})
+          referencedColumnName = "CLI_CLIENTID_SEQ", nullable = true) )})
   private BaseCommonGateInOutAttribute baseCommonGateInOutAttribute;
 
   @Column(name = "GTP_GATEPASSSTATUS")
@@ -140,12 +144,12 @@ public class GatePass extends AuditEntity implements Serializable {
   private String gateOutLaneNo;
 
   @Embedded
-  @AttributeOverrides({@AttributeOverride(name = "seal01Origin", column = @Column(name = "GTP_SEAL_1_ORIGIN")),
-      @AttributeOverride(name = "seal01Type", column = @Column(name = "GTP_SEAL_1_TYPE")),
-      @AttributeOverride(name = "seal01Number", column = @Column(name = "GTP_SEAL_1_NO")),
-      @AttributeOverride(name = "seal02Origin", column = @Column(name = "GTP_SEAL_2_ORIGIN")),
-      @AttributeOverride(name = "seal02Type", column = @Column(name = "GTP_SEAL_2_TYPE")),
-      @AttributeOverride(name = "seal02Number", column = @Column(name = "GTP_SEAL_2_NO"))})
+  @AttributeOverrides({@AttributeOverride(name = "seal01Origin", column = @Column(name = "GTP_SEAL_1_ORIGIN") ),
+      @AttributeOverride(name = "seal01Type", column = @Column(name = "GTP_SEAL_1_TYPE") ),
+      @AttributeOverride(name = "seal01Number", column = @Column(name = "GTP_SEAL_1_NO") ),
+      @AttributeOverride(name = "seal02Origin", column = @Column(name = "GTP_SEAL_2_ORIGIN") ),
+      @AttributeOverride(name = "seal02Type", column = @Column(name = "GTP_SEAL_2_TYPE") ),
+      @AttributeOverride(name = "seal02Number", column = @Column(name = "GTP_SEAL_2_NO") )})
   private CommonSealAttribute sealAttribute;
 
   @Column(name = "GTP_GOUT_REMARKS")
@@ -473,17 +477,27 @@ public class GatePass extends AuditEntity implements Serializable {
   @Override
   public String toString() {
     return "GatePass [gatePassID=" + gatePassID + ", gateOrderNo=" + gateOrderNo + ", gatePassNo=" + gatePassNo
-        + ", container=" + container + ", company=" + company + ", commonGateInOut=" + commonGateInOut
-        + ", baseCommonGateInOutAttribute=" + baseCommonGateInOutAttribute + ", gatePassStatus=" + gatePassStatus
-        + ", handlingID=" + handlingID + ", orderNo=" + orderNo + ", gateInOut=" + gateInOut + ", line=" + line
-        + ", currentPosition=" + currentPosition + ", containerPosition=" + containerPosition + ", gateInLaneNo="
-        + gateInLaneNo + ", gateOutLaneNo=" + gateOutLaneNo + ", sealAttribute=" + sealAttribute + ", gateOutRemarks="
-        + gateOutRemarks + ", yardPosition=" + yardPosition + ", bayCode=" + bayCode + ", callCard=" + callCard
-        + ", printEir=" + printEir + ", cardUsage=" + cardUsage + ", cosmosSeal01Origin=" + cosmosSeal01Origin
-        + ", cosmosSeal01Type=" + cosmosSeal01Type + ", cosmosSeal01Number=" + cosmosSeal01Number
-        + ", cosmosSeal02Origin=" + cosmosSeal02Origin + ", cosmosSeal02Type=" + cosmosSeal02Type
-        + ", cosmosSeal02Number=" + cosmosSeal02Number + ", gatePassValidDate=" + gatePassValidDate
-        + ", retrievedCosmos=" + retrievedCosmos + ", sealChange=" + sealChange + ", forcedSeal=" + forcedSeal + "]";
+        + ", containerLength=" + containerLength + ", container=" + container + ", company=" + company
+        + ", commonGateInOut=" + commonGateInOut + ", baseCommonGateInOutAttribute=" + baseCommonGateInOutAttribute
+        + ", gatePassStatus=" + gatePassStatus + ", handlingID=" + handlingID + ", orderNo=" + orderNo + ", gateInOut="
+        + gateInOut + ", line=" + line + ", currentPosition=" + currentPosition + ", containerPosition="
+        + containerPosition + ", gateInLaneNo=" + gateInLaneNo + ", gateOutLaneNo=" + gateOutLaneNo + ", sealAttribute="
+        + sealAttribute + ", gateOutRemarks=" + gateOutRemarks + ", yardPosition=" + yardPosition + ", bayCode="
+        + bayCode + ", callCard=" + callCard + ", printEir=" + printEir + ", cardUsage=" + cardUsage
+        + ", cosmosSeal01Origin=" + cosmosSeal01Origin + ", cosmosSeal01Type=" + cosmosSeal01Type
+        + ", cosmosSeal01Number=" + cosmosSeal01Number + ", cosmosSeal02Origin=" + cosmosSeal02Origin
+        + ", cosmosSeal02Type=" + cosmosSeal02Type + ", cosmosSeal02Number=" + cosmosSeal02Number
+        + ", gatePassValidDate=" + gatePassValidDate + ", retrievedCosmos=" + retrievedCosmos + ", sealChange="
+        + sealChange + ", forcedSeal=" + forcedSeal + "]";
+  }
+
+
+  public ContainerSize getContainerLength() {
+    return containerLength;
+  }
+
+  public void setContainerLength(ContainerSize containerLength) {
+    this.containerLength = containerLength;
   }
 
 }

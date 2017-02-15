@@ -20,8 +20,6 @@ public class CommonContainerDTO implements Serializable {
 
   private String containerNumber;
 
-  private int containerLength;
-
   private int containerHeight;
 
   private String containerISOCode;
@@ -34,14 +32,6 @@ public class CommonContainerDTO implements Serializable {
 
   public void setContainerNumber(String containerNumber) {
     this.containerNumber = containerNumber;
-  }
-
-  public int getContainerLength() {
-    return containerLength;
-  }
-
-  public void setContainerLength(int containerLength) {
-    this.containerLength = containerLength;
   }
 
   public String getContainerISOCode() {

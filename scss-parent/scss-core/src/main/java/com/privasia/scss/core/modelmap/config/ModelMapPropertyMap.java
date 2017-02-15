@@ -5,8 +5,10 @@ package com.privasia.scss.core.modelmap.config;
 
 import org.modelmapper.PropertyMap;
 
+import com.privasia.scss.common.dto.ExportContainer;
 import com.privasia.scss.common.dto.ImportContainer;
 import com.privasia.scss.common.dto.KioskBoothRightsDTO;
+import com.privasia.scss.core.model.Exports;
 import com.privasia.scss.core.model.GatePass;
 import com.privasia.scss.core.model.KioskBoothRights;
 
@@ -79,8 +81,15 @@ public final class ModelMapPropertyMap {
         map().getBaseCommonGateInOutAttribute().setCard(source.getBaseCommonGateInOutAttribute().getCard().getCardID());
       }
     };
-
   }
-
+  
+  
+  public static PropertyMap<ExportContainer, Exports> exportContainerToExports() {
+	    return new PropertyMap<ExportContainer, Exports>() {
+	      protected void configure() {
+	        skip().getCardUsage().setCard(null);
+	      }
+	    };
+  }
 
 }
