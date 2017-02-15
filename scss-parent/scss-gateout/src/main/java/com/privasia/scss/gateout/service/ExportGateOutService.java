@@ -13,6 +13,7 @@ import com.privasia.scss.common.dto.ExportContainer;
 import com.privasia.scss.common.dto.GateOutRequest;
 import com.privasia.scss.common.dto.GateOutWriteRequest;
 import com.privasia.scss.common.dto.ShipSCNDTO;
+import com.privasia.scss.common.enums.ShipStatus;
 import com.privasia.scss.core.exception.ResultsNotFoundException;
 import com.privasia.scss.core.model.Client;
 import com.privasia.scss.core.model.ShipCode;
@@ -77,14 +78,14 @@ public class ExportGateOutService {
   public List<ShipCode> checkContainer(List<ExportContainer> exportContainers) {
     if (!(exportContainers == null || exportContainers.isEmpty())) {
       List<String> shippingCodes =
-          exportContainers.stream().map(ExportContainer::getShipID).collect(Collectors.toList());
+          exportContainers.stream().map(ExportContainer::getShipCode).collect(Collectors.toList());
 
-      Optional<List<ShipCode>> list = shipCodeRepository.findByShippingCodeIn(shippingCodes);
+      Optional<List<ShipCode>> list = shipCodeRepository.findByShipStatusAndShippingCodeIn(ShipStatus.ACTIVE,shippingCodes);
       if (list.isPresent()) {
         List<ShipCode> codes = list.orElse(null);
         for (ShipCode shipCode : codes) {
           for (ExportContainer item : exportContainers) {
-            if (StringUtils.equals(shipCode.getShippingCode(), item.getShipID())) {
+            if (StringUtils.equals(shipCode.getShippingCode(), item.getShipCode())) {
               item.setStoragePeriod(shipCode.getStoragePeriod());
             }
           }

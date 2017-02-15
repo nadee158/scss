@@ -104,13 +104,15 @@ public class ExportGateInService {
     
   }
 
+  String exportContainer01 = "";
+  String scn01 = null;
+  String exportContainer02 = null;
+  String scn02 = null;
+  
   @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
   public void setSCN(List<ExportContainer> exportContainers) {
 	  
-	  String exportContainer01 = "";
-	  String scn01 = null;
-	  String exportContainer02 = null;
-	  String scn02 = null;
+	  
 	  
 	  if (!(exportContainers == null || exportContainers.isEmpty())) {
 		  
