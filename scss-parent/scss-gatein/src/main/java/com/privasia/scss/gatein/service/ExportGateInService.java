@@ -8,18 +8,19 @@ import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.privasia.scss.common.dto.ExportContainer;
-import com.privasia.scss.common.dto.GateInRequest;
+import com.privasia.scss.common.dto.GateInReponse;
 import com.privasia.scss.common.dto.GateInWriteRequest;
 import com.privasia.scss.common.dto.ShipSCNDTO;
+import com.privasia.scss.common.enums.ShipStatus;
 import com.privasia.scss.core.exception.ResultsNotFoundException;
-import com.privasia.scss.core.model.Client;
 import com.privasia.scss.core.model.Exports;
 import com.privasia.scss.core.model.ExportsQ;
 import com.privasia.scss.core.model.ShipCode;
 import com.privasia.scss.core.model.ShipSCN;
-import com.privasia.scss.core.repository.ClientRepository;
 import com.privasia.scss.core.repository.ExportsQRepository;
 import com.privasia.scss.core.repository.ExportsRepository;
 import com.privasia.scss.core.repository.ShipCodeRepository;
@@ -29,8 +30,6 @@ import com.privasia.scss.core.repository.ShipSCNRepository;
 public class ExportGateInService {
 
   private ModelMapper modelMapper;
-
-  private ClientRepository clientRepository;
 
   private ShipCodeRepository shipCodeRepository;
 
@@ -57,11 +56,6 @@ public class ExportGateInService {
   }
 
   @Autowired
-  public void setClientRepository(ClientRepository clientRepository) {
-    this.clientRepository = clientRepository;
-  }
-
-  @Autowired
   public void setExportsRepository(ExportsRepository exportsRepository) {
     this.exportsRepository = exportsRepository;
   }
@@ -72,16 +66,12 @@ public class ExportGateInService {
   }
 
 
-
-  public List<ExportContainer> populateGateIn(GateInRequest gateInRequest) {
-
-    Optional<Client> clientOpt = clientRepository.findOne(gateInRequest.getLaneId());
-    Client client =
-        clientOpt.orElseThrow(() -> new ResultsNotFoundException("Invalid lane ID ! " + gateInRequest.getLaneId()));
-    gateInRequest.setLaneNo(client.getLaneNo());
-
-
-    return null;
+  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+  public GateInReponse populateGateInExports(GateInReponse gateInReponse) {
+	  
+	setStoragePeriod(gateInReponse.getExportContainers());
+	setSCN(gateInReponse.getExportContainers());
+    return gateInReponse;
 
   }
 
@@ -92,42 +82,67 @@ public class ExportGateInService {
 
   }
 
-
-  public List<ShipCode> checkContainer(List<ExportContainer> exportContainers) {
+  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+  public void setStoragePeriod(List<ExportContainer> exportContainers) {
     if (!(exportContainers == null || exportContainers.isEmpty())) {
       List<String> shippingCodes =
-          exportContainers.stream().map(ExportContainer::getShipID).collect(Collectors.toList());
+          exportContainers.stream().map(ExportContainer::getShipCode).collect(Collectors.toList());
 
-      Optional<List<ShipCode>> list = shipCodeRepository.findByShippingCodeIn(shippingCodes);
-      if (list.isPresent()) {
-        List<ShipCode> codes = list.orElse(null);
-        for (ShipCode shipCode : codes) {
-          for (ExportContainer item : exportContainers) {
-            if (StringUtils.equals(shipCode.getShippingCode(), item.getShipID())) {
-              item.setStoragePeriod(shipCode.getStoragePeriod());
-            }
-          }
-        }
-
-        return codes;
-      }
+      Optional<List<ShipCode>> optionalShipCodelist = shipCodeRepository.findByShipStatusAndShippingCodeIn(ShipStatus.ACTIVE, shippingCodes);
+      
+      List<ShipCode> shipCodelist  =  optionalShipCodelist.orElseThrow(
+    	        () -> new ResultsNotFoundException("Ship Code could be found for the given Ship Codes ! " + String.join(",", shippingCodes)));
+      
+      exportContainers.forEach(exportContainer -> {
+    	  shipCodelist.forEach(shipCode -> {
+    		  if(StringUtils.equals(shipCode.getShippingCode(), exportContainer.getShipCode())){
+    			  exportContainer.setStoragePeriod(shipCode.getStoragePeriod()); 
+    		  }
+    	  });
+      });
     }
-    return null;
+    
   }
 
-  public void checkSCN(ExportContainer exportContainer) throws Exception {
-    Optional<ShipSCN> shipSCNOpt =
-        shipSCNRepository.findByContainerNo(exportContainer.getContainer().getContainerNumber());
-    if (shipSCNOpt.isPresent()) {
-      ShipSCN shipSCN = shipSCNOpt.orElse(null);
-      if (!(shipSCN == null)) {
-        ShipSCNDTO shipSCNDTO = new ShipSCNDTO();
-        modelMapper.map(shipSCN, shipSCNDTO);
-        exportContainer.setScn(shipSCNDTO);
-        exportContainer.setBypassEEntry(shipSCN.getScnByPass());
-        exportContainer.setRegisteredInEarlyEntry(true);
-      }
-    }
+  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+  public void setSCN(List<ExportContainer> exportContainers) {
+	  
+	  String exportContainer01 = "";
+	  String scn01 = null;
+	  String exportContainer02 = null;
+	  String scn02 = null;
+	  
+	  if (!(exportContainers == null || exportContainers.isEmpty())) {
+		  
+		  exportContainers.forEach(container -> {
+			  if(StringUtils.isBlank(exportContainer01)){
+				  exportContainer01 = container.getContainer().getContainerNumber();
+				  scn01 = container.getScn().getScnNo();
+			  }else{
+				  exportContainer02 = container.getContainer().getContainerNumber();
+				  scn02 = container.getScn().getScnNo();
+			  }
+		  });
+		  
+		  Optional<List<ShipSCN>> optionalshipSCN = shipSCNRepository.fetchContainerSCN(scn01, exportContainer01, scn02, exportContainer02);
+		  
+		  List<ShipSCN> shipSCNlist  =  optionalshipSCN.orElseThrow(
+	    	        () -> new ResultsNotFoundException("Ship SCN could be found for the given "
+	    	        		+ "	SCN /ContainerNo Info! " + scn01 +" / "+exportContainer01 +" OR "+scn02 +" / "+exportContainer02));
+		  
+		  exportContainers.forEach(exportContainer -> {
+			  shipSCNlist.forEach(shipSCN -> {
+	    		  if(StringUtils.equals(exportContainer.getContainer().getContainerNumber(), shipSCN.getContainerNo())){
+	    			  ShipSCNDTO shipSCNDTO = new ShipSCNDTO();
+	    			  modelMapper.map(shipSCN, shipSCNDTO);
+	    			  exportContainer.setScn(shipSCNDTO);
+	    		      exportContainer.setBypassEEntry(shipSCN.getScnByPass());
+	    		      exportContainer.setRegisteredInEarlyEntry(true);
+	    		  }
+	    	  });
+	      });
+	  }  
+	
   }
 
   public List<ExportContainer> saveGateInInfo(GateInWriteRequest gateInWriteRequest) {

@@ -1,6 +1,7 @@
 package com.privasia.scss.gatein.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,9 @@ import com.privasia.scss.common.dto.GateInRequest;
 import com.privasia.scss.common.dto.GateInWriteRequest;
 import com.privasia.scss.common.dto.ImportContainer;
 import com.privasia.scss.core.exception.BusinessException;
+import com.privasia.scss.core.exception.ResultsNotFoundException;
+import com.privasia.scss.core.model.Client;
+import com.privasia.scss.core.repository.ClientRepository;
 import com.privasia.scss.opus.dto.OpusGateInReadRequest;
 import com.privasia.scss.opus.dto.OpusGateInReadResponse;
 import com.privasia.scss.opus.dto.OpusGateInWriteRequest;
@@ -27,96 +31,108 @@ import com.privasia.scss.opus.service.OpusService;
 @Service("importExportGateInService")
 public class ImportExportGateInService {
 
-  private ImportGateInService importGateInService;
+	private ImportGateInService importGateInService;
 
-  private ExportGateInService exportGateInService;
+	private ExportGateInService exportGateInService;
 
-  private OpusGateInReadService opusGateInReadService;
+	private OpusGateInReadService opusGateInReadService;
 
-  private OpusGateInWriteService opusGateInWriteService;
+	private OpusGateInWriteService opusGateInWriteService;
 
-  @Autowired
-  public void setOpusGateInReadService(OpusGateInReadService opusGateInReadService) {
-    this.opusGateInReadService = opusGateInReadService;
-  }
+	private ClientRepository clientRepository;
 
-  @Autowired
-  public void setOpusGateInWriteService(OpusGateInWriteService opusGateInWriteService) {
-    this.opusGateInWriteService = opusGateInWriteService;
-  }
+	@Autowired
+	public void setOpusGateInReadService(OpusGateInReadService opusGateInReadService) {
+		this.opusGateInReadService = opusGateInReadService;
+	}
 
-  @Autowired
-  public void setImportGateInService(ImportGateInService importGateInService) {
-    this.importGateInService = importGateInService;
-  }
+	@Autowired
+	public void setOpusGateInWriteService(OpusGateInWriteService opusGateInWriteService) {
+		this.opusGateInWriteService = opusGateInWriteService;
+	}
 
-  @Autowired
-  public void setExportGateInService(ExportGateInService exportGateInService) {
-    this.exportGateInService = exportGateInService;
-  }
+	@Autowired
+	public void setImportGateInService(ImportGateInService importGateInService) {
+		this.importGateInService = importGateInService;
+	}
 
+	@Autowired
+	public void setExportGateInService(ExportGateInService exportGateInService) {
+		this.exportGateInService = exportGateInService;
+	}
+	
+	@Autowired
+	public void setClientRepository(ClientRepository clientRepository) {
+		this.clientRepository = clientRepository;
+	}
 
-  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-  public GateInReponse populateGateIn(GateInRequest gateInRequest) {
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+	public GateInReponse populateGateIn(GateInRequest gateInRequest) {
 
-    List<ImportContainer> importContainers = null;
-    List<ExportContainer> exportContainers = null;
+		List<ImportContainer> importContainers = null;
+		List<ExportContainer> exportContainers = null;
 
-    if (gateInRequest.getGatePass1() > 0 || gateInRequest.getGatePass2() > 0) {
-      importContainers = importGateInService.populateGateIn(gateInRequest);
-    }
+		Optional<Client> clientOpt = clientRepository.findOne(gateInRequest.getLaneId());
+		Client client = clientOpt
+				.orElseThrow(() -> new ResultsNotFoundException("Invalid lane ID ! " + gateInRequest.getLaneId()));
+		gateInRequest.setLaneNo(client.getLaneNo());
+		
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		gateInRequest.setUserName((String) authentication.getPrincipal());
 
-    if (!(StringUtils.isEmpty(gateInRequest.getExpContainer1())
-        || StringUtils.isEmpty(gateInRequest.getExpContainer2()))) {
-      exportContainers = exportGateInService.populateGateIn(gateInRequest);
-    }
+		if (gateInRequest.getGatePass1() > 0 || gateInRequest.getGatePass2() > 0) {
+			importContainers = importGateInService.populateGateInImport(gateInRequest);
+		}
+		
 
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    gateInRequest.setUserName((String) authentication.getPrincipal());
+		// call opus -
+		OpusGateInReadRequest gateInReadRequest = opusGateInReadService.constructOpenGateInRequest(gateInRequest);
+		OpusGateInReadResponse gateInReadResponse = opusGateInReadService.getGateInReadResponse(gateInReadRequest);
+		GateInReponse gateInReponse = new GateInReponse();
+		gateInReponse.setImportContainers(importContainers);
+		gateInReponse.setExportContainers(exportContainers);
+		gateInReponse = opusGateInReadService.constructGateInReponse(gateInReadResponse, gateInReponse);
+		
+		if (!(StringUtils.isEmpty(gateInRequest.getExpContainer1())
+				|| StringUtils.isEmpty(gateInRequest.getExpContainer2()))) {
+			gateInReponse = exportGateInService.populateGateInExports(gateInReponse);
+		}
 
-    // call opus -
-    OpusGateInReadRequest gateInReadRequest = opusGateInReadService.constructOpenGateInRequest(gateInRequest);
-    OpusGateInReadResponse gateInReadResponse = opusGateInReadService.getGateInReadResponse(gateInReadRequest);
-    GateInReponse gateInReponse = new GateInReponse();
-    gateInReponse.setImportContainers(importContainers);
-    gateInReponse.setExportContainers(exportContainers);
-    gateInReponse = opusGateInReadService.constructGateInReponse(gateInReadResponse, gateInReponse);
+		return gateInReponse;
+	}
 
-    return gateInReponse;
-  }
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
+	public GateInReponse saveGateInInfo(GateInWriteRequest gateInWriteRequest) {
+		List<ImportContainer> importContainers = null;
+		List<ExportContainer> exportContainers = null;
 
-  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
-  public GateInReponse saveGateInInfo(GateInWriteRequest gateInWriteRequest) {
-    List<ImportContainer> importContainers = null;
-    List<ExportContainer> exportContainers = null;
+		// call opus -
+		OpusGateInWriteRequest opusGateInWriteRequest = opusGateInWriteService
+				.constructOpusGateInWriteRequest(gateInWriteRequest);
+		OpusGateInWriteResponse opusGateInWriteResponse = opusGateInWriteService
+				.getGateInWriteResponse(opusGateInWriteRequest);
 
-    // call opus -
-    OpusGateInWriteRequest opusGateInWriteRequest =
-        opusGateInWriteService.constructOpusGateInWriteRequest(gateInWriteRequest);
-    OpusGateInWriteResponse opusGateInWriteResponse =
-        opusGateInWriteService.getGateInWriteResponse(opusGateInWriteRequest);
+		String errorMessage = OpusService.hasErrorMessage(opusGateInWriteResponse.getErrorList());
+		if (StringUtils.isNotEmpty(errorMessage)) {
+			// throw new business exception with constructed message - there is
+			// an error
+			throw new BusinessException(errorMessage);
+		}
 
-    String errorMessage = OpusService.hasErrorMessage(opusGateInWriteResponse.getErrorList());
-    if (StringUtils.isNotEmpty(errorMessage)) {
-      // throw new business exception with constructed message - there is an error
-      throw new BusinessException(errorMessage);
-    }
+		if (!(gateInWriteRequest.getExportContainers() == null || gateInWriteRequest.getExportContainers().isEmpty())) {
+			exportContainers = exportGateInService.saveGateInInfo(gateInWriteRequest);
+		}
 
-    if (!(gateInWriteRequest.getExportContainers() == null || gateInWriteRequest.getExportContainers().isEmpty())) {
-      exportContainers = exportGateInService.saveGateInInfo(gateInWriteRequest);
-    }
+		if (!(gateInWriteRequest.getImportContainers() == null || gateInWriteRequest.getImportContainers().isEmpty())) {
+			importContainers = importGateInService.saveGateInInfo(gateInWriteRequest);
+		}
 
-    if (!(gateInWriteRequest.getImportContainers() == null || gateInWriteRequest.getImportContainers().isEmpty())) {
-      importContainers = importGateInService.saveGateInInfo(gateInWriteRequest);
-    }
+		GateInReponse gateInReponse = new GateInReponse();
+		gateInReponse.setImportContainers(importContainers);
+		gateInReponse.setExportContainers(exportContainers);
+		gateInReponse = opusGateInWriteService.constructGateInReponse(opusGateInWriteResponse, gateInReponse);
 
-    GateInReponse gateInReponse = new GateInReponse();
-    gateInReponse.setImportContainers(importContainers);
-    gateInReponse.setExportContainers(exportContainers);
-    gateInReponse = opusGateInWriteService.constructGateInReponse(opusGateInWriteResponse, gateInReponse);
-
-
-    return gateInReponse;
-  }
+		return gateInReponse;
+	}
 
 }

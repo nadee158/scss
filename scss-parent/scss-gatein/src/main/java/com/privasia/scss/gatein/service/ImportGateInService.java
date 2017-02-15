@@ -7,15 +7,15 @@ import java.util.Optional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.privasia.scss.common.dto.GateInRequest;
 import com.privasia.scss.common.dto.GateInWriteRequest;
 import com.privasia.scss.common.dto.GatePassValidateDTO;
 import com.privasia.scss.common.dto.ImportContainer;
 import com.privasia.scss.core.exception.ResultsNotFoundException;
-import com.privasia.scss.core.model.Client;
 import com.privasia.scss.core.model.GatePass;
-import com.privasia.scss.core.repository.ClientRepository;
 import com.privasia.scss.core.repository.GatePassRepository;
 
 @Service("importGateInService")
@@ -24,9 +24,6 @@ public class ImportGateInService {
   private GatePassRepository gatePassRepository;
 
   private ModelMapper modelMapper;
-
-  private ClientRepository clientRepository;
-
 
   @Autowired
   public void setGatePassRepository(GatePassRepository gatePassRepository) {
@@ -39,13 +36,8 @@ public class ImportGateInService {
   }
 
 
-  @Autowired
-  public void setClientRepository(ClientRepository clientRepository) {
-    this.clientRepository = clientRepository;
-  }
-
-
-  public List<ImportContainer> populateGateIn(GateInRequest gateInRequest) {
+  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+  public List<ImportContainer> populateGateInImport(GateInRequest gateInRequest) {
 
     List<Long> gatePassNumberList = new ArrayList<Long>();
     if (gateInRequest.getGatePass1() != null && gateInRequest.getGatePass1() != 0) {
@@ -71,11 +63,6 @@ public class ImportGateInService {
             gatePassValidateDTO.getGatePassErrorMessage() + gateInRequest.getGatePass1());
       }
     });
-
-    Optional<Client> clientOpt = clientRepository.findOne(gateInRequest.getLaneId());
-    Client client =
-        clientOpt.orElseThrow(() -> new ResultsNotFoundException("Invalid lane ID ! " + gateInRequest.getLaneId()));
-    gateInRequest.setLaneNo(client.getLaneNo());
 
     return importContainers;
 
