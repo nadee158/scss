@@ -9,6 +9,7 @@ import com.privasia.scss.common.dto.ExportContainer;
 import com.privasia.scss.common.dto.ImportContainer;
 import com.privasia.scss.common.dto.KioskBoothRightsDTO;
 import com.privasia.scss.core.model.Exports;
+import com.privasia.scss.core.model.ExportsQ;
 import com.privasia.scss.core.model.GatePass;
 import com.privasia.scss.core.model.KioskBoothRights;
 
@@ -82,14 +83,40 @@ public final class ModelMapPropertyMap {
       }
     };
   }
-  
-  
+
+
   public static PropertyMap<ExportContainer, Exports> exportContainerToExports() {
-	    return new PropertyMap<ExportContainer, Exports>() {
-	      protected void configure() {
-	        skip().getCardUsage().setCard(null);
-	      }
-	    };
+    return new PropertyMap<ExportContainer, Exports>() {
+      protected void configure() {
+        skip().getCardUsage().setCard(null);
+      }
+    };
+  }
+
+  public static PropertyMap<Exports, ExportsQ> exportsToExportsQ() {
+    return new PropertyMap<Exports, ExportsQ>() {
+      protected void configure() {
+        map().setEirNumber(source.getCommonGateInOut().getEirNumber());
+        map().setImpExpFlag(source.getCommonGateInOut().getImpExpFlag());
+        map().setRejectReason(source.getCommonGateInOut().getRejectReason());
+        map().setGateInStatus(source.getCommonGateInOut().getGateInStatus());
+        map().setZipFileNo(source.getCommonGateInOut().getZipFileNo());
+        map().setTrxSlipNo(source.getCommonGateInOut().getTrxSlipNo());
+
+        map().setPmHeadNo(source.getBaseCommonGateInOutAttribute().getPmHeadNo());
+        map().setPmPlateNo(source.getBaseCommonGateInOutAttribute().getPmPlateNo());
+        map().setEirStatus(source.getBaseCommonGateInOutAttribute().getEirStatus());
+        map().setTimeGateIn(source.getBaseCommonGateInOutAttribute().getTimeGateIn());
+        map().setTimeGateInOk(source.getBaseCommonGateInOutAttribute().getTimeGateInOk());
+        map().setTimeGateOut(source.getBaseCommonGateInOutAttribute().getTimeGateOut());
+        map().setTimeGateOutOk(source.getBaseCommonGateInOutAttribute().getTimeGateOutOk());
+        map().setCard(source.getBaseCommonGateInOutAttribute().getCard());
+        map().setGateInClerk(source.getBaseCommonGateInOutAttribute().getGateInClerk());
+        map().setGateOutClerk(source.getBaseCommonGateInOutAttribute().getGateOutClerk());
+        map().setGateInClient(source.getBaseCommonGateInOutAttribute().getGateInClient());
+        map().setGateOutClient(source.getBaseCommonGateInOutAttribute().getGateOutClient());
+      }
+    };
   }
 
 }

@@ -22,14 +22,19 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.Type;
 
 import com.privasia.scss.common.enums.ContainerPosition;
 import com.privasia.scss.common.enums.ExportOPTFlagType;
 import com.privasia.scss.common.enums.GCS_SSRBlockStatusType;
 import com.privasia.scss.common.enums.GateInOutStatus;
+import com.privasia.scss.common.enums.ImpExpFlagStatus;
 import com.privasia.scss.common.enums.ReferTempType;
+import com.privasia.scss.common.enums.TransactionStatus;
 import com.privasia.scss.common.enums.VesselStatus;
+import com.privasia.scss.common.util.CommonUtil;
+import com.privasia.scss.core.repository.DamageCodeRepository;
 
 /**
  * @author Janaka
@@ -51,51 +56,51 @@ public class Exports implements Serializable {
   private Long exportID;
 
   @Embedded
-  @AttributeOverrides({@AttributeOverride(name = "containerNumber", column = @Column(name = "EXP_CONTAINERNO") ),
-      @AttributeOverride(name = "containerISOCode", column = @Column(name = "EXP_CONT_ISO_CODE") ), @AttributeOverride(
-          name = "containerFullOrEmpty", column = @Column(name = "EXP_FULL_EMPTY_FLAG", nullable = true) )})
+  @AttributeOverrides({@AttributeOverride(name = "containerNumber", column = @Column(name = "EXP_CONTAINERNO")),
+      @AttributeOverride(name = "containerISOCode", column = @Column(name = "EXP_CONT_ISO_CODE")), @AttributeOverride(
+          name = "containerFullOrEmpty", column = @Column(name = "EXP_FULL_EMPTY_FLAG", nullable = true))})
   private CommonContainerAttribute container;
 
   @Embedded
-  @AttributeOverrides({@AttributeOverride(name = "eirNumber", column = @Column(name = "EXP_EIRNO") ),
-      @AttributeOverride(name = "impExpFlag", column = @Column(name = "EXP_IMPEXPFLAG", nullable = true) ),
-      @AttributeOverride(name = "rejectReason", column = @Column(name = "EXP_REJECTREASON") ),
-      @AttributeOverride(name = "kioskConfirmed", column = @Column(name = "KIOSK_CONFIRMED") ),
-      @AttributeOverride(name = "kioskCancelPickUp", column = @Column(name = "KIOSK_CANCEL_PICKUP") ),
-      @AttributeOverride(name = "gateInStatus", column = @Column(name = "EXP_GATEIN_STATUS") ),
-      @AttributeOverride(name = "zipFileNo", column = @Column(name = "ZIP_FILE_NO") ),
-      @AttributeOverride(name = "trxSlipNo", column = @Column(name = "TRX_SLIP_NO") )})
+  @AttributeOverrides({@AttributeOverride(name = "eirNumber", column = @Column(name = "EXP_EIRNO")),
+      @AttributeOverride(name = "impExpFlag", column = @Column(name = "EXP_IMPEXPFLAG", nullable = true)),
+      @AttributeOverride(name = "rejectReason", column = @Column(name = "EXP_REJECTREASON")),
+      @AttributeOverride(name = "kioskConfirmed", column = @Column(name = "KIOSK_CONFIRMED")),
+      @AttributeOverride(name = "kioskCancelPickUp", column = @Column(name = "KIOSK_CANCEL_PICKUP")),
+      @AttributeOverride(name = "gateInStatus", column = @Column(name = "EXP_GATEIN_STATUS")),
+      @AttributeOverride(name = "zipFileNo", column = @Column(name = "ZIP_FILE_NO")),
+      @AttributeOverride(name = "trxSlipNo", column = @Column(name = "TRX_SLIP_NO"))})
   private CommonGateInOutAttribute commonGateInOut;
 
   @Embedded
-  @AttributeOverrides({@AttributeOverride(name = "pmHeadNo", column = @Column(name = "EXP_TRUCK_HEAD_NO") ),
-      @AttributeOverride(name = "pmPlateNo", column = @Column(name = "EXP_TRUCK_PLATE_NO") ),
-      @AttributeOverride(name = "hpatBooking", column = @Column(name = "BOOKING_ID") ),
-      @AttributeOverride(name = "eirStatus", column = @Column(name = "EXP_EIRSTATUS", nullable = true) ),
-      @AttributeOverride(name = "transactionSlipPrinted", column = @Column(name = "TRANSACTION_SLIP_PRINTED") ),
-      @AttributeOverride(name = "gateOutBoothNo", column = @Column(name = "EXP_GATE_OUT_BOOTH_NO") ),
-      @AttributeOverride(name = "timeGateIn", column = @Column(name = "EXP_TIMEGATEIN") ),
-      @AttributeOverride(name = "timeGateInOk", column = @Column(name = "EXP_TIMEGATEINOK") ),
-      @AttributeOverride(name = "timeGateOut", column = @Column(name = "EXP_TIMEGATEOUT") ),
-      @AttributeOverride(name = "timeGateOutOk", column = @Column(name = "EXP_TIMEGATEOUTOK") ),
-      @AttributeOverride(name = "timeGateOutBooth", column = @Column(name = "EXP_TIMEGATEOUT_BOOTH") )})
+  @AttributeOverrides({@AttributeOverride(name = "pmHeadNo", column = @Column(name = "EXP_TRUCK_HEAD_NO")),
+      @AttributeOverride(name = "pmPlateNo", column = @Column(name = "EXP_TRUCK_PLATE_NO")),
+      @AttributeOverride(name = "hpatBooking", column = @Column(name = "BOOKING_ID")),
+      @AttributeOverride(name = "eirStatus", column = @Column(name = "EXP_EIRSTATUS", nullable = true)),
+      @AttributeOverride(name = "transactionSlipPrinted", column = @Column(name = "TRANSACTION_SLIP_PRINTED")),
+      @AttributeOverride(name = "gateOutBoothNo", column = @Column(name = "EXP_GATE_OUT_BOOTH_NO")),
+      @AttributeOverride(name = "timeGateIn", column = @Column(name = "EXP_TIMEGATEIN")),
+      @AttributeOverride(name = "timeGateInOk", column = @Column(name = "EXP_TIMEGATEINOK")),
+      @AttributeOverride(name = "timeGateOut", column = @Column(name = "EXP_TIMEGATEOUT")),
+      @AttributeOverride(name = "timeGateOutOk", column = @Column(name = "EXP_TIMEGATEOUTOK")),
+      @AttributeOverride(name = "timeGateOutBooth", column = @Column(name = "EXP_TIMEGATEOUT_BOOTH"))})
   @AssociationOverrides({
       @AssociationOverride(name = "gateOutBoothClerk",
           joinColumns = @JoinColumn(name = "EXP_GATEOUT_BOOTH_CLERKID", referencedColumnName = "SYS_USERID_SEQ",
-              nullable = true) ),
+              nullable = true)),
       @AssociationOverride(name = "card",
-          joinColumns = @JoinColumn(name = "EXP_HCTDID", referencedColumnName = "CRD_CARDID_SEQ", nullable = true) ),
+          joinColumns = @JoinColumn(name = "EXP_HCTDID", referencedColumnName = "CRD_CARDID_SEQ", nullable = true)),
       @AssociationOverride(name = "gateInClerk",
           joinColumns = @JoinColumn(name = "EXP_GATEINCLERKID", referencedColumnName = "SYS_USERID_SEQ",
-              nullable = true) ),
+              nullable = true)),
       @AssociationOverride(name = "gateOutClerk",
           joinColumns = @JoinColumn(name = "EXP_GATEOUTCLERKID", referencedColumnName = "SYS_USERID_SEQ",
-              nullable = true) ),
+              nullable = true)),
       @AssociationOverride(name = "gateInClient",
           joinColumns = @JoinColumn(name = "CLI_CLIENTID_GATEIN", referencedColumnName = "CLI_CLIENTID_SEQ",
-              nullable = true) ),
+              nullable = true)),
       @AssociationOverride(name = "gateOutClient", joinColumns = @JoinColumn(name = "CLI_CLIENTID_GATEOUT",
-          referencedColumnName = "CLI_CLIENTID_SEQ", nullable = true) )})
+          referencedColumnName = "CLI_CLIENTID_SEQ", nullable = true))})
   private BaseCommonGateInOutAttribute baseCommonGateInOutAttribute;
 
   @Column(name = "EXP_MANUALOPTFLAG", nullable = true)
@@ -126,12 +131,12 @@ public class Exports implements Serializable {
   private String expSpod;
 
   @Embedded
-  @AttributeOverrides({@AttributeOverride(name = "seal01Origin", column = @Column(name = "EXP_SEAL_1_ORIGIN") ),
-      @AttributeOverride(name = "seal01Type", column = @Column(name = "EXP_SEAL_1_TYPE") ),
-      @AttributeOverride(name = "seal01Number", column = @Column(name = "EXP_SEAL_1_NUMBER") ),
-      @AttributeOverride(name = "seal02Origin", column = @Column(name = "EXP_SEAL_2_ORIGIN") ),
-      @AttributeOverride(name = "seal02Type", column = @Column(name = "EXP_SEAL_2_TYPE") ),
-      @AttributeOverride(name = "seal02Number", column = @Column(name = "EXP_SEAL_2_NUMBER") )})
+  @AttributeOverrides({@AttributeOverride(name = "seal01Origin", column = @Column(name = "EXP_SEAL_1_ORIGIN")),
+      @AttributeOverride(name = "seal01Type", column = @Column(name = "EXP_SEAL_1_TYPE")),
+      @AttributeOverride(name = "seal01Number", column = @Column(name = "EXP_SEAL_1_NUMBER")),
+      @AttributeOverride(name = "seal02Origin", column = @Column(name = "EXP_SEAL_2_ORIGIN")),
+      @AttributeOverride(name = "seal02Type", column = @Column(name = "EXP_SEAL_2_TYPE")),
+      @AttributeOverride(name = "seal02Number", column = @Column(name = "EXP_SEAL_2_NUMBER"))})
   private CommonSealAttribute sealAttribute;
 
   @Column(name = "EXP_WEIGHT_BRIDGE")
@@ -387,12 +392,12 @@ public class Exports implements Serializable {
   private String solasCertNo;
 
   @Embedded
-  @AttributeOverrides({@AttributeOverride(name = "mgw", column = @Column(name = "MGW") ),
-      @AttributeOverride(name = "faLedgerCode", column = @Column(name = "FA_LEDGER_CODE") ),
-      @AttributeOverride(name = "solasRefNumber", column = @Column(name = "SOLAS_REF_NO") ),
-      @AttributeOverride(name = "solasDetailID", column = @Column(name = "SOLAS_DETAIL_NO") ),
-      @AttributeOverride(name = "solasInstruction", column = @Column(name = "VGM_TYPE") ),
-      @AttributeOverride(name = "shipperVGM", column = @Column(name = "SHIPPER_VGM") )})
+  @AttributeOverrides({@AttributeOverride(name = "mgw", column = @Column(name = "MGW")),
+      @AttributeOverride(name = "faLedgerCode", column = @Column(name = "FA_LEDGER_CODE")),
+      @AttributeOverride(name = "solasRefNumber", column = @Column(name = "SOLAS_REF_NO")),
+      @AttributeOverride(name = "solasDetailID", column = @Column(name = "SOLAS_DETAIL_NO")),
+      @AttributeOverride(name = "solasInstruction", column = @Column(name = "VGM_TYPE")),
+      @AttributeOverride(name = "shipperVGM", column = @Column(name = "SHIPPER_VGM"))})
   private CommonSolasAttribute solas;
 
   public Long getExportID() {
@@ -1150,6 +1155,254 @@ public class Exports implements Serializable {
         + ", tireWeight=" + tireWeight + ", variance=" + variance + ", subHandlingType=" + subHandlingType
         + ", withinTolerance=" + withinTolerance + ", calculatedVariance=" + calculatedVariance + ", solasCertNo="
         + solasCertNo + ", solas=" + solas + "]";
+  }
+
+
+  public void prepareForInsertFromOpus(SystemUser gateInClerk, Card card, Client gateInClient, ShipSCN scn,
+      PrintEir printEir, CardUsage cardUsage, HPATBooking hpatBooking, DamageCodeRepository damageCodeRepository) {
+    if (this.getBaseCommonGateInOutAttribute() == null) {
+      this.setBaseCommonGateInOutAttribute(new BaseCommonGateInOutAttribute());
+    }
+    if (this.getBaseCommonGateInOutAttribute().getGateInClerk() == null) {
+      this.getBaseCommonGateInOutAttribute().setGateInClerk(gateInClerk);
+    }
+    this.getBaseCommonGateInOutAttribute().setTimeGateInOk(LocalDateTime.now());
+    this.getBaseCommonGateInOutAttribute().setCard(card);
+    this.setOptFlag(ExportOPTFlagType.OPTFLAG_NORMAL);
+    this.getBaseCommonGateInOutAttribute().setEirStatus(TransactionStatus.INPROGRESS);
+    this.setBookingNo(CommonUtil.changeCase(this.bookingNo, CommonUtil.UPPER_CASE));
+    if (this.container == null) {
+      this.setContainer(new CommonContainerAttribute());
+    }
+    this.getContainer()
+        .setContainerNumber(CommonUtil.changeCase(this.getContainer().getContainerNumber(), CommonUtil.UPPER_CASE));
+    this.getBaseCommonGateInOutAttribute().setGateInClient(gateInClient);
+    if (this.commonGateInOut == null) {
+      this.setCommonGateInOut(new CommonGateInOutAttribute());
+    }
+    this.getCommonGateInOut().setImpExpFlag(ImpExpFlagStatus.EXPORT);
+    this.setScn(scn);
+    this.setExpLine(CommonUtil.changeCase(this.expLine, CommonUtil.UPPER_CASE));
+    this.setExpOut(CommonUtil.changeCase(this.expOut, CommonUtil.UPPER_CASE));
+    this.setExpCar(CommonUtil.changeCase(this.expCar, CommonUtil.UPPER_CASE));
+    this.setExpSpod(CommonUtil.changeCase(this.expSpod, CommonUtil.UPPER_CASE));
+    this.getContainer()
+        .setContainerISOCode(CommonUtil.changeCase(this.getContainer().getContainerISOCode(), CommonUtil.UPPER_CASE));
+    if (this.sealAttribute == null) {
+      this.setSealAttribute(new CommonSealAttribute());
+    }
+    this.getSealAttribute()
+        .setSeal01Origin(CommonUtil.changeCase(this.getSealAttribute().getSeal01Origin(), CommonUtil.UPPER_CASE));
+    this.getSealAttribute()
+        .setSeal01Type(CommonUtil.changeCase(this.getSealAttribute().getSeal01Type(), CommonUtil.UPPER_CASE));
+    this.getSealAttribute()
+        .setSeal01Number(CommonUtil.changeCase(this.getSealAttribute().getSeal01Number(), CommonUtil.UPPER_CASE));
+    this.getSealAttribute()
+        .setSeal02Origin(CommonUtil.changeCase(this.getSealAttribute().getSeal02Origin(), CommonUtil.UPPER_CASE));
+    this.getSealAttribute()
+        .setSeal02Type(CommonUtil.changeCase(this.getSealAttribute().getSeal02Type(), CommonUtil.UPPER_CASE));
+    this.getSealAttribute()
+        .setSeal02Number(CommonUtil.changeCase(this.getSealAttribute().getSeal02Number(), CommonUtil.UPPER_CASE));
+    this.setImdg(CommonUtil.changeCase(this.imdg, CommonUtil.UPPER_CASE));
+    this.setExpUN(CommonUtil.changeCase(this.expUN, CommonUtil.UPPER_CASE));
+    this.setImdgLabelID(CommonUtil.changeCase(this.imdgLabelID, CommonUtil.UPPER_CASE));
+    if (!(this.damageCode_01 == null)) {
+      this.getDamageCode_01()
+          .setDamageCode(CommonUtil.changeCase(this.getDamageCode_01().getDamageCode(), CommonUtil.UPPER_CASE));
+      this.getDamageCode_01()
+          .setDamageDesc(CommonUtil.changeCase(this.getDamageCode_01().getDamageDesc(), CommonUtil.UPPER_CASE));
+
+
+      if (StringUtils.isNotEmpty(this.getDamageCode_01().getDamageCode())) {
+        this.damageCode_01 = damageCodeRepository.findOne(this.getDamageCode_01().getDamageCode()).orElse(null);
+      } else {
+        this.damageCode_01 = null;
+      }
+
+    }
+    if (!(this.damageCode_02 == null)) {
+      this.getDamageCode_02()
+          .setDamageCode(CommonUtil.changeCase(this.getDamageCode_02().getDamageCode(), CommonUtil.UPPER_CASE));
+      this.getDamageCode_02()
+          .setDamageDesc(CommonUtil.changeCase(this.getDamageCode_02().getDamageDesc(), CommonUtil.UPPER_CASE));
+
+      if (StringUtils.isNotEmpty(this.getDamageCode_02().getDamageCode())) {
+        this.damageCode_02 = damageCodeRepository.findOne(this.getDamageCode_02().getDamageCode()).orElse(null);
+      } else {
+        this.damageCode_02 = null;
+      }
+
+    }
+    if (!(this.damageCode_03 == null)) {
+      this.getDamageCode_03()
+          .setDamageCode(CommonUtil.changeCase(this.getDamageCode_03().getDamageCode(), CommonUtil.UPPER_CASE));
+      this.getDamageCode_03()
+          .setDamageDesc(CommonUtil.changeCase(this.getDamageCode_03().getDamageDesc(), CommonUtil.UPPER_CASE));
+
+      if (StringUtils.isNotEmpty(this.getDamageCode_03().getDamageCode())) {
+        this.damageCode_03 = damageCodeRepository.findOne(this.getDamageCode_03().getDamageCode()).orElse(null);
+      } else {
+        this.damageCode_03 = null;
+      }
+
+    }
+    if (!(this.damageCode_04 == null)) {
+      this.getDamageCode_04()
+          .setDamageCode(CommonUtil.changeCase(this.getDamageCode_04().getDamageCode(), CommonUtil.UPPER_CASE));
+      this.getDamageCode_04()
+          .setDamageDesc(CommonUtil.changeCase(this.getDamageCode_04().getDamageDesc(), CommonUtil.UPPER_CASE));
+
+      if (StringUtils.isNotEmpty(this.getDamageCode_04().getDamageCode())) {
+        this.damageCode_04 = damageCodeRepository.findOne(this.getDamageCode_04().getDamageCode()).orElse(null);
+      } else {
+        this.damageCode_04 = null;
+      }
+
+    }
+    if (!(this.damageCode_05 == null)) {
+      this.getDamageCode_05()
+          .setDamageCode(CommonUtil.changeCase(this.getDamageCode_05().getDamageCode(), CommonUtil.UPPER_CASE));
+      this.getDamageCode_05()
+          .setDamageDesc(CommonUtil.changeCase(this.getDamageCode_05().getDamageDesc(), CommonUtil.UPPER_CASE));
+
+      if (StringUtils.isNotEmpty(this.getDamageCode_05().getDamageCode())) {
+        this.damageCode_05 = damageCodeRepository.findOne(this.getDamageCode_05().getDamageCode()).orElse(null);
+      } else {
+        this.damageCode_05 = null;
+      }
+
+    }
+    if (!(this.damageCode_06 == null)) {
+      this.getDamageCode_06()
+          .setDamageCode(CommonUtil.changeCase(this.getDamageCode_06().getDamageCode(), CommonUtil.UPPER_CASE));
+      this.getDamageCode_06()
+          .setDamageDesc(CommonUtil.changeCase(this.getDamageCode_06().getDamageDesc(), CommonUtil.UPPER_CASE));
+
+      if (StringUtils.isNotEmpty(this.getDamageCode_06().getDamageCode())) {
+        this.damageCode_06 = damageCodeRepository.findOne(this.getDamageCode_06().getDamageCode()).orElse(null);
+      } else {
+        this.damageCode_06 = null;
+      }
+
+    }
+    if (!(this.damageCode_07 == null)) {
+      this.getDamageCode_07()
+          .setDamageCode(CommonUtil.changeCase(this.getDamageCode_07().getDamageCode(), CommonUtil.UPPER_CASE));
+      this.getDamageCode_07()
+          .setDamageDesc(CommonUtil.changeCase(this.getDamageCode_07().getDamageDesc(), CommonUtil.UPPER_CASE));
+
+      if (StringUtils.isNotEmpty(this.getDamageCode_07().getDamageCode())) {
+        this.damageCode_07 = damageCodeRepository.findOne(this.getDamageCode_07().getDamageCode()).orElse(null);
+      } else {
+        this.damageCode_07 = null;
+      }
+
+    }
+    if (!(this.damageCode_08 == null)) {
+      this.getDamageCode_08()
+          .setDamageCode(CommonUtil.changeCase(this.getDamageCode_08().getDamageCode(), CommonUtil.UPPER_CASE));
+      this.getDamageCode_08()
+          .setDamageDesc(CommonUtil.changeCase(this.getDamageCode_08().getDamageDesc(), CommonUtil.UPPER_CASE));
+
+      if (StringUtils.isNotEmpty(this.getDamageCode_08().getDamageCode())) {
+        this.damageCode_08 = damageCodeRepository.findOne(this.getDamageCode_08().getDamageCode()).orElse(null);
+      } else {
+        this.damageCode_08 = null;
+      }
+
+    }
+    if (!(this.damageCode_09 == null)) {
+      this.getDamageCode_09()
+          .setDamageCode(CommonUtil.changeCase(this.getDamageCode_09().getDamageCode(), CommonUtil.UPPER_CASE));
+      this.getDamageCode_09()
+          .setDamageDesc(CommonUtil.changeCase(this.getDamageCode_09().getDamageDesc(), CommonUtil.UPPER_CASE));
+
+      if (StringUtils.isNotEmpty(this.getDamageCode_09().getDamageCode())) {
+        this.damageCode_09 = damageCodeRepository.findOne(this.getDamageCode_09().getDamageCode()).orElse(null);
+      } else {
+        this.damageCode_09 = null;
+      }
+
+    }
+    this.getBaseCommonGateInOutAttribute().setPmHeadNo(
+        CommonUtil.changeCase(this.getBaseCommonGateInOutAttribute().getPmHeadNo(), CommonUtil.UPPER_CASE));
+    this.getBaseCommonGateInOutAttribute().setPmPlateNo(
+        CommonUtil.changeCase(this.getBaseCommonGateInOutAttribute().getPmPlateNo(), CommonUtil.UPPER_CASE));
+    this.setYardPosition(CommonUtil.changeCase(this.yardPosition, CommonUtil.UPPER_CASE));
+    this.setBayCode(CommonUtil.changeCase(this.bayCode, CommonUtil.UPPER_CASE));
+    this.setExpAgent(CommonUtil.changeCase(this.expAgent, CommonUtil.UPPER_CASE));
+    this.getCommonGateInOut()
+        .setRejectReason(CommonUtil.changeCase(this.getCommonGateInOut().getRejectReason(), CommonUtil.UPPER_CASE));
+    this.setSubHandlingType(CommonUtil.changeCase(this.subHandlingType, CommonUtil.UPPER_CASE));
+    this.setVesselCode(CommonUtil.changeCase(this.vesselCode, CommonUtil.UPPER_CASE));
+    this.setVesselName(CommonUtil.changeCase(this.vesselName, CommonUtil.UPPER_CASE));
+    this.setVesselSCN(CommonUtil.changeCase(this.vesselSCN, CommonUtil.UPPER_CASE));
+    this.setVesselVisitID(CommonUtil.changeCase(this.vesselVisitID, CommonUtil.UPPER_CASE));
+    this.setVesselVoyage(CommonUtil.changeCase(this.vesselVoyage, CommonUtil.UPPER_CASE));
+    this.setGcsBlockStatusDate(LocalDateTime.now());
+    if (!(this.ssrBlockStatus == null)) {
+      if (this.ssrBlockStatus == GCS_SSRBlockStatusType.BLK) {
+        this.setSsrBlockStatusDate(LocalDateTime.now());
+      }
+    }
+    this.setGcsLastCheck(LocalDateTime.now());
+    this.setPrintEir(printEir);
+    this.setUserRemarks(CommonUtil.changeCase(this.userRemarks, CommonUtil.UPPER_CASE));
+    this.setKpaApproval(CommonUtil.changeCase(this.kpaApproval, CommonUtil.LOWER_CASE));
+    this.setHdlGoodsCode(CommonUtil.changeCase(this.hdlGoodsCode, CommonUtil.LOWER_CASE));
+    this.setDgDescription(CommonUtil.changeCase(this.dgDescription, CommonUtil.LOWER_CASE));
+    this.setHdlGoodsDescription(CommonUtil.changeCase(this.hdlGoodsDescription, CommonUtil.LOWER_CASE));
+    this.setCardUsage(cardUsage);
+    this.getBaseCommonGateInOutAttribute().setHpatBooking(hpatBooking);
+    calculateWeightPercentages();
+    this.setHpabISOCode(CommonUtil.changeCase(this.hpabISOCode, CommonUtil.UPPER_CASE));
+    this.setCosmosISOCode(CommonUtil.changeCase(this.cosmosISOCode, CommonUtil.UPPER_CASE));
+    this.setFuelWeight(CommonUtil.changeCase(this.fuelWeight, CommonUtil.UPPER_CASE));
+    this.setTireWeight(CommonUtil.changeCase(this.tireWeight, CommonUtil.UPPER_CASE));
+    this.setVariance(CommonUtil.changeCase(this.variance, CommonUtil.UPPER_CASE));
+    this.setTrailerPlateNo(CommonUtil.changeCase(this.trailerPlateNo, CommonUtil.UPPER_CASE));
+    this.setTrailerWeight(CommonUtil.changeCase(this.trailerWeight, CommonUtil.UPPER_CASE));
+    this.setPmWeight(CommonUtil.changeCase(this.pmWeight, CommonUtil.UPPER_CASE));
+    if (this.solas == null) {
+      this.setSolas(new CommonSolasAttribute());
+    }
+    this.getSolas().setShipperVGM(CommonUtil.changeCase(this.getSolas().getShipperVGM(), CommonUtil.UPPER_CASE));
+    this.setCalculatedVariance(calculatedVariance);
+    this.getSolas().setSolasDetailID(CommonUtil.changeCase(this.getSolas().getSolasDetailID(), CommonUtil.LOWER_CASE));
+    this.getSolas().setFaLedgerCode(CommonUtil.changeCase(this.getSolas().getFaLedgerCode(), CommonUtil.UPPER_CASE));
+    this.getSolas()
+        .setSolasRefNumber(CommonUtil.changeCase(this.getSolas().getSolasRefNumber(), CommonUtil.LOWER_CASE));
+  }
+
+  private void calculateWeightPercentages() {
+    double weightDifferentPercentage = 0;
+    double weightDifferent = 0;
+    double grossWeightCosmos = 0;
+    double netWeight = 0;
+    if (!(this.cosmosGrossWeight == null)) {
+      grossWeightCosmos = new Double(this.cosmosGrossWeight.doubleValue());
+    } else {
+      double comsosTareWeight = 0;
+      double cosmosNetWeight = 0;
+      if (!(this.cosmosTareWeight == null)) {
+        comsosTareWeight = new Double(this.cosmosTareWeight.doubleValue());
+      }
+      if (!(this.cosmosNetWeight == null)) {
+        cosmosNetWeight = new Double(this.cosmosNetWeight.doubleValue());
+      }
+      grossWeightCosmos = comsosTareWeight + cosmosNetWeight;
+    }
+    if (!(this.expNetWeight == null)) {
+      netWeight = new Double(this.expNetWeight.doubleValue());
+    }
+    if (netWeight > 0) {
+      weightDifferentPercentage = Math.round(100 - ((grossWeightCosmos / netWeight) * 100));
+    } else {
+      weightDifferentPercentage = 100;
+    }
+    weightDifferent = grossWeightCosmos - netWeight;
+    this.setWeightDifference(weightDifferent);
+    this.setWeightDiffPercentage(weightDifferentPercentage);
   }
 
 }

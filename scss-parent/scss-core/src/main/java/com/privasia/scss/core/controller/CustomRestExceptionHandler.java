@@ -3,7 +3,6 @@ package com.privasia.scss.core.controller;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.plaf.ButtonUI;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
@@ -169,6 +168,7 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
   @ExceptionHandler({DataIntegrityViolationException.class})
   public CustomResponseEntity<ApiResponseObject> handleConflictException(
       final DataIntegrityViolationException exception, final WebRequest webRequest) {
+    exception.printStackTrace();
     logger.info(exception.getClass().getName());
     String error = "Duplicate entry for a column marked as unique";
     HttpStatus httpStatus = HttpStatus.CONFLICT;
@@ -316,16 +316,16 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
     HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
     return handleExceptionInternal(exception, httpStatus, webRequest, "Invalid json, Malformed!");
   }
-  
-  
+
+
   @ExceptionHandler(BusinessException.class)
   public CustomResponseEntity<ApiResponseObject> businessExceptionHandler(Exception ex, final WebRequest webRequest) {
-	  
-	  logger.info(ex.getClass().getName());
-	  logger.error("error", ex);
-	    //
-	  HttpStatus httpStatus = HttpStatus.PRECONDITION_FAILED;
-	  return handleExceptionInternal(ex, httpStatus, webRequest, "Business Exception Occured!");
+
+    logger.info(ex.getClass().getName());
+    logger.error("error", ex);
+    //
+    HttpStatus httpStatus = HttpStatus.PRECONDITION_FAILED;
+    return handleExceptionInternal(ex, httpStatus, webRequest, "Business Exception Occured!");
   }
 
 

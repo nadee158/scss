@@ -6,10 +6,9 @@ package com.privasia.scss.core.model;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-import javax.persistence.AssociationOverride;
-import javax.persistence.AssociationOverrides;
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -28,7 +27,9 @@ import com.privasia.scss.common.enums.ContainerPosition;
 import com.privasia.scss.common.enums.ExportOPTFlagType;
 import com.privasia.scss.common.enums.GCS_SSRBlockStatusType;
 import com.privasia.scss.common.enums.GateInOutStatus;
+import com.privasia.scss.common.enums.ImpExpFlagStatus;
 import com.privasia.scss.common.enums.ReferTempType;
+import com.privasia.scss.common.enums.TransactionStatus;
 import com.privasia.scss.common.enums.VesselStatus;
 
 /**
@@ -52,45 +53,75 @@ public class ExportsQ implements Serializable {
 
   @Embedded
   @AttributeOverrides({@AttributeOverride(name = "containerNumber", column = @Column(name = "EXP_CONTAINERNO")),
-      @AttributeOverride(name = "containerISOCode", column = @Column(name = "EXP_CONT_ISO_CODE")), 
-      @AttributeOverride(
+      @AttributeOverride(name = "containerISOCode", column = @Column(name = "EXP_CONT_ISO_CODE")), @AttributeOverride(
           name = "containerFullOrEmpty", column = @Column(name = "EXP_FULL_EMPTY_FLAG", nullable = true))})
   private CommonContainerAttribute container;
 
-  @Embedded
-  @AttributeOverrides({@AttributeOverride(name = "eirNumber", column = @Column(name = "EXP_EIRNO")),
-      @AttributeOverride(name = "impExpFlag", column = @Column(name = "EXP_IMPEXPFLAG", nullable = true)),
-      @AttributeOverride(name = "rejectReason", column = @Column(name = "EXP_REJECTREASON")),
-      @AttributeOverride(name = "gateInStatus", column = @Column(name = "EXP_GATEIN_STATUS")),
-      @AttributeOverride(name = "zipFileNo", column = @Column(name = "ZIP_FILE_NO") ),
-	  @AttributeOverride(name = "trxSlipNo", column = @Column(name = "TRX_SLIP_NO") )})
-  private CommonGateInOutAttribute commonGateInOut;
+  /* COMMON GATE IN ATTRIBUTE STARTS */
+  @Column(name = "EXP_EIRNO")
+  private Long eirNumber;
 
+  @Column(name = "EXP_IMPEXPFLAG")
+  @Type(type = "com.privasia.scss.common.enumusertype.ImpExpFlagEnumUserType")
+  private ImpExpFlagStatus impExpFlag;
 
-  @Embedded
-  @AttributeOverrides({@AttributeOverride(name = "pmHeadNo", column = @Column(name = "EXP_TRUCK_HEAD_NO")),
-      @AttributeOverride(name = "pmPlateNo", column = @Column(name = "EXP_TRUCK_PLATE_NO")),
-      @AttributeOverride(name = "eirStatus", column = @Column(name = "EXP_EIRSTATUS", nullable = true)),
-      @AttributeOverride(name = "timeGateIn", column = @Column(name = "EXP_TIMEGATEIN")),
-      @AttributeOverride(name = "timeGateInOk", column = @Column(name = "EXP_TIMEGATEINOK")),
-      @AttributeOverride(name = "timeGateOut", column = @Column(name = "EXP_TIMEGATEOUT")),
-      @AttributeOverride(name = "timeGateOutOk", column = @Column(name = "EXP_TIMEGATEOUTOK")),})
-  @AssociationOverrides({
-      @AssociationOverride(name = "card",
-          joinColumns = @JoinColumn(name = "EXP_HCTDID", referencedColumnName = "CRD_CARDID_SEQ", nullable = true)),
-      @AssociationOverride(name = "gateInClerk",
-          joinColumns = @JoinColumn(name = "EXP_GATEINCLERKID", referencedColumnName = "SYS_USERID_SEQ",
-              nullable = true)),
-      @AssociationOverride(name = "gateOutClerk",
-          joinColumns = @JoinColumn(name = "EXP_GATEOUTCLERKID", referencedColumnName = "SYS_USERID_SEQ",
-              nullable = true)),
-      @AssociationOverride(name = "gateInClient",
-          joinColumns = @JoinColumn(name = "CLI_CLIENTID_GATEIN", referencedColumnName = "CLI_CLIENTID_SEQ",
-              nullable = true)),
-      @AssociationOverride(name = "gateOutClient", joinColumns = @JoinColumn(name = "CLI_CLIENTID_GATEOUT",
-          referencedColumnName = "CLI_CLIENTID_SEQ", nullable = true))})
-  private BaseCommonGateInOutAttribute baseCommonGateInOutAttribute;
+  @Column(name = "EXP_REJECTREASON")
+  private String rejectReason;
 
+  @Column(name = "EXP_GATEIN_STATUS")
+  @Type(type = "com.privasia.scss.common.enumusertype.TransactionStatusEnumUserType")
+  private TransactionStatus gateInStatus;
+
+  @Column(name = "ZIP_FILE_NO")
+  private String zipFileNo;
+
+  @Column(name = "TRX_SLIP_NO")
+  private String trxSlipNo;
+  /* COMMON GATE IN ATTRIBUTE STARTS */
+
+  /* BASE COMMON GATE IN ATTRIBUTE STARTS */
+  @Column(name = "EXP_TRUCK_HEAD_NO")
+  private String pmHeadNo;
+
+  @Column(name = "EXP_TRUCK_PLATE_NO")
+  private String pmPlateNo;
+
+  @Column(name = "EXP_EIRSTATUS")
+  @Type(type = "com.privasia.scss.common.enumusertype.TransactionStatusEnumUserType")
+  private TransactionStatus eirStatus;
+
+  @Column(name = "EXP_TIMEGATEIN")
+  private LocalDateTime timeGateIn;
+
+  @Column(name = "EXP_TIMEGATEINOK")
+  private LocalDateTime timeGateInOk;
+
+  @Column(name = "EXP_TIMEGATEOUT")
+  private LocalDateTime timeGateOut;
+
+  @Column(name = "EXP_TIMEGATEOUTOK")
+  private LocalDateTime timeGateOutOk;
+
+  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+  @JoinColumn(name = "EXP_HCTDID", nullable = true, referencedColumnName = "CRD_CARDID_SEQ")
+  private Card card;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "EXP_GATEINCLERKID", nullable = true, referencedColumnName = "SYS_USERID_SEQ")
+  private SystemUser gateInClerk;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "EXP_GATEOUTCLERKID", nullable = true, referencedColumnName = "SYS_USERID_SEQ")
+  private SystemUser gateOutClerk;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "CLI_CLIENTID_GATEIN", nullable = true, referencedColumnName = "CLI_CLIENTID_SEQ")
+  private Client gateInClient;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "CLI_CLIENTID_GATEOUT", nullable = true, referencedColumnName = "CLI_CLIENTID_SEQ")
+  private Client gateOutClient;
+  /* BASE COMMON GATE IN ATTRIBUTE ENDS */
 
   @Column(name = "EXP_MANUALOPTFLAG", nullable = true)
   @Type(type = "com.privasia.scss.common.enumusertype.ExportOPTFlagEnumUserType")
@@ -333,14 +364,6 @@ public class ExportsQ implements Serializable {
 
   public void setContainer(CommonContainerAttribute container) {
     this.container = container;
-  }
-
-  public CommonGateInOutAttribute getCommonGateInOut() {
-    return commonGateInOut;
-  }
-
-  public void setCommonGateInOut(CommonGateInOutAttribute commonGateInOut) {
-    this.commonGateInOut = commonGateInOut;
   }
 
   public String getBookingNo() {
@@ -774,14 +797,6 @@ public class ExportsQ implements Serializable {
     return serialVersionUID;
   }
 
-  public BaseCommonGateInOutAttribute getBaseCommonGateInOutAttribute() {
-    return baseCommonGateInOutAttribute;
-  }
-
-  public void setBaseCommonGateInOutAttribute(BaseCommonGateInOutAttribute baseCommonGateInOutAttribute) {
-    this.baseCommonGateInOutAttribute = baseCommonGateInOutAttribute;
-  }
-
   public ExportOPTFlagType getOptFlag() {
     return optFlag;
   }
@@ -876,6 +891,150 @@ public class ExportsQ implements Serializable {
 
   public void setAgentCode(String agentCode) {
     this.agentCode = agentCode;
+  }
+
+  public Long getEirNumber() {
+    return eirNumber;
+  }
+
+  public void setEirNumber(Long eirNumber) {
+    this.eirNumber = eirNumber;
+  }
+
+  public ImpExpFlagStatus getImpExpFlag() {
+    return impExpFlag;
+  }
+
+  public void setImpExpFlag(ImpExpFlagStatus impExpFlag) {
+    this.impExpFlag = impExpFlag;
+  }
+
+  public String getRejectReason() {
+    return rejectReason;
+  }
+
+  public void setRejectReason(String rejectReason) {
+    this.rejectReason = rejectReason;
+  }
+
+  public TransactionStatus getGateInStatus() {
+    return gateInStatus;
+  }
+
+  public void setGateInStatus(TransactionStatus gateInStatus) {
+    this.gateInStatus = gateInStatus;
+  }
+
+  public String getZipFileNo() {
+    return zipFileNo;
+  }
+
+  public void setZipFileNo(String zipFileNo) {
+    this.zipFileNo = zipFileNo;
+  }
+
+  public String getTrxSlipNo() {
+    return trxSlipNo;
+  }
+
+  public void setTrxSlipNo(String trxSlipNo) {
+    this.trxSlipNo = trxSlipNo;
+  }
+
+  public String getPmHeadNo() {
+    return pmHeadNo;
+  }
+
+  public void setPmHeadNo(String pmHeadNo) {
+    this.pmHeadNo = pmHeadNo;
+  }
+
+  public String getPmPlateNo() {
+    return pmPlateNo;
+  }
+
+  public void setPmPlateNo(String pmPlateNo) {
+    this.pmPlateNo = pmPlateNo;
+  }
+
+  public TransactionStatus getEirStatus() {
+    return eirStatus;
+  }
+
+  public void setEirStatus(TransactionStatus eirStatus) {
+    this.eirStatus = eirStatus;
+  }
+
+  public LocalDateTime getTimeGateIn() {
+    return timeGateIn;
+  }
+
+  public void setTimeGateIn(LocalDateTime timeGateIn) {
+    this.timeGateIn = timeGateIn;
+  }
+
+  public LocalDateTime getTimeGateInOk() {
+    return timeGateInOk;
+  }
+
+  public void setTimeGateInOk(LocalDateTime timeGateInOk) {
+    this.timeGateInOk = timeGateInOk;
+  }
+
+  public LocalDateTime getTimeGateOut() {
+    return timeGateOut;
+  }
+
+  public void setTimeGateOut(LocalDateTime timeGateOut) {
+    this.timeGateOut = timeGateOut;
+  }
+
+  public LocalDateTime getTimeGateOutOk() {
+    return timeGateOutOk;
+  }
+
+  public void setTimeGateOutOk(LocalDateTime timeGateOutOk) {
+    this.timeGateOutOk = timeGateOutOk;
+  }
+
+  public Card getCard() {
+    return card;
+  }
+
+  public void setCard(Card card) {
+    this.card = card;
+  }
+
+  public SystemUser getGateInClerk() {
+    return gateInClerk;
+  }
+
+  public void setGateInClerk(SystemUser gateInClerk) {
+    this.gateInClerk = gateInClerk;
+  }
+
+  public SystemUser getGateOutClerk() {
+    return gateOutClerk;
+  }
+
+  public void setGateOutClerk(SystemUser gateOutClerk) {
+    this.gateOutClerk = gateOutClerk;
+  }
+
+  public Client getGateInClient() {
+    return gateInClient;
+  }
+
+  public void setGateInClient(Client gateInClient) {
+    this.gateInClient = gateInClient;
+  }
+
+  public Client getGateOutClient() {
+    return gateOutClient;
+  }
+
+  public void setGateOutClient(Client gateOutClient) {
+    this.gateOutClient = gateOutClient;
   }
 
 
