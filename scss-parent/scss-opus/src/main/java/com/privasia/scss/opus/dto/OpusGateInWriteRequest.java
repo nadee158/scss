@@ -6,20 +6,23 @@ public class OpusGateInWriteRequest extends OpusBaseGateWriteRequest implements 
 
   private static final long serialVersionUID = 1L;
 
-  private double truckWeight;// "4000"
+  private String truckWeight;// "4000"
   private String trailerNo;// "1122"
-  private double trailerWeight;// "4000"
+  private String trailerWeight;// "4000"
   private String gateINDateTime;// "20161219100000"
 
 
-  public double getTruckWeight() {
+
+  public String getTruckWeight() {
     return truckWeight;
   }
 
 
-  public void setTruckWeight(double truckWeight) {
+
+  public void setTruckWeight(String truckWeight) {
     this.truckWeight = truckWeight;
   }
+
 
 
   public String getTrailerNo() {
@@ -27,19 +30,23 @@ public class OpusGateInWriteRequest extends OpusBaseGateWriteRequest implements 
   }
 
 
+
   public void setTrailerNo(String trailerNo) {
     this.trailerNo = trailerNo;
   }
 
 
-  public double getTrailerWeight() {
+
+  public String getTrailerWeight() {
     return trailerWeight;
   }
 
 
-  public void setTrailerWeight(double trailerWeight) {
+
+  public void setTrailerWeight(String trailerWeight) {
     this.trailerWeight = trailerWeight;
   }
+
 
 
   public String getGateINDateTime() {
@@ -47,9 +54,17 @@ public class OpusGateInWriteRequest extends OpusBaseGateWriteRequest implements 
   }
 
 
+
   public void setGateINDateTime(String gateINDateTime) {
     this.gateINDateTime = gateINDateTime;
   }
+
+
+
+  public static long getSerialversionuid() {
+    return serialVersionUID;
+  }
+
 
 
   public static OpusGateInWriteRequest constructObjectWithTestValues() {
@@ -62,10 +77,10 @@ public class OpusGateInWriteRequest extends OpusBaseGateWriteRequest implements 
     giw01Request.setImportContainerListCY(null);
     giw01Request.setLaneNo("GATE00");
     giw01Request.setTrailerNo("1122");
-    giw01Request.setTrailerWeight(4000);
+    giw01Request.setTrailerWeight("4000");
     giw01Request.setTruckHeadNo("NTK193");
     giw01Request.setTruckPlateNo("60P1-2933");
-    giw01Request.setTruckWeight(4000);
+    giw01Request.setTruckWeight("4000");
     giw01Request.setUserID("PRABU");
     return giw01Request;
   }

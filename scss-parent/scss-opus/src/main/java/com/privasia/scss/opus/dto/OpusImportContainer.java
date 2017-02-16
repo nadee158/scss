@@ -25,6 +25,16 @@ public class OpusImportContainer {
   private String vesselName;// AL NEFUD,
   private String vesselATA;// 20161124161800
 
+  private String positionOnTruck;
+
+  public String getPositionOnTruck() {
+    return positionOnTruck;
+  }
+
+  public void setPositionOnTruck(String positionOnTruck) {
+    this.positionOnTruck = positionOnTruck;
+  }
+
   private String rtgExecustionStatus;// ":"RGS"
   private String rtgExecustionDateTime;// ;":"20161212101010"
 

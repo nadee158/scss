@@ -25,11 +25,11 @@ public class OpusExporterContainer {
   private String yardOpeningDateTime;// 20160902080000,
   private String containerSpod;// USSVN,
   private String containerIso;// 22G0,
-  private int containerSize;// 20,
-  private int containerHeight;// 8.6,
+  private String containerSize;// 20,
+  private String containerHeight;// 8.6,
   private String containerType;// GE,
-  private int grossWeight;// 11000,
-  private int containerNetWeight;// 9000,
+  private String grossWeight;// 11000,
+  private String containerNetWeight;// 9000,
   private String containerSeal1_SL;// null,
   private String containerSeal1_NO;// SEAL001,
   private String containerSeal2_SL;// null,
@@ -380,39 +380,12 @@ public class OpusExporterContainer {
     this.containerIso = containerIso;
   }
 
-
-
-  public int getContainerSize() {
-    return containerSize;
-  }
-
-  public void setContainerSize(int containerSize) {
-    this.containerSize = containerSize;
-  }
-
   public String getContainerType() {
     return containerType;
   }
 
   public void setContainerType(String containerType) {
     this.containerType = containerType;
-  }
-
-
-  public int getGrossWeight() {
-    return grossWeight;
-  }
-
-  public void setGrossWeight(int grossWeight) {
-    this.grossWeight = grossWeight;
-  }
-
-  public int getContainerNetWeight() {
-    return containerNetWeight;
-  }
-
-  public void setContainerNetWeight(int containerNetWeight) {
-    this.containerNetWeight = containerNetWeight;
   }
 
   public String getContainerSeal1_SL() {
@@ -552,14 +525,6 @@ public class OpusExporterContainer {
     this.containerOOG_OR = containerOOG_OR;
   }
 
-  public int getContainerHeight() {
-    return containerHeight;
-  }
-
-  public void setContainerHeight(int containerHeight) {
-    this.containerHeight = containerHeight;
-  }
-
   public String getRtgExecustionStatus() {
     return rtgExecustionStatus;
   }
@@ -574,6 +539,38 @@ public class OpusExporterContainer {
 
   public void setRtgExecustionDateTime(String rtgExecustionDateTime) {
     this.rtgExecustionDateTime = rtgExecustionDateTime;
+  }
+
+  public String getContainerSize() {
+    return containerSize;
+  }
+
+  public void setContainerSize(String containerSize) {
+    this.containerSize = containerSize;
+  }
+
+  public String getContainerHeight() {
+    return containerHeight;
+  }
+
+  public void setContainerHeight(String containerHeight) {
+    this.containerHeight = containerHeight;
+  }
+
+  public String getGrossWeight() {
+    return grossWeight;
+  }
+
+  public void setGrossWeight(String grossWeight) {
+    this.grossWeight = grossWeight;
+  }
+
+  public String getContainerNetWeight() {
+    return containerNetWeight;
+  }
+
+  public void setContainerNetWeight(String containerNetWeight) {
+    this.containerNetWeight = containerNetWeight;
   }
 
   @Override
@@ -624,7 +621,7 @@ public class OpusExporterContainer {
 
     opusExporterContainer.setContainerNo("NH161219003");
     opusExporterContainer.setContainerIso("40G1");
-    opusExporterContainer.setContainerNetWeight(8000);
+    opusExporterContainer.setContainerNetWeight("8000");
     opusExporterContainer.setContainerSeal1_SL("C");
     opusExporterContainer.setContainerSeal1_NO("SL1901");
     opusExporterContainer.setContainerReeferIndicator("N");
