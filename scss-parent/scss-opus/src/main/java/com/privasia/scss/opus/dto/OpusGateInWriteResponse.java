@@ -104,7 +104,8 @@ public class OpusGateInWriteResponse extends BaseResponse {
         + ", truckHeadNo=" + truckHeadNo + ", truckPlateNo=" + truckPlateNo + ", gateINDateTime=" + gateINDateTime
         + ", exportContainerListCY=" + exportContainerListCY + ", importContainerListCY=" + importContainerListCY
         + ", exportContainerListCFS=" + exportContainerListCFS + ", importContainerListCFS=" + importContainerListCFS
-        + "]";
+        + ", getErrorCode()=" + getErrorCode() + ", getErrorMessage()=" + getErrorMessage() + ", getUserID()="
+        + getUserID() + ", getErrorList()=" + getErrorList() + ", getErrorDescription()=" + getErrorDescription() + "]";
   }
 
   public String getCallCardNo() {

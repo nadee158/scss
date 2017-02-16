@@ -27,6 +27,8 @@ public final class CommonUtil {
   private static Map<String, Properties> fileNamePropertiesMapping = new HashMap<String, Properties>();
 
   public static final String GLOBAL_DATE_PATTERN = "MM/dd/yyyy hh:mm:ss a";
+  public static final String UPPER_CASE = "U";
+  public static final String LOWER_CASE = "L";
 
   /**
    * To check whether a string is empty or null
@@ -227,6 +229,20 @@ public final class CommonUtil {
         constructedTime = constructedTime.substring(0, constructedTime.length() - 1);
       }
       return constructedTime;
+    }
+    return null;
+  }
+
+  public static String changeCase(String str, String caseStr) {
+    if (StringUtils.isNotEmpty(str)) {
+      switch (caseStr) {
+        case LOWER_CASE:
+          return StringUtils.lowerCase(str);
+        case UPPER_CASE:
+          return StringUtils.upperCase(str);
+        default:
+          break;
+      }
     }
     return null;
   }

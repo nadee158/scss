@@ -17,7 +17,7 @@ import org.hibernate.annotations.Type;
 @Entity
 @Table(name = "SCSS_SHIP_SCN")
 @AttributeOverrides({@AttributeOverride(name = "addBy", column = @Column(name = "SCN_CREATEDBY")),
-    @AttributeOverride(name = "updateBy", column = @Column(name = "SCN_UPDATEBY")),
+    @AttributeOverride(name = "updateBy", column = @Column(name = "SCN_UPDATEDBY")),
     @AttributeOverride(name = "dateTimeAdd", column = @Column(name = "SCN_DATECREATE")),
     @AttributeOverride(name = "dateTimeUpdate", column = @Column(name = "SCN_DATEUPDATE"))})
 public class ShipSCN extends AuditEntity implements Serializable {
