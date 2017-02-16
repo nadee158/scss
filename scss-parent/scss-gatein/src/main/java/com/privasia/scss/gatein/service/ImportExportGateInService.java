@@ -108,6 +108,7 @@ public class ImportExportGateInService {
 
     OpusGateInWriteRequest opusGateInWriteRequest =
         opusGateInWriteService.constructOpusGateInWriteRequest(gateInWriteRequest);
+    System.out.println("opusGateInWriteRequest " + opusGateInWriteRequest);
     OpusGateInWriteResponse opusGateInWriteResponse =
         opusGateInWriteService.getGateInWriteResponse(opusGateInWriteRequest);
     System.out.println("opusGateInWriteResponse " + opusGateInWriteResponse);
