@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.gson.Gson;
 import com.privasia.scss.common.dto.ExportContainer;
 import com.privasia.scss.common.dto.GateInReponse;
 import com.privasia.scss.common.dto.GateInRequest;
@@ -105,13 +106,14 @@ public class ImportExportGateInService {
   public GateInReponse saveGateInInfo(GateInWriteRequest gateInWriteRequest) {
     List<ImportContainer> importContainers = null;
     List<ExportContainer> exportContainers = null;
-
+    Gson gson = new Gson();
     OpusGateInWriteRequest opusGateInWriteRequest =
         opusGateInWriteService.constructOpusGateInWriteRequest(gateInWriteRequest);
-    System.out.println("opusGateInWriteRequest " + opusGateInWriteRequest);
+    System.out.println("opusGateInWriteRequest " + gson.toJson(opusGateInWriteRequest));
+
     OpusGateInWriteResponse opusGateInWriteResponse =
         opusGateInWriteService.getGateInWriteResponse(opusGateInWriteRequest);
-    System.out.println("opusGateInWriteResponse " + opusGateInWriteResponse);
+    System.out.println("opusGateInWriteResponse " + gson.toJson(opusGateInWriteResponse));
     String errorMessage = OpusService.hasErrorMessage(opusGateInWriteResponse.getErrorList());
     if (StringUtils.isNotEmpty(errorMessage)) {
       // throw new business exception with constructed message - there is

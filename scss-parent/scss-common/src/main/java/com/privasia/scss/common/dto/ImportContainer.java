@@ -13,6 +13,26 @@ public class ImportContainer implements Serializable {
    */
   private static final long serialVersionUID = 1L;
 
+  private PrintEirDTO printEir;
+
+  private CardUsageDTO cardUsage;
+
+  public CardUsageDTO getCardUsage() {
+    return cardUsage;
+  }
+
+  public void setCardUsage(CardUsageDTO cardUsage) {
+    this.cardUsage = cardUsage;
+  }
+
+  public PrintEirDTO getPrintEir() {
+    return printEir;
+  }
+
+  public void setPrintEir(PrintEirDTO printEir) {
+    this.printEir = printEir;
+  }
+
   private Long gatePassID;
 
   private Long gatePassNo;
