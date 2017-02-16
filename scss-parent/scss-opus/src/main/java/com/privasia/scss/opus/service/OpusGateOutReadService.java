@@ -75,7 +75,7 @@ public class OpusGateOutReadService {
   public GateOutReponse constructGateOutReponse(OpusGateOutReadResponse opusGateOutReadResponse,
       GateOutReponse gateOutReponse) {
 
-    LocalDateTime localDateTime = OpusService.getLocalDategFromString(opusGateOutReadResponse.getGateOUTDateTime());
+    LocalDateTime localDateTime = DateUtil.getLocalDategFromString(opusGateOutReadResponse.getGateOUTDateTime());
     gateOutReponse.setGateOUTDateTime(CommonUtil.getFormatteDate(localDateTime));
     gateOutReponse.setHaulageCode(opusGateOutReadResponse.getHaulageCode());
     gateOutReponse.setLaneNo(opusGateOutReadResponse.getLaneNo());

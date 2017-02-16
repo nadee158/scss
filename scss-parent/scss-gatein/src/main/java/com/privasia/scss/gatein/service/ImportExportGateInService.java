@@ -1,5 +1,6 @@
 package com.privasia.scss.gatein.service;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,7 +19,9 @@ import com.privasia.scss.common.dto.GateInWriteRequest;
 import com.privasia.scss.common.dto.ImportContainer;
 import com.privasia.scss.core.exception.BusinessException;
 import com.privasia.scss.core.exception.ResultsNotFoundException;
+import com.privasia.scss.core.model.Card;
 import com.privasia.scss.core.model.Client;
+import com.privasia.scss.core.repository.CardRepository;
 import com.privasia.scss.core.repository.ClientRepository;
 import com.privasia.scss.opus.dto.OpusGateInReadRequest;
 import com.privasia.scss.opus.dto.OpusGateInReadResponse;
@@ -40,6 +43,8 @@ public class ImportExportGateInService {
 	private OpusGateInWriteService opusGateInWriteService;
 
 	private ClientRepository clientRepository;
+	
+	private CardRepository cardRepository;
 
 	@Autowired
 	public void setOpusGateInReadService(OpusGateInReadService opusGateInReadService) {
@@ -65,12 +70,18 @@ public class ImportExportGateInService {
 	public void setClientRepository(ClientRepository clientRepository) {
 		this.clientRepository = clientRepository;
 	}
+	
+	@Autowired
+	public void setCardRepository(CardRepository cardRepository) {
+		this.cardRepository = cardRepository;
+	}
 
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
 	public GateInReponse populateGateIn(GateInRequest gateInRequest) {
 
-		List<ImportContainer> importContainers = null;
-		List<ExportContainer> exportContainers = null;
+		Optional<Card> cardOpt = cardRepository.findOne(gateInRequest.getCardID());
+		Card card = cardOpt.orElseThrow(() -> new ResultsNotFoundException("Invalid Card ID ! " + gateInRequest.getCardID()));
+		gateInRequest.setHaulageCode(card.getCompany().getCompanyCode());
 
 		Optional<Client> clientOpt = clientRepository.findOne(gateInRequest.getLaneId());
 		Client client = clientOpt
@@ -79,22 +90,30 @@ public class ImportExportGateInService {
 		
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		gateInRequest.setUserName((String) authentication.getPrincipal());
+		
+		GateInReponse gateInReponse = new GateInReponse();
+		gateInReponse.setCheckPreArrival(gateInRequest.isCheckPreArrival());
 
-		if (gateInRequest.getGatePass1() > 0 || gateInRequest.getGatePass2() > 0) {
-			importGateInService.findContainerNoByGatePass(gateInRequest);
+		if ((gateInRequest.getGatePass1() != null && gateInRequest.getGatePass1() > 0 )|| 
+				(gateInRequest.getGatePass2() != null && gateInRequest.getGatePass2() > 0)) {
+			List<Long> gatePassList = Arrays.asList(gateInRequest.getGatePass1(), gateInRequest.getGatePass2());
+			List<ImportContainer> importContainerList = importGateInService.fetchContainerInfo(gatePassList);
+			gateInReponse.setImportContainers(importContainerList);
 		}
 		
 		// call opus -
 		OpusGateInReadRequest gateInReadRequest = opusGateInReadService.constructOpenGateInRequest(gateInRequest);
 		OpusGateInReadResponse gateInReadResponse = opusGateInReadService.getGateInReadResponse(gateInReadRequest);
-		GateInReponse gateInReponse = new GateInReponse();
-		gateInReponse.setImportContainers(importContainers);
-		gateInReponse.setExportContainers(exportContainers);
 		gateInReponse = opusGateInReadService.constructGateInReponse(gateInReadResponse, gateInReponse);
 		
 		if (!(StringUtils.isEmpty(gateInRequest.getExpContainer1())
 				|| StringUtils.isEmpty(gateInRequest.getExpContainer2()))) {
 			gateInReponse = exportGateInService.populateGateInExports(gateInReponse);
+		}
+		
+		if ((gateInRequest.getGatePass1() != null && gateInRequest.getGatePass1() > 0 )|| 
+				(gateInRequest.getGatePass2() != null && gateInRequest.getGatePass2() > 0)) {
+			importGateInService.populateGateInImport(gateInReponse);
 		}
 
 		return gateInReponse;

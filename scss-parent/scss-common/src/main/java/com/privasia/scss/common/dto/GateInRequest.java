@@ -20,8 +20,9 @@ public class GateInRequest implements Serializable {
 	private Long laneId;// -long (clientID)
 	private String laneNo;// -long (clientID)
 	private Integer expWeightBridge;// -long
-	private boolean checkPreArrival;// -boolean
+	private boolean checkPreArrival = false;// -boolean
 	private String hpabSeqId;// -string
+	private String haulageCode;
 
 	public String getExpContainer1() {
 		return expContainer1;
@@ -62,7 +63,7 @@ public class GateInRequest implements Serializable {
 	public void setLaneId(Long laneId) {
 		this.laneId = laneId;
 	}
-	
+
 	public String getLaneNo() {
 		return laneNo;
 	}
@@ -150,7 +151,13 @@ public class GateInRequest implements Serializable {
 	public void setImpContainer2(String impContainer2) {
 		this.impContainer2 = impContainer2;
 	}
-	
-	
+
+	public String getHaulageCode() {
+		return haulageCode;
+	}
+
+	public void setHaulageCode(String haulageCode) {
+		this.haulageCode = haulageCode;
+	}
 
 }

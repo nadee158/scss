@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.privasia.scss.common.dto.GateInReponse;
 import com.privasia.scss.common.dto.GateInRequest;
 import com.privasia.scss.common.dto.GateInWriteRequest;
 import com.privasia.scss.common.dto.GatePassValidateDTO;
@@ -51,34 +52,19 @@ public class ImportGateInService {
 	}
 
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-	public List<ImportContainer> populateGateInImport(GateInRequest gateInRequest) {
+	public GateInReponse populateGateInImport(GateInReponse gateInReponse) {
 
-		List<Long> gatePassNumberList = new ArrayList<Long>();
-		if (gateInRequest.getGatePass1() != null && gateInRequest.getGatePass1() != 0) {
-			gatePassNumberList.add(gateInRequest.getGatePass1());
-		}
-		if (gateInRequest.getGatePass2() != null && gateInRequest.getGatePass2() != 0) {
-			gatePassNumberList.add(gateInRequest.getGatePass2());
-		}
-		List<ImportContainer> importContainers = fetchContainerInfo(gatePassNumberList);
-
-		importContainers.forEach(importContainer -> {
-			GatePassValidateDTO gatePassValidateDTO = validateGatePass(gateInRequest.getCardID(),
-					gateInRequest.getGatePass1(), gateInRequest.isCheckPreArrival(), gateInRequest.getHpabSeqId(),
-					gateInRequest.getTruckHeadNo());
-			if (gatePassValidateDTO.isValidGatePass()) {
-				if (importContainer.getGatePassNo() == gateInRequest.getGatePass1()) {
-					gateInRequest.setImpContainer1(importContainer.getContainer().getContainerNumber());
-				} else {
-					gateInRequest.setImpContainer2(importContainer.getContainer().getContainerNumber());
-				}
-			} else {
+		gateInReponse.getImportContainers().forEach(importContainer -> {
+			GatePassValidateDTO gatePassValidateDTO = validateGatePass(importContainer.getBaseCommonGateInOutAttribute().getCard(),
+					importContainer.getGatePassNo(), gateInReponse.isCheckPreArrival(), importContainer.getBaseCommonGateInOutAttribute().getHpatBooking(),
+					gateInReponse.getTruckHeadNo());
+			if (!gatePassValidateDTO.isValidGatePass()) {
 				throw new ResultsNotFoundException(
-						gatePassValidateDTO.getGatePassErrorMessage() + gateInRequest.getGatePass1());
+						gatePassValidateDTO.getGatePassErrorMessage() + importContainer.getGatePassNo());
 			}
 		});
 
-		return importContainers;
+		return gateInReponse;
 
 	}
 

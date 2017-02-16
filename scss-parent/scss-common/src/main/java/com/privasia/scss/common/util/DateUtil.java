@@ -122,4 +122,16 @@ public class DateUtil {
 		return null;
 	}
 
+	public static LocalDateTime getLocalDategFromString(String gateINDateTime) {
+		try {
+			if (StringUtils.isNotEmpty(gateINDateTime)) {
+				DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+				return LocalDateTime.parse(gateINDateTime, dateFormat);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
 }

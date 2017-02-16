@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -33,66 +34,69 @@ import com.privasia.scss.opus.dto.OpusImportContainer;
 @Service("opusGateOutWriteService")
 public class OpusGateOutWriteService {
 
-  private static final Logger log = LoggerFactory.getLogger(OpusGateOutWriteService.class);
+	private static final Logger log = LoggerFactory.getLogger(OpusGateOutWriteService.class);
 
-  @Value("${gate_out.write.response.url}")
-  private String gateOutWriteResponseURL;
+	@Value("${gate_out.write.response.url}")
+	private String gateOutWriteResponseURL;
 
-  public OpusGateOutWriteResponse getGateOutWriteResponse(OpusGateOutWriteRequest opusGateOutWriteRequest) {
-    System.out.println("gateOutWriteResponseURL " + gateOutWriteResponseURL);
-    RestTemplate restTemplate = new RestTemplate();
-    HttpHeaders headers = new HttpHeaders();
+	private OpusService opusService;
 
-    headers.setContentType(MediaType.APPLICATION_JSON);
+	@Autowired
+	public void setOpusService(OpusService opusService) {
+		this.opusService = opusService;
+	}
 
-    HttpEntity<OpusGateOutWriteRequest> request =
-        new HttpEntity<OpusGateOutWriteRequest>(opusGateOutWriteRequest, headers);
+	public OpusGateOutWriteResponse getGateOutWriteResponse(OpusGateOutWriteRequest opusGateOutWriteRequest) {
+		System.out.println("gateOutWriteResponseURL " + gateOutWriteResponseURL);
+		RestTemplate restTemplate = new RestTemplate();
+		HttpHeaders headers = new HttpHeaders();
 
-    ResponseEntity<OpusGateOutWriteResponse> response =
-        restTemplate.postForEntity(gateOutWriteResponseURL, request, OpusGateOutWriteResponse.class);
+		headers.setContentType(MediaType.APPLICATION_JSON);
 
-    log.info(response.toString());
-    return response.getBody();
-  }
+		HttpEntity<OpusGateOutWriteRequest> request = new HttpEntity<OpusGateOutWriteRequest>(opusGateOutWriteRequest,
+				headers);
 
+		ResponseEntity<OpusGateOutWriteResponse> response = restTemplate.postForEntity(gateOutWriteResponseURL, request,
+				OpusGateOutWriteResponse.class);
 
-  public GateOutReponse constructGateOutReponse(OpusGateOutWriteResponse opusGateOutWriteResponse,
-      GateOutReponse gateOutReponse) {
-    LocalDateTime localDateTime = OpusService.getLocalDategFromString(opusGateOutWriteResponse.getGateOUTDateTime());
-    gateOutReponse.setGateOUTDateTime(CommonUtil.getFormatteDate(localDateTime));
-    gateOutReponse.setHaulageCode(opusGateOutWriteResponse.getHaulageCode());
-    gateOutReponse.setLaneNo(opusGateOutWriteResponse.getLaneNo());
-    gateOutReponse.setTruckHeadNo(opusGateOutWriteResponse.getTruckHeadNo());
-    gateOutReponse.setTruckPlateNo(opusGateOutWriteResponse.getTruckPlateNo());
-    gateOutReponse.setExportContainers(OpusService
-        .constructExportContainersFromOpusExportContainers(opusGateOutWriteResponse.getExportContainerListCY()));
-    gateOutReponse.setImportContainers(OpusService
-        .constructImportContainersFromOpusImportContainers(opusGateOutWriteResponse.getImportContainerListCY()));
-    gateOutReponse.setCallCardNo(opusGateOutWriteResponse.getCallCardNo());
-    return gateOutReponse;
-  }
+		log.info(response.toString());
+		return response.getBody();
+	}
 
+	public GateOutReponse constructGateOutReponse(OpusGateOutWriteResponse opusGateOutWriteResponse,
+			GateOutReponse gateOutReponse) {
+		LocalDateTime localDateTime = DateUtil
+				.getLocalDategFromString(opusGateOutWriteResponse.getGateOUTDateTime());
+		gateOutReponse.setGateOUTDateTime(CommonUtil.getFormatteDate(localDateTime));
+		gateOutReponse.setHaulageCode(opusGateOutWriteResponse.getHaulageCode());
+		gateOutReponse.setLaneNo(opusGateOutWriteResponse.getLaneNo());
+		gateOutReponse.setTruckHeadNo(opusGateOutWriteResponse.getTruckHeadNo());
+		gateOutReponse.setTruckPlateNo(opusGateOutWriteResponse.getTruckPlateNo());
+		gateOutReponse.setExportContainers(opusService.constructExportContainersFromOpusExportContainers(
+				opusGateOutWriteResponse.getExportContainerListCY()));
+		gateOutReponse.setImportContainers(opusService.constructImportContainersFromOpusImportContainers(
+				opusGateOutWriteResponse.getImportContainerListCY()));
+		gateOutReponse.setCallCardNo(opusGateOutWriteResponse.getCallCardNo());
+		return gateOutReponse;
+	}
 
+	public OpusGateOutWriteRequest constructOpusGateOutWriteRequest(GateOutWriteRequest gateOutWriteRequest) {
+		OpusGateOutWriteRequest opusGateOutWriteRequest = new OpusGateOutWriteRequest();
 
-  public OpusGateOutWriteRequest constructOpusGateOutWriteRequest(GateOutWriteRequest gateOutWriteRequest) {
-    OpusGateOutWriteRequest opusGateOutWriteRequest = new OpusGateOutWriteRequest();
+		List<OpusExporterContainer> exportContainerListCY = OpusService
+				.constructOpusExporterContainersFromExporterContainers(gateOutWriteRequest.getExportContainers());
+		List<OpusImportContainer> importContainerListCY = OpusService
+				.constructOpusImportContainersFromImportContainers(gateOutWriteRequest.getImportContainers());
 
-    List<OpusExporterContainer> exportContainerListCY =
-        OpusService.constructOpusExporterContainersFromExporterContainers(gateOutWriteRequest.getExportContainers());
-    List<OpusImportContainer> importContainerListCY =
-        OpusService.constructOpusImportContainersFromImportContainers(gateOutWriteRequest.getImportContainers());
-
-    LocalDateTime gateOutDateTime = CommonUtil.getParsedDate(gateOutWriteRequest.getGateOUTDateTime());
-    opusGateOutWriteRequest.setGateOUTDateTime(DateUtil.getJsonDateFromDate(gateOutDateTime));
-    opusGateOutWriteRequest.setHaulageCode("HAUCD");
-    opusGateOutWriteRequest.setLaneNo(gateOutWriteRequest.getLaneNo());
-    opusGateOutWriteRequest.setTruckHeadNo(gateOutWriteRequest.getTruckHeadNo());
-    opusGateOutWriteRequest.setUserID(gateOutWriteRequest.getUserName());
-    opusGateOutWriteRequest.setExportContainerListCY(exportContainerListCY);
-    opusGateOutWriteRequest.setImportContainerListCY(importContainerListCY);
-    return opusGateOutWriteRequest;
-  }
-
-
+		LocalDateTime gateOutDateTime = CommonUtil.getParsedDate(gateOutWriteRequest.getGateOUTDateTime());
+		opusGateOutWriteRequest.setGateOUTDateTime(DateUtil.getJsonDateFromDate(gateOutDateTime));
+		opusGateOutWriteRequest.setHaulageCode("HAUCD");
+		opusGateOutWriteRequest.setLaneNo(gateOutWriteRequest.getLaneNo());
+		opusGateOutWriteRequest.setTruckHeadNo(gateOutWriteRequest.getTruckHeadNo());
+		opusGateOutWriteRequest.setUserID(gateOutWriteRequest.getUserName());
+		opusGateOutWriteRequest.setExportContainerListCY(exportContainerListCY);
+		opusGateOutWriteRequest.setImportContainerListCY(importContainerListCY);
+		return opusGateOutWriteRequest;
+	}
 
 }
