@@ -1,6 +1,8 @@
 package com.privasia.scss.gatein.controller;
 
 
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,8 +18,10 @@ import com.privasia.scss.common.dto.GateInReponse;
 import com.privasia.scss.common.dto.GateInRequest;
 import com.privasia.scss.common.dto.GateInWriteRequest;
 import com.privasia.scss.common.dto.GateInfo;
+import com.privasia.scss.common.dto.ImportContainer;
 import com.privasia.scss.gatein.service.GateInService;
 import com.privasia.scss.gatein.service.ImportExportGateInService;
+import com.privasia.scss.gatein.service.ImportGateInService;
 
 
 
@@ -32,6 +36,9 @@ public class GateInController {
 
   @Autowired
   private ImportExportGateInService importExportGateInService;
+
+  @Autowired
+  private ImportGateInService importGateInService;
 
 
   @RequestMapping(value = "/allow", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
@@ -63,6 +70,17 @@ public class GateInController {
 
     return new CustomResponseEntity<ApiResponseObject<?>>(
         new ApiResponseObject<GateInReponse>(HttpStatus.OK, gateInWriteReponse), HttpStatus.OK);
+  }
+
+  @RequestMapping(value = "/tetssaveimportcontainer", method = RequestMethod.PUT,
+      produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+  public CustomResponseEntity<ApiResponseObject<?>> testSaveImportContainer(
+      @RequestBody GateInWriteRequest gateInWriteRequest) {
+
+    List<ImportContainer> reponse = importGateInService.saveGateInInfo(gateInWriteRequest);
+
+    return new CustomResponseEntity<ApiResponseObject<?>>(
+        new ApiResponseObject<List<ImportContainer>>(HttpStatus.OK, reponse), HttpStatus.OK);
   }
 
 

@@ -11,71 +11,71 @@ import java.io.Serializable;
  */
 public class CommonGateInOutDTO implements Serializable {
 
-	/**
-	* 
-	*/
-	private static final long serialVersionUID = 1L;
+  /**
+  * 
+  */
+  private static final long serialVersionUID = 1L;
 
-	private Long eirNumber;
+  private Long eirNumber;
 
-	private String impExpFlag;
+  private String impExpFlag;
 
-	private String rejectReason;
+  private String rejectReason;
 
-	private String gateInStatus;
+  private String gateInStatus;
 
-	private String zipFileNo;
+  private String zipFileNo;
 
-	private String trxSlipNo;
+  private String trxSlipNo;
 
-	public Long getEirNumber() {
-		return eirNumber;
-	}
+  public Long getEirNumber() {
+    return eirNumber;
+  }
 
-	public void setEirNumber(Long eirNumber) {
-		this.eirNumber = eirNumber;
-	}
+  public void setEirNumber(Long eirNumber) {
+    this.eirNumber = eirNumber;
+  }
 
-	public String getImpExpFlag() {
-		return impExpFlag;
-	}
+  public String getImpExpFlag() {
+    return impExpFlag;
+  }
 
-	public void setImpExpFlag(String impExpFlag) {
-		this.impExpFlag = impExpFlag;
-	}
+  public void setImpExpFlag(String impExpFlag) {
+    this.impExpFlag = impExpFlag;
+  }
 
-	public String getRejectReason() {
-		return rejectReason;
-	}
+  public String getRejectReason() {
+    return rejectReason;
+  }
 
-	public void setRejectReason(String rejectReason) {
-		this.rejectReason = rejectReason;
-	}
+  public void setRejectReason(String rejectReason) {
+    this.rejectReason = rejectReason;
+  }
 
-	public String getGateInStatus() {
-		return gateInStatus;
-	}
+  public String getGateInStatus() {
+    return gateInStatus;
+  }
 
-	public void setGateInStatus(String gateInStatus) {
-		this.gateInStatus = gateInStatus;
-	}
+  public void setGateInStatus(String gateInStatus) {
+    this.gateInStatus = gateInStatus;
+  }
 
-	public String getZipFileNo() {
-		return zipFileNo;
-	}
+  public String getZipFileNo() {
+    return zipFileNo;
+  }
 
-	public void setZipFileNo(String zipFileNo) {
-		this.zipFileNo = zipFileNo;
-	}
+  public void setZipFileNo(String zipFileNo) {
+    this.zipFileNo = zipFileNo;
+  }
 
-	public String getTrxSlipNo() {
-		return trxSlipNo;
-	}
+  public String getTrxSlipNo() {
+    return trxSlipNo;
+  }
 
-	public void setTrxSlipNo(String trxSlipNo) {
-		this.trxSlipNo = trxSlipNo;
-	}
-	
-	
+  public void setTrxSlipNo(String trxSlipNo) {
+    this.trxSlipNo = trxSlipNo;
+  }
+
+
 
 }

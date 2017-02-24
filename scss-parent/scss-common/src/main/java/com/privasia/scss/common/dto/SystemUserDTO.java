@@ -10,21 +10,21 @@ import java.io.Serializable;
  *
  */
 public class SystemUserDTO implements Serializable {
-	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	
-	private Long systemUserID;
 
-	public Long getSystemUserID() {
-		return systemUserID;
-	}
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 1L;
 
-	public void setSystemUserID(Long systemUserID) {
-		this.systemUserID = systemUserID;
-	}
-	
+  private Long systemUserID;
+
+  public Long getSystemUserID() {
+    return systemUserID;
+  }
+
+  public void setSystemUserID(Long systemUserID) {
+    this.systemUserID = systemUserID;
+  }
+
 
 }

@@ -78,6 +78,7 @@ public class ModelMapConfig {
     modelMapper.addMappings(ModelMapPropertyMap.kioskBoothRightsDtoToDomain());
     modelMapper.addMappings(ModelMapPropertyMap.gatePassToImportContainer());
     modelMapper.addMappings(ModelMapPropertyMap.exportsToExportsQ());
+    modelMapper.addMappings(ModelMapPropertyMap.importContainerToGatePass());
     return modelMapper;
   }
 

@@ -84,6 +84,23 @@ public final class ModelMapPropertyMap {
     };
   }
 
+  public static PropertyMap<ImportContainer, GatePass> importContainerToGatePass() {
+
+    return new PropertyMap<ImportContainer, GatePass>() {
+      protected void configure() {
+        skip().getBaseCommonGateInOutAttribute().setHpatBooking(null);
+        skip().getBaseCommonGateInOutAttribute().setCard(null);
+        skip().getBaseCommonGateInOutAttribute().setGateInClerk(null);
+        skip().getBaseCommonGateInOutAttribute().setGateInClient(null);
+        skip().getBaseCommonGateInOutAttribute().setGateOutBoothClerk(null);
+        skip().getBaseCommonGateInOutAttribute().setGateOutClerk(null);
+        skip().getBaseCommonGateInOutAttribute().setGateOutClient(null);
+        skip().setCardUsage(null);
+        skip().setPrintEir(null);
+      }
+    };
+  }
+
 
   public static PropertyMap<ExportContainer, Exports> exportContainerToExports() {
     return new PropertyMap<ExportContainer, Exports>() {
