@@ -11,8 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.privasia.scss.common.dto.GateInReponse;
 import com.privasia.scss.common.dto.BaseCommonGateInOutDTO;
+import com.privasia.scss.common.dto.GateInReponse;
 import com.privasia.scss.common.dto.GateInRequest;
 import com.privasia.scss.common.dto.GateInWriteRequest;
 import com.privasia.scss.common.dto.GatePassValidateDTO;
@@ -39,130 +39,130 @@ import com.privasia.scss.core.repository.PrintEirRepository;
 @Service("importGateInService")
 public class ImportGateInService {
 
-	private GatePassRepository gatePassRepository;
+  private GatePassRepository gatePassRepository;
 
-	private ModelMapper modelMapper;
+  private ModelMapper modelMapper;
 
-	private LoginRepository loginRepository;
+  private LoginRepository loginRepository;
 
-	private CardRepository cardRepository;
+  private CardRepository cardRepository;
 
-	private ClientRepository clientRepository;
+  private ClientRepository clientRepository;
 
-	private PrintEirRepository printEirRepository;
+  private PrintEirRepository printEirRepository;
 
-	private CardUsageRepository cardUsageRepository;
+  private CardUsageRepository cardUsageRepository;
 
-	private HPATBookingRepository hpatBookingRepository;
+  private HPATBookingRepository hpatBookingRepository;
 
-	private DamageCodeRepository damageCodeRepository;
+  private DamageCodeRepository damageCodeRepository;
 
-	@Autowired
-	public void setDamageCodeRepository(DamageCodeRepository damageCodeRepository) {
-		this.damageCodeRepository = damageCodeRepository;
-	}
+  @Autowired
+  public void setDamageCodeRepository(DamageCodeRepository damageCodeRepository) {
+    this.damageCodeRepository = damageCodeRepository;
+  }
 
-	@Autowired
-	public void setLoginRepository(LoginRepository loginRepository) {
-		this.loginRepository = loginRepository;
-	}
+  @Autowired
+  public void setLoginRepository(LoginRepository loginRepository) {
+    this.loginRepository = loginRepository;
+  }
 
-	@Autowired
-	public void setCardRepository(CardRepository cardRepository) {
-		this.cardRepository = cardRepository;
-	}
+  @Autowired
+  public void setCardRepository(CardRepository cardRepository) {
+    this.cardRepository = cardRepository;
+  }
 
-	@Autowired
-	public void setClientRepository(ClientRepository clientRepository) {
-		this.clientRepository = clientRepository;
-	}
+  @Autowired
+  public void setClientRepository(ClientRepository clientRepository) {
+    this.clientRepository = clientRepository;
+  }
 
-	@Autowired
-	public void setPrintEirRepository(PrintEirRepository printEirRepository) {
-		this.printEirRepository = printEirRepository;
-	}
+  @Autowired
+  public void setPrintEirRepository(PrintEirRepository printEirRepository) {
+    this.printEirRepository = printEirRepository;
+  }
 
-	@Autowired
-	public void setCardUsageRepository(CardUsageRepository cardUsageRepository) {
-		this.cardUsageRepository = cardUsageRepository;
-	}
+  @Autowired
+  public void setCardUsageRepository(CardUsageRepository cardUsageRepository) {
+    this.cardUsageRepository = cardUsageRepository;
+  }
 
-	@Autowired
-	public void setHPATBookingRepository(HPATBookingRepository hpatBookingRepository) {
-		this.hpatBookingRepository = hpatBookingRepository;
-	}
+  @Autowired
+  public void setHPATBookingRepository(HPATBookingRepository hpatBookingRepository) {
+    this.hpatBookingRepository = hpatBookingRepository;
+  }
 
-	@Autowired
-	public void setGatePassRepository(GatePassRepository gatePassRepository) {
-		this.gatePassRepository = gatePassRepository;
-	}
+  @Autowired
+  public void setGatePassRepository(GatePassRepository gatePassRepository) {
+    this.gatePassRepository = gatePassRepository;
+  }
 
-	@Autowired
-	public void setModelMapper(ModelMapper modelMapper) {
-		this.modelMapper = modelMapper;
-	}
+  @Autowired
+  public void setModelMapper(ModelMapper modelMapper) {
+    this.modelMapper = modelMapper;
+  }
 
 
-	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-	public GateInRequest findContainerNoByGatePass(GateInRequest gateInRequest) {
+  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+  public GateInRequest findContainerNoByGatePass(GateInRequest gateInRequest) {
 
-		if (gateInRequest.getGatePass1() != null && gateInRequest.getGatePass1() != 0) {
-			String impContainer01 = gatePassRepository.findContainerNoByGatePassNo(gateInRequest.getGatePass1());
-			gateInRequest.setImpContainer1(impContainer01);
-		}
-		if (gateInRequest.getGatePass2() != null && gateInRequest.getGatePass2() != 0) {
-			String impContainer02 = gatePassRepository.findContainerNoByGatePassNo(gateInRequest.getGatePass2());
-			gateInRequest.setImpContainer2(impContainer02);
-		}
-		return gateInRequest;
+    if (gateInRequest.getGatePass1() != null && gateInRequest.getGatePass1() != 0) {
+      String impContainer01 = gatePassRepository.findContainerNoByGatePassNo(gateInRequest.getGatePass1());
+      gateInRequest.setImpContainer1(impContainer01);
+    }
+    if (gateInRequest.getGatePass2() != null && gateInRequest.getGatePass2() != 0) {
+      String impContainer02 = gatePassRepository.findContainerNoByGatePassNo(gateInRequest.getGatePass2());
+      gateInRequest.setImpContainer2(impContainer02);
+    }
+    return gateInRequest;
 
-	}
+  }
 
-	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-	public GateInReponse populateGateInImport(GateInReponse gateInReponse) {
+  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+  public GateInReponse populateGateInImport(GateInReponse gateInReponse) {
 
-		gateInReponse.getImportContainers().forEach(importContainer -> {
-			GatePassValidateDTO gatePassValidateDTO = validateGatePass(
-					importContainer.getBaseCommonGateInOutAttribute().getCard(), importContainer.getGatePassNo(),
-					gateInReponse.isCheckPreArrival(),
-					importContainer.getBaseCommonGateInOutAttribute().getHpatBooking(), gateInReponse.getTruckHeadNo());
-			if (!gatePassValidateDTO.isValidGatePass()) {
-				throw new ResultsNotFoundException(
-						gatePassValidateDTO.getGatePassErrorMessage() + importContainer.getGatePassNo());
-			}
-		});
+    gateInReponse.getImportContainers().forEach(importContainer -> {
+      GatePassValidateDTO gatePassValidateDTO =
+          validateGatePass(importContainer.getBaseCommonGateInOutAttribute().getCard(), importContainer.getGatePassNo(),
+              gateInReponse.isCheckPreArrival(), importContainer.getBaseCommonGateInOutAttribute().getHpatBooking(),
+              gateInReponse.getTruckHeadNo());
+      if (!gatePassValidateDTO.isValidGatePass()) {
+        throw new ResultsNotFoundException(
+            gatePassValidateDTO.getGatePassErrorMessage() + importContainer.getGatePassNo());
+      }
+    });
 
-		return gateInReponse;
+    return gateInReponse;
 
-	}
+  }
 
-	public GatePassValidateDTO validateGatePass(Long cardIdSeq, Long gatePassNo, boolean checkPreArrival,
-			String hpatSeqId, String truckHeadNo) {
+  public GatePassValidateDTO validateGatePass(Long cardIdSeq, Long gatePassNo, boolean checkPreArrival,
+      String hpatSeqId, String truckHeadNo) {
 
-		return new GatePassValidateDTO();
-	}
+    return new GatePassValidateDTO();
+  }
 
-	public List<ImportContainer> fetchContainerInfo(List<Long> gatePassNumberList) {
+  public List<ImportContainer> fetchContainerInfo(List<Long> gatePassNumberList) {
 
-		Optional<List<GatePass>> optionalGatePassList = gatePassRepository.findByGatePassNoIn(gatePassNumberList);
+    Optional<List<GatePass>> optionalGatePassList = gatePassRepository.findByGatePassNoIn(gatePassNumberList);
 
-		List<GatePass> gatePassList = optionalGatePassList.orElseThrow(() -> new ResultsNotFoundException(
-				"No Import Containers could be found for the given Gate Pass Numbers!"));
-		List<ImportContainer> importContainers = new ArrayList<ImportContainer>();
-		gatePassList.forEach(item -> {
-			ImportContainer importContainer = new ImportContainer();
-			modelMapper.map(item, importContainer);
+    List<GatePass> gatePassList = optionalGatePassList.orElseThrow(
+        () -> new ResultsNotFoundException("No Import Containers could be found for the given Gate Pass Numbers!"));
+    List<ImportContainer> importContainers = new ArrayList<ImportContainer>();
+    gatePassList.forEach(item -> {
+      ImportContainer importContainer = new ImportContainer();
+      modelMapper.map(item, importContainer);
 
-			System.out.println("item " + item);
-			System.out.println("importContainer " + importContainer);
+      System.out.println("item " + item);
+      System.out.println("importContainer " + importContainer);
 
-			importContainers.add(importContainer);
-		});
-		return importContainers;
+      importContainers.add(importContainer);
+    });
+    return importContainers;
 
-	}
+  }
 
-	public List<ImportContainer> saveGateInInfo(GateInWriteRequest gateInWriteRequest) {
+  public List<ImportContainer> saveGateInInfo(GateInWriteRequest gateInWriteRequest) {
     // construct a new export entity for each exportcontainer and save
     if (!(gateInWriteRequest.getImportContainers() == null || gateInWriteRequest.getImportContainers().isEmpty())) {
       gateInWriteRequest.getImportContainers().forEach(importContainer -> {
@@ -224,6 +224,8 @@ public class ImportGateInService {
             System.out.println("gatePass after initializeing " + gatePass);
             gatePass = gatePassRepository.save(gatePass);
             System.out.println("gatePass after modal map from importContainer " + gatePass);
+          } else {
+            throw new ResultsNotFoundException("Gatepass could not be found with the given gate pass number!");
           }
 
         }
@@ -231,7 +233,7 @@ public class ImportGateInService {
       });
       return gateInWriteRequest.getImportContainers();
     }
-	return null;
+    return null;
   }
 
 }
