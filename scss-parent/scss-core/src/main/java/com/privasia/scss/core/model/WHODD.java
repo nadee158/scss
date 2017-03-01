@@ -28,9 +28,9 @@ import com.privasia.scss.common.enums.TransactionStatus;
 
 @Entity
 @Table(name = "SCSS_WH_ODD")
-@AttributeOverrides({@AttributeOverride(name = "addBy", column = @Column(name = "ADD_BY") ),
+@AttributeOverrides({@AttributeOverride(name = "addBy", column = @Column(name = "ODD_ADDBY") ),
     @AttributeOverride(name = "updateBy", column = @Column(name = "ODD_UPDATEDBY") ),
-    @AttributeOverride(name = "dateTimeAdd", column = @Column(name = "DATETIME_ADD") ),
+    @AttributeOverride(name = "dateTimeAdd", column = @Column(name = "ODD_DATEADD") ),
     @AttributeOverride(name = "dateTimeUpdate", column = @Column(name = "ODD_DATEUPDATE") )})
 public class WHODD extends AuditEntity implements Serializable {
 
