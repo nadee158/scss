@@ -24,6 +24,7 @@ public class GateInReponse implements Serializable {
 
 	// for gate in write
 	private String callCardNo;// 20161130112233,
+	
 
 	public String getLaneNo() {
 		return laneNo;

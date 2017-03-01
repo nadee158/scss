@@ -31,7 +31,7 @@ public class WDCGatePass implements Serializable {
 	@Column(name = "GATE_PASS_NO")
 	private Long gatePassNO;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "GATE_ORDER_NO", nullable = false, referencedColumnName = "GATE_ORDER_NO")
 	private WDCGateOrder gateOrder;
 

@@ -68,7 +68,21 @@ public class ModelMapConfig {
     modelMapper.addConverter(ModelMapEnumConverter.convertCardUsageStatusToString());
     modelMapper.addConverter(ModelMapEnumConverter.convertStringToSolasInstructionType());
     modelMapper.addConverter(ModelMapEnumConverter.convertSolasInstructionTypeToString());
-
+    modelMapper.addConverter(ModelMapEnumConverter.convertStringToBookingType());
+    modelMapper.addConverter(ModelMapEnumConverter.convertBookingTypeToString());
+    modelMapper.addConverter(ModelMapEnumConverter.convertHDBSStatusToString());
+    modelMapper.addConverter(ModelMapEnumConverter.convertStringToHDBSStatus());
+    modelMapper.addConverter(ModelMapEnumConverter.convertStringToHDBSArrivalStatus());
+    modelMapper.addConverter(ModelMapEnumConverter.convertHDBSArrivalStatusToString());
+    modelMapper.addConverter(ModelMapEnumConverter.convertHDBSBookingTypeToString());
+    modelMapper.addConverter(ModelMapEnumConverter.convertStringToHDBSBookingType());
+    modelMapper.addConverter(ModelMapEnumConverter.convertSCSSHDBSStatusToString());
+    modelMapper.addConverter(ModelMapEnumConverter.convertStringToSCSSHDBSStatus());
+    modelMapper.addConverter(ModelMapEnumConverter.convertCardStatusToString());
+    modelMapper.addConverter(ModelMapEnumConverter.convertStringToCardStatus());
+    modelMapper.addConverter(ModelMapEnumConverter.convertStringToCompanyStatus());
+    modelMapper.addConverter(ModelMapEnumConverter.convertCompanyStatusToString());
+    
     return modelMapper;
   }
 

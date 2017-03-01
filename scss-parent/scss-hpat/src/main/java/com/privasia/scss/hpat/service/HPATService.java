@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.privasia.scss.common.dto.GateInReponse;
+import com.privasia.scss.common.dto.GateInRequest;
 import com.privasia.scss.common.dto.HpatDto;
 import com.privasia.scss.common.dto.TransactionDTO;
 import com.privasia.scss.common.enums.BookingType;
@@ -192,6 +194,47 @@ public class HPATService {
       // need to discuss with etp team to manage web services between etp and scss
       throw new ResultsNotFoundException("No HPAT Booking was Found !");
     }
+  }
+    
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
+    public GateInRequest fetchHpab4ImpAndExp(GateInRequest gateInRequest) {
+
+      Optional<HPATBooking> hpatBookingOpt =
+          hpatBookingRepository.findByBookingIDAndStatus(gateInRequest.getHpabSeqId(), HpatReferStatus.ACTIVE);
+      
+      HPATBooking booking  = hpatBookingOpt.orElseThrow(() -> new ResultsNotFoundException("Invalid HPAB Bookibg ID ! " + gateInRequest.getHpabSeqId()));
+
+      if (!(booking.getHpatBookingDetails() == null || booking.getHpatBookingDetails().isEmpty())) {
+
+          booking.getHpatBookingDetails().forEach(bookingDetail -> {
+
+            BookingType bookingType = bookingDetail.getBookingType();
+            switch (bookingType) {
+              case IMPORT:
+              case  IMPORT_ITT:
+            	   
+
+                break;
+              case EXPORT:
+
+                break;
+             
+              case EMPTY_PICKUP:
+
+                break;
+              case EMPTY_RETURN:
+
+                break;
+
+              default:
+                break;
+            }
+
+          });
+        }
+
+        return gateInRequest;
+
   }
 
 }

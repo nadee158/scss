@@ -33,6 +33,15 @@ public class WDCGateOrder implements Serializable {
 	@Column(name = "VESSEL_NAME")
 	private String vesselName;
 
+	@Column(name = "MOVE_TYPE")
+	private String moveType;
+
+	@Column(name = "LINE_CODE")
+	private String lineCode;
+
+	@Column(name = "TYPE_CODE")
+	private String typeCode;
+
 	public Long getGateOrderNo() {
 		return gateOrderNo;
 	}
@@ -80,14 +89,5 @@ public class WDCGateOrder implements Serializable {
 	public void setTypeCode(String typeCode) {
 		this.typeCode = typeCode;
 	}
-
-	@Column(name = "MOVE_TYPE")
-	private String moveType;
-
-	@Column(name = "LINE_CODE")
-	private String lineCode;
-
-	@Column(name = "TYPE_CODE")
-	private String typeCode;
 
 }
