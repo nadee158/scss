@@ -25,11 +25,11 @@ public class ODDContainerDetailsDTO implements Serializable {
 
   private String containerSize = StringUtils.EMPTY;
 
-  private String hdbsBkgDetailNoId = StringUtils.EMPTY;
+  private String hdbsBkgDetailNoId;
 
-  private String hdbsStatus = StringUtils.EMPTY;
+  private String hdbsStatus;
 
-  private String hdbsArrivalStatus = StringUtils.EMPTY;
+  private String hdbsArrivalStatus;
 
   public String getContainerNo() {
     return containerNo;
