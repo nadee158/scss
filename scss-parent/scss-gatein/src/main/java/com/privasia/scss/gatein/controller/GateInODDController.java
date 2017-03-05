@@ -20,6 +20,7 @@ import com.privasia.scss.common.dto.ApiResponseObject;
 import com.privasia.scss.common.dto.CustomResponseEntity;
 import com.privasia.scss.common.dto.GateInOutODDDTO;
 import com.privasia.scss.core.model.HDBSBkgDetail;
+import com.privasia.scss.gatein.service.ODDService;
 import com.privasia.scss.hdbs.service.HDBSService;
 
 /**
@@ -34,13 +35,18 @@ public class GateInODDController {
   @Autowired
   private HDBSService hdbsService;
 
+  @Autowired
+  private ODDService oddService;
+
   @RequestMapping(value = "/whodd/save", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
       consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public CustomResponseEntity<ApiResponseObject<?>> saveWhodd(@RequestBody GateInOutODDDTO gateInOutODDDTO) {
 
     System.out.println("gateInOutODDDTO :" + gateInOutODDDTO);
 
-    return new CustomResponseEntity<ApiResponseObject<?>>(new ApiResponseObject<Long>(HttpStatus.CREATED, 0l),
+    long generatedId = oddService.savempWHODDDB(gateInOutODDDTO);
+
+    return new CustomResponseEntity<ApiResponseObject<?>>(new ApiResponseObject<Long>(HttpStatus.CREATED, generatedId),
         HttpStatus.CREATED);
   }
 
