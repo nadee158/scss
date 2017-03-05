@@ -26,7 +26,7 @@ import com.privasia.scss.common.enums.SCSSHDBSStatus;
 @Entity
 @Table(name = "HDBS_BKG_DETAIL")
 @AttributeOverrides({ @AttributeOverride(name = "addBy", column = @Column(name = "ADD_BY")),
-		@AttributeOverride(name = "updateBy", column = @Column(name = "UPDATED_BY")),
+		@AttributeOverride(name = "updateBy", column = @Column(name = "UPDATE_BY")),
 		@AttributeOverride(name = "dateTimeAdd", column = @Column(name = "DATETIME_ADD")),
 		@AttributeOverride(name = "dateTimeUpdate", column = @Column(name = "DATETIME_UPDATE")) })
 public class HDBSBkgDetail extends AuditEntity implements Serializable {

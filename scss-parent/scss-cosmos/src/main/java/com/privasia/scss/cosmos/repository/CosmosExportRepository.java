@@ -9,9 +9,11 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.privasia.scss.common.dto.ExportContainer;
+import com.privasia.scss.common.enums.ContainerStatus;
 
 @Repository
 public class CosmosExportRepository {
@@ -25,6 +27,9 @@ public class CosmosExportRepository {
 
 	@Value("${export.isInternalBlock}")
 	private String queryIsInternalBlock;
+	
+	@Value("${export.containerStatus}")
+	private String queryContainerStatus;
 
 	@Transactional(readOnly = true)
 	public boolean isOGABlock(String containerNo) {
@@ -62,6 +67,26 @@ public class CosmosExportRepository {
 		}
 
 		return exportContainer;
+	}
+	
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+	public String checkContainerStatus(String containerNo, String timeGateIn) {
+
+		containerNo = StringUtils.upperCase(containerNo);
+		return jdbcTemplate.queryForObject(queryContainerStatus, new Object[] { containerNo, timeGateIn },
+				(rs, i) -> extractContainerStatus(rs));
+
+	}
+
+	private String extractContainerStatus(ResultSet rs) throws SQLException {
+
+		if (rs != null && rs.next()) {
+  		  return rs.getString("hdfs03");
+  	  	} else {
+  	  		
+  	  	return ContainerStatus.NON_EXECUTE.getValue();
+  	  	}
+
 	}
 
 }

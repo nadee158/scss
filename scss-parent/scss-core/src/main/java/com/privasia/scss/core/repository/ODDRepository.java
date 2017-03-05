@@ -3,6 +3,9 @@
  */
 package com.privasia.scss.core.repository;
 
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -23,6 +26,9 @@ public interface ODDRepository extends BaseRepository<WHODD, Long> {
 	
 	@Query(name="WHODD.countByCardIDAndOddStatus", nativeQuery = true)
 	public Long countByCardIDAndEirStatus(@Param("cardID") long cardId, @Param("eirStatus") String eirStatus);
+	
+	@Query(name="WHODD.findByCardIDAndOddStatus")
+	public Optional<List<WHODD>> findByCardIDAndEirStatus(@Param("cardID") long cardId, @Param("oddStatus") TransactionStatus oddStatus);
 	
 
 }

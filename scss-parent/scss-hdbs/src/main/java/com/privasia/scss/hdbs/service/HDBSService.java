@@ -65,7 +65,7 @@ public class HDBSService {
   @Autowired
   private ModelMapper modelMapper;
   
-  @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
+  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
   public List<HDBSBkgDetail> findHDBSBookingDetailByIDList(List<String> bkgDetailIDList) {
 
     Stream<HDBSBkgDetail> bkgDetails = hdbsBookingDetailRepository.findByHdbsBKGDetailIDIn(bkgDetailIDList);
@@ -74,8 +74,18 @@ public class HDBSService {
   }
   
   
-  @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-  public String validateSelectedHDBSBookingDetails(List<String> bkgDetailIDList) {
+  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+  public String validateSelectedHDBSBookingDetails(HDBSBkgGridDTO bkgDetailGridDTO) {
+	  
+	List<String> bkgDetailIDList = new ArrayList<>();
+	
+	if(bkgDetailGridDTO == null || bkgDetailGridDTO.getHdbsBkgDetailGridDTOList().isEmpty()){
+		return "Booking selection is Empty";
+	}
+	
+	bkgDetailGridDTO.getHdbsBkgDetailGridDTOList().forEach(gridDTO ->{
+		bkgDetailIDList.add(gridDTO.getHdbsBKGDetailID());
+	});
 
 	List<HDBSBkgDetail> bkgDetails = findHDBSBookingDetailByIDList(bkgDetailIDList);
     
@@ -118,7 +128,7 @@ public class HDBSService {
     
   }
 
-  @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
+  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
   public HDBSBkgGridDTO findHDBSBookingDetailByCard(Long cardID) {
 
     Optional<Card> optionalCard = cardRepository.findOne(cardID);
@@ -178,14 +188,6 @@ public class HDBSService {
   }
 
   public HDBSBkgGridDTO createPredicatesAndFindHDBS(long cardNo) {
-    //@formatter:off
-//    + " WHERE mas.DRAYAGE_BOOKING ='0' AND SCSS_STATUS_CODE is null AND (det.STATUS_CODE = 'ACCEPTED') " //
-//    + " AND  card.CRD_CARDID_SEQ = " //
-//    + SQL.format(cardIdSeq) 
-//    + " AND APPT_DATETIME_FROM <= sysdate+0.0416 " // 1 hour earlier
-//    + " AND APPT_DATETIME_FROM >= sysdate-0.0833 " // 2 hour late
-//    + " order by APPT_DATETIME_TO_ACTUAL "; //
-    //@formatter:on
 
     LocalDateTime dateFrom = LocalDateTime.now().minus(1, ChronoUnit.HOURS);
     LocalDateTime dateTo = LocalDateTime.now().plus(2, ChronoUnit.HOURS);
@@ -225,7 +227,7 @@ public class HDBSService {
 
   }
   
-  @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
+  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
   public HDBSBkgGridDTO createPredicatesAndFindHDBS(Card card, LocalDateTime dateFrom, LocalDateTime dateTo,
       List<HDBSStatus> statusList, HDBSBkgGridDTO gridDTo) {
 
@@ -315,7 +317,7 @@ public class HDBSService {
 
   }
   
-  @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
+  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
   public List<WHODDDTO> populateODDInfo(String timeGateIn, List<String> bkgDetailIDList){
 	  
 	  List<HDBSBkgDetail> bkgDetails = findHDBSBookingDetailByIDList(bkgDetailIDList);

@@ -35,7 +35,7 @@ public class ImportGateOutService {
 	private WDCGatePassRepository wdcGatePassRepository;
 
 	@Autowired
-	public void setGatePassRepository(GatePassRepository gatePassRepository) {
+	public void setGatePassRepository(GatePassRepository gatePassRepository) { 
 		this.gatePassRepository = gatePassRepository;
 	}
 
@@ -63,7 +63,7 @@ public class ImportGateOutService {
 		if (gateOutRequest.getGatePass2() != null && gateOutRequest.getGatePass2() != 0) {
 			gatePassNumberList.add(gateOutRequest.getGatePass2());
 		}
-		List<ImportContainer> importContainers = fetchContainerInfo(gatePassNumberList);
+		/*List<ImportContainer> importContainers = fetchContainerInfo(gatePassNumberList);
 
 		importContainers.forEach(importContainer -> {
 			GatePassValidateDTO gatePassValidateDTO = validateGatePass(gateOutRequest.getCardID(),
@@ -79,14 +79,14 @@ public class ImportGateOutService {
 				throw new ResultsNotFoundException(
 						gatePassValidateDTO.getGatePassErrorMessage() + gateOutRequest.getGatePass1());
 			}
-		});
+		});*/
 
 		Optional<Client> clientOpt = clientRepository.findOne(gateOutRequest.getLaneId());
 		Client client = clientOpt
 				.orElseThrow(() -> new ResultsNotFoundException("Invalid lane ID ! " + gateOutRequest.getLaneId()));
 		gateOutRequest.setLaneNo(client.getLaneNo());
 
-		return importContainers;
+		return null;
 
 	}
 
@@ -95,8 +95,10 @@ public class ImportGateOutService {
 
 		return new GatePassValidateDTO();
 	}
-	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
-	public List<ImportContainer> fetchContainerInfo(List<Long> gatePassNumberList) {
+	
+	
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+	public List<ImportContainer> fetchWDCGatePassInfo(List<ImportContainer> importList, List<Long> gatePassNumberList) {
 		
 		
 		Optional<List<WDCGatePass>> optionalWdcGatePassList =  wdcGatePassRepository.findByGatePassNOIn(gatePassNumberList);
@@ -108,6 +110,7 @@ public class ImportGateOutService {
 		wdcGatePassList.forEach(wdcGatePass ->{
 			System.out.println("getGateOrder" + wdcGatePass.getGateOrder());
 			System.out.println("getLineCode" + wdcGatePass.getGateOrder().getLineCode());
+			System.out.println("GcsDelcarerNo" + wdcGatePass.getGcsDelcarerNo());
 		});
 
 		/*Optional<List<GatePass>> optionalGatePassList = gatePassRepository.findByGatePassNoIn(gatePassNumberList);
@@ -124,7 +127,7 @@ public class ImportGateOutService {
 
 			importContainers.add(importContainer);
 		});*/
-		return null;
+		return importList;
 
 	}
 
@@ -139,7 +142,7 @@ public class ImportGateOutService {
 		List<Long> gatePassNumberList = new ArrayList<>();
 		gatePassNumberList.add(20000070011l);
 		gatePassNumberList.add(20000140011l);
-		importGateOutService.fetchContainerInfo(gatePassNumberList);
+		//importGateOutService.fetchContainerInfo(gatePassNumberList);
 	}	
 
 }

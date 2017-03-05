@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.privasia.scss.common.dto.ApiResponseObject;
 import com.privasia.scss.common.dto.CustomResponseEntity;
+import com.privasia.scss.common.dto.HDBSBkgDetailGridDTO;
 import com.privasia.scss.common.dto.HDBSBkgGridDTO;
 import com.privasia.scss.hdbs.service.HDBSService;
 
@@ -47,10 +48,10 @@ public class HDBSController {
 
   @RequestMapping(value = "/validateselection", method = RequestMethod.PUT,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-  public CustomResponseEntity<ApiResponseObject<?>> validateBookingSelection(@RequestBody List<String> bkgDetailIDList,
+  public CustomResponseEntity<ApiResponseObject<?>> validateBookingSelection(@RequestBody HDBSBkgGridDTO bkgDetailGridDTO,
       HttpServletRequest request) {
 
-    String validateMessage = hdbsService.validateSelectedHDBSBookingDetails(bkgDetailIDList);
+    String validateMessage = hdbsService.validateSelectedHDBSBookingDetails(bkgDetailGridDTO);
 
     return new CustomResponseEntity<ApiResponseObject<?>>(new ApiResponseObject<String>(HttpStatus.OK, validateMessage),
         HttpStatus.OK);
