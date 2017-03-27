@@ -1,27 +1,39 @@
 package com.privasia.scss.gateout.service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.privasia.scss.common.dto.CancelPickUpDTO;
+import com.privasia.scss.common.dto.ConfirmedKioskDTO;
 import com.privasia.scss.common.dto.GateOutRequest;
 import com.privasia.scss.common.dto.GateOutWriteRequest;
 import com.privasia.scss.common.dto.GatePassValidateDTO;
 import com.privasia.scss.common.dto.ImportContainer;
+import com.privasia.scss.common.dto.UpdateSealDTO;
+import com.privasia.scss.common.enums.TransactionStatus;
 import com.privasia.scss.core.exception.ResultsNotFoundException;
 import com.privasia.scss.core.model.Client;
+import com.privasia.scss.core.model.CommonSealAttribute;
 import com.privasia.scss.core.model.GatePass;
+import com.privasia.scss.core.model.SystemUser;
 import com.privasia.scss.core.model.WDCGatePass;
 import com.privasia.scss.core.repository.ClientRepository;
 import com.privasia.scss.core.repository.GatePassRepository;
+import com.privasia.scss.core.repository.SystemUserRepository;
 import com.privasia.scss.core.repository.WDCGatePassRepository;
+import com.privasia.scss.core.security.util.SecurityHelper;
 
 @Service("importGateOutService")
 public class ImportGateOutService {
@@ -33,6 +45,8 @@ public class ImportGateOutService {
 	private ClientRepository clientRepository;
 
 	private WDCGatePassRepository wdcGatePassRepository;
+	
+	private SystemUserRepository systemUserRepository;
 
 	@Autowired
 	public void setGatePassRepository(GatePassRepository gatePassRepository) { 
@@ -52,6 +66,11 @@ public class ImportGateOutService {
 	@Autowired
 	public void setWdcGatePassRepository(WDCGatePassRepository wdcGatePassRepository) {
 		this.wdcGatePassRepository = wdcGatePassRepository;
+	}
+	
+	@Autowired
+	public void setSystemUserRepository(SystemUserRepository systemUserRepository) {
+		this.systemUserRepository = systemUserRepository;
 	}
 
 	public List<ImportContainer> populateGateOut(GateOutRequest gateOutRequest) {
@@ -98,7 +117,7 @@ public class ImportGateOutService {
 	
 	
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-	public List<ImportContainer> fetchWDCGatePassInfo(List<ImportContainer> importList, List<Long> gatePassNumberList) {
+	public List<ImportContainer> getGCSDeclarationInfo(List<ImportContainer> importList, List<Long> gatePassNumberList) {
 		
 		
 		Optional<List<WDCGatePass>> optionalWdcGatePassList =  wdcGatePassRepository.findByGatePassNOIn(gatePassNumberList);
@@ -111,6 +130,16 @@ public class ImportGateOutService {
 			System.out.println("getGateOrder" + wdcGatePass.getGateOrder());
 			System.out.println("getLineCode" + wdcGatePass.getGateOrder().getLineCode());
 			System.out.println("GcsDelcarerNo" + wdcGatePass.getGcsDelcarerNo());
+			
+			importList.forEach(container ->{
+				System.out.println("getGateOrder" + wdcGatePass.getGateOrder());
+				System.out.println("getLineCode" + wdcGatePass.getGateOrder().getLineCode());
+				System.out.println("GcsDelcarerNo" + wdcGatePass.getGcsDelcarerNo());
+				
+				
+				
+			});
+			
 		});
 
 		/*Optional<List<GatePass>> optionalGatePassList = gatePassRepository.findByGatePassNoIn(gatePassNumberList);
@@ -129,6 +158,91 @@ public class ImportGateOutService {
 		});*/
 		return importList;
 
+	}
+	
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
+	public String cancelPickUp(CancelPickUpDTO cancelPickUpDTO){
+		
+		List<Long> gatepassNumList = Arrays.asList(cancelPickUpDTO.getGatePass01(), cancelPickUpDTO.getGatePass02());
+		Optional<List<GatePass>> optionalGatePassList = gatePassRepository.findByGatePassNoIn(gatepassNumList);
+		
+		List<GatePass> gatePassList = optionalGatePassList.orElseThrow(() -> new ResultsNotFoundException(
+				"Invalid Gate pass numbers ! "+String.join(",", gatepassNumList.stream().map(Object::toString)
+                        .collect(Collectors.toList()))));
+		
+		gatePassList.forEach(gatePass->{
+			gatePass.getBaseCommonGateInOutAttribute().setEirStatus(TransactionStatus.REJECT);
+			if(gatePass.getGatePassNo() == cancelPickUpDTO.getGatePass01()){
+				gatePass.getCommonGateInOut().setRejectReason(cancelPickUpDTO.getRemarks01());
+			}else{
+				gatePass.getCommonGateInOut().setRejectReason(cancelPickUpDTO.getRemarks02());
+			}
+			gatePass.getCommonGateInOut().setKioskCancelPickUp(true);
+			gatePassRepository.save(gatePass);
+		});
+		
+		return "success";
+		
+	}
+	
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
+	public String updateSeal(UpdateSealDTO updateSealDTO){
+		
+		List<Long> gatepassNumList = Arrays.asList(updateSealDTO.getGatePass01(), updateSealDTO.getGatePass02());
+		Optional<List<GatePass>> optionalGatePassList = gatePassRepository.findByGatePassNoIn(gatepassNumList);
+		
+		List<GatePass> gatePassList = optionalGatePassList.orElseThrow(() -> new ResultsNotFoundException(
+				"Invalid Gate pass numbers ! "+String.join(",", gatepassNumList.stream().map(Object::toString)
+                        .collect(Collectors.toList()))));
+		
+		gatePassList.forEach(gatePass->{
+			if(gatePass.getSealAttribute()== null){
+				gatePass.setSealAttribute(new CommonSealAttribute());
+			}
+			if(gatePass.getGatePassNo() == updateSealDTO.getGatePass01()){
+				gatePass.getSealAttribute().setSeal01Number(updateSealDTO.getGatePass01Seal01().trim());
+				gatePass.getSealAttribute().setSeal02Number(updateSealDTO.getGatePass01Seal02().trim());
+			}else{
+				gatePass.getSealAttribute().setSeal01Number(updateSealDTO.getGatePass02Seal01().trim());
+				gatePass.getSealAttribute().setSeal02Number(updateSealDTO.getGatePass02Seal02().trim());
+			}
+			gatePass.setForcedSeal(updateSealDTO.isForceSealUpdate());
+			gatePassRepository.save(gatePass);
+		});
+		
+		return "success";
+		
+	}
+	
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
+	public String confirmedKioskTransaction(ConfirmedKioskDTO confirmedKioskDTO){
+		
+		List<Long> gatepassNumList = Arrays.asList(confirmedKioskDTO.getGatePass01(), confirmedKioskDTO.getGatePass02());
+		Optional<List<GatePass>> optionalGatePassList = gatePassRepository.findByGatePassNoIn(gatepassNumList);
+		
+		List<GatePass> gatePassList = optionalGatePassList.orElseThrow(() -> new ResultsNotFoundException(
+				"Invalid Gate pass numbers ! "+String.join(",", gatepassNumList.stream().map(Object::toString)
+                        .collect(Collectors.toList()))));
+		
+		Optional<Client> clientOpt = clientRepository.findOne(confirmedKioskDTO.getKioskID());
+		Client client = clientOpt.orElseThrow(() -> new ResultsNotFoundException("Invalid Kiosk ID ! " + confirmedKioskDTO.getKioskID()));
+		SystemUser systemUser = systemUserRepository.findOne(SecurityHelper.getCurrentUserId()).orElseThrow(
+		          () -> new AuthenticationServiceException("Log in User Not Found : " + SecurityHelper.getCurrentUserId()));
+		
+		gatePassList.forEach(gatePass->{
+			gatePass.getBaseCommonGateInOutAttribute().setGateOutClerk(systemUser);
+			gatePass.getBaseCommonGateInOutAttribute().setGateOutClient(client);
+			gatePass.getBaseCommonGateInOutAttribute().setTimeGateInOk(LocalDateTime.now());
+			if(gatePass.getGatePassNo() == confirmedKioskDTO.getGatePass01()){
+				gatePass.getCommonGateInOut().setKioskConfirmed(confirmedKioskDTO.isStatus01());
+			}else{
+				gatePass.getCommonGateInOut().setKioskConfirmed(confirmedKioskDTO.isStatus02());
+			}
+			gatePassRepository.save(gatePass);
+		});
+		
+		return "success";
+		
 	}
 
 	public List<ImportContainer> saveGateOutInfo(GateOutWriteRequest gateOutWriteRequest) {

@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Repository
@@ -22,7 +23,7 @@ public class CosmosODDRepository {
 	@Value("${odd.validateODDContainer}")
 	private String queryValidateODDContainer;
 
-	@Transactional(readOnly = true)
+	@Transactional(value = "as400TransactionManager", propagation = Propagation.REQUIRED, readOnly = true)
 	public boolean validateODDContainer(String containerNo) {
 		containerNo = StringUtils.upperCase(containerNo);
 		try {

@@ -36,7 +36,7 @@ public class GateOutImportController {
 	}
 
 	@RequestMapping(value = "/cancelpickup", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public CustomResponseEntity<ApiResponseObject<?>> cancelpickup(@RequestBody CancelPickUpDTO cancelPickUpDTO) {
+	public CustomResponseEntity<ApiResponseObject<?>> cancelPickUp(@RequestBody CancelPickUpDTO cancelPickUpDTO) {
 		GateOutMessage gateOutMessage = null;
 		return new CustomResponseEntity<ApiResponseObject<?>>(new ApiResponseObject<GateOutMessage>(HttpStatus.OK, gateOutMessage), HttpStatus.OK);
 	}

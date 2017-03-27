@@ -203,7 +203,7 @@ public class ExportContainer {
 	private CommonSolasDTO solas;
 
 	/////////////// EXTRA FILEDS FOUND BASED ON COMPILE ERRORS/////////////////
-	private boolean internalBlock; // for CosmosExportRepository -
+	private boolean internalBlock = false; // for CosmosExportRepository -
 									// extractInternalBlock method
 
 	private String internalBlockDesc; // for CosmosExportRepository -
@@ -305,6 +305,8 @@ public class ExportContainer {
 	private LocalDateTime rtgExecustionDateTime;// ;":"20161212101010"
 
 	//////////////////////////////////////
+	
+	private boolean ogaBlock = false;
 
 	public Long getExportID() {
 		return exportID;
@@ -1036,6 +1038,14 @@ public class ExportContainer {
 
 	public void setInternalBlock(boolean internalBlock) {
 		this.internalBlock = internalBlock;
+	}
+
+	public boolean isOgaBlock() {
+		return ogaBlock;
+	}
+
+	public void setOgaBlock(boolean ogaBlock) {
+		this.ogaBlock = ogaBlock;
 	}
 
 	public List<DamageCodeDTO> getDamages() {

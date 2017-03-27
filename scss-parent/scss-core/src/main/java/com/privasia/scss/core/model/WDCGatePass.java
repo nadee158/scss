@@ -30,6 +30,9 @@ public class WDCGatePass implements Serializable {
 	@Id
 	@Column(name = "GATE_PASS_NO")
 	private Long gatePassNO;
+	
+	@Column(name = "GATE_ORDER_NO")
+	private Long gateOrderNO;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "GATE_ORDER_NO", nullable = false, referencedColumnName = "GATE_ORDER_NO")
@@ -172,4 +175,13 @@ public class WDCGatePass implements Serializable {
 		this.edoExpiryDate = edoExpiryDate;
 	}
 
+	public Long getGateOrderNO() {
+		return gateOrderNO;
+	}
+
+	public void setGateOrderNO(Long gateOrderNO) {
+		this.gateOrderNO = gateOrderNO;
+	}
+	
+	
 }

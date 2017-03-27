@@ -22,36 +22,40 @@ public class CosmosExportRepository {
 	@Qualifier("as400JdbcTemplate")
 	private JdbcTemplate jdbcTemplate;
 
-	@Value("${export.isOGABlock}")
-	private String queryIsOGABlock;
+	@Value("${export.ogaBlock}")
+	private String queryOGABlock;
 
-	@Value("${export.isInternalBlock}")
-	private String queryIsInternalBlock;
+	@Value("${export.internalBlock}")
+	private String queryInternalBlock;
 	
 	@Value("${export.containerStatus}")
 	private String queryContainerStatus;
+	
+	@Value("${export.containerInfo}")
+	private String queryContainerInfo;
 
-	@Transactional(readOnly = true)
-	public boolean isOGABlock(String containerNo) {
+	
+	@Transactional(value = "as400TransactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+	public ExportContainer isOGABlock(ExportContainer exportContainer) {
 
-		containerNo = StringUtils.upperCase(containerNo);
-		return jdbcTemplate.query(queryIsOGABlock, new Object[] { containerNo }, this::extractOGABlock);
+		String containerNo = StringUtils.upperCase(exportContainer.getContainer().getContainerNumber());
+		return jdbcTemplate.queryForObject(queryOGABlock, new Object[] { containerNo }, (rs, i) -> extractOGABlock(exportContainer, rs)); 
 
 	}
 
-	private boolean extractOGABlock(ResultSet rs) throws SQLException {
+	private ExportContainer extractOGABlock(ExportContainer exportContainer, ResultSet rs) throws SQLException {
 
 		if (rs.next()) {
-			return true;
+			exportContainer.setOgaBlock(true);
 		}
-		return false;
+		return exportContainer;
 	}
 
-	@Transactional(readOnly = true)
+	@Transactional(value = "as400TransactionManager", propagation = Propagation.REQUIRED, readOnly = true)
 	public ExportContainer isInternalBlock(ExportContainer exportContainer, String containerNo) {
 
 		containerNo = StringUtils.upperCase(containerNo);
-		return jdbcTemplate.queryForObject(queryIsInternalBlock, new Object[] { containerNo },
+		return jdbcTemplate.queryForObject(queryInternalBlock, new Object[] { containerNo },
 				(rs, i) -> extractInternalBlock(exportContainer, rs, i));
 
 	}
@@ -62,10 +66,7 @@ public class CosmosExportRepository {
 		if (rs.next()) {
 			exportContainer.setInternalBlock(true);
 			exportContainer.setInternalBlockDesc(rs.getString("inop30"));
-		} else {
-			exportContainer.setInternalBlock(true);
-		}
-
+		} 
 		return exportContainer;
 	}
 	
@@ -87,6 +88,22 @@ public class CosmosExportRepository {
   	  	return ContainerStatus.NON_EXECUTE.getValue();
   	  	}
 
+	}
+	
+	@Transactional(value = "as400TransactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+	public ExportContainer fetchContainerInfo(String exportContainerNo) {
+
+		exportContainerNo = StringUtils.upperCase(exportContainerNo);
+		return jdbcTemplate.queryForObject(queryContainerInfo, new Object[] { exportContainerNo }, (rs, i) -> extractContainerInfo(rs, i)); 
+
+	}
+
+	private ExportContainer extractContainerInfo(ResultSet rs, int rowNum) throws SQLException {
+
+		if (rs.next()) {
+			
+		}
+		return new ExportContainer();
 	}
 
 }
