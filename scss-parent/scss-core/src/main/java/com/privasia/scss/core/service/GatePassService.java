@@ -188,7 +188,7 @@ public class GatePassService {
 
 
         log.error("------STARTING CHECKING WDC GATEPASS is valid------" + gatePassNo + ":" + truckHeadNo);
-        Optional<WDCGatePass> wdcGatePassOpt = wdcGatePassRepository.findByGatePassNO(gatePassNo);
+        Optional<WDCGatePass> wdcGatePassOpt = wdcGatePassRepository.findByGatePassNO(Long.parseLong(gatePassNo));
 
         if (wdcGatePassOpt.isPresent()) {
 
