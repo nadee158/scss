@@ -22,6 +22,7 @@ import com.privasia.scss.common.dto.GateOutWriteRequest;
 import com.privasia.scss.common.dto.GatePassValidateDTO;
 import com.privasia.scss.common.dto.ImportContainer;
 import com.privasia.scss.common.dto.UpdateSealDTO;
+import com.privasia.scss.common.dto.WDCGatePassDTO;
 import com.privasia.scss.common.enums.TransactionStatus;
 import com.privasia.scss.core.exception.ResultsNotFoundException;
 import com.privasia.scss.core.model.Client;
@@ -130,6 +131,10 @@ public class ImportGateOutService {
 			System.out.println("getGateOrder" + wdcGatePass.getGateOrder());
 			System.out.println("getLineCode" + wdcGatePass.getGateOrder().getLineCode());
 			System.out.println("GcsDelcarerNo" + wdcGatePass.getGcsDelcarerNo());
+			
+			WDCGatePassDTO wdcGatePassDTO =  modelMapper.map(wdcGatePass, WDCGatePassDTO.class);
+			wdcGatePassDTO.setPortSecurity(wdcGatePass.getDateTimeADD());
+			wdcGatePassDTO.setGatePassIssued(wdcGatePass.getDateTimeADD()); 
 			
 			importList.forEach(container ->{
 				System.out.println("getGateOrder" + wdcGatePass.getGateOrder());
