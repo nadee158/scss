@@ -18,4 +18,6 @@ public interface ShipCodeRepository extends BaseRepository<ShipCode, Long> {
 
   Optional<List<ShipCode>> findByShipStatusAndShippingCodeIn(ShipStatus status, List<String> shippingCodes);
 
+  Optional<ShipCode> findByShipStatusAndShippingCode(ShipStatus status, String shippingCode);
+
 }

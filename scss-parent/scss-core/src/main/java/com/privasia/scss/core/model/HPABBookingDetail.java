@@ -42,7 +42,7 @@ import com.privasia.scss.common.enums.BookingType;
     @AttributeOverride(name = "updateBy", column = @Column(name = "UPDATE_BY")),
     @AttributeOverride(name = "dateTimeAdd", column = @Column(name = "DATETIME_ADD")),
     @AttributeOverride(name = "dateTimeUpdate", column = @Column(name = "DATETIME_UPDATE"))})
-public class HPATBookingDetail extends AuditEntity implements Serializable {
+public class HPABBookingDetail extends AuditEntity implements Serializable {
 
   /**
    * 
@@ -100,7 +100,7 @@ public class HPATBookingDetail extends AuditEntity implements Serializable {
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "BOOKING_ID", nullable = false)
-  private HPATBooking hpatBooking;
+  private HPABBooking hpatBooking;
 
   @Column(name = "EXP_BOOKING_NO")
   private String expBookingNo;
@@ -269,12 +269,12 @@ public class HPATBookingDetail extends AuditEntity implements Serializable {
   }
 
 
-  public HPATBooking getHpatBooking() {
+  public HPABBooking getHpatBooking() {
     return hpatBooking;
   }
 
 
-  public void setHpatBooking(HPATBooking hpatBooking) {
+  public void setHpatBooking(HPABBooking hpatBooking) {
     this.hpatBooking = hpatBooking;
   }
 

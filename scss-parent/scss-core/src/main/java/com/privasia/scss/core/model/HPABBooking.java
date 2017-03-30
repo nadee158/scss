@@ -36,7 +36,7 @@ import com.privasia.scss.common.util.CommonUtil;
 		@AttributeOverride(name = "updateBy", column = @Column(name = "UPDATE_BY")),
 		@AttributeOverride(name = "dateTimeAdd", column = @Column(name = "DATETIME_ADD")),
 		@AttributeOverride(name = "dateTimeUpdate", column = @Column(name = "DATETIME_UPDATE")) })
-public class HPATBooking extends AuditEntity implements Serializable {
+public class HPABBooking extends AuditEntity implements Serializable {
 
 	/**
 	 * 
@@ -105,7 +105,7 @@ public class HPATBooking extends AuditEntity implements Serializable {
 	private Boolean pmVerified;
 
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "hpatBooking")
-	private Set<HPATBookingDetail> hpatBookingDetails;
+	private Set<HPABBookingDetail> hpatBookingDetails;
 
 	public HpatDto constructHpatDto() {
 		HpatDto dto = new HpatDto();
@@ -133,7 +133,7 @@ public class HPATBooking extends AuditEntity implements Serializable {
 		return dto;
 	}
 
-	public void setGatePassAndContainDetail(HPATBookingDetail hpabBookingDetail, HpatDto dto) {
+	public void setGatePassAndContainDetail(HPABBookingDetail hpabBookingDetail, HpatDto dto) {
 
 		if (StringUtils.isEmpty(dto.getExpContainer01())) {
 			dto.setExpContainer01(hpabBookingDetail.getContainerNumber());
@@ -315,11 +315,11 @@ public class HPATBooking extends AuditEntity implements Serializable {
 		this.pmVerified = pmVerified;
 	}
 
-	public Set<HPATBookingDetail> getHpatBookingDetails() {
+	public Set<HPABBookingDetail> getHpatBookingDetails() {
 		return hpatBookingDetails;
 	}
 
-	public void setHpatBookingDetails(Set<HPATBookingDetail> hpatBookingDetails) {
+	public void setHpatBookingDetails(Set<HPABBookingDetail> hpatBookingDetails) {
 		this.hpatBookingDetails = hpatBookingDetails;
 	}
 

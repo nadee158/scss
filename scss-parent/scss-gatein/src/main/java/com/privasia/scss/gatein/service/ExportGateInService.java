@@ -2,7 +2,6 @@ package com.privasia.scss.gatein.service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
@@ -24,7 +23,7 @@ import com.privasia.scss.core.model.CardUsage;
 import com.privasia.scss.core.model.Client;
 import com.privasia.scss.core.model.Exports;
 import com.privasia.scss.core.model.ExportsQ;
-import com.privasia.scss.core.model.HPATBooking;
+import com.privasia.scss.core.model.HPABBooking;
 import com.privasia.scss.core.model.Login;
 import com.privasia.scss.core.model.PrintEir;
 import com.privasia.scss.core.model.ShipCode;
@@ -133,8 +132,13 @@ public class ExportGateInService {
   @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
   public GateInReponse populateGateInExports(GateInReponse gateInReponse) {
 
-    setStoragePeriod(gateInReponse.getExportContainers());
-    setSCN(gateInReponse.getExportContainers());
+    if (!(gateInReponse.getExportContainers() == null || gateInReponse.getExportContainers().isEmpty())) {
+      gateInReponse.getExportContainers().forEach(container -> {
+        setStoragePeriod(container);
+        setSCN(container);
+      });
+    }
+
     return gateInReponse;
 
   }
@@ -147,24 +151,18 @@ public class ExportGateInService {
   }
 
   @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-  public void setStoragePeriod(List<ExportContainer> exportContainers) {
-    if (!(exportContainers == null || exportContainers.isEmpty())) {
-      List<String> shippingCodes =
-          exportContainers.stream().map(ExportContainer::getShipCode).collect(Collectors.toList());
+  public void setStoragePeriod(ExportContainer exportContainer) {
+    if (!(exportContainer == null)) {
 
-      Optional<List<ShipCode>> optionalShipCodelist =
-          shipCodeRepository.findByShipStatusAndShippingCodeIn(ShipStatus.ACTIVE, shippingCodes);
+      String shipCodeStr = exportContainer.getShipCode();
 
-      List<ShipCode> shipCodelist = optionalShipCodelist.orElseThrow(() -> new ResultsNotFoundException(
-          "Ship Code could be found for the given Ship Codes ! " + String.join(",", shippingCodes)));
+      Optional<ShipCode> optionalShipCode =
+          shipCodeRepository.findByShipStatusAndShippingCode(ShipStatus.ACTIVE, shipCodeStr);
 
-      exportContainers.forEach(exportContainer -> {
-        shipCodelist.forEach(shipCode -> {
-          if (StringUtils.equals(shipCode.getShippingCode(), exportContainer.getShipCode())) {
-            exportContainer.setStoragePeriod(shipCode.getStoragePeriod());
-          }
-        });
-      });
+      ShipCode shipCode = optionalShipCode.orElseThrow(
+          () -> new ResultsNotFoundException("Ship Code could be found for the given Ship Code ! " + shipCodeStr));
+
+      exportContainer.setStoragePeriod(shipCode.getStoragePeriod());
     }
 
   }
@@ -172,44 +170,28 @@ public class ExportGateInService {
 
 
   @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-  public void setSCN(List<ExportContainer> exportContainers) {
+  public void setSCN(ExportContainer exportContainer) {
 
-    String exportContainer01 = null;
-    String scn01 = null;
-    String exportContainer02 = null;
-    String scn02 = null;
+    String exportContainerNumber = null;
+    String scn = null;
 
-    if (!(exportContainers == null || exportContainers.isEmpty())) {
+    if (!(exportContainer == null)) {
 
-      for (ExportContainer container : exportContainers) {
-        if (StringUtils.isBlank(exportContainer01)) {
-          exportContainer01 = container.getContainer().getContainerNumber();
-          scn01 = container.getScn().getScnNo();
-        } else {
-          exportContainer02 = container.getContainer().getContainerNumber();
-          scn02 = container.getScn().getScnNo();
-        }
-      }
+      exportContainerNumber = exportContainer.getContainer().getContainerNumber();
+      scn = exportContainer.getScn().getScnNo();
 
-      Optional<List<ShipSCN>> optionalshipSCN =
-          shipSCNRepository.fetchContainerSCN(scn01, exportContainer01, scn02, exportContainer02);
+      Optional<ShipSCN> optionalshipSCN = shipSCNRepository.fetchContainerSCN(scn, exportContainerNumber);
 
       if (optionalshipSCN.isPresent()) {
-        List<ShipSCN> shipSCNlist = optionalshipSCN.get();
-        exportContainers.forEach(exportContainer -> {
-          shipSCNlist.forEach(shipSCN -> {
-            if (StringUtils.equals(exportContainer.getContainer().getContainerNumber(), shipSCN.getContainerNo())) {
-              ShipSCNDTO shipSCNDTO = new ShipSCNDTO();
-              modelMapper.map(shipSCN, shipSCNDTO);
-              exportContainer.setScn(shipSCNDTO);
-              exportContainer.setBypassEEntry(shipSCN.getScnByPass());
-              exportContainer.setRegisteredInEarlyEntry(true);
-            }
-          });
-        });
+        ShipSCN shipSCN = optionalshipSCN.get();
+        ShipSCNDTO shipSCNDTO = new ShipSCNDTO();
+        modelMapper.map(shipSCN, shipSCNDTO);
+        exportContainer.setScn(shipSCNDTO);
+        exportContainer.setBypassEEntry(shipSCN.getScnByPass());
+        exportContainer.setRegisteredInEarlyEntry(true);
       } else {
-        throw new ResultsNotFoundException("Ship SCN could be found for the given " + "	SCN / ContainerNo Info! "
-            + scn01 + " / " + exportContainer01 + " OR " + scn02 + " / " + exportContainer02);
+        throw new ResultsNotFoundException(
+            "Ship SCN could be found for the given " + "	SCN / ContainerNo Info! " + scn + " / " + exportContainer);
       }
 
     }
@@ -238,7 +220,7 @@ public class ExportGateInService {
         }
         System.out.println("gateInClerk " + gateInClerk);
         Card card = null;
-        HPATBooking hpatBooking = null;
+        HPABBooking hpatBooking = null;
         if (!(exportContainer.getBaseCommonGateInOutAttribute() == null)) {
           if (StringUtils.isNotEmpty(exportContainer.getBaseCommonGateInOutAttribute().getHpatBooking())) {
             hpatBooking = hpatBookingRepository

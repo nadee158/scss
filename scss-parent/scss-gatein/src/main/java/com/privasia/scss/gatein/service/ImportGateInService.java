@@ -29,7 +29,7 @@ import com.privasia.scss.core.model.Card;
 import com.privasia.scss.core.model.CardUsage;
 import com.privasia.scss.core.model.Client;
 import com.privasia.scss.core.model.GatePass;
-import com.privasia.scss.core.model.HPATBooking;
+import com.privasia.scss.core.model.HPABBooking;
 import com.privasia.scss.core.model.Login;
 import com.privasia.scss.core.model.PrintEir;
 import com.privasia.scss.core.model.SystemUser;
@@ -326,7 +326,7 @@ public class ImportGateInService {
           if (!(gatePass == null)) {
 
             Card card = null;
-            HPATBooking hpatBooking = null;
+            HPABBooking hpatBooking = null;
             if (!(importContainer.getBaseCommonGateInOutAttribute() == null)) {
               if (StringUtils.isNotEmpty(importContainer.getBaseCommonGateInOutAttribute().getHpatBooking())) {
                 hpatBooking = hpatBookingRepository
