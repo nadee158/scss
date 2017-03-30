@@ -16,8 +16,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.privasia.scss.common.dto.ExportContainer;
 import com.privasia.scss.common.dto.GateInRequest;
+import com.privasia.scss.common.dto.GateOutReponse;
 import com.privasia.scss.common.dto.HpatDto;
+import com.privasia.scss.common.dto.ImportContainer;
 import com.privasia.scss.common.dto.TransactionDTO;
 import com.privasia.scss.common.enums.BookingType;
 import com.privasia.scss.common.enums.HpatReferStatus;
@@ -198,7 +201,7 @@ public class HPABService {
   // rename method to populateHpabForImpExp
   // return GateOutReponse
   @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-  public GateInRequest fetchHpab4ImpAndExp(GateInRequest gateInRequest) {
+  public GateOutReponse populateHpabForImpExp(GateInRequest gateInRequest) {
 
     Optional<HPABBooking> hpatBookingOpt =
         hpatBookingRepository.findByBookingIDAndStatus(gateInRequest.getHpabSeqId(), HpatReferStatus.ACTIVE);
@@ -206,11 +209,11 @@ public class HPABService {
     HPABBooking booking = hpatBookingOpt
         .orElseThrow(() -> new ResultsNotFoundException("Invalid HPAB Bookibg ID ! " + gateInRequest.getHpabSeqId()));
 
+    final GateOutReponse reponse = booking.constructGateOutReponse();
+
     if (!(booking.getHpatBookingDetails() == null || booking.getHpatBookingDetails().isEmpty())) {
 
       // construct DTO from domain
-
-
       booking.getHpatBookingDetails().forEach(bookingDetail -> {
 
         BookingType bookingType = bookingDetail.getBookingType();
@@ -220,12 +223,20 @@ public class HPABService {
             /// create a import conatiner
             // fetch details from hpat
             // add to a list
-
+            if (reponse.getImportContainers() == null) {
+              reponse.setImportContainers(new ArrayList<ImportContainer>());
+            }
+            reponse.getImportContainers().add(bookingDetail.constructImportContainer());
             break;
           case EXPORT:
             /// create a export conatiner
             // fetch details from hpat
             // add to a list
+            if (reponse.getExportContainers() == null) {
+              reponse.setExportContainers(new ArrayList<ExportContainer>());
+            }
+            reponse.getExportContainers().add(bookingDetail.constructExportContainer());
+
             break;
 
           case EMPTY_PICKUP:
@@ -242,7 +253,7 @@ public class HPABService {
       });
     }
 
-    return gateInRequest;
+    return reponse;
 
   }
 
