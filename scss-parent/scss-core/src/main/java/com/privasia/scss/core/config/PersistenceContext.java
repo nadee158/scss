@@ -51,16 +51,37 @@ public class PersistenceContext {
   }
 
   @Bean(destroyMethod = "close")
-  public DataSource dataSource(Environment env)  {
-	  
-		HikariConfig dataSourceConfig = new HikariConfig();
-	    dataSourceConfig.setDriverClassName(env.getRequiredProperty("spring.datasource.driver"));
-	    dataSourceConfig.setJdbcUrl(env.getRequiredProperty("spring.datasource.url"));
-	    dataSourceConfig.setUsername(env.getRequiredProperty("spring.datasource.username"));
-	    dataSourceConfig.setPassword(env.getRequiredProperty("spring.datasource.password"));
-	    dataSourceConfig.setPoolName("scss");
-	    return new HikariDataSource(dataSourceConfig);
-    
+  public DataSource dataSource(Environment env) {
+
+    HikariConfig dataSourceConfig = new HikariConfig();
+    dataSourceConfig.setDriverClassName(env.getRequiredProperty("spring.datasource.driver"));
+    dataSourceConfig.setJdbcUrl(env.getRequiredProperty("spring.datasource.url"));
+    dataSourceConfig.setUsername(env.getRequiredProperty("spring.datasource.username"));
+    dataSourceConfig.setPassword(env.getRequiredProperty("spring.datasource.password"));
+    dataSourceConfig.setPoolName("scss");
+    dataSourceConfig.setConnectionTestQuery(env.getRequiredProperty("spring.datasource.validationQuery"));
+
+    dataSourceConfig
+        .setConnectionTimeout(Long.parseLong(env.getRequiredProperty("spring.datasource.connectionTimeout")));
+    dataSourceConfig.setIdleTimeout(Long.parseLong(env.getRequiredProperty("spring.datasource.idleTimeout")));
+    dataSourceConfig.setInitializationFailFast(false);
+    dataSourceConfig.setLeakDetectionThreshold(
+        Long.parseLong(env.getRequiredProperty("spring.datasource.leakDetection.threshold")));
+    dataSourceConfig.setMaximumPoolSize(Integer.parseInt(env.getRequiredProperty("spring.datasource.maximumPoolSize")));
+    dataSourceConfig.setMaxLifetime(Integer.parseInt(env.getRequiredProperty("spring.datasource.maxLifetime")));
+    dataSourceConfig.setMinimumIdle(Integer.parseInt(env.getRequiredProperty("spring.datasource.minimumIdle")));
+
+
+    dataSourceConfig.addDataSourceProperty("prepStmtCacheSize",
+        Integer.parseInt(env.getRequiredProperty("dataSource.prepStmtCacheSize")));
+    dataSourceConfig.addDataSourceProperty("prepStmtCacheSqlLimit",
+        Integer.parseInt(env.getRequiredProperty("dataSource.prepStmtCacheSqlLimit")));
+    dataSourceConfig.addDataSourceProperty("useServerPrepStmts",
+        Boolean.parseBoolean(env.getRequiredProperty("dataSource.cachePrepStmts")));
+
+
+    return new HikariDataSource(dataSourceConfig);
+
   }
 
   @Bean
@@ -68,7 +89,8 @@ public class PersistenceContext {
     LocalContainerEntityManagerFactoryBean entityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();
     entityManagerFactoryBean.setDataSource(dataSource);
     entityManagerFactoryBean.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
-    entityManagerFactoryBean.setPackagesToScan("com.privasia.scss.core.model", "org.springframework.data.jpa.convert.threeten");
+    entityManagerFactoryBean.setPackagesToScan("com.privasia.scss.core.model",
+        "org.springframework.data.jpa.convert.threeten");
 
     Properties jpaProperties = new Properties();
 
@@ -78,7 +100,8 @@ public class PersistenceContext {
 
     // Specifies the action that is invoked to the database when the Hibernate
     // SessionFactory is created or closed.
-    //jpaProperties.put("hibernate.hbm2ddl.auto", env.getRequiredProperty("spring.jpa.hibernate.ddl-auto"));
+    // jpaProperties.put("hibernate.hbm2ddl.auto",
+    // env.getRequiredProperty("spring.jpa.hibernate.ddl-auto"));
 
     // Configures the naming strategy that is used when Hibernate creates
     // new database objects and schema elements
