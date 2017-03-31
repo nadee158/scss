@@ -2,6 +2,8 @@ package com.privasia.scss.scancard;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Test;
 import org.modelmapper.ModelMapper;
@@ -10,6 +12,7 @@ import org.modelmapper.PropertyMap;
 import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
 import com.privasia.scss.common.dto.GateInOutODDDTO;
+import com.privasia.scss.common.dto.WHODDDTO;
 
 public class TestClass {
 
@@ -22,9 +25,12 @@ public class TestClass {
     // GateOutWriteRequest obj = GateOutWriteRequest.emptyGateOutWriteRequest();
 
     GateInOutODDDTO obj = GateInOutODDDTO.emptyGateInOutODDRequest();
-
+    List<WHODDDTO> whoddds = new ArrayList<WHODDDTO>();
+    whoddds.add(new WHODDDTO());
+    whoddds.add(new WHODDDTO());
+    obj.setWhoddds(whoddds);
     // 1. Java object to JSON, and save into a file
-    gson.toJson(obj, new FileWriter("D:\\file.json"));
+    gson.toJson(obj, new FileWriter("D:\\GateInOutODDDTO.json"));
 
     // 2. Java object to JSON, and assign to a String
     String jsonInString = gson.toJson(obj);
