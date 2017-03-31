@@ -25,7 +25,7 @@ import com.privasia.scss.core.model.Card;
 import com.privasia.scss.core.model.SmartCardUser;
 import com.privasia.scss.core.service.CommonCardService;
 import com.privasia.scss.hdbs.service.HDBSService;
-import com.privasia.scss.hpat.service.HPATService;
+import com.privasia.scss.hpat.service.HPABService;
 
 /**
  * @author Nadeeshani Senevirathna
@@ -38,7 +38,7 @@ public class ExpressService {
   private Logger log = Logger.getLogger(this.getClass());
 
   @Autowired
-  private HPATService hpatService;
+  private HPABService hpatService;
 
   @Autowired
   private HDBSService hdbsService;

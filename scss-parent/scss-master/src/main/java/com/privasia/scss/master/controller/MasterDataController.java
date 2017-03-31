@@ -24,11 +24,13 @@ import com.privasia.scss.core.model.ODDImportReason;
 import com.privasia.scss.core.model.ODDLocation;
 import com.privasia.scss.core.util.service.CurrentDateTimeService;
 import com.privasia.scss.master.dto.ReferReasonDTO;
+import com.privasia.scss.master.dto.SolasWeightConfigDTO;
 import com.privasia.scss.master.service.ClientMasterDataService;
 import com.privasia.scss.master.service.DamageCodeService;
 import com.privasia.scss.master.service.GlobalSettingService;
 import com.privasia.scss.master.service.ODDMasterDataService;
 import com.privasia.scss.master.service.ReferReasonService;
+import com.privasia.scss.master.service.SolasWeightConfigService;
 
 /**
  * @author Janaka
@@ -56,6 +58,9 @@ public class MasterDataController {
 
   @Autowired
   private DamageCodeService damageCodeService;
+
+  @Autowired
+  private SolasWeightConfigService solasWeightConfigService;
 
   @RequestMapping(value = "serverdate", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
       consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -148,6 +153,24 @@ public class MasterDataController {
     return new CustomResponseEntity<ApiResponseObject<?>>(
         new ApiResponseObject<List<DamageCodeDTO>>(HttpStatus.OK, damageCodeDTOList), HttpStatus.OK);
 
+  }
+
+  @RequestMapping(value = "/solasmasterconfig/byweighttype/weighttype/weighttypesize", method = RequestMethod.GET,
+      produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+  public CustomResponseEntity<ApiResponseObject<?>> getSolasMasterConfig(@PathVariable boolean byWeightType,
+      @PathVariable String weightType, @PathVariable int weightTypeSize) {
+    Map<String, SolasWeightConfigDTO> map =
+        solasWeightConfigService.fetchSolasWeightConfig(byWeightType, weightType, weightTypeSize);
+    return new CustomResponseEntity<ApiResponseObject<?>>(
+        new ApiResponseObject<Map<String, SolasWeightConfigDTO>>(HttpStatus.OK, map), HttpStatus.OK);
+  }
+
+  @RequestMapping(value = "/solasmasterconfig", method = RequestMethod.GET,
+      produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+  public CustomResponseEntity<ApiResponseObject<?>> getAllSolasMasterConfig() {
+    Map<String, SolasWeightConfigDTO> map = solasWeightConfigService.fetchSolasWeightConfig(false, null, 0);
+    return new CustomResponseEntity<ApiResponseObject<?>>(
+        new ApiResponseObject<Map<String, SolasWeightConfigDTO>>(HttpStatus.OK, map), HttpStatus.OK);
   }
 
 }

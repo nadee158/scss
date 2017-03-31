@@ -1159,7 +1159,7 @@ public class Exports implements Serializable {
 
 
   public void prepareForInsertFromOpus(SystemUser gateInClerk, Card card, Client gateInClient, ShipSCN scn,
-      PrintEir printEir, CardUsage cardUsage, HPATBooking hpatBooking, DamageCodeRepository damageCodeRepository) {
+      PrintEir printEir, CardUsage cardUsage, HPABBooking hpatBooking, DamageCodeRepository damageCodeRepository) {
     if (this.getBaseCommonGateInOutAttribute() == null) {
       this.setBaseCommonGateInOutAttribute(new BaseCommonGateInOutAttribute());
     }

@@ -18,7 +18,7 @@ import com.privasia.scss.common.dto.ApiResponseObject;
 import com.privasia.scss.common.dto.CustomResponseEntity;
 import com.privasia.scss.common.dto.HpatDto;
 import com.privasia.scss.common.dto.TransactionDTO;
-import com.privasia.scss.hpat.service.HPATService;
+import com.privasia.scss.hpat.service.HPABService;
 
 /**
  * @author Janaka
@@ -30,7 +30,7 @@ import com.privasia.scss.hpat.service.HPATService;
 public class HPATController {
 
   @Autowired
-  private HPATService hpatService;
+  private HPABService hpatService;
 
 
   @RequestMapping(value = "/{cardID}/{bookingTypes}", method = RequestMethod.GET,

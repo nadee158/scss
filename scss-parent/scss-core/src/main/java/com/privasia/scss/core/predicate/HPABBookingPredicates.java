@@ -11,7 +11,8 @@ import org.springframework.stereotype.Component;
 
 import com.privasia.scss.common.enums.BookingType;
 import com.privasia.scss.common.enums.HpatReferStatus;
-import com.privasia.scss.core.model.QHPATBooking;
+import com.privasia.scss.core.model.QHPABBooking;
+import com.privasia.scss.core.model.QHPABBooking;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Predicate;
 
@@ -22,36 +23,36 @@ import com.querydsl.core.types.Predicate;
  *
  */
 @Component
-public final class HPATBookingPredicates {
+public final class HPABBookingPredicates {
 
 
-  private HPATBookingPredicates() {}
+  private HPABBookingPredicates() {}
 
 
   public static Predicate byBookingStatus(String status) {
 
     if (StringUtils.isEmpty(status)) {
-      return QHPATBooking.hPATBooking.isNull();
+      return QHPABBooking.hPABBooking.isNull();
     } else {
-      return QHPATBooking.hPATBooking.status.eq(HpatReferStatus.fromCode(status));
+      return QHPABBooking.hPABBooking.status.eq(HpatReferStatus.fromCode(status));
     }
   }
 
   public static Predicate byCardNo(String cardNo) {
     if (StringUtils.isEmpty(cardNo)) {
-      return QHPATBooking.hPATBooking.isNull();
+      return QHPABBooking.hPABBooking.isNull();
     } else {
-      return QHPATBooking.hPATBooking.cardNo.eq(cardNo);
+      return QHPABBooking.hPABBooking.cardNo.eq(cardNo);
     }
   }
 
   public static Predicate byAppointmentEndDate(LocalDateTime date) {
     LocalDateTime endDate = date.plusHours(24);
-    return QHPATBooking.hPATBooking.appointmentEndDate.loe(endDate);
+    return QHPABBooking.hPABBooking.appointmentEndDate.loe(endDate);
   }
 
   public static Predicate byBookingDetailTypes(List<BookingType> bookingTypes) {
-    return QHPATBooking.hPATBooking.hpatBookingDetails.any().bookingType.in(bookingTypes);
+    return QHPABBooking.hPABBooking.hpatBookingDetails.any().bookingType.in(bookingTypes);
   }
 
   /**
@@ -60,7 +61,7 @@ public final class HPATBookingPredicates {
    * @return
    */
   public static OrderSpecifier<LocalDateTime> orderByAppointmentStartDateAsc() {
-    return QHPATBooking.hPATBooking.appointmentStartDate.asc();
+    return QHPABBooking.hPABBooking.appointmentStartDate.asc();
   }
 
 }

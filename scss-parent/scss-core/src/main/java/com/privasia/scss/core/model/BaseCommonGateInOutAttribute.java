@@ -34,7 +34,7 @@ public class BaseCommonGateInOutAttribute implements Serializable {
 
   @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
   @JoinColumn(name = "BOOKING_ID", nullable = true, referencedColumnName = "BOOKING_ID")
-  private HPATBooking hpatBooking;
+  private HPABBooking hpatBooking;
 
   @Type(type = "com.privasia.scss.common.enumusertype.TransactionStatusEnumUserType")
   private TransactionStatus eirStatus;
@@ -166,11 +166,11 @@ public class BaseCommonGateInOutAttribute implements Serializable {
     this.transactionSlipPrinted = transactionSlipPrinted;
   }
 
-  public HPATBooking getHpatBooking() {
+  public HPABBooking getHpatBooking() {
     return hpatBooking;
   }
 
-  public void setHpatBooking(HPATBooking hpatBooking) {
+  public void setHpatBooking(HPABBooking hpatBooking) {
     this.hpatBooking = hpatBooking;
   }
 
