@@ -35,7 +35,7 @@ public class VesselOmitService {
 
   public boolean isValidVesselOmit(ExportContainer c) {
 
-    VesselOmit vesselOmit = getVesselOmit(c.getExpLine(), c.getAgentCode());
+    VesselOmit vesselOmit = getVesselOmit(c.getShippingLine(), c.getShippingAgent());
     if (StringUtils.contains(c.getVesselVoyageIN(), vesselOmit.getVesselVoyIN())) {
       // return business exception
       /*

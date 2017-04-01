@@ -8,6 +8,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import com.privasia.scss.common.enums.TransactionStatus;
 import com.privasia.scss.core.model.GatePass;
 
 public interface GatePassRepository extends BaseRepository<GatePass, Long> {
@@ -23,5 +24,8 @@ public interface GatePassRepository extends BaseRepository<GatePass, Long> {
   
   @Query(name = "GatePass.findContainerNoByGatePassNo")
   public String findContainerNoByGatePassNo(@Param("gatePassNo") long gatePassNo);
+  
+  @Query(name = "GatePass.fetchInProgressTransaction")
+  public Optional<List<GatePass>> fetchInProgressTransaction(@Param("cardID") long cardId, @Param("eirStatus") TransactionStatus eirStatus);
   
 }

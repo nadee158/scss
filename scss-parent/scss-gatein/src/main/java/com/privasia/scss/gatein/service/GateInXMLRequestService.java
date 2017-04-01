@@ -437,7 +437,7 @@ public class GateInXMLRequestService {
         .append("<UNBTSE>").append(toUpperCase(exportContainer.getContainer().getContainerFullOrEmpty())).append("</UNBTSE>\n") // (E)mpty or (F)ull : To capture E or F
         .append("<CNPVSE>").append(toUpperCase(exportContainer.getContainerPosition())).append("</CNPVSE>\n") // Position on Truck : To capture F, A or M
         .append("<ORGVSE>").append(toUpperCase(exportContainer.getExpAgent())).append("</ORGVSE>\n") // Order supplier : To capture Agent code??
-        .append("<LYNDSE>").append(toUpperCase(exportContainer.getExpLine())).append("</LYNDSE>\n") // Line code : To capture line code
+        .append("<LYNDSE>").append(toUpperCase(exportContainer.getShippingLine())).append("</LYNDSE>\n") // Line code : To capture line code
         .append(damage.toString()) // Damage Code 1 : To capture damage code 1, To loop if more than 1
         .append(seal.toString()) // Seal Origin 1 : To capture seal origin, seal type and seal no 1, To loop if more than 1
         .append("<UNBGSE>").append(weight).append("</UNBGSE>\n") // Unit Gross Weight : To capture Gross Weight
