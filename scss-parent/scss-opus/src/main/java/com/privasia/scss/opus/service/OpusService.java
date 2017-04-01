@@ -180,15 +180,17 @@ public class OpusService {
     commonContainerDTO.setContainerFullOrEmpty(gIReadResponseImportContainer.getContainerFullOrEmpty());
     importContainer.setContainerSubHandlingType(gIReadResponseImportContainer.getContainerSubHandlingType());
     // private double containerHeight;// 8,
-    commonContainerDTO
-        .setContainerHeight(getIntegerValueFromString(gIReadResponseImportContainer.getContainerHeight()));
+    commonContainerDTO.setContainerHeight(
+        ExportUtilService.getIntegerValueFromString(gIReadResponseImportContainer.getContainerHeight()));
     // private String containerIso;// 4001,
     commonContainerDTO.setContainerISOCode(gIReadResponseImportContainer.getContainerIso());
     // private double containerSize;// 40,
-    importContainer.setContainerLength(getIntegerValueFromString(gIReadResponseImportContainer.getContainerSize()));
+    importContainer.setContainerLength(
+        ExportUtilService.getIntegerValueFromString(gIReadResponseImportContainer.getContainerSize()));
     // private String containerType;// GE,
     importContainer.setContainerType(gIReadResponseImportContainer.getContainerType());
-    importContainer.setTareWeight(getIntValueFromString(gIReadResponseImportContainer.getContainerTareWeight()));
+    importContainer
+        .setTareWeight(ExportUtilService.getIntValueFromString(gIReadResponseImportContainer.getContainerTareWeight()));
     importContainer.setContainerDischargeDateTime(
         DateUtil.getLocalDategFromString(gIReadResponseImportContainer.getContainerDischargeDateTime()));
     // private String currentYardPosition;// 02S-0102-C-1,
@@ -252,15 +254,19 @@ public class OpusService {
     // private String containerIso;// 22G0,
     containerDTO.setContainerISOCode(gIReadResponseExporterContainer.getContainerIso());
     // private double containerHeight;// 8.6,
-    containerDTO.setContainerHeight(getIntValueFromString(gIReadResponseExporterContainer.getContainerHeight()));
+    containerDTO.setContainerHeight(
+        ExportUtilService.getIntValueFromString(gIReadResponseExporterContainer.getContainerHeight()));
     // private String containerType;// GE,
     exportContainer.setContainerType(gIReadResponseExporterContainer.getContainerType());
     containerDTO.setContainerSize(gIReadResponseExporterContainer.getContainerSize());
     // private double grossWeight;// 11000,
-    exportContainer.setGrossWeight(getIntValueFromString(gIReadResponseExporterContainer.getContainerGrossWeight()));
+    exportContainer.setGrossWeight(
+        ExportUtilService.getIntValueFromString(gIReadResponseExporterContainer.getContainerGrossWeight()));
     // private double containerNetWeight;// 9000,
-    exportContainer.setNetWeight(getIntValueFromString(gIReadResponseExporterContainer.getContainerNetWeight()));
-    exportContainer.setTareWeight(getIntValueFromString(gIReadResponseExporterContainer.getContainerTareWeight()));
+    exportContainer
+        .setNetWeight(ExportUtilService.getIntValueFromString(gIReadResponseExporterContainer.getContainerNetWeight()));
+    exportContainer.setTareWeight(
+        ExportUtilService.getIntValueFromString(gIReadResponseExporterContainer.getContainerTareWeight()));
     CommonSealDTO sealAttribute = new CommonSealDTO();
     // private String containerSeal1_SL;// null,
     sealAttribute.setSeal01Origin(gIReadResponseExporterContainer.getContainerSeal1_SL());
@@ -272,13 +278,14 @@ public class OpusService {
     sealAttribute.setSeal02Origin(gIReadResponseExporterContainer.getContainerSeal2_NO());
 
     // private String containerReeferIndicator;// N,
-    exportContainer.setReferFlag(getBooleanFromString(gIReadResponseExporterContainer.getContainerReeferIndicator()));
+    exportContainer.setReferFlag(
+        ExportUtilService.getBooleanFromString(gIReadResponseExporterContainer.getContainerReeferIndicator()));
     // private String containerReeferTempSign;// null,
     exportContainer.setReferTempType(gIReadResponseExporterContainer.getContainerReeferTempSign());
     // private String containerReeferTempValue;// null,
     if (StringUtils.isNotEmpty(gIReadResponseExporterContainer.getContainerReeferTempValue())) {
-      exportContainer
-          .setReferTemp(getIntegerValueFromString(gIReadResponseExporterContainer.getContainerReeferTempValue()));
+      exportContainer.setReferTemp(
+          ExportUtilService.getIntegerValueFromString(gIReadResponseExporterContainer.getContainerReeferTempValue()));
     }
     // private String containerReeferTempUnit;// null,
     exportContainer.setReeferTempUnit(gIReadResponseExporterContainer.getContainerReeferTempUnit());
@@ -294,15 +301,20 @@ public class OpusService {
         DateUtil.getLocalDategFromString(gIReadResponseExporterContainer.getYardDGOpeningDateTime()));
 
     // private double containerOOG_OH;// 5.0,
-    exportContainer.setOogOH(getIntegerValueFromString(gIReadResponseExporterContainer.getContainerOOG_OH()));
+    exportContainer
+        .setOogOH(ExportUtilService.getIntegerValueFromString(gIReadResponseExporterContainer.getContainerOOG_OH()));
     // private double containerOOG_OL;// 3.0,
-    exportContainer.setOogOL(getIntegerValueFromString(gIReadResponseExporterContainer.getContainerOOG_OL()));
+    exportContainer
+        .setOogOL(ExportUtilService.getIntegerValueFromString(gIReadResponseExporterContainer.getContainerOOG_OL()));
     // private double containerOOG_OF;// 1.0,
-    exportContainer.setOogOF(getIntegerValueFromString(gIReadResponseExporterContainer.getContainerOOG_OF()));
+    exportContainer
+        .setOogOF(ExportUtilService.getIntegerValueFromString(gIReadResponseExporterContainer.getContainerOOG_OF()));
     // private double containerOOG_OA;// 2.0,
-    exportContainer.setOogOA(getIntegerValueFromString(gIReadResponseExporterContainer.getContainerOOG_OA()));
+    exportContainer
+        .setOogOA(ExportUtilService.getIntegerValueFromString(gIReadResponseExporterContainer.getContainerOOG_OA()));
     // private double containerOOG_OR;// 4.0
-    exportContainer.setOogOR(getIntegerValueFromString(gIReadResponseExporterContainer.getContainerOOG_OR()));
+    exportContainer
+        .setOogOR(ExportUtilService.getIntegerValueFromString(gIReadResponseExporterContainer.getContainerOOG_OR()));
     // private String containerDamageCode1;//
     exportContainer.setDamageCode_01(constructDamageCode(gIReadResponseExporterContainer.getContainerDamageCode1()));
     // private String containerDamageCode2;//
@@ -415,41 +427,6 @@ public class OpusService {
   }
 
 
-  private int getIntValueFromString(String stringVal) {
-    if (StringUtils.isNotEmpty(stringVal)) {
-      return Integer.parseInt(stringVal);
-    }
-    return 0;
-  }
-
-  private static String getStringValueFromInteger(Integer integerVal) {
-    if (!(integerVal == null || integerVal == 0)) {
-      return Integer.toString(integerVal);
-    }
-    return null;
-  }
-
-  private static int getIntegerValueFromString(String strValue) {
-    if (StringUtils.isNotEmpty(strValue)) {
-      try {
-        return Integer.parseInt(strValue);
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
-    }
-    return 0;
-  }
-
-  private static Boolean getBooleanFromString(String string) {
-    if (StringUtils.isNotEmpty(string)) {
-      if (StringUtils.equals(string, "N")) {
-        return false;
-      } else {
-        return true;
-      }
-    }
-    return null;
-  }
 
   private static DamageCodeDTO constructDamageCode(String containerDamageCode) {
     DamageCodeDTO damageCodeDTO = new DamageCodeDTO();
@@ -457,16 +434,7 @@ public class OpusService {
     return damageCodeDTO;
   }
 
-  private static String getStringFromBoolean(Boolean bool) {
-    if (!(bool == null)) {
-      if (bool) {
-        return "Y";
-      } else {
-        return "N";
-      }
-    }
-    return null;
-  }
+
 
   private static String getDamageCodeFromObject(DamageCodeDTO damageCode) {
     if (!(damageCode == null)) {
