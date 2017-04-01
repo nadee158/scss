@@ -468,16 +468,16 @@ public class GatePass extends AuditEntity implements Serializable {
 				+ ", containerLength=" + containerLength + ", container=" + container + ", company=" + company
 				+ ", commonGateInOut=" + commonGateInOut + ", baseCommonGateInOutAttribute="
 				+ baseCommonGateInOutAttribute + ", gatePassStatus=" + gatePassStatus + ", handlingID=" + handlingID
-				+ ", orderNo=" + orderNo + ", gateInOut=" + gateInOut + ", shippingLine=" + shippingLine + ", currentPosition="
-				+ currentPosition + ", containerPosition=" + containerPosition + ", gateInLaneNo=" + gateInLaneNo
-				+ ", gateOutLaneNo=" + gateOutLaneNo + ", sealAttribute=" + sealAttribute + ", gateOutRemarks="
-				+ gateOutRemarks + ", yardPosition=" + yardPosition + ", bayCode=" + bayCode + ", callCard=" + callCard
-				+ ", printEir=" + printEir + ", cardUsage=" + cardUsage + ", cosmosSeal01Origin=" + cosmosSeal01Origin
-				+ ", cosmosSeal01Type=" + cosmosSeal01Type + ", cosmosSeal01Number=" + cosmosSeal01Number
-				+ ", cosmosSeal02Origin=" + cosmosSeal02Origin + ", cosmosSeal02Type=" + cosmosSeal02Type
-				+ ", cosmosSeal02Number=" + cosmosSeal02Number + ", gatePassValidDate=" + gatePassValidDate
-				+ ", retrievedCosmos=" + retrievedCosmos + ", sealChange=" + sealChange + ", forcedSeal=" + forcedSeal
-				+ "]";
+				+ ", orderNo=" + orderNo + ", gateInOut=" + gateInOut + ", shippingLine=" + shippingLine
+				+ ", currentPosition=" + currentPosition + ", containerPosition=" + containerPosition
+				+ ", gateInLaneNo=" + gateInLaneNo + ", gateOutLaneNo=" + gateOutLaneNo + ", sealAttribute="
+				+ sealAttribute + ", gateOutRemarks=" + gateOutRemarks + ", yardPosition=" + yardPosition + ", bayCode="
+				+ bayCode + ", callCard=" + callCard + ", printEir=" + printEir + ", cardUsage=" + cardUsage
+				+ ", cosmosSeal01Origin=" + cosmosSeal01Origin + ", cosmosSeal01Type=" + cosmosSeal01Type
+				+ ", cosmosSeal01Number=" + cosmosSeal01Number + ", cosmosSeal02Origin=" + cosmosSeal02Origin
+				+ ", cosmosSeal02Type=" + cosmosSeal02Type + ", cosmosSeal02Number=" + cosmosSeal02Number
+				+ ", gatePassValidDate=" + gatePassValidDate + ", retrievedCosmos=" + retrievedCosmos + ", sealChange="
+				+ sealChange + ", forcedSeal=" + forcedSeal + "]";
 	}
 
 	public ContainerSize getContainerLength() {
@@ -489,7 +489,7 @@ public class GatePass extends AuditEntity implements Serializable {
 	}
 
 	public void prepareForInsertFromOpus(Card card, SystemUser gateInClerk, Client gateInClient, PrintEir printEir,
-			CardUsage cardUsage, HPATBooking hpatBooking) {
+			CardUsage cardUsage, HPABBooking hpatBooking) {
 		if (this.baseCommonGateInOutAttribute == null) {
 			this.setBaseCommonGateInOutAttribute(new BaseCommonGateInOutAttribute());
 		}

@@ -40,8 +40,8 @@ import com.privasia.scss.core.model.CommonGateInOutAttribute;
 import com.privasia.scss.core.model.CommonSealAttribute;
 import com.privasia.scss.core.model.Company;
 import com.privasia.scss.core.model.GatePass;
-import com.privasia.scss.core.model.HPATBooking;
-import com.privasia.scss.core.model.HPATBookingDetail;
+import com.privasia.scss.core.model.HPABBooking;
+import com.privasia.scss.core.model.HPABBookingDetail;
 import com.privasia.scss.core.model.ISOCode;
 import com.privasia.scss.core.model.PrintEir;
 import com.privasia.scss.core.model.SmartCardUser;
@@ -507,7 +507,7 @@ public class GatePassService {
 			BookingType type = BookingType.IMPORT;
 			HpatReferStatus hpatReferStatus = HpatReferStatus.ACTIVE;
 
-			HPATBookingDetail hpatBookingDetail = null;
+			HPABBookingDetail hpatBookingDetail = null;
 
 			if (StringUtils.isNotBlank(truckHeadNo)) {
 
@@ -675,7 +675,7 @@ public class GatePassService {
 		if (!(gateInOut == null)) {
 			container.setGateInOut(gateInOut.getValue());
 		}
-		container.setLine(gatePass.getLine());
+		container.setShippingLine(gatePass.getShippingLine());
 
 		transactionDTO = selectGatePassInfoCosmos(transactionDTO, false);
 
@@ -899,7 +899,7 @@ public class GatePassService {
 				gatePass.setSealAttribute(sealAttribute);
 
 				if (StringUtils.isNotEmpty(container.getBaseCommonGateInOutAttribute().getHpatBooking())) {
-					Optional<HPATBooking> hpatBooking = hpatBookingRepository.findOne(
+					Optional<HPABBooking> hpatBooking = hpatBookingRepository.findOne(
 							StringUtils.upperCase(container.getBaseCommonGateInOutAttribute().getHpatBooking()));
 					if (hpatBooking.isPresent()) {
 						baseCommonGateInOutAttribute.setHpatBooking(hpatBooking.get());
@@ -927,7 +927,7 @@ public class GatePassService {
 						.setContainerISOCode(StringUtils.upperCase(container.getContainer().getContainerISOCode()));
 				gatePass.setContainer(containerCommonAttribute);
 
-				gatePass.setLine(StringUtils.upperCase(container.getLine()));
+				gatePass.setShippingLine(StringUtils.upperCase(container.getShippingLine()));
 				gatePass.setGateInLaneNo(StringUtils.upperCase(container.getGateInLaneNo()));
 
 				gatePass.setCallCard(transactionDTO.getCallCard());

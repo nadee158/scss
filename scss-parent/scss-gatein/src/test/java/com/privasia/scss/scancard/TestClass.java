@@ -9,7 +9,7 @@ import org.modelmapper.PropertyMap;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
-import com.privasia.scss.common.dto.GateInOutODDDTO;
+import com.privasia.scss.common.dto.GateInRequest;
 
 public class TestClass {
 
@@ -21,15 +21,33 @@ public class TestClass {
     Gson gson = new Gson();
     // GateOutWriteRequest obj = GateOutWriteRequest.emptyGateOutWriteRequest();
 
-    GateInOutODDDTO obj = GateInOutODDDTO.emptyGateInOutODDRequest();
-
+    GateInRequest obj = new GateInRequest();
+    obj.initializeWithDefaultValues();
     // 1. Java object to JSON, and save into a file
-    gson.toJson(obj, new FileWriter("D:\\file.json"));
+    gson.toJson(obj, new FileWriter("D:\\GateInRequest.json"));
 
     // 2. Java object to JSON, and assign to a String
     String jsonInString = gson.toJson(obj);
     System.out.println(jsonInString);
   }
+
+  // @Test
+  // public void testMethodOne() throws JsonIOException, IOException {
+  // Gson gson = new Gson();
+  // // GateOutWriteRequest obj = GateOutWriteRequest.emptyGateOutWriteRequest();
+  //
+  // GateInOutODDDTO obj = GateInOutODDDTO.emptyGateInOutODDRequest();
+  // List<WHODDDTO> whoddds = new ArrayList<WHODDDTO>();
+  // whoddds.add(new WHODDDTO());
+  // whoddds.add(new WHODDDTO());
+  // obj.setWhoddds(whoddds);
+  // // 1. Java object to JSON, and save into a file
+  // gson.toJson(obj, new FileWriter("D:\\GateInOutODDDTO.json"));
+  //
+  // // 2. Java object to JSON, and assign to a String
+  // String jsonInString = gson.toJson(obj);
+  // System.out.println(jsonInString);
+  // }
 
   // @Test
   public void testMethod() {

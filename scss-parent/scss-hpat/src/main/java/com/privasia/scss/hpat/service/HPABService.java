@@ -16,17 +16,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.privasia.scss.common.dto.GateInReponse;
+import com.privasia.scss.common.dto.ExportContainer;
 import com.privasia.scss.common.dto.GateInRequest;
+import com.privasia.scss.common.dto.GateOutReponse;
 import com.privasia.scss.common.dto.HpatDto;
+import com.privasia.scss.common.dto.ImportContainer;
 import com.privasia.scss.common.dto.TransactionDTO;
 import com.privasia.scss.common.enums.BookingType;
 import com.privasia.scss.common.enums.HpatReferStatus;
 import com.privasia.scss.core.exception.BusinessException;
 import com.privasia.scss.core.exception.ResultsNotFoundException;
 import com.privasia.scss.core.model.Card;
-import com.privasia.scss.core.model.HPATBooking;
-import com.privasia.scss.core.predicate.HPATBookingPredicates;
+import com.privasia.scss.core.model.HPABBooking;
+import com.privasia.scss.core.predicate.HPABBookingPredicates;
 import com.privasia.scss.core.repository.CardRepository;
 import com.privasia.scss.core.repository.HPATBookingRepository;
 import com.querydsl.core.types.ExpressionUtils;
@@ -38,7 +40,7 @@ import com.querydsl.core.types.Predicate;
  *
  */
 @Service("hpatService")
-public class HPATService {
+public class HPABService {
 
   @Autowired
   private HPATBookingRepository hpatBookingRepository;
@@ -51,16 +53,16 @@ public class HPATService {
     List<HpatDto> dtoList = new ArrayList<HpatDto>();
     Optional<Card> card = cardRepository.findOne(cardId); // need to handle optional
     if (card.isPresent()) {
-      Predicate byCardNo = HPATBookingPredicates.byCardNo(String.valueOf(card.get().getCardNo()));
-      Predicate byBookingStatus = HPATBookingPredicates.byBookingStatus(HpatReferStatus.ACTIVE.getValue());
-      Predicate byAppointmentEndDate = HPATBookingPredicates.byAppointmentEndDate(date);
-      Predicate byBookingTypes = HPATBookingPredicates.byBookingDetailTypes(bookingTypes);
+      Predicate byCardNo = HPABBookingPredicates.byCardNo(String.valueOf(card.get().getCardNo()));
+      Predicate byBookingStatus = HPABBookingPredicates.byBookingStatus(HpatReferStatus.ACTIVE.getValue());
+      Predicate byAppointmentEndDate = HPABBookingPredicates.byAppointmentEndDate(date);
+      Predicate byBookingTypes = HPABBookingPredicates.byBookingDetailTypes(bookingTypes);
       Predicate condition = ExpressionUtils.allOf(byCardNo, byBookingStatus, byAppointmentEndDate, byBookingTypes);
-      OrderSpecifier<LocalDateTime> sortSpec = HPATBookingPredicates.orderByAppointmentStartDateAsc();
+      OrderSpecifier<LocalDateTime> sortSpec = HPABBookingPredicates.orderByAppointmentStartDateAsc();
 
-      Iterable<HPATBooking> bookingList = hpatBookingRepository.findAll(condition, sortSpec);
+      Iterable<HPABBooking> bookingList = hpatBookingRepository.findAll(condition, sortSpec);
 
-      bookingList.forEach((HPATBooking b) -> {
+      bookingList.forEach((HPABBooking b) -> {
         dtoList.add(b.constructHpatDto());
       });
       return dtoList;
@@ -121,12 +123,12 @@ public class HPATService {
   @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
   public TransactionDTO getEtpHpab4ImpAndExp(String bookingID) {
 
-    Optional<HPATBooking> hpatBooking =
+    Optional<HPABBooking> hpatBooking =
         hpatBookingRepository.findByBookingIDAndStatus(bookingID, HpatReferStatus.ACTIVE);
 
     if (hpatBooking.isPresent()) {
 
-      HPATBooking booking = hpatBooking.get();
+      HPABBooking booking = hpatBooking.get();
 
       TransactionDTO transactionDTO = booking.constructTransactionDTO();
 
@@ -195,45 +197,63 @@ public class HPATService {
       throw new ResultsNotFoundException("No HPAT Booking was Found !");
     }
   }
-    
-    @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-    public GateInRequest fetchHpab4ImpAndExp(GateInRequest gateInRequest) {
 
-      Optional<HPATBooking> hpatBookingOpt =
-          hpatBookingRepository.findByBookingIDAndStatus(gateInRequest.getHpabSeqId(), HpatReferStatus.ACTIVE);
-      
-      HPATBooking booking  = hpatBookingOpt.orElseThrow(() -> new ResultsNotFoundException("Invalid HPAB Bookibg ID ! " + gateInRequest.getHpabSeqId()));
+  // rename method to populateHpabForImpExp
+  // return GateOutReponse
+  @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
+  public GateOutReponse populateHpabForImpExp(GateInRequest gateInRequest) {
 
-      if (!(booking.getHpatBookingDetails() == null || booking.getHpatBookingDetails().isEmpty())) {
+    Optional<HPABBooking> hpatBookingOpt =
+        hpatBookingRepository.findByBookingIDAndStatus(gateInRequest.getHpabSeqId(), HpatReferStatus.ACTIVE);
 
-          booking.getHpatBookingDetails().forEach(bookingDetail -> {
+    HPABBooking booking = hpatBookingOpt
+        .orElseThrow(() -> new ResultsNotFoundException("Invalid HPAB Bookibg ID ! " + gateInRequest.getHpabSeqId()));
 
-            BookingType bookingType = bookingDetail.getBookingType();
-            switch (bookingType) {
-              case IMPORT:
-              case  IMPORT_ITT:
-            	   
+    final GateOutReponse reponse = booking.constructGateOutReponse();
 
-                break;
-              case EXPORT:
+    if (!(booking.getHpatBookingDetails() == null || booking.getHpatBookingDetails().isEmpty())) {
 
-                break;
-             
-              case EMPTY_PICKUP:
+      // construct DTO from domain
+      booking.getHpatBookingDetails().forEach(bookingDetail -> {
 
-                break;
-              case EMPTY_RETURN:
-
-                break;
-
-              default:
-                break;
+        BookingType bookingType = bookingDetail.getBookingType();
+        switch (bookingType) {
+          case IMPORT:
+          case IMPORT_ITT:
+            /// create a import conatiner
+            // fetch details from hpat
+            // add to a list
+            if (reponse.getImportContainers() == null) {
+              reponse.setImportContainers(new ArrayList<ImportContainer>());
             }
+            reponse.getImportContainers().add(bookingDetail.constructImportContainer());
+            break;
+          case EXPORT:
+            /// create a export conatiner
+            // fetch details from hpat
+            // add to a list
+            if (reponse.getExportContainers() == null) {
+              reponse.setExportContainers(new ArrayList<ExportContainer>());
+            }
+            reponse.getExportContainers().add(bookingDetail.constructExportContainer());
 
-          });
+            break;
+
+          case EMPTY_PICKUP:
+
+            break;
+          case EMPTY_RETURN:
+
+            break;
+
+          default:
+            break;
         }
 
-        return gateInRequest;
+      });
+    }
+
+    return reponse;
 
   }
 

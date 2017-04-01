@@ -42,7 +42,11 @@ import com.privasia.scss.core.repository.DamageCodeRepository;
  */
 @Entity
 @Table(name = "SCSS_EXPORTS")
-public class Exports implements Serializable {
+@AttributeOverrides({@AttributeOverride(name = "addBy", column = @Column(name = "EXP_ADD_BY") ),
+    @AttributeOverride(name = "updateBy", column = @Column(name = "EXP_UPDATE_BY") ),
+    @AttributeOverride(name = "dateTimeAdd", column = @Column(name = "EXP_DATECREATE") ),
+    @AttributeOverride(name = "dateTimeUpdate", column = @Column(name = "EXP_DATEUPDATE") )})
+public class Exports extends AuditEntity implements Serializable {
 
 	/**
 	 * 
@@ -1151,7 +1155,7 @@ public class Exports implements Serializable {
 	}
 
 	public void prepareForInsertFromOpus(SystemUser gateInClerk, Card card, Client gateInClient, ShipSCN scn,
-			PrintEir printEir, CardUsage cardUsage, HPATBooking hpatBooking,
+			PrintEir printEir, CardUsage cardUsage, HPABBooking hpatBooking,
 			DamageCodeRepository damageCodeRepository) {
 		if (this.getBaseCommonGateInOutAttribute() == null) {
 			this.setBaseCommonGateInOutAttribute(new BaseCommonGateInOutAttribute());

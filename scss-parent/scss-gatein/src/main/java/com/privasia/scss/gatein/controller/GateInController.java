@@ -77,10 +77,23 @@ public class GateInController {
   public CustomResponseEntity<ApiResponseObject<?>> testSaveImportContainer(
       @RequestBody GateInWriteRequest gateInWriteRequest) {
 
-    List<ImportContainer> reponse = importGateInService.saveGateInInfo(gateInWriteRequest);
+    List<ImportContainer> reponse = null;
 
-    return new CustomResponseEntity<ApiResponseObject<?>>(
-        new ApiResponseObject<List<ImportContainer>>(HttpStatus.OK, reponse), HttpStatus.OK);
+    try {
+      reponse = importGateInService.saveGateInInfo(gateInWriteRequest);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+    System.out.println("reponse" + reponse);
+
+
+    CustomResponseEntity<ApiResponseObject<?>> obj = new CustomResponseEntity<ApiResponseObject<?>>(
+        new ApiResponseObject<String>(HttpStatus.OK, "fdifs dhfhsdhf isdhfihsdifhidus"), HttpStatus.OK);
+
+    System.out.println("obj  +" + obj);
+
+    return obj;
   }
 
 

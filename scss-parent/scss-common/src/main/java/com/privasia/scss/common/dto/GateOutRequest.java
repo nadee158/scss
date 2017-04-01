@@ -2,6 +2,8 @@ package com.privasia.scss.common.dto;
 
 import java.io.Serializable;
 
+import org.apache.commons.lang3.StringUtils;
+
 public class GateOutRequest implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -161,6 +163,25 @@ public class GateOutRequest implements Serializable {
     this.impContainer2 = impContainer2;
   }
 
+  public void initializeWithDefaultValues() {
+    this.userId = 0l;
+    this.userName = StringUtils.EMPTY;
+    this.gatePass1 = 0l;// -long
+    this.gatePass2 = 0l;// -long
+    this.cardID = 0l;
+    this.expContainer1 = StringUtils.EMPTY;// -string
+    this.expContainer2 = StringUtils.EMPTY;// -string
+    this.impContainer1 = StringUtils.EMPTY;// -string
+    this.impContainer2 = StringUtils.EMPTY;// -string
+    this.truckHeadNo = StringUtils.EMPTY;// -string
+    this.gateOUTDateTime = StringUtils.EMPTY;// -string
+    this.laneId = 0l;// -long (clientID)
+    this.laneNo = StringUtils.EMPTY;// -long (clientID)
+    this.expWeightBridge = 0;// -long
+    this.checkPreArrival = false;// -boolean
+    this.hpabSeqId = StringUtils.EMPTY;// -string
+    this.haulageCode = StringUtils.EMPTY;
 
+  }
 
 }

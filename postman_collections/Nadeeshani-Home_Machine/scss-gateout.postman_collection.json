@@ -1,0 +1,34 @@
+{
+	"id": "ccd34c77-ede8-2789-7207-e8d13fc0feab",
+	"name": "scss-gateout",
+	"description": "",
+	"order": [
+		"716f9638-773d-0f63-1391-8a94708bb801"
+	],
+	"folders": [],
+	"timestamp": 1491028637537,
+	"owner": "390246",
+	"public": false,
+	"requests": [
+		{
+			"id": "716f9638-773d-0f63-1391-8a94708bb801",
+			"headers": "Content-Type: application/json;charset=UTF-8\nX-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJURVNUVCIsInJvbGVzIjpbIkFETUlOSVNUUkFUT1IiXSwiZnVuY3Rpb25zIjpbMzcxLDYyMyw0NDIsNDE5LDQ2NCwzOTEsNDYyLDQ0OSwzNzUsNDI3LDQ2MSwxMTEsNDY2LDQ2NSw0NDEsNDY4LDQ0NiwzMjQsMjIxLDExMyw3MDEsMzk0LDQ0OCwzNzksNDQ1LDM5Miw0NDcsMzgxLDQ1MiwzOTUsMzEyLDQzMSw0MjgsMTEyLDQ0NCw0NTEsNzAyLDExNCwzODUsNDE0LDM5MCwzOTMsNDE2LDMxNSwzMzEsNjIxLDM2Miw0NjcsMzQwLDkwMSwzODMsNDEzLDMzMiw2MjQsNTIwLDM3NiwyMjIsMzg3LDQzMiwzNjMsNjIyLDQxNywzODIsNDMzLDQ1NiwzODksNDI0LDMxNCwzNjEsNDMwLDM4NCw0NTUsMzYwLDM4NiwzODgsNDE4LDMyNSwzMTEsMzgwLDM3Nyw0MjYsNTEwLDQ2Myw2MjUsNDQzLDQxNSwzMjYsNDM1LDM3OCwzMjEsMzI3LDQyMywzMjMsNDU0LDMyMiwzNzQsMjExLDM3Miw0MjksMzEzXSwic3RhZmZOYW1lIjoiTU9IRCBZVVNVRiBCSU4gQUxJQVMiLCJzdGFmZk51bWJlciI6IjYwNTYiLCJ1c2VySUQiOjQsImlzcyI6Imh0dHA6Ly9zY3NzLmNvbS5teSIsImlhdCI6MTQ5MTAyODQ4MywiZXhwIjoxNDkxMDI5MzgzfQ.FQWaJRRWg01a9uzd-FMRUr6o4twg6ZIwSz2_0t3rLV9XyI81Tnl2FrrQhU0flCN48HDALEvQTsHO-eXKdA7t7Q\nX-Requested-With: XMLHttpRequest\n",
+			"url": "http://localhost:8080/scss-gateout/api/gateout/populategateout",
+			"preRequestScript": null,
+			"pathVariables": {},
+			"method": "PUT",
+			"data": [],
+			"dataMode": "raw",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1491029146858,
+			"name": "http://localhost:8080/scss-gateout/api/gateout/populategateout",
+			"description": "check for incomplete transactions before gate in ",
+			"collectionId": "ccd34c77-ede8-2789-7207-e8d13fc0feab",
+			"responses": [],
+			"rawModeData": "{  \r\n   \"userId\":0,\r\n   \"userName\":\"\",\r\n   \"gatePass1\":0,\r\n   \"gatePass2\":0,\r\n   \"cardID\":1998,\r\n   \"expContainer1\":\"\",\r\n   \"expContainer2\":\"\",\r\n   \"impContainer1\":\"\",\r\n   \"impContainer2\":\"\",\r\n   \"truckHeadNo\":\"\",\r\n   \"gateOUTDateTime\":\"\",\r\n   \"laneId\":0,\r\n   \"laneNo\":\"\",\r\n   \"expWeightBridge\":0,\r\n   \"checkPreArrival\":false,\r\n   \"hpabSeqId\":\"\",\r\n   \"haulageCode\":\"\"\r\n}"
+		}
+	]
+}

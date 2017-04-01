@@ -8,16 +8,16 @@ import java.util.Optional;
 import org.springframework.data.querydsl.QueryDslPredicateExecutor;
 
 import com.privasia.scss.common.enums.HpatReferStatus;
-import com.privasia.scss.core.model.HPATBooking;
+import com.privasia.scss.core.model.HPABBooking;
 
 /**
  * @author Janaka
  *
  */
 public interface HPATBookingRepository
-    extends BaseRepository<HPATBooking, String>, QueryDslPredicateExecutor<HPATBooking> {
+    extends BaseRepository<HPABBooking, String>, QueryDslPredicateExecutor<HPABBooking> {
 
-  Optional<HPATBooking> findByBookingIDAndStatus(String bookingID, HpatReferStatus active);
+  Optional<HPABBooking> findByBookingIDAndStatus(String bookingID, HpatReferStatus active);
 
 
 }
