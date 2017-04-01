@@ -27,6 +27,7 @@ import com.privasia.scss.core.model.Client;
 import com.privasia.scss.core.repository.CardRepository;
 import com.privasia.scss.core.repository.ClientRepository;
 import com.privasia.scss.core.security.model.UserContext;
+import com.privasia.scss.hpat.service.HPABService;
 import com.privasia.scss.opus.dto.OpusGateInReadRequest;
 import com.privasia.scss.opus.dto.OpusGateInReadResponse;
 import com.privasia.scss.opus.dto.OpusGateInWriteRequest;
@@ -53,6 +54,14 @@ public class ImportExportGateInService {
   private CardRepository cardRepository;
 
   private OpusService opusService;
+
+  private HPABService hpabService;
+
+
+  @Autowired
+  public void setHpabService(HPABService hpabService) {
+    this.hpabService = hpabService;
+  }
 
   @Autowired
   public void setOpusService(OpusService opusService) {
@@ -142,6 +151,11 @@ public class ImportExportGateInService {
     if ((gateInRequest.getGatePass1() != null && gateInRequest.getGatePass1() > 0)
         || (gateInRequest.getGatePass2() != null && gateInRequest.getGatePass2() > 0)) {
       importGateInService.populateGateInImport(gateInReponse);
+    }
+
+    // assign details from hpab booking
+    if (StringUtils.isNotEmpty(gateInRequest.getHpabSeqId())) {
+      gateInReponse = hpabService.populateHpabForImpExp(gateInReponse, gateInRequest.getHpabSeqId());
     }
 
     return gateInReponse;

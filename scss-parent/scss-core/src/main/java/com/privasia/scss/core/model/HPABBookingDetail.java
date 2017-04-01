@@ -288,20 +288,29 @@ public class HPABBookingDetail extends AuditEntity implements Serializable {
     this.expBookingNo = expBookingNo;
   }
 
-  public ExportContainer constructExportContainer() {
-    ExportContainer exportContainer = new ExportContainer();
-    exportContainer.setContainer(new CommonContainerDTO());
+  public ExportContainer constructExportContainer(ExportContainer exportContainer) {
+
+    if (exportContainer == null) {
+      exportContainer = new ExportContainer();
+    }
+
+    if (exportContainer.getContainer() == null) {
+      exportContainer.setContainer(new CommonContainerDTO());
+    }
+
 
     if (!(this.getSolas() == null)) {
-      CommonSolasDTO commonSolasDTO = new CommonSolasDTO();
+      if (exportContainer.getSolas() == null) {
+        exportContainer.setSolas(new CommonSolasDTO());
+      }
       SolasInfo solasInfo = this.getSolas().constructSolasInfo();
-      commonSolasDTO.setFaLedgerCode(solasInfo.getFaLedgerCode());
-      commonSolasDTO.setMgw(solasInfo.getMgw());
-      commonSolasDTO.setShipperVGM(solasInfo.getShipperVGM());
-      commonSolasDTO.setSolasDetailID(solasInfo.getSolasDetailID());
-      commonSolasDTO.setSolasInstruction(solasInfo.getSolasInstruction());
-      commonSolasDTO.setSolasRefNumber(solasInfo.getSolasRefNumber());
-      exportContainer.setSolas(commonSolasDTO);
+      exportContainer.getSolas().setFaLedgerCode(solasInfo.getFaLedgerCode());
+      exportContainer.getSolas().setMgw(solasInfo.getMgw());
+      exportContainer.getSolas().setShipperVGM(solasInfo.getShipperVGM());
+      exportContainer.getSolas().setSolasDetailID(solasInfo.getSolasDetailID());
+      exportContainer.getSolas().setSolasInstruction(solasInfo.getSolasInstruction());
+      exportContainer.getSolas().setSolasRefNumber(solasInfo.getSolasRefNumber());
+
     }
     exportContainer.getContainer().setContainerNumber(containerNumber);
     exportContainer.setSealAttribute(new CommonSealDTO());
@@ -312,18 +321,27 @@ public class HPABBookingDetail extends AuditEntity implements Serializable {
     return exportContainer;
   }
 
-  public ImportContainer constructImportContainer() {
-    ImportContainer importContainer = new ImportContainer();
+  public ImportContainer constructImportContainer(ImportContainer importContainer) {
 
-    importContainer.setBaseCommonGateInOutAttribute(new BaseCommonGateInOutDTO());
+    if (importContainer == null) {
+      importContainer = new ImportContainer();
+    }
+
+    if (importContainer.getBaseCommonGateInOutAttribute() == null) {
+      importContainer.setBaseCommonGateInOutAttribute(new BaseCommonGateInOutDTO());
+    }
     importContainer.getBaseCommonGateInOutAttribute().setHpatBooking(this.hpatBooking.getBookingID());
 
-    importContainer.setContainer(new CommonContainerDTO());
+    if (importContainer.getContainer() == null) {
+      importContainer.setContainer(new CommonContainerDTO());
+    }
     importContainer.getContainer().setContainerNumber(this.containerNumber);
     importContainer.getContainer().setContainerISOCode(this.containerISO);
     importContainer.getContainer().setContainerHeight(Integer.parseInt(this.containerSize));
 
-    importContainer.setCardUsage(new CardUsageDTO());
+    if (importContainer.getCardUsage() == null) {
+      importContainer.setCardUsage(new CardUsageDTO());
+    }
     importContainer.setContainerType(this.containerType);
     importContainer.setSealAttribute(new CommonSealDTO());
     importContainer.getSealAttribute().setSeal01Number(this.expSealNo01);
