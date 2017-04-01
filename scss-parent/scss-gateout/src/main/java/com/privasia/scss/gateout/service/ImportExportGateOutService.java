@@ -36,6 +36,13 @@ public class ImportExportGateOutService {
 
   private OpusGateOutWriteService opusGateOutWriteService;
 
+  private OpusService opusService;
+
+  @Autowired
+  public void setOpusService(OpusService opusService) {
+    this.opusService = opusService;
+  }
+
   @Autowired
   public void setOpusGateOutReadService(OpusGateOutReadService opusGateOutReadService) {
     this.opusGateOutReadService = opusGateOutReadService;
@@ -57,7 +64,7 @@ public class ImportExportGateOutService {
   }
 
   @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-  public GateOutReponse populateGateOut(GateOutRequest gateOutRequest) { //gate out read
+  public GateOutReponse populateGateOut(GateOutRequest gateOutRequest) { // gate out read
     List<ImportContainer> importContainers = null;
     List<ExportContainer> exportContainers = null;
 
@@ -97,7 +104,7 @@ public class ImportExportGateOutService {
     OpusGateOutWriteResponse opusGateOutWriteResponse =
         opusGateOutWriteService.getGateOutWriteResponse(opusGateOutWriteRequest);
 
-    String errorMessage = OpusService.hasErrorMessage(opusGateOutWriteResponse.getErrorList());
+    String errorMessage = opusService.hasErrorMessage(opusGateOutWriteResponse.getErrorList());
     if (StringUtils.isNotEmpty(errorMessage)) {
       // throw new business exception with constructed message - there is an error
       throw new BusinessException(errorMessage);

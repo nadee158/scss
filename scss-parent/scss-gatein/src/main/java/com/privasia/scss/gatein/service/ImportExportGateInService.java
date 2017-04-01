@@ -52,6 +52,13 @@ public class ImportExportGateInService {
 
   private CardRepository cardRepository;
 
+  private OpusService opusService;
+
+  @Autowired
+  public void setOpusService(OpusService opusService) {
+    this.opusService = opusService;
+  }
+
   @Autowired
   public void setOpusGateInReadService(OpusGateInReadService opusGateInReadService) {
     this.opusGateInReadService = opusGateInReadService;
@@ -113,6 +120,17 @@ public class ImportExportGateInService {
     // call opus -
     OpusGateInReadRequest gateInReadRequest = opusGateInReadService.constructOpenGateInRequest(gateInRequest);
     OpusGateInReadResponse gateInReadResponse = opusGateInReadService.getGateInReadResponse(gateInReadRequest);
+
+    // check the errorlist of reponse
+    String errorMessage = opusService.hasErrorMessage(gateInReadResponse.getErrorList());
+    log.error("ERROR MESSAGE FROM OPUS SERVICE: " + errorMessage);
+    if (StringUtils.isNotEmpty(errorMessage)) {
+      // save it to the db - TO BE IMPLEMENTED
+      // throw new business exception with constructed message - there is
+      // an error
+      throw new BusinessException(errorMessage);
+    }
+
     // double check with the documentation
     gateInReponse = opusGateInReadService.constructGateInReponse(gateInReadResponse, gateInReponse);
 
@@ -141,8 +159,10 @@ public class ImportExportGateInService {
     OpusGateInWriteResponse opusGateInWriteResponse =
         opusGateInWriteService.getGateInWriteResponse(opusGateInWriteRequest);
     System.out.println("opusGateInWriteResponse " + gson.toJson(opusGateInWriteResponse));
-    String errorMessage = OpusService.hasErrorMessage(opusGateInWriteResponse.getErrorList());
+    String errorMessage = opusService.hasErrorMessage(opusGateInWriteResponse.getErrorList());
+    log.error("ERROR MESSAGE FROM OPUS SERVICE: " + errorMessage);
     if (StringUtils.isNotEmpty(errorMessage)) {
+      // save it to the db - TO BE IMPLEMENTED
       // throw new business exception with constructed message - there is
       // an error
       throw new BusinessException(errorMessage);

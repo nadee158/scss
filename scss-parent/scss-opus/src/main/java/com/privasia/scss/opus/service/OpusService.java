@@ -452,11 +452,11 @@ public class OpusService {
     return null;
   }
 
-  public static String hasErrorMessage(List<OpusErrorListItem> errorList) {
+  public String hasErrorMessage(List<OpusErrorListItem> errorList) {
     // String hasErrorMessage(List<Error>) in opus service
     // check if error list object is empty
     if (!(errorList == null || errorList.isEmpty())) {
-      StringBuilder sb = new StringBuilder("");
+      StringBuilder sb = new StringBuilder("OPUS_ERROR_MESSAGE :");
       // if not empty construct error string
       // container number + error description, other eg:- NH161219003
       // There does no Truck In plan
