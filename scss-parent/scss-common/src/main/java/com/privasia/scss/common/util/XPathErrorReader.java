@@ -169,16 +169,16 @@ public class XPathErrorReader {
       if (msg.getChild("PKIDSE") != null) { // bay code
         if (msgCnt == 1) {
           if (transactionDTO.getGateImpOrExp().equals("E")) {
-            exportContainer01.setBayCode(msg.getChild("PKIDSE").getTextTrim());
+            exportContainer01.setYardBayCode(msg.getChild("PKIDSE").getTextTrim());
           } else {
-            importContainer01.setBayCode(msg.getChild("PKIDSE").getTextTrim());
+            importContainer01.setYardBayCode(msg.getChild("PKIDSE").getTextTrim());
           }
         }
         if (msgCnt == 2) {
           if (transactionDTO.getGateImpOrExp().equals("E")) {
-            exportContainer02.setBayCode(msg.getChild("PKIDSE").getTextTrim());
+            exportContainer02.setYardBayCode(msg.getChild("PKIDSE").getTextTrim());
           } else {
-            importContainer02.setBayCode(msg.getChild("PKIDSE").getTextTrim());
+            importContainer02.setYardBayCode(msg.getChild("PKIDSE").getTextTrim());
           }
         }
       }
@@ -208,10 +208,10 @@ public class XPathErrorReader {
       }
       if (msg.getChild("PKIDSE") != null) { // bay code
         if (msgCnt == 1) {
-          importContainer01.setBayCode(msg.getChild("PKIDSE").getTextTrim());
+          importContainer01.setYardBayCode(msg.getChild("PKIDSE").getTextTrim());
         }
         if (msgCnt == 2) {
-          importContainer02.setBayCode(msg.getChild("PKIDSE").getTextTrim());
+          importContainer02.setYardBayCode(msg.getChild("PKIDSE").getTextTrim());
         }
       }
       msgCnt++;
@@ -240,10 +240,10 @@ public class XPathErrorReader {
       }
       if (msg.getChild("PKIDSE") != null) { // bay code
         if (msgCnt == 1) {
-          exportContainer01.setBayCode(msg.getChild("PKIDSE").getTextTrim());
+          exportContainer01.setYardBayCode(msg.getChild("PKIDSE").getTextTrim());
         }
         if (msgCnt == 2) {
-          exportContainer02.setBayCode(msg.getChild("PKIDSE").getTextTrim());
+          exportContainer02.setYardBayCode(msg.getChild("PKIDSE").getTextTrim());
         }
       }
       msgCnt++;

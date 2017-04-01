@@ -144,8 +144,8 @@ public class OpusService {
     commonContainerDTO.setContainerNumber(giWriteResponseExportContainer.getContainerNo());
     exportContainer.setContainer(commonContainerDTO);
     exportContainer.setYardPosition(giWriteResponseExportContainer.getYardPosition());
-    exportContainer.setBayCode(giWriteResponseExportContainer.getYardBayCode());
-    exportContainer.setOptFlag(giWriteResponseExportContainer.getManualPlanIndicator());
+    exportContainer.setYardBayCode(giWriteResponseExportContainer.getYardBayCode());
+    exportContainer.setManualPlanIndicator(giWriteResponseExportContainer.getManualPlanIndicator());
     return exportContainer;
   }
 
@@ -157,7 +157,7 @@ public class OpusService {
     commonContainerDTO.setContainerNumber(giWriteResponseImportContainer.getContainerNo());
     importContainer.setContainer(commonContainerDTO);
     importContainer.setYardPosition(giWriteResponseImportContainer.getYardPosition());
-    importContainer.setBayCode(giWriteResponseImportContainer.getYardBayCode());
+    importContainer.setYardBayCode(giWriteResponseImportContainer.getYardBayCode());
     return importContainer;
   }
 

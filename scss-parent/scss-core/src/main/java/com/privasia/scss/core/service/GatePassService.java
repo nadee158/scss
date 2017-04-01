@@ -814,7 +814,7 @@ public class GatePassService {
 
 
         gatePass.setYardPosition(StringUtils.upperCase(container.getYardPosition()));
-        gatePass.setBayCode(StringUtils.upperCase(container.getBayCode()));
+        gatePass.setBayCode(StringUtils.upperCase(container.getYardBayCode()));
         gatePass
             .setContainerPosition(ContainerPosition.fromValue(StringUtils.upperCase(container.getContainerPosition())));
 

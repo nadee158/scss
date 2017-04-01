@@ -100,7 +100,7 @@ public class PrintEirService {
   private PrintEIRContainerInfo getConstructedEirContainer(ImportContainer importContainer, String weight,
       StringBuilder lineInfo, StringBuilder lineInfo2, StringBuilder seal) {
     PrintEIRContainerInfo eirContainer = new PrintEIRContainerInfo();
-    eirContainer.setContainerBayCode(importContainer.getBayCode());
+    eirContainer.setContainerBayCode(importContainer.getYardBayCode());
     eirContainer.setContainerInOrOut(GateInOutStatus.fromValue(importContainer.getGateInOut()));
     eirContainer.setContainerFullOrEmpty(
         ContainerFullEmptyType.fromValue(importContainer.getContainer().getContainerFullOrEmpty()));

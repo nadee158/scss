@@ -129,7 +129,7 @@ public class ExportsQ extends AuditEntity implements Serializable {
 
   @Column(name = "EXP_MANUALOPTFLAG", nullable = true)
   @Type(type = "com.privasia.scss.common.enumusertype.ExportOPTFlagEnumUserType")
-  private ExportOPTFlagType optFlag;
+  private ExportOPTFlagType manualPlanIndicator;
 
   @Column(name = "EXP_BOOKINGNO")
   private String bookingNo;
@@ -212,7 +212,7 @@ public class ExportsQ extends AuditEntity implements Serializable {
   private String yardPosition;
 
   @Column(name = "EXP_BAY_CODE")
-  private String bayCode;
+  private String yardBayCode;
 
   @Column(name = "EXP_PM_BTM")
   private Integer pmBTM;
@@ -474,13 +474,6 @@ public class ExportsQ extends AuditEntity implements Serializable {
     this.yardPosition = yardPosition;
   }
 
-  public String getBayCode() {
-    return bayCode;
-  }
-
-  public void setBayCode(String bayCode) {
-    this.bayCode = bayCode;
-  }
 
   public Integer getPmBTM() {
     return pmBTM;
@@ -801,12 +794,21 @@ public class ExportsQ extends AuditEntity implements Serializable {
     return serialVersionUID;
   }
 
-  public ExportOPTFlagType getOptFlag() {
-    return optFlag;
+
+  public ExportOPTFlagType getManualPlanIndicator() {
+    return manualPlanIndicator;
   }
 
-  public void setOptFlag(ExportOPTFlagType optFlag) {
-    this.optFlag = optFlag;
+  public void setManualPlanIndicator(ExportOPTFlagType manualPlanIndicator) {
+    this.manualPlanIndicator = manualPlanIndicator;
+  }
+
+  public String getYardBayCode() {
+    return yardBayCode;
+  }
+
+  public void setYardBayCode(String yardBayCode) {
+    this.yardBayCode = yardBayCode;
   }
 
   public Boolean getReferFlag() {
