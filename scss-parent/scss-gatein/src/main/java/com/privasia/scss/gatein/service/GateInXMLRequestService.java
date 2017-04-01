@@ -467,8 +467,8 @@ public class GateInXMLRequestService {
 
   //@formatter:on
   private StringBuilder constructExportContainerUNCInfo(ExportContainer exportContainer, StringBuilder uN) {
-    if (StringUtils.isNotEmpty(exportContainer.getExpUN())) {
-      uN.append("<CUN1SE>").append(exportContainer.getExpUN()).append("</CUN1SE>\n");
+    if (StringUtils.isNotEmpty(exportContainer.getDgUNCode())) {
+      uN.append("<CUN1SE>").append(exportContainer.getDgUNCode()).append("</CUN1SE>\n");
     }
     return uN;
   }

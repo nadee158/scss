@@ -4,7 +4,6 @@
 package com.privasia.scss.opus.service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -22,10 +21,10 @@ import com.privasia.scss.common.dto.GateInReponse;
 import com.privasia.scss.common.dto.GateInWriteRequest;
 import com.privasia.scss.common.util.CommonUtil;
 import com.privasia.scss.common.util.DateUtil;
-import com.privasia.scss.opus.dto.GIReadResponseExporterContainer;
+import com.privasia.scss.opus.dto.GIWriteRequestExportContainer;
+import com.privasia.scss.opus.dto.GIWriteRequestImportContainer;
 import com.privasia.scss.opus.dto.OpusGateInWriteRequest;
 import com.privasia.scss.opus.dto.OpusGateInWriteResponse;
-import com.privasia.scss.opus.dto.GIReadResponseImportContainer;
 
 /**
  * @author Janaka
@@ -73,9 +72,9 @@ public class OpusGateInWriteService {
     gateInReponse.setTruckHeadNo(opusGateInWriteResponse.getTruckHeadNo());
     gateInReponse.setTruckPlateNo(opusGateInWriteResponse.getTruckPlateNo());
     gateInReponse.setExportContainers(opusService
-        .constructExportContainersFromOpusExportContainers(opusGateInWriteResponse.getExportContainerListCY()));
+        .giWriteResponseExportContainerListToExportContainerList(opusGateInWriteResponse.getExportContainerListCY()));
     gateInReponse.setImportContainers(opusService
-        .constructImportContainersFromOpusImportContainers(opusGateInWriteResponse.getImportContainerListCY()));
+        .giWriteResponseImportContainerListToImportContainerList(opusGateInWriteResponse.getImportContainerListCY()));
     gateInReponse.setCallCardNo(opusGateInWriteResponse.getCallCardNo());
     return gateInReponse;
   }
@@ -83,10 +82,10 @@ public class OpusGateInWriteService {
   public OpusGateInWriteRequest constructOpusGateInWriteRequest(GateInWriteRequest gateInWriteRequest) {
     OpusGateInWriteRequest opusGateInWriteRequest = new OpusGateInWriteRequest();
 
-    List<GIReadResponseExporterContainer> exportContainerListCY =
-        OpusService.constructOpusExporterContainersFromExporterContainers(gateInWriteRequest.getExportContainers());
-    List<GIReadResponseImportContainer> importContainerListCY =
-        OpusService.constructOpusImportContainersFromImportContainers(gateInWriteRequest.getImportContainers());
+    List<GIWriteRequestExportContainer> exportContainerListCY =
+        opusService.exportContainerListToGIWriteRequestExportContainerList(gateInWriteRequest.getExportContainers());
+    List<GIWriteRequestImportContainer> importContainerListCY =
+        opusService.importContainerListToGIWriteRequestImportContainerList(gateInWriteRequest.getImportContainers());
 
     LocalDateTime gateInDateTime = CommonUtil.getParsedDate(gateInWriteRequest.getGateInDateTime());
     opusGateInWriteRequest.setGateINDateTime(DateUtil.getJsonDateFromDate(gateInDateTime));
@@ -100,8 +99,6 @@ public class OpusGateInWriteService {
     opusGateInWriteRequest.setTrailerWeight(Integer.toString(gateInWriteRequest.getTrailerWeight()));
     opusGateInWriteRequest.setTruckPlateNo(gateInWriteRequest.getTruckPlateNo());
     opusGateInWriteRequest.setTruckWeight(Integer.toString(gateInWriteRequest.getTruckWeight()));
-    opusGateInWriteRequest.setImportContainerListCFS(new ArrayList<>());
-    opusGateInWriteRequest.setExportContainerListCFS(new ArrayList<>());
     return opusGateInWriteRequest;
   }
 

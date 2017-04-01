@@ -141,11 +141,8 @@ public class ImportExportGateInService {
       // throw new business exception with constructed message - there is
       // an error
       throw new BusinessException(errorMessage);
-    } else {
-      if (!(opusGateInWriteResponse.getErrorCode() == 0)) {
-        throw new BusinessException(opusGateInWriteResponse.getErrorMessage());
-      }
     }
+
 
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     UserContext userContext = (UserContext) authentication.getPrincipal();

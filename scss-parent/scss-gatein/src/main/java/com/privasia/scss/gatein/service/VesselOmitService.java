@@ -36,7 +36,7 @@ public class VesselOmitService {
   public boolean isValidVesselOmit(ExportContainer c) {
 
     VesselOmit vesselOmit = getVesselOmit(c.getExpLine(), c.getAgentCode());
-    if (StringUtils.contains(c.getVesselVoyage(), vesselOmit.getVesselVoyIN())) {
+    if (StringUtils.contains(c.getVesselVoyageIN(), vesselOmit.getVesselVoyIN())) {
       // return business exception
       /*
        * returnmsg += MessageCode.format("ERR_MSG_081", new Object[] { f.getContainerNoC2(),
@@ -45,7 +45,7 @@ public class VesselOmitService {
        */
     }
 
-    if (StringUtils.contains(c.getVesselVoyage(), vesselOmit.getVesselVoyOUT())) {
+    if (StringUtils.contains(c.getVesselVoyageOUT(), vesselOmit.getVesselVoyOUT())) {
       // return business exception
       /*
        * returnmsg += MessageCode.format("ERR_MSG_081", new Object[] { f.getContainerNoC2(),

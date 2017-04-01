@@ -6,96 +6,106 @@ import java.util.List;
 
 public class GateInReponse implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 1L;
 
-	private String laneNo;// LNO01,
-	private String haulageCode;// HAUCD,
-	private String truckHeadNo;// TRUCK,
-	private String truckPlateNo;// null,
-	private String gateINDateTime;// 20161130112233,
-	private boolean checkPreArrival = false;// -boolean
+  private String userId;
 
-	private List<ImportContainer> importContainers = new ArrayList<ImportContainer>();
+  private String laneNo;// LNO01,
+  private String haulageCode;// HAUCD,
+  private String truckHeadNo;// TRUCK,
+  private String truckPlateNo;// null,
+  private String gateINDateTime;// 20161130112233,
+  private boolean checkPreArrival = false;// -boolean
 
-	private List<ExportContainer> exportContainers = new ArrayList<ExportContainer>();
+  private List<ImportContainer> importContainers = new ArrayList<ImportContainer>();
 
-	// for gate in write
-	private String callCardNo;// 20161130112233,
-	
+  private List<ExportContainer> exportContainers = new ArrayList<ExportContainer>();
 
-	public String getLaneNo() {
-		return laneNo;
-	}
+  // for gate in write
+  private String callCardNo;// 20161130112233,
 
-	public void setLaneNo(String laneNo) {
-		this.laneNo = laneNo;
-	}
 
-	public String getHaulageCode() {
-		return haulageCode;
-	}
+  public String getLaneNo() {
+    return laneNo;
+  }
 
-	public void setHaulageCode(String haulageCode) {
-		this.haulageCode = haulageCode;
-	}
+  public void setLaneNo(String laneNo) {
+    this.laneNo = laneNo;
+  }
 
-	public String getTruckHeadNo() {
-		return truckHeadNo;
-	}
+  public String getHaulageCode() {
+    return haulageCode;
+  }
 
-	public void setTruckHeadNo(String truckHeadNo) {
-		this.truckHeadNo = truckHeadNo;
-	}
+  public void setHaulageCode(String haulageCode) {
+    this.haulageCode = haulageCode;
+  }
 
-	public String getTruckPlateNo() {
-		return truckPlateNo;
-	}
+  public String getTruckHeadNo() {
+    return truckHeadNo;
+  }
 
-	public void setTruckPlateNo(String truckPlateNo) {
-		this.truckPlateNo = truckPlateNo;
-	}
+  public void setTruckHeadNo(String truckHeadNo) {
+    this.truckHeadNo = truckHeadNo;
+  }
 
-	public String getGateINDateTime() {
-		return gateINDateTime;
-	}
+  public String getTruckPlateNo() {
+    return truckPlateNo;
+  }
 
-	public void setGateINDateTime(String gateINDateTime) {
-		this.gateINDateTime = gateINDateTime;
-	}
+  public void setTruckPlateNo(String truckPlateNo) {
+    this.truckPlateNo = truckPlateNo;
+  }
 
-	public List<ImportContainer> getImportContainers() {
-		return importContainers;
-	}
+  public String getGateINDateTime() {
+    return gateINDateTime;
+  }
 
-	public void setImportContainers(List<ImportContainer> importContainers) {
-		this.importContainers = importContainers;
-	}
+  public void setGateINDateTime(String gateINDateTime) {
+    this.gateINDateTime = gateINDateTime;
+  }
 
-	public List<ExportContainer> getExportContainers() {
-		return exportContainers;
-	}
+  public List<ImportContainer> getImportContainers() {
+    return importContainers;
+  }
 
-	public void setExportContainers(List<ExportContainer> exportContainers) {
-		this.exportContainers = exportContainers;
-	}
+  public void setImportContainers(List<ImportContainer> importContainers) {
+    this.importContainers = importContainers;
+  }
 
-	public String getCallCardNo() {
-		return callCardNo;
-	}
+  public List<ExportContainer> getExportContainers() {
+    return exportContainers;
+  }
 
-	public void setCallCardNo(String callCardNo) {
-		this.callCardNo = callCardNo;
-	}
+  public void setExportContainers(List<ExportContainer> exportContainers) {
+    this.exportContainers = exportContainers;
+  }
 
-	public boolean isCheckPreArrival() {
-		return checkPreArrival;
-	}
+  public String getCallCardNo() {
+    return callCardNo;
+  }
 
-	public void setCheckPreArrival(boolean checkPreArrival) {
-		this.checkPreArrival = checkPreArrival;
-	}
+  public void setCallCardNo(String callCardNo) {
+    this.callCardNo = callCardNo;
+  }
+
+  public boolean isCheckPreArrival() {
+    return checkPreArrival;
+  }
+
+  public void setCheckPreArrival(boolean checkPreArrival) {
+    this.checkPreArrival = checkPreArrival;
+  }
+
+  public String getUserId() {
+    return userId;
+  }
+
+  public void setUserId(String userId) {
+    this.userId = userId;
+  }
 
 }

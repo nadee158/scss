@@ -4,11 +4,10 @@
 package com.privasia.scss.opus.service;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -19,12 +18,10 @@ import org.springframework.web.client.RestTemplate;
 
 import com.privasia.scss.common.dto.GateOutReponse;
 import com.privasia.scss.common.dto.GateOutRequest;
-import com.privasia.scss.common.dto.ImportContainer;
 import com.privasia.scss.common.util.CommonUtil;
 import com.privasia.scss.common.util.DateUtil;
 import com.privasia.scss.opus.dto.OpusGateOutReadRequest;
 import com.privasia.scss.opus.dto.OpusGateOutReadResponse;
-import com.privasia.scss.opus.dto.GIReadResponseImportContainer;
 
 /**
  * @author Janaka
@@ -38,6 +35,13 @@ public class OpusGateOutReadService {
 
   @Value("${gate_out.read.response.url}")
   private String gateOutReadResponseURL;
+
+  private OpusService opusService;
+
+  @Autowired
+  public void setOpusService(OpusService opusService) {
+    this.opusService = opusService;
+  }
 
   public OpusGateOutReadRequest constructOpenGateOutRequest(GateOutRequest gateOutRequest) {
 
@@ -81,33 +85,13 @@ public class OpusGateOutReadService {
     gateOutReponse.setLaneNo(opusGateOutReadResponse.getLaneNo());
     gateOutReponse.setTruckHeadNo(opusGateOutReadResponse.getTruckHeadNo());
     gateOutReponse.setTruckPlateNo(opusGateOutReadResponse.getTruckPlateNo());
-    return constructImportContainers(opusGateOutReadResponse.getImportContainerListCY(), gateOutReponse);
+    gateOutReponse.setImportContainers(opusService
+        .goReadResponseImportContainerListToImportContainerList(opusGateOutReadResponse.getImportContainerListCY()));
+    gateOutReponse.setExportContainers(opusService
+        .goReadResponseExportContainerListToExportContainerList(opusGateOutReadResponse.getExportContainerListCY()));
+    return gateOutReponse;
   }
 
-  private GateOutReponse constructImportContainers(List<GIReadResponseImportContainer> importContainerListCY,
-      GateOutReponse gateOutReponse) {
-
-    if (!(importContainerListCY == null || importContainerListCY.isEmpty())) {
-
-      importContainerListCY.forEach(opusImportContainer -> {
-        Optional<ImportContainer> optinalContainer =
-            gateOutReponse.getImportContainers().stream().filter(importContainer -> importContainer.getContainer()
-                .getContainerNumber().equals(opusImportContainer.getContainerNo())).findFirst();
-
-        /*
-         * ImportContainer importContainer = optinalContainer.orElseThrow(() -> new
-         * ResultsNotFoundException(
-         * "No Import Containers could be found for the given Cantainer Number from SCSS !"));
-         */
-
-        // constructImportContainer(opusImportContainer, importContainer);
-
-      });
-
-      return gateOutReponse;
-    }
-    return null;
-  }
 
 
 }
