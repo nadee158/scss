@@ -162,12 +162,16 @@ public class OpusService {
   }
 
   public ImportContainer giReadResponseImportContainerToImportContainer(
-      GIReadResponseImportContainer gIReadResponseImportContainer) {
+      GIReadResponseImportContainer gIReadResponseImportContainer, ImportContainer importContainer) {
 
-    ImportContainer importContainer = new ImportContainer();
-    CommonContainerDTO commonContainerDTO = new CommonContainerDTO();
+    if (importContainer == null) {
+      importContainer = new ImportContainer();
+    }
+    if (importContainer.getContainer() == null) {
+      importContainer.setContainer(new CommonContainerDTO());
+    }
     // private String containerNumber; //EPLA0000002
-    commonContainerDTO.setContainerNumber(gIReadResponseImportContainer.getContainerNo());
+    importContainer.getContainer().setContainerNumber(gIReadResponseImportContainer.getContainerNo());
     importContainer.setOrderFOT(gIReadResponseImportContainer.getImpOrderNo());
     importContainer.setImpOrderStatus(gIReadResponseImportContainer.getImpOrderStatus());
     importContainer.setImpOrderType(gIReadResponseImportContainer.getImpOrderType());
@@ -177,18 +181,20 @@ public class OpusService {
     importContainer.setShippingLine(gIReadResponseImportContainer.getContainerShippingLine());
     importContainer.setShippingAgent(gIReadResponseImportContainer.getContainerShippingAgent());
     // private String containerFullOrEmpty;// F,
-    commonContainerDTO.setContainerFullOrEmpty(gIReadResponseImportContainer.getContainerFullOrEmpty());
+    importContainer.getContainer().setContainerFullOrEmpty(gIReadResponseImportContainer.getContainerFullOrEmpty());
     importContainer.setContainerSubHandlingType(gIReadResponseImportContainer.getContainerSubHandlingType());
     // private double containerHeight;// 8,
-    commonContainerDTO
-        .setContainerHeight(getIntegerValueFromString(gIReadResponseImportContainer.getContainerHeight()));
+    importContainer.getContainer().setContainerHeight(
+        ExportUtilService.getIntegerValueFromString(gIReadResponseImportContainer.getContainerHeight()));
     // private String containerIso;// 4001,
-    commonContainerDTO.setContainerISOCode(gIReadResponseImportContainer.getContainerIso());
+    importContainer.getContainer().setContainerISOCode(gIReadResponseImportContainer.getContainerIso());
     // private double containerSize;// 40,
-    importContainer.setContainerLength(getIntegerValueFromString(gIReadResponseImportContainer.getContainerSize()));
+    importContainer.setContainerLength(
+        ExportUtilService.getIntegerValueFromString(gIReadResponseImportContainer.getContainerSize()));
     // private String containerType;// GE,
     importContainer.setContainerType(gIReadResponseImportContainer.getContainerType());
-    importContainer.setTareWeight(getIntValueFromString(gIReadResponseImportContainer.getContainerTareWeight()));
+    importContainer
+        .setTareWeight(ExportUtilService.getIntValueFromString(gIReadResponseImportContainer.getContainerTareWeight()));
     importContainer.setContainerDischargeDateTime(
         DateUtil.getLocalDategFromString(gIReadResponseImportContainer.getContainerDischargeDateTime()));
     // private String currentYardPosition;// 02S-0102-C-1,
@@ -206,18 +212,22 @@ public class OpusService {
     importContainer.setVesselETADate(DateUtil.getLocalDategFromString(gIReadResponseImportContainer.getVesselETA()));
     importContainer.setVesselATADate(DateUtil.getLocalDategFromString(gIReadResponseImportContainer.getVesselATA()));
     importContainer.setVesselStatus(gIReadResponseImportContainer.getVesselStatus());
-    importContainer.setContainer(commonContainerDTO);
 
     return importContainer;
   }
 
   public ExportContainer giReadResponseExporterContainerToExportContainer(
-      GIReadResponseExporterContainer gIReadResponseExporterContainer) {
+      GIReadResponseExporterContainer gIReadResponseExporterContainer, ExportContainer exportContainer) {
 
-    ExportContainer exportContainer = new ExportContainer();
-    CommonContainerDTO containerDTO = new CommonContainerDTO();
+    if (exportContainer == null) {
+      exportContainer = new ExportContainer();
+    }
+
+    if (exportContainer.getContainer() == null) {
+      exportContainer.setContainer(new CommonContainerDTO());
+    }
     // private String containerNo;// ;//AZHA0000001,
-    containerDTO.setContainerNumber(gIReadResponseExporterContainer.getContainerNo());
+    exportContainer.getContainer().setContainerNumber(gIReadResponseExporterContainer.getContainerNo());
     // private String exportBookingNo;// BOOK20001,
     exportContainer.setBookingNo(gIReadResponseExporterContainer.getExportOrderNo());
     exportContainer.setExportOrderStatus(gIReadResponseExporterContainer.getExportOrderStatus());
@@ -226,7 +236,7 @@ public class OpusService {
     exportContainer.setGateInOut(gIReadResponseExporterContainer.getContainerInOrOut());
     exportContainer.setShippingLine(gIReadResponseExporterContainer.getContainerShippingLine());
     // private String containerFullOrEmpty;// F,
-    containerDTO.setContainerFullOrEmpty(gIReadResponseExporterContainer.getContainerFullOrEmpty());
+    exportContainer.getContainer().setContainerFullOrEmpty(gIReadResponseExporterContainer.getContainerFullOrEmpty());
     // private String subHandlingType;// null,
     exportContainer.setSubHandlingType(gIReadResponseExporterContainer.getContainerSubHandlingType());
     // private String expCarrierType;// null,
@@ -250,35 +260,43 @@ public class OpusService {
     // private String containerSpod;// USSVN,
     exportContainer.setExpSpod(gIReadResponseExporterContainer.getContainerSpod());
     // private String containerIso;// 22G0,
-    containerDTO.setContainerISOCode(gIReadResponseExporterContainer.getContainerIso());
+    exportContainer.getContainer().setContainerISOCode(gIReadResponseExporterContainer.getContainerIso());
     // private double containerHeight;// 8.6,
-    containerDTO.setContainerHeight(getIntValueFromString(gIReadResponseExporterContainer.getContainerHeight()));
+    exportContainer.getContainer().setContainerHeight(
+        ExportUtilService.getIntValueFromString(gIReadResponseExporterContainer.getContainerHeight()));
     // private String containerType;// GE,
     exportContainer.setContainerType(gIReadResponseExporterContainer.getContainerType());
-    containerDTO.setContainerSize(gIReadResponseExporterContainer.getContainerSize());
+    exportContainer.getContainer().setContainerSize(gIReadResponseExporterContainer.getContainerSize());
     // private double grossWeight;// 11000,
-    exportContainer.setGrossWeight(getIntValueFromString(gIReadResponseExporterContainer.getContainerGrossWeight()));
+    exportContainer.setGrossWeight(
+        ExportUtilService.getIntValueFromString(gIReadResponseExporterContainer.getContainerGrossWeight()));
     // private double containerNetWeight;// 9000,
-    exportContainer.setNetWeight(getIntValueFromString(gIReadResponseExporterContainer.getContainerNetWeight()));
-    exportContainer.setTareWeight(getIntValueFromString(gIReadResponseExporterContainer.getContainerTareWeight()));
-    CommonSealDTO sealAttribute = new CommonSealDTO();
+    exportContainer
+        .setNetWeight(ExportUtilService.getIntValueFromString(gIReadResponseExporterContainer.getContainerNetWeight()));
+    exportContainer.setTareWeight(
+        ExportUtilService.getIntValueFromString(gIReadResponseExporterContainer.getContainerTareWeight()));
+
+    if (exportContainer.getSealAttribute() == null) {
+      exportContainer.setSealAttribute(new CommonSealDTO());
+    }
     // private String containerSeal1_SL;// null,
-    sealAttribute.setSeal01Origin(gIReadResponseExporterContainer.getContainerSeal1_SL());
+    exportContainer.getSealAttribute().setSeal01Origin(gIReadResponseExporterContainer.getContainerSeal1_SL());
     // private String containerSeal1_NO;// SEAL001,
-    sealAttribute.setSeal01Number(gIReadResponseExporterContainer.getContainerSeal1_NO());
+    exportContainer.getSealAttribute().setSeal01Number(gIReadResponseExporterContainer.getContainerSeal1_NO());
     // private String containerSeal2_SL;// null,
-    sealAttribute.setSeal02Origin(gIReadResponseExporterContainer.getContainerSeal2_SL());
+    exportContainer.getSealAttribute().setSeal02Origin(gIReadResponseExporterContainer.getContainerSeal2_SL());
     // private String containerSeal2_NO;// null,
-    sealAttribute.setSeal02Origin(gIReadResponseExporterContainer.getContainerSeal2_NO());
+    exportContainer.getSealAttribute().setSeal02Origin(gIReadResponseExporterContainer.getContainerSeal2_NO());
 
     // private String containerReeferIndicator;// N,
-    exportContainer.setReferFlag(getBooleanFromString(gIReadResponseExporterContainer.getContainerReeferIndicator()));
+    exportContainer.setReferFlag(
+        ExportUtilService.getBooleanFromString(gIReadResponseExporterContainer.getContainerReeferIndicator()));
     // private String containerReeferTempSign;// null,
     exportContainer.setReferTempType(gIReadResponseExporterContainer.getContainerReeferTempSign());
     // private String containerReeferTempValue;// null,
     if (StringUtils.isNotEmpty(gIReadResponseExporterContainer.getContainerReeferTempValue())) {
-      exportContainer
-          .setReferTemp(getIntegerValueFromString(gIReadResponseExporterContainer.getContainerReeferTempValue()));
+      exportContainer.setReferTemp(
+          ExportUtilService.getIntegerValueFromString(gIReadResponseExporterContainer.getContainerReeferTempValue()));
     }
     // private String containerReeferTempUnit;// null,
     exportContainer.setReeferTempUnit(gIReadResponseExporterContainer.getContainerReeferTempUnit());
@@ -294,15 +312,20 @@ public class OpusService {
         DateUtil.getLocalDategFromString(gIReadResponseExporterContainer.getYardDGOpeningDateTime()));
 
     // private double containerOOG_OH;// 5.0,
-    exportContainer.setOogOH(getIntegerValueFromString(gIReadResponseExporterContainer.getContainerOOG_OH()));
+    exportContainer
+        .setOogOH(ExportUtilService.getIntegerValueFromString(gIReadResponseExporterContainer.getContainerOOG_OH()));
     // private double containerOOG_OL;// 3.0,
-    exportContainer.setOogOL(getIntegerValueFromString(gIReadResponseExporterContainer.getContainerOOG_OL()));
+    exportContainer
+        .setOogOL(ExportUtilService.getIntegerValueFromString(gIReadResponseExporterContainer.getContainerOOG_OL()));
     // private double containerOOG_OF;// 1.0,
-    exportContainer.setOogOF(getIntegerValueFromString(gIReadResponseExporterContainer.getContainerOOG_OF()));
+    exportContainer
+        .setOogOF(ExportUtilService.getIntegerValueFromString(gIReadResponseExporterContainer.getContainerOOG_OF()));
     // private double containerOOG_OA;// 2.0,
-    exportContainer.setOogOA(getIntegerValueFromString(gIReadResponseExporterContainer.getContainerOOG_OA()));
+    exportContainer
+        .setOogOA(ExportUtilService.getIntegerValueFromString(gIReadResponseExporterContainer.getContainerOOG_OA()));
     // private double containerOOG_OR;// 4.0
-    exportContainer.setOogOR(getIntegerValueFromString(gIReadResponseExporterContainer.getContainerOOG_OR()));
+    exportContainer
+        .setOogOR(ExportUtilService.getIntegerValueFromString(gIReadResponseExporterContainer.getContainerOOG_OR()));
     // private String containerDamageCode1;//
     exportContainer.setDamageCode_01(constructDamageCode(gIReadResponseExporterContainer.getContainerDamageCode1()));
     // private String containerDamageCode2;//
@@ -322,8 +345,6 @@ public class OpusService {
     // private String containerDamageCode9;//
     exportContainer.setDamageCode_09(constructDamageCode(gIReadResponseExporterContainer.getContainerDamageCode9()));
 
-    exportContainer.setSealAttribute(sealAttribute);
-    exportContainer.setContainer(containerDTO);
 
     return exportContainer;
   }
@@ -415,41 +436,6 @@ public class OpusService {
   }
 
 
-  private int getIntValueFromString(String stringVal) {
-    if (StringUtils.isNotEmpty(stringVal)) {
-      return Integer.parseInt(stringVal);
-    }
-    return 0;
-  }
-
-  private static String getStringValueFromInteger(Integer integerVal) {
-    if (!(integerVal == null || integerVal == 0)) {
-      return Integer.toString(integerVal);
-    }
-    return null;
-  }
-
-  private static int getIntegerValueFromString(String strValue) {
-    if (StringUtils.isNotEmpty(strValue)) {
-      try {
-        return Integer.parseInt(strValue);
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
-    }
-    return 0;
-  }
-
-  private static Boolean getBooleanFromString(String string) {
-    if (StringUtils.isNotEmpty(string)) {
-      if (StringUtils.equals(string, "N")) {
-        return false;
-      } else {
-        return true;
-      }
-    }
-    return null;
-  }
 
   private static DamageCodeDTO constructDamageCode(String containerDamageCode) {
     DamageCodeDTO damageCodeDTO = new DamageCodeDTO();
@@ -457,16 +443,7 @@ public class OpusService {
     return damageCodeDTO;
   }
 
-  private static String getStringFromBoolean(Boolean bool) {
-    if (!(bool == null)) {
-      if (bool) {
-        return "Y";
-      } else {
-        return "N";
-      }
-    }
-    return null;
-  }
+
 
   private static String getDamageCodeFromObject(DamageCodeDTO damageCode) {
     if (!(damageCode == null)) {
@@ -475,11 +452,11 @@ public class OpusService {
     return null;
   }
 
-  public static String hasErrorMessage(List<OpusErrorListItem> errorList) {
+  public String hasErrorMessage(List<OpusErrorListItem> errorList) {
     // String hasErrorMessage(List<Error>) in opus service
     // check if error list object is empty
     if (!(errorList == null || errorList.isEmpty())) {
-      StringBuilder sb = new StringBuilder("");
+      StringBuilder sb = new StringBuilder("OPUS_ERROR_MESSAGE :");
       // if not empty construct error string
       // container number + error description, other eg:- NH161219003
       // There does no Truck In plan
@@ -622,6 +599,88 @@ public class OpusService {
         goWriteRequestImportContainerList.add(importContainerToGOWriteRequestImportContainer(importContainer));
       });
       return goWriteRequestImportContainerList;
+    }
+    return null;
+  }
+
+  public List<ExportContainer> giReadResponseExporterContainerListToExportContainerList(
+      List<GIReadResponseExporterContainer> exportContainerListCY, List<ExportContainer> exportContainers) {
+    if (!(exportContainerListCY == null || exportContainerListCY.isEmpty())) {
+      List<ExportContainer> updatedExportContainers = new ArrayList<ExportContainer>();
+      exportContainerListCY.forEach(opusExportContainer -> {
+        ExportContainer exportContainer = null;
+        if (!(exportContainers == null || exportContainers.isEmpty())) {
+          exportContainer =
+              exportContainers
+                  .stream().filter(e -> (e.getContainer() != null) && (StringUtils
+                      .equals(e.getContainer().getContainerNumber(), opusExportContainer.getContainerNo())))
+                  .findFirst().get();
+        }
+        exportContainer = giReadResponseExporterContainerToExportContainer(opusExportContainer, exportContainer);
+
+        log.info("exportContainer.getGateInOut " + exportContainer.getGateInOut());
+        log.info("exportContainer.getShippingLine " + exportContainer.getShippingLine());
+        if (!(exportContainer.getContainer() == null)) {
+          log.info("exportContainer.getContainer().getContainerNumber() "
+              + exportContainer.getContainer().getContainerNumber());
+        } else {
+          log.warn("exportContainer.getContainer().getContainerNumber() is NULL ");
+        }
+        if (!(exportContainer.getBaseCommonGateInOutAttribute() == null)) {
+          log.info("exportContainer.getBaseCommonGateInOutAttribute().getPmHeadNo() "
+              + exportContainer.getBaseCommonGateInOutAttribute().getPmHeadNo());
+          log.info("exportContainer.getBaseCommonGateInOutAttribute().getPmPlateNo()"
+              + exportContainer.getBaseCommonGateInOutAttribute().getPmPlateNo());
+        } else {
+          log.warn("exportContainer.getBaseCommonGateInOutAttribute() is NULL ");
+        }
+
+
+        updatedExportContainers.add(exportContainer);
+
+      });
+      return updatedExportContainers;
+    }
+    return null;
+  }
+
+  public List<ImportContainer> giReadResponseImportContainerListToImportContainerList(
+      List<GIReadResponseImportContainer> importContainerListCY, List<ImportContainer> importContainers) {
+    if (!(importContainerListCY == null || importContainerListCY.isEmpty())) {
+      List<ImportContainer> updatedImportContainers = new ArrayList<ImportContainer>();
+      importContainerListCY.forEach(opusExportContainer -> {
+        ImportContainer importContainer = null;
+        if (!(importContainers == null || importContainers.isEmpty())) {
+          importContainer =
+              importContainers
+                  .stream().filter(e -> (e.getContainer() != null) && (StringUtils
+                      .equals(e.getContainer().getContainerNumber(), opusExportContainer.getContainerNo())))
+                  .findFirst().get();
+        }
+        importContainer = giReadResponseImportContainerToImportContainer(opusExportContainer, importContainer);
+
+        log.info("importContainer.getGateInOut " + importContainer.getGateInOut());
+        log.info("importContainer.getShippingLine " + importContainer.getShippingLine());
+        if (!(importContainer.getContainer() == null)) {
+          log.info("importContainer.getContainer().getContainerNumber() "
+              + importContainer.getContainer().getContainerNumber());
+        } else {
+          log.warn("importContainer.getContainer().getContainerNumber() is NULL ");
+        }
+        if (!(importContainer.getBaseCommonGateInOutAttribute() == null)) {
+          log.info("importContainer.getBaseCommonGateInOutAttribute().getPmHeadNo() "
+              + importContainer.getBaseCommonGateInOutAttribute().getPmHeadNo());
+          log.info("importContainer.getBaseCommonGateInOutAttribute().getPmPlateNo()"
+              + importContainer.getBaseCommonGateInOutAttribute().getPmPlateNo());
+        } else {
+          log.warn("importContainer.getBaseCommonGateInOutAttribute() is NULL ");
+        }
+
+
+        updatedImportContainers.add(importContainer);
+
+      });
+      return updatedImportContainers;
     }
     return null;
   }

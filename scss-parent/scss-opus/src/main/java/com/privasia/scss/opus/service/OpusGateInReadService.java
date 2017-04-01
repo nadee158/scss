@@ -6,7 +6,6 @@ package com.privasia.scss.opus.service;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,14 +17,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.google.gson.Gson;
 import com.privasia.scss.common.dto.ExportContainer;
 import com.privasia.scss.common.dto.GateInReponse;
 import com.privasia.scss.common.dto.GateInRequest;
 import com.privasia.scss.common.dto.ImportContainer;
 import com.privasia.scss.common.util.CommonUtil;
 import com.privasia.scss.common.util.DateUtil;
-import com.privasia.scss.opus.dto.GIReadResponseExporterContainer;
-import com.privasia.scss.opus.dto.GIReadResponseImportContainer;
 // import com.privasia.scss.core.exception.ResultsNotFoundException;
 import com.privasia.scss.opus.dto.OpusGateInReadRequest;
 import com.privasia.scss.opus.dto.OpusGateInReadResponse;
@@ -79,10 +77,12 @@ public class OpusGateInReadService {
 
     HttpEntity<OpusGateInReadRequest> request = new HttpEntity<OpusGateInReadRequest>(opusGateInReadRequest, headers);
 
+    log.info("OpusGateInReadRequest : -" + (new Gson()).toJson(opusGateInReadRequest));
+
     ResponseEntity<OpusGateInReadResponse> response =
         restTemplate.postForEntity(gateInReadResponseURL, request, OpusGateInReadResponse.class);
 
-    log.info(response.toString());
+    log.info("RESPONSE FROM OPUS: " + response.toString());
     return response.getBody();
   }
 
@@ -96,43 +96,20 @@ public class OpusGateInReadService {
     gateInReponse.setHaulageCode(opusGateInReadResponse.getHaulageCode());
     gateInReponse.setLaneNo(opusGateInReadResponse.getLaneNo());
     gateInReponse.setTruckHeadNo(opusGateInReadResponse.getTruckHeadNo());
-    gateInReponse = constructExportContainers(opusGateInReadResponse.getExportContainerListCY(), gateInReponse);
-    gateInReponse = constructImportContainers(opusGateInReadResponse.getImportContainerListCY(), gateInReponse);
+    // already hav import containers and export containers, update them
+    List<ExportContainer> updatedExportContainerList =
+        opusService.giReadResponseExporterContainerListToExportContainerList(
+            opusGateInReadResponse.getExportContainerListCY(), gateInReponse.getExportContainers());
+
+    List<ImportContainer> updatedImportContainerList =
+        opusService.giReadResponseImportContainerListToImportContainerList(
+            opusGateInReadResponse.getImportContainerListCY(), gateInReponse.getImportContainers());
+
+    gateInReponse.setExportContainers(updatedExportContainerList);
+    gateInReponse.setImportContainers(updatedImportContainerList);
     return gateInReponse;
   }
 
-  private GateInReponse constructExportContainers(List<GIReadResponseExporterContainer> exportContainerListCY,
-      GateInReponse gateInReponse) {
 
-    if (!(exportContainerListCY == null || exportContainerListCY.isEmpty())) {
-
-      exportContainerListCY.forEach(opusExportContainer -> {
-        ExportContainer exportContainer =
-            opusService.giReadResponseExporterContainerToExportContainer(opusExportContainer);
-        gateInReponse.getExportContainers().add(exportContainer);
-
-      });
-    }
-    return gateInReponse;
-  }
-
-  private GateInReponse constructImportContainers(List<GIReadResponseImportContainer> importContainerListCY,
-      GateInReponse gateInReponse) {
-
-    if (!(importContainerListCY == null || importContainerListCY.isEmpty())) {
-
-      importContainerListCY.forEach(opusImportContainer -> {
-        gateInReponse.getImportContainers().forEach(container -> {
-          if (StringUtils.equals(container.getContainer().getContainerNumber(), opusImportContainer.getContainerNo())) {
-            ImportContainer importContainer =
-                opusService.giReadResponseImportContainerToImportContainer(opusImportContainer);
-            gateInReponse.getImportContainers().add(importContainer);
-          }
-        });
-
-      });
-    }
-    return gateInReponse;
-  }
 
 }

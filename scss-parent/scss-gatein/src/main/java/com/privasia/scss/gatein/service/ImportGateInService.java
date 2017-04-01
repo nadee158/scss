@@ -287,6 +287,7 @@ public class ImportGateInService {
     return new GatePassValidateDTO();
   }
 
+  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
   public List<ImportContainer> fetchContainerInfo(List<Long> gatePassNumberList) {
 
     Optional<List<GatePass>> optionalGatePassList = gatePassRepository.findByGatePassNoIn(gatePassNumberList);
@@ -298,8 +299,15 @@ public class ImportGateInService {
       ImportContainer importContainer = new ImportContainer();
       modelMapper.map(item, importContainer);
 
-      System.out.println("item " + item);
-      System.out.println("importContainer " + importContainer);
+      // log.info("item " + item);
+      // log.info("importContainer " + importContainer);
+      log.info("getGateInOut " + importContainer.getGateInOut());
+      log.info("getShippingLine " + importContainer.getShippingLine());
+      log.info("getContainer().getContainerNumber() " + importContainer.getContainer().getContainerNumber());
+      log.info("getBaseCommonGateInOutAttribute().getPmHeadNo() "
+          + importContainer.getBaseCommonGateInOutAttribute().getPmHeadNo());
+      log.info("getBaseCommonGateInOutAttribute().getPmPlateNo()"
+          + importContainer.getBaseCommonGateInOutAttribute().getPmPlateNo());
 
       importContainers.add(importContainer);
     });
@@ -354,14 +362,18 @@ public class ImportGateInService {
             }
 
             PrintEir printEir = null;
-            if (!(importContainer.getPrintEir() == null || importContainer.getPrintEir().getPrintEIRID() == null)) {
-              printEir = printEirRepository.findOne(importContainer.getPrintEir().getPrintEIRID()).orElse(null);
-            }
+            // if (!(importContainer.getPrintEir() == null ||
+            // importContainer.getPrintEir().getPrintEIRID() == null)) {
+            // printEir =
+            // printEirRepository.findOne(importContainer.getPrintEir().getPrintEIRID()).orElse(null);
+            // }
 
             CardUsage cardUsage = null;
-            if (!(importContainer.getCardUsage() == null || importContainer.getCardUsage().getCardUsageID() == null)) {
-              cardUsage = cardUsageRepository.findOne(importContainer.getCardUsage().getCardUsageID()).orElse(null);
-            }
+            // if (!(importContainer.getCardUsage() == null ||
+            // importContainer.getCardUsage().getCardUsageID() == null)) {
+            // cardUsage =
+            // cardUsageRepository.findOne(importContainer.getCardUsage().getCardUsageID()).orElse(null);
+            // }
 
             modelMapper.map(importContainer, gatePass);
             gatePass.prepareForInsertFromOpus(card, gateInClerk, gateInClient, printEir, cardUsage, hpatBooking);

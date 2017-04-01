@@ -42,6 +42,8 @@ public class ImportExportGateOutService {
 
 	private ClientRepository clientRepository;
 
+	private OpusService opusService;
+
 	@Autowired
 	public void setOpusGateOutReadService(OpusGateOutReadService opusGateOutReadService) {
 		this.opusGateOutReadService = opusGateOutReadService;
@@ -61,10 +63,15 @@ public class ImportExportGateOutService {
 	public void setExportGateOutService(ExportGateOutService exportGateOutService) {
 		this.exportGateOutService = exportGateOutService;
 	}
-	
+
 	@Autowired
 	public void setClientRepository(ClientRepository clientRepository) {
 		this.clientRepository = clientRepository;
+	}
+
+	@Autowired
+	public void setOpusService(OpusService opusService) {
+		this.opusService = opusService;
 	}
 
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
@@ -74,11 +81,10 @@ public class ImportExportGateOutService {
 		Client client = clientOpt
 				.orElseThrow(() -> new ResultsNotFoundException("Invalid lane ID ! " + gateOutRequest.getLaneId()));
 		gateOutRequest.setLaneNo(client.getLaneNo());
-		
+
 		List<ExportContainer> exportContainers = exportGateOutService.populateGateOut(gateOutRequest);
 
 		List<ImportContainer> importContainers = null;
-		
 
 		if (gateOutRequest.getGatePass1() > 0 || gateOutRequest.getGatePass2() > 0) {
 			importContainers = importGateOutService.populateGateOut(gateOutRequest);
@@ -116,7 +122,7 @@ public class ImportExportGateOutService {
 		OpusGateOutWriteResponse opusGateOutWriteResponse = opusGateOutWriteService
 				.getGateOutWriteResponse(opusGateOutWriteRequest);
 
-		String errorMessage = OpusService.hasErrorMessage(opusGateOutWriteResponse.getErrorList());
+		String errorMessage = opusService.hasErrorMessage(opusGateOutWriteResponse.getErrorList());
 		if (StringUtils.isNotEmpty(errorMessage)) {
 			// throw new business exception with constructed message - there is
 			// an error

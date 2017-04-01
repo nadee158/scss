@@ -33,7 +33,6 @@ import com.privasia.scss.common.util.ReturnMsg;
 import com.privasia.scss.core.service.WDCGlobalSettingService;
 import com.privasia.scss.gatein.dto.ExportSSR;
 import com.privasia.scss.gatein.service.ClientService;
-import com.privasia.scss.gatein.service.ContainerService;
 import com.privasia.scss.gatein.service.IsoCodeService;
 import com.privasia.scss.gatein.service.VesselOmitService;
 import com.privasia.scss.gatein.util.DGContDesc;
@@ -47,9 +46,6 @@ public class GateInExpNormalController {
   private static Logger logger = Logger.getLogger(GateInExpNormalController.class.getName());
 
 
-
-  @Autowired
-  private ContainerService containerService;
 
   @Autowired
   private VesselOmitService vesselOmitService;
@@ -144,7 +140,7 @@ public class GateInExpNormalController {
               /**
                * Query Export Information
                */
-              f = containerService.selectContainerNoInfo(f);
+              // f = containerService.selectContainerNoInfo(f);
 
               /**
                * Check if container 1 is a DG container
@@ -169,7 +165,7 @@ public class GateInExpNormalController {
               /**
                * Query Export Information
                */
-              f = containerService.selectContainerNoInfo(f);
+              // f = containerService.selectContainerNoInfo(f);
 
               /**
                * Check if container 1 is a DG container
@@ -335,7 +331,7 @@ public class GateInExpNormalController {
                     /**
                      * did not tick bypass early entry window
                      */
-                    boolean inEarlyEntryWindow = containerService.inEarlyEntryWindow();
+                    boolean inEarlyEntryWindow = false; // containerService.inEarlyEntryWindow();
                     if (!inEarlyEntryWindow) {
 
                       final SimpleDateFormat time = new SimpleDateFormat("h:mm a");
@@ -444,7 +440,7 @@ public class GateInExpNormalController {
 
   private String validateContainerAllowedIn(ExportContainer c) throws Exception {
     String returnmsg = null;
-    boolean isContainerAllowedIn = containerService.isAllowIn(c);
+    boolean isContainerAllowedIn = false;// containerService.isAllowIn(c);
     if (!isContainerAllowedIn) {
       if (c.isEarlyEntry()) {
         final Date now = new Date();
@@ -474,7 +470,7 @@ public class GateInExpNormalController {
 
   private ExportContainer findContainer(String containerNo) throws Exception {
     if (StringUtils.isNotEmpty(containerNo)) {
-      return containerService.getContainerByContainerNo(containerNo);
+      // return containerService.getContainerByContainerNo(containerNo);
     }
     return null;
   }

@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.privasia.scss.common.dto.ExportContainer;
-import com.privasia.scss.common.dto.GateInRequest;
+import com.privasia.scss.common.dto.GateInReponse;
 import com.privasia.scss.common.dto.GateOutReponse;
 import com.privasia.scss.common.dto.HpatDto;
 import com.privasia.scss.common.dto.ImportContainer;
@@ -39,7 +39,7 @@ import com.querydsl.core.types.Predicate;
  * @author Janaka
  *
  */
-@Service("hpatService")
+@Service("hpabService")
 public class HPABService {
 
   @Autowired
@@ -143,11 +143,11 @@ public class HPABService {
 
               if (transactionDTO.getImportContainer01() == null) {
                 if (!(bookingDetail == null)) {
-                  transactionDTO.setImportContainer01(bookingDetail.constructImportContainer());
+                  transactionDTO.setImportContainer01(bookingDetail.constructImportContainer(null));
                 }
               } else {
                 if (!(bookingDetail == null)) {
-                  transactionDTO.setImportContainer02(bookingDetail.constructImportContainer());
+                  transactionDTO.setImportContainer02(bookingDetail.constructImportContainer(null));
                 }
               }
 
@@ -156,10 +156,10 @@ public class HPABService {
 
               if (transactionDTO.getExportContainer01() == null) {
                 if (!(bookingDetail == null)) {
-                  transactionDTO.setExportContainer01(bookingDetail.constructExportContainer());
+                  transactionDTO.setExportContainer01(bookingDetail.constructExportContainer(null));
                 }
               } else {
-                transactionDTO.setExportContainer02(bookingDetail.constructExportContainer());
+                transactionDTO.setExportContainer02(bookingDetail.constructExportContainer(null));
               }
 
               break;
@@ -167,11 +167,11 @@ public class HPABService {
 
               if (transactionDTO.getImportContainer01() == null) {
                 if (!(bookingDetail == null)) {
-                  transactionDTO.setImportContainer01(bookingDetail.constructImportContainer());
+                  transactionDTO.setImportContainer01(bookingDetail.constructImportContainer(null));
                 }
               } else {
                 if (!(bookingDetail == null)) {
-                  transactionDTO.setImportContainer02(bookingDetail.constructImportContainer());
+                  transactionDTO.setImportContainer02(bookingDetail.constructImportContainer(null));
                 }
               }
 
@@ -201,15 +201,18 @@ public class HPABService {
   // rename method to populateHpabForImpExp
   // return GateOutReponse
   @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-  public GateOutReponse populateHpabForImpExp(GateInRequest gateInRequest) {
+  public GateInReponse populateHpabForImpExp(GateInReponse gateInReponse, String hpabSeqId) {
 
     Optional<HPABBooking> hpatBookingOpt =
-        hpatBookingRepository.findByBookingIDAndStatus(gateInRequest.getHpabSeqId(), HpatReferStatus.ACTIVE);
+        hpatBookingRepository.findByBookingIDAndStatus(hpabSeqId, HpatReferStatus.ACTIVE);
 
-    HPABBooking booking = hpatBookingOpt
-        .orElseThrow(() -> new ResultsNotFoundException("Invalid HPAB Bookibg ID ! " + gateInRequest.getHpabSeqId()));
+    HPABBooking booking =
+        hpatBookingOpt.orElseThrow(() -> new ResultsNotFoundException("Invalid HPAB Bookibg ID ! " + hpabSeqId));
 
     final GateOutReponse reponse = booking.constructGateOutReponse();
+
+    List<ImportContainer> updatedImportContainers = new ArrayList<ImportContainer>();
+    List<ExportContainer> updatedExportContainers = new ArrayList<ExportContainer>();
 
     if (!(booking.getHpatBookingDetails() == null || booking.getHpatBookingDetails().isEmpty())) {
 
@@ -223,22 +226,30 @@ public class HPABService {
             /// create a import conatiner
             // fetch details from hpat
             // add to a list
-            if (reponse.getImportContainers() == null) {
-              reponse.setImportContainers(new ArrayList<ImportContainer>());
+            ImportContainer importContainer = null;
+            if (!(gateInReponse.getImportContainers() == null || gateInReponse.getImportContainers().isEmpty())) {
+              importContainer = gateInReponse.getImportContainers()
+                  .stream().filter(e -> (e.getContainer() != null) && (StringUtils
+                      .equals(e.getContainer().getContainerNumber(), bookingDetail.getContainerNumber())))
+                  .findFirst().get();
             }
-            reponse.getImportContainers().add(bookingDetail.constructImportContainer());
+            updatedImportContainers.add(bookingDetail.constructImportContainer(importContainer));
             break;
           case EXPORT:
             /// create a export conatiner
             // fetch details from hpat
             // add to a list
-            if (reponse.getExportContainers() == null) {
-              reponse.setExportContainers(new ArrayList<ExportContainer>());
+
+            ExportContainer exportContainer = null;
+            if (!(gateInReponse.getExportContainers() == null || gateInReponse.getExportContainers().isEmpty())) {
+              exportContainer = gateInReponse.getExportContainers()
+                  .stream().filter(e -> (e.getContainer() != null) && (StringUtils
+                      .equals(e.getContainer().getContainerNumber(), bookingDetail.getContainerNumber())))
+                  .findFirst().get();
             }
-            reponse.getExportContainers().add(bookingDetail.constructExportContainer());
 
+            updatedExportContainers.add(bookingDetail.constructExportContainer(exportContainer));
             break;
-
           case EMPTY_PICKUP:
 
             break;
@@ -253,7 +264,15 @@ public class HPABService {
       });
     }
 
-    return reponse;
+    if (!(updatedImportContainers == null || updatedImportContainers.isEmpty())) {
+      gateInReponse.setImportContainers(updatedImportContainers);
+    }
+
+    if (!(updatedExportContainers == null || updatedExportContainers.isEmpty())) {
+      gateInReponse.setExportContainers(updatedExportContainers);
+    }
+
+    return gateInReponse;
 
   }
 

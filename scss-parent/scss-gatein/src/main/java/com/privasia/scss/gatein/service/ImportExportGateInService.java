@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,6 +27,7 @@ import com.privasia.scss.core.model.Client;
 import com.privasia.scss.core.repository.CardRepository;
 import com.privasia.scss.core.repository.ClientRepository;
 import com.privasia.scss.core.security.model.UserContext;
+import com.privasia.scss.hpat.service.HPABService;
 import com.privasia.scss.opus.dto.OpusGateInReadRequest;
 import com.privasia.scss.opus.dto.OpusGateInReadResponse;
 import com.privasia.scss.opus.dto.OpusGateInWriteRequest;
@@ -35,6 +38,8 @@ import com.privasia.scss.opus.service.OpusService;
 
 @Service("importExportGateInService")
 public class ImportExportGateInService {
+
+  private static final Log log = LogFactory.getLog(ImportExportGateInService.class);
 
   private ImportGateInService importGateInService;
 
@@ -47,6 +52,21 @@ public class ImportExportGateInService {
   private ClientRepository clientRepository;
 
   private CardRepository cardRepository;
+
+  private OpusService opusService;
+
+  private HPABService hpabService;
+
+
+  @Autowired
+  public void setHpabService(HPABService hpabService) {
+    this.hpabService = hpabService;
+  }
+
+  @Autowired
+  public void setOpusService(OpusService opusService) {
+    this.opusService = opusService;
+  }
 
   @Autowired
   public void setOpusGateInReadService(OpusGateInReadService opusGateInReadService) {
@@ -109,6 +129,18 @@ public class ImportExportGateInService {
     // call opus -
     OpusGateInReadRequest gateInReadRequest = opusGateInReadService.constructOpenGateInRequest(gateInRequest);
     OpusGateInReadResponse gateInReadResponse = opusGateInReadService.getGateInReadResponse(gateInReadRequest);
+
+    // check the errorlist of reponse
+    String errorMessage = opusService.hasErrorMessage(gateInReadResponse.getErrorList());
+    log.error("ERROR MESSAGE FROM OPUS SERVICE: " + errorMessage);
+    if (StringUtils.isNotEmpty(errorMessage)) {
+      // save it to the db - TO BE IMPLEMENTED
+      // throw new business exception with constructed message - there is
+      // an error
+      throw new BusinessException(errorMessage);
+    }
+
+    // double check with the documentation
     gateInReponse = opusGateInReadService.constructGateInReponse(gateInReadResponse, gateInReponse);
 
     if (!(StringUtils.isEmpty(gateInRequest.getExpContainer1())
@@ -119,6 +151,11 @@ public class ImportExportGateInService {
     if ((gateInRequest.getGatePass1() != null && gateInRequest.getGatePass1() > 0)
         || (gateInRequest.getGatePass2() != null && gateInRequest.getGatePass2() > 0)) {
       importGateInService.populateGateInImport(gateInReponse);
+    }
+
+    // assign details from hpab booking
+    if (StringUtils.isNotEmpty(gateInRequest.getHpabSeqId())) {
+      gateInReponse = hpabService.populateHpabForImpExp(gateInReponse, gateInRequest.getHpabSeqId());
     }
 
     return gateInReponse;
@@ -136,8 +173,10 @@ public class ImportExportGateInService {
     OpusGateInWriteResponse opusGateInWriteResponse =
         opusGateInWriteService.getGateInWriteResponse(opusGateInWriteRequest);
     System.out.println("opusGateInWriteResponse " + gson.toJson(opusGateInWriteResponse));
-    String errorMessage = OpusService.hasErrorMessage(opusGateInWriteResponse.getErrorList());
+    String errorMessage = opusService.hasErrorMessage(opusGateInWriteResponse.getErrorList());
+    log.error("ERROR MESSAGE FROM OPUS SERVICE: " + errorMessage);
     if (StringUtils.isNotEmpty(errorMessage)) {
+      // save it to the db - TO BE IMPLEMENTED
       // throw new business exception with constructed message - there is
       // an error
       throw new BusinessException(errorMessage);
