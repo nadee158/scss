@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,7 +25,6 @@ import com.privasia.scss.core.model.Client;
 import com.privasia.scss.core.model.Exports;
 import com.privasia.scss.core.model.ExportsQ;
 import com.privasia.scss.core.model.HPABBooking;
-import com.privasia.scss.core.model.Login;
 import com.privasia.scss.core.model.PrintEir;
 import com.privasia.scss.core.model.ShipCode;
 import com.privasia.scss.core.model.ShipSCN;
@@ -36,10 +36,11 @@ import com.privasia.scss.core.repository.DamageCodeRepository;
 import com.privasia.scss.core.repository.ExportsQRepository;
 import com.privasia.scss.core.repository.ExportsRepository;
 import com.privasia.scss.core.repository.HPATBookingRepository;
-import com.privasia.scss.core.repository.LoginRepository;
 import com.privasia.scss.core.repository.PrintEirRepository;
 import com.privasia.scss.core.repository.ShipCodeRepository;
 import com.privasia.scss.core.repository.ShipSCNRepository;
+import com.privasia.scss.core.repository.SystemUserRepository;
+import com.privasia.scss.core.security.util.SecurityHelper;
 
 @Service("exportGateInService")
 public class ExportGateInService {
@@ -54,7 +55,7 @@ public class ExportGateInService {
 
   private ExportsQRepository exportsQRepository;
 
-  private LoginRepository loginRepository;
+  private SystemUserRepository systemUserRepository;
 
   private CardRepository cardRepository;
 
@@ -74,8 +75,8 @@ public class ExportGateInService {
   }
 
   @Autowired
-  public void setLoginRepository(LoginRepository loginRepository) {
-    this.loginRepository = loginRepository;
+  public void setSystemUserRepository(SystemUserRepository systemUserRepository) {
+    this.systemUserRepository = systemUserRepository;
   }
 
   @Autowired
@@ -212,42 +213,63 @@ public class ExportGateInService {
         System.out.println("exportContainer " + exportContainer);
         modelMapper.map(exportContainer, exports);
         System.out.println("exports after modal map from exportContainer " + exports);
-        SystemUser gateInClerk = null;
-        System.out.println("gateInWriteRequest.getUserName() " + gateInWriteRequest.getUserName());
-        Login login = loginRepository.findByUserName(gateInWriteRequest.getUserName()).orElse(null);
-        if (!(login == null)) {
-          gateInClerk = login.getSystemUser();
-        }
+
+        // SystemUser gateInClerk = null;
+        // System.out.println("gateInWriteRequest.getUserName() " +
+        // gateInWriteRequest.getUserName());
+        // Login login =
+        // loginRepository.findByUserName(gateInWriteRequest.getUserName()).orElse(null);
+        // if (!(login == null)) {
+        // gateInClerk = login.getSystemUser();
+        // }
+
+        // if any of entitiees are not found throw exception
+        SystemUser gateInClerk = systemUserRepository.findOne(SecurityHelper.getCurrentUserId()).orElseThrow(
+            () -> new AuthenticationServiceException("Log in User Not Found : " + SecurityHelper.getCurrentUserId()));
         System.out.println("gateInClerk " + gateInClerk);
+
         Card card = null;
         HPABBooking hpatBooking = null;
+
         if (!(exportContainer.getBaseCommonGateInOutAttribute() == null)) {
           if (StringUtils.isNotEmpty(exportContainer.getBaseCommonGateInOutAttribute().getHpatBooking())) {
-            hpatBooking = hpatBookingRepository
-                .findOne(exportContainer.getBaseCommonGateInOutAttribute().getHpatBooking()).orElse(null);
+            hpatBooking =
+                hpatBookingRepository.findOne(exportContainer.getBaseCommonGateInOutAttribute().getHpatBooking())
+                    .orElseThrow(() -> new ResultsNotFoundException(
+                        "Invalid Booking : " + exportContainer.getBaseCommonGateInOutAttribute().getHpatBooking()));
           }
           if (!(exportContainer.getBaseCommonGateInOutAttribute().getCard() == null)) {
-            card = cardRepository.findOne(exportContainer.getBaseCommonGateInOutAttribute().getCard()).orElse(null);
+            card = cardRepository.findOne(exportContainer.getBaseCommonGateInOutAttribute().getCard())
+                .orElseThrow(() -> new ResultsNotFoundException(
+                    "Invalid Card : " + exportContainer.getBaseCommonGateInOutAttribute().getCard()));
           }
         }
+
         Client gateInClient = null;
         if (!(exportContainer.getBaseCommonGateInOutAttribute() == null
             || exportContainer.getBaseCommonGateInOutAttribute().getGateInClient() == null)) {
           gateInClient = clientRepository
-              .findOne(exportContainer.getBaseCommonGateInOutAttribute().getGateInClient().getClientID()).orElse(null);
+              .findOne(exportContainer.getBaseCommonGateInOutAttribute().getGateInClient().getClientID())
+              .orElseThrow(() -> new ResultsNotFoundException(
+                  "Invalid Client Id : " + exportContainer.getBaseCommonGateInOutAttribute().getGateInClient()));
         }
         ShipSCN scn = null;
         if (!(exportContainer.getScn() == null)) {
-          scn = shipSCNRepository.findOne(exportContainer.getScn().getShipSCNID()).orElse(null);
+          scn = shipSCNRepository.findOne(exportContainer.getScn().getShipSCNID())
+              .orElseThrow(() -> new ResultsNotFoundException("Invalid Ship SCN : " + exportContainer.getScn()));
         }
         PrintEir printEir = null;
-        if (!(exportContainer.getPrintEir() == null || exportContainer.getPrintEir().getPrintEIRID() == null)) {
-          printEir = printEirRepository.findOne(exportContainer.getPrintEir().getPrintEIRID()).orElse(null);
-        }
+        // if (!(exportContainer.getPrintEir() == null ||
+        // exportContainer.getPrintEir().getPrintEIRID() == null)) {
+        // printEir =
+        // printEirRepository.findOne(exportContainer.getPrintEir().getPrintEIRID()).orElse(null);
+        // }
         CardUsage cardUsage = null;
-        if (!(exportContainer.getCardUsage() == null || exportContainer.getCardUsage().getCardUsageID() == null)) {
-          cardUsage = cardUsageRepository.findOne(exportContainer.getCardUsage().getCardUsageID()).orElse(null);
-        }
+        // if (!(exportContainer.getCardUsage() == null ||
+        // exportContainer.getCardUsage().getCardUsageID() == null)) {
+        // cardUsage =
+        // cardUsageRepository.findOne(exportContainer.getCardUsage().getCardUsageID()).orElse(null);
+        // }
         exports.prepareForInsertFromOpus(gateInClerk, card, gateInClient, scn, printEir, cardUsage, hpatBooking,
             damageCodeRepository);
         System.out.println("exports after initializeing " + exports);

@@ -38,7 +38,11 @@ import com.privasia.scss.common.enums.VesselStatus;
  */
 @Entity
 @Table(name = "SCSS_EXPORTS_Q")
-public class ExportsQ implements Serializable {
+@AttributeOverrides({@AttributeOverride(name = "addBy", column = @Column(name = "EXP_ADD_BY") ),
+    @AttributeOverride(name = "updateBy", column = @Column(name = "EXP_UPDATE_BY") ),
+    @AttributeOverride(name = "dateTimeAdd", column = @Column(name = "EXP_DATECREATE") ),
+    @AttributeOverride(name = "dateTimeUpdate", column = @Column(name = "EXP_DATEUPDATE") )})
+public class ExportsQ extends AuditEntity implements Serializable {
 
   /**
    * 
@@ -52,9 +56,9 @@ public class ExportsQ implements Serializable {
   private Long exportID;
 
   @Embedded
-  @AttributeOverrides({@AttributeOverride(name = "containerNumber", column = @Column(name = "EXP_CONTAINERNO")),
-      @AttributeOverride(name = "containerISOCode", column = @Column(name = "EXP_CONT_ISO_CODE")), @AttributeOverride(
-          name = "containerFullOrEmpty", column = @Column(name = "EXP_FULL_EMPTY_FLAG", nullable = true))})
+  @AttributeOverrides({@AttributeOverride(name = "containerNumber", column = @Column(name = "EXP_CONTAINERNO") ),
+      @AttributeOverride(name = "containerISOCode", column = @Column(name = "EXP_CONT_ISO_CODE") ), @AttributeOverride(
+          name = "containerFullOrEmpty", column = @Column(name = "EXP_FULL_EMPTY_FLAG", nullable = true) )})
   private CommonContainerAttribute container;
 
   /* COMMON GATE IN ATTRIBUTE STARTS */
@@ -151,12 +155,12 @@ public class ExportsQ implements Serializable {
   private String expSpod;
 
   @Embedded
-  @AttributeOverrides({@AttributeOverride(name = "seal01Origin", column = @Column(name = "EXP_SEAL_1_ORIGIN")),
-      @AttributeOverride(name = "seal01Type", column = @Column(name = "EXP_SEAL_1_TYPE")),
-      @AttributeOverride(name = "seal01Number", column = @Column(name = "EXP_SEAL_1_NUMBER")),
-      @AttributeOverride(name = "seal02Origin", column = @Column(name = "EXP_SEAL_2_ORIGIN")),
-      @AttributeOverride(name = "seal02Type", column = @Column(name = "EXP_SEAL_2_TYPE")),
-      @AttributeOverride(name = "seal02Number", column = @Column(name = "EXP_SEAL_2_NUMBER"))})
+  @AttributeOverrides({@AttributeOverride(name = "seal01Origin", column = @Column(name = "EXP_SEAL_1_ORIGIN") ),
+      @AttributeOverride(name = "seal01Type", column = @Column(name = "EXP_SEAL_1_TYPE") ),
+      @AttributeOverride(name = "seal01Number", column = @Column(name = "EXP_SEAL_1_NUMBER") ),
+      @AttributeOverride(name = "seal02Origin", column = @Column(name = "EXP_SEAL_2_ORIGIN") ),
+      @AttributeOverride(name = "seal02Type", column = @Column(name = "EXP_SEAL_2_TYPE") ),
+      @AttributeOverride(name = "seal02Number", column = @Column(name = "EXP_SEAL_2_NUMBER") )})
   private CommonSealAttribute sealAttribute;
 
   @Column(name = "EXP_WEIGHT_BRIDGE")
@@ -342,12 +346,12 @@ public class ExportsQ implements Serializable {
   private String solasCertNo;
 
   @Embedded
-  @AttributeOverrides({@AttributeOverride(name = "mgw", column = @Column(name = "MGW")),
-      @AttributeOverride(name = "faLedgerCode", column = @Column(name = "FA_LEDGER_CODE")),
-      @AttributeOverride(name = "solasRefNumber", column = @Column(name = "SOLAS_REF_NO")),
-      @AttributeOverride(name = "solasDetailID", column = @Column(name = "SOLAS_DETAIL_NO")),
-      @AttributeOverride(name = "solasInstruction", column = @Column(name = "VGM_TYPE")),
-      @AttributeOverride(name = "shipperVGM", column = @Column(name = "SHIPPER_VGM"))})
+  @AttributeOverrides({@AttributeOverride(name = "mgw", column = @Column(name = "MGW") ),
+      @AttributeOverride(name = "faLedgerCode", column = @Column(name = "FA_LEDGER_CODE") ),
+      @AttributeOverride(name = "solasRefNumber", column = @Column(name = "SOLAS_REF_NO") ),
+      @AttributeOverride(name = "solasDetailID", column = @Column(name = "SOLAS_DETAIL_NO") ),
+      @AttributeOverride(name = "solasInstruction", column = @Column(name = "VGM_TYPE") ),
+      @AttributeOverride(name = "shipperVGM", column = @Column(name = "SHIPPER_VGM") )})
   private CommonSolasAttribute solas;
 
   public Long getExportID() {

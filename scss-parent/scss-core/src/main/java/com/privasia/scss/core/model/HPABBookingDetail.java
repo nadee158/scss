@@ -21,8 +21,9 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
-import org.springframework.beans.BeanUtils;
 
+import com.privasia.scss.common.dto.BaseCommonGateInOutDTO;
+import com.privasia.scss.common.dto.CardUsageDTO;
 import com.privasia.scss.common.dto.CommonContainerDTO;
 import com.privasia.scss.common.dto.CommonSealDTO;
 import com.privasia.scss.common.dto.CommonSolasDTO;
@@ -38,10 +39,10 @@ import com.privasia.scss.common.enums.BookingType;
  */
 @Entity
 @Table(name = "ETP_BOOKING_HPAT_DETAIL")
-@AttributeOverrides({@AttributeOverride(name = "addBy", column = @Column(name = "ADD_BY")),
-    @AttributeOverride(name = "updateBy", column = @Column(name = "UPDATE_BY")),
-    @AttributeOverride(name = "dateTimeAdd", column = @Column(name = "DATETIME_ADD")),
-    @AttributeOverride(name = "dateTimeUpdate", column = @Column(name = "DATETIME_UPDATE"))})
+@AttributeOverrides({@AttributeOverride(name = "addBy", column = @Column(name = "ADD_BY") ),
+    @AttributeOverride(name = "updateBy", column = @Column(name = "UPDATE_BY") ),
+    @AttributeOverride(name = "dateTimeAdd", column = @Column(name = "DATETIME_ADD") ),
+    @AttributeOverride(name = "dateTimeUpdate", column = @Column(name = "DATETIME_UPDATE") )})
 public class HPABBookingDetail extends AuditEntity implements Serializable {
 
   /**
@@ -313,7 +314,23 @@ public class HPABBookingDetail extends AuditEntity implements Serializable {
 
   public ImportContainer constructImportContainer() {
     ImportContainer importContainer = new ImportContainer();
-    BeanUtils.copyProperties(this, importContainer);
+
+    importContainer.setBaseCommonGateInOutAttribute(new BaseCommonGateInOutDTO());
+    importContainer.getBaseCommonGateInOutAttribute().setHpatBooking(this.hpatBooking.getBookingID());
+
+    importContainer.setContainer(new CommonContainerDTO());
+    importContainer.getContainer().setContainerNumber(this.containerNumber);
+    importContainer.getContainer().setContainerISOCode(this.containerISO);
+    importContainer.getContainer().setContainerHeight(Integer.parseInt(this.containerSize));
+
+    importContainer.setCardUsage(new CardUsageDTO());
+    importContainer.setContainerType(this.containerType);
+    importContainer.setSealAttribute(new CommonSealDTO());
+    importContainer.getSealAttribute().setSeal01Number(this.expSealNo01);
+    importContainer.getSealAttribute().setSeal02Number(this.expSealNo02);
+    importContainer.setGatePassNo(Long.parseLong(this.impGatePassNumber));
+    importContainer.setContainerLength(Integer.parseInt(this.containerLength));
+
     return importContainer;
   }
 

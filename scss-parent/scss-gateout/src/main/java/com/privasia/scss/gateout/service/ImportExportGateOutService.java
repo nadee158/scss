@@ -16,6 +16,7 @@ import com.privasia.scss.common.dto.GateOutRequest;
 import com.privasia.scss.common.dto.GateOutWriteRequest;
 import com.privasia.scss.common.dto.ImportContainer;
 import com.privasia.scss.core.exception.BusinessException;
+import com.privasia.scss.core.security.model.UserContext;
 import com.privasia.scss.opus.dto.OpusGateOutReadRequest;
 import com.privasia.scss.opus.dto.OpusGateOutReadResponse;
 import com.privasia.scss.opus.dto.OpusGateOutWriteRequest;
@@ -70,7 +71,9 @@ public class ImportExportGateOutService {
     }
 
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    gateOutRequest.setUserName((String) authentication.getPrincipal());
+    UserContext userContext = (UserContext) authentication.getPrincipal();
+    System.out.println("userContext.getUsername() " + userContext.getUsername());
+    gateOutRequest.setUserName(userContext.getUsername());
 
     // call opus -
     OpusGateOutReadRequest gateOutReadRequest = opusGateOutReadService.constructOpenGateOutRequest(gateOutRequest);
