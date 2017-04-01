@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,6 +26,8 @@ import com.privasia.scss.cosmos.util.TextString;
 
 @Repository
 public class CosmosImportRepository {
+	
+	private static final Log log = LogFactory.getLog(CosmosImportRepository.class);
 
 	@Autowired
 	@Qualifier("as400JdbcTemplate")
@@ -47,7 +51,7 @@ public class CosmosImportRepository {
 	@Value("${import.dsoSealNo}")
 	private String queryDsoSealNo;
 
-	@Transactional(readOnly = true)
+	@Transactional(value = "as400TransactionManager", propagation = Propagation.REQUIRED, readOnly = true)
 	public ImportContainer getContainerInfo(ImportContainer importContainer, String containerNo) {
 
 		containerNo = StringUtils.upperCase(containerNo);
@@ -76,7 +80,7 @@ public class CosmosImportRepository {
 		return importContainer;
 	}
 
-	@Transactional(readOnly = true)
+	@Transactional(value = "as400TransactionManager", propagation = Propagation.REQUIRED, readOnly = true)
 	public Optional<List<SealInfo>> getSealInfo(String handingID) {
 
 		handingID = StringUtils.upperCase(handingID);
@@ -103,7 +107,7 @@ public class CosmosImportRepository {
 
 	}
 
-	@Transactional(readOnly = true)
+	@Transactional(value = "as400TransactionManager", propagation = Propagation.REQUIRED, readOnly = true)
 	public boolean checkLaden(String containerNo) {
 
 		containerNo = StringUtils.upperCase(containerNo);
@@ -123,7 +127,7 @@ public class CosmosImportRepository {
 		return false;
 	}
 
-	@Transactional(readOnly = true)
+	@Transactional(value = "as400TransactionManager", propagation = Propagation.REQUIRED, readOnly = true)
 	public boolean isOGABlock(String containerNo) {
 
 		containerNo = StringUtils.upperCase(containerNo);
@@ -140,7 +144,7 @@ public class CosmosImportRepository {
 		return false;
 	}
 
-	@Transactional(readOnly = true)
+	@Transactional(value = "as400TransactionManager", propagation = Propagation.REQUIRED, readOnly = true)
 	public boolean isInternalBlock(String containerNo) {
 
 		containerNo = StringUtils.upperCase(containerNo);
@@ -148,7 +152,7 @@ public class CosmosImportRepository {
 
 	}
 
-	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+	@Transactional(value = "as400TransactionManager", propagation = Propagation.REQUIRED, readOnly = true)
 	public CommonSealDTO fetchDsoSealNo(String containerNo,  String vesselScn) {
 
 		containerNo = StringUtils.upperCase(containerNo);
@@ -167,8 +171,8 @@ public class CosmosImportRepository {
 			commonSealDTO = new CommonSealDTO();
 			sealOrigin = StringUtils.trim(rs.getString("SLOR2K"));
 			sealType = StringUtils.trim(rs.getString("SLTP2K"));
-			System.out.println("sealOrigin" + sealOrigin);
-			System.out.println("sealType" + sealType);
+			log.info("sealOrigin" + sealOrigin);
+			log.info("sealType" + sealType);
 			
 			if (StringUtils.equalsIgnoreCase("L", sealOrigin) && StringUtils.equalsIgnoreCase("SL", sealType)) {
 				commonSealDTO.setSeal01Origin(StringUtils.trim(rs.getString("SLOR2K")));

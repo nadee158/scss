@@ -24,7 +24,7 @@ import com.privasia.scss.common.util.CommonUtil;
 import com.privasia.scss.common.util.DateUtil;
 import com.privasia.scss.opus.dto.OpusGateOutReadRequest;
 import com.privasia.scss.opus.dto.OpusGateOutReadResponse;
-import com.privasia.scss.opus.dto.OpusImportContainer;
+import com.privasia.scss.opus.dto.GIReadResponseImportContainer;
 
 /**
  * @author Janaka
@@ -84,7 +84,7 @@ public class OpusGateOutReadService {
     return constructImportContainers(opusGateOutReadResponse.getImportContainerListCY(), gateOutReponse);
   }
 
-  private GateOutReponse constructImportContainers(List<OpusImportContainer> importContainerListCY,
+  private GateOutReponse constructImportContainers(List<GIReadResponseImportContainer> importContainerListCY,
       GateOutReponse gateOutReponse) {
 
     if (!(importContainerListCY == null || importContainerListCY.isEmpty())) {

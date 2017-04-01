@@ -28,7 +28,11 @@ public class ExportContainer {
 
 	private String optFlag;
 
-	private String bookingNo;
+	private String bookingNo; // opus exportOrderNo
+
+	private String exportOrderType;
+
+	private String exportOrderStatus;
 
 	private ShipSCNDTO scn;
 
@@ -56,7 +60,7 @@ public class ExportContainer {
 
 	private String imdg;
 
-	private String expUN;
+	private String dgUNCode;
 
 	private String imdgLabelID;
 
@@ -87,7 +91,9 @@ public class ExportContainer {
 
 	private String vesselVisitID;
 
-	private String vesselVoyage;
+	private String vesselVoyageIN;
+	
+	private String vesselVoyageOUT;
 
 	private String vesselCode;
 
@@ -142,11 +148,11 @@ public class ExportContainer {
 
 	private String hdlGoodsDescription;
 
-	private Integer cosmosTareWeight;
+	private Integer tareWeight;
 
-	private Integer cosmosGrossWeight;
+	private Integer grossWeight;
 
-	private Integer cosmosNetWeight;
+	private Integer netWeight;
 
 	private CardUsageDTO cardUsage;
 
@@ -204,7 +210,7 @@ public class ExportContainer {
 
 	/////////////// EXTRA FILEDS FOUND BASED ON COMPILE ERRORS/////////////////
 	private boolean internalBlock = false; // for CosmosExportRepository -
-									// extractInternalBlock method
+	// extractInternalBlock method
 
 	private String internalBlockDesc; // for CosmosExportRepository -
 										// extractInternalBlock method
@@ -283,19 +289,8 @@ public class ExportContainer {
 
 	private String reeferTempUnit;
 
-	private String containerDGUNCode;
-
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
 	private LocalDateTime yardDGOpeningDateTime;
-
-	private String vgmType;// S
-	private String vgmWeighingStation;//
-	private String vgmWitnessName;//
-	private String vgmWitnessID;//
-	private String vgmRefNo;//
-	private String vgmMGW;// 1
-	private String vgmNetWeight;//
-	private String vgmVerificationDatetime;//
 
 	private String shippingLine;
 
@@ -305,9 +300,9 @@ public class ExportContainer {
 	private LocalDateTime rtgExecustionDateTime;// ;":"20161212101010"
 
 	//////////////////////////////////////
-	
-	private boolean ogaBlock = false;
 
+	private boolean ogaBlock = false;
+	
 	public Long getExportID() {
 		return exportID;
 	}
@@ -460,12 +455,12 @@ public class ExportContainer {
 		this.imdg = imdg;
 	}
 
-	public String getExpUN() {
-		return expUN;
+	public String getDgUNCode() {
+		return dgUNCode;
 	}
 
-	public void setExpUN(String expUN) {
-		this.expUN = expUN;
+	public void setDgUNCode(String dgUNCode) {
+		this.dgUNCode = dgUNCode;
 	}
 
 	public String getImdgLabelID() {
@@ -578,14 +573,6 @@ public class ExportContainer {
 
 	public void setVesselVisitID(String vesselVisitID) {
 		this.vesselVisitID = vesselVisitID;
-	}
-
-	public String getVesselVoyage() {
-		return vesselVoyage;
-	}
-
-	public void setVesselVoyage(String vesselVoyage) {
-		this.vesselVoyage = vesselVoyage;
 	}
 
 	public String getVesselCode() {
@@ -780,28 +767,28 @@ public class ExportContainer {
 		this.hdlGoodsDescription = hdlGoodsDescription;
 	}
 
-	public Integer getCosmosTareWeight() {
-		return cosmosTareWeight;
+	public Integer getTareWeight() {
+		return tareWeight;
 	}
 
-	public void setCosmosTareWeight(Integer cosmosTareWeight) {
-		this.cosmosTareWeight = cosmosTareWeight;
+	public void setTareWeight(Integer tareWeight) {
+		this.tareWeight = tareWeight;
 	}
 
-	public Integer getCosmosGrossWeight() {
-		return cosmosGrossWeight;
+	public Integer getGrossWeight() {
+		return grossWeight;
 	}
 
-	public void setCosmosGrossWeight(Integer cosmosGrossWeight) {
-		this.cosmosGrossWeight = cosmosGrossWeight;
+	public void setGrossWeight(Integer grossWeight) {
+		this.grossWeight = grossWeight;
 	}
 
-	public Integer getCosmosNetWeight() {
-		return cosmosNetWeight;
+	public Integer getNetWeight() {
+		return netWeight;
 	}
 
-	public void setCosmosNetWeight(Integer cosmosNetWeight) {
-		this.cosmosNetWeight = cosmosNetWeight;
+	public void setNetWeight(Integer netWeight) {
+		this.netWeight = netWeight;
 	}
 
 	public CardUsageDTO getCardUsage() {
@@ -1268,84 +1255,12 @@ public class ExportContainer {
 		this.reeferTempUnit = reeferTempUnit;
 	}
 
-	public String getContainerDGUNCode() {
-		return containerDGUNCode;
-	}
-
-	public void setContainerDGUNCode(String containerDGUNCode) {
-		this.containerDGUNCode = containerDGUNCode;
-	}
-
 	public LocalDateTime getYardDGOpeningDateTime() {
 		return yardDGOpeningDateTime;
 	}
 
 	public void setYardDGOpeningDateTime(LocalDateTime yardDGOpeningDateTime) {
 		this.yardDGOpeningDateTime = yardDGOpeningDateTime;
-	}
-
-	public String getVgmType() {
-		return vgmType;
-	}
-
-	public void setVgmType(String vgmType) {
-		this.vgmType = vgmType;
-	}
-
-	public String getVgmWeighingStation() {
-		return vgmWeighingStation;
-	}
-
-	public void setVgmWeighingStation(String vgmWeighingStation) {
-		this.vgmWeighingStation = vgmWeighingStation;
-	}
-
-	public String getVgmWitnessName() {
-		return vgmWitnessName;
-	}
-
-	public void setVgmWitnessName(String vgmWitnessName) {
-		this.vgmWitnessName = vgmWitnessName;
-	}
-
-	public String getVgmWitnessID() {
-		return vgmWitnessID;
-	}
-
-	public void setVgmWitnessID(String vgmWitnessID) {
-		this.vgmWitnessID = vgmWitnessID;
-	}
-
-	public String getVgmRefNo() {
-		return vgmRefNo;
-	}
-
-	public void setVgmRefNo(String vgmRefNo) {
-		this.vgmRefNo = vgmRefNo;
-	}
-
-	public String getVgmMGW() {
-		return vgmMGW;
-	}
-
-	public void setVgmMGW(String vgmMGW) {
-		this.vgmMGW = vgmMGW;
-	}
-
-	public String getVgmNetWeight() {
-		return vgmNetWeight;
-	}
-
-	public void setVgmNetWeight(String vgmNetWeight) {
-		this.vgmNetWeight = vgmNetWeight;
-	}
-
-	public String getVgmVerificationDatetime() {
-		return vgmVerificationDatetime;
-	}
-
-	public void setVgmVerificationDatetime(String vgmVerificationDatetime) {
-		this.vgmVerificationDatetime = vgmVerificationDatetime;
 	}
 
 	public String getShippingLine() {
@@ -1380,6 +1295,39 @@ public class ExportContainer {
 		this.rtgExecustionDateTime = rtgExecustionDateTime;
 	}
 
+	public String getExportOrderType() {
+		return exportOrderType;
+	}
+
+	public void setExportOrderType(String exportOrderType) {
+		this.exportOrderType = exportOrderType;
+	}
+
+	public String getExportOrderStatus() {
+		return exportOrderStatus;
+	}
+
+	public void setExportOrderStatus(String exportOrderStatus) {
+		this.exportOrderStatus = exportOrderStatus;
+	}
+	
+	public String getVesselVoyageIN() {
+		return vesselVoyageIN;
+	}
+
+	public void setVesselVoyageIN(String vesselVoyageIN) {
+		this.vesselVoyageIN = vesselVoyageIN;
+	}
+
+	public String getVesselVoyageOUT() {
+		return vesselVoyageOUT;
+	}
+
+	public void setVesselVoyageOUT(String vesselVoyageOUT) {
+		this.vesselVoyageOUT = vesselVoyageOUT;
+	}
+	
+
 	@Override
 	public String toString() {
 		return "ExportContainer [exportID=" + exportID + ", container=" + container + ", commonGateInOut="
@@ -1388,21 +1336,21 @@ public class ExportContainer {
 				+ expLine + ", expOut=" + expOut + ", expCar=" + expCar + ", expSpod=" + expSpod + ", sealAttribute="
 				+ sealAttribute + ", expWeightBridge=" + expWeightBridge + ", expNetWeight=" + expNetWeight
 				+ ", referFlag=" + referFlag + ", referTempType=" + referTempType + ", referTemp=" + referTemp
-				+ ", imdg=" + imdg + ", expUN=" + expUN + ", imdgLabelID=" + imdgLabelID + ", oogOH=" + oogOH
+				+ ", imdg=" + imdg + ", dgUNCode=" + dgUNCode + ", imdgLabelID=" + imdgLabelID + ", oogOH=" + oogOH
 				+ ", oogOL=" + oogOL + ", oogOF=" + oogOF + ", oogOA=" + oogOA + ", containerPosition="
 				+ containerPosition + ", preCheckDate=" + preCheckDate + ", yardPosition=" + yardPosition + ", bayCode="
 				+ bayCode + ", pmBTM=" + pmBTM + ", trBTM=" + trBTM + ", oogOR=" + oogOR + ", callCard=" + callCard
-				+ ", vesselVisitID=" + vesselVisitID + ", vesselVoyage=" + vesselVoyage + ", vesselCode=" + vesselCode
-				+ ", vesselName=" + vesselName + ", expAgent=" + expAgent + ", vesselStatus=" + vesselStatus
+				+ ", vesselVisitID=" + vesselVisitID + ", vesselVoyageIN=" + vesselVoyageIN +  ", vesselVoyageOUT=" + vesselVoyageOUT 
+				+ ", vesselCode=" + vesselCode + ", vesselName=" + vesselName + ", expAgent=" + expAgent + ", vesselStatus=" + vesselStatus
 				+ ", shipCode=" + shipCode + ", vesselSCN=" + vesselSCN + ", vesselETADate=" + vesselETADate
 				+ ", vesselATADate=" + vesselATADate + ", agentCode=" + agentCode + ", oogSSR=" + oogSSR
 				+ ", overClosingSSR=" + overClosingSSR + ", replanSSR=" + replanSSR + ", ssrBlockStatus="
 				+ ssrBlockStatus + ", ssrBlockStatusDate=" + ssrBlockStatusDate + ", gcsBlockStatus=" + gcsBlockStatus
 				+ ", gcsBlockStatusDate=" + gcsBlockStatusDate + ", gcsDeclareNo=" + gcsDeclareNo + ", gcsLastCheck="
 				+ gcsLastCheck + ", printEir=" + printEir + ", userRemarks=" + userRemarks + ", kpaApproval="
-				+ kpaApproval + ", hdlGoodsCode=" + hdlGoodsCode + ", dgDescription=" + dgDescription
-				+ ", hdlGoodsDescription=" + hdlGoodsDescription + ", cosmosTareWeight=" + cosmosTareWeight
-				+ ", cosmosGrossWeight=" + cosmosGrossWeight + ", cosmosNetWeight=" + cosmosNetWeight + ", cardUsage="
+				+ kpaApproval + ", hdlGoodsCode=" + hdlGoodsCode + ", dgDescription=" + dgDescription 
+				+ ", hdlGoodsDescription=" + hdlGoodsDescription + ", tareWeight=" + tareWeight
+				+ ", grossWeight=" + grossWeight + ", netWeight=" + netWeight + ", cardUsage="
 				+ cardUsage + ", backToback=" + backToback + ", weightDiffPercentage=" + weightDiffPercentage
 				+ ", weightDifference=" + weightDifference + ", damageCode_01=" + damageCode_01 + ", damageCode_02="
 				+ damageCode_02 + ", damageCode_03=" + damageCode_03 + ", damageCode_04=" + damageCode_04

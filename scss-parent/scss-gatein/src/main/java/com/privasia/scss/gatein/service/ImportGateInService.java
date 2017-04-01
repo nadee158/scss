@@ -242,7 +242,7 @@ public class ImportGateInService {
          */
 
       }
-      log.error("------ENDING CHECKING SCSS GATEPASS is valid------" + gatePassNo);
+      log.error("------ENDING CHECKING Gate Pass Expiry Date By YPN ------" + gatePassNo);
 
 
       log.error("------STARTING CHECKING WDC GATEPASS is valid------" + gatePassNo);

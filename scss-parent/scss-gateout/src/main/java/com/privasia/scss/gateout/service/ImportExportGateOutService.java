@@ -56,7 +56,7 @@ public class ImportExportGateOutService {
   }
 
   @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-  public GateOutReponse populateGateOut(GateOutRequest gateOutRequest) {
+  public GateOutReponse populateGateOut(GateOutRequest gateOutRequest) { //gate out read
     List<ImportContainer> importContainers = null;
     List<ExportContainer> exportContainers = null;
 

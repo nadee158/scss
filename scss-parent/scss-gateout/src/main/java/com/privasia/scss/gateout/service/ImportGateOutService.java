@@ -1,6 +1,5 @@
 package com.privasia.scss.gateout.service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -8,6 +7,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationServiceException;
@@ -22,8 +23,10 @@ import com.privasia.scss.common.dto.GateOutWriteRequest;
 import com.privasia.scss.common.dto.GatePassValidateDTO;
 import com.privasia.scss.common.dto.ImportContainer;
 import com.privasia.scss.common.dto.UpdateSealDTO;
+import com.privasia.scss.common.dto.WDCGateOrderDTO;
 import com.privasia.scss.common.dto.WDCGatePassDTO;
 import com.privasia.scss.common.enums.TransactionStatus;
+import com.privasia.scss.core.exception.BusinessException;
 import com.privasia.scss.core.exception.ResultsNotFoundException;
 import com.privasia.scss.core.model.Client;
 import com.privasia.scss.core.model.CommonSealAttribute;
@@ -35,9 +38,12 @@ import com.privasia.scss.core.repository.GatePassRepository;
 import com.privasia.scss.core.repository.SystemUserRepository;
 import com.privasia.scss.core.repository.WDCGatePassRepository;
 import com.privasia.scss.core.security.util.SecurityHelper;
+import com.privasia.scss.cosmos.repository.CosmosImportRepository;
 
 @Service("importGateOutService")
 public class ImportGateOutService {
+	
+	private static final Log log = LogFactory.getLog(ImportGateOutService.class);
 
 	private GatePassRepository gatePassRepository;
 
@@ -48,6 +54,8 @@ public class ImportGateOutService {
 	private WDCGatePassRepository wdcGatePassRepository;
 	
 	private SystemUserRepository systemUserRepository;
+	
+	private CosmosImportRepository cosmosImportRepository;
 
 	@Autowired
 	public void setGatePassRepository(GatePassRepository gatePassRepository) { 
@@ -73,6 +81,11 @@ public class ImportGateOutService {
 	public void setSystemUserRepository(SystemUserRepository systemUserRepository) {
 		this.systemUserRepository = systemUserRepository;
 	}
+	
+	@Autowired
+	public void setCosmosImportRepository(CosmosImportRepository cosmosImportRepository) {
+		this.cosmosImportRepository = cosmosImportRepository;
+	} 
 
 	public List<ImportContainer> populateGateOut(GateOutRequest gateOutRequest) {
 
@@ -110,6 +123,8 @@ public class ImportGateOutService {
 
 	}
 
+	
+
 	public GatePassValidateDTO validateGatePass(Long cardIdSeq, Long gatePassNo, boolean checkPreArrival,
 			String hpatSeqId, String truckHeadNo) {
 
@@ -118,52 +133,27 @@ public class ImportGateOutService {
 	
 	
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-	public List<ImportContainer> getGCSDeclarationInfo(List<ImportContainer> importList, List<Long> gatePassNumberList) {
+	public ImportContainer getGCSDeclarationInfo(ImportContainer importContainer, long gatePassNumber) {
 		
+		Optional<WDCGatePass> optionalWdcGatePass =  wdcGatePassRepository.findByGatePassNO(gatePassNumber);
 		
-		Optional<List<WDCGatePass>> optionalWdcGatePassList =  wdcGatePassRepository.findByGatePassNOIn(gatePassNumberList);
+		WDCGatePass wdcGatePass = optionalWdcGatePass.orElseThrow(() -> new ResultsNotFoundException(
+				"GCS Declaration could be found for the given Gate Pass Numbers! "+gatePassNumber));
 		
-		List<WDCGatePass> wdcGatePassList = optionalWdcGatePassList.orElseThrow(() -> new ResultsNotFoundException(
-				"GCS Declaration could be found for the given Gate Pass Numbers! "+String.join(",", gatePassNumberList.stream().map(Object::toString)
-                        .collect(Collectors.toList()))));
+		log.info("getGateOrder" + wdcGatePass.getGateOrder());
+		log.info("getLineCode" + wdcGatePass.getGateOrder().getLineCode());
+		log.info("GcsDelcarerNo" + wdcGatePass.getGcsDelcarerNo());
 		
-		wdcGatePassList.forEach(wdcGatePass ->{
-			System.out.println("getGateOrder" + wdcGatePass.getGateOrder());
-			System.out.println("getLineCode" + wdcGatePass.getGateOrder().getLineCode());
-			System.out.println("GcsDelcarerNo" + wdcGatePass.getGcsDelcarerNo());
-			
-			WDCGatePassDTO wdcGatePassDTO =  modelMapper.map(wdcGatePass, WDCGatePassDTO.class);
-			wdcGatePassDTO.setPortSecurity(wdcGatePass.getDateTimeADD());
-			wdcGatePassDTO.setGatePassIssued(wdcGatePass.getDateTimeADD()); 
-			
-			importList.forEach(container ->{
-				System.out.println("getGateOrder" + wdcGatePass.getGateOrder());
-				System.out.println("getLineCode" + wdcGatePass.getGateOrder().getLineCode());
-				System.out.println("GcsDelcarerNo" + wdcGatePass.getGcsDelcarerNo());
-				
-				
-				
-			});
-			
-		});
-
-		/*Optional<List<GatePass>> optionalGatePassList = gatePassRepository.findByGatePassNoIn(gatePassNumberList);
-
-		List<GatePass> gatePassList = optionalGatePassList.orElseThrow(() -> new ResultsNotFoundException(
-				"No Import Containers could be found for the given Gate Pass Numbers!"));
-		List<ImportContainer> importContainers = new ArrayList<ImportContainer>();
-		gatePassList.forEach(item -> {
-			ImportContainer importContainer = new ImportContainer();
-			modelMapper.map(item, importContainer);
-
-			System.out.println("item " + item);
-			System.out.println("importContainer " + importContainer);
-
-			importContainers.add(importContainer);
-		});*/
-		return importList;
+		WDCGatePassDTO wdcGatePassDTO =  modelMapper.map(wdcGatePass, WDCGatePassDTO.class);
+		WDCGateOrderDTO gateOrderDTO =  modelMapper.map(wdcGatePass.getGateOrder(), WDCGateOrderDTO.class);
+		wdcGatePassDTO.setGateOrderDTO(gateOrderDTO);
+		wdcGatePassDTO.setPortSecurity(wdcGatePass.getDateTimeADD());
+		wdcGatePassDTO.setGatePassIssued(wdcGatePass.getDateTimeADD()); 
+		importContainer.setGcsDeclarationInfo(wdcGatePassDTO);
+		return importContainer;
 
 	}
+	
 	
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
 	public String cancelPickUp(CancelPickUpDTO cancelPickUpDTO){
@@ -249,12 +239,45 @@ public class ImportGateOutService {
 		return "success";
 		
 	}
-
-	public List<ImportContainer> saveGateOutInfo(GateOutWriteRequest gateOutWriteRequest) {
-		//
-
-		return null;
+	
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
+	public void updateGateOutImport(List<ImportContainer> importContainers) {
+		
+		long clientID = importContainers.get(0).getBaseCommonGateInOutAttribute().getGateOutClient().getClientID();
+		Optional<Client> clientOpt = clientRepository.findOne(clientID);
+		Client gateOutClient = clientOpt.orElseThrow(() -> new ResultsNotFoundException("Invalid GateOutClient ID ! " + clientID));
+		SystemUser gateOutClerk = systemUserRepository.findOne(SecurityHelper.getCurrentUserId()).orElseThrow(
+		          () -> new AuthenticationServiceException("Log in User Not Found : " + SecurityHelper.getCurrentUserId()));
+		
+		LocalDateTime timeGateOutOk = LocalDateTime.now();
+		
+		importContainers.forEach(importContainer ->{
+			Optional<GatePass> gatePassOpt = gatePassRepository.findOne(importContainer.getGatePassID());
+			GatePass gatePass = gatePassOpt.orElseThrow(()-> new ResultsNotFoundException("Invalid Gate pass  !"+importContainer.getGatePassID()));
+			gatePass.getBaseCommonGateInOutAttribute().setGateOutClerk(gateOutClerk);
+			gatePass.getBaseCommonGateInOutAttribute().setEirStatus(TransactionStatus.valueOf(importContainer.getBaseCommonGateInOutAttribute().getEirStatus()));
+			gatePass.getBaseCommonGateInOutAttribute().setTimeGateOut(importContainer.getBaseCommonGateInOutAttribute().getTimeGateIn());
+			gatePass.getBaseCommonGateInOutAttribute().setTimeGateOutOk(timeGateOutOk);
+			
+			gatePassRepository.save(gatePass);
+		});
 	}
+	
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+	public void ogaInternalBlockCheck(String containerNo) {
+		
+		boolean ogaBlock = cosmosImportRepository.isOGABlock(containerNo);
+		boolean internalBlock = cosmosImportRepository.isInternalBlock(containerNo);
+		
+		if(ogaBlock && internalBlock){
+			throw new BusinessException("Container "+containerNo+ " : Internal & OGA Block!");
+		}else if(ogaBlock){
+			throw new BusinessException("Container "+containerNo+ " : OGA Block!");
+		}else if(internalBlock){
+			throw new BusinessException("Container "+containerNo+ " : Internal Block!");
+		}
+	}
+	
 	
 	public static void main(String args[]){
 		ImportGateOutService importGateOutService = new ImportGateOutService();

@@ -21,10 +21,10 @@ import com.privasia.scss.common.dto.GateOutReponse;
 import com.privasia.scss.common.dto.GateOutWriteRequest;
 import com.privasia.scss.common.util.CommonUtil;
 import com.privasia.scss.common.util.DateUtil;
-import com.privasia.scss.opus.dto.OpusExporterContainer;
+import com.privasia.scss.opus.dto.GIReadResponseExporterContainer;
 import com.privasia.scss.opus.dto.OpusGateOutWriteRequest;
 import com.privasia.scss.opus.dto.OpusGateOutWriteResponse;
-import com.privasia.scss.opus.dto.OpusImportContainer;
+import com.privasia.scss.opus.dto.GIReadResponseImportContainer;
 
 /**
  * @author Janaka
@@ -47,7 +47,7 @@ public class OpusGateOutWriteService {
 	}
 
 	public OpusGateOutWriteResponse getGateOutWriteResponse(OpusGateOutWriteRequest opusGateOutWriteRequest) {
-		System.out.println("gateOutWriteResponseURL " + gateOutWriteResponseURL);
+		log.info("gateOutWriteResponseURL " + gateOutWriteResponseURL);
 		RestTemplate restTemplate = new RestTemplate();
 		HttpHeaders headers = new HttpHeaders();
 
@@ -83,9 +83,9 @@ public class OpusGateOutWriteService {
 	public OpusGateOutWriteRequest constructOpusGateOutWriteRequest(GateOutWriteRequest gateOutWriteRequest) {
 		OpusGateOutWriteRequest opusGateOutWriteRequest = new OpusGateOutWriteRequest();
 
-		List<OpusExporterContainer> exportContainerListCY = OpusService
+		List<GIReadResponseExporterContainer> exportContainerListCY = OpusService
 				.constructOpusExporterContainersFromExporterContainers(gateOutWriteRequest.getExportContainers());
-		List<OpusImportContainer> importContainerListCY = OpusService
+		List<GIReadResponseImportContainer> importContainerListCY = OpusService
 				.constructOpusImportContainersFromImportContainers(gateOutWriteRequest.getImportContainers());
 
 		LocalDateTime gateOutDateTime = CommonUtil.getParsedDate(gateOutWriteRequest.getGateOUTDateTime());

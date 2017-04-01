@@ -26,11 +26,11 @@ import com.privasia.scss.common.dto.GateInRequest;
 import com.privasia.scss.common.dto.ImportContainer;
 import com.privasia.scss.common.util.CommonUtil;
 import com.privasia.scss.common.util.DateUtil;
-import com.privasia.scss.opus.dto.OpusExporterContainer;
+import com.privasia.scss.opus.dto.GIReadResponseExporterContainer;
 // import com.privasia.scss.core.exception.ResultsNotFoundException;
 import com.privasia.scss.opus.dto.OpusGateInReadRequest;
 import com.privasia.scss.opus.dto.OpusGateInReadResponse;
-import com.privasia.scss.opus.dto.OpusImportContainer;
+import com.privasia.scss.opus.dto.GIReadResponseImportContainer;
 
 /**
  * @author Janaka
@@ -99,7 +99,7 @@ public class OpusGateInReadService {
 		return gateInReponse;
 	}
 
-	private GateInReponse constructExportContainers(List<OpusExporterContainer> exportContainerListCY,
+	private GateInReponse constructExportContainers(List<GIReadResponseExporterContainer> exportContainerListCY,
 	      GateInReponse gateInReponse) {
 
 	    if (!(exportContainerListCY == null || exportContainerListCY.isEmpty())) {
@@ -114,7 +114,7 @@ public class OpusGateInReadService {
 	    return gateInReponse;
 	  }
 
-	private GateInReponse constructImportContainers(List<OpusImportContainer> importContainerListCY, 
+	private GateInReponse constructImportContainers(List<GIReadResponseImportContainer> importContainerListCY, 
 			GateInReponse gateInReponse) {
 
 		if (!(importContainerListCY == null || importContainerListCY.isEmpty())) {

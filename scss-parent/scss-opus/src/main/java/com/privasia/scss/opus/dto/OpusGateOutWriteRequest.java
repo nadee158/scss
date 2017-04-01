@@ -1,48 +1,45 @@
 package com.privasia.scss.opus.dto;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class OpusGateOutWriteRequest extends OpusBaseGateWriteRequest implements Serializable {
 
-  private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-  private String gateOUTDateTime;// "20161219100000"
+	private String gateOUTDateTime;// "20161219100000"
+	private List<GOWriteRequestExportContainer> exportContainerListCY;
+	private List<GOWriteRequestImportContainer> importContainerListCY;
 
+	public List<GOWriteRequestExportContainer> getExportContainerListCY() {
+		return exportContainerListCY;
+	}
 
+	public void setExportContainerListCY(List<GOWriteRequestExportContainer> exportContainerListCY) {
+		this.exportContainerListCY = exportContainerListCY;
+	}
 
-  public String getGateOUTDateTime() {
-    return gateOUTDateTime;
-  }
+	public List<GOWriteRequestImportContainer> getImportContainerListCY() {
+		return importContainerListCY;
+	}
 
-  public void setGateOUTDateTime(String gateOUTDateTime) {
-    this.gateOUTDateTime = gateOUTDateTime;
-  }
+	public void setImportContainerListCY(List<GOWriteRequestImportContainer> importContainerListCY) {
+		this.importContainerListCY = importContainerListCY;
+	}
 
-  public static OpusGateOutWriteRequest constructObjectWithTestValues() {
-    OpusGateOutWriteRequest giw01Request = new OpusGateOutWriteRequest();
-    giw01Request.setExportContainerListCFS(null);
-    giw01Request.setExportContainerListCY(OpusExporterContainer.constructGIW01RequestTestList());
-    giw01Request.setGateOUTDateTime("20161219100000l");
-    giw01Request.setHaulageCode("HAN");
-    giw01Request.setImportContainerListCFS(null);
-    giw01Request.setImportContainerListCY(null);
-    giw01Request.setLaneNo("GATE00");
-    giw01Request.setTruckHeadNo("NTK193");
-    giw01Request.setTruckPlateNo("60P1-2933");
-    giw01Request.setUserID("PRABU");
-    return giw01Request;
-  }
+	public String getGateOUTDateTime() {
+		return gateOUTDateTime;
+	}
 
-  @Override
-  public String toString() {
-    return "OpusGateOutWriteRequest [gateOUTDateTime=" + gateOUTDateTime + ", getUserID()=" + getUserID()
-        + ", getLaneNo()=" + getLaneNo() + ", getHaulageCode()=" + getHaulageCode() + ", getTruckHeadNo()="
-        + getTruckHeadNo() + ", getTruckPlateNo()=" + getTruckPlateNo() + ", getExportContainerListCY()="
-        + getExportContainerListCY() + ", getImportContainerListCY()=" + getImportContainerListCY()
-        + ", getExportContainerListCFS()=" + getExportContainerListCFS() + ", getImportContainerListCFS()="
-        + getImportContainerListCFS() + "]";
-  }
-
-
+	public void setGateOUTDateTime(String gateOUTDateTime) {
+		this.gateOUTDateTime = gateOUTDateTime;
+	}
+	
+	@Override
+	public String toString() {
+		return "OpusGateOutWriteRequest [userID=" + getUserID() + ", laneNo=" + getLaneNo() + ", haulageCode="
+				+ getHaulageCode() + ", truckHeadNo=" + getTruckHeadNo() + ", truckPlateNo=" + getTruckPlateNo() + ", gateOUTDateTime="
+				+ gateOUTDateTime + ", exportContainerListCY=" + exportContainerListCY + ", importContainerListCY=" + importContainerListCY + "]";
+	}
 
 }

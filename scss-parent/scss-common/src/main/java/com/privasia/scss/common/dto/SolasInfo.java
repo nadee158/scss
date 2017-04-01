@@ -8,78 +8,73 @@ import java.io.Serializable;
  */
 public class SolasInfo implements Serializable {
 
-  /**
-   * 
-   */
-  private static final long serialVersionUID = 1L;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
-  private int mgw;
+	private int mgw;
 
-  private String faLedgerCode;
+	private String faLedgerCode;
 
-  private String solasRefNumber;
+	private String solasRefNumber;
 
-  private String solasDetailID;
+	private String solasDetailID;
 
-  private String solasInstruction;
+	private String solasInstruction;
 
-  private String shipperVGM;
+	private String shipperVGM;
 
+	public SolasInfo() {
+		super();
+	}
 
-  public SolasInfo() {
-    super();
-  }
+	public int getMgw() {
+		return mgw;
+	}
 
+	public void setMgw(int mgw) {
+		this.mgw = mgw;
+	}
 
-  public int getMgw() {
-    return mgw;
-  }
+	public String getFaLedgerCode() {
+		return faLedgerCode;
+	}
 
-  public void setMgw(int mgw) {
-    this.mgw = mgw;
-  }
+	public void setFaLedgerCode(String faLedgerCode) {
+		this.faLedgerCode = faLedgerCode;
+	}
 
-  public String getFaLedgerCode() {
-    return faLedgerCode;
-  }
+	public String getSolasRefNumber() {
+		return solasRefNumber;
+	}
 
-  public void setFaLedgerCode(String faLedgerCode) {
-    this.faLedgerCode = faLedgerCode;
-  }
+	public void setSolasRefNumber(String solasRefNumber) {
+		this.solasRefNumber = solasRefNumber;
+	}
 
-  public String getSolasRefNumber() {
-    return solasRefNumber;
-  }
+	public String getSolasDetailID() {
+		return solasDetailID;
+	}
 
-  public void setSolasRefNumber(String solasRefNumber) {
-    this.solasRefNumber = solasRefNumber;
-  }
+	public void setSolasDetailID(String solasDetailID) {
+		this.solasDetailID = solasDetailID;
+	}
 
-  public String getSolasDetailID() {
-    return solasDetailID;
-  }
+	public String getSolasInstruction() {
+		return solasInstruction;
+	}
 
-  public void setSolasDetailID(String solasDetailID) {
-    this.solasDetailID = solasDetailID;
-  }
+	public void setSolasInstruction(String solasInstruction) {
+		this.solasInstruction = solasInstruction;
+	}
 
+	public String getShipperVGM() {
+		return shipperVGM;
+	}
 
-  public String getSolasInstruction() {
-    return solasInstruction;
-  }
-
-  public void setSolasInstruction(String solasInstruction) {
-    this.solasInstruction = solasInstruction;
-  }
-
-  public String getShipperVGM() {
-    return shipperVGM;
-  }
-
-  public void setShipperVGM(String shipperVGM) {
-    this.shipperVGM = shipperVGM;
-  }
-
-
+	public void setShipperVGM(String shipperVGM) {
+		this.shipperVGM = shipperVGM;
+	}
 
 }

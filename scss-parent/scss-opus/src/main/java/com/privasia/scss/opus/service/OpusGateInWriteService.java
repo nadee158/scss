@@ -22,10 +22,10 @@ import com.privasia.scss.common.dto.GateInReponse;
 import com.privasia.scss.common.dto.GateInWriteRequest;
 import com.privasia.scss.common.util.CommonUtil;
 import com.privasia.scss.common.util.DateUtil;
-import com.privasia.scss.opus.dto.OpusExporterContainer;
+import com.privasia.scss.opus.dto.GIReadResponseExporterContainer;
 import com.privasia.scss.opus.dto.OpusGateInWriteRequest;
 import com.privasia.scss.opus.dto.OpusGateInWriteResponse;
-import com.privasia.scss.opus.dto.OpusImportContainer;
+import com.privasia.scss.opus.dto.GIReadResponseImportContainer;
 
 /**
  * @author Janaka
@@ -83,9 +83,9 @@ public class OpusGateInWriteService {
   public OpusGateInWriteRequest constructOpusGateInWriteRequest(GateInWriteRequest gateInWriteRequest) {
     OpusGateInWriteRequest opusGateInWriteRequest = new OpusGateInWriteRequest();
 
-    List<OpusExporterContainer> exportContainerListCY =
+    List<GIReadResponseExporterContainer> exportContainerListCY =
         OpusService.constructOpusExporterContainersFromExporterContainers(gateInWriteRequest.getExportContainers());
-    List<OpusImportContainer> importContainerListCY =
+    List<GIReadResponseImportContainer> importContainerListCY =
         OpusService.constructOpusImportContainersFromImportContainers(gateInWriteRequest.getImportContainers());
 
     LocalDateTime gateInDateTime = CommonUtil.getParsedDate(gateInWriteRequest.getGateInDateTime());
