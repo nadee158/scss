@@ -33,6 +33,7 @@ import com.privasia.scss.core.repository.CardRepository;
 import com.privasia.scss.core.repository.CardUsageRepository;
 import com.privasia.scss.core.repository.ClientRepository;
 import com.privasia.scss.core.repository.DamageCodeRepository;
+import com.privasia.scss.core.repository.DgDetailRepository;
 import com.privasia.scss.core.repository.ExportsQRepository;
 import com.privasia.scss.core.repository.ExportsRepository;
 import com.privasia.scss.core.repository.HPATBookingRepository;
@@ -68,6 +69,12 @@ public class ExportGateInService {
   private HPATBookingRepository hpatBookingRepository;
 
   private DamageCodeRepository damageCodeRepository;
+
+  private DgDetailRepository dgDetailRepository;
+
+  public void setDgDetailRepository(DgDetailRepository dgDetailRepository) {
+    this.dgDetailRepository = dgDetailRepository;
+  }
 
   @Autowired
   public void setDamageCodeRepository(DamageCodeRepository damageCodeRepository) {
@@ -137,6 +144,7 @@ public class ExportGateInService {
       gateInReponse.getExportContainers().forEach(container -> {
         setStoragePeriod(container);
         setSCN(container);
+        checkDg(container);
       });
     }
 
@@ -145,10 +153,25 @@ public class ExportGateInService {
   }
 
 
+
   public List<ExportContainer> fetchContainerInfo(List<String> exportContainerNumbers) {
 
     return null;
 
+  }
+
+  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+  private void checkDg(ExportContainer exportContainer) {
+    if (!(exportContainer == null || exportContainer.getContainer() == null || exportContainer.getScn() == null)) {
+      if (!(StringUtils.isEmpty(exportContainer.getContainer().getContainerNumber())
+          || StringUtils.isEmpty(exportContainer.getScn().getScnNo()))) {
+        Long count = dgDetailRepository.countByScnAndContainerNo(exportContainer.getScn().getScnNo(),
+            exportContainer.getContainer().getContainerNumber());
+        if (!(count == null || count <= 0)) {
+          exportContainer.setBypassDg(true);
+        }
+      }
+    }
   }
 
   @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
@@ -191,8 +214,10 @@ public class ExportGateInService {
         exportContainer.setBypassEEntry(shipSCN.getScnByPass());
         exportContainer.setRegisteredInEarlyEntry(true);
       } else {
-        throw new ResultsNotFoundException(
-            "Ship SCN could be found for the given " + "	SCN / ContainerNo Info! " + scn + " / " + exportContainer);
+        exportContainer.setRegisteredInEarlyEntry(false);
+        // throw new ResultsNotFoundException(
+        // "Ship SCN could be found for the given " + " SCN / ContainerNo Info! " + scn + " / " +
+        // exportContainer);
       }
 
     }

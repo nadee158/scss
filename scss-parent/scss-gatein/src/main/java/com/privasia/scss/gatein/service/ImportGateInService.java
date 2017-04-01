@@ -362,14 +362,18 @@ public class ImportGateInService {
             }
 
             PrintEir printEir = null;
-            if (!(importContainer.getPrintEir() == null || importContainer.getPrintEir().getPrintEIRID() == null)) {
-              printEir = printEirRepository.findOne(importContainer.getPrintEir().getPrintEIRID()).orElse(null);
-            }
+            // if (!(importContainer.getPrintEir() == null ||
+            // importContainer.getPrintEir().getPrintEIRID() == null)) {
+            // printEir =
+            // printEirRepository.findOne(importContainer.getPrintEir().getPrintEIRID()).orElse(null);
+            // }
 
             CardUsage cardUsage = null;
-            if (!(importContainer.getCardUsage() == null || importContainer.getCardUsage().getCardUsageID() == null)) {
-              cardUsage = cardUsageRepository.findOne(importContainer.getCardUsage().getCardUsageID()).orElse(null);
-            }
+            // if (!(importContainer.getCardUsage() == null ||
+            // importContainer.getCardUsage().getCardUsageID() == null)) {
+            // cardUsage =
+            // cardUsageRepository.findOne(importContainer.getCardUsage().getCardUsageID()).orElse(null);
+            // }
 
             modelMapper.map(importContainer, gatePass);
             gatePass.prepareForInsertFromOpus(card, gateInClerk, gateInClient, printEir, cardUsage, hpatBooking);
