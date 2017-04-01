@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -35,6 +37,8 @@ import com.privasia.scss.opus.service.OpusService;
 
 @Service("importExportGateInService")
 public class ImportExportGateInService {
+
+  private static final Log log = LogFactory.getLog(ImportExportGateInService.class);
 
   private ImportGateInService importGateInService;
 
@@ -109,6 +113,7 @@ public class ImportExportGateInService {
     // call opus -
     OpusGateInReadRequest gateInReadRequest = opusGateInReadService.constructOpenGateInRequest(gateInRequest);
     OpusGateInReadResponse gateInReadResponse = opusGateInReadService.getGateInReadResponse(gateInReadRequest);
+    // double check with the documentation
     gateInReponse = opusGateInReadService.constructGateInReponse(gateInReadResponse, gateInReponse);
 
     if (!(StringUtils.isEmpty(gateInRequest.getExpContainer1())
