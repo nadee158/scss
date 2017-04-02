@@ -1,0 +1,35 @@
+{
+	"id": "3e7ba229-6592-85e2-56da-40d11ee7d741",
+	"name": "scss-odd",
+	"description": "SCSS odd Functions for Gate In and Gate Out",
+	"order": [
+		"d65ff580-2aba-4709-865c-d2e465f69232"
+	],
+	"folders": [],
+	"timestamp": 1484278552606,
+	"owner": 0,
+	"public": false,
+	"hasRequests": true,
+	"requests": [
+		{
+			"id": "d65ff580-2aba-4709-865c-d2e465f69232",
+			"headers": "Content-Type: application/json;charset=UTF-8\nX-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJURVNUVCIsInJvbGVzIjpbIkFETUlOSVNUUkFUT1IiXSwiZnVuY3Rpb25zIjpbNDE3LDM4MywzNjEsNDQ2LDM3OCw0MzMsNDY4LDQyNiwzNzIsNDQ4LDM4MiwzNjMsNDMxLDQzMCw0NTUsNTEwLDQ2NywzODQsMzgwLDQ1NCw0NDUsNDYyLDMxNSwzMzEsMzc1LDM5NCw0NjYsNDUyLDQyOCwzODcsNDY0LDQ1Niw2MjUsMzYyLDExMiwzMjQsMTEzLDMyNiw0NTEsMzIxLDM5MSw0MTQsNDM1LDQyMywzNzcsMzk1LDM3OSw0MTgsNDI0LDIxMSwzNzQsMTExLDUyMCwzNjAsMzkyLDQ2NSw2MjQsNDE1LDMzMiwzODksNjIyLDM3NiwzNzEsNDMyLDQ2MSwzMTIsMzI3LDQxMywyMjEsNDE5LDQ0Nyw0NDQsNDE2LDM4MSw2MjMsMzkzLDMyNSw0MjcsMzExLDQ0MSwxMTQsMzg1LDcwMiwzMjIsMzE0LDM4OCw0MjksNDQyLDQ0Myw0NjMsMjIyLDQ0OSwzMTMsMzQwLDcwMSw5MDEsMzg2LDM5MCwzMjMsNjIxXSwic3RhZmZOYW1lIjoiTVVIQU1NQUQgRklSREFVWiBCSU4gQUJEVUwgSEFMSU0iLCJzdGFmZk51bWJlciI6IlAxMzQ0IiwidXNlcklEIjoyNDAxLCJpc3MiOiJodHRwOi8vc2Nzcy5jb20ubXkiLCJpYXQiOjE0ODQ1NDQ5MTksImV4cCI6MTQ4NDU0NTgxOX0.vLyhdVlUdRFYkqEBx4Iv8Tdtz8kRMP-kCaT5-9eKt3AUsf34X4JBALVM4nygSSzZQOVyO2EZncL-pN8c8P2-Gw\nX-Requested-With: XMLHttpRequest\n",
+			"url": "http://localhost:8080/scss-gateout/api/odd/validatecontainer",
+			"preRequestScript": null,
+			"pathVariables": {},
+			"method": "PUT",
+			"data": [],
+			"dataMode": "raw",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1486305272244,
+			"name": "http://localhost:8080/scss-gateout/api/odd/validatecontainer",
+			"description": "Validate odd containers before gate out",
+			"collectionId": "3e7ba229-6592-85e2-56da-40d11ee7d741",
+			"responses": [],
+			"rawModeData": "{  \r\n   \"containerNo1\": \"conABC123\",\r\n   \"containerNo2\":\"conXYZ456\"\r\n}"
+		}
+	]
+}
