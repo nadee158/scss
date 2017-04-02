@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.modelmapper.ModelMapper;
@@ -90,7 +91,8 @@ public class ImportGateOutService {
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
 	public List<ImportContainer> populateGateOut(GateOutRequest gateOutRequest) {
 
-		Optional<List<GatePass>> optGatePassList = gatePassRepository.fetchInProgressTransaction(gateOutRequest.getCardID(),TransactionStatus.INPROGRESS);
+		Optional<List<GatePass>> optGatePassList = gatePassRepository.
+								fetchInProgressTransaction(gateOutRequest.getCardID(),gateOutRequest.getComID(), TransactionStatus.INPROGRESS);
 		List<GatePass> inprogressGatePassList = optGatePassList.orElseThrow(() -> new BusinessException(
 				"No InProgress Import Transaction for the scan card ! " + gateOutRequest.getCardID()));
 		List<ImportContainer> importContainerList = new ArrayList<ImportContainer>();
@@ -100,6 +102,12 @@ public class ImportGateOutService {
 			// adding log info
 			importContainer = getGCSDeclarationInfo(importContainer);
 			importContainerList.add(importContainer);
+			if(StringUtils.isEmpty(gateOutRequest.getImpContainer1())){
+	    		gateOutRequest.setImpContainer1(gatePass.getContainer().getContainerNumber());
+	    	}else{
+	    		gateOutRequest.setImpContainer2(gatePass.getContainer().getContainerNumber());
+	    	}
+			gateOutRequest.setTruckHeadNo(gatePass.getBaseCommonGateInOutAttribute().getPmHeadNo());
 		});
 
 		return importContainerList;

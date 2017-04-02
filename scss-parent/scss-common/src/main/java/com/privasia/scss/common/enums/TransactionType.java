@@ -6,7 +6,7 @@ import java.util.Map;
 
 public enum TransactionType implements Enumable {
 
-  IMPORT("I"), EXPORT("E"), IMPORT_EXPORT("IE"), ODD_EXPORT("OE"), ODD_IMPORT("OI"), ODD_IMPORT_EXPORT("OIE");
+  IMPORT("I"), EXPORT("E"), IMPORT_EXPORT("IE"), ODD_EXPORT("OE"), ODD_IMPORT("OI"), ODD_IMPORT_EXPORT("OIE"), ODD("ODD");
 
   private final String transactionType;
 

@@ -171,7 +171,7 @@ public class OpusService {
       importContainer.setContainer(new CommonContainerDTO());
     }
     // private String containerNumber; //EPLA0000002
-    importContainer.getContainer().setContainerNumber(gIReadResponseImportContainer.getContainerNo());
+    //importContainer.getContainer().setContainerNumber(gIReadResponseImportContainer.getContainerNo());
     importContainer.setOrderFOT(gIReadResponseImportContainer.getImpOrderNo());
     importContainer.setImpOrderStatus(gIReadResponseImportContainer.getImpOrderStatus());
     importContainer.setImpOrderType(gIReadResponseImportContainer.getImpOrderType());
@@ -227,7 +227,7 @@ public class OpusService {
       exportContainer.setContainer(new CommonContainerDTO());
     }
     // private String containerNo;// ;//AZHA0000001,
-    exportContainer.getContainer().setContainerNumber(gIReadResponseExporterContainer.getContainerNo());
+    //exportContainer.getContainer().setContainerNumber(gIReadResponseExporterContainer.getContainerNo());
     // private String exportBookingNo;// BOOK20001,
     exportContainer.setBookingNo(gIReadResponseExporterContainer.getExportOrderNo());
     exportContainer.setExportOrderStatus(gIReadResponseExporterContainer.getExportOrderStatus());
@@ -350,43 +350,37 @@ public class OpusService {
   }
 
   public ExportContainer goReadResponseExporterContainerToExportContainer(
-      GOReadResponseExportContainer goReadResponseExporterContainer) {
-
-    ExportContainer exportContainer = new ExportContainer();
-    CommonContainerDTO containerDTO = new CommonContainerDTO();
-    // private String containerNo;// ;//AZHA0000001,
-    containerDTO.setContainerNumber(goReadResponseExporterContainer.getContainerNo());
-    containerDTO.setContainerFullOrEmpty(goReadResponseExporterContainer.getContainerFullOrEmpty());
+      GOReadResponseExportContainer goReadResponseExporterContainer, ExportContainer exportContainer) {
+	
+	if(exportContainer.getContainer() == null){
+	    CommonContainerDTO commonContainerDTO = new CommonContainerDTO();
+	    exportContainer.setContainer(commonContainerDTO);
+	}
+    exportContainer.getContainer().setContainerFullOrEmpty(goReadResponseExporterContainer.getContainerFullOrEmpty());
     exportContainer.setRtgExecustionDateTime(
         DateUtil.getLocalDategFromString(goReadResponseExporterContainer.getRtgExecustionDateTime()));
     exportContainer.setRtgExecustionStatus(goReadResponseExporterContainer.getRtgExecustionStatus());
-    exportContainer.setContainer(containerDTO);
-
+ 
     return exportContainer;
   }
 
   public ImportContainer goReadResponseImportContainerToImportContainer(
-      GOReadResponseImportContainer goReadResponseImportContainer) {
-
-    ImportContainer importContainer = new ImportContainer();
-    CommonContainerDTO commonContainerDTO = new CommonContainerDTO();
-    CommonSealDTO sealAttribute = new CommonSealDTO();
-    // private String containerNumber; //EPLA0000002
-    commonContainerDTO.setContainerNumber(goReadResponseImportContainer.getContainerNo());
+      GOReadResponseImportContainer goReadResponseImportContainer, ImportContainer importContainer) {
+    
+    if(importContainer.getSealAttribute() == null){
+    	CommonSealDTO sealAttribute = new CommonSealDTO();
+    	importContainer.setSealAttribute(sealAttribute);
+    }
     // private String containerFullOrEmpty;// F,
-    commonContainerDTO.setContainerFullOrEmpty(goReadResponseImportContainer.getContainerFullOrEmpty());
+    importContainer.getContainer().setContainerFullOrEmpty(goReadResponseImportContainer.getContainerFullOrEmpty());
     importContainer.setRtgExecustionDateTime(
         DateUtil.getLocalDategFromString(goReadResponseImportContainer.getRtgExecustionDateTime()));
     importContainer.setRtgExecustionStatus(goReadResponseImportContainer.getRtgExecustionStatus());
 
-    sealAttribute.setSeal01Number(goReadResponseImportContainer.getContainerSeal1_NO());
-    sealAttribute.setSeal02Number(goReadResponseImportContainer.getContainerSeal2_NO());
-    sealAttribute.setSeal01Origin(goReadResponseImportContainer.getContainerSeal1_SL());
-    sealAttribute.setSeal02Origin(goReadResponseImportContainer.getContainerSeal2_SL());
-
-    importContainer.setSealAttribute(sealAttribute);
-    importContainer.setContainer(commonContainerDTO);
-
+    importContainer.getSealAttribute().setSeal01Number(goReadResponseImportContainer.getContainerSeal1_NO());
+    importContainer.getSealAttribute().setSeal02Number(goReadResponseImportContainer.getContainerSeal2_NO());
+    importContainer.getSealAttribute().setSeal01Origin(goReadResponseImportContainer.getContainerSeal1_SL());
+    importContainer.getSealAttribute().setSeal02Origin(goReadResponseImportContainer.getContainerSeal2_SL());
     return importContainer;
   }
 
@@ -529,11 +523,22 @@ public class OpusService {
   }
 
   public List<ImportContainer> goReadResponseImportContainerListToImportContainerList(
-      List<GOReadResponseImportContainer> goReadResponseImportContainerList) {
-    if (!(goReadResponseImportContainerList == null || goReadResponseImportContainerList.isEmpty())) {
-      List<ImportContainer> importContainers = new ArrayList<ImportContainer>();
-      goReadResponseImportContainerList.forEach(goReadResponseImportContainer -> {
-        importContainers.add(goReadResponseImportContainerToImportContainer(goReadResponseImportContainer));
+      List<GOReadResponseImportContainer> goReadResponseImportContainerList, List<ImportContainer> importContainers) {
+    
+	  if (!(goReadResponseImportContainerList == null || goReadResponseImportContainerList.isEmpty())) {
+   
+		  goReadResponseImportContainerList.forEach(goReadResponseImportContainer -> {
+			  ImportContainer importContainer = null;	
+				if (!(importContainers == null || importContainers.isEmpty())) {
+					importContainer =
+							importContainers
+			                  .stream().filter(e -> (e.getContainer() != null) && (StringUtils
+			                      .equals(e.getContainer().getContainerNumber(), goReadResponseImportContainer.getContainerNo())))
+			                  .findFirst().get();
+			    }else{
+			    	importContainer = new ImportContainer();
+			    }
+				importContainer = goReadResponseImportContainerToImportContainer(goReadResponseImportContainer, importContainer);
       });
       return importContainers;
     }
@@ -541,11 +546,21 @@ public class OpusService {
   }
 
   public List<ExportContainer> goReadResponseExportContainerListToExportContainerList(
-      List<GOReadResponseExportContainer> goReadResponseExportContainerList) {
+      List<GOReadResponseExportContainer> goReadResponseExportContainerList, List<ExportContainer> exportContainers) {
+	  
     if (!(goReadResponseExportContainerList == null || goReadResponseExportContainerList.isEmpty())) {
-      List<ExportContainer> exportContainers = new ArrayList<ExportContainer>();
-      goReadResponseExportContainerList.forEach(goReadResponseExportContainer -> {
-        exportContainers.add(goReadResponseExporterContainerToExportContainer(goReadResponseExportContainer));
+    	goReadResponseExportContainerList.forEach(goReadResponseExportContainer -> {
+    	ExportContainer exportContainer = null;	
+		if (!(exportContainers == null || exportContainers.isEmpty())) {
+	          exportContainer =
+	              exportContainers
+	                  .stream().filter(e -> (e.getContainer() != null) && (StringUtils
+	                      .equals(e.getContainer().getContainerNumber(), goReadResponseExportContainer.getContainerNo())))
+	                  .findFirst().get();
+	    }else{
+	    	exportContainer = new ExportContainer();
+	    }
+		exportContainer = goReadResponseExporterContainerToExportContainer(goReadResponseExportContainer, exportContainer);
       });
       return exportContainers;
     }

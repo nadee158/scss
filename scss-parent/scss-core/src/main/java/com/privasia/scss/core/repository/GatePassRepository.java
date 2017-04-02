@@ -26,6 +26,6 @@ public interface GatePassRepository extends BaseRepository<GatePass, Long> {
   public String findContainerNoByGatePassNo(@Param("gatePassNo") long gatePassNo);
   
   @Query(name = "GatePass.fetchInProgressTransaction")
-  public Optional<List<GatePass>> fetchInProgressTransaction(@Param("cardID") long cardId, @Param("eirStatus") TransactionStatus eirStatus);
+  public Optional<List<GatePass>> fetchInProgressTransaction(@Param("cardID") long cardId, @Param("comID") long comId, @Param("eirStatus") TransactionStatus eirStatus);
   
 }

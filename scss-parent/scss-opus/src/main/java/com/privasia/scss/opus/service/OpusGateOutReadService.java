@@ -49,10 +49,12 @@ public class OpusGateOutReadService {
 
     opusGateOutRequest.setContainerNo1ImportCY(gateOutRequest.getImpContainer1());
     opusGateOutRequest.setContainerNo2ImportCY(gateOutRequest.getImpContainer2());
+    opusGateOutRequest.setContainerNo1ExportCY(gateOutRequest.getExpContainer1());
+    opusGateOutRequest.setContainerNo2ExportCY(gateOutRequest.getExpContainer2());
     // 20161130112233 - yyyyMMddHHmmss
     LocalDateTime gateOutDateTime = CommonUtil.getParsedDate(gateOutRequest.getGateOUTDateTime());
     opusGateOutRequest.setGateOUTDateTime(DateUtil.getJsonDateFromDate(gateOutDateTime));
-    opusGateOutRequest.setHaulageCode("HAUCD");
+    opusGateOutRequest.setHaulageCode(gateOutRequest.getHaulageCode());
     opusGateOutRequest.setLaneNo(gateOutRequest.getLaneNo());
     opusGateOutRequest.setTruckHeadNo(gateOutRequest.getTruckHeadNo());
     opusGateOutRequest.setUserID(gateOutRequest.getUserName());
@@ -60,7 +62,7 @@ public class OpusGateOutReadService {
   }
 
   public OpusGateOutReadResponse getGateOutReadResponse(OpusGateOutReadRequest opusGateOutReadRequest) {
-    System.out.println("gateOutReadResponseURL " + gateOutReadResponseURL);
+	log.info("gateOutReadResponseURL " + gateOutReadResponseURL);
     RestTemplate restTemplate = new RestTemplate();
     HttpHeaders headers = new HttpHeaders();
 
@@ -78,17 +80,18 @@ public class OpusGateOutReadService {
 
   public GateOutReponse constructGateOutReponse(OpusGateOutReadResponse opusGateOutReadResponse,
       GateOutReponse gateOutReponse) {
-
+	
+	gateOutReponse.setUserID(opusGateOutReadResponse.getUserID());
     LocalDateTime localDateTime = DateUtil.getLocalDategFromString(opusGateOutReadResponse.getGateOUTDateTime());
     gateOutReponse.setGateOUTDateTime(CommonUtil.getFormatteDate(localDateTime));
     gateOutReponse.setHaulageCode(opusGateOutReadResponse.getHaulageCode());
     gateOutReponse.setLaneNo(opusGateOutReadResponse.getLaneNo());
     gateOutReponse.setTruckHeadNo(opusGateOutReadResponse.getTruckHeadNo());
-    gateOutReponse.setTruckPlateNo(opusGateOutReadResponse.getTruckPlateNo());
+    //gateOutReponse.setTruckPlateNo(opusGateOutReadResponse.getTruckPlateNo());
     gateOutReponse.setImportContainers(opusService
-        .goReadResponseImportContainerListToImportContainerList(opusGateOutReadResponse.getImportContainerListCY()));
+        .goReadResponseImportContainerListToImportContainerList(opusGateOutReadResponse.getImportContainerListCY(), gateOutReponse.getImportContainers()));
     gateOutReponse.setExportContainers(opusService
-        .goReadResponseExportContainerListToExportContainerList(opusGateOutReadResponse.getExportContainerListCY()));
+        .goReadResponseExportContainerListToExportContainerList(opusGateOutReadResponse.getExportContainerListCY(), gateOutReponse.getExportContainers()));
     return gateOutReponse;
   }
 
