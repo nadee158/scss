@@ -2,6 +2,8 @@ package com.privasia.scss.common.dto;
 
 import java.io.Serializable;
 
+import com.privasia.scss.common.enums.SolasInstructionType;
+
 public class CommonSolasDTO implements Serializable {
 
   /**
@@ -111,12 +113,13 @@ public class CommonSolasDTO implements Serializable {
     this.faLedgerCode = "456";
     this.solasRefNumber = "758";
     this.solasDetailID = "54";
-    this.solasInstruction = "solasInstruction";
+    this.solasInstruction = SolasInstructionType.VGM_INSTRUCTION_NO_SOLAS.getValue();
     this.shipperVGM = "878";
-    this.vgmWitnessName = "vgmWitnessName";
-    this.vgmWitnessID = "vgmWitnessID";
-    this.vgmWeighingStation = "vgmWeighingStation";
+    this.vgmWitnessName = "vgmWiNme";
+    this.vgmWitnessID = "10";
+    this.vgmWeighingStation = "stn";
     return this;
   }
+
 
 }

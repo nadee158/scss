@@ -885,7 +885,7 @@ public class ImportContainer implements Serializable {
     this.cosmosSeal02Origin = "L";
     this.cosmosSeal02Type = "NS";
     this.cosmosSeal02Number = "MQ133881";
-    this.gatePassValidDate = "04/15/2017 02:05:30 pm";
+    this.gatePassValidDate = "04/15/2017 02:05:30 PM";
     this.setIsoInfo(new ISOInfo().initializeWithDefaultValues());
     this.shippingAgent = "AG01";
     this.orderFOT = "FOT";

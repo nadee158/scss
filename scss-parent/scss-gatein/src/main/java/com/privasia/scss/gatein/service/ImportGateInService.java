@@ -10,11 +10,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.privasia.scss.common.dto.BaseCommonGateInOutDTO;
+import com.privasia.scss.common.dto.ClientDTO;
 import com.privasia.scss.common.dto.GateInReponse;
 import com.privasia.scss.common.dto.GateInRequest;
 import com.privasia.scss.common.dto.GateInWriteRequest;
@@ -30,7 +32,6 @@ import com.privasia.scss.core.model.CardUsage;
 import com.privasia.scss.core.model.Client;
 import com.privasia.scss.core.model.GatePass;
 import com.privasia.scss.core.model.HPABBooking;
-import com.privasia.scss.core.model.Login;
 import com.privasia.scss.core.model.PrintEir;
 import com.privasia.scss.core.model.SystemUser;
 import com.privasia.scss.core.model.WDCGatePass;
@@ -40,9 +41,10 @@ import com.privasia.scss.core.repository.ClientRepository;
 import com.privasia.scss.core.repository.DamageCodeRepository;
 import com.privasia.scss.core.repository.GatePassRepository;
 import com.privasia.scss.core.repository.HPATBookingRepository;
-import com.privasia.scss.core.repository.LoginRepository;
 import com.privasia.scss.core.repository.PrintEirRepository;
+import com.privasia.scss.core.repository.SystemUserRepository;
 import com.privasia.scss.core.repository.WDCGatePassRepository;
+import com.privasia.scss.core.security.util.SecurityHelper;
 
 @Service("importGateInService")
 public class ImportGateInService {
@@ -52,8 +54,6 @@ public class ImportGateInService {
   private GatePassRepository gatePassRepository;
 
   private ModelMapper modelMapper;
-
-  private LoginRepository loginRepository;
 
   private CardRepository cardRepository;
 
@@ -69,14 +69,16 @@ public class ImportGateInService {
 
   private WDCGatePassRepository wdcGatePassRepository;
 
+  private SystemUserRepository systemUserRepository;
+
   @Autowired
-  public void setDamageCodeRepository(DamageCodeRepository damageCodeRepository) {
-    this.damageCodeRepository = damageCodeRepository;
+  public void setSystemUserRepository(SystemUserRepository systemUserRepository) {
+    this.systemUserRepository = systemUserRepository;
   }
 
   @Autowired
-  public void setLoginRepository(LoginRepository loginRepository) {
-    this.loginRepository = loginRepository;
+  public void setDamageCodeRepository(DamageCodeRepository damageCodeRepository) {
+    this.damageCodeRepository = damageCodeRepository;
   }
 
   @Autowired
@@ -326,39 +328,56 @@ public class ImportGateInService {
         importContainer.getBaseCommonGateInOutAttribute()
             .setTimeGateIn(CommonUtil.getParsedDate(gateInWriteRequest.getGateInDateTime()));
 
+        // assign values from header level to container level
+        importContainer.getBaseCommonGateInOutAttribute().setCard(gateInWriteRequest.getCardId());
+        importContainer.getBaseCommonGateInOutAttribute()
+            .setEirStatus(com.privasia.scss.common.enums.TransactionStatus.INPROGRESS.getValue());
+        ClientDTO gateInClientDTO = new ClientDTO();
+        gateInClientDTO.setClientID(gateInWriteRequest.getGateInClient());
+        importContainer.getBaseCommonGateInOutAttribute().setGateInClient(gateInClientDTO);
+        importContainer.getBaseCommonGateInOutAttribute().setHpatBooking(gateInWriteRequest.getHpatBookingId());
+        importContainer.getBaseCommonGateInOutAttribute().setPmHeadNo(gateInWriteRequest.getTruckHeadNo());
+        importContainer.getBaseCommonGateInOutAttribute().setPmPlateNo(gateInWriteRequest.getTruckPlateNo());
+        importContainer.getBaseCommonGateInOutAttribute().setTimeGateInOk(LocalDateTime.now());
+
         System.out.println("importContainer " + importContainer);
 
         if (!(importContainer.getGatePassNo() == null)) {
 
-          GatePass gatePass = gatePassRepository.findByGatePassNo(importContainer.getGatePassNo()).orElse(null);
+          GatePass gatePass = gatePassRepository.findByGatePassNo(importContainer.getGatePassNo()).orElseThrow(
+              () -> new ResultsNotFoundException("Invalid Gate Pass Number : " + importContainer.getGatePassNo()));
           if (!(gatePass == null)) {
 
             Card card = null;
             HPABBooking hpatBooking = null;
             if (!(importContainer.getBaseCommonGateInOutAttribute() == null)) {
               if (StringUtils.isNotEmpty(importContainer.getBaseCommonGateInOutAttribute().getHpatBooking())) {
-                hpatBooking = hpatBookingRepository
-                    .findOne(importContainer.getBaseCommonGateInOutAttribute().getHpatBooking()).orElse(null);
+                hpatBooking =
+                    hpatBookingRepository.findOne(importContainer.getBaseCommonGateInOutAttribute().getHpatBooking())
+                        .orElseThrow(() -> new ResultsNotFoundException(
+                            "Invalid Booking : " + importContainer.getBaseCommonGateInOutAttribute().getHpatBooking()));
               }
               if (!(importContainer.getBaseCommonGateInOutAttribute().getCard() == null)) {
-                card = cardRepository.findOne(importContainer.getBaseCommonGateInOutAttribute().getCard()).orElse(null);
+                card = cardRepository.findOne(importContainer.getBaseCommonGateInOutAttribute().getCard())
+                    .orElseThrow(() -> new ResultsNotFoundException(
+                        "Invalid Card : " + importContainer.getBaseCommonGateInOutAttribute().getCard()));
               }
             }
 
-            SystemUser gateInClerk = null;
-            System.out.println("gateInWriteRequest.getUserName() " + gateInWriteRequest.getUserName());
-            Login login = loginRepository.findByUserName(gateInWriteRequest.getUserName()).orElse(null);
-            if (!(login == null)) {
-              gateInClerk = login.getSystemUser();
-            }
+            SystemUser gateInClerk = systemUserRepository.findOne(SecurityHelper.getCurrentUserId())
+                .orElseThrow(() -> new AuthenticationServiceException(
+                    "Log in User Not Found : " + SecurityHelper.getCurrentUserId()));
             System.out.println("gateInClerk " + gateInClerk);
 
             Client gateInClient = null;
             if (!(importContainer.getBaseCommonGateInOutAttribute() == null
                 || importContainer.getBaseCommonGateInOutAttribute().getGateInClient() == null)) {
-              gateInClient = clientRepository
-                  .findOne(importContainer.getBaseCommonGateInOutAttribute().getGateInClient().getClientID())
-                  .orElse(null);
+              gateInClient =
+                  clientRepository
+                      .findOne(importContainer.getBaseCommonGateInOutAttribute().getGateInClient()
+                          .getClientID())
+                  .orElseThrow(() -> new ResultsNotFoundException(
+                      "Invalid Client Id : " + importContainer.getBaseCommonGateInOutAttribute().getGateInClient()));
             }
 
             PrintEir printEir = null;
