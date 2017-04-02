@@ -199,7 +199,7 @@ public class BaseCommonGateInOutDTO implements Serializable {
     this.pmPlateNo = "60P1-2933";
     this.hpatBooking = "BKG193";
     this.eirStatus = TransactionStatus.COMPLETE.getValue();
-    this.gateOutBoothNo = "1234";
+    this.gateOutBoothNo = "12";
     this.timeGateIn = LocalDateTime.now();
     this.timeGateInOk = LocalDateTime.now();
     this.timeGateOut = LocalDateTime.now();

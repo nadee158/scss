@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.privasia.scss.common.dto.BaseCommonGateInOutDTO;
+import com.privasia.scss.common.dto.ClientDTO;
 import com.privasia.scss.common.dto.ExportContainer;
 import com.privasia.scss.common.dto.GateInReponse;
 import com.privasia.scss.common.dto.GateInWriteRequest;
@@ -243,9 +244,24 @@ public class ExportGateInService {
         }
         System.out.println("gateInWriteRequest.getGateInDateTime() " + gateInWriteRequest.getGateInDateTime());
         exportContainer.setBackToback(backToback);
+
+        // assign values from header level to container level
+        exportContainer.getBaseCommonGateInOutAttribute().setCard(gateInWriteRequest.getCardId());
+        exportContainer.getBaseCommonGateInOutAttribute()
+            .setEirStatus(com.privasia.scss.common.enums.TransactionStatus.INPROGRESS.getValue());
+        ClientDTO gateInClientDTO = new ClientDTO();
+        gateInClientDTO.setClientID(gateInWriteRequest.getGateInClient());
+        exportContainer.getBaseCommonGateInOutAttribute().setGateInClient(gateInClientDTO);
+        exportContainer.getBaseCommonGateInOutAttribute().setHpatBooking(gateInWriteRequest.getHpatBookingId());
+        exportContainer.getBaseCommonGateInOutAttribute().setPmHeadNo(gateInWriteRequest.getTruckHeadNo());
+        exportContainer.getBaseCommonGateInOutAttribute().setPmPlateNo(gateInWriteRequest.getTruckPlateNo());
+        exportContainer.getBaseCommonGateInOutAttribute().setTimeGateInOk(LocalDateTime.now());
+
         exportContainer.getBaseCommonGateInOutAttribute()
             .setTimeGateIn(CommonUtil.getParsedDate(gateInWriteRequest.getGateInDateTime()));
         exportContainer.getBaseCommonGateInOutAttribute().setTimeGateInOk(LocalDateTime.now());
+
+
         Exports exports = new Exports();
         System.out.println("exportContainer " + exportContainer);
         modelMapper.map(exportContainer, exports);
