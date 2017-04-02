@@ -88,17 +88,19 @@ public class ExportGateOutService {
     	modelMapper.map(export, exportContainer);
     	//adding log info
     	exportContainerList.add(exportContainer);
+    	if(StringUtils.isEmpty(gateOutRequest.getExpContainer1())){
+    		gateOutRequest.setExpContainer1(export.getContainer().getContainerNumber());
+    	}else{
+    		gateOutRequest.setExpContainer2(export.getContainer().getContainerNumber());
+    	}
+    	gateOutRequest.setTruckHeadNo(export.getBaseCommonGateInOutAttribute().getPmHeadNo());
     });
 
     return exportContainerList;
 
   }
 
-  public List<ExportContainer> fetchContainerInfo(List<String> exportContainerNumbers) {
-
-    return null;
-
-  }
+  
 
   public List<ShipCode> checkContainer(List<ExportContainer> exportContainers) {
     if (!(exportContainers == null || exportContainers.isEmpty())) {

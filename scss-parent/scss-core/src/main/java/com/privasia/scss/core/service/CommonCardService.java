@@ -9,11 +9,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.privasia.scss.common.dto.InProgressTrxDTO;
 import com.privasia.scss.common.enums.CardStatus;
 import com.privasia.scss.common.enums.CompanyType;
 import com.privasia.scss.common.enums.TransactionStatus;
+import com.privasia.scss.common.enums.TransactionType;
+import com.privasia.scss.core.exception.BusinessException;
 import com.privasia.scss.core.exception.ResultsNotFoundException;
 import com.privasia.scss.core.model.Card;
+import com.privasia.scss.core.model.Company;
 import com.privasia.scss.core.repository.CardRepository;
 import com.privasia.scss.core.repository.ExportsRepository;
 import com.privasia.scss.core.repository.GatePassRepository;
@@ -61,42 +65,48 @@ public class CommonCardService {
   }
 
   @Transactional(propagation = Propagation.REQUIRED, readOnly = true, value = "transactionManager")
-  public boolean isTrxInProgress(Long cardID) {
+  public InProgressTrxDTO isTrxInProgress(Long cardID) {
 
-    long count = 0;
-
-    count = oddRepository.countByCardIDAndEirStatus(cardID, TransactionStatus.INPROGRESS.getValue());
-    if (count > 0)
-      return true;
-
-    count = gatePassRepository.countRecordsByCardIdAndEirStatus(cardID, TransactionStatus.INPROGRESS.getValue());
-    if (count > 0)
-      return true;
-
-    count = exportsRepository.countRecordsByCardIdAndEirStatus(cardID, TransactionStatus.INPROGRESS.getValue());
-    if (count > 0)
-      return true;
-
-    return false;
+    InProgressTrxDTO inProgressTrxDTO = new InProgressTrxDTO();
+    inProgressTrxDTO.setInProgress(false);
+    
+    long oddCount = oddRepository.countByCardIDAndEirStatus(cardID, TransactionStatus.INPROGRESS.getValue());
+   
+    long impCount = gatePassRepository.countRecordsByCardIdAndEirStatus(cardID, TransactionStatus.INPROGRESS.getValue());
+  
+    long expCount = exportsRepository.countRecordsByCardIdAndEirStatus(cardID, TransactionStatus.INPROGRESS.getValue());
+    
+    if(oddCount > 0){
+    	inProgressTrxDTO.setTrxType(TransactionType.ODD);
+    	inProgressTrxDTO.setInProgress(true);
+    }else if(impCount > 0 && expCount > 0){
+    	inProgressTrxDTO.setTrxType(TransactionType.IMPORT_EXPORT);
+    	inProgressTrxDTO.setInProgress(true);
+    }else if(impCount > 0){
+    	inProgressTrxDTO.setTrxType(TransactionType.IMPORT);
+    	inProgressTrxDTO.setInProgress(true);
+    }else if(expCount > 0){
+    	inProgressTrxDTO.setTrxType(TransactionType.EXPORT);
+    	inProgressTrxDTO.setInProgress(true);
+    }
+    return inProgressTrxDTO;
 
   }
 
   @Transactional(propagation = Propagation.REQUIRED, readOnly = true, value = "transactionManager")
-  public String getHaulierCodeByScanCard(Long cardID) {
+  public String getHaulierCodeByScanCard(Card card) {
     // fetch company of which type is
     // CompanyType - > HAULAGE
-    Optional<Card> cardOpt = cardRepository.findByCardIDAndCompany_CompanyType(cardID, CompanyType.HAULAGE);
-    if (cardOpt.isPresent()) {
-      Card card = cardOpt.orElse(null);
-      if (!(card == null || card.getCompany() == null)) {
-        return card.getCompany().getCompanyCode();
-      } else {
-        throw new ResultsNotFoundException("Company was not found for card id :" + cardID);
-      }
-    } else {
-      throw new ResultsNotFoundException("Card was not found for id :" + cardID);
-    }
-    // return companyCode
+	Company haulageCompany = card.getCompany();
+	if(haulageCompany == null) 
+		throw new BusinessException("Company was not assigned for card id "+card.getCardID());
+	
+	if(haulageCompany.getCompanyType().equals(CompanyType.HAULAGE)){
+		return haulageCompany.getCompanyCode();
+	}else{
+		throw new BusinessException("Not a haulage Company ! "+haulageCompany.getCompanyCode());
+	}
+	
   }
 
 }
