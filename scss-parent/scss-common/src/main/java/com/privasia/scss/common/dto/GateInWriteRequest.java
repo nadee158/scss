@@ -122,7 +122,7 @@ public class GateInWriteRequest implements Serializable {
     this.userName = userName;
   }
 
-  public void initializeWithDefaultValues() {
+  public GateInWriteRequest initializeWithDefaultValues() {
     this.userName = "USER01";
     this.laneNo = "GATE00";// -long (clientID)
     this.haulageCode = "HAN";// -long (clientID)
@@ -140,6 +140,7 @@ public class GateInWriteRequest implements Serializable {
     this.importContainers = new ArrayList<ImportContainer>();
     this.importContainers.add((new ImportContainer()).initializeWithDefaultValues("ASIA1234562"));
     this.importContainers.add((new ImportContainer()).initializeWithDefaultValues("ASIA1234563"));
+    return this;
   }
 
 }

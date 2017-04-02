@@ -9,7 +9,7 @@ import org.modelmapper.PropertyMap;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
-import com.privasia.scss.common.dto.ImportContainer;
+import com.privasia.scss.common.dto.GateInWriteRequest;
 
 public class TestClass {
 
@@ -21,12 +21,12 @@ public class TestClass {
     Gson gson = new Gson();
     // GateOutWriteRequest obj = GateOutWriteRequest.emptyGateOutWriteRequest();
 
-    ImportContainer obj = new ImportContainer().initializeWithDefaultValues("VSLCONT0011");
+    GateInWriteRequest obj = new GateInWriteRequest().initializeWithDefaultValues();
 
     // 2. Java object to JSON, and assign to a String
     String jsonInString = gson.toJson(obj);
 
-    FileWriter f = new FileWriter("D:/Projects/LatestSCSS/scss/postman_collections/json_files/ImportContainer.json");
+    FileWriter f = new FileWriter("D:/Projects/LatestSCSS/scss/postman_collections/json_files/GateInWriteRequest.json");
     f.write(jsonInString);
     f.flush();
     f.close();

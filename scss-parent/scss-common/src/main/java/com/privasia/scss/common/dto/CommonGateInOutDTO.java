@@ -5,9 +5,8 @@ package com.privasia.scss.common.dto;
 
 import java.io.Serializable;
 
-import org.hibernate.resource.transaction.spi.TransactionStatus;
-
 import com.privasia.scss.common.enums.ImpExpFlagStatus;
+import com.privasia.scss.common.enums.TransactionStatus;
 
 /**
  * @author Janaka
@@ -87,11 +86,11 @@ public class CommonGateInOutDTO implements Serializable {
 
     this.rejectReason = "Sample Reason";
 
-    this.gateInStatus = TransactionStatus.ACTIVE.toString();
+    this.gateInStatus = TransactionStatus.APPROVED.getValue();
 
-    this.zipFileNo = "zip0122";
+    this.zipFileNo = "zi01";
 
-    this.trxSlipNo = "slip0045";
+    this.trxSlipNo = "sl45";
     return this;
   }
 

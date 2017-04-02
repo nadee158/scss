@@ -5,6 +5,8 @@ package com.privasia.scss.common.dto;
 
 import java.io.Serializable;
 
+import com.privasia.scss.common.enums.ContainerFullEmptyType;
+
 /**
  * @author Janaka
  *
@@ -68,10 +70,10 @@ public class CommonContainerDTO implements Serializable {
 
   public CommonContainerDTO initializeWithDefaultValues(String containerNo) {
     this.setContainerNumber(containerNo);
-    this.setContainerFullOrEmpty("F");
+    this.setContainerFullOrEmpty(ContainerFullEmptyType.FULL.getValue());
     this.setContainerHeight(150);
     this.setContainerISOCode("2210");
-    this.setContainerSize("8000");
+    this.setContainerSize("80");
     return this;
   }
 
