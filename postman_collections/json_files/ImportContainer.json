@@ -31,11 +31,11 @@
       "hpatBooking":"BKG193",
       "eirStatus":"INPROGRESS",
       "gateOutBoothNo":"1234",
-      "timeGateIn":"04/11/2017 01:22:55 am",
-      "timeGateInOk":"04/11/2017 01:22:55 am",
-      "timeGateOut":"04/11/2017 01:22:55 am",
-      "timeGateOutOk":"04/11/2017 01:22:55 am",
-      "timeGateOutBooth":"04/11/2017 01:22:55 am",
+      "timeGateIn":"04/11/2017 01:22:55 AM",
+      "timeGateInOk":"04/11/2017 01:22:55 AM",
+      "timeGateOut":"04/11/2017 01:22:55 AM",
+      "timeGateOutOk":"04/11/2017 01:22:55 AM",
+      "timeGateOutBooth":"04/11/2017 01:22:55 AM",
       "card":1998,
       "gateInClerk":{
          "systemUserID":37

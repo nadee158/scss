@@ -7,7 +7,7 @@
    "truckWeight":4000,
    "trailerNo":"1122",
    "trailerWeight":4000,
-   "gateInDateTime":"04/11/2017 01:22:55 am",
+   "gateInDateTime":"04/11/2017 01:22:55 AM",
    "weightBridge":500,
    "exportContainers":[
       {
@@ -22,37 +22,24 @@
             "eirNumber":150,
             "impExpFlag":"I",
             "rejectReason":"Sample Reason",
-            "gateInStatus":"ACTIVE",
+            "gateInStatus":"A",
             "zipFileNo":"zip0122",
             "trxSlipNo":"slip0045"
          },
          "baseCommonGateInOutAttribute":{
             "pmHeadNo":"NTK194",
             "pmPlateNo":"60P1-2933",
-            "hpatBooking":"BKG193",
-            "eirStatus":"INPROGRESS",
-            "gateOutBoothNo":"1234",
-            "timeGateIn":"04/11/2017 01:22:55 am",
-            "timeGateInOk":"04/11/2017 01:22:55 am",
-            "timeGateOut":"04/11/2017 01:22:55 am",
-            "timeGateOutOk":"04/11/2017 01:22:55 am",
-            "timeGateOutBooth":"04/11/2017 01:22:55 am",
+            "hpatBooking":"2c92613a2be36140012be361b6250d57",
+            "eirStatus":"I",            
+            "timeGateIn":"04/11/2017 01:22:55 AM",
+            "timeGateInOk":"04/11/2017 01:22:55 AM",           
             "card":1998,
             "gateInClerk":{
                "systemUserID":37
-            },
-            "gateOutClerk":{
-               "systemUserID":37
-            },
+            },           
             "gateInClient":{
                "clientID":101
-            },
-            "gateOutClient":{
-               "clientID":101
-            },
-            "gateOutBoothClerk":{
-               "systemUserID":37
-            }
+            }            
          },
          "manualPlanIndicator":"M",
          "bookingNo":"BKG193",
@@ -78,11 +65,11 @@
             "seal02Type":"SL",
             "seal02Number":"MY0338571"
          },
-         "expWeightBridge":34710,
-         "expNetWeight":23910,
+         "expWeightBridge":34,
+         "expNetWeight":65,
          "referFlag":false,
-         "referTempType":"reftemp",
-         "referTemp":1500,
+         "referTempType":"F",
+         "referTemp":34.2,
          "imdg":"3",
          "dgUNCode":"1170",
          "imdgLabelID":"4",
@@ -91,7 +78,7 @@
          "oogOF":3,
          "oogOA":4,
          "containerPosition":"4",
-         "preCheckDate":"04/11/2017 01:22:55 am",
+         "preCheckDate":"04/11/2017 01:22:55 AM",
          "yardPosition":"4",
          "yardBayCode":"4",
          "pmBTM":357,
@@ -99,32 +86,30 @@
          "oogOR":32,
          "callCard":55,
          "vesselVisitID":"4",
-         "vesselVoyageIN":"vesselVoyageIN",
-         "vesselVoyageOUT":"vesselVoyageOUT",
-         "vesselCode":"vesselCode",
-         "vesselName":"vesselName",
-         "expAgent":"expAgent",
-         "vesselStatus":"ACT",
+         "vesselCode":"25",
+         "vesselName":"100",
+         "expAgent":"100",
+         "vesselStatus":"A",
          "shipCode":"59",
          "vesselSCN":"45",
-         "vesselETADate":"04/11/2017 01:22:55 am",
-         "vesselATADate":"04/11/2017 01:22:55 am",
+         "vesselETADate":"04/11/2017 01:22:55 AM",
+         "vesselATADate":"04/11/2017 01:22:55 AM",
          "shippingAgent":"shp001",
          "oogSSR":true,
          "overClosingSSR":true,
          "replanSSR":true,
          "ssrBlockStatus":"RLS",
-         "ssrBlockStatusDate":"04/11/2017 01:22:55 am",
+         "ssrBlockStatusDate":"04/11/2017 01:22:55 AM",
          "gcsBlockStatus":"BLK",
-         "gcsBlockStatusDate":"04/11/2017 01:22:55 am",
+         "gcsBlockStatusDate":"04/11/2017 01:22:55 AM",
          "gcsDeclareNo":"454",
-         "gcsLastCheck":"04/11/2017 01:22:55 am",
+         "gcsLastCheck":"04/11/2017 01:22:55 AM",
          "printEir":{
             "printEIRID":5493059
          },
          "userRemarks":"userRemarks",
-         "kpaApproval":"kpaApproval",
-         "hdlGoodsCode":"hdlGoodsCode",
+         "kpaApproval":"A",
+         "hdlGoodsCode":"100",
          "dgDescription":"dgDescription",
          "hdlGoodsDescription":"hdlGoodsDescription",
          "tareWeight":1500,
@@ -134,8 +119,8 @@
             "cardUsageID":9649030
          },
          "backToback":true,
-         "weightDiffPercentage":45.0,
-         "weightDifference":456.0,
+         "weightDiffPercentage":45,
+         "weightDifference":456,
          "damageCode_01":{
             "damageCode":"30",
             "damageDesc":"30 Description"
@@ -184,17 +169,17 @@
          "variance":"56",
          "withinTolerance":false,
          "calculatedVariance":"45465",
-         "solasCertNo":"solas0455",
+         "solasCertNo":"s0455",
          "solas":{
             "mgw":50,
             "faLedgerCode":"456",
             "solasRefNumber":"758",
             "solasDetailID":"54",
-            "solasInstruction":"solasInstruction",
+            "solasInstruction":"A",
             "shipperVGM":"878",
-            "vgmWitnessName":"vgmWitnessName",
-            "vgmWitnessID":"vgmWitnessID",
-            "vgmWeighingStation":"vgmWeighingStation"
+            "vgmWitnessName":"vgmr",
+            "vgmWitnessID":"10",
+            "vgmWeighingStation":"stn"
          },
          "internalBlock":false,
          "bypassDg":false,
@@ -209,7 +194,7 @@
          "shipperVGM":0,
          "subHandlingType":"1",
          "rtgExecustionStatus":"RGS",
-         "rtgExecustionDateTime":"04/11/2017 01:22:55 am",
+         "rtgExecustionDateTime":"04/11/2017 01:22:55 AM",
          "ogaBlock":false
       },
       {
@@ -224,37 +209,24 @@
             "eirNumber":150,
             "impExpFlag":"I",
             "rejectReason":"Sample Reason",
-            "gateInStatus":"ACTIVE",
+            "gateInStatus":"A",
             "zipFileNo":"zip0122",
             "trxSlipNo":"slip0045"
          },
          "baseCommonGateInOutAttribute":{
             "pmHeadNo":"NTK194",
             "pmPlateNo":"60P1-2933",
-            "hpatBooking":"BKG193",
-            "eirStatus":"INPROGRESS",
-            "gateOutBoothNo":"1234",
-            "timeGateIn":"04/11/2017 01:22:55 am",
-            "timeGateInOk":"04/11/2017 01:22:55 am",
-            "timeGateOut":"04/11/2017 01:22:55 am",
-            "timeGateOutOk":"04/11/2017 01:22:55 am",
-            "timeGateOutBooth":"04/11/2017 01:22:55 am",
+            "hpatBooking":"2c92613a2be36140012be361b6250d57",
+            "eirStatus":"I",            
+            "timeGateIn":"04/11/2017 01:22:55 AM",
+            "timeGateInOk":"04/11/2017 01:22:55 AM",            
             "card":1998,
             "gateInClerk":{
                "systemUserID":37
-            },
-            "gateOutClerk":{
-               "systemUserID":37
-            },
+            },            
             "gateInClient":{
                "clientID":101
-            },
-            "gateOutClient":{
-               "clientID":101
-            },
-            "gateOutBoothClerk":{
-               "systemUserID":37
-            }
+            }          
          },
          "manualPlanIndicator":"M",
          "bookingNo":"BKG193",
@@ -280,11 +252,11 @@
             "seal02Type":"SL",
             "seal02Number":"MY0338571"
          },
-         "expWeightBridge":34710,
-         "expNetWeight":23910,
+         "expWeightBridge":65,
+         "expNetWeight":25,
          "referFlag":false,
-         "referTempType":"reftemp",
-         "referTemp":1500,
+         "referTempType":"C",
+         "referTemp":34.2,
          "imdg":"3",
          "dgUNCode":"1170",
          "imdgLabelID":"4",
@@ -293,7 +265,7 @@
          "oogOF":3,
          "oogOA":4,
          "containerPosition":"4",
-         "preCheckDate":"04/11/2017 01:22:55 am",
+         "preCheckDate":"04/11/2017 01:22:55 AM",
          "yardPosition":"4",
          "yardBayCode":"4",
          "pmBTM":357,
@@ -303,30 +275,30 @@
          "vesselVisitID":"4",
          "vesselVoyageIN":"vesselVoyageIN",
          "vesselVoyageOUT":"vesselVoyageOUT",
-         "vesselCode":"vesselCode",
-         "vesselName":"vesselName",
+         "vesselCode":"25",
+         "vesselName":"100",
          "expAgent":"expAgent",
          "vesselStatus":"ACT",
          "shipCode":"59",
          "vesselSCN":"45",
-         "vesselETADate":"04/11/2017 01:22:55 am",
-         "vesselATADate":"04/11/2017 01:22:55 am",
+         "vesselETADate":"04/11/2017 01:22:55 AM",
+         "vesselATADate":"04/11/2017 01:22:55 AM",
          "shippingAgent":"shp001",
          "oogSSR":true,
          "overClosingSSR":true,
          "replanSSR":true,
          "ssrBlockStatus":"RLS",
-         "ssrBlockStatusDate":"04/11/2017 01:22:55 am",
+         "ssrBlockStatusDate":"04/11/2017 01:22:55 AM",
          "gcsBlockStatus":"BLK",
-         "gcsBlockStatusDate":"04/11/2017 01:22:55 am",
+         "gcsBlockStatusDate":"04/11/2017 01:22:55 AM",
          "gcsDeclareNo":"454",
-         "gcsLastCheck":"04/11/2017 01:22:55 am",
+         "gcsLastCheck":"04/11/2017 01:22:55 AM",
          "printEir":{
             "printEIRID":5493059
          },
          "userRemarks":"userRemarks",
-         "kpaApproval":"kpaApproval",
-         "hdlGoodsCode":"hdlGoodsCode",
+         "kpaApproval":"A",
+         "hdlGoodsCode":"89",
          "dgDescription":"dgDescription",
          "hdlGoodsDescription":"hdlGoodsDescription",
          "tareWeight":1500,
@@ -336,8 +308,8 @@
             "cardUsageID":9649030
          },
          "backToback":true,
-         "weightDiffPercentage":45.0,
-         "weightDifference":456.0,
+         "weightDiffPercentage":45,
+         "weightDifference":456,
          "damageCode_01":{
             "damageCode":"30",
             "damageDesc":"30 Description"
@@ -386,17 +358,17 @@
          "variance":"56",
          "withinTolerance":false,
          "calculatedVariance":"45465",
-         "solasCertNo":"solas0455",
+         "solasCertNo":"0455",
          "solas":{
             "mgw":50,
             "faLedgerCode":"456",
             "solasRefNumber":"758",
             "solasDetailID":"54",
-            "solasInstruction":"solasInstruction",
+            "solasInstruction":"In",
             "shipperVGM":"878",
-            "vgmWitnessName":"vgmWitnessName",
-            "vgmWitnessID":"vgmWitnessID",
-            "vgmWeighingStation":"vgmWeighingStation"
+            "vgmWitnessName":"vgmW",
+            "vgmWitnessID":"100",
+            "vgmWeighingStation":"stn"
          },
          "internalBlock":false,
          "bypassDg":false,
@@ -411,204 +383,8 @@
          "shipperVGM":0,
          "subHandlingType":"1",
          "rtgExecustionStatus":"RGS",
-         "rtgExecustionDateTime":"04/11/2017 01:22:55 am",
+         "rtgExecustionDateTime":"04/11/2017 01:22:55 AM",
          "ogaBlock":false
-      }
-   ],
-   "importContainers":[
-      {
-         "printEir":{
-			"printEIRID":5493059
-         },
-         "cardUsage":{
-            "cardUsageID":9649030
-         },
-         "gatePassID":24441450101,
-         "gatePassNo":24441450101,
-         "gateOrderNo":2444145,
-         "containerLength":40,
-         "container":{
-            "containerNumber":"ASIA1234562",
-            "containerHeight":150,
-            "containerISOCode":"2210",
-            "containerFullOrEmpty":"F",
-            "containerSize":"8000"
-         },
-         "company":412,
-         "commonGateInOut":{
-            "eirNumber":150,
-            "impExpFlag":"I",
-            "rejectReason":"Sample Reason",
-            "gateInStatus":"ACTIVE",
-            "zipFileNo":"zip0122",
-            "trxSlipNo":"slip0045"
-         },
-         "baseCommonGateInOutAttribute":{
-            "pmHeadNo":"NTK194",
-            "pmPlateNo":"60P1-2933",
-            "hpatBooking":"BKG193",
-            "eirStatus":"INPROGRESS",
-            "gateOutBoothNo":"1234",
-            "timeGateIn":"04/11/2017 01:22:55 am",
-            "timeGateInOk":"04/11/2017 01:22:55 am",
-            "timeGateOut":"04/11/2017 01:22:55 am",
-            "timeGateOutOk":"04/11/2017 01:22:55 am",
-            "timeGateOutBooth":"04/11/2017 01:22:55 am",
-            "card":1998,
-            "gateInClerk":{
-               "systemUserID":37
-            },
-            "gateOutClerk":{
-               "systemUserID":37
-            },
-            "gateInClient":{
-               "clientID":101
-            },
-            "gateOutClient":{
-               "clientID":101
-            },
-            "gateOutBoothClerk":{
-               "systemUserID":37
-            }
-         },
-         "gatePassStatus":"A",
-         "handlingID":150,
-         "orderNo":"KKLUTH0429431",
-         "gateInOut":"IN",
-         "shippingLine":"KKK",
-         "currentPosition":"09B0405E1",
-         "containerPosition":"M",
-         "gateInLaneNo":"MG",
-         "gateOutLaneNo":"B9B",
-         "sealAttribute":{
-            "seal01Origin":"L",
-            "seal01Type":"SL",
-            "seal01Number":"B109612",
-            "seal02Origin":"S",
-            "seal02Type":"SL",
-            "seal02Number":"MY0338571"
-         },
-         "gateOutRemarks":"gateOutRemarks",
-         "yardPosition":"09B0405E1",
-         "yardBayCode":"09B04",
-         "callCard":9032,
-         "cosmosSeal01Origin":"L",
-         "cosmosSeal01Type":"SL",
-         "cosmosSeal01Number":"MQ133880",
-         "cosmosSeal02Origin":"L",
-         "cosmosSeal02Type":"NS",
-         "cosmosSeal02Number":"MQ133881",
-         "gatePassValidDate":"04/15/2017 02:05:30 pm",
-         "isoInfo":{
-            "length":150,
-            "height":150.5,
-            "type":"T",
-            "tareWeight":500,
-            "totalWeightBridge":600,
-            "width":45
-         },
-         "shippingAgent":"AG01",
-         "orderFOT":"FOT",
-         "userSessionId":0,
-         "printEIRNo":0,
-         "FOTBKGFlag":true
-      },
-      {
-         "printEir":{
-			"printEIRID":5493059
-         },
-         "cardUsage":{
-            "cardUsageID":9649030
-         },
-         "gatePassID":24441450101,
-         "gatePassNo":24441450101,
-         "gateOrderNo":2444145,
-         "containerLength":40,
-         "container":{
-            "containerNumber":"ASIA1234563",
-            "containerHeight":150,
-            "containerISOCode":"2210",
-            "containerFullOrEmpty":"F",
-            "containerSize":"8000"
-         },
-         "company":412,
-         "commonGateInOut":{
-            "eirNumber":150,
-            "impExpFlag":"I",
-            "rejectReason":"Sample Reason",
-            "gateInStatus":"ACTIVE",
-            "zipFileNo":"zip0122",
-            "trxSlipNo":"slip0045"
-         },
-         "baseCommonGateInOutAttribute":{
-            "pmHeadNo":"NTK194",
-            "pmPlateNo":"60P1-2933",
-            "hpatBooking":"BKG193",
-            "eirStatus":"INPROGRESS",
-            "gateOutBoothNo":"1234",
-            "timeGateIn":"04/11/2017 01:22:55 am",
-            "timeGateInOk":"04/11/2017 01:22:55 am",
-            "timeGateOut":"04/11/2017 01:22:55 am",
-            "timeGateOutOk":"04/11/2017 01:22:55 am",
-            "timeGateOutBooth":"04/11/2017 01:22:55 am",
-            "card":1998,
-            "gateInClerk":{
-               "systemUserID":37
-            },
-            "gateOutClerk":{
-               "systemUserID":37
-            },
-            "gateInClient":{
-               "clientID":101
-            },
-            "gateOutClient":{
-               "clientID":101
-            },
-            "gateOutBoothClerk":{
-               "systemUserID":37
-            }
-         },
-         "gatePassStatus":"A",
-         "handlingID":150,
-         "orderNo":"KKLUTH0429431",
-         "gateInOut":"IN",
-         "shippingLine":"KKK",
-         "currentPosition":"09B0405E1",
-         "containerPosition":"M",
-         "gateInLaneNo":"MG",
-         "gateOutLaneNo":"B9B",
-         "sealAttribute":{
-            "seal01Origin":"L",
-            "seal01Type":"SL",
-            "seal01Number":"B109612",
-            "seal02Origin":"S",
-            "seal02Type":"SL",
-            "seal02Number":"MY0338571"
-         },
-         "gateOutRemarks":"gateOutRemarks",
-         "yardPosition":"09B0405E1",
-         "yardBayCode":"09B04",
-         "callCard":9032,
-         "cosmosSeal01Origin":"L",
-         "cosmosSeal01Type":"SL",
-         "cosmosSeal01Number":"MQ133880",
-         "cosmosSeal02Origin":"L",
-         "cosmosSeal02Type":"NS",
-         "cosmosSeal02Number":"MQ133881",
-         "gatePassValidDate":"04/15/2017 02:05:30 pm",
-         "isoInfo":{
-            "length":150,
-            "height":150.5,
-            "type":"T",
-            "tareWeight":500,
-            "totalWeightBridge":600,
-            "width":45
-         },
-         "shippingAgent":"AG01",
-         "orderFOT":"FOT",
-         "userSessionId":0,
-         "printEIRNo":0,
-         "FOTBKGFlag":true
       }
    ]
 }

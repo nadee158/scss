@@ -6,6 +6,8 @@ package com.privasia.scss.common.dto;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.privasia.scss.common.enums.TransactionStatus;
 import com.privasia.scss.common.util.CommonUtil;
@@ -32,19 +34,24 @@ public class BaseCommonGateInOutDTO implements Serializable {
 
   private String gateOutBoothNo;
 
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+  @JsonFormat(pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+  @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
   private LocalDateTime timeGateIn;
 
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+  @JsonFormat(pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+  @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
   private LocalDateTime timeGateInOk;
 
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+  @JsonFormat(pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+  @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
   private LocalDateTime timeGateOut;
 
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+  @JsonFormat(pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+  @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
   private LocalDateTime timeGateOutOk;
 
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+  @JsonFormat(pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+  @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
   private LocalDateTime timeGateOutBooth;
 
   private Long card;

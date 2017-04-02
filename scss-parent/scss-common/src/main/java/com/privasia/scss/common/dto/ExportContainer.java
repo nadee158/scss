@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.privasia.scss.common.enums.ExportOPTFlagType;
@@ -76,7 +77,8 @@ public class ExportContainer {
 
   private String containerPosition;
 
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+  @JsonFormat(pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+  @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
   private LocalDateTime preCheckDate;
 
   private String yardPosition;
@@ -109,10 +111,12 @@ public class ExportContainer {
 
   private String vesselSCN;
 
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+  @JsonFormat(pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+  @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
   private LocalDateTime vesselETADate;
 
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+  @JsonFormat(pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+  @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
   private LocalDateTime vesselATADate;
 
   private String shippingAgent;
@@ -125,17 +129,20 @@ public class ExportContainer {
 
   private String ssrBlockStatus;
 
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+  @JsonFormat(pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+  @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
   private LocalDateTime ssrBlockStatusDate;
 
   private String gcsBlockStatus;
 
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+  @JsonFormat(pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+  @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
   private LocalDateTime gcsBlockStatusDate;
 
   private String gcsDeclareNo;
 
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+  @JsonFormat(pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+  @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
   private LocalDateTime gcsLastCheck;
 
   private PrintEirDTO printEir;
@@ -284,21 +291,25 @@ public class ExportContainer {
   // FOR OPUS SERVICE
   private String expCarrierType;
 
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+  @JsonFormat(pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+  @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
   private LocalDateTime yardOpeningDateTime;
 
   private String containerType;
 
   private String reeferTempUnit;
 
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+  @JsonFormat(pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+  @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
   private LocalDateTime yardDGOpeningDateTime;
 
   private String shippingLine;
 
   private String subHandlingType;// ":"1"
   private String rtgExecustionStatus;// ":"RGS"
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+
+  @JsonFormat(pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+  @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
   private LocalDateTime rtgExecustionDateTime;// ;":"20161212101010"
 
   //////////////////////////////////////
