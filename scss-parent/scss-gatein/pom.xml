@@ -25,11 +25,23 @@
       <scope>test</scope>
     </dependency>
     
+    <dependency>
+		<groupId>com.privasia.scss</groupId>
+		<artifactId>scss-core</artifactId>
+		<version>1.0</version>
+	</dependency>
+    
    <dependency>
 			<groupId>com.privasia.scss</groupId>
   			<artifactId>scss-hpat</artifactId>
 			<version>1.0</version>
-	</dependency>
+			<exclusions>
+				<exclusion>
+					<artifactId>scss-core</artifactId>
+					<groupId>com.privasia.scss</groupId>
+				</exclusion>
+			</exclusions>
+   </dependency>
 	
 	<dependency>
 			<groupId>com.privasia.scss</groupId>
@@ -41,12 +53,24 @@
 			<groupId>com.privasia.scss</groupId>
   			<artifactId>scss-opus</artifactId>
 			<version>1.0</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>scss-core</artifactId>
+					<groupId>com.privasia.scss</groupId>
+				</exclusion>
+			</exclusions>
 	</dependency> 
 	
 	<dependency>
 			<groupId>com.privasia.scss</groupId>
   			<artifactId>scss-hdbs</artifactId>
 			<version>1.0</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>scss-core</artifactId>
+					<groupId>com.privasia.scss</groupId>
+				</exclusion>
+			</exclusions>
 	</dependency>
     
   </dependencies>

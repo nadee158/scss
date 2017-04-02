@@ -114,7 +114,7 @@ public class ImportExportGateInService {
         cardOpt.orElseThrow(() -> new ResultsNotFoundException("Invalid Card ID ! " + gateInRequest.getCardID()));
 
 
-    gateInRequest.setHaulageCode(commonCardService.getHaulierCodeByScanCard(gateInRequest.getCardID()));
+    gateInRequest.setHaulageCode(commonCardService.getHaulierCodeByScanCard(card));
 
     Optional<Client> clientOpt = clientRepository.findOne(gateInRequest.getLaneId());
     Client client =

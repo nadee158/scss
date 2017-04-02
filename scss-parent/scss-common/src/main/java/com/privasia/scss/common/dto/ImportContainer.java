@@ -131,6 +131,7 @@ public class ImportContainer implements Serializable {
   private String contRefer;
 
   // from opus import container
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
   private LocalDateTime containerDischargeDateTime;// 20161124162510,
   private String impCarrierType;// null,
   private String impCarrier;// null,
@@ -160,10 +161,13 @@ public class ImportContainer implements Serializable {
 
   private String lpkBlock;
 
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
   private LocalDateTime cusGCSReleaseDate;
 
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
   private LocalDateTime gatePassIssued;
 
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
   private LocalDateTime portSecurity;
 
   private String moveType;

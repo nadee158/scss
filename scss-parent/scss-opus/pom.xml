@@ -23,7 +23,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.privasia.scss</groupId>
-			<artifactId>scss-common</artifactId>
+			<artifactId>scss-core</artifactId>
 			<version>1.0</version>
 		</dependency>
 		<dependency>

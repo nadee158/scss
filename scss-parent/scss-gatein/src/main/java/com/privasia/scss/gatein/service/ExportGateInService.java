@@ -232,6 +232,8 @@ public class ExportGateInService {
     // construct a new export entity for each exportcontainer and save
     backToback = false;
     if (!(gateInWriteRequest.getExportContainers() == null || gateInWriteRequest.getExportContainers().isEmpty())) {
+      System.out.println(
+          "gateInWriteRequest.getExportContainers().size() " + gateInWriteRequest.getExportContainers().size());
       if (gateInWriteRequest.getExportContainers().size() > 1) {
         backToback = true;
       }
