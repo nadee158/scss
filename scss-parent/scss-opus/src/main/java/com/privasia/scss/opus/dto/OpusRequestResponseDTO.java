@@ -13,151 +13,151 @@ import java.time.LocalDateTime;
  */
 public class OpusRequestResponseDTO implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 1L;
 
-	private Long opusReqResID;
+  private Long opusReqResID;
 
-	private String transactionType;
+  private String transactionType;
 
-	private String gateInOut;
+  private String gateInOut;
 
-	private String impContainer01;
-	
-	private String impContainer02;
-	
-	private String expContainer01;
-	
-	private String expContainer02;
+  private String impContainer01;
 
-	private Long cardID;
+  private String impContainer02;
 
-	private LocalDateTime gateinTime;
+  private String expContainer01;
 
-	private String readWrite;
+  private String expContainer02;
 
-	private String request;
+  private Long cardID;
 
-	private String response;
+  private LocalDateTime gateinTime;
 
-	private LocalDateTime sendTime;
+  private String readWrite;
 
-	private LocalDateTime receivedTime;
+  private String request;
 
-	public Long getOpusReqResID() {
-		return opusReqResID;
-	}
+  private String response;
 
-	public void setOpusReqResID(Long opusReqResID) {
-		this.opusReqResID = opusReqResID;
-	}
+  private LocalDateTime sendTime;
 
-	public String getTransactionType() {
-		return transactionType;
-	}
+  private LocalDateTime receivedTime;
 
-	public void setTransactionType(String transactionType) {
-		this.transactionType = transactionType;
-	}
+  public Long getOpusReqResID() {
+    return opusReqResID;
+  }
 
-	public String getGateInOut() {
-		return gateInOut;
-	}
+  public void setOpusReqResID(Long opusReqResID) {
+    this.opusReqResID = opusReqResID;
+  }
 
-	public void setGateInOut(String gateInOut) {
-		this.gateInOut = gateInOut;
-	}
-	
-	public String getImpContainer01() {
-		return impContainer01;
-	}
+  public String getTransactionType() {
+    return transactionType;
+  }
 
-	public void setImpContainer01(String impContainer01) {
-		this.impContainer01 = impContainer01;
-	}
+  public void setTransactionType(String transactionType) {
+    this.transactionType = transactionType;
+  }
 
-	public String getImpContainer02() {
-		return impContainer02;
-	}
+  public String getGateInOut() {
+    return gateInOut;
+  }
 
-	public void setImpContainer02(String impContainer02) {
-		this.impContainer02 = impContainer02;
-	}
+  public void setGateInOut(String gateInOut) {
+    this.gateInOut = gateInOut;
+  }
 
-	public String getExpContainer01() {
-		return expContainer01;
-	}
+  public String getImpContainer01() {
+    return impContainer01;
+  }
 
-	public void setExpContainer01(String expContainer01) {
-		this.expContainer01 = expContainer01;
-	}
+  public void setImpContainer01(String impContainer01) {
+    this.impContainer01 = impContainer01;
+  }
 
-	public String getExpContainer02() {
-		return expContainer02;
-	}
+  public String getImpContainer02() {
+    return impContainer02;
+  }
 
-	public void setExpContainer02(String expContainer02) {
-		this.expContainer02 = expContainer02;
-	}
+  public void setImpContainer02(String impContainer02) {
+    this.impContainer02 = impContainer02;
+  }
 
-	public Long getCardID() {
-		return cardID;
-	}
+  public String getExpContainer01() {
+    return expContainer01;
+  }
 
-	public void setCardID(Long cardID) {
-		this.cardID = cardID;
-	}
+  public void setExpContainer01(String expContainer01) {
+    this.expContainer01 = expContainer01;
+  }
 
-	public LocalDateTime getGateinTime() {
-		return gateinTime;
-	}
+  public String getExpContainer02() {
+    return expContainer02;
+  }
 
-	public void setGateinTime(LocalDateTime gateinTime) {
-		this.gateinTime = gateinTime;
-	}
+  public void setExpContainer02(String expContainer02) {
+    this.expContainer02 = expContainer02;
+  }
 
-	public String getReadWrite() {
-		return readWrite;
-	}
+  public Long getCardID() {
+    return cardID;
+  }
 
-	public void setReadWrite(String readWrite) {
-		this.readWrite = readWrite;
-	}
+  public void setCardID(Long cardID) {
+    this.cardID = cardID;
+  }
 
-	public String getRequest() {
-		return request;
-	}
+  public LocalDateTime getGateinTime() {
+    return gateinTime;
+  }
 
-	public void setRequest(String request) {
-		this.request = request;
-	}
+  public void setGateinTime(LocalDateTime gateinTime) {
+    this.gateinTime = gateinTime;
+  }
 
-	public String getResponse() {
-		return response;
-	}
+  public String getReadWrite() {
+    return readWrite;
+  }
 
-	public void setResponse(String response) {
-		this.response = response;
-	}
+  public void setReadWrite(String readWrite) {
+    this.readWrite = readWrite;
+  }
 
-	public LocalDateTime getSendTime() {
-		return sendTime;
-	}
+  public String getRequest() {
+    return request;
+  }
 
-	public void setSendTime(LocalDateTime sendTime) {
-		this.sendTime = sendTime;
-	}
+  public void setRequest(String request) {
+    this.request = request;
+  }
 
-	public LocalDateTime getReceivedTime() {
-		return receivedTime;
-	}
+  public String getResponse() {
+    return response;
+  }
 
-	public void setReceivedTime(LocalDateTime receivedTime) {
-		this.receivedTime = receivedTime;
-	}
-	
-	
+  public void setResponse(String response) {
+    this.response = response;
+  }
+
+  public LocalDateTime getSendTime() {
+    return sendTime;
+  }
+
+  public void setSendTime(LocalDateTime sendTime) {
+    this.sendTime = sendTime;
+  }
+
+  public LocalDateTime getReceivedTime() {
+    return receivedTime;
+  }
+
+  public void setReceivedTime(LocalDateTime receivedTime) {
+    this.receivedTime = receivedTime;
+  }
+
+
 
 }

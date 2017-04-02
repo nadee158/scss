@@ -13,7 +13,7 @@
 	"requests": [
 		{
 			"id": "716f9638-773d-0f63-1391-8a94708bb801",
-			"headers": "Content-Type: application/json;charset=UTF-8\nX-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJURVNUVCIsInJvbGVzIjpbIkFETUlOSVNUUkFUT1IiXSwiZnVuY3Rpb25zIjpbMzEzLDM2MSwzODksMzYyLDExMSwzOTUsMzE1LDM3NiwzOTMsMzc3LDMxNCwzNzEsNDYxLDM4MCwzNzIsMzk0LDQzMywzNzUsMzkwLDQyOCwzODMsNDI0LDQ2Niw0NDEsNDY3LDM4OCw2MjQsNjIxLDYyMiwzOTIsNDI5LDQ2OCwxMTQsMzIyLDM3NCwzMjQsMjExLDQ2NCw0NTYsMzg1LDQ0Myw0MTYsNDQyLDQzNSwzNjMsNzAyLDMyMyw1MTAsNDQ1LDMzMSwxMTIsMzg0LDQxNywyMjEsNDQ0LDMzMiwzNjAsMzc4LDMyNiwzNDAsMzIxLDQ1MSw0MTMsNzAxLDM4Nyw0NjIsMzI1LDUyMCwzMjcsNDE0LDM4Niw0NjUsNDYzLDMxMSwzMTIsMzgxLDM5MSw0MjcsMjIyLDQ0OSw0MjYsNDE4LDQxNSwxMTMsNDMwLDQzMSw0NTQsMzgyLDM3OSw5MDEsNDQ4LDYyMyw0NTUsNDQ2LDQzMiw2MjUsNDUyLDQ0Nyw0MjMsNDE5XSwic3RhZmZOYW1lIjoiTU9IRCBZVVNVRiBCSU4gQUxJQVMiLCJzdGFmZk51bWJlciI6IjYwNTYiLCJ1c2VySUQiOjQsImlzcyI6Imh0dHA6Ly9zY3NzLmNvbS5teSIsImlhdCI6MTQ5MTE1NjMyOCwiZXhwIjoxNDkxMTU3MjI4fQ.pLybgC43exzGPr1xyPRUV_5nHyHCll7rI7PdftG2g7177zDVAios5tyxRnyVeB8v5wHZaGFATu3feMz-Kql3Tg\nX-Requested-With: XMLHttpRequest\n",
+			"headers": "Content-Type: application/json;charset=UTF-8\nX-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJURVNUVCIsInJvbGVzIjpbIkFETUlOSVNUUkFUT1IiXSwiZnVuY3Rpb25zIjpbNDE1LDQ0NSw0MTksOTAxLDMzMSwzODQsMzcyLDYyNCwzNzQsNDE2LDQ0NCwzNzUsNDQ3LDQ2NSw2MjIsMzExLDM4OCw0NTYsMzg3LDIyMiwzOTAsMjIxLDQxMyw0MTQsNDE3LDM5MSwzODYsNDIzLDM3NywxMTQsNDQ2LDM4MCwzNjEsNDQzLDQyOSw0NDgsMzMyLDM4NSwzMjIsNDYxLDQ1MiwyMTEsMzYwLDQ1MSw0MzMsNzAxLDQ2Niw0NjIsMTEzLDExMSwzMTUsMzI0LDQ0MSw0MTgsMzQwLDM3MSw0MzAsNDI4LDExMiwzMTQsNDYzLDYyMSwzMTMsMzIxLDM4OSwzOTQsMzI1LDQyNyw0NDIsMzgzLDMxMiw0NTUsNzAyLDUyMCw2MjMsMzc5LDQzNSwzODIsMzYzLDM4MSwzOTUsNDY3LDQ2OCwzOTIsNDU0LDUxMCw0MjYsNDY0LDMyNiwzOTMsNDQ5LDMyMyw0MzIsMzc2LDM3OCw2MjUsMzI3LDQyNCwzNjIsNDMxXSwic3RhZmZOYW1lIjoiTU9IRCBZVVNVRiBCSU4gQUxJQVMiLCJzdGFmZk51bWJlciI6IjYwNTYiLCJ1c2VySUQiOjQsImlzcyI6Imh0dHA6Ly9zY3NzLmNvbS5teSIsImlhdCI6MTQ5MTE1NzM4MiwiZXhwIjoxNDkxMTU4MjgyfQ.1zbUAQPaV9egOOPgzefZDjaeyviWCQ1d3FoTgrMN2MKKZ1Gwadx-QKcV6ZI2lxsM1NcUBLkEfJIcc_orK6yxNw\nX-Requested-With: XMLHttpRequest\n",
 			"url": "http://localhost:8080/scss-gateout/api/gateout/populategateout",
 			"preRequestScript": null,
 			"pathVariables": {},
@@ -24,12 +24,12 @@
 			"tests": null,
 			"currentHelper": "normal",
 			"helperAttributes": {},
-			"time": 1491156342990,
+			"time": 1491158002763,
 			"name": "http://localhost:8080/scss-gateout/api/gateout/populategateout",
 			"description": "check for incomplete transactions before gate in ",
 			"collectionId": "ccd34c77-ede8-2789-7207-e8d13fc0feab",
 			"responses": [],
-			"rawModeData": "{  \r\n   \"cardID\":1998,\r\n   \"clientID\":10\r\n}"
+			"rawModeData": "{  \r\n   \"cardID\":1998,\r\n   \"clientID\":10,\r\n   \"gateOUTDateTime\":\"04/11/2017 01:22:55 AM\"\r\n}"
 		},
 		{
 			"id": "7b409eac-6824-92fc-f64d-5d5df2e3ede5",
