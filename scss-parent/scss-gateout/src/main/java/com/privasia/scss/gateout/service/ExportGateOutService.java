@@ -141,26 +141,35 @@ public class ExportGateOutService {
   }
 
   @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
-  public void updateGateOutExport(List<ExportContainer> exportContainerList) {
+  public void updateGateOutExport(GateOutWriteRequest gateOutWriteRequest) {
+	  
+	  
+	  Optional<List<Exports>> optExpList = exportsRepository.fetchInProgressTransaction(gateOutWriteRequest.getCardID(), TransactionStatus.INPROGRESS);
+	  List<Exports> inprogressExpList =
+	    		optExpList.orElseThrow(() -> new BusinessException("No InProgress Export Transaction for the scan card ! " + gateOutWriteRequest.getCardID())); 
+	  List<ExportContainer> exportContainers = gateOutWriteRequest.getExportContainers();
+	  inprogressExpList.forEach(exports->{
+		  ExportContainer exportContainer = null;	
+		  if (!(exportContainers == null || exportContainers.isEmpty())) {
+	          exportContainer =
+	              exportContainers
+	                  .stream().filter(e -> (e.getContainer() != null) && (StringUtils
+	                      .equals(e.getContainer().getContainerNumber(), exports.getContainer().getContainerNumber())))
+	                  .findFirst().get();
+	          modelMapper.map(exportContainer, exports);
+	          exportsRepository.save(exports);
+	          
+	          Optional<ExportsQ> exportQOpt = exportsQRepository.findOne(exports.getExportID());
+	          ExportsQ exportq = exportQOpt.orElseThrow(() -> new ResultsNotFoundException(
+	              "Not valid Gate In ExportQ Process found ! " + exports.getExportID()));
 
-    exportContainerList.forEach(exportContainer -> {
-      // fetch based on id
-
-      Optional<Exports> exportOpt = exportsRepository.findOne(exportContainer.getExportID());
-      Exports export = exportOpt.orElseThrow(() -> new ResultsNotFoundException(
-          "No valid Gate In Export Process found ! " + exportContainer.getExportID()));
-
-      modelMapper.map(exportContainer, export);
-      exportsRepository.save(export);
-
-      Optional<ExportsQ> exportQOpt = exportsQRepository.findOne(exportContainer.getExportID());
-      ExportsQ exportq = exportQOpt.orElseThrow(() -> new ResultsNotFoundException(
-          "No valid Gate In ExportQ Process found ! " + exportContainer.getExportID()));
-
-      modelMapper.map(exportContainer, exportq);
-      exportsQRepository.save(exportq);
-
-    });
+	          modelMapper.map(exports, exportq);
+	          exportsQRepository.save(exportq);
+	          
+	    }else{
+	    	throw new BusinessException("Invalid Request to Update Export !");
+	    }
+	  });
   }
 
   public List<ExportContainer> saveGateOutInfo(GateOutWriteRequest gateOutWriteRequest) {
