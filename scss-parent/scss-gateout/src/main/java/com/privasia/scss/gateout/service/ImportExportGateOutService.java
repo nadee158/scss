@@ -63,6 +63,12 @@ public class ImportExportGateOutService {
 
   private Gson gson;
 
+
+  @Autowired
+  public void setCardRepository(CardRepository cardRepository) {
+    this.cardRepository = cardRepository;
+  }
+
   @Autowired
   public void setOpusGateOutReadService(OpusGateOutReadService opusGateOutReadService) {
     this.opusGateOutReadService = opusGateOutReadService;

@@ -94,6 +94,8 @@ public class ModelMapConfig {
     modelMapper.addMappings(ModelMapPropertyMap.exportsToExportsQ());
     modelMapper.addMappings(ModelMapPropertyMap.importContainerToGatePass());
     modelMapper.addMappings(ModelMapPropertyMap.exportContainerToExports());
+    modelMapper.addMappings(ModelMapPropertyMap.exportsToExportContainer());
+
     return modelMapper;
   }
 

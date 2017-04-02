@@ -1,0 +1,34 @@
+{
+	"id": "11c0ad91-0ccb-7029-416a-1d4fb814f16f",
+	"name": "scss-odd",
+	"description": "SCSS odd Functions for Gate In and Gate Out",
+	"order": [
+		"dee0b17d-9cd5-d870-684e-5ecbab1b413a"
+	],
+	"folders": [],
+	"timestamp": 1484278552606,
+	"owner": "962370",
+	"public": false,
+	"requests": [
+		{
+			"id": "dee0b17d-9cd5-d870-684e-5ecbab1b413a",
+			"headers": "Content-Type: application/json;charset=UTF-8\nX-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJURVNUVCIsInJvbGVzIjpbIkFETUlOSVNUUkFUT1IiXSwiZnVuY3Rpb25zIjpbMzExLDkwMSwzMTQsMzgwLDMxNSw2MjIsNDMxLDMxMywzNzcsNDI0LDQ0Nyw0MzIsMzg5LDQxOCw0NjEsNDQzLDQ1Niw0NTEsMjExLDQ0NSw0NTUsNDY4LDMyNSwzMjEsMzMxLDYyNCw2MjMsMzcyLDUyMCw0MTcsMjIxLDYyNSw2MjEsMzYwLDM5NSwzMjMsMzc5LDQxNSw0MTYsMTEzLDM2MiwzNzUsNDI3LDM4Niw0NjUsMzQwLDMyMiwzOTIsMzg1LDM2MSw0MTMsNDQ5LDcwMiwzODIsNDMwLDUxMCwzODcsNDU0LDQyMyw0MjYsNDQyLDM5MywzMTIsMzcxLDMzMiw0NjcsMzg4LDIyMiw0NDEsNDE0LDQ1MiwzMjcsNDQ4LDQyOSw0MzMsMTE0LDQ0Niw0NjYsNDYyLDMyNCw3MDEsMzk0LDExMiwzOTAsNDQ0LDQ2NCwzODMsMzc0LDQ2MywxMTEsMzc4LDQzNSw0MjgsMzkxLDM3NiwzNjMsMzI2LDM4NCwzODEsNDE5XSwic3RhZmZOYW1lIjoiTVVIQU1NQUQgRklSREFVWiBCSU4gQUJEVUwgSEFMSU0iLCJzdGFmZk51bWJlciI6IlAxMzQ0IiwidXNlcklEIjoyNDAxLCJpc3MiOiJodHRwOi8vc2Nzcy5jb20ubXkiLCJpYXQiOjE0ODQ1MjU3OTksImV4cCI6MTQ4NDUyNjY5OX0.KleZyFPdJkDmshcBapcHtrfO0_QeggBIIcrfLw8TnPDxBL80R3Di8Ue_NBIEqR1KyttAt_xckcKdPoRSoc89rw\nX-Requested-With: XMLHttpRequest\n",
+			"url": "http://localhost:8080/scss-gateout/api/odd/validatecontainer",
+			"preRequestScript": null,
+			"pathVariables": {},
+			"method": "PUT",
+			"data": [],
+			"dataMode": "raw",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1484525884375,
+			"name": "http://localhost:8080/scss-gateout/api/odd/validatecontainer",
+			"description": "Validate odd containers before gate out",
+			"collectionId": "11c0ad91-0ccb-7029-416a-1d4fb814f16f",
+			"responses": [],
+			"rawModeData": "{  \r\n   \"containerNo1\": \"conABC123\",\r\n   \"containerNo2\":\"conXYZ456\"\r\n}"
+		}
+	]
+}

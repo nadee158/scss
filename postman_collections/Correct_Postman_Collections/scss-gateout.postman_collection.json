@@ -1,0 +1,57 @@
+{
+	"id": "ccd34c77-ede8-2789-7207-e8d13fc0feab",
+	"name": "scss-gateout",
+	"description": "",
+	"order": [
+		"716f9638-773d-0f63-1391-8a94708bb801",
+		"7b409eac-6824-92fc-f64d-5d5df2e3ede5"
+	],
+	"folders": [],
+	"timestamp": 1491028637537,
+	"owner": "390246",
+	"public": false,
+	"requests": [
+		{
+			"id": "716f9638-773d-0f63-1391-8a94708bb801",
+			"headers": "Content-Type: application/json;charset=UTF-8\nX-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJURVNUVCIsInJvbGVzIjpbIkFETUlOSVNUUkFUT1IiXSwiZnVuY3Rpb25zIjpbMzEzLDM2MSwzODksMzYyLDExMSwzOTUsMzE1LDM3NiwzOTMsMzc3LDMxNCwzNzEsNDYxLDM4MCwzNzIsMzk0LDQzMywzNzUsMzkwLDQyOCwzODMsNDI0LDQ2Niw0NDEsNDY3LDM4OCw2MjQsNjIxLDYyMiwzOTIsNDI5LDQ2OCwxMTQsMzIyLDM3NCwzMjQsMjExLDQ2NCw0NTYsMzg1LDQ0Myw0MTYsNDQyLDQzNSwzNjMsNzAyLDMyMyw1MTAsNDQ1LDMzMSwxMTIsMzg0LDQxNywyMjEsNDQ0LDMzMiwzNjAsMzc4LDMyNiwzNDAsMzIxLDQ1MSw0MTMsNzAxLDM4Nyw0NjIsMzI1LDUyMCwzMjcsNDE0LDM4Niw0NjUsNDYzLDMxMSwzMTIsMzgxLDM5MSw0MjcsMjIyLDQ0OSw0MjYsNDE4LDQxNSwxMTMsNDMwLDQzMSw0NTQsMzgyLDM3OSw5MDEsNDQ4LDYyMyw0NTUsNDQ2LDQzMiw2MjUsNDUyLDQ0Nyw0MjMsNDE5XSwic3RhZmZOYW1lIjoiTU9IRCBZVVNVRiBCSU4gQUxJQVMiLCJzdGFmZk51bWJlciI6IjYwNTYiLCJ1c2VySUQiOjQsImlzcyI6Imh0dHA6Ly9zY3NzLmNvbS5teSIsImlhdCI6MTQ5MTE1NjMyOCwiZXhwIjoxNDkxMTU3MjI4fQ.pLybgC43exzGPr1xyPRUV_5nHyHCll7rI7PdftG2g7177zDVAios5tyxRnyVeB8v5wHZaGFATu3feMz-Kql3Tg\nX-Requested-With: XMLHttpRequest\n",
+			"url": "http://localhost:8080/scss-gateout/api/gateout/populategateout",
+			"preRequestScript": null,
+			"pathVariables": {},
+			"method": "PUT",
+			"data": [],
+			"dataMode": "raw",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1491156342990,
+			"name": "http://localhost:8080/scss-gateout/api/gateout/populategateout",
+			"description": "check for incomplete transactions before gate in ",
+			"collectionId": "ccd34c77-ede8-2789-7207-e8d13fc0feab",
+			"responses": [],
+			"rawModeData": "{  \r\n   \"cardID\":1998,\r\n   \"clientID\":10\r\n}"
+		},
+		{
+			"id": "7b409eac-6824-92fc-f64d-5d5df2e3ede5",
+			"headers": "Content-Type: application/json;charset=UTF-8\nX-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJURVNUVCIsInJvbGVzIjpbIkFETUlOSVNUUkFUT1IiXSwiZnVuY3Rpb25zIjpbNDQ3LDQxMyw0MzAsMjExLDQxNSwzNzQsMzQwLDYyMyw2MjIsNDU2LDQ0MSw1MTAsMzc2LDM5MywzOTAsMzgxLDM3Nyw0MTgsNDUyLDQzMSw1MjAsMzYzLDM4OSwzMjEsMzYyLDQ1MSwxMTMsNjIxLDQzMywzODgsMzgyLDMyNCw3MDEsMzEzLDQyNCw2MjQsNDYzLDMxNCwxMTIsMzgwLDExMSwzOTUsMzYxLDMxMiwzNjAsNDI5LDExNCw0NjIsMzc5LDMyNiw0NTUsNDY1LDQ0OSw0NDYsNDU0LDM3MSw0MjgsNDM1LDQxNiw0NjcsMzMyLDMxNSwzMjUsNjI1LDQ2NiwzODUsNDI2LDQ2NCwzMjMsNDY4LDQ0Myw0NDIsMzkyLDM4Nyw0NDgsNDE0LDMyMiwzODMsMzc1LDM5MSw0MTksNDQ1LDcwMiwzMzEsOTAxLDQxNyw0MjMsNDYxLDMyNywyMjIsMzcyLDM4NCwzOTQsNDMyLDMxMSw0MjcsMzg2LDM3OCw0NDQsMjIxXSwic3RhZmZOYW1lIjoiTVVIQU1NQUQgRklSREFVWiBCSU4gQUJEVUwgSEFMSU0iLCJzdGFmZk51bWJlciI6IlAxMzQ0IiwidXNlcklEIjoyNDAxLCJpc3MiOiJodHRwOi8vc2Nzcy5jb20ubXkiLCJpYXQiOjE0ODQ1NzI5NjUsImV4cCI6MTQ4NDU3Mzg2NX0._y-oGDEgcpMhWFBFmGGVQ18ufxjtsgCg6F67JKVL9fQnyitr4MZykK94CL7DNXajoBdoNw794ULkgA7qrpa73Q\nX-Requested-With: XMLHttpRequest\n",
+			"url": "http://localhost:8080/scss-gateout/api/manualgate/open/56",
+			"pathVariables": {},
+			"preRequestScript": null,
+			"method": "PUT",
+			"collectionId": "ccd34c77-ede8-2789-7207-e8d13fc0feab",
+			"data": null,
+			"dataMode": "params",
+			"name": "http://localhost:8080/scss-gateout/api/manualgate/open/56",
+			"description": "update after manual gate open",
+			"descriptionFormat": "html",
+			"time": 1484573580042,
+			"version": 2,
+			"responses": [],
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": "{}",
+			"isFromCollection": true,
+			"collectionRequestId": "afa3b10a-49fb-8401-a698-803e53a53723"
+		}
+	]
+}

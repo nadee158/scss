@@ -264,19 +264,19 @@ public class ModelMapEnumConverter {
 
   }
 
-  public static Converter<ContainerSize, String> convertContainerSizeToString() {
+  public static Converter<ContainerSize, Integer> convertContainerSizeToString() {
 
-    return new Converter<ContainerSize, String>() {
+    return new Converter<ContainerSize, Integer>() {
       @Override
-      public String convert(MappingContext<ContainerSize, String> context) {
+      public Integer convert(MappingContext<ContainerSize, Integer> context) {
         if (context.getSource() != null) {
           switch (context.getSource()) {
             case SIZE_20:
-              return ContainerSize.SIZE_20.getValue();
+              return Integer.parseInt(ContainerSize.SIZE_20.getValue());
             case SIZE_40:
-              return ContainerSize.SIZE_40.getValue();
+              return Integer.parseInt(ContainerSize.SIZE_40.getValue());
             case SIZE_45:
-              return ContainerSize.SIZE_45.getValue();
+              return Integer.parseInt(ContainerSize.SIZE_45.getValue());
             default:
               return null;
           }
