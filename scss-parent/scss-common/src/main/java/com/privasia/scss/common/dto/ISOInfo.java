@@ -89,5 +89,21 @@ public class ISOInfo implements Serializable {
   }
 
 
+  public ISOInfo initializeWithDefaultValues() {
+    this.length = 150;
+
+    this.height = new BigDecimal(150.50);
+
+    this.type = "T";
+
+    this.tareWeight = 500;
+
+    this.totalWeightBridge = 600;
+
+    this.width = 45;
+    return this;
+  }
+
+
 
 }

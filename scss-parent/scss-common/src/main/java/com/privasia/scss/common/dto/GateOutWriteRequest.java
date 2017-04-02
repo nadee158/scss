@@ -125,13 +125,24 @@ public class GateOutWriteRequest implements Serializable {
     this.userName = userName;
   }
 
-  public static GateOutWriteRequest emptyGateOutWriteRequest() {
-    GateOutWriteRequest req = new GateOutWriteRequest();
-    req.setExportContainers(new ArrayList<>());
-    req.setImportContainers(new ArrayList<>());
-    req.getExportContainers().add(ExportContainer.emptyExportContainer());
-    req.getImportContainers().add(ImportContainer.emptyImportContainer());
-    return req;
+  public void initializeWithDefaultValues() {
+    this.userName = "USER01";
+    this.laneNo = "GATE00";// -long (clientID)
+    this.haulageCode = "HAN";// -long (clientID)
+    this.truckHeadNo = "HAN001";// -string
+    this.truckPlateNo = "60P1-2933";// -long (clientID)
+    this.truckWeight = 4000;
+    this.trailerNo = "1122";
+    this.trailerWeight = 4000;
+    this.gateOUTDateTime = "04/11/2017 01:22:55 am";// -string
+    this.weightBridge = 500;// -long
+
+    this.exportContainers = new ArrayList<ExportContainer>();
+    this.exportContainers.add((new ExportContainer()).initializeWithDefaultValues("VSLCONT0011"));
+    this.exportContainers.add((new ExportContainer()).initializeWithDefaultValues("QASS1234003"));
+    this.importContainers = new ArrayList<ImportContainer>();
+    this.importContainers.add((new ImportContainer()).initializeWithDefaultValues("ASIA1234562"));
+    this.importContainers.add((new ImportContainer()).initializeWithDefaultValues("ASIA1234563"));
   }
 
 }
