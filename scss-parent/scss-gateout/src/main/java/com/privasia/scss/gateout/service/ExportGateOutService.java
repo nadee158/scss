@@ -1,5 +1,6 @@
 package com.privasia.scss.gateout.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -16,6 +17,7 @@ import com.privasia.scss.common.dto.GateOutRequest;
 import com.privasia.scss.common.dto.GateOutWriteRequest;
 import com.privasia.scss.common.dto.ShipSCNDTO;
 import com.privasia.scss.common.enums.ShipStatus;
+import com.privasia.scss.common.enums.TransactionStatus;
 import com.privasia.scss.core.exception.BusinessException;
 import com.privasia.scss.core.exception.ResultsNotFoundException;
 import com.privasia.scss.core.model.Client;
@@ -73,15 +75,22 @@ public class ExportGateOutService {
   public void setExportsQRepository(ExportsQRepository exportsQRepository) {
     this.exportsQRepository = exportsQRepository;
   }
-
+  
+  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
   public List<ExportContainer> populateGateOut(GateOutRequest gateOutRequest) {
 
-    Optional<Client> clientOpt = clientRepository.findOne(gateOutRequest.getLaneId());
-    Client client =
-        clientOpt.orElseThrow(() -> new ResultsNotFoundException("Invalid lane ID ! " + gateOutRequest.getLaneId()));
-    gateOutRequest.setLaneNo(client.getLaneNo());
+    Optional<List<Exports>> optExpList = exportsRepository.fetchInProgressTransaction(gateOutRequest.getCardID(), TransactionStatus.INPROGRESS);
+    List<Exports> inprogressExpList =
+    		optExpList.orElseThrow(() -> new BusinessException("No InProgress Export Transaction for the scan card ! " + gateOutRequest.getCardID()));
+    List<ExportContainer> exportContainerList = new ArrayList<ExportContainer>();
+    inprogressExpList.forEach(export->{
+    	ExportContainer exportContainer = new ExportContainer();
+    	modelMapper.map(export, exportContainer);
+    	//adding log info
+    	exportContainerList.add(exportContainer);
+    });
 
-    return null;
+    return exportContainerList;
 
   }
 
