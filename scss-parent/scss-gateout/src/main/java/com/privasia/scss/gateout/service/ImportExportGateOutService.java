@@ -162,7 +162,7 @@ public class ImportExportGateOutService {
 		    opusRequestResponseDTO.setImpContainer02(gateOutReadRequest.getContainerNo2ImportCY());
 		    opusRequestResponseDTO.setExpContainer01(gateOutReadRequest.getContainerNo1ExportCY());
 		    opusRequestResponseDTO.setExpContainer02(gateOutReadRequest.getContainerNo2ExportCY());
-		    opusRequestResponseDTO.setGateInOut(GateInOutStatus.IN.getValue());
+		    opusRequestResponseDTO.setGateInOut(GateInOutStatus.OUT.getValue());
 		    opusRequestResponseDTO.setReadWrite(ReadWriteStatus.READ.getValue());
 			
 			OpusGateOutReadResponse gateOutReadResponse = opusGateOutReadService.getGateOutReadResponse(gateOutReadRequest, opusRequestResponseDTO);
