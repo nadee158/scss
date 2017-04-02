@@ -76,4 +76,19 @@ public class CommonSealDTO implements Serializable {
     this.seal02Number = seal02Number;
   }
 
+  public CommonSealDTO initializeWithDefaultValues() {
+    this.seal01Origin = "L";
+
+    this.seal01Type = "SL";
+
+    this.seal01Number = "B109612";
+
+    this.seal02Origin = "S";
+
+    this.seal02Type = "SL";
+
+    this.seal02Number = "MY0338571";
+    return this;
+  }
+
 }

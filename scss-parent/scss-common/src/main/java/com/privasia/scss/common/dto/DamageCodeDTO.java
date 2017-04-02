@@ -36,6 +36,12 @@ public class DamageCodeDTO implements Serializable {
     return "DamageCodeDTO [damageCode=" + damageCode + ", damageDesc=" + damageDesc + "]";
   }
 
+  public DamageCodeDTO initializeWithDefaultValues(String damageCode) {
+    this.damageCode = damageCode;
+    this.damageDesc = damageCode + " Description";
+    return this;
+  }
+
 
 
 }

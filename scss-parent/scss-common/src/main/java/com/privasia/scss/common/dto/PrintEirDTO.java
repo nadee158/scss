@@ -149,5 +149,16 @@ public class PrintEirDTO implements Serializable {
   }
 
 
+  public PrintEirDTO initializeWithDefaultValues() {
+    this.printEIRID = 5493059l;
+    return this;
+  }
+
+  public PrintEirDTO initializeWithIdOnly() {
+    this.printEIRID = 5493059l;
+    return this;
+  }
+
+
 
 }

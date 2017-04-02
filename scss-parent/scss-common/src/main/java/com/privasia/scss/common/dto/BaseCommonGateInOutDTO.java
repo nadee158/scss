@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.privasia.scss.common.enums.TransactionStatus;
 import com.privasia.scss.common.util.CommonUtil;
 
 
@@ -184,6 +185,26 @@ public class BaseCommonGateInOutDTO implements Serializable {
 
   public void setGateOutBoothClerk(SystemUserDTO gateOutBoothClerk) {
     this.gateOutBoothClerk = gateOutBoothClerk;
+  }
+
+  public BaseCommonGateInOutDTO initializeWithDefaultValues() {
+    this.pmHeadNo = "NTK194";
+    this.pmPlateNo = "60P1-2933";
+    this.hpatBooking = "BKG193";
+    this.eirStatus = TransactionStatus.INPROGRESS.toString();
+    this.gateOutBoothNo = "1234";
+    this.timeGateIn = LocalDateTime.now();
+    this.timeGateInOk = LocalDateTime.now();
+    this.timeGateOut = LocalDateTime.now();
+    this.timeGateOutOk = LocalDateTime.now();
+    this.timeGateOutBooth = LocalDateTime.now();
+    this.card = 1998l;
+    this.gateInClerk = new SystemUserDTO().initializeWithDefaultValues();
+    this.gateOutClerk = new SystemUserDTO().initializeWithDefaultValues();
+    this.gateInClient = new ClientDTO().initializeWithIdOnly();
+    this.gateOutClient = new ClientDTO().initializeWithIdOnly();
+    this.gateOutBoothClerk = new SystemUserDTO().initializeWithDefaultValues();
+    return this;
   }
 
 

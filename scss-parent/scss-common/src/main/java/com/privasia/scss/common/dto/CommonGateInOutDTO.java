@@ -5,6 +5,10 @@ package com.privasia.scss.common.dto;
 
 import java.io.Serializable;
 
+import org.hibernate.resource.transaction.spi.TransactionStatus;
+
+import com.privasia.scss.common.enums.ImpExpFlagStatus;
+
 /**
  * @author Janaka
  *
@@ -74,6 +78,21 @@ public class CommonGateInOutDTO implements Serializable {
 
   public void setTrxSlipNo(String trxSlipNo) {
     this.trxSlipNo = trxSlipNo;
+  }
+
+  public CommonGateInOutDTO initializeWithDefaultValues() {
+    this.eirNumber = 150l;
+
+    this.impExpFlag = ImpExpFlagStatus.IMPORT.getValue();
+
+    this.rejectReason = "Sample Reason";
+
+    this.gateInStatus = TransactionStatus.ACTIVE.toString();
+
+    this.zipFileNo = "zip0122";
+
+    this.trxSlipNo = "slip0045";
+    return this;
   }
 
 

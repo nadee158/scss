@@ -27,6 +27,7 @@ import com.privasia.scss.core.model.Client;
 import com.privasia.scss.core.repository.CardRepository;
 import com.privasia.scss.core.repository.ClientRepository;
 import com.privasia.scss.core.security.model.UserContext;
+import com.privasia.scss.core.service.CommonCardService;
 import com.privasia.scss.hpat.service.HPABService;
 import com.privasia.scss.opus.dto.OpusGateInReadRequest;
 import com.privasia.scss.opus.dto.OpusGateInReadResponse;
@@ -57,6 +58,13 @@ public class ImportExportGateInService {
 
   private HPABService hpabService;
 
+  private CommonCardService commonCardService;
+
+
+  @Autowired
+  public void setCommonCardService(CommonCardService commonCardService) {
+    this.commonCardService = commonCardService;
+  }
 
   @Autowired
   public void setHpabService(HPABService hpabService) {
@@ -104,7 +112,9 @@ public class ImportExportGateInService {
     Optional<Card> cardOpt = cardRepository.findOne(gateInRequest.getCardID());
     Card card =
         cardOpt.orElseThrow(() -> new ResultsNotFoundException("Invalid Card ID ! " + gateInRequest.getCardID()));
-    gateInRequest.setHaulageCode(card.getCompany().getCompanyCode());
+
+
+    gateInRequest.setHaulageCode(commonCardService.getHaulierCodeByScanCard(card));
 
     Optional<Client> clientOpt = clientRepository.findOne(gateInRequest.getLaneId());
     Client client =

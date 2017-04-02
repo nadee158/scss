@@ -1,5 +1,6 @@
 package com.privasia.scss.gatein.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -45,6 +46,8 @@ import com.privasia.scss.core.security.util.SecurityHelper;
 
 @Service("exportGateInService")
 public class ExportGateInService {
+
+  boolean backToback = false;
 
   private ModelMapper modelMapper;
 
@@ -224,29 +227,29 @@ public class ExportGateInService {
 
   }
 
+
   public List<ExportContainer> saveGateInInfo(GateInWriteRequest gateInWriteRequest) {
     // construct a new export entity for each exportcontainer and save
+    backToback = false;
     if (!(gateInWriteRequest.getExportContainers() == null || gateInWriteRequest.getExportContainers().isEmpty())) {
+      System.out.println(
+          "gateInWriteRequest.getExportContainers().size() " + gateInWriteRequest.getExportContainers().size());
+      if (gateInWriteRequest.getExportContainers().size() > 1) {
+        backToback = true;
+      }
       gateInWriteRequest.getExportContainers().forEach(exportContainer -> {
         if (exportContainer.getBaseCommonGateInOutAttribute() == null) {
           exportContainer.setBaseCommonGateInOutAttribute(new BaseCommonGateInOutDTO());
         }
         System.out.println("gateInWriteRequest.getGateInDateTime() " + gateInWriteRequest.getGateInDateTime());
+        exportContainer.setBackToback(backToback);
         exportContainer.getBaseCommonGateInOutAttribute()
             .setTimeGateIn(CommonUtil.getParsedDate(gateInWriteRequest.getGateInDateTime()));
+        exportContainer.getBaseCommonGateInOutAttribute().setTimeGateInOk(LocalDateTime.now());
         Exports exports = new Exports();
         System.out.println("exportContainer " + exportContainer);
         modelMapper.map(exportContainer, exports);
         System.out.println("exports after modal map from exportContainer " + exports);
-
-        // SystemUser gateInClerk = null;
-        // System.out.println("gateInWriteRequest.getUserName() " +
-        // gateInWriteRequest.getUserName());
-        // Login login =
-        // loginRepository.findByUserName(gateInWriteRequest.getUserName()).orElse(null);
-        // if (!(login == null)) {
-        // gateInClerk = login.getSystemUser();
-        // }
 
         // if any of entitiees are not found throw exception
         SystemUser gateInClerk = systemUserRepository.findOne(SecurityHelper.getCurrentUserId()).orElseThrow(
