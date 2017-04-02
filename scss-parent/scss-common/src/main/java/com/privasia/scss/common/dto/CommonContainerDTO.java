@@ -20,7 +20,7 @@ public class CommonContainerDTO implements Serializable {
 
   private String containerNumber;
 
-  private int containerHeight;
+  private double containerHeight;
 
   private String containerISOCode;
 
@@ -52,11 +52,12 @@ public class CommonContainerDTO implements Serializable {
     this.containerFullOrEmpty = containerFullOrEmpty;
   }
 
-  public int getContainerHeight() {
+
+  public double getContainerHeight() {
     return containerHeight;
   }
 
-  public void setContainerHeight(int containerHeight) {
+  public void setContainerHeight(double containerHeight) {
     this.containerHeight = containerHeight;
   }
 

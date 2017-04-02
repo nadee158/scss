@@ -109,7 +109,7 @@ public class PrintEirService {
     eirContainer.setContainerLine(importContainer.getShippingLine());
     eirContainer.setContainerISOCode(importContainer.getContainer().getContainerISOCode());
     eirContainer.setContainerLength(ContainerSize.fromValue(Integer.toString(importContainer.getContainerLength())));
-    eirContainer.setContainerHeight(Integer.toString(importContainer.getContainer().getContainerHeight()));
+    eirContainer.setContainerHeight(Double.toString(importContainer.getContainer().getContainerHeight()));
     eirContainer.setContainerType(importContainer.getContainerType());
     eirContainer.setContainerNetWeight(weight);
     if (!(lineInfo == null)) {

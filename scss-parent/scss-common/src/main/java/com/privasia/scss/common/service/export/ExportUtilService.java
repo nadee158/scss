@@ -94,4 +94,23 @@ public class ExportUtilService {
     return null;
   }
 
+  public static String getStringRepresentationOfBooleanTF(Boolean value) {
+    if (value != null && value) {
+      return "T";
+    } else {
+      return "F";
+    }
+  }
+
+  public static double getDoubleValueFromString(String strValue) {
+    if (StringUtils.isNotEmpty(strValue)) {
+      try {
+        return Double.parseDouble(strValue);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
+    return 0;
+  }
+
 }

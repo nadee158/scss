@@ -22,7 +22,6 @@ import com.privasia.scss.common.dto.ImportContainer;
 import com.privasia.scss.common.dto.InProgressTrxDTO;
 import com.privasia.scss.common.enums.GateInOutStatus;
 import com.privasia.scss.common.enums.ReadWriteStatus;
-import com.privasia.scss.common.enums.TransactionType;
 import com.privasia.scss.common.util.DateUtil;
 import com.privasia.scss.core.exception.BusinessException;
 import com.privasia.scss.core.exception.ResultsNotFoundException;
@@ -43,185 +42,186 @@ import com.privasia.scss.opus.service.OpusService;
 
 @Service("importExportGateOutService")
 public class ImportExportGateOutService {
-	
-	private static final Log log = LogFactory.getLog(ImportExportGateOutService.class);
-	
-	private ImportGateOutService importGateOutService;
 
-	private ExportGateOutService exportGateOutService;
+  private static final Log log = LogFactory.getLog(ImportExportGateOutService.class);
 
-	private OpusGateOutReadService opusGateOutReadService;
+  private ImportGateOutService importGateOutService;
 
-	private OpusGateOutWriteService opusGateOutWriteService;
-	
-	private CommonCardService commonCardService;
+  private ExportGateOutService exportGateOutService;
 
-	private ClientRepository clientRepository;
+  private OpusGateOutReadService opusGateOutReadService;
 
-	private OpusService opusService;
-	
-	private CardRepository cardRepository;
-	
-	private Gson gson;
+  private OpusGateOutWriteService opusGateOutWriteService;
 
-	@Autowired
-	public void setOpusGateOutReadService(OpusGateOutReadService opusGateOutReadService) {
-		this.opusGateOutReadService = opusGateOutReadService;
-	}
+  private CommonCardService commonCardService;
 
-	@Autowired
-	public void setOpusGateOutWriteService(OpusGateOutWriteService opusGateOutWriteService) {
-		this.opusGateOutWriteService = opusGateOutWriteService;
-	}
+  private ClientRepository clientRepository;
 
-	@Autowired
-	public void setImportGateOutService(ImportGateOutService importGateOutService) {
-		this.importGateOutService = importGateOutService;
-	}
+  private OpusService opusService;
 
-	@Autowired
-	public void setExportGateOutService(ExportGateOutService exportGateOutService) {
-		this.exportGateOutService = exportGateOutService;
-	}
-	
-	@Autowired
-	public void setCommonCardService(CommonCardService commonCardService) {
-		this.commonCardService = commonCardService;
-	}
+  private CardRepository cardRepository;
 
-	@Autowired
-	public void setClientRepository(ClientRepository clientRepository) {
-		this.clientRepository = clientRepository;
-	}
+  private Gson gson;
 
-	@Autowired
-	public void setOpusService(OpusService opusService) {
-		this.opusService = opusService;
-	}
-	
-	@Autowired
-	public void setGson(Gson gson) {
-		this.gson = gson;
-	}
+  @Autowired
+  public void setOpusGateOutReadService(OpusGateOutReadService opusGateOutReadService) {
+    this.opusGateOutReadService = opusGateOutReadService;
+  }
 
-	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-	public GateOutReponse populateGateOut(GateOutRequest gateOutRequest) { // gate out read
-		
-		Optional<Card> cardOpt = cardRepository.findOne(gateOutRequest.getCardID());
-		Card card = cardOpt
-				.orElseThrow(() -> new ResultsNotFoundException("Invalid Scan Card ID ! " + gateOutRequest.getCardID()));
-		gateOutRequest.setComID(card.getCompany().getCompanyID());
-		
-		gateOutRequest.setHaulageCode(commonCardService.getHaulierCodeByScanCard(card));
-		
-		InProgressTrxDTO trxDTO = commonCardService.isTrxInProgress(gateOutRequest.getCardID());
-		
-		if(trxDTO.isInProgress()){
-			
-			List<ExportContainer> exportContainers = null;
-			
-			List<ImportContainer> importContainers = null;
-			
-			switch (trxDTO.getTrxType()) {
-			case EXPORT:
-				exportContainers = exportGateOutService.populateGateOut(gateOutRequest);
-				break;
-			case IMPORT:
-				importContainers = importGateOutService.populateGateOut(gateOutRequest);
-				break;
-			case IMPORT_EXPORT:
-				exportContainers = exportGateOutService.populateGateOut(gateOutRequest);
-				importContainers = importGateOutService.populateGateOut(gateOutRequest);
-				break;
-			case ODD:
-				
-				break;
-			default:
-				break;
-			}
-			
-			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-			UserContext userContext = (UserContext) authentication.getPrincipal();
-			log.info("userContext.getUsername() " + userContext.getUsername());
-			gateOutRequest.setUserName(userContext.getUsername());
-			
-			Optional<Client> clientOpt = clientRepository.findOne(gateOutRequest.getLaneId());
-			Client client = clientOpt
-					.orElseThrow(() -> new ResultsNotFoundException("Invalid lane ID ! " + gateOutRequest.getLaneId()));
-			gateOutRequest.setLaneNo(client.getLaneNo());
+  @Autowired
+  public void setOpusGateOutWriteService(OpusGateOutWriteService opusGateOutWriteService) {
+    this.opusGateOutWriteService = opusGateOutWriteService;
+  }
 
-			// call opus -
-			OpusGateOutReadRequest gateOutReadRequest = opusGateOutReadService.constructOpenGateOutRequest(gateOutRequest);
-			
-			OpusRequestResponseDTO opusRequestResponseDTO = new OpusRequestResponseDTO();
-		    opusRequestResponseDTO.setRequest(gson.toJson(gateOutReadRequest));
-		    opusRequestResponseDTO.setGateinTime(DateUtil.getLocalDateFromString(gateOutReadRequest.getGateOUTDateTime()));
-		    opusRequestResponseDTO.setCardID(gateOutRequest.getCardID());
-		    opusRequestResponseDTO.setTransactionType(trxDTO.getTrxType().getValue());
-		    opusRequestResponseDTO.setImpContainer01(gateOutReadRequest.getContainerNo1ImportCY());
-		    opusRequestResponseDTO.setImpContainer02(gateOutReadRequest.getContainerNo2ImportCY());
-		    opusRequestResponseDTO.setExpContainer01(gateOutReadRequest.getContainerNo1ExportCY());
-		    opusRequestResponseDTO.setExpContainer02(gateOutReadRequest.getContainerNo2ExportCY());
-		    opusRequestResponseDTO.setGateInOut(GateInOutStatus.OUT.getValue());
-		    opusRequestResponseDTO.setReadWrite(ReadWriteStatus.READ.getValue());
-			
-			OpusGateOutReadResponse gateOutReadResponse = opusGateOutReadService.getGateOutReadResponse(gateOutReadRequest, opusRequestResponseDTO);
-			// check the errorlist of reponse
-		    String errorMessage = opusService.hasErrorMessage(gateOutReadResponse.getErrorList());
-		    log.error("ERROR MESSAGE FROM OPUS SERVICE: " + errorMessage);
-		    if (StringUtils.isNotEmpty(errorMessage)) {
-		      // save it to the db - TO BE IMPLEMENTED
-		      // throw new business exception with constructed message - there is
-		      // an error
-		      throw new BusinessException(errorMessage);
-		    }
-			GateOutReponse gateOutReponse = new GateOutReponse();
-			gateOutReponse.setImportContainers(importContainers);
-			gateOutReponse.setExportContainers(exportContainers);
-			gateOutReponse = opusGateOutReadService.constructGateOutReponse(gateOutReadResponse, gateOutReponse);
-			gateOutReponse.setTransactionType(trxDTO.getTrxType().name());
-			return gateOutReponse;
-		}else{
-			throw new BusinessException("No Valid Gate in Transaction Found for the Scan Card : "+gateOutRequest.getCardID());
-		}
+  @Autowired
+  public void setImportGateOutService(ImportGateOutService importGateOutService) {
+    this.importGateOutService = importGateOutService;
+  }
 
-		
-	}
+  @Autowired
+  public void setExportGateOutService(ExportGateOutService exportGateOutService) {
+    this.exportGateOutService = exportGateOutService;
+  }
 
-	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
-	public GateOutReponse saveGateOutInfo(GateOutWriteRequest gateOutWriteRequest) {
-		List<ImportContainer> importContainers = null;
-		List<ExportContainer> exportContainers = null;
+  @Autowired
+  public void setCommonCardService(CommonCardService commonCardService) {
+    this.commonCardService = commonCardService;
+  }
 
-		// call opus -
-		OpusGateOutWriteRequest opusGateOutWriteRequest = opusGateOutWriteService
-				.constructOpusGateOutWriteRequest(gateOutWriteRequest);
-		OpusGateOutWriteResponse opusGateOutWriteResponse = opusGateOutWriteService
-				.getGateOutWriteResponse(opusGateOutWriteRequest);
+  @Autowired
+  public void setClientRepository(ClientRepository clientRepository) {
+    this.clientRepository = clientRepository;
+  }
 
-		String errorMessage = opusService.hasErrorMessage(opusGateOutWriteResponse.getErrorList());
-		if (StringUtils.isNotEmpty(errorMessage)) {
-			// throw new business exception with constructed message - there is
-			// an error
-			throw new BusinessException(errorMessage);
-		}
+  @Autowired
+  public void setOpusService(OpusService opusService) {
+    this.opusService = opusService;
+  }
 
-		if (!(gateOutWriteRequest.getExportContainers() == null
-				|| gateOutWriteRequest.getExportContainers().isEmpty())) {
-			exportContainers = exportGateOutService.saveGateOutInfo(gateOutWriteRequest);
-		}
+  @Autowired
+  public void setGson(Gson gson) {
+    this.gson = gson;
+  }
 
-		if (!(gateOutWriteRequest.getImportContainers() == null
-				|| gateOutWriteRequest.getImportContainers().isEmpty())) {
-			importContainers = importGateOutService.saveGateOutInfo(gateOutWriteRequest);
-		}
+  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+  public GateOutReponse populateGateOut(GateOutRequest gateOutRequest) { // gate out read
 
-		GateOutReponse gateOutReponse = new GateOutReponse();
-		gateOutReponse.setImportContainers(importContainers);
-		gateOutReponse.setExportContainers(exportContainers);
-		gateOutReponse = opusGateOutWriteService.constructGateOutReponse(opusGateOutWriteResponse, gateOutReponse);
+    Optional<Card> cardOpt = cardRepository.findOne(gateOutRequest.getCardID());
+    Card card =
+        cardOpt.orElseThrow(() -> new ResultsNotFoundException("Invalid Scan Card ID ! " + gateOutRequest.getCardID()));
+    gateOutRequest.setComID(card.getCompany().getCompanyID());
 
-		return gateOutReponse;
-	}
+    gateOutRequest.setHaulageCode(commonCardService.getHaulierCodeByScanCard(card));
+
+    InProgressTrxDTO trxDTO = commonCardService.isTrxInProgress(gateOutRequest.getCardID());
+
+    if (trxDTO.isInProgress()) {
+
+      List<ExportContainer> exportContainers = null;
+
+      List<ImportContainer> importContainers = null;
+
+      switch (trxDTO.getTrxType()) {
+        case EXPORT:
+          exportContainers = exportGateOutService.populateGateOut(gateOutRequest);
+          break;
+        case IMPORT:
+          importContainers = importGateOutService.populateGateOut(gateOutRequest);
+          break;
+        case IMPORT_EXPORT:
+          exportContainers = exportGateOutService.populateGateOut(gateOutRequest);
+          importContainers = importGateOutService.populateGateOut(gateOutRequest);
+          break;
+        case ODD:
+
+          break;
+        default:
+          break;
+      }
+
+      Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+      UserContext userContext = (UserContext) authentication.getPrincipal();
+      log.info("userContext.getUsername() " + userContext.getUsername());
+      gateOutRequest.setUserName(userContext.getUsername());
+
+      Optional<Client> clientOpt = clientRepository.findOne(gateOutRequest.getClientID());
+      Client client = clientOpt
+          .orElseThrow(() -> new ResultsNotFoundException("Invalid lane ID ! " + gateOutRequest.getClientID()));
+      gateOutRequest.setLaneNo(client.getLaneNo());
+      gateOutRequest.setLaneNo("GATE00");
+
+      // call opus -
+      OpusGateOutReadRequest gateOutReadRequest = opusGateOutReadService.constructOpenGateOutRequest(gateOutRequest);
+
+      OpusRequestResponseDTO opusRequestResponseDTO = new OpusRequestResponseDTO();
+      opusRequestResponseDTO.setRequest(gson.toJson(gateOutReadRequest));
+      opusRequestResponseDTO.setGateinTime(DateUtil.getLocalDateFromString(gateOutReadRequest.getGateOUTDateTime()));
+      opusRequestResponseDTO.setCardID(gateOutRequest.getCardID());
+      opusRequestResponseDTO.setTransactionType(trxDTO.getTrxType().getValue());
+      opusRequestResponseDTO.setImpContainer01(gateOutReadRequest.getContainerNo1ImportCY());
+      opusRequestResponseDTO.setImpContainer02(gateOutReadRequest.getContainerNo2ImportCY());
+      opusRequestResponseDTO.setExpContainer01(gateOutReadRequest.getContainerNo1ExportCY());
+      opusRequestResponseDTO.setExpContainer02(gateOutReadRequest.getContainerNo2ExportCY());
+      opusRequestResponseDTO.setGateInOut(GateInOutStatus.OUT.getValue());
+      opusRequestResponseDTO.setReadWrite(ReadWriteStatus.READ.getValue());
+
+      OpusGateOutReadResponse gateOutReadResponse =
+          opusGateOutReadService.getGateOutReadResponse(gateOutReadRequest, opusRequestResponseDTO);
+      // check the errorlist of reponse
+      String errorMessage = opusService.hasErrorMessage(gateOutReadResponse.getErrorList());
+      log.error("ERROR MESSAGE FROM OPUS SERVICE: " + errorMessage);
+      if (StringUtils.isNotEmpty(errorMessage)) {
+        // save it to the db - TO BE IMPLEMENTED
+        // throw new business exception with constructed message - there is
+        // an error
+        throw new BusinessException(errorMessage);
+      }
+      GateOutReponse gateOutReponse = new GateOutReponse();
+      gateOutReponse.setImportContainers(importContainers);
+      gateOutReponse.setExportContainers(exportContainers);
+      gateOutReponse = opusGateOutReadService.constructGateOutReponse(gateOutReadResponse, gateOutReponse);
+      gateOutReponse.setTransactionType(trxDTO.getTrxType().name());
+      return gateOutReponse;
+    } else {
+      throw new BusinessException(
+          "No Valid Gate in Transaction Found for the Scan Card : " + gateOutRequest.getCardID());
+    }
+
+
+  }
+
+  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
+  public GateOutReponse saveGateOutInfo(GateOutWriteRequest gateOutWriteRequest) {
+    List<ImportContainer> importContainers = null;
+    List<ExportContainer> exportContainers = null;
+
+    // call opus -
+    OpusGateOutWriteRequest opusGateOutWriteRequest =
+        opusGateOutWriteService.constructOpusGateOutWriteRequest(gateOutWriteRequest);
+    OpusGateOutWriteResponse opusGateOutWriteResponse =
+        opusGateOutWriteService.getGateOutWriteResponse(opusGateOutWriteRequest);
+
+    String errorMessage = opusService.hasErrorMessage(opusGateOutWriteResponse.getErrorList());
+    if (StringUtils.isNotEmpty(errorMessage)) {
+      // throw new business exception with constructed message - there is
+      // an error
+      throw new BusinessException(errorMessage);
+    }
+
+    if (!(gateOutWriteRequest.getExportContainers() == null || gateOutWriteRequest.getExportContainers().isEmpty())) {
+      exportContainers = exportGateOutService.saveGateOutInfo(gateOutWriteRequest);
+    }
+
+    if (!(gateOutWriteRequest.getImportContainers() == null || gateOutWriteRequest.getImportContainers().isEmpty())) {
+      importContainers = importGateOutService.saveGateOutInfo(gateOutWriteRequest);
+    }
+
+    GateOutReponse gateOutReponse = new GateOutReponse();
+    gateOutReponse.setImportContainers(importContainers);
+    gateOutReponse.setExportContainers(exportContainers);
+    gateOutReponse = opusGateOutWriteService.constructGateOutReponse(opusGateOutWriteResponse, gateOutReponse);
+
+    return gateOutReponse;
+  }
 
 }

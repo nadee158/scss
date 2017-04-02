@@ -82,10 +82,12 @@ public class OpusGateInWriteService {
   public OpusGateInWriteRequest constructOpusGateInWriteRequest(GateInWriteRequest gateInWriteRequest) {
     OpusGateInWriteRequest opusGateInWriteRequest = new OpusGateInWriteRequest();
 
+
+
     List<GIWriteRequestExportContainer> exportContainerListCY =
-        opusService.exportContainerListToGIWriteRequestExportContainerList(gateInWriteRequest.getExportContainers());
+        opusService.exportContainerListToGIWriteRequestExportContainerList(gateInWriteRequest);
     List<GIWriteRequestImportContainer> importContainerListCY =
-        opusService.importContainerListToGIWriteRequestImportContainerList(gateInWriteRequest.getImportContainers());
+        opusService.importContainerListToGIWriteRequestImportContainerList(gateInWriteRequest);
 
     LocalDateTime gateInDateTime = CommonUtil.getParsedDate(gateInWriteRequest.getGateInDateTime());
     opusGateInWriteRequest.setGateINDateTime(DateUtil.getJsonDateFromDate(gateInDateTime));

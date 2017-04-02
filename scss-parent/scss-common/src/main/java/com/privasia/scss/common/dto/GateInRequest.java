@@ -19,7 +19,7 @@ public class GateInRequest implements Serializable {
   private String impContainer2;// -string
   private String truckHeadNo;// -string
   private String gateInDateTime;// -string
-  private Long laneId;// -long (clientID)
+  private Long clientID;// -long (clientID)
   private String laneNo;// -long (clientID)
   private Integer expWeightBridge;// -long
   private boolean checkPreArrival = false;// -boolean
@@ -58,12 +58,13 @@ public class GateInRequest implements Serializable {
     this.gateInDateTime = gateInDateTime;
   }
 
-  public Long getLaneId() {
-    return laneId;
+
+  public Long getClientID() {
+    return clientID;
   }
 
-  public void setLaneId(Long laneId) {
-    this.laneId = laneId;
+  public void setClientID(Long clientID) {
+    this.clientID = clientID;
   }
 
   public String getLaneNo() {
@@ -174,7 +175,7 @@ public class GateInRequest implements Serializable {
     this.impContainer2 = StringUtils.EMPTY;// -string
     this.truckHeadNo = StringUtils.EMPTY;// -string
     this.gateInDateTime = StringUtils.EMPTY;// -string
-    this.laneId = 0l;// -long (clientID)
+    this.clientID = 0l;// -long (clientID)
     this.laneNo = StringUtils.EMPTY;// -long (clientID)
     this.expWeightBridge = 0;// -long
     this.checkPreArrival = false;// -boolean

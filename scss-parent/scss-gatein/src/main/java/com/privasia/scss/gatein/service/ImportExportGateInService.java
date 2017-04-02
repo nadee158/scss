@@ -116,10 +116,15 @@ public class ImportExportGateInService {
 
     gateInRequest.setHaulageCode(commonCardService.getHaulierCodeByScanCard(card));
 
-    Optional<Client> clientOpt = clientRepository.findOne(gateInRequest.getLaneId());
+    Optional<Client> clientOpt = clientRepository.findOne(gateInRequest.getClientID());
     Client client =
-        clientOpt.orElseThrow(() -> new ResultsNotFoundException("Invalid lane ID ! " + gateInRequest.getLaneId()));
+        clientOpt.orElseThrow(() -> new ResultsNotFoundException("Invalid client ID ! " + gateInRequest.getClientID()));
+    System.out.println("client.getLaneNo() " + client.getLaneNo());
+    if (StringUtils.isEmpty(client.getLaneNo())) {
+      throw new ResultsNotFoundException("Invalid lane ID ! " + gateInRequest.getClientID());
+    }
     gateInRequest.setLaneNo(client.getLaneNo());
+    gateInRequest.setLaneNo("GATE00");
 
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     UserContext userContext = (UserContext) authentication.getPrincipal();
@@ -176,6 +181,23 @@ public class ImportExportGateInService {
     List<ImportContainer> importContainers = null;
     List<ExportContainer> exportContainers = null;
     Gson gson = new Gson();
+
+    Optional<Card> cardOpt = cardRepository.findOne(gateInWriteRequest.getCardId());
+    Card card =
+        cardOpt.orElseThrow(() -> new ResultsNotFoundException("Invalid Card ID ! " + gateInWriteRequest.getCardId()));
+
+    gateInWriteRequest.setHaulageCode(commonCardService.getHaulierCodeByScanCard(card));
+
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    UserContext userContext = (UserContext) authentication.getPrincipal();
+    gateInWriteRequest.setUserName(userContext.getUsername());
+
+    Optional<Client> clientOpt = clientRepository.findOne(gateInWriteRequest.getGateInClient());
+    Client client = clientOpt
+        .orElseThrow(() -> new ResultsNotFoundException("Invalid lane ID ! " + gateInWriteRequest.getGateInClient()));
+    gateInWriteRequest.setLaneNo(client.getLaneNo());
+
+
     OpusGateInWriteRequest opusGateInWriteRequest =
         opusGateInWriteService.constructOpusGateInWriteRequest(gateInWriteRequest);
     System.out.println("opusGateInWriteRequest " + gson.toJson(opusGateInWriteRequest));
@@ -193,9 +215,6 @@ public class ImportExportGateInService {
     }
 
 
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    UserContext userContext = (UserContext) authentication.getPrincipal();
-    gateInWriteRequest.setUserName(userContext.getUsername());
 
     if (!(gateInWriteRequest.getExportContainers() == null || gateInWriteRequest.getExportContainers().isEmpty())) {
       exportContainers = exportGateInService.saveGateInInfo(gateInWriteRequest);

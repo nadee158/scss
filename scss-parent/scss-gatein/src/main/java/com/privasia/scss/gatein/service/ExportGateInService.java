@@ -169,7 +169,7 @@ public class ExportGateInService {
     if (!(exportContainer == null || exportContainer.getContainer() == null || exportContainer.getScn() == null)) {
       if (!(StringUtils.isEmpty(exportContainer.getContainer().getContainerNumber())
           || StringUtils.isEmpty(exportContainer.getScn().getScnNo()))) {
-        Long count = dgDetailRepository.countByScnAndContainerNo(exportContainer.getScn().getScnNo(),
+        Long count = dgDetailRepository.countByScnAndContainerNo(exportContainer.getVesselSCN(),
             exportContainer.getContainer().getContainerNumber());
         if (!(count == null || count <= 0)) {
           exportContainer.setBypassDg(true);
@@ -182,7 +182,8 @@ public class ExportGateInService {
   public void setStoragePeriod(ExportContainer exportContainer) {
     if (!(exportContainer == null)) {
 
-      String shipCodeStr = exportContainer.getShipCode();
+      String shipCodeStr = exportContainer.getShippingLine();
+      System.out.println("shipCodeStr " + shipCodeStr);
 
       Optional<ShipCode> optionalShipCode =
           shipCodeRepository.findByShipStatusAndShippingCode(ShipStatus.ACTIVE, shipCodeStr);
@@ -206,7 +207,8 @@ public class ExportGateInService {
     if (!(exportContainer == null)) {
 
       exportContainerNumber = exportContainer.getContainer().getContainerNumber();
-      scn = exportContainer.getScn().getScnNo();
+      scn = exportContainer.getVesselSCN();
+      System.out.println("scn " + scn);
 
       Optional<ShipSCN> optionalshipSCN = shipSCNRepository.fetchContainerSCN(scn, exportContainerNumber);
 

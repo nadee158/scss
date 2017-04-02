@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.privasia.scss.core.model.ShipSCN;
 
@@ -16,6 +17,6 @@ public interface ShipSCNRepository extends BaseRepository<ShipSCN, Long> {
 
 
   @Query(name = "ShipSCN.fetchContainerSCN.singleContainer")
-  Optional<ShipSCN> fetchContainerSCN(String scn, String container);
+  Optional<ShipSCN> fetchContainerSCN(@Param("scn01") String scn, @Param("container01") String container);
 
 }
