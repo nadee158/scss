@@ -22,6 +22,7 @@ import com.privasia.scss.common.util.CommonUtil;
 import com.privasia.scss.common.util.DateUtil;
 import com.privasia.scss.opus.dto.OpusGateOutReadRequest;
 import com.privasia.scss.opus.dto.OpusGateOutReadResponse;
+import com.privasia.scss.opus.dto.OpusRequestResponseDTO;
 
 /**
  * @author Janaka
@@ -37,13 +38,21 @@ public class OpusGateOutReadService {
   private String gateOutReadResponseURL;
 
   private OpusService opusService;
+  
+  private OpusRequestResponseService opusRequestResponseService;
 
   @Autowired
   public void setOpusService(OpusService opusService) {
     this.opusService = opusService;
   }
+  
+  @Autowired
+  public void setOpusRequestResponseService(OpusRequestResponseService opusRequestResponseService) {
+	this.opusRequestResponseService = opusRequestResponseService;
+}
 
-  public OpusGateOutReadRequest constructOpenGateOutRequest(GateOutRequest gateOutRequest) {
+
+public OpusGateOutReadRequest constructOpenGateOutRequest(GateOutRequest gateOutRequest) {
 
     OpusGateOutReadRequest opusGateOutRequest = new OpusGateOutReadRequest();
 
@@ -61,7 +70,7 @@ public class OpusGateOutReadService {
     return opusGateOutRequest;
   }
 
-  public OpusGateOutReadResponse getGateOutReadResponse(OpusGateOutReadRequest opusGateOutReadRequest) {
+  public OpusGateOutReadResponse getGateOutReadResponse(OpusGateOutReadRequest opusGateOutReadRequest, OpusRequestResponseDTO opusRequestResponseDTO) {
 	log.info("gateOutReadResponseURL " + gateOutReadResponseURL);
     RestTemplate restTemplate = new RestTemplate();
     HttpHeaders headers = new HttpHeaders();
@@ -70,11 +79,14 @@ public class OpusGateOutReadService {
 
     HttpEntity<OpusGateOutReadRequest> request =
         new HttpEntity<OpusGateOutReadRequest>(opusGateOutReadRequest, headers);
-
+    //save in to db
+    opusRequestResponseService.saveOpusRequest(opusRequestResponseDTO);
     ResponseEntity<OpusGateOutReadResponse> response =
         restTemplate.postForEntity(gateOutReadResponseURL, request, OpusGateOutReadResponse.class);
 
     log.info(response.toString());
+    
+    //update to db
     return response.getBody();
   }
 

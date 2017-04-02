@@ -13,13 +13,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.gson.Gson;
 import com.privasia.scss.common.dto.ExportContainer;
 import com.privasia.scss.common.dto.GateOutReponse;
 import com.privasia.scss.common.dto.GateOutRequest;
 import com.privasia.scss.common.dto.GateOutWriteRequest;
 import com.privasia.scss.common.dto.ImportContainer;
 import com.privasia.scss.common.dto.InProgressTrxDTO;
+import com.privasia.scss.common.enums.GateInOutStatus;
+import com.privasia.scss.common.enums.ReadWriteStatus;
 import com.privasia.scss.common.enums.TransactionType;
+import com.privasia.scss.common.util.DateUtil;
 import com.privasia.scss.core.exception.BusinessException;
 import com.privasia.scss.core.exception.ResultsNotFoundException;
 import com.privasia.scss.core.model.Card;
@@ -32,6 +36,7 @@ import com.privasia.scss.opus.dto.OpusGateOutReadRequest;
 import com.privasia.scss.opus.dto.OpusGateOutReadResponse;
 import com.privasia.scss.opus.dto.OpusGateOutWriteRequest;
 import com.privasia.scss.opus.dto.OpusGateOutWriteResponse;
+import com.privasia.scss.opus.dto.OpusRequestResponseDTO;
 import com.privasia.scss.opus.service.OpusGateOutReadService;
 import com.privasia.scss.opus.service.OpusGateOutWriteService;
 import com.privasia.scss.opus.service.OpusService;
@@ -56,6 +61,8 @@ public class ImportExportGateOutService {
 	private OpusService opusService;
 	
 	private CardRepository cardRepository;
+	
+	private Gson gson;
 
 	@Autowired
 	public void setOpusGateOutReadService(OpusGateOutReadService opusGateOutReadService) {
@@ -90,6 +97,11 @@ public class ImportExportGateOutService {
 	@Autowired
 	public void setOpusService(OpusService opusService) {
 		this.opusService = opusService;
+	}
+	
+	@Autowired
+	public void setGson(Gson gson) {
+		this.gson = gson;
 	}
 
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
@@ -140,7 +152,20 @@ public class ImportExportGateOutService {
 
 			// call opus -
 			OpusGateOutReadRequest gateOutReadRequest = opusGateOutReadService.constructOpenGateOutRequest(gateOutRequest);
-			OpusGateOutReadResponse gateOutReadResponse = opusGateOutReadService.getGateOutReadResponse(gateOutReadRequest);
+			
+			OpusRequestResponseDTO opusRequestResponseDTO = new OpusRequestResponseDTO();
+		    opusRequestResponseDTO.setRequest(gson.toJson(gateOutReadRequest));
+		    opusRequestResponseDTO.setGateinTime(DateUtil.getLocalDateFromString(gateOutReadRequest.getGateOUTDateTime()));
+		    opusRequestResponseDTO.setCardID(gateOutRequest.getCardID());
+		    opusRequestResponseDTO.setTransactionType(trxDTO.getTrxType().getValue());
+		    opusRequestResponseDTO.setImpContainer01(gateOutReadRequest.getContainerNo1ImportCY());
+		    opusRequestResponseDTO.setImpContainer02(gateOutReadRequest.getContainerNo2ImportCY());
+		    opusRequestResponseDTO.setExpContainer01(gateOutReadRequest.getContainerNo1ExportCY());
+		    opusRequestResponseDTO.setExpContainer02(gateOutReadRequest.getContainerNo2ExportCY());
+		    opusRequestResponseDTO.setGateInOut(GateInOutStatus.IN.getValue());
+		    opusRequestResponseDTO.setReadWrite(ReadWriteStatus.READ.getValue());
+			
+			OpusGateOutReadResponse gateOutReadResponse = opusGateOutReadService.getGateOutReadResponse(gateOutReadRequest, opusRequestResponseDTO);
 			// check the errorlist of reponse
 		    String errorMessage = opusService.hasErrorMessage(gateOutReadResponse.getErrorList());
 		    log.error("ERROR MESSAGE FROM OPUS SERVICE: " + errorMessage);

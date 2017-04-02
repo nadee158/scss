@@ -26,6 +26,7 @@ import com.privasia.scss.common.enums.HpatReferStatus;
 import com.privasia.scss.common.enums.ImpExpFlagStatus;
 import com.privasia.scss.common.enums.KioskHLTCheckStatus;
 import com.privasia.scss.common.enums.KioskLockStatus;
+import com.privasia.scss.common.enums.ReadWriteStatus;
 import com.privasia.scss.common.enums.RecordStatus;
 import com.privasia.scss.common.enums.ReferTempType;
 import com.privasia.scss.common.enums.SCSSHDBSStatus;
@@ -1236,6 +1237,48 @@ public class ModelMapEnumConverter {
 						return CardStatus.TERMINATED.getValue();
 					case UPDATED:
 						return CardStatus.UPDATED.getValue();
+					default:
+						return null;
+					}
+				} else {
+					return null;
+				}
+			}
+		};
+	}
+	
+	public static Converter<ReadWriteStatus, String> convertReadWriteStatusToString() {
+
+		return new Converter<ReadWriteStatus, String>() {
+			@Override
+			public String convert(MappingContext<ReadWriteStatus, String> context) {
+				if (context.getSource() != null) {
+					switch (context.getSource()) {
+					case READ:
+						return ReadWriteStatus.READ.getValue();
+					case WRITE:
+						return ReadWriteStatus.WRITE.getValue();
+					default:
+						return null;
+					}
+				} else {
+					return null;
+				}
+			}
+		};
+	}
+
+	public static Converter<String, ReadWriteStatus> convertStringToReadWriteStatus() {
+
+		return new Converter<String, ReadWriteStatus>() {
+			@Override
+			public ReadWriteStatus convert(MappingContext<String, ReadWriteStatus> context) {
+				if (context.getSource() != null) {
+					switch (context.getSource()) {
+					case "R":
+						return ReadWriteStatus.READ;
+					case "W":
+						return ReadWriteStatus.WRITE;
 					default:
 						return null;
 					}
