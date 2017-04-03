@@ -498,7 +498,7 @@ public class GatePass extends AuditEntity implements Serializable {
   }
 
   public void prepareForInsertFromOpus(Card card, SystemUser gateInClerk, Client gateInClient, PrintEir printEir,
-      CardUsage cardUsage, HPABBooking hpatBooking) {
+      HPABBooking hpatBooking) {
     if (this.baseCommonGateInOutAttribute == null) {
       this.setBaseCommonGateInOutAttribute(new BaseCommonGateInOutAttribute());
     }
@@ -528,24 +528,7 @@ public class GatePass extends AuditEntity implements Serializable {
         CommonUtil.changeCase(this.getBaseCommonGateInOutAttribute().getPmPlateNo(), CommonUtil.UPPER_CASE));
     this.setYardPosition(CommonUtil.changeCase(this.yardPosition, CommonUtil.UPPER_CASE));
     this.setBayCode(CommonUtil.changeCase(this.bayCode, CommonUtil.UPPER_CASE));
-
-    if (this.sealAttribute == null) {
-      this.setSealAttribute(new CommonSealAttribute());
-    }
-    this.getSealAttribute()
-        .setSeal01Origin(CommonUtil.changeCase(this.getSealAttribute().getSeal01Origin(), CommonUtil.UPPER_CASE));
-    this.getSealAttribute()
-        .setSeal01Type(CommonUtil.changeCase(this.getSealAttribute().getSeal01Type(), CommonUtil.UPPER_CASE));
-    this.getSealAttribute()
-        .setSeal01Number(CommonUtil.changeCase(this.getSealAttribute().getSeal01Number(), CommonUtil.UPPER_CASE));
-    this.getSealAttribute()
-        .setSeal02Origin(CommonUtil.changeCase(this.getSealAttribute().getSeal02Origin(), CommonUtil.UPPER_CASE));
-    this.getSealAttribute()
-        .setSeal02Type(CommonUtil.changeCase(this.getSealAttribute().getSeal02Type(), CommonUtil.UPPER_CASE));
-    this.getSealAttribute()
-        .setSeal02Number(CommonUtil.changeCase(this.getSealAttribute().getSeal02Number(), CommonUtil.UPPER_CASE));
     this.setPrintEir(printEir);
-    this.setCardUsage(cardUsage);
     this.getBaseCommonGateInOutAttribute().setHpatBooking(hpatBooking);
     this.getCommonGateInOut()
         .setRejectReason(CommonUtil.changeCase(this.getCommonGateInOut().getRejectReason(), CommonUtil.UPPER_CASE));

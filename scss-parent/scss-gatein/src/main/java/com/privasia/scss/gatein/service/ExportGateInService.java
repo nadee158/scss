@@ -19,10 +19,10 @@ import com.privasia.scss.common.dto.GateInReponse;
 import com.privasia.scss.common.dto.GateInWriteRequest;
 import com.privasia.scss.common.dto.ShipSCNDTO;
 import com.privasia.scss.common.enums.ShipStatus;
+import com.privasia.scss.common.enums.TransactionStatus;
 import com.privasia.scss.common.util.CommonUtil;
 import com.privasia.scss.core.exception.ResultsNotFoundException;
 import com.privasia.scss.core.model.Card;
-import com.privasia.scss.core.model.CardUsage;
 import com.privasia.scss.core.model.Client;
 import com.privasia.scss.core.model.Exports;
 import com.privasia.scss.core.model.ExportsQ;
@@ -248,8 +248,7 @@ public class ExportGateInService {
         exportContainer.setBackToback(backToback);
 
         // assign values from header level to container level
-        exportContainer.getBaseCommonGateInOutAttribute()
-            .setEirStatus(com.privasia.scss.common.enums.TransactionStatus.INPROGRESS.getValue());
+        exportContainer.getBaseCommonGateInOutAttribute().setEirStatus(TransactionStatus.INPROGRESS.getValue());
         exportContainer.getBaseCommonGateInOutAttribute().setHpatBooking(gateInWriteRequest.getHpatBookingId());
         exportContainer.getBaseCommonGateInOutAttribute().setPmHeadNo(gateInWriteRequest.getTruckHeadNo());
         exportContainer.getBaseCommonGateInOutAttribute().setPmPlateNo(gateInWriteRequest.getTruckPlateNo());
@@ -282,10 +281,8 @@ public class ExportGateInService {
 
         if (!(exportContainer.getBaseCommonGateInOutAttribute() == null)) {
           if (StringUtils.isNotEmpty(exportContainer.getBaseCommonGateInOutAttribute().getHpatBooking())) {
-            hpatBooking =
-                hpatBookingRepository.findOne(exportContainer.getBaseCommonGateInOutAttribute().getHpatBooking())
-                    .orElseThrow(() -> new ResultsNotFoundException(
-                        "Invalid Booking : " + exportContainer.getBaseCommonGateInOutAttribute().getHpatBooking()));
+            hpatBooking = hpatBookingRepository
+                .findOne(exportContainer.getBaseCommonGateInOutAttribute().getHpatBooking()).orElse(null);
           }
         }
 
@@ -302,13 +299,7 @@ public class ExportGateInService {
         // printEir =
         // printEirRepository.findOne(exportContainer.getPrintEir().getPrintEIRID()).orElse(null);
         // }
-        CardUsage cardUsage = null;
-        // if (!(exportContainer.getCardUsage() == null ||
-        // exportContainer.getCardUsage().getCardUsageID() == null)) {
-        // cardUsage =
-        // cardUsageRepository.findOne(exportContainer.getCardUsage().getCardUsageID()).orElse(null);
-        // }
-        exports.prepareForInsertFromOpus(gateInClerk, card, gateInClient, scn, printEir, cardUsage, hpatBooking,
+        exports.prepareForInsertFromOpus(gateInClerk, card, gateInClient, scn, printEir, hpatBooking,
             damageCodeRepository);
         System.out.println("exports after initializeing " + exports);
         exports = exportsRepository.save(exports);

@@ -1163,7 +1163,7 @@ public class Exports extends AuditEntity implements Serializable {
   }
 
   public void prepareForInsertFromOpus(SystemUser gateInClerk, Card card, Client gateInClient, ShipSCN scn,
-      PrintEir printEir, CardUsage cardUsage, HPABBooking hpatBooking, DamageCodeRepository damageCodeRepository) {
+      PrintEir printEir, HPABBooking hpatBooking, DamageCodeRepository damageCodeRepository) {
     if (this.getBaseCommonGateInOutAttribute() == null) {
       this.setBaseCommonGateInOutAttribute(new BaseCommonGateInOutAttribute());
     }

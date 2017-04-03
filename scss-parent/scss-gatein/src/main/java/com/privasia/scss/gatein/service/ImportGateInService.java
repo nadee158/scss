@@ -28,7 +28,6 @@ import com.privasia.scss.common.util.CommonUtil;
 import com.privasia.scss.core.exception.BusinessException;
 import com.privasia.scss.core.exception.ResultsNotFoundException;
 import com.privasia.scss.core.model.Card;
-import com.privasia.scss.core.model.CardUsage;
 import com.privasia.scss.core.model.Client;
 import com.privasia.scss.core.model.GatePass;
 import com.privasia.scss.core.model.HPABBooking;
@@ -349,18 +348,16 @@ public class ImportGateInService {
               () -> new ResultsNotFoundException("Invalid Gate Pass Number : " + importContainer.getGatePassNo()));
           if (!(gatePass == null)) {
 
-            Card card = null;
             HPABBooking hpatBooking = null;
             if (!(importContainer.getBaseCommonGateInOutAttribute() == null)) {
               if (StringUtils.isNotEmpty(importContainer.getBaseCommonGateInOutAttribute().getHpatBooking())) {
-                hpatBooking =
-                    hpatBookingRepository.findOne(importContainer.getBaseCommonGateInOutAttribute().getHpatBooking())
-                        .orElseThrow(() -> new ResultsNotFoundException(
-                            "Invalid Booking : " + importContainer.getBaseCommonGateInOutAttribute().getHpatBooking()));
+                hpatBooking = hpatBookingRepository
+                    .findOne(importContainer.getBaseCommonGateInOutAttribute().getHpatBooking()).orElse(null);
               }
-              card = cardRepository.findOne(gateInWriteRequest.getCardId())
-                  .orElseThrow(() -> new ResultsNotFoundException("Invalid Card : " + gateInWriteRequest.getCardId()));
             }
+
+            Card card = cardRepository.findOne(gateInWriteRequest.getCardId())
+                .orElseThrow(() -> new ResultsNotFoundException("Invalid Card : " + gateInWriteRequest.getCardId()));
 
             SystemUser gateInClerk = systemUserRepository.findOne(SecurityHelper.getCurrentUserId())
                 .orElseThrow(() -> new AuthenticationServiceException(
@@ -379,15 +376,8 @@ public class ImportGateInService {
             // printEirRepository.findOne(importContainer.getPrintEir().getPrintEIRID()).orElse(null);
             // }
 
-            CardUsage cardUsage = null;
-            // if (!(importContainer.getCardUsage() == null ||
-            // importContainer.getCardUsage().getCardUsageID() == null)) {
-            // cardUsage =
-            // cardUsageRepository.findOne(importContainer.getCardUsage().getCardUsageID()).orElse(null);
-            // }
-
             modelMapper.map(importContainer, gatePass);
-            gatePass.prepareForInsertFromOpus(card, gateInClerk, gateInClient, printEir, cardUsage, hpatBooking);
+            gatePass.prepareForInsertFromOpus(card, gateInClerk, gateInClient, printEir, hpatBooking);
             System.out.println("gatePass after initializeing " + gatePass);
             gatePass = gatePassRepository.save(gatePass);
             System.out.println("gatePass after modal map from importContainer " + gatePass);
