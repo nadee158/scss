@@ -180,7 +180,7 @@ public class OpusService {
     }
     // private String containerNumber; //EPLA0000002
     // importContainer.getContainer().setContainerNumber(gIReadResponseImportContainer.getContainerNo());
-    importContainer.setOrderFOT(gIReadResponseImportContainer.getImpOrderNo());
+    importContainer.setOrderNo(gIReadResponseImportContainer.getImpOrderNo());
     importContainer.setImpOrderStatus(gIReadResponseImportContainer.getImpOrderStatus());
     importContainer.setImpOrderType(gIReadResponseImportContainer.getImpOrderType());
     // private String containerInOrOut;// OUT,

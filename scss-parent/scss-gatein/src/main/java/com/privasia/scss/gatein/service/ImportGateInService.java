@@ -364,6 +364,8 @@ public class ImportGateInService {
             Client gateInClient = clientRepository.findOne(gateInWriteRequest.getGateInClient()).orElseThrow(
                 () -> new ResultsNotFoundException("Invalid Client Id : " + gateInWriteRequest.getGateInClient()));
 
+
+
             PrintEir printEir = null;
             // if (!(importContainer.getPrintEir() == null ||
             // importContainer.getPrintEir().getPrintEIRID() == null)) {
