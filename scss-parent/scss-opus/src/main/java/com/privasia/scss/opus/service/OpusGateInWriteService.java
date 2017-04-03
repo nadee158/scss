@@ -71,10 +71,10 @@ public class OpusGateInWriteService {
     gateInReponse.setLaneNo(opusGateInWriteResponse.getLaneNo());
     gateInReponse.setTruckHeadNo(opusGateInWriteResponse.getTruckHeadNo());
     gateInReponse.setTruckPlateNo(opusGateInWriteResponse.getTruckPlateNo());
-    gateInReponse.setExportContainers(opusService
-        .giWriteResponseExportContainerListToExportContainerList(opusGateInWriteResponse.getExportContainerListCY()));
-    gateInReponse.setImportContainers(opusService
-        .giWriteResponseImportContainerListToImportContainerList(opusGateInWriteResponse.getImportContainerListCY()));
+    gateInReponse.setExportContainers(
+        opusService.giWriteResponseExportContainerListToExportContainerList(opusGateInWriteResponse));
+    gateInReponse.setImportContainers(
+        opusService.giWriteResponseImportContainerListToImportContainerList(opusGateInWriteResponse));
     gateInReponse.setCallCardNo(opusGateInWriteResponse.getCallCardNo());
     return gateInReponse;
   }

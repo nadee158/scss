@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.privasia.scss.common.dto.BaseCommonGateInOutDTO;
-import com.privasia.scss.common.dto.ClientDTO;
+import com.privasia.scss.common.dto.CommonGateInOutDTO;
 import com.privasia.scss.common.dto.ExportContainer;
 import com.privasia.scss.common.dto.GateInReponse;
 import com.privasia.scss.common.dto.GateInWriteRequest;
@@ -248,16 +248,17 @@ public class ExportGateInService {
         exportContainer.setBackToback(backToback);
 
         // assign values from header level to container level
-        exportContainer.getBaseCommonGateInOutAttribute().setCard(gateInWriteRequest.getCardId());
         exportContainer.getBaseCommonGateInOutAttribute()
             .setEirStatus(com.privasia.scss.common.enums.TransactionStatus.INPROGRESS.getValue());
-        ClientDTO gateInClientDTO = new ClientDTO();
-        gateInClientDTO.setClientID(gateInWriteRequest.getGateInClient());
-        exportContainer.getBaseCommonGateInOutAttribute().setGateInClient(gateInClientDTO);
         exportContainer.getBaseCommonGateInOutAttribute().setHpatBooking(gateInWriteRequest.getHpatBookingId());
         exportContainer.getBaseCommonGateInOutAttribute().setPmHeadNo(gateInWriteRequest.getTruckHeadNo());
         exportContainer.getBaseCommonGateInOutAttribute().setPmPlateNo(gateInWriteRequest.getTruckPlateNo());
         exportContainer.getBaseCommonGateInOutAttribute().setTimeGateInOk(LocalDateTime.now());
+
+        if (exportContainer.getCommonGateInOut() == null) {
+          exportContainer.setCommonGateInOut(new CommonGateInOutDTO());
+        }
+        exportContainer.getCommonGateInOut().setGateInStatus(gateInWriteRequest.getGateInStatus());
 
         exportContainer.getBaseCommonGateInOutAttribute()
             .setTimeGateIn(CommonUtil.getParsedDate(gateInWriteRequest.getGateInDateTime()));
@@ -274,7 +275,9 @@ public class ExportGateInService {
             () -> new AuthenticationServiceException("Log in User Not Found : " + SecurityHelper.getCurrentUserId()));
         System.out.println("gateInClerk " + gateInClerk);
 
-        Card card = null;
+        Card card = cardRepository.findOne(gateInWriteRequest.getCardId())
+            .orElseThrow(() -> new ResultsNotFoundException("Invalid Card : " + gateInWriteRequest.getCardId()));
+
         HPABBooking hpatBooking = null;
 
         if (!(exportContainer.getBaseCommonGateInOutAttribute() == null)) {
@@ -284,21 +287,10 @@ public class ExportGateInService {
                     .orElseThrow(() -> new ResultsNotFoundException(
                         "Invalid Booking : " + exportContainer.getBaseCommonGateInOutAttribute().getHpatBooking()));
           }
-          if (!(exportContainer.getBaseCommonGateInOutAttribute().getCard() == null)) {
-            card = cardRepository.findOne(exportContainer.getBaseCommonGateInOutAttribute().getCard())
-                .orElseThrow(() -> new ResultsNotFoundException(
-                    "Invalid Card : " + exportContainer.getBaseCommonGateInOutAttribute().getCard()));
-          }
         }
 
-        Client gateInClient = null;
-        if (!(exportContainer.getBaseCommonGateInOutAttribute() == null
-            || exportContainer.getBaseCommonGateInOutAttribute().getGateInClient() == null)) {
-          gateInClient = clientRepository
-              .findOne(exportContainer.getBaseCommonGateInOutAttribute().getGateInClient().getClientID())
-              .orElseThrow(() -> new ResultsNotFoundException(
-                  "Invalid Client Id : " + exportContainer.getBaseCommonGateInOutAttribute().getGateInClient()));
-        }
+        Client gateInClient = clientRepository.findOne(gateInWriteRequest.getGateInClient()).orElseThrow(
+            () -> new ResultsNotFoundException("Invalid Client Id : " + gateInWriteRequest.getGateInClient()));
         ShipSCN scn = null;
         if (!(exportContainer.getScn() == null)) {
           scn = shipSCNRepository.findOne(exportContainer.getScn().getShipSCNID())

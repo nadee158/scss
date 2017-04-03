@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.privasia.scss.common.dto.BaseCommonGateInOutDTO;
+import com.privasia.scss.common.dto.CommonGateInOutDTO;
 import com.privasia.scss.common.dto.GateInReponse;
 import com.privasia.scss.common.dto.GateInRequest;
 import com.privasia.scss.common.dto.GateInWriteRequest;
@@ -334,6 +335,11 @@ public class ImportGateInService {
         importContainer.getBaseCommonGateInOutAttribute().setPmHeadNo(gateInWriteRequest.getTruckHeadNo());
         importContainer.getBaseCommonGateInOutAttribute().setPmPlateNo(gateInWriteRequest.getTruckPlateNo());
         importContainer.getBaseCommonGateInOutAttribute().setTimeGateInOk(LocalDateTime.now());
+
+        if (importContainer.getCommonGateInOut() == null) {
+          importContainer.setCommonGateInOut(new CommonGateInOutDTO());
+        }
+        importContainer.getCommonGateInOut().setGateInStatus(gateInWriteRequest.getGateInStatus());
 
         System.out.println("importContainer " + importContainer);
 
