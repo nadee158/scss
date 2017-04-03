@@ -1,0 +1,57 @@
+{
+	"id": "ccd34c77-ede8-2789-7207-e8d13fc0feab",
+	"name": "scss-gateout",
+	"description": "",
+	"order": [
+		"716f9638-773d-0f63-1391-8a94708bb801",
+		"7b409eac-6824-92fc-f64d-5d5df2e3ede5"
+	],
+	"folders": [],
+	"timestamp": 1491028637537,
+	"owner": "390246",
+	"public": false,
+	"requests": [
+		{
+			"id": "716f9638-773d-0f63-1391-8a94708bb801",
+			"headers": "Content-Type: application/json;charset=UTF-8\nX-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJURVNUVCIsInJvbGVzIjpbIkFETUlOSVNUUkFUT1IiXSwiZnVuY3Rpb25zIjpbMzI3LDM5Myw0MzIsNDY3LDYyMiw0NDMsMzYxLDUyMCw2MjEsNDI3LDQ0OCwzMTQsNzAxLDQyNCwzNzEsMzkyLDM4OCw1MTAsNDY1LDIxMSw0NjEsNDEzLDM4MSwxMTIsNDYzLDQxNiwzODAsNDE3LDQ0NiwxMTQsNDUyLDkwMSwxMTMsNDI5LDMyNSw2MjUsMzkwLDQzMywzNzYsNDM1LDM3MiwzNzgsMzg2LDQyNiw0NjgsNDE5LDQ0NywxMTEsNDI4LDM4OSwzODIsMzYyLDMyNiwzMTUsNDMwLDMzMiwzMjIsNDQxLDYyMyw0NjIsMzYwLDIyMSw0NDIsMzIxLDYyNCw0MjMsNDE0LDQ1NCw0NDQsMzMxLDM5NSw3MDIsMzk0LDQ1NiwzNzQsMzg1LDMxMiwzMTMsMzExLDMyNCwzMjMsMzgzLDQzMSwzNzksMzg3LDQ1NSwzNzUsMjIyLDQ0OSw0NjYsNDE1LDM2MywzNDAsNDY0LDM4NCwzNzcsMzkxLDQ1MSw0MTgsNDQ1XSwic3RhZmZOYW1lIjoiTU9IRCBZVVNVRiBCSU4gQUxJQVMiLCJzdGFmZk51bWJlciI6IjYwNTYiLCJ1c2VySUQiOjQsImlzcyI6Imh0dHA6Ly9zY3NzLmNvbS5teSIsImlhdCI6MTQ5MTE1ODI4OCwiZXhwIjoxNDkxMTU5MTg4fQ.xdZ_xHAAhgalUD0AlcPsbiVC9jf0jxtGkdUJ6Dj9GdmJlei2BnFZZ6blPTmqfLOjFuiODHde4ykE3xZMo4Um0w\nX-Requested-With: XMLHttpRequest\n",
+			"url": "http://localhost:8080/scss-gateout/api/gateout/populategateout",
+			"preRequestScript": null,
+			"pathVariables": {},
+			"method": "PUT",
+			"data": [],
+			"dataMode": "raw",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1491158585851,
+			"name": "http://localhost:8080/scss-gateout/api/gateout/populategateout",
+			"description": "check for incomplete transactions before gate in ",
+			"collectionId": "ccd34c77-ede8-2789-7207-e8d13fc0feab",
+			"responses": [],
+			"rawModeData": "{  \r\n   \"cardID\":1998,\r\n   \"clientID\":10,\r\n   \"gateOUTDateTime\":\"04/11/2017 01:22:55 AM\"\r\n}"
+		},
+		{
+			"id": "7b409eac-6824-92fc-f64d-5d5df2e3ede5",
+			"headers": "Content-Type: application/json;charset=UTF-8\nX-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJURVNUVCIsInJvbGVzIjpbIkFETUlOSVNUUkFUT1IiXSwiZnVuY3Rpb25zIjpbNDQ3LDQxMyw0MzAsMjExLDQxNSwzNzQsMzQwLDYyMyw2MjIsNDU2LDQ0MSw1MTAsMzc2LDM5MywzOTAsMzgxLDM3Nyw0MTgsNDUyLDQzMSw1MjAsMzYzLDM4OSwzMjEsMzYyLDQ1MSwxMTMsNjIxLDQzMywzODgsMzgyLDMyNCw3MDEsMzEzLDQyNCw2MjQsNDYzLDMxNCwxMTIsMzgwLDExMSwzOTUsMzYxLDMxMiwzNjAsNDI5LDExNCw0NjIsMzc5LDMyNiw0NTUsNDY1LDQ0OSw0NDYsNDU0LDM3MSw0MjgsNDM1LDQxNiw0NjcsMzMyLDMxNSwzMjUsNjI1LDQ2NiwzODUsNDI2LDQ2NCwzMjMsNDY4LDQ0Myw0NDIsMzkyLDM4Nyw0NDgsNDE0LDMyMiwzODMsMzc1LDM5MSw0MTksNDQ1LDcwMiwzMzEsOTAxLDQxNyw0MjMsNDYxLDMyNywyMjIsMzcyLDM4NCwzOTQsNDMyLDMxMSw0MjcsMzg2LDM3OCw0NDQsMjIxXSwic3RhZmZOYW1lIjoiTVVIQU1NQUQgRklSREFVWiBCSU4gQUJEVUwgSEFMSU0iLCJzdGFmZk51bWJlciI6IlAxMzQ0IiwidXNlcklEIjoyNDAxLCJpc3MiOiJodHRwOi8vc2Nzcy5jb20ubXkiLCJpYXQiOjE0ODQ1NzI5NjUsImV4cCI6MTQ4NDU3Mzg2NX0._y-oGDEgcpMhWFBFmGGVQ18ufxjtsgCg6F67JKVL9fQnyitr4MZykK94CL7DNXajoBdoNw794ULkgA7qrpa73Q\nX-Requested-With: XMLHttpRequest\n",
+			"url": "http://localhost:8080/scss-gateout/api/manualgate/open/56",
+			"pathVariables": {},
+			"preRequestScript": null,
+			"method": "PUT",
+			"collectionId": "ccd34c77-ede8-2789-7207-e8d13fc0feab",
+			"data": null,
+			"dataMode": "params",
+			"name": "http://localhost:8080/scss-gateout/api/manualgate/open/56",
+			"description": "update after manual gate open",
+			"descriptionFormat": "html",
+			"time": 1484573580042,
+			"version": 2,
+			"responses": [],
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": "{}",
+			"isFromCollection": true,
+			"collectionRequestId": "afa3b10a-49fb-8401-a698-803e53a53723"
+		}
+	]
+}

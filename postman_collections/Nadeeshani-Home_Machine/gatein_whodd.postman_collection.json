@@ -1,0 +1,34 @@
+{
+	"id": "13b79c09-a0e7-c4fb-069b-2b9075d06ed3",
+	"name": "gatein_whodd",
+	"description": "",
+	"order": [
+		"3d8e0875-880e-ee09-1995-3e1fc41dc882"
+	],
+	"folders": [],
+	"timestamp": 1488387085741,
+	"owner": "390246",
+	"public": false,
+	"requests": [
+		{
+			"id": "3d8e0875-880e-ee09-1995-3e1fc41dc882",
+			"headers": "Content-Type: application/json;charset=UTF-8\nX-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJURVNUVCIsInJvbGVzIjpbIkFETUlOSVNUUkFUT1IiXSwiZnVuY3Rpb25zIjpbMzI2LDM5MiwxMTQsMzEyLDQxNiw0NjcsMzE1LDQ0MiwzNzcsMzEzLDM0MCw0NDYsMzc0LDQyNCw0MTcsNDI5LDM3MiwzODQsNDQxLDM4Miw1MTAsMzg5LDQ0NCw0NTYsNDQ1LDM4NSwzNjEsNDQzLDQzNSw3MDEsNDQ3LDIyMSwzOTMsMzc2LDYyNSwxMTIsMzYyLDQ1NSw0NjMsNjI0LDQyNyw1MjAsNDMyLDQ2NCwyMjIsNDI2LDMzMiw0MTMsMzc1LDQyOCwzODMsNDE5LDkwMSwzODAsMzc4LDMzMSwzMjIsMzE0LDM4OCw0NTIsNDYyLDQ2OCwyMTEsNDYxLDExMSw0MTQsNjIyLDM5MSw0NjUsNDY2LDQzMywzMjQsNzAyLDM3MSwxMTMsNDE1LDM5NCwzNjAsMzIzLDM4NiwzODcsMzIxLDQzMSwzOTUsMzI1LDM5MCwzNzksNDQ5LDM4MSw2MjMsNDIzLDQzMCw0NTEsNjIxLDMxMSwzNjMsNDU0LDQxOCw0NDgsMzI3XSwic3RhZmZOYW1lIjoiTU9IRCBZVVNVRiBCSU4gQUxJQVMiLCJzdGFmZk51bWJlciI6IjYwNTYiLCJ1c2VySUQiOjQsImlzcyI6Imh0dHA6Ly9zY3NzLmNvbS5teSIsImlhdCI6MTQ4ODM4NzY2NiwiZXhwIjoxNDg4Mzg4NTY2fQ.QLy0VL-SjwFzI-7zmWilSHfMoAbu-bwlY1UJ5gpjAbUrQUJlNQEk20XArOqlnSMnHCv-Yk32VpL6drBziaNDwQ\nX-Requested-With: XMLHttpRequest\n",
+			"url": "http://localhost:8080/scss-gatein/api/gatein/odd/whodd/save",
+			"preRequestScript": null,
+			"pathVariables": {},
+			"method": "POST",
+			"data": [],
+			"dataMode": "raw",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1488389189098,
+			"name": "http://localhost:8080/scss-gatein/api/gatein/odd/whodd/save",
+			"description": "whodd_save",
+			"collectionId": "13b79c09-a0e7-c4fb-069b-2b9075d06ed3",
+			"responses": [],
+			"rawModeData": "{  \r\n   \"pmHeadNo\":\"pmHeadNo\",\r\n   \"pmPlateNo\":\"pmPlateNo\",\r\n   \"cardId\":1998,\r\n   \"gateInStatus\":\"A\",\r\n   \"timeGateIn\":\"03/01/2017 11:11:11 AM\",\r\n   \"whoddds\":[  \r\n      {  \r\n         \"oddIdSeq\":12,\r\n         \"impExpFlag\":\"I\",\r\n         \"reviseHeadNoRem\":\"reviseHeadNoRem\",\r\n         \"reviseHeadNo\":\"reviseHeadNo\",\r\n         \"oldHeadNo\":\"oldHeadNo\",\r\n         \"container01\":{  \r\n            \"containerNo\":\"containerNo1\",\r\n            \"location\":\"location1\",\r\n            \"remarks\":\"remarks1\",\r\n            \"oddStatus\":\"oddStatus1\",\r\n            \"rejectionReason\":\"rejectionReason1\",\r\n            \"fullOrEmpty\":\"F\",\r\n            \"containerSize\":\"containerSize1\"\r\n         },\r\n         \"container02\":{  \r\n           \"containerNo\":\"containerNo2\",\r\n            \"location\":\"location2\",\r\n            \"remarks\":\"remarks2\",\r\n            \"oddStatus\":\"oddStatus2\",\r\n            \"rejectionReason\":\"rejectionReason2\",\r\n            \"fullOrEmpty\":\"E\",\r\n            \"containerSize\":\"containerSize2\"\r\n         }\r\n      }\r\n   ]\r\n}"
+		}
+	]
+}

@@ -15,6 +15,7 @@ import com.privasia.scss.common.dto.BookingDTO;
 import com.privasia.scss.common.dto.BookingInfoDTO;
 import com.privasia.scss.common.dto.HDBSBkgGridDTO;
 import com.privasia.scss.common.dto.HpatDto;
+import com.privasia.scss.common.dto.InProgressTrxDTO;
 import com.privasia.scss.common.enums.BookingType;
 import com.privasia.scss.common.enums.CardStatus;
 import com.privasia.scss.common.enums.CompanyType;
@@ -54,8 +55,8 @@ public class ExpressService {
       if (isCardValid) {
         if (!(card.getCompany() == null || card.getCompany().getCompanyType() == null)) {
           if (StringUtils.equals(card.getCompany().getCompanyType().getValue(), CompanyType.HAULAGE.getValue())) {
-            boolean isImpExpCompleted = commonCardService.isTrxInProgress(card.getCardID());
-            if (isImpExpCompleted) {
+        	InProgressTrxDTO inProgressTrxDTO = commonCardService.isTrxInProgress(card.getCardID());
+            if (!inProgressTrxDTO.isInProgress()) {
               log.error("Seq:" + card.getCardID());
 
               if (!(card.getSmartCardUser() == null || card.getSmartCardUser().getCommonContactAttribute() == null

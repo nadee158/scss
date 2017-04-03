@@ -82,7 +82,7 @@ public class ModelMapConfig {
     modelMapper.addConverter(ModelMapEnumConverter.convertStringToCardStatus());
     modelMapper.addConverter(ModelMapEnumConverter.convertStringToCompanyStatus());
     modelMapper.addConverter(ModelMapEnumConverter.convertCompanyStatusToString());
-    
+
     return modelMapper;
   }
 
@@ -93,6 +93,9 @@ public class ModelMapConfig {
     modelMapper.addMappings(ModelMapPropertyMap.gatePassToImportContainer());
     modelMapper.addMappings(ModelMapPropertyMap.exportsToExportsQ());
     modelMapper.addMappings(ModelMapPropertyMap.importContainerToGatePass());
+    modelMapper.addMappings(ModelMapPropertyMap.exportContainerToExports());
+    modelMapper.addMappings(ModelMapPropertyMap.exportsToExportContainer());
+
     return modelMapper;
   }
 

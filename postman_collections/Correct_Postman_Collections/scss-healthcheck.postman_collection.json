@@ -1,0 +1,55 @@
+{
+	"id": "10b052b7-073f-7310-9438-f317a075558b",
+	"name": "scss-healthcheck",
+	"description": "",
+	"order": [
+		"54228bfe-678b-3fd6-6af4-b0bbd3143cde",
+		"003c0aed-fae4-09bb-1c6a-013a643b80e2"
+	],
+	"folders": [],
+	"timestamp": 1480753299063,
+	"owner": "",
+	"public": false,
+	"requests": [
+		{
+			"id": "003c0aed-fae4-09bb-1c6a-013a643b80e2",
+			"headers": "Content-Type: application/json;charset=UTF-8\nX-Requested-With: XMLHttpRequest\nX-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJURVNUVCIsInJvbGVzIjpbIkFETUlOSVNUUkFUT1IiXSwiZnVuY3Rpb25zIjpbNDEzLDQ0MSwzMjcsNDQ2LDQ0NSwzOTAsNjIzLDQyNiwzNzUsMzcxLDM3Niw0MjMsMzc3LDQ2NCwzMTMsNDY2LDkwMSwzMTQsNDY3LDM2MCw0MjgsMzI2LDQ0OSwzODIsMjIyLDYyNSwzMjIsMjIxLDM4Myw0NjUsMzExLDQ1Miw0MjksNDMyLDQyNyw0NDMsNjIxLDMyNCw2MjIsNDE2LDM5MSw0NTYsMzgwLDQxOCw1MjAsMTEyLDQzMCwzOTUsNDMxLDM4OCw3MDEsNDQ4LDMyNSwzOTQsNDMzLDYyNCw0NjEsNDE0LDMyMywzMzEsNDY4LDQxOSwzNjIsMzkzLDExMywzMTUsMzQwLDM2Myw0NDIsMzYxLDUxMCwzODQsNzAyLDM4MSwxMTQsMzg1LDMyMSwzNzksMzEyLDM3OCwyMTEsNDYzLDQxNywzNzQsNDYyLDMzMiw0NDcsMzg2LDQ1MSw0NTUsNDE1LDM4OSwxMTEsNDM1LDQ0NCw0NTQsMzkyLDM3Miw0MjQsMzg3XSwic3RhZmZOYW1lIjoiTVVIQU1NQUQgRklSREFVWiBCSU4gQUJEVUwgSEFMSU0iLCJzdGFmZk51bWJlciI6IlAxMzQ0IiwidXNlcklEIjoyNDAxLCJpc3MiOiJodHRwOi8vc2Nzcy5jb20ubXkiLCJpYXQiOjE0ODA3NTU3MzUsImV4cCI6MTQ4MDc1NjYzNX0.TegOY-L1tFmLDhd4N_pB3U__fAR1CF2wpP5Xp42bfyxMDI-Sstl6dc2W-Kowe-QCPAMPm6RAFf4Q5TX9_ykJNg\n",
+			"url": "http://localhost:8080/scss-healthcheck/api/healthcheck/save",
+			"preRequestScript": null,
+			"pathVariables": {},
+			"method": "POST",
+			"data": [],
+			"dataMode": "raw",
+			"version": 2,
+			"tests": "{  \r\n   \"boothID\":\"\",\r\n   \"kioskID\":\"\",\r\n   \"kioskLockStatus\":\"\",\r\n   \"cardNumber\":0,\r\n   \"cardScanTime\":\"\",\r\n   \"kioskSelectedTime\":\"\",\r\n   \"displayScreenID\":0,\r\n   \"transactionIDList\":\"\",\r\n   \"driverName\":\"\",\r\n   \"pmHeadNo\":\"\",\r\n   \"truckCompany\":\"\",\r\n   \"driverIC\":\"\",\r\n   \"plateNo\":\"\",\r\n   \"transactionType\":\"\",\r\n   \"reviseHeadNo\":\"\",\r\n   \"reviseHeadNoRemarks\":\"\",\r\n   \"retakePhoto\":false,\r\n   \"trxCompleteTime\":\"\",\r\n   \"lockUserID\":\"\",\r\n   \"lockUserName\":\"\",\r\n   \"referReason01List\":\"\",\r\n   \"referReason02List\":\"\",\r\n   \"container01\":{  \r\n      \"cancelPickup\":\"\",\r\n      \"location\":\"\",\r\n      \"status\":\"\",\r\n      \"others\":\"\",\r\n      \"rejectRemarks\":\"\",\r\n      \"customCheck\":\"\",\r\n      \"shipper\":\"\",\r\n      \"line\":\"\"\r\n   },\r\n   \"container02\":{  \r\n      \"cancelPickup\":\"\",\r\n      \"location\":\"\",\r\n      \"status\":\"\",\r\n      \"others\":\"\",\r\n      \"rejectRemarks\":\"\",\r\n      \"customCheck\":\"\",\r\n      \"shipper\":\"\",\r\n      \"line\":\"\"\r\n   },\r\n   \"container03\":{  \r\n      \"cancelPickup\":\"\",\r\n      \"location\":\"\",\r\n      \"status\":\"\",\r\n      \"others\":\"\",\r\n      \"rejectRemarks\":\"\",\r\n      \"customCheck\":\"\",\r\n      \"shipper\":\"\",\r\n      \"line\":\"\"\r\n   },\r\n   \"container04\":{  \r\n      \"cancelPickup\":\"\",\r\n      \"location\":\"\",\r\n      \"status\":\"\",\r\n      \"others\":\"\",\r\n      \"rejectRemarks\":\"\",\r\n      \"customCheck\":\"\",\r\n      \"shipper\":\"\",\r\n      \"line\":\"\"\r\n   }\r\n}",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1480756616843,
+			"name": "http://localhost:8080/scss-healthcheck/api/healthcheck/save",
+			"description": "",
+			"collectionId": "10b052b7-073f-7310-9438-f317a075558b",
+			"responses": [],
+			"rawModeData": "  {  \r\n   \"healthCheckSeq\":\"0\",\r\n   \"kioskID\":\"602\",\r\n   \"boothID\":\"24\",\r\n   \"creationTime\":\"02/25/2016 10:22:59 PM\",\r\n   \"cardReaderStatus\":\"Card Reader Down\",\r\n   \"pcStatus\":\"OK\",\r\n   \"intercomStatus\":\"Intercom Down\",\r\n   \"printerStatus\":\"Printer Down\",\r\n   \"paperStatus\":\"OK\",\r\n   \"lcdStatus\":\"OK\",\r\n   \"cameraStatus\":\"Camera Down\",\r\n   \"webServiceStatus\":\"OK\",\r\n   \"laneNo\":\"laneNo\",\r\n   \"notificationStatus\":\"N\"\r\n}"
+		},
+		{
+			"id": "54228bfe-678b-3fd6-6af4-b0bbd3143cde",
+			"headers": "Content-Type: application/json;charset=UTF-8\nX-Requested-With: XMLHttpRequest\nX-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJURVNUVCIsInJvbGVzIjpbIkFETUlOSVNUUkFUT1IiXSwiZnVuY3Rpb25zIjpbNDEzLDQ0MSwzMjcsNDQ2LDQ0NSwzOTAsNjIzLDQyNiwzNzUsMzcxLDM3Niw0MjMsMzc3LDQ2NCwzMTMsNDY2LDkwMSwzMTQsNDY3LDM2MCw0MjgsMzI2LDQ0OSwzODIsMjIyLDYyNSwzMjIsMjIxLDM4Myw0NjUsMzExLDQ1Miw0MjksNDMyLDQyNyw0NDMsNjIxLDMyNCw2MjIsNDE2LDM5MSw0NTYsMzgwLDQxOCw1MjAsMTEyLDQzMCwzOTUsNDMxLDM4OCw3MDEsNDQ4LDMyNSwzOTQsNDMzLDYyNCw0NjEsNDE0LDMyMywzMzEsNDY4LDQxOSwzNjIsMzkzLDExMywzMTUsMzQwLDM2Myw0NDIsMzYxLDUxMCwzODQsNzAyLDM4MSwxMTQsMzg1LDMyMSwzNzksMzEyLDM3OCwyMTEsNDYzLDQxNywzNzQsNDYyLDMzMiw0NDcsMzg2LDQ1MSw0NTUsNDE1LDM4OSwxMTEsNDM1LDQ0NCw0NTQsMzkyLDM3Miw0MjQsMzg3XSwic3RhZmZOYW1lIjoiTVVIQU1NQUQgRklSREFVWiBCSU4gQUJEVUwgSEFMSU0iLCJzdGFmZk51bWJlciI6IlAxMzQ0IiwidXNlcklEIjoyNDAxLCJpc3MiOiJodHRwOi8vc2Nzcy5jb20ubXkiLCJpYXQiOjE0ODA3NTU3MzUsImV4cCI6MTQ4MDc1NjYzNX0.TegOY-L1tFmLDhd4N_pB3U__fAR1CF2wpP5Xp42bfyxMDI-Sstl6dc2W-Kowe-QCPAMPm6RAFf4Q5TX9_ykJNg\n",
+			"url": "http://localhost:8080/scss-healthcheck/api/healthcheck/getinfo/0/14",
+			"preRequestScript": null,
+			"pathVariables": {},
+			"method": "GET",
+			"data": [],
+			"dataMode": "raw",
+			"version": 2,
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1480755827831,
+			"name": "http://localhost:8080/scss-healthcheck/api/healthcheck/getinfo/0/14",
+			"description": "fetch data for kiosk health",
+			"collectionId": "10b052b7-073f-7310-9438-f317a075558b",
+			"responses": [],
+			"rawModeData": "{  \r\n   \"boothID\":\"501\",\r\n   \"kioskID\":\"400\",\r\n   \"kioskLockStatus\":\"R\",\r\n   \"cardNumber\":5,\r\n   \"cardScanTime\":\"01/01/2016 11:05 AM\",\r\n   \"kioskSelectedTime\":\"01/12/2016 12:05 AM\",\r\n   \"displayScreenID\":6,\r\n   \"transactionIDList\":\"trid1,trid2\",\r\n   \"driverName\":\"driverName tst\",\r\n   \"pmHeadNo\":\"451\",\r\n   \"truckCompany\":\"truckCompany tst\",\r\n   \"driverIC\":\"456824125V8\",\r\n   \"plateNo\":\"45x-jkh\",\r\n   \"transactionType\":\"E\",\r\n   \"reviseHeadNo\":\"45\",\r\n   \"reviseHeadNoRemarks\":\"reviseHeadNoRemarks dds\",\r\n   \"retakePhoto\":false,\r\n   \"trxCompleteTime\":\"25/01/2016 11:05 AM\",\r\n   \"lockUserID\":\"1\",\r\n   \"lockUserName\":\"lockUserName tst\",\r\n   \"referReason01List\":\"referReason01_1,referReason01_2,referReason01_3\",\r\n   \"referReason02List\":\"referReason02List_1,referReason02List_2\",\r\n   \"container01\":{  \r\n      \"cancelPickup\":\"cancelPickup c1\",\r\n      \"location\":\"location c1\",\r\n      \"status\":\"status c1\",\r\n      \"others\":\"others c1\",\r\n      \"rejectRemarks\":\"rejectRemarks c1\",\r\n      \"customCheck\":\"customCheck c1\",\r\n      \"shipper\":\"shipper c1\",\r\n      \"line\":\"line c1\"\r\n   },\r\n   \"container02\":{  \r\n      \"cancelPickup\":\"cancelPickup c2\",\r\n      \"location\":\"location c2\",\r\n      \"status\":\"status c2\",\r\n      \"others\":\"others c2\",\r\n      \"rejectRemarks\":\"rejectRemarks c2\",\r\n      \"customCheck\":\"customCheck c2\",\r\n      \"shipper\":\"shipper c2\",\r\n      \"line\":\"line c2\"\r\n   },\r\n   \"container03\":{  \r\n    \"cancelPickup\":\"cancelPickup c3\",\r\n      \"location\":\"location c3\",\r\n      \"status\":\"status c3\",\r\n      \"others\":\"others c3\",\r\n      \"rejectRemarks\":\"rejectRemarks c3\",\r\n      \"customCheck\":\"customCheck c3\",\r\n      \"shipper\":\"shipper c3\",\r\n      \"line\":\"line c3\"\r\n   },\r\n   \"container04\":{  \r\n     \"cancelPickup\":\"cancelPickup c4\",\r\n      \"location\":\"location c4\",\r\n      \"status\":\"status c4\",\r\n      \"others\":\"others c4\",\r\n      \"rejectRemarks\":\"rejectRemarks c4\",\r\n      \"customCheck\":\"customCheck c4\",\r\n      \"shipper\":\"shipper c4\",\r\n      \"line\":\"line c4\"\r\n   }\r\n}"
+		}
+	]
+}

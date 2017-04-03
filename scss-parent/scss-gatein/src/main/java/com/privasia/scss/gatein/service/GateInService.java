@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.privasia.scss.common.dto.GateInfo;
+import com.privasia.scss.common.dto.InProgressTrxDTO;
 import com.privasia.scss.core.service.CommonCardService;
 
 /**
@@ -30,13 +31,14 @@ public class GateInService {
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = true, value="transactionManager")
 	public GateInfo checkGateInAllow(GateInfo gateInfo) {
 
-		boolean trxInProgress = commonCardService.isTrxInProgress(gateInfo.getCardID());
-		gateInfo.setAllowGateIn(!trxInProgress);
+		InProgressTrxDTO trxInProgress = commonCardService.isTrxInProgress(gateInfo.getCardID());
 
-		if (trxInProgress) {
+		if (trxInProgress.isInProgress()) {
 			gateInfo.setMessage("Driver has not completed a full cycle process");
+			gateInfo.setAllowGateIn(false);
 		} else {
 			gateInfo.setMessage("Allow Gate In");
+			gateInfo.setAllowGateIn(true);
 		}
 
 		return gateInfo;

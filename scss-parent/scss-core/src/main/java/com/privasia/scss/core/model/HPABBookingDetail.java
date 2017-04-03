@@ -21,8 +21,9 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
-import org.springframework.beans.BeanUtils;
 
+import com.privasia.scss.common.dto.BaseCommonGateInOutDTO;
+import com.privasia.scss.common.dto.CardUsageDTO;
 import com.privasia.scss.common.dto.CommonContainerDTO;
 import com.privasia.scss.common.dto.CommonSealDTO;
 import com.privasia.scss.common.dto.CommonSolasDTO;
@@ -38,10 +39,10 @@ import com.privasia.scss.common.enums.BookingType;
  */
 @Entity
 @Table(name = "ETP_BOOKING_HPAT_DETAIL")
-@AttributeOverrides({@AttributeOverride(name = "addBy", column = @Column(name = "ADD_BY")),
-    @AttributeOverride(name = "updateBy", column = @Column(name = "UPDATE_BY")),
-    @AttributeOverride(name = "dateTimeAdd", column = @Column(name = "DATETIME_ADD")),
-    @AttributeOverride(name = "dateTimeUpdate", column = @Column(name = "DATETIME_UPDATE"))})
+@AttributeOverrides({@AttributeOverride(name = "addBy", column = @Column(name = "ADD_BY") ),
+    @AttributeOverride(name = "updateBy", column = @Column(name = "UPDATE_BY") ),
+    @AttributeOverride(name = "dateTimeAdd", column = @Column(name = "DATETIME_ADD") ),
+    @AttributeOverride(name = "dateTimeUpdate", column = @Column(name = "DATETIME_UPDATE") )})
 public class HPABBookingDetail extends AuditEntity implements Serializable {
 
   /**
@@ -287,20 +288,29 @@ public class HPABBookingDetail extends AuditEntity implements Serializable {
     this.expBookingNo = expBookingNo;
   }
 
-  public ExportContainer constructExportContainer() {
-    ExportContainer exportContainer = new ExportContainer();
-    exportContainer.setContainer(new CommonContainerDTO());
+  public ExportContainer constructExportContainer(ExportContainer exportContainer) {
+
+    if (exportContainer == null) {
+      exportContainer = new ExportContainer();
+    }
+
+    if (exportContainer.getContainer() == null) {
+      exportContainer.setContainer(new CommonContainerDTO());
+    }
+
 
     if (!(this.getSolas() == null)) {
-      CommonSolasDTO commonSolasDTO = new CommonSolasDTO();
+      if (exportContainer.getSolas() == null) {
+        exportContainer.setSolas(new CommonSolasDTO());
+      }
       SolasInfo solasInfo = this.getSolas().constructSolasInfo();
-      commonSolasDTO.setFaLedgerCode(solasInfo.getFaLedgerCode());
-      commonSolasDTO.setMgw(solasInfo.getMgw());
-      commonSolasDTO.setShipperVGM(solasInfo.getShipperVGM());
-      commonSolasDTO.setSolasDetailID(solasInfo.getSolasDetailID());
-      commonSolasDTO.setSolasInstruction(solasInfo.getSolasInstruction());
-      commonSolasDTO.setSolasRefNumber(solasInfo.getSolasRefNumber());
-      exportContainer.setSolas(commonSolasDTO);
+      exportContainer.getSolas().setFaLedgerCode(solasInfo.getFaLedgerCode());
+      exportContainer.getSolas().setMgw(solasInfo.getMgw());
+      exportContainer.getSolas().setShipperVGM(solasInfo.getShipperVGM());
+      exportContainer.getSolas().setSolasDetailID(solasInfo.getSolasDetailID());
+      exportContainer.getSolas().setSolasInstruction(solasInfo.getSolasInstruction());
+      exportContainer.getSolas().setSolasRefNumber(solasInfo.getSolasRefNumber());
+
     }
     exportContainer.getContainer().setContainerNumber(containerNumber);
     exportContainer.setSealAttribute(new CommonSealDTO());
@@ -311,9 +321,34 @@ public class HPABBookingDetail extends AuditEntity implements Serializable {
     return exportContainer;
   }
 
-  public ImportContainer constructImportContainer() {
-    ImportContainer importContainer = new ImportContainer();
-    BeanUtils.copyProperties(this, importContainer);
+  public ImportContainer constructImportContainer(ImportContainer importContainer) {
+
+    if (importContainer == null) {
+      importContainer = new ImportContainer();
+    }
+
+    if (importContainer.getBaseCommonGateInOutAttribute() == null) {
+      importContainer.setBaseCommonGateInOutAttribute(new BaseCommonGateInOutDTO());
+    }
+    importContainer.getBaseCommonGateInOutAttribute().setHpatBooking(this.hpatBooking.getBookingID());
+
+    if (importContainer.getContainer() == null) {
+      importContainer.setContainer(new CommonContainerDTO());
+    }
+    importContainer.getContainer().setContainerNumber(this.containerNumber);
+    importContainer.getContainer().setContainerISOCode(this.containerISO);
+    importContainer.getContainer().setContainerHeight(Integer.parseInt(this.containerSize));
+
+    if (importContainer.getCardUsage() == null) {
+      importContainer.setCardUsage(new CardUsageDTO());
+    }
+    importContainer.setContainerType(this.containerType);
+    importContainer.setSealAttribute(new CommonSealDTO());
+    importContainer.getSealAttribute().setSeal01Number(this.expSealNo01);
+    importContainer.getSealAttribute().setSeal02Number(this.expSealNo02);
+    importContainer.setGatePassNo(Long.parseLong(this.impGatePassNumber));
+    importContainer.setContainerLength(Integer.parseInt(this.containerLength));
+
     return importContainer;
   }
 

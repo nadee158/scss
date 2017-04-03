@@ -26,5 +26,10 @@ public class SystemUserDTO implements Serializable {
     this.systemUserID = systemUserID;
   }
 
+  public SystemUserDTO initializeWithDefaultValues() {
+    this.systemUserID = 37l;
+    return this;
+  }
+
 
 }

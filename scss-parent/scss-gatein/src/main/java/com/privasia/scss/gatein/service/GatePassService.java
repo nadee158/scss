@@ -1,16 +1,16 @@
-package com.privasia.scss.core.service;
+package com.privasia.scss.gatein.service;
 
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Optional;
-
-import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.privasia.scss.common.dto.ClientDTO;
 import com.privasia.scss.common.dto.CommonSealDTO;
@@ -59,10 +59,9 @@ import com.privasia.scss.core.repository.PrintEirRepository;
 import com.privasia.scss.core.repository.SystemUserRepository;
 import com.privasia.scss.core.repository.WDCGatePassRepository;
 import com.privasia.scss.core.repository.WDCGlobalSettingRepository;
+import com.privasia.scss.cosmos.repository.CosmosImportRepository;
 import com.privasia.scss.etpws.service.EdoExpiryForLineResponseType;
 import com.privasia.scss.etpws.service.client.ETPWebserviceClient;
-
-
 
 @Service("gatePassService")
 public class GatePassService {
@@ -81,7 +80,6 @@ public class GatePassService {
   @Autowired
   private HPATBookingDetailRepository hpatBookingDetailRepository;
 
-  @Autowired
   private CardRepository cardRepository;
 
   @Autowired
@@ -105,6 +103,17 @@ public class GatePassService {
   @Autowired
   private HPATBookingRepository hpatBookingRepository;
 
+  private CosmosImportRepository cosmosImportRepository;
+
+  @Autowired
+  public void setCardRepository(CardRepository cardRepository) {
+    this.cardRepository = cardRepository;
+  }
+
+  @Autowired
+  public void setCosmosImportRepository(CosmosImportRepository cosmosImportRepository) {
+    this.cosmosImportRepository = cosmosImportRepository;
+  }
 
   public boolean validateGatePass(String cardIdSeq, String gatePassNo, String check, String hpatSeqId,
       String truckHeadNo, long companyId) throws Exception {
@@ -144,7 +153,6 @@ public class GatePassService {
         }
       }
       log.debug("--END check gatepass is in progress (in using), EIRStatus = I? --" + gatePassNo + ":" + truckHeadNo);
-
 
       // check gatepass is cancelled?
       log.debug("------START check gatepass is cancelled ------" + gatePassNo + ":" + truckHeadNo);
@@ -186,7 +194,6 @@ public class GatePassService {
         }
         log.error("------ENDING CHECKING SCSS GATEPASS is valid------" + gatePassNo + ":" + truckHeadNo);
 
-
         log.error("------STARTING CHECKING WDC GATEPASS is valid------" + gatePassNo + ":" + truckHeadNo);
         Optional<WDCGatePass> wdcGatePassOpt = wdcGatePassRepository.findByGatePassNO(Long.parseLong(gatePassNo));
 
@@ -224,7 +231,6 @@ public class GatePassService {
 
               log.error("-------------START Edo Expiry Date -----------" + gatePassNo + ":" + truckHeadNo);
 
-
               log.error("-------------END Edo Expiry Date -----------" + gatePassNo + ":" + truckHeadNo);
 
               if (wdcGatePass.getGateOrder() != null) {
@@ -252,7 +258,6 @@ public class GatePassService {
                 }
               }
 
-
               /**
                * Checking the Haulage Information
                */
@@ -279,6 +284,95 @@ public class GatePassService {
     return result;
   }
 
+  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+  public void checkEdoExpiry(GatePass gatePass, WDCGatePass wdcGatePass) {
+
+    /**
+     * Edo Expiry Date //edo logs
+     * 
+     */
+    log.error("-------------START Edo Expiry Date -----------" + gatePass.getGatePassNo());
+
+    Optional<WDCGlobalSetting> wdcGlobalSettingOpt = wdcGlobalSettingRepository.findOne("EDO_EXP");
+
+    WDCGlobalSetting wdcGlobalSetting = wdcGlobalSettingOpt
+        .orElseThrow(() -> new ResultsNotFoundException("WDCGlobalSetting could not be Found! " + "EDO_EXP"));
+
+    String etpEdoExpiryDateFlag = wdcGlobalSetting.getGlobalString();
+
+    if (StringUtils.equalsIgnoreCase("Y", etpEdoExpiryDateFlag)) {
+
+      if (wdcGatePass.getGateOrder() != null) {
+        String gateOrderType = wdcGatePass.getGateOrder().getTypeCode();
+        if ("I".equalsIgnoreCase(gateOrderType) || "J".equalsIgnoreCase(gateOrderType)
+            || "K".equalsIgnoreCase(gateOrderType)) {
+          LocalDateTime edoExpiryDate = wdcGatePass.getEdoExpiryDate();
+          if (edoExpiryDate != null) {
+            if (LocalDateTime.now().isAfter(edoExpiryDate)) {
+              throw new BusinessException("Gate Pass No " + gatePass.getGatePassNo() + " Demurrage already Expiry");
+
+              /*
+               * throw new BusinessException(CommonUtil .formatMessageCode(ApplicationConstants.
+               * DATE_GATEPASS_EDO_EXPIRY, new Object[] {gatePass.getGatePassNo()}));
+               */
+            }
+          } else {
+            String lineCode = wdcGatePass.getGateOrder().getLineCode();
+            if (StringUtils.isNotBlank(lineCode)) {
+              EdoExpiryForLineResponseType responseType = etpWebserviceClient.getEdoExpiryForLine(lineCode);
+              if (responseType.isEdoExpiryEnabled()) {
+                if (edoExpiryDate == null) {
+                  throw new BusinessException("Gate Pass No " + gatePass.getGatePassNo() + " Demurrage already Expiry");
+                  /*
+                   * throw new BusinessException(CommonUtil .formatMessageCode(ApplicationConstants.
+                   * EDO_EXPIRY_DATE_NULL, new Object[] {gatePass.getGatePassNo()}));
+                   */
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    log.error("-------------END Edo Expiry Date -----------" + gatePass.getGatePassNo());
+
+  }
+
+  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+  public void matchCompany(GatePass gatePass, Long cardIdSeq) {
+
+    /**
+     * Match Company
+     * 
+     */
+    log.error("-------------START Match Company -----------" + gatePass.getGatePassNo());
+
+    Optional<Card> cardOpt = cardRepository.findOne(cardIdSeq);
+    Card card = cardOpt
+        .orElseThrow(() -> new ResultsNotFoundException("Card could not be Found for given card Id ! " + cardIdSeq));
+
+    if (gatePass.getCompany() != null || card.getCompany() != null) {
+      if (gatePass.getCompany().getCompanyID().longValue() != card.getCompany().getCompanyID().longValue()) {
+        throw new BusinessException(
+            "Company''s Gate Pass No " + gatePass.getGatePassNo() + " and Smart Card No do not match");
+      }
+      log.error("-------------END Match Company -----------" + gatePass.getGatePassNo());
+    } else {
+      log.error("-------------END Match Company -----------" + gatePass.getGatePassNo());
+      throw new BusinessException("Company could not be Found for given Gate Pass No ! " + gatePass.getGatePassNo());
+    }
+  }
+
+  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+  public boolean checkOGABlock(String containerNo) {
+    return cosmosImportRepository.isOGABlock(containerNo);
+
+  }
+
+  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+  public boolean checkInternalBlock(String containerNo) {
+    return cosmosImportRepository.isInternalBlock(containerNo);
+  }
 
   public boolean checkMatchCompanyPreArrival(String cardIdSeq, String gatePassNo, String check, String hpatSeqId,
       String truckHeadNo, long companyId, GatePass gatePass) throws Exception {
@@ -326,8 +420,6 @@ public class GatePassService {
 
   }
 
-
-
   private boolean checkPreArrival(String containerNo, String cardIdSeq, String hpatSeqId, String truckHeadNo,
       String gatePassNo) throws Exception {
 
@@ -363,7 +455,6 @@ public class GatePassService {
                 icNo = smartCardUser.getPassportNo();
               }
 
-
               Optional<WDCGlobalSetting> wdcGlobalSettingOpt = wdcGlobalSettingRepository.findOne("ETP_HPAT");
               if (wdcGlobalSettingOpt.isPresent()) {
                 WDCGlobalSetting wdcGlobalSetting = wdcGlobalSettingOpt.get();
@@ -371,8 +462,11 @@ public class GatePassService {
                 if ("Y".equalsIgnoreCase(etpFlag)) {
 
                   // web service
-                  // getHpatDetails(card.getCardNo(), icNo, company.getCompanyCode(), new Date());
-                  // isHpatExist = this.checkHpatBookingExist(containerNo, cardIdSeq, truckHeadNo);
+                  // getHpatDetails(card.getCardNo(), icNo,
+                  // company.getCompanyCode(), new Date());
+                  // isHpatExist =
+                  // this.checkHpatBookingExist(containerNo,
+                  // cardIdSeq, truckHeadNo);
                 } else {
                   isHpatExist = true;
                 }
@@ -390,7 +484,6 @@ public class GatePassService {
     }
     return false;
   }
-
 
   private boolean checkHpatBookingExist(String containerNo, String truckHeadNo, Card card) throws Exception {
     if (!(card == null)) {
@@ -429,15 +522,18 @@ public class GatePassService {
     // EtpServicePortTypeProxy ws = new EtpServicePortTypeProxy();
     // ws.setEndpoint(gateInDAOImpl.getEtpWebServiceAddress());
     //
-    // HpatDetailsRequestType hpatDetailsRequestType = new HpatDetailsRequestType();
+    // HpatDetailsRequestType hpatDetailsRequestType = new
+    // HpatDetailsRequestType();
     // hpatDetailsRequestType.setDriverIc(icNo); // Driver IC
     // hpatDetailsRequestType.setHaulageCompanyCode(compCode);
-    // hpatDetailsRequestType.setAppointmnetDate(this.convertDateToString(driverArrivalDate)); //
+    // hpatDetailsRequestType.setAppointmnetDate(this.convertDateToString(driverArrivalDate));
+    // //
     // DD/MM/YYYY
     // // Format
     //
     // try {
-    // HpatDetailsResponseType[] response = ws.getHpatDetails(hpatDetailsRequestType);
+    // HpatDetailsResponseType[] response =
+    // ws.getHpatDetails(hpatDetailsRequestType);
     //
     // if (response != null && response.length > 0) {
     // for (int i = 0; i < response.length; i++) {
@@ -449,7 +545,8 @@ public class GatePassService {
     // gateInDAOImpl.isExistEtpBookingHpat(hpatDetailsResponseType.getRefId().trim());
     //
     // if (!isExist) {
-    // gateInDAOImpl.doEterminalPlusHpat(hpatDetailsResponseType, smartCardNo, "");
+    // gateInDAOImpl.doEterminalPlusHpat(hpatDetailsResponseType,
+    // smartCardNo, "");
     // }
     // }
     // }
@@ -466,72 +563,27 @@ public class GatePassService {
 
   private boolean checkLaden(String containerNo, String gatePassNo) throws Exception {
     // AS400Database db = null;
-    // sql = "SELECT hdid03" + ", hddt03" + ", hdtd03" + ", cnbt03" + " FROM PCTCSE.cthndl5" + "
+    // sql = "SELECT hdid03" + ", hddt03" + ", hdtd03" + ", cnbt03" + " FROM
+    // PCTCSE.cthndl5" + "
     // WHERE hdtm03='WPT1'"
-    // + " AND hdtp03='IN'" + " AND hddt03 >=20060601" + " AND hdtd03 >=0" + " AND hdfs03<>'CAN'" +
+    // + " AND hdtp03='IN'" + " AND hddt03 >=20060601" + " AND hdtd03 >=0" +
+    // " AND hdfs03<>'CAN'" +
     // " AND cnid03="
     // + SQL.format(containerNo) + " ORDER BY hddt03 DESC, hdtd03 DESC";
 
     // if (rs.next()) {
-    // if (rs.getString("cnbt03") != null && rs.getString("cnbt03").equals("E")) {
+    // if (rs.getString("cnbt03") != null &&
+    // rs.getString("cnbt03").equals("E")) {
     // return true;
     // } else {
     // throw new BusinessException(
-    // CommonUtil.formatMessageCode(ApplicationConstants.GATE_PASS_NO_PREARRIVAL, new Object[]
+    // CommonUtil.formatMessageCode(ApplicationConstants.GATE_PASS_NO_PREARRIVAL,
+    // new Object[]
     // {gatePassNo}));
     // }
     // }
     return false;
   }
-
-
-  public boolean checkOGABlock(String containerNo) throws Exception {
-    // AS400Database db = null;
-
-    boolean isOGABlock = false;
-
-
-    // sql = "SELECT cnid80"
-    // + ", rlgb80"
-    // + ", bldt80"
-    // + ", bltd80"
-    // + ", dgfs80"
-    // + " FROM PCTCSE.ctcubl"
-    // + " WHERE cnid80=" + SQL.format(containerNo)
-    // + " AND cufs80='RGS'"
-    // + " AND rldt80=0"
-    // + " AND rltd80=0"
-    // + " AND trmk80='WPT1'";
-
-
-    // if (rs.next()) {
-    // //return ApplicationConstants.GATE_PASS_OGA_BLOCK;
-    // isOGABlock = true;
-    // }
-
-    return isOGABlock;
-
-  }
-
-  public boolean checkInternalBlock(String containerNo) throws Exception {
-    // AS400Database db = null;
-    boolean isInternalBlock = false;
-
-    // sql = "SELECT intp30"
-    // + " FROM PCTCSE.ctinst7"
-    // + " WHERE cnid30=" + SQL.format(containerNo)
-    // + " AND (infs30='RGS'"
-    // + " OR infs30='ACT')"
-    // + " AND intp30='BLK'"
-    // + " ORDER BY orid30 DESC";
-    //
-    // if (rs.next()) {
-    // //return ApplicationConstants.GATE_PASS_INTERNAL_BLOCK;
-    // isInternalBlock = true;
-    // }
-    return isInternalBlock;
-  }
-
 
   @Transactional
   public TransactionDTO selectGatePassInfo(TransactionDTO transactionDTO, long companyID, long clientId)
@@ -584,7 +636,6 @@ public class GatePassService {
 
   }
 
-
   public String selectLaneNo(long clientId) {
     Optional<ClientDTO> client = clientRepository.getClientUnitNoByClientID(clientId);
     if (client.isPresent()) {
@@ -592,7 +643,6 @@ public class GatePassService {
     }
     return null;
   }
-
 
   public TransactionDTO assignValuesToImportContainer(TransactionDTO transactionDTO, GatePass gatePass,
       boolean isContainerNo1) throws Exception {
@@ -610,7 +660,7 @@ public class GatePassService {
     if (!(gateInOut == null)) {
       container.setGateInOut(gateInOut.getValue());
     }
-    container.setLine(gatePass.getLine());
+    container.setShippingLine(gatePass.getShippingLine());
 
     transactionDTO = selectGatePassInfoCosmos(transactionDTO, false);
 
@@ -630,18 +680,22 @@ public class GatePassService {
 
     String containerNo = container.getContainer().getContainerNumber();
 
-
-    // sql = "SELECT cnid03" + ", hdtp03" + ", cnbt03" + ", lynd05" + ", orgv05" + ", cnis03" + ",
+    // sql = "SELECT cnid03" + ", hdtp03" + ", cnbt03" + ", lynd05" + ",
+    // orgv05" + ", cnis03" + ",
     // orrf05"
-    // + ", psex45" + ", hdid10" + " FROM PCTCSE.cthndl5" + ", PCTCSE.ctlthd2" + ", PCTCSE.ctordru"
-    // + ", PSPACEE.spcinfi" + " WHERE hdtm03='WPT1'" + " AND cnid03=" + SQL.format(containerNo)
-    // //+ ", PSPACEE.spcinfi" + " WHERE hdtm03='WPT1'" + " AND cnid03 LIKE " + "'%" + containerNo +
+    // + ", psex45" + ", hdid10" + " FROM PCTCSE.cthndl5" + ",
+    // PCTCSE.ctlthd2" + ", PCTCSE.ctordru"
+    // + ", PSPACEE.spcinfi" + " WHERE hdtm03='WPT1'" + " AND cnid03=" +
+    // SQL.format(containerNo)
+    // //+ ", PSPACEE.spcinfi" + " WHERE hdtm03='WPT1'" + " AND cnid03 LIKE
+    // " + "'%" + containerNo +
     // "%'"
-    // + " AND hdtp03='OUT'" + " AND lttp10='ORD'" + " AND hdid10 = hdid03" + " AND orid10 = orid05"
-    // + " AND lhfs10='RGS'" + " AND (ortp05='FOT'" + " OR ortp05 = 'BKG'" + " OR ortp05 = 'CNA' )"
+    // + " AND hdtp03='OUT'" + " AND lttp10='ORD'" + " AND hdid10 = hdid03"
+    // + " AND orid10 = orid05"
+    // + " AND lhfs10='RGS'" + " AND (ortp05='FOT'" + " OR ortp05 = 'BKG'" +
+    // " OR ortp05 = 'CNA' )"
     // + " AND trmc45='WPT1'"
     // + " AND cnid45=cnid03" + " AND psex45 IS NOT NULL";
-
 
     /**
      * Change COSMOS Schema
@@ -677,7 +731,6 @@ public class GatePassService {
     // f.setFOTBKGFlag(false);
     // }
 
-
     log.error("-------END selectGatePassInfo cosmos----------" + transactionDTO + ":" + isContainerNo1);
     return transactionDTO;
   }
@@ -697,7 +750,8 @@ public class GatePassService {
 
   public SealInfo selectSealInfo(String handlingId) throws Exception {
 
-    // sql = "SELECT slor2k" + ", sltp2k" + ", seal2k" + " FROM" + " PCTCSE.ctseal1" + " WHERE" + "
+    // sql = "SELECT slor2k" + ", sltp2k" + ", seal2k" + " FROM" + "
+    // PCTCSE.ctseal1" + " WHERE" + "
     // rfid2k="
     // + SQL.format(handlingId);
     SealInfo sealInfo = new SealInfo();
@@ -718,8 +772,6 @@ public class GatePassService {
 
   }
 
-
-
   public GatePass getGatePassForImportContainer(ImportContainer container, long companyID) {
     if (!(container == null)) {
       // get gate pass 01
@@ -734,8 +786,6 @@ public class GatePassService {
     }
     return null;
   }
-
-
 
   public void updateGatePass(TransactionDTO transactionDTO, LocalDateTime timeGateIn, String clientId, String cardIdSeq,
       String expImpFlag) throws Exception {
@@ -759,7 +809,6 @@ public class GatePassService {
           updateGatePassIntoDb(transactionDTO, container02, cardIdSeq, timeGateIn, clientId, expImpFlag);
         }
       }
-
 
     }
 
@@ -812,13 +861,10 @@ public class GatePassService {
         baseCommonGateInOutAttribute.setPmHeadNo(StringUtils.upperCase(transactionDTO.getPmHeadNo()));
         baseCommonGateInOutAttribute.setPmPlateNo(StringUtils.upperCase(transactionDTO.getPmPlateNo()));
 
-
         gatePass.setYardPosition(StringUtils.upperCase(container.getYardPosition()));
-        gatePass.setBayCode(StringUtils.upperCase(container.getBayCode()));
+        gatePass.setBayCode(StringUtils.upperCase(container.getYardBayCode()));
         gatePass
             .setContainerPosition(ContainerPosition.fromValue(StringUtils.upperCase(container.getContainerPosition())));
-
-
 
         CommonSealAttribute sealAttribute = gatePass.getSealAttribute();
         if (sealAttribute == null) {
@@ -835,7 +881,6 @@ public class GatePassService {
           sealAttribute.setSeal02Type(commonSealAttribute.getSeal02Type());
         }
 
-
         gatePass.setSealAttribute(sealAttribute);
 
         if (StringUtils.isNotEmpty(container.getBaseCommonGateInOutAttribute().getHpatBooking())) {
@@ -849,7 +894,6 @@ public class GatePassService {
         commonGateInOut
             .setGateInStatus(TransactionStatus.fromCode(StringUtils.upperCase(container.getAcceptOrReject())));
         gatePass.setCommonGateInOut(commonGateInOut);
-
 
         gatePass.setOrderNo(StringUtils.upperCase(container.getOrderFOT()));
         gatePass.setCurrentPosition(StringUtils.upperCase(container.getCurrentPosition()));
@@ -867,9 +911,8 @@ public class GatePassService {
             .setContainerISOCode(StringUtils.upperCase(container.getContainer().getContainerISOCode()));
         gatePass.setContainer(containerCommonAttribute);
 
-        gatePass.setLine(StringUtils.upperCase(container.getLine()));
+        gatePass.setShippingLine(StringUtils.upperCase(container.getShippingLine()));
         gatePass.setGateInLaneNo(StringUtils.upperCase(container.getGateInLaneNo()));
-
 
         gatePass.setCallCard(transactionDTO.getCallCard());
         Optional<PrintEir> printEirOpt = printEirRepository.findOne(container.getPrintEIRNo());
@@ -900,6 +943,5 @@ public class GatePassService {
       throw new BusinessException("Gatepass number is null!");
     }
   }
-
 
 }

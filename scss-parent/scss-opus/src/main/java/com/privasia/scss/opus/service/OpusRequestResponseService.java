@@ -1,0 +1,74 @@
+/**
+ * 
+ */
+package com.privasia.scss.opus.service;
+
+import java.time.LocalDateTime;
+import java.util.Optional;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+
+import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.AsyncResult;
+import org.springframework.stereotype.Service;
+
+import com.privasia.scss.core.model.OpusRequestResponse;
+import com.privasia.scss.core.repository.OpusRequestResponseRepository;
+import com.privasia.scss.opus.dto.OpusRequestResponseDTO;
+
+/**
+ * @author Janaka
+ *
+ */
+@Service("opusRequestResponseService")
+public class OpusRequestResponseService {
+	
+	private static final Logger log = LoggerFactory.getLogger(OpusRequestResponseService.class);
+	
+	private OpusRequestResponseRepository opusRepository;
+	
+	private ModelMapper modelMapper;
+
+	@Autowired
+	public void setOpusRepository(OpusRequestResponseRepository opusRepository) {
+		this.opusRepository = opusRepository;
+	}
+	
+	@Autowired
+	public void setModelMapper(ModelMapper modelMapper) {
+		this.modelMapper = modelMapper;
+	}
+
+	@Async
+	public Future<Long> saveOpusRequest(OpusRequestResponseDTO opusRequestResponseDTO){
+		
+		OpusRequestResponse opusRequestResponse = modelMapper.map(opusRequestResponseDTO, OpusRequestResponse.class); 
+		opusRequestResponse.setSendTime(LocalDateTime.now());
+		opusRequestResponse = opusRepository.save(opusRequestResponse);
+		return new AsyncResult<Long>(opusRequestResponse.getOpusReqResID());
+	}
+	
+	@Async
+	public void updateOpusResponse(OpusRequestResponseDTO opusRequestResponseDTO, Future<Long> future){
+		Optional<OpusRequestResponse> OptOpus = opusRepository.findOne(opusRequestResponseDTO.getOpusReqResID());
+		if(OptOpus.isPresent()){
+			OpusRequestResponse opusRequestResponse = OptOpus.get();
+			modelMapper.map(opusRequestResponseDTO, opusRequestResponse); 
+			try {
+				opusRequestResponse.setOpusReqResID(future.get());
+				opusRequestResponse.setReceivedTime(LocalDateTime.now());
+				opusRepository.save(opusRequestResponse);
+			} catch (InterruptedException | ExecutionException e) {
+				log.error("Error Occured when update Opus Response "+opusRequestResponse.getOpusReqResID());
+				log.error(e.getMessage());
+			}
+			
+		}
+		
+	}
+
+}

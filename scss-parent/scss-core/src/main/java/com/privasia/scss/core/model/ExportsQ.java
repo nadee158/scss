@@ -38,7 +38,11 @@ import com.privasia.scss.common.enums.VesselStatus;
  */
 @Entity
 @Table(name = "SCSS_EXPORTS_Q")
-public class ExportsQ implements Serializable {
+@AttributeOverrides({@AttributeOverride(name = "addBy", column = @Column(name = "EXP_ADD_BY") ),
+    @AttributeOverride(name = "updateBy", column = @Column(name = "EXP_UPDATE_BY") ),
+    @AttributeOverride(name = "dateTimeAdd", column = @Column(name = "EXP_DATECREATE") ),
+    @AttributeOverride(name = "dateTimeUpdate", column = @Column(name = "EXP_DATEUPDATE") )})
+public class ExportsQ extends AuditEntity implements Serializable {
 
   /**
    * 
@@ -52,9 +56,9 @@ public class ExportsQ implements Serializable {
   private Long exportID;
 
   @Embedded
-  @AttributeOverrides({@AttributeOverride(name = "containerNumber", column = @Column(name = "EXP_CONTAINERNO")),
-      @AttributeOverride(name = "containerISOCode", column = @Column(name = "EXP_CONT_ISO_CODE")), @AttributeOverride(
-          name = "containerFullOrEmpty", column = @Column(name = "EXP_FULL_EMPTY_FLAG", nullable = true))})
+  @AttributeOverrides({@AttributeOverride(name = "containerNumber", column = @Column(name = "EXP_CONTAINERNO") ),
+      @AttributeOverride(name = "containerISOCode", column = @Column(name = "EXP_CONT_ISO_CODE") ), @AttributeOverride(
+          name = "containerFullOrEmpty", column = @Column(name = "EXP_FULL_EMPTY_FLAG", nullable = true) )})
   private CommonContainerAttribute container;
 
   /* COMMON GATE IN ATTRIBUTE STARTS */
@@ -125,7 +129,7 @@ public class ExportsQ implements Serializable {
 
   @Column(name = "EXP_MANUALOPTFLAG", nullable = true)
   @Type(type = "com.privasia.scss.common.enumusertype.ExportOPTFlagEnumUserType")
-  private ExportOPTFlagType optFlag;
+  private ExportOPTFlagType manualPlanIndicator;
 
   @Column(name = "EXP_BOOKINGNO")
   private String bookingNo;
@@ -139,7 +143,7 @@ public class ExportsQ implements Serializable {
   private GateInOutStatus gateInOut;
 
   @Column(name = "EXP_LINE")
-  private String expLine;
+  private String shippingLine;
 
   @Column(name = "EXP_OUT")
   private String expOut;
@@ -151,12 +155,12 @@ public class ExportsQ implements Serializable {
   private String expSpod;
 
   @Embedded
-  @AttributeOverrides({@AttributeOverride(name = "seal01Origin", column = @Column(name = "EXP_SEAL_1_ORIGIN")),
-      @AttributeOverride(name = "seal01Type", column = @Column(name = "EXP_SEAL_1_TYPE")),
-      @AttributeOverride(name = "seal01Number", column = @Column(name = "EXP_SEAL_1_NUMBER")),
-      @AttributeOverride(name = "seal02Origin", column = @Column(name = "EXP_SEAL_2_ORIGIN")),
-      @AttributeOverride(name = "seal02Type", column = @Column(name = "EXP_SEAL_2_TYPE")),
-      @AttributeOverride(name = "seal02Number", column = @Column(name = "EXP_SEAL_2_NUMBER"))})
+  @AttributeOverrides({@AttributeOverride(name = "seal01Origin", column = @Column(name = "EXP_SEAL_1_ORIGIN") ),
+      @AttributeOverride(name = "seal01Type", column = @Column(name = "EXP_SEAL_1_TYPE") ),
+      @AttributeOverride(name = "seal01Number", column = @Column(name = "EXP_SEAL_1_NUMBER") ),
+      @AttributeOverride(name = "seal02Origin", column = @Column(name = "EXP_SEAL_2_ORIGIN") ),
+      @AttributeOverride(name = "seal02Type", column = @Column(name = "EXP_SEAL_2_TYPE") ),
+      @AttributeOverride(name = "seal02Number", column = @Column(name = "EXP_SEAL_2_NUMBER") )})
   private CommonSealAttribute sealAttribute;
 
   @Column(name = "EXP_WEIGHT_BRIDGE")
@@ -180,7 +184,7 @@ public class ExportsQ implements Serializable {
   private String imdg;
 
   @Column(name = "EXP_UN")
-  private String expUN;
+  private String dgUNCode;
 
   @Column(name = "EXP_IMDG_LABEL_ID")
   private String imdgLabelID;
@@ -208,7 +212,7 @@ public class ExportsQ implements Serializable {
   private String yardPosition;
 
   @Column(name = "EXP_BAY_CODE")
-  private String bayCode;
+  private String yardBayCode;
 
   @Column(name = "EXP_PM_BTM")
   private Integer pmBTM;
@@ -226,7 +230,7 @@ public class ExportsQ implements Serializable {
   private String vesselVisitID;
 
   @Column(name = "VESSEL_VOYAGE")
-  private String vesselVoyage;
+  private String vesselVoyageIN;
 
   @Column(name = "VESSEL_CODE")
   private String vesselCode;
@@ -254,7 +258,7 @@ public class ExportsQ implements Serializable {
   private LocalDateTime vesselATADate;
 
   @Column(name = "EXP_AGENT_CODE")
-  private String agentCode;
+  private String shippingAgent;
 
   @Column(name = " EXP_HAS_OOG_SSR", nullable = true)
   @Type(type = "yes_no")
@@ -287,7 +291,6 @@ public class ExportsQ implements Serializable {
 
   @Column(name = "GCS_LAST_CHK_DATETIME")
   private LocalDateTime gcsLastCheck;
-
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "EXP_DAMAGE_1", nullable = true, referencedColumnName = "DAMAGE_CODE")
@@ -330,7 +333,6 @@ public class ExportsQ implements Serializable {
   @Column(name = "EXP_SUB_TYPE")
   private String subType;
 
-
   @Column(name = "WITHIN_TOLERANCE", nullable = true)
   @Type(type = "true_false")
   private boolean withinTolerance;
@@ -342,12 +344,12 @@ public class ExportsQ implements Serializable {
   private String solasCertNo;
 
   @Embedded
-  @AttributeOverrides({@AttributeOverride(name = "mgw", column = @Column(name = "MGW")),
-      @AttributeOverride(name = "faLedgerCode", column = @Column(name = "FA_LEDGER_CODE")),
-      @AttributeOverride(name = "solasRefNumber", column = @Column(name = "SOLAS_REF_NO")),
-      @AttributeOverride(name = "solasDetailID", column = @Column(name = "SOLAS_DETAIL_NO")),
-      @AttributeOverride(name = "solasInstruction", column = @Column(name = "VGM_TYPE")),
-      @AttributeOverride(name = "shipperVGM", column = @Column(name = "SHIPPER_VGM"))})
+  @AttributeOverrides({@AttributeOverride(name = "mgw", column = @Column(name = "MGW") ),
+      @AttributeOverride(name = "faLedgerCode", column = @Column(name = "FA_LEDGER_CODE") ),
+      @AttributeOverride(name = "solasRefNumber", column = @Column(name = "SOLAS_REF_NO") ),
+      @AttributeOverride(name = "solasDetailID", column = @Column(name = "SOLAS_DETAIL_NO") ),
+      @AttributeOverride(name = "solasInstruction", column = @Column(name = "VGM_TYPE") ),
+      @AttributeOverride(name = "shipperVGM", column = @Column(name = "SHIPPER_VGM") )})
   private CommonSolasAttribute solas;
 
   public Long getExportID() {
@@ -390,12 +392,12 @@ public class ExportsQ implements Serializable {
     this.gateInOut = gateInOut;
   }
 
-  public String getExpLine() {
-    return expLine;
+  public String getShippingLine() {
+    return shippingLine;
   }
 
-  public void setExpLine(String expLine) {
-    this.expLine = expLine;
+  public void setShippingLine(String shippingLine) {
+    this.shippingLine = shippingLine;
   }
 
   public String getExpOut() {
@@ -470,14 +472,6 @@ public class ExportsQ implements Serializable {
     this.yardPosition = yardPosition;
   }
 
-  public String getBayCode() {
-    return bayCode;
-  }
-
-  public void setBayCode(String bayCode) {
-    this.bayCode = bayCode;
-  }
-
   public Integer getPmBTM() {
     return pmBTM;
   }
@@ -518,12 +512,13 @@ public class ExportsQ implements Serializable {
     this.vesselVisitID = vesselVisitID;
   }
 
-  public String getVesselVoyage() {
-    return vesselVoyage;
+
+  public String getVesselVoyageIN() {
+    return vesselVoyageIN;
   }
 
-  public void setVesselVoyage(String vesselVoyage) {
-    this.vesselVoyage = vesselVoyage;
+  public void setVesselVoyageIN(String vesselVoyageIN) {
+    this.vesselVoyageIN = vesselVoyageIN;
   }
 
   public String getVesselCode() {
@@ -662,7 +657,6 @@ public class ExportsQ implements Serializable {
     this.gcsLastCheck = gcsLastCheck;
   }
 
-
   public DamageCode getDamageCode_01() {
     return damageCode_01;
   }
@@ -702,8 +696,6 @@ public class ExportsQ implements Serializable {
   public void setDamageCode_05(DamageCode damageCode_05) {
     this.damageCode_05 = damageCode_05;
   }
-
-
 
   public String getPmWeight() {
     return pmWeight;
@@ -793,16 +785,20 @@ public class ExportsQ implements Serializable {
     this.solas = solas;
   }
 
-  public static long getSerialversionuid() {
-    return serialVersionUID;
+  public ExportOPTFlagType getManualPlanIndicator() {
+    return manualPlanIndicator;
   }
 
-  public ExportOPTFlagType getOptFlag() {
-    return optFlag;
+  public void setManualPlanIndicator(ExportOPTFlagType manualPlanIndicator) {
+    this.manualPlanIndicator = manualPlanIndicator;
   }
 
-  public void setOptFlag(ExportOPTFlagType optFlag) {
-    this.optFlag = optFlag;
+  public String getYardBayCode() {
+    return yardBayCode;
+  }
+
+  public void setYardBayCode(String yardBayCode) {
+    this.yardBayCode = yardBayCode;
   }
 
   public Boolean getReferFlag() {
@@ -837,12 +833,12 @@ public class ExportsQ implements Serializable {
     this.imdg = imdg;
   }
 
-  public String getExpUN() {
-    return expUN;
+  public String getDgUNCode() {
+    return dgUNCode;
   }
 
-  public void setExpUN(String expUN) {
-    this.expUN = expUN;
+  public void setDgUNCode(String dgUNCode) {
+    this.dgUNCode = dgUNCode;
   }
 
   public String getImdgLabelID() {
@@ -885,12 +881,12 @@ public class ExportsQ implements Serializable {
     this.oogOA = oogOA;
   }
 
-  public String getAgentCode() {
-    return agentCode;
+  public String getShippingAgent() {
+    return shippingAgent;
   }
 
-  public void setAgentCode(String agentCode) {
-    this.agentCode = agentCode;
+  public void setShippingAgent(String shippingAgent) {
+    this.shippingAgent = shippingAgent;
   }
 
   public Long getEirNumber() {
@@ -1036,7 +1032,5 @@ public class ExportsQ implements Serializable {
   public void setGateOutClient(Client gateOutClient) {
     this.gateOutClient = gateOutClient;
   }
-
-
 
 }

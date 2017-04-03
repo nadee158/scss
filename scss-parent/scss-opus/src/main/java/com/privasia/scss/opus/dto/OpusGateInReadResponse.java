@@ -5,53 +5,18 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class OpusGateInReadResponse extends BaseResponse {
+public class OpusGateInReadResponse extends OpusBaseResponse {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private String laneNo;// LNO01,
-	private String haulageCode;// HAUCD,
-	private String truckHeadNo;// TRUCK,
-	private String truckPlateNo;// null,
+	
+	
 	private String gateInDateTime;// 20161130112233,
-	private List<OpusExporterContainer> exportContainerListCY;
-	private List<OpusImportContainer> importContainerListCY;
-	private List<OpusExporterContainer> exportContainerListCFS;
-	private List<OpusImportContainer> importContainerListCFS;
-
-	public String getLaneNo() {
-		return laneNo;
-	}
-
-	public void setLaneNo(String laneNo) {
-		this.laneNo = laneNo;
-	}
-
-	public String getHaulageCode() {
-		return haulageCode;
-	}
-
-	public void setHaulageCode(String haulageCode) {
-		this.haulageCode = haulageCode;
-	}
-
-	public String getTruckHeadNo() {
-		return truckHeadNo;
-	}
-
-	public void setTruckHeadNo(String truckHeadNo) {
-		this.truckHeadNo = truckHeadNo;
-	}
-
-	public String getTruckPlateNo() {
-		return truckPlateNo;
-	}
-
-	public void setTruckPlateNo(String truckPlateNo) {
-		this.truckPlateNo = truckPlateNo;
-	}
+	private List<GIReadResponseExporterContainer> exportContainerListCY;
+	private List<GIReadResponseImportContainer> importContainerListCY;
+	
 
 	public String getGateInDateTime() {
 		return gateInDateTime;
@@ -61,45 +26,28 @@ public class OpusGateInReadResponse extends BaseResponse {
 		this.gateInDateTime = gateInDateTime;
 	}
 
-	public List<OpusExporterContainer> getExportContainerListCY() {
+	public List<GIReadResponseExporterContainer> getExportContainerListCY() {
 		return exportContainerListCY;
 	}
 
-	public void setExportContainerListCY(List<OpusExporterContainer> exportContainerListCY) {
+	public void setExportContainerListCY(List<GIReadResponseExporterContainer> exportContainerListCY) {
 		this.exportContainerListCY = exportContainerListCY;
 	}
 
-	public List<OpusImportContainer> getImportContainerListCY() {
+	public List<GIReadResponseImportContainer> getImportContainerListCY() {
 		return importContainerListCY;
 	}
 
-	public void setImportContainerListCY(List<OpusImportContainer> importContainerListCY) {
+	public void setImportContainerListCY(List<GIReadResponseImportContainer> importContainerListCY) {
 		this.importContainerListCY = importContainerListCY;
-	}
-
-	public List<OpusExporterContainer> getExportContainerListCFS() {
-		return exportContainerListCFS;
-	}
-
-	public void setExportContainerListCFS(List<OpusExporterContainer> exportContainerListCFS) {
-		this.exportContainerListCFS = exportContainerListCFS;
-	}
-
-	public List<OpusImportContainer> getImportContainerListCFS() {
-		return importContainerListCFS;
-	}
-
-	public void setImportContainerListCFS(List<OpusImportContainer> importContainerListCFS) {
-		this.importContainerListCFS = importContainerListCFS;
 	}
 
 	@Override
 	public String toString() {
-		return "OpusGateInReadResponse [laneNo=" + laneNo + ", haulageCode=" + haulageCode + ", truckHeadNo="
-				+ truckHeadNo + ", truckPlateNo=" + truckPlateNo + ", gateINDateTime=" + gateInDateTime
+		return "OpusGateInReadResponse [userID=" + getUserID() + ", laneNo=" + getLaneNo() + ", haulageCode="
+				+ getHaulageCode() + ", truckHeadNo=" + getTruckHeadNo() + ", gateInDateTime=" + gateInDateTime
 				+ ", exportContainerListCY=" + exportContainerListCY + ", importContainerListCY="
-				+ importContainerListCY + ", exportContainerListCFS=" + exportContainerListCFS
-				+ ", importContainerListCFS=" + importContainerListCFS + "]";
+				+ importContainerListCY + ", errorList=" + getErrorList() + "]";
 	}
 
 }

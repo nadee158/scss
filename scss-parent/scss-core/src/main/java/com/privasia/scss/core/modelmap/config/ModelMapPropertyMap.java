@@ -8,6 +8,7 @@ import org.modelmapper.PropertyMap;
 import com.privasia.scss.common.dto.ExportContainer;
 import com.privasia.scss.common.dto.ImportContainer;
 import com.privasia.scss.common.dto.KioskBoothRightsDTO;
+import com.privasia.scss.common.enums.TransactionStatus;
 import com.privasia.scss.core.model.Exports;
 import com.privasia.scss.core.model.ExportsQ;
 import com.privasia.scss.core.model.GatePass;
@@ -42,7 +43,6 @@ public final class ModelMapPropertyMap {
     };
 
   }
-
 
   public static PropertyMap<GatePass, GatePass> gatePassUpdate() {
 
@@ -80,6 +80,8 @@ public final class ModelMapPropertyMap {
       protected void configure() {
         map().setCompany(source.getCompany().getCompanyID());
         map().getBaseCommonGateInOutAttribute().setCard(source.getBaseCommonGateInOutAttribute().getCard().getCardID());
+        skip().setContainerLength(0);
+
       }
     };
   }
@@ -101,11 +103,38 @@ public final class ModelMapPropertyMap {
     };
   }
 
+  public static PropertyMap<Exports, ExportContainer> exportsToExportContainer() {
+    return new PropertyMap<Exports, ExportContainer>() {
+      protected void configure() {
+        skip().setBaseCommonGateInOutAttribute(null);
+      }
+    };
+  }
 
   public static PropertyMap<ExportContainer, Exports> exportContainerToExports() {
     return new PropertyMap<ExportContainer, Exports>() {
       protected void configure() {
-        skip().getCardUsage().setCard(null);
+
+        skip().setDamageCode_01(null);
+        skip().setDamageCode_02(null);
+        skip().setDamageCode_03(null);
+        skip().setDamageCode_04(null);
+        skip().setDamageCode_05(null);
+        skip().setDamageCode_06(null);
+        skip().setDamageCode_07(null);
+        skip().setDamageCode_08(null);
+        skip().setDamageCode_09(null);
+        skip().getBaseCommonGateInOutAttribute().setHpatBooking(null);
+        skip().getBaseCommonGateInOutAttribute().setCard(null);
+        skip().getBaseCommonGateInOutAttribute().setGateInClerk(null);
+        skip().getBaseCommonGateInOutAttribute().setGateInClient(null);
+        skip().getBaseCommonGateInOutAttribute().setGateOutBoothClerk(null);
+        skip().getBaseCommonGateInOutAttribute().setGateOutClerk(null);
+        skip().getBaseCommonGateInOutAttribute().setGateOutClient(null);
+        skip().setCardUsage(null);
+        skip().setPrintEir(null);
+        skip().setScn(null);
+
       }
     };
   }
@@ -132,6 +161,16 @@ public final class ModelMapPropertyMap {
         map().setGateOutClerk(source.getBaseCommonGateInOutAttribute().getGateOutClerk());
         map().setGateInClient(source.getBaseCommonGateInOutAttribute().getGateInClient());
         map().setGateOutClient(source.getBaseCommonGateInOutAttribute().getGateOutClient());
+      }
+    };
+  }
+
+  public static PropertyMap<ImportContainer, GatePass> importContainerToGatePassInGateOut() {
+
+    return new PropertyMap<ImportContainer, GatePass>() {
+      protected void configure() {
+        map().getBaseCommonGateInOutAttribute()
+            .setEirStatus(TransactionStatus.valueOf(source.getBaseCommonGateInOutAttribute().getEirStatus()));
       }
     };
   }

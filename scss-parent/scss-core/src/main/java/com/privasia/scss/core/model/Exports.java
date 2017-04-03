@@ -42,7 +42,11 @@ import com.privasia.scss.core.repository.DamageCodeRepository;
  */
 @Entity
 @Table(name = "SCSS_EXPORTS")
-public class Exports implements Serializable {
+@AttributeOverrides({@AttributeOverride(name = "addBy", column = @Column(name = "EXP_ADD_BY") ),
+    @AttributeOverride(name = "updateBy", column = @Column(name = "EXP_UPDATE_BY") ),
+    @AttributeOverride(name = "dateTimeAdd", column = @Column(name = "EXP_DATECREATE") ),
+    @AttributeOverride(name = "dateTimeUpdate", column = @Column(name = "EXP_DATEUPDATE") )})
+public class Exports extends AuditEntity implements Serializable {
 
   /**
    * 
@@ -56,56 +60,56 @@ public class Exports implements Serializable {
   private Long exportID;
 
   @Embedded
-  @AttributeOverrides({@AttributeOverride(name = "containerNumber", column = @Column(name = "EXP_CONTAINERNO")),
-      @AttributeOverride(name = "containerISOCode", column = @Column(name = "EXP_CONT_ISO_CODE")), @AttributeOverride(
-          name = "containerFullOrEmpty", column = @Column(name = "EXP_FULL_EMPTY_FLAG", nullable = true))})
+  @AttributeOverrides({@AttributeOverride(name = "containerNumber", column = @Column(name = "EXP_CONTAINERNO") ),
+      @AttributeOverride(name = "containerISOCode", column = @Column(name = "EXP_CONT_ISO_CODE") ), @AttributeOverride(
+          name = "containerFullOrEmpty", column = @Column(name = "EXP_FULL_EMPTY_FLAG", nullable = true) )})
   private CommonContainerAttribute container;
 
   @Embedded
-  @AttributeOverrides({@AttributeOverride(name = "eirNumber", column = @Column(name = "EXP_EIRNO")),
-      @AttributeOverride(name = "impExpFlag", column = @Column(name = "EXP_IMPEXPFLAG", nullable = true)),
-      @AttributeOverride(name = "rejectReason", column = @Column(name = "EXP_REJECTREASON")),
-      @AttributeOverride(name = "kioskConfirmed", column = @Column(name = "KIOSK_CONFIRMED")),
-      @AttributeOverride(name = "kioskCancelPickUp", column = @Column(name = "KIOSK_CANCEL_PICKUP")),
-      @AttributeOverride(name = "gateInStatus", column = @Column(name = "EXP_GATEIN_STATUS")),
-      @AttributeOverride(name = "zipFileNo", column = @Column(name = "ZIP_FILE_NO")),
-      @AttributeOverride(name = "trxSlipNo", column = @Column(name = "TRX_SLIP_NO"))})
+  @AttributeOverrides({@AttributeOverride(name = "eirNumber", column = @Column(name = "EXP_EIRNO") ),
+      @AttributeOverride(name = "impExpFlag", column = @Column(name = "EXP_IMPEXPFLAG", nullable = true) ),
+      @AttributeOverride(name = "rejectReason", column = @Column(name = "EXP_REJECTREASON") ),
+      @AttributeOverride(name = "kioskConfirmed", column = @Column(name = "KIOSK_CONFIRMED") ),
+      @AttributeOverride(name = "kioskCancelPickUp", column = @Column(name = "KIOSK_CANCEL_PICKUP") ),
+      @AttributeOverride(name = "gateInStatus", column = @Column(name = "EXP_GATEIN_STATUS") ),
+      @AttributeOverride(name = "zipFileNo", column = @Column(name = "ZIP_FILE_NO") ),
+      @AttributeOverride(name = "trxSlipNo", column = @Column(name = "TRX_SLIP_NO") )})
   private CommonGateInOutAttribute commonGateInOut;
 
   @Embedded
-  @AttributeOverrides({@AttributeOverride(name = "pmHeadNo", column = @Column(name = "EXP_TRUCK_HEAD_NO")),
-      @AttributeOverride(name = "pmPlateNo", column = @Column(name = "EXP_TRUCK_PLATE_NO")),
-      @AttributeOverride(name = "hpatBooking", column = @Column(name = "BOOKING_ID")),
-      @AttributeOverride(name = "eirStatus", column = @Column(name = "EXP_EIRSTATUS", nullable = true)),
-      @AttributeOverride(name = "transactionSlipPrinted", column = @Column(name = "TRANSACTION_SLIP_PRINTED")),
-      @AttributeOverride(name = "gateOutBoothNo", column = @Column(name = "EXP_GATE_OUT_BOOTH_NO")),
-      @AttributeOverride(name = "timeGateIn", column = @Column(name = "EXP_TIMEGATEIN")),
-      @AttributeOverride(name = "timeGateInOk", column = @Column(name = "EXP_TIMEGATEINOK")),
-      @AttributeOverride(name = "timeGateOut", column = @Column(name = "EXP_TIMEGATEOUT")),
-      @AttributeOverride(name = "timeGateOutOk", column = @Column(name = "EXP_TIMEGATEOUTOK")),
-      @AttributeOverride(name = "timeGateOutBooth", column = @Column(name = "EXP_TIMEGATEOUT_BOOTH"))})
+  @AttributeOverrides({@AttributeOverride(name = "pmHeadNo", column = @Column(name = "EXP_TRUCK_HEAD_NO") ),
+      @AttributeOverride(name = "pmPlateNo", column = @Column(name = "EXP_TRUCK_PLATE_NO") ),
+      @AttributeOverride(name = "hpatBooking", column = @Column(name = "BOOKING_ID") ),
+      @AttributeOverride(name = "eirStatus", column = @Column(name = "EXP_EIRSTATUS", nullable = true) ),
+      @AttributeOverride(name = "transactionSlipPrinted", column = @Column(name = "TRANSACTION_SLIP_PRINTED") ),
+      @AttributeOverride(name = "gateOutBoothNo", column = @Column(name = "EXP_GATE_OUT_BOOTH_NO") ),
+      @AttributeOverride(name = "timeGateIn", column = @Column(name = "EXP_TIMEGATEIN") ),
+      @AttributeOverride(name = "timeGateInOk", column = @Column(name = "EXP_TIMEGATEINOK") ),
+      @AttributeOverride(name = "timeGateOut", column = @Column(name = "EXP_TIMEGATEOUT") ),
+      @AttributeOverride(name = "timeGateOutOk", column = @Column(name = "EXP_TIMEGATEOUTOK") ),
+      @AttributeOverride(name = "timeGateOutBooth", column = @Column(name = "EXP_TIMEGATEOUT_BOOTH") )})
   @AssociationOverrides({
       @AssociationOverride(name = "gateOutBoothClerk",
           joinColumns = @JoinColumn(name = "EXP_GATEOUT_BOOTH_CLERKID", referencedColumnName = "SYS_USERID_SEQ",
-              nullable = true)),
+              nullable = true) ),
       @AssociationOverride(name = "card",
-          joinColumns = @JoinColumn(name = "EXP_HCTDID", referencedColumnName = "CRD_CARDID_SEQ", nullable = true)),
+          joinColumns = @JoinColumn(name = "EXP_HCTDID", referencedColumnName = "CRD_CARDID_SEQ", nullable = true) ),
       @AssociationOverride(name = "gateInClerk",
           joinColumns = @JoinColumn(name = "EXP_GATEINCLERKID", referencedColumnName = "SYS_USERID_SEQ",
-              nullable = true)),
+              nullable = true) ),
       @AssociationOverride(name = "gateOutClerk",
           joinColumns = @JoinColumn(name = "EXP_GATEOUTCLERKID", referencedColumnName = "SYS_USERID_SEQ",
-              nullable = true)),
+              nullable = true) ),
       @AssociationOverride(name = "gateInClient",
           joinColumns = @JoinColumn(name = "CLI_CLIENTID_GATEIN", referencedColumnName = "CLI_CLIENTID_SEQ",
-              nullable = true)),
+              nullable = true) ),
       @AssociationOverride(name = "gateOutClient", joinColumns = @JoinColumn(name = "CLI_CLIENTID_GATEOUT",
-          referencedColumnName = "CLI_CLIENTID_SEQ", nullable = true))})
+          referencedColumnName = "CLI_CLIENTID_SEQ", nullable = true) )})
   private BaseCommonGateInOutAttribute baseCommonGateInOutAttribute;
 
   @Column(name = "EXP_MANUALOPTFLAG", nullable = true)
   @Type(type = "com.privasia.scss.common.enumusertype.ExportOPTFlagEnumUserType")
-  private ExportOPTFlagType optFlag;
+  private ExportOPTFlagType manualPlanIndicator;
 
   @Column(name = "EXP_BOOKINGNO")
   private String bookingNo;
@@ -119,7 +123,7 @@ public class Exports implements Serializable {
   private GateInOutStatus gateInOut;
 
   @Column(name = "EXP_LINE")
-  private String expLine;
+  private String shippingLine;
 
   @Column(name = "EXP_OUT")
   private String expOut;
@@ -131,12 +135,12 @@ public class Exports implements Serializable {
   private String expSpod;
 
   @Embedded
-  @AttributeOverrides({@AttributeOverride(name = "seal01Origin", column = @Column(name = "EXP_SEAL_1_ORIGIN")),
-      @AttributeOverride(name = "seal01Type", column = @Column(name = "EXP_SEAL_1_TYPE")),
-      @AttributeOverride(name = "seal01Number", column = @Column(name = "EXP_SEAL_1_NUMBER")),
-      @AttributeOverride(name = "seal02Origin", column = @Column(name = "EXP_SEAL_2_ORIGIN")),
-      @AttributeOverride(name = "seal02Type", column = @Column(name = "EXP_SEAL_2_TYPE")),
-      @AttributeOverride(name = "seal02Number", column = @Column(name = "EXP_SEAL_2_NUMBER"))})
+  @AttributeOverrides({@AttributeOverride(name = "seal01Origin", column = @Column(name = "EXP_SEAL_1_ORIGIN") ),
+      @AttributeOverride(name = "seal01Type", column = @Column(name = "EXP_SEAL_1_TYPE") ),
+      @AttributeOverride(name = "seal01Number", column = @Column(name = "EXP_SEAL_1_NUMBER") ),
+      @AttributeOverride(name = "seal02Origin", column = @Column(name = "EXP_SEAL_2_ORIGIN") ),
+      @AttributeOverride(name = "seal02Type", column = @Column(name = "EXP_SEAL_2_TYPE") ),
+      @AttributeOverride(name = "seal02Number", column = @Column(name = "EXP_SEAL_2_NUMBER") )})
   private CommonSealAttribute sealAttribute;
 
   @Column(name = "EXP_WEIGHT_BRIDGE")
@@ -160,7 +164,7 @@ public class Exports implements Serializable {
   private String imdg;
 
   @Column(name = "EXP_UN")
-  private String expUN;
+  private String dgUNCode;
 
   @Column(name = "EXP_IMDG_LABEL_ID")
   private String imdgLabelID;
@@ -188,7 +192,7 @@ public class Exports implements Serializable {
   private String yardPosition;
 
   @Column(name = "EXP_BAY_CODE")
-  private String bayCode;
+  private String yardBayCode;
 
   @Column(name = "EXP_PM_BTM")
   private Integer pmBTM;
@@ -206,7 +210,7 @@ public class Exports implements Serializable {
   private String vesselVisitID;
 
   @Column(name = "VESSEL_VOYAGE")
-  private String vesselVoyage;
+  private String vesselVoyageIN;
 
   @Column(name = "VESSEL_CODE")
   private String vesselCode;
@@ -234,7 +238,7 @@ public class Exports implements Serializable {
   private LocalDateTime vesselATADate;
 
   @Column(name = "EXP_AGENT_CODE")
-  private String agentCode;
+  private String shippingAgent;
 
   @Column(name = " EXP_HAS_OOG_SSR", nullable = true)
   @Type(type = "yes_no")
@@ -288,13 +292,13 @@ public class Exports implements Serializable {
   private String hdlGoodsDescription;
 
   @Column(name = "COSMOS_TARE_WEIGHT")
-  private Integer cosmosTareWeight;
+  private Integer tareWeight;
 
   @Column(name = "COSMOS_GROSS_WEIGHT")
-  private Integer cosmosGrossWeight;
+  private Integer grossWeight;
 
   @Column(name = "COSMOS_NET_WEIGHT")
-  private Integer cosmosNetWeight;
+  private Integer netWeight;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "CUG_ID_SEQ", nullable = true, referencedColumnName = "CUG_ID_SEQ")
@@ -392,12 +396,12 @@ public class Exports implements Serializable {
   private String solasCertNo;
 
   @Embedded
-  @AttributeOverrides({@AttributeOverride(name = "mgw", column = @Column(name = "MGW")),
-      @AttributeOverride(name = "faLedgerCode", column = @Column(name = "FA_LEDGER_CODE")),
-      @AttributeOverride(name = "solasRefNumber", column = @Column(name = "SOLAS_REF_NO")),
-      @AttributeOverride(name = "solasDetailID", column = @Column(name = "SOLAS_DETAIL_NO")),
-      @AttributeOverride(name = "solasInstruction", column = @Column(name = "VGM_TYPE")),
-      @AttributeOverride(name = "shipperVGM", column = @Column(name = "SHIPPER_VGM"))})
+  @AttributeOverrides({@AttributeOverride(name = "mgw", column = @Column(name = "MGW") ),
+      @AttributeOverride(name = "faLedgerCode", column = @Column(name = "FA_LEDGER_CODE") ),
+      @AttributeOverride(name = "solasRefNumber", column = @Column(name = "SOLAS_REF_NO") ),
+      @AttributeOverride(name = "solasDetailID", column = @Column(name = "SOLAS_DETAIL_NO") ),
+      @AttributeOverride(name = "solasInstruction", column = @Column(name = "VGM_TYPE") ),
+      @AttributeOverride(name = "shipperVGM", column = @Column(name = "SHIPPER_VGM") )})
   private CommonSolasAttribute solas;
 
   public Long getExportID() {
@@ -448,12 +452,12 @@ public class Exports implements Serializable {
     this.gateInOut = gateInOut;
   }
 
-  public String getExpLine() {
-    return expLine;
+  public String getShippingLine() {
+    return shippingLine;
   }
 
-  public void setExpLine(String expLine) {
-    this.expLine = expLine;
+  public void setShippingLine(String shippingLine) {
+    this.shippingLine = shippingLine;
   }
 
   public String getExpOut() {
@@ -528,12 +532,12 @@ public class Exports implements Serializable {
     this.yardPosition = yardPosition;
   }
 
-  public String getBayCode() {
-    return bayCode;
+  public String getYardBayCode() {
+    return yardBayCode;
   }
 
-  public void setBayCode(String bayCode) {
-    this.bayCode = bayCode;
+  public void setYardBayCode(String yardBayCode) {
+    this.yardBayCode = yardBayCode;
   }
 
   public Integer getPmBTM() {
@@ -576,12 +580,13 @@ public class Exports implements Serializable {
     this.vesselVisitID = vesselVisitID;
   }
 
-  public String getVesselVoyage() {
-    return vesselVoyage;
+
+  public String getVesselVoyageIN() {
+    return vesselVoyageIN;
   }
 
-  public void setVesselVoyage(String vesselVoyage) {
-    this.vesselVoyage = vesselVoyage;
+  public void setVesselVoyageIN(String vesselVoyageIN) {
+    this.vesselVoyageIN = vesselVoyageIN;
   }
 
   public String getVesselCode() {
@@ -766,30 +771,6 @@ public class Exports implements Serializable {
 
   public void setHdlGoodsDescription(String hdlGoodsDescription) {
     this.hdlGoodsDescription = hdlGoodsDescription;
-  }
-
-  public Integer getCosmosTareWeight() {
-    return cosmosTareWeight;
-  }
-
-  public void setCosmosTareWeight(Integer cosmosTareWeight) {
-    this.cosmosTareWeight = cosmosTareWeight;
-  }
-
-  public Integer getCosmosGrossWeight() {
-    return cosmosGrossWeight;
-  }
-
-  public void setCosmosGrossWeight(Integer cosmosGrossWeight) {
-    this.cosmosGrossWeight = cosmosGrossWeight;
-  }
-
-  public Integer getCosmosNetWeight() {
-    return cosmosNetWeight;
-  }
-
-  public void setCosmosNetWeight(Integer cosmosNetWeight) {
-    this.cosmosNetWeight = cosmosNetWeight;
   }
 
   public CardUsage getCardUsage() {
@@ -1028,12 +1009,12 @@ public class Exports implements Serializable {
     this.baseCommonGateInOutAttribute = baseCommonGateInOutAttribute;
   }
 
-  public ExportOPTFlagType getOptFlag() {
-    return optFlag;
+  public ExportOPTFlagType getManualPlanIndicator() {
+    return manualPlanIndicator;
   }
 
-  public void setOptFlag(ExportOPTFlagType optFlag) {
-    this.optFlag = optFlag;
+  public void setManualPlanIndicator(ExportOPTFlagType manualPlanIndicator) {
+    this.manualPlanIndicator = manualPlanIndicator;
   }
 
   public Boolean getReferFlag() {
@@ -1068,12 +1049,12 @@ public class Exports implements Serializable {
     this.imdg = imdg;
   }
 
-  public String getExpUN() {
-    return expUN;
+  public String getDgUNCode() {
+    return dgUNCode;
   }
 
-  public void setExpUN(String expUN) {
-    this.expUN = expUN;
+  public void setDgUNCode(String dgUNCode) {
+    this.dgUNCode = dgUNCode;
   }
 
   public String getImdgLabelID() {
@@ -1116,47 +1097,70 @@ public class Exports implements Serializable {
     this.oogOA = oogOA;
   }
 
-  public String getAgentCode() {
-    return agentCode;
+  public String getShippingAgent() {
+    return shippingAgent;
   }
 
-  public void setAgentCode(String agentCode) {
-    this.agentCode = agentCode;
+  public void setShippingAgent(String shippingAgent) {
+    this.shippingAgent = shippingAgent;
+  }
+
+  public Integer getTareWeight() {
+    return tareWeight;
+  }
+
+  public void setTareWeight(Integer tareWeight) {
+    this.tareWeight = tareWeight;
+  }
+
+  public Integer getGrossWeight() {
+    return grossWeight;
+  }
+
+  public void setGrossWeight(Integer grossWeight) {
+    this.grossWeight = grossWeight;
+  }
+
+  public Integer getNetWeight() {
+    return netWeight;
+  }
+
+  public void setNetWeight(Integer netWeight) {
+    this.netWeight = netWeight;
   }
 
   @Override
   public String toString() {
     return "Exports [exportID=" + exportID + ", container=" + container + ", commonGateInOut=" + commonGateInOut
-        + ", baseCommonGateInOutAttribute=" + baseCommonGateInOutAttribute + ", optFlag=" + optFlag + ", bookingNo="
-        + bookingNo + ", scn=" + scn + ", gateInOut=" + gateInOut + ", expLine=" + expLine + ", expOut=" + expOut
-        + ", expCar=" + expCar + ", expSpod=" + expSpod + ", sealAttribute=" + sealAttribute + ", expWeightBridge="
-        + expWeightBridge + ", expNetWeight=" + expNetWeight + ", referFlag=" + referFlag + ", referTempType="
-        + referTempType + ", referTemp=" + referTemp + ", imdg=" + imdg + ", expUN=" + expUN + ", imdgLabelID="
-        + imdgLabelID + ", oogOH=" + oogOH + ", oogOL=" + oogOL + ", oogOF=" + oogOF + ", oogOA=" + oogOA
-        + ", containerPosition=" + containerPosition + ", preCheckDate=" + preCheckDate + ", yardPosition="
-        + yardPosition + ", bayCode=" + bayCode + ", pmBTM=" + pmBTM + ", trBTM=" + trBTM + ", oogOR=" + oogOR
-        + ", callCard=" + callCard + ", vesselVisitID=" + vesselVisitID + ", vesselVoyage=" + vesselVoyage
-        + ", vesselCode=" + vesselCode + ", vesselName=" + vesselName + ", expAgent=" + expAgent + ", vesselStatus="
-        + vesselStatus + ", shipCode=" + shipCode + ", vesselSCN=" + vesselSCN + ", vesselETADate=" + vesselETADate
-        + ", vesselATADate=" + vesselATADate + ", agentCode=" + agentCode + ", oogSSR=" + oogSSR + ", overClosingSSR="
-        + overClosingSSR + ", replanSSR=" + replanSSR + ", ssrBlockStatus=" + ssrBlockStatus + ", ssrBlockStatusDate="
-        + ssrBlockStatusDate + ", gcsBlockStatus=" + gcsBlockStatus + ", gcsBlockStatusDate=" + gcsBlockStatusDate
-        + ", gcsDeclareNo=" + gcsDeclareNo + ", gcsLastCheck=" + gcsLastCheck + ", printEir=" + printEir
-        + ", userRemarks=" + userRemarks + ", kpaApproval=" + kpaApproval + ", hdlGoodsCode=" + hdlGoodsCode
-        + ", dgDescription=" + dgDescription + ", hdlGoodsDescription=" + hdlGoodsDescription + ", cosmosTareWeight="
-        + cosmosTareWeight + ", cosmosGrossWeight=" + cosmosGrossWeight + ", cosmosNetWeight=" + cosmosNetWeight
-        + ", cardUsage=" + cardUsage + ", backToback=" + backToback + ", weightDiffPercentage=" + weightDiffPercentage
-        + ", weightDifference=" + weightDifference + ", damageCode_01=" + damageCode_01 + ", damageCode_02="
-        + damageCode_02 + ", damageCode_03=" + damageCode_03 + ", damageCode_04=" + damageCode_04 + ", damageCode_05="
-        + damageCode_05 + ", damageCode_06=" + damageCode_06 + ", damageCode_07=" + damageCode_07 + ", damageCode_08="
-        + damageCode_08 + ", damageCode_09=" + damageCode_09 + ", dontValidateSeal=" + dontValidateSeal + ", wrongDoor="
-        + wrongDoor + ", hpabISOCode=" + hpabISOCode + ", cosmosISOCode=" + cosmosISOCode + ", pmWeight=" + pmWeight
-        + ", trailerWeight=" + trailerWeight + ", trailerPlateNo=" + trailerPlateNo + ", fuelWeight=" + fuelWeight
-        + ", tireWeight=" + tireWeight + ", variance=" + variance + ", subHandlingType=" + subHandlingType
-        + ", withinTolerance=" + withinTolerance + ", calculatedVariance=" + calculatedVariance + ", solasCertNo="
-        + solasCertNo + ", solas=" + solas + "]";
+        + ", baseCommonGateInOutAttribute=" + baseCommonGateInOutAttribute + ", manualPlanIndicator="
+        + manualPlanIndicator + ", bookingNo=" + bookingNo + ", scn=" + scn + ", gateInOut=" + gateInOut
+        + ", shippingLine=" + shippingLine + ", expOut=" + expOut + ", expCar=" + expCar + ", expSpod=" + expSpod
+        + ", sealAttribute=" + sealAttribute + ", expWeightBridge=" + expWeightBridge + ", expNetWeight=" + expNetWeight
+        + ", referFlag=" + referFlag + ", referTempType=" + referTempType + ", referTemp=" + referTemp + ", imdg="
+        + imdg + ", dgUNCode=" + dgUNCode + ", imdgLabelID=" + imdgLabelID + ", oogOH=" + oogOH + ", oogOL=" + oogOL
+        + ", oogOF=" + oogOF + ", oogOA=" + oogOA + ", containerPosition=" + containerPosition + ", preCheckDate="
+        + preCheckDate + ", yardPosition=" + yardPosition + ", yardBayCode=" + yardBayCode + ", pmBTM=" + pmBTM
+        + ", trBTM=" + trBTM + ", oogOR=" + oogOR + ", callCard=" + callCard + ", vesselVisitID=" + vesselVisitID
+        + ", vesselVoyageIN=" + vesselVoyageIN + ", vesselCode=" + vesselCode + ", vesselName=" + vesselName
+        + ", expAgent=" + expAgent + ", vesselStatus=" + vesselStatus + ", shipCode=" + shipCode + ", vesselSCN="
+        + vesselSCN + ", vesselETADate=" + vesselETADate + ", vesselATADate=" + vesselATADate + ", shippingAgent="
+        + shippingAgent + ", oogSSR=" + oogSSR + ", overClosingSSR=" + overClosingSSR + ", replanSSR=" + replanSSR
+        + ", ssrBlockStatus=" + ssrBlockStatus + ", ssrBlockStatusDate=" + ssrBlockStatusDate + ", gcsBlockStatus="
+        + gcsBlockStatus + ", gcsBlockStatusDate=" + gcsBlockStatusDate + ", gcsDeclareNo=" + gcsDeclareNo
+        + ", gcsLastCheck=" + gcsLastCheck + ", printEir=" + printEir + ", userRemarks=" + userRemarks
+        + ", kpaApproval=" + kpaApproval + ", hdlGoodsCode=" + hdlGoodsCode + ", dgDescription=" + dgDescription
+        + ", hdlGoodsDescription=" + hdlGoodsDescription + ", tareWeight=" + tareWeight + ", grossWeight=" + grossWeight
+        + ", netWeight=" + netWeight + ", cardUsage=" + cardUsage + ", backToback=" + backToback
+        + ", weightDiffPercentage=" + weightDiffPercentage + ", weightDifference=" + weightDifference
+        + ", damageCode_01=" + damageCode_01 + ", damageCode_02=" + damageCode_02 + ", damageCode_03=" + damageCode_03
+        + ", damageCode_04=" + damageCode_04 + ", damageCode_05=" + damageCode_05 + ", damageCode_06=" + damageCode_06
+        + ", damageCode_07=" + damageCode_07 + ", damageCode_08=" + damageCode_08 + ", damageCode_09=" + damageCode_09
+        + ", dontValidateSeal=" + dontValidateSeal + ", wrongDoor=" + wrongDoor + ", hpabISOCode=" + hpabISOCode
+        + ", cosmosISOCode=" + cosmosISOCode + ", pmWeight=" + pmWeight + ", trailerWeight=" + trailerWeight
+        + ", trailerPlateNo=" + trailerPlateNo + ", fuelWeight=" + fuelWeight + ", tireWeight=" + tireWeight
+        + ", variance=" + variance + ", subHandlingType=" + subHandlingType + ", withinTolerance=" + withinTolerance
+        + ", calculatedVariance=" + calculatedVariance + ", solasCertNo=" + solasCertNo + ", solas=" + solas + "]";
   }
-
 
   public void prepareForInsertFromOpus(SystemUser gateInClerk, Card card, Client gateInClient, ShipSCN scn,
       PrintEir printEir, CardUsage cardUsage, HPABBooking hpatBooking, DamageCodeRepository damageCodeRepository) {
@@ -1168,7 +1172,7 @@ public class Exports implements Serializable {
     }
     this.getBaseCommonGateInOutAttribute().setTimeGateInOk(LocalDateTime.now());
     this.getBaseCommonGateInOutAttribute().setCard(card);
-    this.setOptFlag(ExportOPTFlagType.OPTFLAG_NORMAL);
+    this.setManualPlanIndicator(ExportOPTFlagType.OPTFLAG_NORMAL);
     this.getBaseCommonGateInOutAttribute().setEirStatus(TransactionStatus.INPROGRESS);
     this.setBookingNo(CommonUtil.changeCase(this.bookingNo, CommonUtil.UPPER_CASE));
     if (this.container == null) {
@@ -1182,7 +1186,7 @@ public class Exports implements Serializable {
     }
     this.getCommonGateInOut().setImpExpFlag(ImpExpFlagStatus.EXPORT);
     this.setScn(scn);
-    this.setExpLine(CommonUtil.changeCase(this.expLine, CommonUtil.UPPER_CASE));
+    this.setShippingLine(CommonUtil.changeCase(this.shippingLine, CommonUtil.UPPER_CASE));
     this.setExpOut(CommonUtil.changeCase(this.expOut, CommonUtil.UPPER_CASE));
     this.setExpCar(CommonUtil.changeCase(this.expCar, CommonUtil.UPPER_CASE));
     this.setExpSpod(CommonUtil.changeCase(this.expSpod, CommonUtil.UPPER_CASE));
@@ -1204,14 +1208,13 @@ public class Exports implements Serializable {
     this.getSealAttribute()
         .setSeal02Number(CommonUtil.changeCase(this.getSealAttribute().getSeal02Number(), CommonUtil.UPPER_CASE));
     this.setImdg(CommonUtil.changeCase(this.imdg, CommonUtil.UPPER_CASE));
-    this.setExpUN(CommonUtil.changeCase(this.expUN, CommonUtil.UPPER_CASE));
+    this.setDgUNCode(CommonUtil.changeCase(this.dgUNCode, CommonUtil.UPPER_CASE));
     this.setImdgLabelID(CommonUtil.changeCase(this.imdgLabelID, CommonUtil.UPPER_CASE));
     if (!(this.damageCode_01 == null)) {
       this.getDamageCode_01()
           .setDamageCode(CommonUtil.changeCase(this.getDamageCode_01().getDamageCode(), CommonUtil.UPPER_CASE));
       this.getDamageCode_01()
           .setDamageDesc(CommonUtil.changeCase(this.getDamageCode_01().getDamageDesc(), CommonUtil.UPPER_CASE));
-
 
       if (StringUtils.isNotEmpty(this.getDamageCode_01().getDamageCode())) {
         this.damageCode_01 = damageCodeRepository.findOne(this.getDamageCode_01().getDamageCode()).orElse(null);
@@ -1329,7 +1332,7 @@ public class Exports implements Serializable {
     this.getBaseCommonGateInOutAttribute().setPmPlateNo(
         CommonUtil.changeCase(this.getBaseCommonGateInOutAttribute().getPmPlateNo(), CommonUtil.UPPER_CASE));
     this.setYardPosition(CommonUtil.changeCase(this.yardPosition, CommonUtil.UPPER_CASE));
-    this.setBayCode(CommonUtil.changeCase(this.bayCode, CommonUtil.UPPER_CASE));
+    this.setYardBayCode(CommonUtil.changeCase(this.yardBayCode, CommonUtil.UPPER_CASE));
     this.setExpAgent(CommonUtil.changeCase(this.expAgent, CommonUtil.UPPER_CASE));
     this.getCommonGateInOut()
         .setRejectReason(CommonUtil.changeCase(this.getCommonGateInOut().getRejectReason(), CommonUtil.UPPER_CASE));
@@ -1338,7 +1341,7 @@ public class Exports implements Serializable {
     this.setVesselName(CommonUtil.changeCase(this.vesselName, CommonUtil.UPPER_CASE));
     this.setVesselSCN(CommonUtil.changeCase(this.vesselSCN, CommonUtil.UPPER_CASE));
     this.setVesselVisitID(CommonUtil.changeCase(this.vesselVisitID, CommonUtil.UPPER_CASE));
-    this.setVesselVoyage(CommonUtil.changeCase(this.vesselVoyage, CommonUtil.UPPER_CASE));
+    this.setVesselVoyageIN(CommonUtil.changeCase(this.vesselVoyageIN, CommonUtil.UPPER_CASE));
     this.setGcsBlockStatusDate(LocalDateTime.now());
     if (!(this.ssrBlockStatus == null)) {
       if (this.ssrBlockStatus == GCS_SSRBlockStatusType.BLK) {
@@ -1379,16 +1382,16 @@ public class Exports implements Serializable {
     double weightDifferent = 0;
     double grossWeightCosmos = 0;
     double netWeight = 0;
-    if (!(this.cosmosGrossWeight == null)) {
-      grossWeightCosmos = new Double(this.cosmosGrossWeight.doubleValue());
+    if (!(this.grossWeight == null)) {
+      grossWeightCosmos = new Double(this.grossWeight.doubleValue());
     } else {
       double comsosTareWeight = 0;
       double cosmosNetWeight = 0;
-      if (!(this.cosmosTareWeight == null)) {
-        comsosTareWeight = new Double(this.cosmosTareWeight.doubleValue());
+      if (!(this.tareWeight == null)) {
+        comsosTareWeight = new Double(this.tareWeight.doubleValue());
       }
-      if (!(this.cosmosNetWeight == null)) {
-        cosmosNetWeight = new Double(this.cosmosNetWeight.doubleValue());
+      if (!(this.netWeight == null)) {
+        cosmosNetWeight = new Double(this.netWeight.doubleValue());
       }
       grossWeightCosmos = comsosTareWeight + cosmosNetWeight;
     }

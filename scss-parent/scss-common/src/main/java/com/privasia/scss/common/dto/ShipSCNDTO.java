@@ -75,6 +75,21 @@ public class ShipSCNDTO implements Serializable {
         + ", scnChargebale=" + scnChargebale + ", scnShipper=" + scnShipper + ", scnByPass=" + scnByPass + "]";
   }
 
+  public ShipSCNDTO initializeWithDefaultValues() {
+    this.shipSCNID = 390l;
+
+    this.scnNo = "PYB7";
+
+    this.containerNo = "APLU8944927";
+
+    this.scnChargebale = false;
+
+    this.scnShipper = "";
+
+    this.scnByPass = false;
+    return this;
+  }
+
 
 
 }

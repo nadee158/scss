@@ -112,7 +112,7 @@ public class DateUtil {
 
 	public static String getJsonDateFromDate(LocalDateTime localDateTime) {
 		try {
-			if (!(localDateTime == null)) {
+			if (localDateTime != null) {
 				DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
 				return localDateTime.format(dateFormat);
 			}

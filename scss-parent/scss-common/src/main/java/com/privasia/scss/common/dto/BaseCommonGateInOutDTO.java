@@ -6,7 +6,10 @@ package com.privasia.scss.common.dto;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.privasia.scss.common.enums.TransactionStatus;
 import com.privasia.scss.common.util.CommonUtil;
 
 
@@ -31,19 +34,24 @@ public class BaseCommonGateInOutDTO implements Serializable {
 
   private String gateOutBoothNo;
 
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+  @JsonFormat(pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+  @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
   private LocalDateTime timeGateIn;
 
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+  @JsonFormat(pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+  @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
   private LocalDateTime timeGateInOk;
 
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+  @JsonFormat(pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+  @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
   private LocalDateTime timeGateOut;
 
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+  @JsonFormat(pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+  @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
   private LocalDateTime timeGateOutOk;
 
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+  @JsonFormat(pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+  @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
   private LocalDateTime timeGateOutBooth;
 
   private Long card;
@@ -184,6 +192,26 @@ public class BaseCommonGateInOutDTO implements Serializable {
 
   public void setGateOutBoothClerk(SystemUserDTO gateOutBoothClerk) {
     this.gateOutBoothClerk = gateOutBoothClerk;
+  }
+
+  public BaseCommonGateInOutDTO initializeWithDefaultValues() {
+    this.pmHeadNo = "NTK194";
+    this.pmPlateNo = "60P1-2933";
+    this.hpatBooking = "BKG193";
+    this.eirStatus = TransactionStatus.COMPLETE.getValue();
+    this.gateOutBoothNo = "12";
+    this.timeGateIn = LocalDateTime.now();
+    this.timeGateInOk = LocalDateTime.now();
+    this.timeGateOut = LocalDateTime.now();
+    this.timeGateOutOk = LocalDateTime.now();
+    this.timeGateOutBooth = LocalDateTime.now();
+    this.card = 1998l;
+    this.gateInClerk = new SystemUserDTO().initializeWithDefaultValues();
+    this.gateOutClerk = new SystemUserDTO().initializeWithDefaultValues();
+    this.gateInClient = new ClientDTO().initializeWithIdOnly();
+    this.gateOutClient = new ClientDTO().initializeWithIdOnly();
+    this.gateOutBoothClerk = new SystemUserDTO().initializeWithDefaultValues();
+    return this;
   }
 
 

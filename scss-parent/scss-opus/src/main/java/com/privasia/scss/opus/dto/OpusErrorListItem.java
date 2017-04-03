@@ -2,15 +2,21 @@ package com.privasia.scss.opus.dto;
 
 import java.io.Serializable;
 
-public class ErrorListItem implements Serializable {
+public class OpusErrorListItem implements Serializable {
 
   /**
    * 
    */
   private static final long serialVersionUID = 1L;
   private String containerNo;// NH161219003,
+  private String containerHoldType;// OGA & INT
   private int errorCode;// 1,
-  private String errorDescription;// There does no Truck In plan for container,
+  // 0=No Error;
+  // 1=Error;
+  // 2=Warning;
+  // 9=Manual Planning;
+  private String errorDescription;// There does no Truck In plan for
+                                  // container,
   private int warningCode;// ,
   private String warningDescription;//
 
@@ -54,12 +60,19 @@ public class ErrorListItem implements Serializable {
     this.warningDescription = warningDescription;
   }
 
-  @Override
-  public String toString() {
-    return "ErrorListItem [containerNo=" + containerNo + ", errorCode=" + errorCode + ", errorDescription="
-        + errorDescription + ", warningCode=" + warningCode + ", warningDescription=" + warningDescription + "]";
+  public String getContainerHoldType() {
+    return containerHoldType;
   }
 
+  public void setContainerHoldType(String containerHoldType) {
+    this.containerHoldType = containerHoldType;
+  }
 
+  @Override
+  public String toString() {
+    return "OpusErrorListItem [containerNo=" + containerNo + ", errorCode=" + errorCode + ", errorDescription="
+        + errorDescription + ", warningCode=" + warningCode + ", warningDescription=" + warningDescription
+        + ", containerHoldType=" + containerHoldType + "]";
+  }
 
 }

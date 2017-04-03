@@ -100,16 +100,16 @@ public class PrintEirService {
   private PrintEIRContainerInfo getConstructedEirContainer(ImportContainer importContainer, String weight,
       StringBuilder lineInfo, StringBuilder lineInfo2, StringBuilder seal) {
     PrintEIRContainerInfo eirContainer = new PrintEIRContainerInfo();
-    eirContainer.setContainerBayCode(importContainer.getBayCode());
+    eirContainer.setContainerBayCode(importContainer.getYardBayCode());
     eirContainer.setContainerInOrOut(GateInOutStatus.fromValue(importContainer.getGateInOut()));
     eirContainer.setContainerFullOrEmpty(
         ContainerFullEmptyType.fromValue(importContainer.getContainer().getContainerFullOrEmpty()));
     eirContainer.setContainerPositionOnTruck(importContainer.getContainerPosition());
     eirContainer.setContainerNumber(importContainer.getContainer().getContainerNumber());
-    eirContainer.setContainerLine(importContainer.getLine());
+    eirContainer.setContainerLine(importContainer.getShippingLine());
     eirContainer.setContainerISOCode(importContainer.getContainer().getContainerISOCode());
     eirContainer.setContainerLength(ContainerSize.fromValue(Integer.toString(importContainer.getContainerLength())));
-    eirContainer.setContainerHeight(Integer.toString(importContainer.getContainer().getContainerHeight()));
+    eirContainer.setContainerHeight(Double.toString(importContainer.getContainer().getContainerHeight()));
     eirContainer.setContainerType(importContainer.getContainerType());
     eirContainer.setContainerNetWeight(weight);
     if (!(lineInfo == null)) {

@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Version;
 
 import org.hibernate.annotations.Type;
 
@@ -20,145 +21,188 @@ import com.privasia.scss.common.enums.ReadWriteStatus;
 import com.privasia.scss.common.enums.TransactionType;
 
 @Entity
-@Table(name = "OPUS_REQUEST_RESPONSE")
+@Table(name = "SCSS_OPUS_REQUEST_RESPONSE")
 public class OpusRequestResponse implements Serializable {
 
-  /**
-   * 
-   */
-  private static final long serialVersionUID = 1L;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "ID")
-  private long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "OPUS_REQ_RES_SEQ")
+	private Long opusReqResID;
 
-  @Column(name = "TRANSACTION_TYPE")
-  @Type(type = "com.privasia.scss.common.enumusertype.TransactionTypeEnumUserType")
-  private TransactionType transactionType;
+	@Column(name = "TRANSACTION_TYPE")
+	@Type(type = "com.privasia.scss.common.enumusertype.TransactionTypeEnumUserType")
+	private TransactionType transactionType;
 
-  @Column(name = "GATE_IN_OUT")
-  @Type(type = "com.privasia.scss.common.enumusertype.GateInOutStatusEnumUserType")
-  private GateInOutStatus gateInOut;
+	@Column(name = "GATE_IN_OUT")
+	@Type(type = "com.privasia.scss.common.enumusertype.GateInOutStatusEnumUserType")
+	private GateInOutStatus gateInOut;
 
-  @Column(name = "CONTAINER_NUMBER")
-  private String containerNumber;
+	@Column(name = "IMP_CONTAINER_01")
+	private String impContainer01;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "CARD_ID", nullable = true, referencedColumnName = "CRD_CARDID_SEQ")
-  private Card card;
+	@Column(name = "IMP_CONTAINER_02")
+	private String impContainer02;
 
-  @Column(name = "GATE_IN_TIME")
-  private LocalDateTime gateinTime;
+	@Column(name = "EXP_CONTAINER_01")
+	private String expContainer01;
 
-  @Column(name = "READ_WRITE")
-  @Type(type = "com.privasia.scss.common.enumusertype.ReadWriteStatusEnumUserType")
-  private ReadWriteStatus readWrite;
+	@Column(name = "EXP_CONTAINER_02")
+	private String expContainer02;
 
-  @Column(name = "REQUEST", length = 5000)
-  private String request;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "CARD_ID", nullable = true, referencedColumnName = "CRD_CARDID_SEQ")
+	private Card card;
 
-  @Column(name = "RESPONSE", length = 5000)
-  private String response;
+	@Column(name = "GATE_IN_TIME")
+	private LocalDateTime gateinTime;
 
-  @Column(name = "SEND_TIME")
-  private LocalDateTime sendTime;
+	@Column(name = "READ_WRITE")
+	@Type(type = "com.privasia.scss.common.enumusertype.ReadWriteStatusEnumUserType")
+	private ReadWriteStatus readWrite;
 
-  @Column(name = "RECEIVED_TIME")
-  private LocalDateTime receivedTime;
+	@Column(name = "REQUEST", length = 5000)
+	private String request;
 
-  public long getId() {
-    return id;
-  }
+	@Column(name = "RESPONSE", length = 5000)
+	private String response;
 
-  public void setId(long id) {
-    this.id = id;
-  }
+	@Column(name = "SEND_TIME")
+	private LocalDateTime sendTime;
 
-  public TransactionType getTransactionType() {
-    return transactionType;
-  }
+	@Column(name = "RECEIVED_TIME")
+	private LocalDateTime receivedTime;
 
-  public void setTransactionType(TransactionType transactionType) {
-    this.transactionType = transactionType;
-  }
+	@Version
+	@Column(name = "VERSION")
+	private Integer version;
 
-  public GateInOutStatus getGateInOut() {
-    return gateInOut;
-  }
+	public Long getOpusReqResID() {
+		return opusReqResID;
+	}
 
-  public void setGateInOut(GateInOutStatus gateInOut) {
-    this.gateInOut = gateInOut;
-  }
+	public void setOpusReqResID(Long opusReqResID) {
+		this.opusReqResID = opusReqResID;
+	}
 
-  public String getContainerNumber() {
-    return containerNumber;
-  }
+	public TransactionType getTransactionType() {
+		return transactionType;
+	}
 
-  public void setContainerNumber(String containerNumber) {
-    this.containerNumber = containerNumber;
-  }
+	public void setTransactionType(TransactionType transactionType) {
+		this.transactionType = transactionType;
+	}
 
-  public Card getCard() {
-    return card;
-  }
+	public GateInOutStatus getGateInOut() {
+		return gateInOut;
+	}
 
-  public void setCard(Card card) {
-    this.card = card;
-  }
+	public void setGateInOut(GateInOutStatus gateInOut) {
+		this.gateInOut = gateInOut;
+	}
 
-  public LocalDateTime getGateinTime() {
-    return gateinTime;
-  }
+	public String getImpContainer01() {
+		return impContainer01;
+	}
 
-  public void setGateinTime(LocalDateTime gateinTime) {
-    this.gateinTime = gateinTime;
-  }
+	public void setImpContainer01(String impContainer01) {
+		this.impContainer01 = impContainer01;
+	}
 
-  public ReadWriteStatus getReadWrite() {
-    return readWrite;
-  }
+	public String getImpContainer02() {
+		return impContainer02;
+	}
 
-  public void setReadWrite(ReadWriteStatus readWrite) {
-    this.readWrite = readWrite;
-  }
+	public void setImpContainer02(String impContainer02) {
+		this.impContainer02 = impContainer02;
+	}
 
-  public String getRequest() {
-    return request;
-  }
+	public String getExpContainer01() {
+		return expContainer01;
+	}
 
-  public void setRequest(String request) {
-    this.request = request;
-  }
+	public void setExpContainer01(String expContainer01) {
+		this.expContainer01 = expContainer01;
+	}
 
-  public String getResponse() {
-    return response;
-  }
+	public String getExpContainer02() {
+		return expContainer02;
+	}
 
-  public void setResponse(String response) {
-    this.response = response;
-  }
+	public void setExpContainer02(String expContainer02) {
+		this.expContainer02 = expContainer02;
+	}
 
-  public LocalDateTime getSendTime() {
-    return sendTime;
-  }
+	public Integer getVersion() {
+		return version;
+	}
 
-  public void setSendTime(LocalDateTime sendTime) {
-    this.sendTime = sendTime;
-  }
+	public void setVersion(Integer version) {
+		this.version = version;
+	}
 
-  public LocalDateTime getReceivedTime() {
-    return receivedTime;
-  }
+	public Card getCard() {
+		return card;
+	}
 
-  public void setReceivedTime(LocalDateTime receivedTime) {
-    this.receivedTime = receivedTime;
-  }
+	public void setCard(Card card) {
+		this.card = card;
+	}
 
-  public static long getSerialversionuid() {
-    return serialVersionUID;
-  }
+	public LocalDateTime getGateinTime() {
+		return gateinTime;
+	}
 
+	public void setGateinTime(LocalDateTime gateinTime) {
+		this.gateinTime = gateinTime;
+	}
 
+	public ReadWriteStatus getReadWrite() {
+		return readWrite;
+	}
+
+	public void setReadWrite(ReadWriteStatus readWrite) {
+		this.readWrite = readWrite;
+	}
+
+	public String getRequest() {
+		return request;
+	}
+
+	public void setRequest(String request) {
+		this.request = request;
+	}
+
+	public String getResponse() {
+		return response;
+	}
+
+	public void setResponse(String response) {
+		this.response = response;
+	}
+
+	public LocalDateTime getSendTime() {
+		return sendTime;
+	}
+
+	public void setSendTime(LocalDateTime sendTime) {
+		this.sendTime = sendTime;
+	}
+
+	public LocalDateTime getReceivedTime() {
+		return receivedTime;
+	}
+
+	public void setReceivedTime(LocalDateTime receivedTime) {
+		this.receivedTime = receivedTime;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
 
 }

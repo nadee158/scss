@@ -5,6 +5,9 @@ package com.privasia.scss.common.dto;
 
 import java.io.Serializable;
 
+import com.privasia.scss.common.enums.ImpExpFlagStatus;
+import com.privasia.scss.common.enums.TransactionStatus;
+
 /**
  * @author Janaka
  *
@@ -74,6 +77,21 @@ public class CommonGateInOutDTO implements Serializable {
 
   public void setTrxSlipNo(String trxSlipNo) {
     this.trxSlipNo = trxSlipNo;
+  }
+
+  public CommonGateInOutDTO initializeWithDefaultValues() {
+    this.eirNumber = 150l;
+
+    this.impExpFlag = ImpExpFlagStatus.IMPORT.getValue();
+
+    this.rejectReason = "Sample Reason";
+
+    this.gateInStatus = TransactionStatus.APPROVED.getValue();
+
+    this.zipFileNo = "zi01";
+
+    this.trxSlipNo = "sl45";
+    return this;
   }
 
 

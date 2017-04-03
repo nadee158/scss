@@ -1,5 +1,6 @@
 package com.privasia.scss.gateout.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -8,17 +9,27 @@ import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.privasia.scss.common.dto.BaseCommonGateInOutDTO;
+import com.privasia.scss.common.dto.ClientDTO;
 import com.privasia.scss.common.dto.ExportContainer;
 import com.privasia.scss.common.dto.GateOutRequest;
 import com.privasia.scss.common.dto.GateOutWriteRequest;
 import com.privasia.scss.common.dto.ShipSCNDTO;
+import com.privasia.scss.common.dto.SystemUserDTO;
 import com.privasia.scss.common.enums.ShipStatus;
+import com.privasia.scss.common.enums.TransactionStatus;
+import com.privasia.scss.core.exception.BusinessException;
 import com.privasia.scss.core.exception.ResultsNotFoundException;
-import com.privasia.scss.core.model.Client;
+import com.privasia.scss.core.model.Exports;
+import com.privasia.scss.core.model.ExportsQ;
 import com.privasia.scss.core.model.ShipCode;
 import com.privasia.scss.core.model.ShipSCN;
 import com.privasia.scss.core.repository.ClientRepository;
+import com.privasia.scss.core.repository.ExportsQRepository;
+import com.privasia.scss.core.repository.ExportsRepository;
 import com.privasia.scss.core.repository.ShipCodeRepository;
 import com.privasia.scss.core.repository.ShipSCNRepository;
 
@@ -33,6 +44,9 @@ public class ExportGateOutService {
 
   private ShipSCNRepository shipSCNRepository;
 
+  private ExportsRepository exportsRepository;
+
+  private ExportsQRepository exportsQRepository;
 
   @Autowired
   public void setModelMapper(ModelMapper modelMapper) {
@@ -54,25 +68,86 @@ public class ExportGateOutService {
     this.clientRepository = clientRepository;
   }
 
+  @Autowired
+  public void setExportsRepository(ExportsRepository exportsRepository) {
+    this.exportsRepository = exportsRepository;
+  }
 
+  @Autowired
+  public void setExportsQRepository(ExportsQRepository exportsQRepository) {
+    this.exportsQRepository = exportsQRepository;
+  }
+
+  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
   public List<ExportContainer> populateGateOut(GateOutRequest gateOutRequest) {
 
-    Optional<Client> clientOpt = clientRepository.findOne(gateOutRequest.getLaneId());
-    Client client =
-        clientOpt.orElseThrow(() -> new ResultsNotFoundException("Invalid lane ID ! " + gateOutRequest.getLaneId()));
-    gateOutRequest.setLaneNo(client.getLaneNo());
+    Optional<List<Exports>> optExpList =
+        exportsRepository.fetchInProgressTransaction(gateOutRequest.getCardID(), TransactionStatus.INPROGRESS);
+    List<Exports> inprogressExpList = optExpList.orElseThrow(() -> new BusinessException(
+        "No InProgress Export Transaction for the scan card ! " + gateOutRequest.getCardID()));
+    List<ExportContainer> exportContainerList = new ArrayList<ExportContainer>();
+    inprogressExpList.forEach(export -> {
+      ExportContainer exportContainer = new ExportContainer();
+      modelMapper.map(export, exportContainer);
+
+      if (!(export.getBaseCommonGateInOutAttribute() == null)) {
+        exportContainer.setBaseCommonGateInOutAttribute(new BaseCommonGateInOutDTO());
+        if (!(export.getBaseCommonGateInOutAttribute().getCard() == null)) {
+          exportContainer.getBaseCommonGateInOutAttribute()
+              .setCard(export.getBaseCommonGateInOutAttribute().getCard().getCardID());
+        }
+        if (!(export.getBaseCommonGateInOutAttribute().getEirStatus() == null)) {
+          exportContainer.getBaseCommonGateInOutAttribute()
+              .setEirStatus(export.getBaseCommonGateInOutAttribute().getEirStatus().getValue());
+        }
+        if (!(export.getBaseCommonGateInOutAttribute().getGateOutBoothClerk() == null)) {
+          SystemUserDTO gateOutBoothClerk = new SystemUserDTO();
+          modelMapper.map(export.getBaseCommonGateInOutAttribute().getGateOutBoothClerk(), gateOutBoothClerk);
+          exportContainer.getBaseCommonGateInOutAttribute().setGateOutBoothClerk(gateOutBoothClerk);
+        }
+        if (!(export.getBaseCommonGateInOutAttribute().getGateOutClient() == null)) {
+          ClientDTO gateOutClient = new ClientDTO();
+          modelMapper.map(export.getBaseCommonGateInOutAttribute().getGateOutClient(), gateOutClient);
+          exportContainer.getBaseCommonGateInOutAttribute().setGateOutClient(gateOutClient);
+        }
+        exportContainer.getBaseCommonGateInOutAttribute()
+            .setGateOutBoothNo(export.getBaseCommonGateInOutAttribute().getGateOutBoothNo());
 
 
-    return null;
+
+        if (!(export.getBaseCommonGateInOutAttribute().getHpatBooking() == null)) {
+          exportContainer.getBaseCommonGateInOutAttribute()
+              .setHpatBooking(export.getBaseCommonGateInOutAttribute().getHpatBooking().getBookingID());
+        }
+
+
+        exportContainer.getBaseCommonGateInOutAttribute()
+            .setPmHeadNo(export.getBaseCommonGateInOutAttribute().getPmHeadNo());
+        exportContainer.getBaseCommonGateInOutAttribute()
+            .setPmPlateNo(export.getBaseCommonGateInOutAttribute().getPmHeadNo());
+        exportContainer.getBaseCommonGateInOutAttribute()
+            .setTimeGateOut(export.getBaseCommonGateInOutAttribute().getTimeGateOut());
+        exportContainer.getBaseCommonGateInOutAttribute()
+            .setTimeGateOutBooth(export.getBaseCommonGateInOutAttribute().getTimeGateOutBooth());
+        exportContainer.getBaseCommonGateInOutAttribute()
+            .setTimeGateOutOk(export.getBaseCommonGateInOutAttribute().getTimeGateOutOk());
+      }
+
+
+      // adding log info
+      exportContainerList.add(exportContainer);
+      if (StringUtils.isEmpty(gateOutRequest.getExpContainer1())) {
+        gateOutRequest.setExpContainer1(export.getContainer().getContainerNumber());
+      } else {
+        gateOutRequest.setExpContainer2(export.getContainer().getContainerNumber());
+      }
+      gateOutRequest.setTruckHeadNo(export.getBaseCommonGateInOutAttribute().getPmHeadNo());
+    });
+
+    return exportContainerList;
 
   }
 
-
-  public List<ExportContainer> fetchContainerInfo(List<String> exportContainerNumbers) {
-
-    return null;
-
-  }
 
 
   public List<ShipCode> checkContainer(List<ExportContainer> exportContainers) {
@@ -80,7 +155,8 @@ public class ExportGateOutService {
       List<String> shippingCodes =
           exportContainers.stream().map(ExportContainer::getShipCode).collect(Collectors.toList());
 
-      Optional<List<ShipCode>> list = shipCodeRepository.findByShipStatusAndShippingCodeIn(ShipStatus.ACTIVE,shippingCodes);
+      Optional<List<ShipCode>> list =
+          shipCodeRepository.findByShipStatusAndShippingCodeIn(ShipStatus.ACTIVE, shippingCodes);
       if (list.isPresent()) {
         List<ShipCode> codes = list.orElse(null);
         for (ShipCode shipCode : codes) {
@@ -112,13 +188,40 @@ public class ExportGateOutService {
     }
   }
 
-  public List<ExportContainer> saveGateOutInfo(GateOutWriteRequest gateOutWriteRequest) {
+  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
+  public void updateGateOutExport(GateOutWriteRequest gateOutWriteRequest) {
 
 
+    Optional<List<Exports>> optExpList =
+        exportsRepository.fetchInProgressTransaction(gateOutWriteRequest.getCardID(), TransactionStatus.INPROGRESS);
+    List<Exports> inprogressExpList = optExpList.orElseThrow(() -> new BusinessException(
+        "No InProgress Export Transaction for the scan card ! " + gateOutWriteRequest.getCardID()));
+    List<ExportContainer> exportContainers = gateOutWriteRequest.getExportContainers();
+    inprogressExpList.forEach(exports -> {
+      ExportContainer exportContainer = null;
+      if (!(exportContainers == null || exportContainers.isEmpty())) {
+        exportContainer = exportContainers
+            .stream().filter(e -> (e.getContainer() != null) && (StringUtils
+                .equals(e.getContainer().getContainerNumber(), exports.getContainer().getContainerNumber())))
+            .findFirst().get();
+        modelMapper.map(exportContainer, exports);
+        exportsRepository.save(exports);
 
-    return null;
+        Optional<ExportsQ> exportQOpt = exportsQRepository.findOne(exports.getExportID());
+        ExportsQ exportq = exportQOpt.orElseThrow(
+            () -> new ResultsNotFoundException("Not valid Gate In ExportQ Process found ! " + exports.getExportID()));
+
+        modelMapper.map(exports, exportq);
+        exportsQRepository.save(exportq);
+
+      } else {
+        throw new BusinessException("Invalid Request to Update Export !");
+      }
+    });
   }
 
-
+  public List<ExportContainer> saveGateOutInfo(GateOutWriteRequest gateOutWriteRequest) {
+    throw new BusinessException("METHOD NOT IMPLEMENTED YET!");
+  }
 
 }

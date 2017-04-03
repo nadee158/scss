@@ -25,6 +25,11 @@ public class CardUsageDTO implements Serializable {
     this.cardUsageID = cardUsageID;
   }
 
+  public CardUsageDTO initializeWithDefaultValues() {
+    this.cardUsageID = 9649030l;
+    return this;
+  }
+
   // public CardDto getCard() {
   // return card;
   // }

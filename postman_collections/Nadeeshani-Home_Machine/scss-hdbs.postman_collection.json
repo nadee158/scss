@@ -1,0 +1,55 @@
+{
+	"id": "eacbdb47-fc7c-2cde-2280-bd8713a2ffa2",
+	"name": "scss-hdbs",
+	"description": "",
+	"order": [
+		"587d7709-1101-8d5e-e5c1-2be1df82b033",
+		"d131d008-ccf7-b83f-fb27-c2ef6c4511b4"
+	],
+	"folders": [],
+	"timestamp": 1482170204543,
+	"owner": "390246",
+	"public": false,
+	"requests": [
+		{
+			"id": "587d7709-1101-8d5e-e5c1-2be1df82b033",
+			"headers": "Content-Type: application/json;charset=UTF-8\nX-Requested-With: XMLHttpRequest\nX-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJURVNUVCIsInJvbGVzIjpbIkFETUlOSVNUUkFUT1IiXSwiZnVuY3Rpb25zIjpbMzIxLDQ0NSw0NjMsMjIxLDM5MiwzODYsMzg3LDM2MSw0MzIsNzAyLDM2Myw0NDIsNDYyLDM3NCwzMzIsMzQwLDMxNSwzOTEsMzc4LDM3MiwxMTMsNDY1LDM5MCwzMTEsNTIwLDYyMiw0NDksNDM1LDQ1NSwzMjMsMzg1LDQ1MSw0MjMsNDU0LDM3NSwzMTQsMTE0LDM2Miw0NDQsMzEzLDM4OSwxMTEsNDE1LDM5Myw0MzEsNDUyLDM4NCw0MTgsNjI1LDQzMCw0NTYsMjExLDMyNywzMjIsNDQ3LDMzMSw0MTYsNDE3LDM3OSw0MzMsMjIyLDQxMyw2MjEsMTEyLDQ0OCwzMjUsMzgxLDQ2MSw2MjMsNDI2LDQ2NywzNzcsNDY4LDkwMSw0NDMsNDI0LDM3MSwzMjYsNDQ2LDM4MywzODgsNjI0LDQyNyw0MTksNDE0LDM5NCwzMjQsNzAxLDUxMCwzNjAsMzgyLDQ2Niw0NjQsMzc2LDQyOCwzOTUsNDI5LDMxMiw0NDEsMzgwXSwic3RhZmZOYW1lIjoiTVVIQU1NQUQgRklSREFVWiBCSU4gQUJEVUwgSEFMSU0iLCJzdGFmZk51bWJlciI6IlAxMzQ0IiwidXNlcklEIjoyNDAxLCJpc3MiOiJodHRwOi8vc2Nzcy5jb20ubXkiLCJpYXQiOjE0ODIxNzA2NzIsImV4cCI6MTQ4MjE3MTU3Mn0.8ZKhlA5ePs50JTQRVX3dN0R2fI6w6uqDfmSBQ9GdfjHLFpXNVLef-iHWJ47aGly5_Zmi7p7L0brA0XGyMdW75g\n",
+			"url": "http://localhost:8080/scss-gatein/api/hdbs/findbooking/1998",
+			"preRequestScript": null,
+			"pathVariables": {},
+			"method": "GET",
+			"data": [],
+			"dataMode": "raw",
+			"version": 2,
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1482170684959,
+			"name": "http://localhost:8080/scss-hdbs/api/hdbs/findbooking/400",
+			"description": "",
+			"collectionId": "eacbdb47-fc7c-2cde-2280-bd8713a2ffa2",
+			"responses": [],
+			"rawModeData": "{  \r\n   \"boothID\":\"501\",\r\n   \"kioskID\":\"400\",\r\n   \"kioskLockStatus\":\"R\",\r\n   \"cardNumber\":5,\r\n   \"cardScanTime\":\"01/01/2016 11:05 AM\",\r\n   \"kioskSelectedTime\":\"01/12/2016 12:05 AM\",\r\n   \"displayScreenID\":6,\r\n   \"transactionIDList\":\"trid1,trid2\",\r\n   \"driverName\":\"driverName tst\",\r\n   \"pmHeadNo\":\"451\",\r\n   \"truckCompany\":\"truckCompany tst\",\r\n   \"driverIC\":\"456824125V8\",\r\n   \"plateNo\":\"45x-jkh\",\r\n   \"transactionType\":\"E\",\r\n   \"reviseHeadNo\":\"45\",\r\n   \"reviseHeadNoRemarks\":\"reviseHeadNoRemarks dds\",\r\n   \"retakePhoto\":false,\r\n   \"trxCompleteTime\":\"25/01/2016 11:05 AM\",\r\n   \"lockUserID\":\"1\",\r\n   \"lockUserName\":\"lockUserName tst\",\r\n   \"referReason01List\":\"referReason01_1,referReason01_2,referReason01_3\",\r\n   \"referReason02List\":\"referReason02List_1,referReason02List_2\",\r\n   \"container01\":{  \r\n      \"cancelPickup\":\"cancelPickup c1\",\r\n      \"location\":\"location c1\",\r\n      \"status\":\"status c1\",\r\n      \"others\":\"others c1\",\r\n      \"rejectRemarks\":\"rejectRemarks c1\",\r\n      \"customCheck\":\"customCheck c1\",\r\n      \"shipper\":\"shipper c1\",\r\n      \"line\":\"line c1\"\r\n   },\r\n   \"container02\":{  \r\n      \"cancelPickup\":\"cancelPickup c2\",\r\n      \"location\":\"location c2\",\r\n      \"status\":\"status c2\",\r\n      \"others\":\"others c2\",\r\n      \"rejectRemarks\":\"rejectRemarks c2\",\r\n      \"customCheck\":\"customCheck c2\",\r\n      \"shipper\":\"shipper c2\",\r\n      \"line\":\"line c2\"\r\n   },\r\n   \"container03\":{  \r\n    \"cancelPickup\":\"cancelPickup c3\",\r\n      \"location\":\"location c3\",\r\n      \"status\":\"status c3\",\r\n      \"others\":\"others c3\",\r\n      \"rejectRemarks\":\"rejectRemarks c3\",\r\n      \"customCheck\":\"customCheck c3\",\r\n      \"shipper\":\"shipper c3\",\r\n      \"line\":\"line c3\"\r\n   },\r\n   \"container04\":{  \r\n     \"cancelPickup\":\"cancelPickup c4\",\r\n      \"location\":\"location c4\",\r\n      \"status\":\"status c4\",\r\n      \"others\":\"others c4\",\r\n      \"rejectRemarks\":\"rejectRemarks c4\",\r\n      \"customCheck\":\"customCheck c4\",\r\n      \"shipper\":\"shipper c4\",\r\n      \"line\":\"line c4\"\r\n   }\r\n}"
+		},
+		{
+			"id": "d131d008-ccf7-b83f-fb27-c2ef6c4511b4",
+			"headers": "Content-Type: application/json;charset=UTF-8\nX-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJURVNUVCIsInJvbGVzIjpbIkFETUlOSVNUUkFUT1IiXSwiZnVuY3Rpb25zIjpbNDE5LDQxNiwzNzcsNDMxLDM4NSwzOTMsMzg4LDQyOCw1MjAsMzYyLDQzMCwzODIsMzI1LDUxMCw0NDksMzgwLDMxMSw0MjMsMzI2LDMzMiwzOTIsMTExLDMxMiwzODcsNjI0LDMyNCwzMTMsMTE0LDM4Myw0NDQsNDMzLDQ2NiwzODQsNDI5LDQ1MiwzODksNDY4LDExMyw0NTUsNDI2LDM3MSwzMTQsNzAxLDQ0NSwzNjMsNjIyLDMyNyw0NTQsNzAyLDM3MiwzNzYsNDMyLDQxNCwzNzQsNDE4LDQyNyw2MjEsMzIxLDIxMSw0MTcsOTAxLDMyMywzMjIsNDQ2LDQ1MSw0MTMsNDU2LDExMiwyMjEsMzk0LDM3NSw0MTUsNjIzLDM2MCwzMzEsNDQ3LDM3OCw0NDgsNDY3LDQ0Myw0MzUsNDQyLDM2MSw0MjQsMzE1LDM3OSw2MjUsMzkwLDQ2Miw0NDEsMzk1LDQ2MywzNDAsMjIyLDM4MSwzODYsMzkxLDQ2NCw0NjEsNDY1XSwic3RhZmZOYW1lIjoiTVVIQU1NQUQgRklSREFVWiBCSU4gQUJEVUwgSEFMSU0iLCJzdGFmZk51bWJlciI6IlAxMzQ0IiwidXNlcklEIjoyNDAxLCJpc3MiOiJodHRwOi8vc2Nzcy5jb20ubXkiLCJpYXQiOjE0ODIxNjk4MDgsImV4cCI6MTQ4MjE3MDcwOH0.uMJzMw-vnOeI7ZIkII6bzec-krwD_H9BKfsVgJEhzD1TW8f65cBgiLnwhtMnQvHOs3U0cqGPZycXSfu3sKlycg\n",
+			"url": "http://localhost:8080/scss-gatein/api/hdbs/validateselection",
+			"preRequestScript": null,
+			"pathVariables": {},
+			"method": "PUT",
+			"data": [],
+			"dataMode": "raw",
+			"version": 2,
+			"tests": "{  \r\n   \"boothID\":\"\",\r\n   \"kioskID\":\"\",\r\n   \"kioskLockStatus\":\"\",\r\n   \"cardNumber\":0,\r\n   \"cardScanTime\":\"\",\r\n   \"kioskSelectedTime\":\"\",\r\n   \"displayScreenID\":0,\r\n   \"transactionIDList\":\"\",\r\n   \"driverName\":\"\",\r\n   \"pmHeadNo\":\"\",\r\n   \"truckCompany\":\"\",\r\n   \"driverIC\":\"\",\r\n   \"plateNo\":\"\",\r\n   \"transactionType\":\"\",\r\n   \"reviseHeadNo\":\"\",\r\n   \"reviseHeadNoRemarks\":\"\",\r\n   \"retakePhoto\":false,\r\n   \"trxCompleteTime\":\"\",\r\n   \"lockUserID\":\"\",\r\n   \"lockUserName\":\"\",\r\n   \"referReason01List\":\"\",\r\n   \"referReason02List\":\"\",\r\n   \"container01\":{  \r\n      \"cancelPickup\":\"\",\r\n      \"location\":\"\",\r\n      \"status\":\"\",\r\n      \"others\":\"\",\r\n      \"rejectRemarks\":\"\",\r\n      \"customCheck\":\"\",\r\n      \"shipper\":\"\",\r\n      \"line\":\"\"\r\n   },\r\n   \"container02\":{  \r\n      \"cancelPickup\":\"\",\r\n      \"location\":\"\",\r\n      \"status\":\"\",\r\n      \"others\":\"\",\r\n      \"rejectRemarks\":\"\",\r\n      \"customCheck\":\"\",\r\n      \"shipper\":\"\",\r\n      \"line\":\"\"\r\n   },\r\n   \"container03\":{  \r\n      \"cancelPickup\":\"\",\r\n      \"location\":\"\",\r\n      \"status\":\"\",\r\n      \"others\":\"\",\r\n      \"rejectRemarks\":\"\",\r\n      \"customCheck\":\"\",\r\n      \"shipper\":\"\",\r\n      \"line\":\"\"\r\n   },\r\n   \"container04\":{  \r\n      \"cancelPickup\":\"\",\r\n      \"location\":\"\",\r\n      \"status\":\"\",\r\n      \"others\":\"\",\r\n      \"rejectRemarks\":\"\",\r\n      \"customCheck\":\"\",\r\n      \"shipper\":\"\",\r\n      \"line\":\"\"\r\n   }\r\n}",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1482170651087,
+			"name": "http://localhost:8080/scss-hdbs/api/hdbs/validateselection",
+			"description": "",
+			"collectionId": "eacbdb47-fc7c-2cde-2280-bd8713a2ffa2",
+			"responses": [],
+			"rawModeData": "[\"1\",\"2\"]"
+		}
+	]
+}

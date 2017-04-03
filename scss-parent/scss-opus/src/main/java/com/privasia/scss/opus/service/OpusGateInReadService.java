@@ -4,11 +4,8 @@
 package com.privasia.scss.opus.service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,17 +17,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.google.gson.Gson;
 import com.privasia.scss.common.dto.ExportContainer;
 import com.privasia.scss.common.dto.GateInReponse;
 import com.privasia.scss.common.dto.GateInRequest;
 import com.privasia.scss.common.dto.ImportContainer;
 import com.privasia.scss.common.util.CommonUtil;
 import com.privasia.scss.common.util.DateUtil;
-import com.privasia.scss.opus.dto.OpusExporterContainer;
 // import com.privasia.scss.core.exception.ResultsNotFoundException;
 import com.privasia.scss.opus.dto.OpusGateInReadRequest;
 import com.privasia.scss.opus.dto.OpusGateInReadResponse;
-import com.privasia.scss.opus.dto.OpusImportContainer;
 
 /**
  * @author Janaka
@@ -40,95 +36,80 @@ import com.privasia.scss.opus.dto.OpusImportContainer;
 @Service("opusGateInReadService")
 public class OpusGateInReadService {
 
-	private static final Logger log = LoggerFactory.getLogger(OpusGateInReadService.class);
+  private static final Logger log = LoggerFactory.getLogger(OpusGateInReadService.class);
 
-	@Value("${gate_in.read.response.url}")
-	private String gateInReadResponseURL;
+  @Value("${gate_in.read.response.url}")
+  private String gateInReadResponseURL;
 
-	private OpusService opusService;
-	
-	@Autowired
-	public void setOpusService(OpusService opusService) {
-		this.opusService = opusService;
-	}
+  private OpusService opusService;
 
-	public OpusGateInReadRequest constructOpenGateInRequest(GateInRequest gateInRequest) {
+  @Autowired
+  public void setOpusService(OpusService opusService) {
+    this.opusService = opusService;
+  }
 
-		OpusGateInReadRequest opusGateInRequest = new OpusGateInReadRequest();
+  public OpusGateInReadRequest constructOpenGateInRequest(GateInRequest gateInRequest) {
 
-		opusGateInRequest.setContainerNo1ImportCY(gateInRequest.getImpContainer1());
-		opusGateInRequest.setContainerNo2ImportCY(gateInRequest.getImpContainer2());
-		// 20161130112233 - yyyyMMddHHmmss
-		LocalDateTime gateInDateTime = CommonUtil.getParsedDate(gateInRequest.getGateInDateTime());
-		opusGateInRequest.setGateINDateTime(DateUtil.getJsonDateFromDate(gateInDateTime));
-		opusGateInRequest.setHaulageCode(gateInRequest.getHaulageCode());
-		opusGateInRequest.setLaneNo(gateInRequest.getLaneNo());
-		opusGateInRequest.setTruckHeadNo(gateInRequest.getTruckHeadNo());
-		opusGateInRequest.setUserID(gateInRequest.getUserName());
-		return opusGateInRequest;
-	}
+    OpusGateInReadRequest opusGateInRequest = new OpusGateInReadRequest();
 
-	public OpusGateInReadResponse getGateInReadResponse(OpusGateInReadRequest opusGateInReadRequest) {
-		System.out.println("gateInReadResponseURL " + gateInReadResponseURL);
-		RestTemplate restTemplate = new RestTemplate();
-		HttpHeaders headers = new HttpHeaders();
+    opusGateInRequest.setContainerNo1ImportCY(gateInRequest.getImpContainer1());
+    opusGateInRequest.setContainerNo2ImportCY(gateInRequest.getImpContainer2());
+    // add export containers also
+    opusGateInRequest.setContainerNo1ExportCY(gateInRequest.getExpContainer1());
+    opusGateInRequest.setContainerNo2ExportCY(gateInRequest.getExpContainer2());
 
-		headers.setContentType(MediaType.APPLICATION_JSON);
+    // 20161130112233 - yyyyMMddHHmmss
+    LocalDateTime gateInDateTime = CommonUtil.getParsedDate(gateInRequest.getGateInDateTime());
+    opusGateInRequest.setGateINDateTime(DateUtil.getJsonDateFromDate(gateInDateTime));
+    opusGateInRequest.setHaulageCode(gateInRequest.getHaulageCode());
+    opusGateInRequest.setLaneNo(gateInRequest.getLaneNo());
+    opusGateInRequest.setTruckHeadNo(gateInRequest.getTruckHeadNo());
+    opusGateInRequest.setUserID(gateInRequest.getUserName());
+    return opusGateInRequest;
+  }
 
-		HttpEntity<OpusGateInReadRequest> request = new HttpEntity<OpusGateInReadRequest>(opusGateInReadRequest,
-				headers);
+  public OpusGateInReadResponse getGateInReadResponse(OpusGateInReadRequest opusGateInReadRequest) {
+    System.out.println("gateInReadResponseURL " + gateInReadResponseURL);
+    RestTemplate restTemplate = new RestTemplate();
+    HttpHeaders headers = new HttpHeaders();
 
-		ResponseEntity<OpusGateInReadResponse> response = restTemplate.postForEntity(gateInReadResponseURL, request,
-				OpusGateInReadResponse.class);
+    headers.setContentType(MediaType.APPLICATION_JSON);
 
-		log.info(response.toString());
-		return response.getBody();
-	}
+    HttpEntity<OpusGateInReadRequest> request = new HttpEntity<OpusGateInReadRequest>(opusGateInReadRequest, headers);
 
-	public GateInReponse constructGateInReponse(OpusGateInReadResponse opusGateInReadResponse,
-			GateInReponse gateInReponse) {
+    log.info("OpusGateInReadRequest : -" + (new Gson()).toJson(opusGateInReadRequest));
 
-		LocalDateTime localDateTime = DateUtil.getLocalDategFromString(opusGateInReadResponse.getGateInDateTime());
-		gateInReponse.setGateINDateTime(CommonUtil.getFormatteDate(localDateTime));
-		gateInReponse.setHaulageCode(opusGateInReadResponse.getHaulageCode());
-		gateInReponse.setLaneNo(opusGateInReadResponse.getLaneNo());
-		gateInReponse.setTruckHeadNo(opusGateInReadResponse.getTruckHeadNo());
-		gateInReponse.setTruckPlateNo(opusGateInReadResponse.getTruckPlateNo());
-		gateInReponse = constructExportContainers(opusGateInReadResponse.getExportContainerListCY(), gateInReponse);
-		gateInReponse = constructImportContainers(opusGateInReadResponse.getImportContainerListCY(), gateInReponse);
-		return gateInReponse;
-	}
+    ResponseEntity<OpusGateInReadResponse> response =
+        restTemplate.postForEntity(gateInReadResponseURL, request, OpusGateInReadResponse.class);
 
-	private GateInReponse constructExportContainers(List<OpusExporterContainer> exportContainerListCY,
-	      GateInReponse gateInReponse) {
+    log.info("RESPONSE FROM OPUS: " + response.toString());
+    return response.getBody();
+  }
 
-	    if (!(exportContainerListCY == null || exportContainerListCY.isEmpty())) {
-	    	
-	    	exportContainerListCY.forEach(opusExportContainer -> {
-	    	ExportContainer exportContainer = new ExportContainer();	
-	    	exportContainer = opusService.constructExportContainer(opusExportContainer, exportContainer);
-	    	gateInReponse.getExportContainers().add(exportContainer);
-	       
-	      });
-	    }
-	    return gateInReponse;
-	  }
+  public GateInReponse constructGateInReponse(OpusGateInReadResponse opusGateInReadResponse,
+      GateInReponse gateInReponse) {
 
-	private GateInReponse constructImportContainers(List<OpusImportContainer> importContainerListCY, 
-			GateInReponse gateInReponse) {
+    gateInReponse.setUserId(opusGateInReadResponse.getUserID());
+    LocalDateTime localDateTime = DateUtil.getLocalDategFromString(opusGateInReadResponse.getGateInDateTime());
 
-		if (!(importContainerListCY == null || importContainerListCY.isEmpty())) {
+    gateInReponse.setGateINDateTime(CommonUtil.getFormatteDate(localDateTime));
+    gateInReponse.setHaulageCode(opusGateInReadResponse.getHaulageCode());
+    gateInReponse.setLaneNo(opusGateInReadResponse.getLaneNo());
+    gateInReponse.setTruckHeadNo(opusGateInReadResponse.getTruckHeadNo());
+    // already hav import containers and export containers, update them
+    List<ExportContainer> updatedExportContainerList =
+        opusService.giReadResponseExporterContainerListToExportContainerList(
+            opusGateInReadResponse.getExportContainerListCY(), gateInReponse.getExportContainers());
 
-			importContainerListCY.forEach(opusImportContainer -> {
-				gateInReponse.getImportContainers().forEach(container -> {
-					if(StringUtils.equals(container.getContainer().getContainerNumber(), opusImportContainer.getContainerNo())){
-						opusService.constructImportContainer(opusImportContainer, container);
-					}
-				});
+    List<ImportContainer> updatedImportContainerList =
+        opusService.giReadResponseImportContainerListToImportContainerList(
+            opusGateInReadResponse.getImportContainerListCY(), gateInReponse.getImportContainers());
 
-			});
-		}
-		return gateInReponse;
-	}
+    gateInReponse.setExportContainers(updatedExportContainerList);
+    gateInReponse.setImportContainers(updatedImportContainerList);
+    return gateInReponse;
+  }
+
+
 
 }

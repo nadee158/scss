@@ -4,6 +4,9 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.privasia.scss.common.enums.ContainerPosition;
+import com.privasia.scss.common.enums.GateInOutStatus;
+import com.privasia.scss.common.enums.GatePassStatus;
 import com.privasia.scss.common.util.CommonUtil;
 
 public class ImportContainer implements Serializable {
@@ -41,7 +44,7 @@ public class ImportContainer implements Serializable {
 
   private String gateInOut;
 
-  private String line;
+  private String shippingLine;
 
   private String currentPosition;
 
@@ -57,7 +60,7 @@ public class ImportContainer implements Serializable {
 
   private String yardPosition;
 
-  private String bayCode;
+  private String yardBayCode;
 
   private Long callCard;
 
@@ -77,7 +80,7 @@ public class ImportContainer implements Serializable {
 
   private ISOInfo isoInfo;
 
-  private String agentCode;
+  private String shippingAgent;
 
   private String orderFOT;
 
@@ -114,7 +117,11 @@ public class ImportContainer implements Serializable {
 
   private boolean FOTBKGFlag = true;
 
-  private String netWeight;
+  private Integer tareWeight;
+
+  private Integer grossWeight;
+
+  private Integer netWeight;
 
   private String containerType;
 
@@ -124,22 +131,57 @@ public class ImportContainer implements Serializable {
   private String contRefer;
 
   // from opus import container
-  private long containerDischargeDateTime;// 20161124162510,
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+  private LocalDateTime containerDischargeDateTime;// 20161124162510,
   private String impCarrierType;// null,
   private String impCarrier;// null,
   private String vesselCode;// UANE,
-  private String vesselVoyage;// 003/2016,
-  private String visitId;// 121212,
   private String vesselScn;// DB0899,
   private String vesselName;// AL NEFUD,
-  private String vesselATA;// 20161124161800
+
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+  private LocalDateTime vesselETADate;
+
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+  private LocalDateTime vesselATADate;
+
+  private String vesselVisitID;
+
+  private String vesselVoyage;
+
+  private String vesselStatus;
 
   private DamageCodeInfo damageCodeInfo;
+
+  private String gcsDelcarerNo;
+
+  private String gcsBlock;
+
+  private String pkfzBlock;
+
+  private String lpkBlock;
+
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+  private LocalDateTime cusGCSReleaseDate;
+
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+  private LocalDateTime gatePassIssued;
+
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+  private LocalDateTime portSecurity;
+
+  private String moveType;
 
   private String rtgExecustionStatus;// ":"RGS"
 
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
   private LocalDateTime rtgExecustionDateTime;// ;":"20161212101010"
+
+  private String impOrderType;
+
+  private String impOrderStatus;
+
+  private String containerSubHandlingType;
 
   public String getRtgExecustionStatus() {
     return rtgExecustionStatus;
@@ -245,12 +287,20 @@ public class ImportContainer implements Serializable {
     this.gateInOut = gateInOut;
   }
 
-  public String getLine() {
-    return line;
+  public String getShippingLine() {
+    return shippingLine;
   }
 
-  public void setLine(String line) {
-    this.line = line;
+  public void setShippingLine(String shippingLine) {
+    this.shippingLine = shippingLine;
+  }
+
+  public String getShippingAgent() {
+    return shippingAgent;
+  }
+
+  public void setShippingAgent(String shippingAgent) {
+    this.shippingAgent = shippingAgent;
   }
 
   public String getCurrentPosition() {
@@ -309,12 +359,12 @@ public class ImportContainer implements Serializable {
     this.yardPosition = yardPosition;
   }
 
-  public String getBayCode() {
-    return bayCode;
+  public String getYardBayCode() {
+    return yardBayCode;
   }
 
-  public void setBayCode(String bayCode) {
-    this.bayCode = bayCode;
+  public void setYardBayCode(String yardBayCode) {
+    this.yardBayCode = yardBayCode;
   }
 
   public Long getCallCard() {
@@ -387,14 +437,6 @@ public class ImportContainer implements Serializable {
 
   public void setIsoInfo(ISOInfo isoInfo) {
     this.isoInfo = isoInfo;
-  }
-
-  public String getAgentCode() {
-    return agentCode;
-  }
-
-  public void setAgentCode(String agentCode) {
-    this.agentCode = agentCode;
   }
 
   public String getOrderFOT() {
@@ -525,11 +567,27 @@ public class ImportContainer implements Serializable {
     FOTBKGFlag = fOTBKGFlag;
   }
 
-  public String getNetWeight() {
+  public Integer getTareWeight() {
+    return tareWeight;
+  }
+
+  public void setTareWeight(Integer tareWeight) {
+    this.tareWeight = tareWeight;
+  }
+
+  public Integer getGrossWeight() {
+    return grossWeight;
+  }
+
+  public void setGrossWeight(Integer grossWeight) {
+    this.grossWeight = grossWeight;
+  }
+
+  public Integer getNetWeight() {
     return netWeight;
   }
 
-  public void setNetWeight(String netWeight) {
+  public void setNetWeight(Integer netWeight) {
     this.netWeight = netWeight;
   }
 
@@ -557,11 +615,11 @@ public class ImportContainer implements Serializable {
     this.contRefer = contRefer;
   }
 
-  public long getContainerDischargeDateTime() {
+  public LocalDateTime getContainerDischargeDateTime() {
     return containerDischargeDateTime;
   }
 
-  public void setContainerDischargeDateTime(long containerDischargeDateTime) {
+  public void setContainerDischargeDateTime(LocalDateTime containerDischargeDateTime) {
     this.containerDischargeDateTime = containerDischargeDateTime;
   }
 
@@ -589,6 +647,30 @@ public class ImportContainer implements Serializable {
     this.vesselCode = vesselCode;
   }
 
+  public LocalDateTime getVesselETADate() {
+    return vesselETADate;
+  }
+
+  public void setVesselETADate(LocalDateTime vesselETADate) {
+    this.vesselETADate = vesselETADate;
+  }
+
+  public LocalDateTime getVesselATADate() {
+    return vesselATADate;
+  }
+
+  public void setVesselATADate(LocalDateTime vesselATADate) {
+    this.vesselATADate = vesselATADate;
+  }
+
+  public String getVesselVisitID() {
+    return vesselVisitID;
+  }
+
+  public void setVesselVisitID(String vesselVisitID) {
+    this.vesselVisitID = vesselVisitID;
+  }
+
   public String getVesselVoyage() {
     return vesselVoyage;
   }
@@ -597,12 +679,12 @@ public class ImportContainer implements Serializable {
     this.vesselVoyage = vesselVoyage;
   }
 
-  public String getVisitId() {
-    return visitId;
+  public String getVesselStatus() {
+    return vesselStatus;
   }
 
-  public void setVisitId(String visitId) {
-    this.visitId = visitId;
+  public void setVesselStatus(String vesselStatus) {
+    this.vesselStatus = vesselStatus;
   }
 
   public String getVesselScn() {
@@ -619,14 +701,6 @@ public class ImportContainer implements Serializable {
 
   public void setVesselName(String vesselName) {
     this.vesselName = vesselName;
-  }
-
-  public String getVesselATA() {
-    return vesselATA;
-  }
-
-  public void setVesselATA(String vesselATA) {
-    this.vesselATA = vesselATA;
   }
 
   public DamageCodeInfo getDamageCodeInfo() {
@@ -653,45 +727,124 @@ public class ImportContainer implements Serializable {
     this.printEir = printEir;
   }
 
+  public String getImpOrderType() {
+    return impOrderType;
+  }
+
+  public void setImpOrderType(String impOrderType) {
+    this.impOrderType = impOrderType;
+  }
+
+  public String getImpOrderStatus() {
+    return impOrderStatus;
+  }
+
+  public void setImpOrderStatus(String impOrderStatus) {
+    this.impOrderStatus = impOrderStatus;
+  }
+
+  public String getContainerSubHandlingType() {
+    return containerSubHandlingType;
+  }
+
+  public void setContainerSubHandlingType(String containerSubHandlingType) {
+    this.containerSubHandlingType = containerSubHandlingType;
+  }
+
+  public String getGcsDelcarerNo() {
+    return gcsDelcarerNo;
+  }
+
+  public void setGcsDelcarerNo(String gcsDelcarerNo) {
+    this.gcsDelcarerNo = gcsDelcarerNo;
+  }
+
+  public String getGcsBlock() {
+    return gcsBlock;
+  }
+
+  public void setGcsBlock(String gcsBlock) {
+    this.gcsBlock = gcsBlock;
+  }
+
+  public String getPkfzBlock() {
+    return pkfzBlock;
+  }
+
+  public void setPkfzBlock(String pkfzBlock) {
+    this.pkfzBlock = pkfzBlock;
+  }
+
+  public String getLpkBlock() {
+    return lpkBlock;
+  }
+
+  public void setLpkBlock(String lpkBlock) {
+    this.lpkBlock = lpkBlock;
+  }
+
+  public LocalDateTime getCusGCSReleaseDate() {
+    return cusGCSReleaseDate;
+  }
+
+  public void setCusGCSReleaseDate(LocalDateTime cusGCSReleaseDate) {
+    this.cusGCSReleaseDate = cusGCSReleaseDate;
+  }
+
+  public LocalDateTime getGatePassIssued() {
+    return gatePassIssued;
+  }
+
+  public void setGatePassIssued(LocalDateTime gatePassIssued) {
+    this.gatePassIssued = gatePassIssued;
+  }
+
+  public LocalDateTime getPortSecurity() {
+    return portSecurity;
+  }
+
+  public void setPortSecurity(LocalDateTime portSecurity) {
+    this.portSecurity = portSecurity;
+  }
+
+  public String getMoveType() {
+    return moveType;
+  }
+
+  public void setMoveType(String moveType) {
+    this.moveType = moveType;
+  }
+
   @Override
   public String toString() {
     return "ImportContainer [gatePassID=" + gatePassID + ", gatePassNo=" + gatePassNo + ", gateOrderNo=" + gateOrderNo
         + ", containerLength=" + containerLength + ", container=" + container + ", company=" + company
         + ", commonGateInOut=" + commonGateInOut + ", baseCommonGateInOutAttribute=" + baseCommonGateInOutAttribute
         + ", gatePassStatus=" + gatePassStatus + ", handlingID=" + handlingID + ", orderNo=" + orderNo + ", gateInOut="
-        + gateInOut + ", line=" + line + ", currentPosition=" + currentPosition + ", containerPosition="
+        + gateInOut + ", shippingLine=" + shippingLine + ", currentPosition=" + currentPosition + ", containerPosition="
         + containerPosition + ", gateInLaneNo=" + gateInLaneNo + ", gateOutLaneNo=" + gateOutLaneNo + ", sealAttribute="
-        + sealAttribute + ", gateOutRemarks=" + gateOutRemarks + ", yardPosition=" + yardPosition + ", bayCode="
-        + bayCode + ", callCard=" + callCard + ", cosmosSeal01Origin=" + cosmosSeal01Origin + ", cosmosSeal01Type="
+        + sealAttribute + ", gateOutRemarks=" + gateOutRemarks + ", yardPosition=" + yardPosition + ", yardBayCode="
+        + yardBayCode + ", callCard=" + callCard + ", cosmosSeal01Origin=" + cosmosSeal01Origin + ", cosmosSeal01Type="
         + cosmosSeal01Type + ", cosmosSeal01Number=" + cosmosSeal01Number + ", cosmosSeal02Origin=" + cosmosSeal02Origin
         + ", cosmosSeal02Type=" + cosmosSeal02Type + ", cosmosSeal02Number=" + cosmosSeal02Number
-        + ", gatePassValidDate=" + gatePassValidDate + ", isoInfo=" + isoInfo + ", agentCode=" + agentCode
+        + ", gatePassValidDate=" + gatePassValidDate + ", isoInfo=" + isoInfo + ", shippingAgent=" + shippingAgent
         + ", orderFOT=" + orderFOT + ", userSessionId=" + userSessionId + ", printEIRNo=" + printEIRNo
         + ", acceptOrReject=" + acceptOrReject + ", cugId=" + cugId + ", operationReefer=" + operationReefer + ", temp="
         + temp + ", tempUnit=" + tempUnit + ", imdg=" + imdg + ", unc=" + unc + ", oogoh=" + oogoh + ", oogol=" + oogol
-        + ", oogof=" + oogof + ", oogoa=" + oogoa + ", oogor=" + oogor + ", FOTBKGFlag=" + FOTBKGFlag + ", netWeight="
-        + netWeight + ", containerType=" + containerType + ", errXMLMsg=" + errXMLMsg + ", contRefer=" + contRefer
-        + ", containerDischargeDateTime=" + containerDischargeDateTime + ", impCarrierType=" + impCarrierType
-        + ", impCarrier=" + impCarrier + ", vesselCode=" + vesselCode + ", vesselVoyage=" + vesselVoyage + ", visitId="
-        + visitId + ", vesselScn=" + vesselScn + ", vesselName=" + vesselName + ", vesselATA=" + vesselATA
-        + ", damageCodeInfo=" + damageCodeInfo + ", rtgExecustionStatus=" + rtgExecustionStatus
-        + ", rtgExecustionDateTime=" + rtgExecustionDateTime + "]";
+        + ", oogof=" + oogof + ", oogoa=" + oogoa + ", oogor=" + oogor + ", FOTBKGFlag=" + FOTBKGFlag + ", tareWeight="
+        + tareWeight + ", grossWeight=" + grossWeight + ", netWeight=" + netWeight + ", containerType=" + containerType
+        + ", errXMLMsg=" + errXMLMsg + ", contRefer=" + contRefer + ", containerDischargeDateTime="
+        + containerDischargeDateTime + ", impCarrierType=" + impCarrierType + ", impCarrier=" + impCarrier
+        + ", vesselCode=" + vesselCode + ", vesselVoyage=" + vesselVoyage + ", vesselVisitID=" + vesselVisitID
+        + ", vesselScn=" + vesselScn + ", vesselName=" + vesselName + ", vesselETADate=" + vesselETADate
+        + ", vesselATADate=" + vesselATADate + ", damageCodeInfo=" + damageCodeInfo + ", vesselStatus=" + vesselStatus
+        + ", rtgExecustionStatus=" + rtgExecustionStatus + ", gcsDelcarerNo=" + gcsDelcarerNo + ", gcsBlock=" + gcsBlock
+        + ", pkfzBlock=" + pkfzBlock + ", lpkBlock=" + lpkBlock + ", cusGCSReleaseDate=" + cusGCSReleaseDate
+        + ", gatePassIssued=" + gatePassIssued + ", portSecurity=" + portSecurity + ", moveType=" + moveType
+        + ", rtgExecustionDateTime=" + rtgExecustionDateTime + ", impOrderType=" + impOrderType + ", impOrderStatus="
+        + impOrderStatus + ", containerSubHandlingType=" + containerSubHandlingType + "]";
   }
 
-  public static ImportContainer emptyImportContainer() {
-    ImportContainer importContainer = new ImportContainer();
-    importContainer.setContainer(new CommonContainerDTO());
-    importContainer.getContainer().setContainerNumber("FSCU8145801");
-    importContainer.getContainer().setContainerFullOrEmpty("E");
-    importContainer.setSealAttribute(new CommonSealDTO());
-    importContainer.getSealAttribute().setSeal01Number("SL191");
-    importContainer.getSealAttribute().setSeal01Origin("C");
-    importContainer.getSealAttribute().setSeal02Number("SL192");
-    importContainer.getSealAttribute().setSeal02Origin("C");
-    importContainer.setRtgExecustionDateTime(LocalDateTime.now());
-    importContainer.setRtgExecustionStatus("RGS");
-    return importContainer;
-  }
 
   public int getContainerLength() {
     return containerLength;
@@ -701,5 +854,42 @@ public class ImportContainer implements Serializable {
     this.containerLength = containerLength;
   }
 
+  public ImportContainer initializeWithDefaultValues(String containerNo) {
+    this.setPrintEir(new PrintEirDTO().initializeWithIdOnly());
+    this.setCardUsage(new CardUsageDTO().initializeWithDefaultValues());
+    this.gatePassID = 24441450101l;
+    this.gatePassNo = 24441450101l;
+    this.gateOrderNo = 2444145l;
+    this.containerLength = 40;
+    this.setContainer(new CommonContainerDTO().initializeWithDefaultValues(containerNo));
+    this.company = 412l;
+    this.setCommonGateInOut(new CommonGateInOutDTO().initializeWithDefaultValues());
+    this.setBaseCommonGateInOutAttribute(new BaseCommonGateInOutDTO().initializeWithDefaultValues());
+    this.gatePassStatus = GatePassStatus.ACTIVE.getValue();
+    this.handlingID = 150l;
+    this.orderNo = "KKLUTH0429431";
+    this.gateInOut = GateInOutStatus.IN.getValue();
+    this.shippingLine = "KKK";
+    this.currentPosition = "09B0405E1";
+    this.containerPosition = ContainerPosition.MIDDLE.getValue();
+    this.gateInLaneNo = "MG";
+    this.gateOutLaneNo = "B9B";
+    this.setSealAttribute(new CommonSealDTO().initializeWithDefaultValues());
+    this.gateOutRemarks = "gateOutRemarks";
+    this.yardPosition = "09B0405E1";
+    this.yardBayCode = "09B04";
+    this.callCard = 9032l;
+    this.cosmosSeal01Origin = "L";
+    this.cosmosSeal01Type = "SL";
+    this.cosmosSeal01Number = "MQ133880";
+    this.cosmosSeal02Origin = "L";
+    this.cosmosSeal02Type = "NS";
+    this.cosmosSeal02Number = "MQ133881";
+    this.gatePassValidDate = "04/15/2017 02:05:30 PM";
+    this.setIsoInfo(new ISOInfo().initializeWithDefaultValues());
+    this.shippingAgent = "AG01";
+    this.orderFOT = "FOT";
+    return this;
+  }
 
 }

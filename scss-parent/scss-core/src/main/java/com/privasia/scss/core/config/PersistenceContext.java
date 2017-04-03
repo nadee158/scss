@@ -59,25 +59,25 @@ public class PersistenceContext {
     dataSourceConfig.setUsername(env.getRequiredProperty("spring.datasource.username"));
     dataSourceConfig.setPassword(env.getRequiredProperty("spring.datasource.password"));
     dataSourceConfig.setPoolName("scss");
-    dataSourceConfig.setConnectionTestQuery(env.getRequiredProperty("spring.datasource.validationQuery"));
 
-    dataSourceConfig
-        .setConnectionTimeout(Long.parseLong(env.getRequiredProperty("spring.datasource.connectionTimeout")));
-    dataSourceConfig.setIdleTimeout(Long.parseLong(env.getRequiredProperty("spring.datasource.idleTimeout")));
+    dataSourceConfig.setConnectionTestQuery(env.getRequiredProperty("spr.datasource.validationQuery"));
+
+    dataSourceConfig.setConnectionTimeout(Long.parseLong(env.getRequiredProperty("spr.datasource.connectionTimeout")));
+    dataSourceConfig.setIdleTimeout(Long.parseLong(env.getRequiredProperty("spr.datasource.idleTimeout")));
     dataSourceConfig.setInitializationFailFast(false);
-    dataSourceConfig.setLeakDetectionThreshold(
-        Long.parseLong(env.getRequiredProperty("spring.datasource.leakDetection.threshold")));
-    dataSourceConfig.setMaximumPoolSize(Integer.parseInt(env.getRequiredProperty("spring.datasource.maximumPoolSize")));
-    dataSourceConfig.setMaxLifetime(Integer.parseInt(env.getRequiredProperty("spring.datasource.maxLifetime")));
-    dataSourceConfig.setMinimumIdle(Integer.parseInt(env.getRequiredProperty("spring.datasource.minimumIdle")));
+    dataSourceConfig
+        .setLeakDetectionThreshold(Long.parseLong(env.getRequiredProperty("spr.datasource.leakDetection.threshold")));
+    dataSourceConfig.setMaximumPoolSize(Integer.parseInt(env.getRequiredProperty("spr.datasource.maximumPoolSize")));
+    dataSourceConfig.setMaxLifetime(Integer.parseInt(env.getRequiredProperty("spr.datasource.maxLifetime")));
+    dataSourceConfig.setMinimumIdle(Integer.parseInt(env.getRequiredProperty("spr.datasource.minimumIdle")));
 
 
     dataSourceConfig.addDataSourceProperty("prepStmtCacheSize",
-        Integer.parseInt(env.getRequiredProperty("dataSource.prepStmtCacheSize")));
+        Integer.parseInt(env.getRequiredProperty("spr.dataSource.prepStmtCacheSize")));
     dataSourceConfig.addDataSourceProperty("prepStmtCacheSqlLimit",
-        Integer.parseInt(env.getRequiredProperty("dataSource.prepStmtCacheSqlLimit")));
+        Integer.parseInt(env.getRequiredProperty("spr.dataSource.prepStmtCacheSqlLimit")));
     dataSourceConfig.addDataSourceProperty("useServerPrepStmts",
-        Boolean.parseBoolean(env.getRequiredProperty("dataSource.cachePrepStmts")));
+        Boolean.parseBoolean(env.getRequiredProperty("spr.dataSource.cachePrepStmts")));
 
 
     return new HikariDataSource(dataSourceConfig);
