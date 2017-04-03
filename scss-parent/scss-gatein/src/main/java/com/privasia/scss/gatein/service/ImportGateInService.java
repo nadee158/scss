@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.privasia.scss.common.dto.BaseCommonGateInOutDTO;
-import com.privasia.scss.common.dto.ClientDTO;
 import com.privasia.scss.common.dto.GateInReponse;
 import com.privasia.scss.common.dto.GateInRequest;
 import com.privasia.scss.common.dto.GateInWriteRequest;
@@ -317,6 +316,7 @@ public class ImportGateInService {
 
   }
 
+  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
   public List<ImportContainer> saveGateInInfo(GateInWriteRequest gateInWriteRequest) {
     // construct a new export entity for each exportcontainer and save
     if (!(gateInWriteRequest.getImportContainers() == null || gateInWriteRequest.getImportContainers().isEmpty())) {
@@ -329,12 +329,7 @@ public class ImportGateInService {
             .setTimeGateIn(CommonUtil.getParsedDate(gateInWriteRequest.getGateInDateTime()));
 
         // assign values from header level to container level
-        importContainer.getBaseCommonGateInOutAttribute().setCard(gateInWriteRequest.getCardId());
-        importContainer.getBaseCommonGateInOutAttribute()
-            .setEirStatus(com.privasia.scss.common.enums.TransactionStatus.INPROGRESS.getValue());
-        ClientDTO gateInClientDTO = new ClientDTO();
-        gateInClientDTO.setClientID(gateInWriteRequest.getGateInClient());
-        importContainer.getBaseCommonGateInOutAttribute().setGateInClient(gateInClientDTO);
+        importContainer.getBaseCommonGateInOutAttribute().setEirStatus(TransactionStatus.INPROGRESS.getValue());
         importContainer.getBaseCommonGateInOutAttribute().setHpatBooking(gateInWriteRequest.getHpatBookingId());
         importContainer.getBaseCommonGateInOutAttribute().setPmHeadNo(gateInWriteRequest.getTruckHeadNo());
         importContainer.getBaseCommonGateInOutAttribute().setPmPlateNo(gateInWriteRequest.getTruckPlateNo());
@@ -357,11 +352,8 @@ public class ImportGateInService {
                         .orElseThrow(() -> new ResultsNotFoundException(
                             "Invalid Booking : " + importContainer.getBaseCommonGateInOutAttribute().getHpatBooking()));
               }
-              if (!(importContainer.getBaseCommonGateInOutAttribute().getCard() == null)) {
-                card = cardRepository.findOne(importContainer.getBaseCommonGateInOutAttribute().getCard())
-                    .orElseThrow(() -> new ResultsNotFoundException(
-                        "Invalid Card : " + importContainer.getBaseCommonGateInOutAttribute().getCard()));
-              }
+              card = cardRepository.findOne(gateInWriteRequest.getCardId())
+                  .orElseThrow(() -> new ResultsNotFoundException("Invalid Card : " + gateInWriteRequest.getCardId()));
             }
 
             SystemUser gateInClerk = systemUserRepository.findOne(SecurityHelper.getCurrentUserId())
@@ -369,16 +361,8 @@ public class ImportGateInService {
                     "Log in User Not Found : " + SecurityHelper.getCurrentUserId()));
             System.out.println("gateInClerk " + gateInClerk);
 
-            Client gateInClient = null;
-            if (!(importContainer.getBaseCommonGateInOutAttribute() == null
-                || importContainer.getBaseCommonGateInOutAttribute().getGateInClient() == null)) {
-              gateInClient =
-                  clientRepository
-                      .findOne(importContainer.getBaseCommonGateInOutAttribute().getGateInClient()
-                          .getClientID())
-                  .orElseThrow(() -> new ResultsNotFoundException(
-                      "Invalid Client Id : " + importContainer.getBaseCommonGateInOutAttribute().getGateInClient()));
-            }
+            Client gateInClient = clientRepository.findOne(gateInWriteRequest.getGateInClient()).orElseThrow(
+                () -> new ResultsNotFoundException("Invalid Client Id : " + gateInWriteRequest.getGateInClient()));
 
             PrintEir printEir = null;
             // if (!(importContainer.getPrintEir() == null ||

@@ -150,6 +150,8 @@ public class OpusService {
     exportContainer.setYardPosition(giWriteResponseExportContainer.getYardPosition());
     exportContainer.setYardBayCode(giWriteResponseExportContainer.getYardBayCode());
     exportContainer.setManualPlanIndicator(giWriteResponseExportContainer.getManualPlanIndicator());
+    // importContainer.setEirNumber(150l);// eirNumber value should be come from opus in the
+    // giWriteResponse
     return exportContainer;
   }
 
@@ -162,6 +164,8 @@ public class OpusService {
     importContainer.setContainer(commonContainerDTO);
     importContainer.setYardPosition(giWriteResponseImportContainer.getYardPosition());
     importContainer.setYardBayCode(giWriteResponseImportContainer.getYardBayCode());
+    // importContainer.setEirNumber(150l);// eirNumber value should be come from opus in the
+    // giWriteResponse
     return importContainer;
   }
 

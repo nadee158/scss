@@ -204,6 +204,7 @@ public class ImportExportGateInService {
 
     OpusGateInWriteResponse opusGateInWriteResponse =
         opusGateInWriteService.getGateInWriteResponse(opusGateInWriteRequest);
+
     System.out.println("opusGateInWriteResponse " + gson.toJson(opusGateInWriteResponse));
     String errorMessage = opusService.hasErrorMessage(opusGateInWriteResponse.getErrorList());
     log.error("ERROR MESSAGE FROM OPUS SERVICE: " + errorMessage);

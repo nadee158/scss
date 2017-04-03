@@ -28,6 +28,8 @@ public class GateInWriteRequest implements Serializable {
   private String rejectReason;
   private String gateInStatus;
 
+  private String impExpFlag;
+
 
   private List<ExportContainer> exportContainers;
   private List<ImportContainer> importContainers;
@@ -196,6 +198,14 @@ public class GateInWriteRequest implements Serializable {
     this.importContainers.add((new ImportContainer()).initializeWithDefaultValues("ASIA1234562"));
     this.importContainers.add((new ImportContainer()).initializeWithDefaultValues("ASIA1234563"));
     return this;
+  }
+
+  public String getImpExpFlag() {
+    return impExpFlag;
+  }
+
+  public void setImpExpFlag(String impExpFlag) {
+    this.impExpFlag = impExpFlag;
   }
 
 }
