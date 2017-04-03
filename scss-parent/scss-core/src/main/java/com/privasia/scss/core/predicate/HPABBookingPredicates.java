@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 import com.privasia.scss.common.enums.BookingType;
 import com.privasia.scss.common.enums.HpatReferStatus;
 import com.privasia.scss.core.model.QHPABBooking;
-import com.privasia.scss.core.model.QHPABBooking;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Predicate;
 
