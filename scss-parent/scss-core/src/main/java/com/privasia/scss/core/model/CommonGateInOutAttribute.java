@@ -5,6 +5,7 @@ import java.io.Serializable;
 
 import javax.persistence.Embeddable;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.Type;
 
 import com.privasia.scss.common.enums.ImpExpFlagStatus;
@@ -79,6 +80,9 @@ public class CommonGateInOutAttribute implements Serializable {
   }
 
   public void setRejectReason(String rejectReason) {
+	  if(StringUtils.isNotEmpty(rejectReason)){
+		  rejectReason = rejectReason.toUpperCase();
+	  }
     this.rejectReason = rejectReason;
   }
 

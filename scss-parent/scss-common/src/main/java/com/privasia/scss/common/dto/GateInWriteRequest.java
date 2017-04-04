@@ -122,10 +122,6 @@ public class GateInWriteRequest implements Serializable {
     this.importContainers = importContainers;
   }
 
-  public static long getSerialversionuid() {
-    return serialVersionUID;
-  }
-
   public String getUserName() {
     return userName;
   }

@@ -88,7 +88,7 @@ public class OpusGateOutWriteService {
 
     LocalDateTime gateOutDateTime = CommonUtil.getParsedDate(gateOutWriteRequest.getGateOUTDateTime());
     opusGateOutWriteRequest.setGateOUTDateTime(DateUtil.getJsonDateFromDate(gateOutDateTime));
-    opusGateOutWriteRequest.setHaulageCode("HAUCD");
+    opusGateOutWriteRequest.setHaulageCode(gateOutWriteRequest.getHaulageCode());
     opusGateOutWriteRequest.setLaneNo(gateOutWriteRequest.getLaneNo());
     opusGateOutWriteRequest.setTruckHeadNo(gateOutWriteRequest.getTruckHeadNo());
     opusGateOutWriteRequest.setUserID(gateOutWriteRequest.getUserName());

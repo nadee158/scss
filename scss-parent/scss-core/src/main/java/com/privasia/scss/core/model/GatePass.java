@@ -19,6 +19,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.Type;
 
 import com.privasia.scss.common.enums.ContainerPosition;
@@ -337,7 +338,10 @@ public class GatePass extends AuditEntity implements Serializable {
   }
 
   public void setGateOutRemarks(String gateOutRemarks) {
-    this.gateOutRemarks = gateOutRemarks;
+	  if(StringUtils.isNotEmpty(gateOutRemarks)){
+		  gateOutRemarks = gateOutRemarks.toUpperCase();
+	  }
+	  this.gateOutRemarks = gateOutRemarks;
   }
 
   public String getYardPosition() {
@@ -385,6 +389,9 @@ public class GatePass extends AuditEntity implements Serializable {
   }
 
   public void setCosmosSeal01Origin(String cosmosSeal01Origin) {
+	  if(StringUtils.isNotEmpty(cosmosSeal01Origin)){
+		  cosmosSeal01Origin = cosmosSeal01Origin.toUpperCase();
+	  }
     this.cosmosSeal01Origin = cosmosSeal01Origin;
   }
 
@@ -393,6 +400,9 @@ public class GatePass extends AuditEntity implements Serializable {
   }
 
   public void setCosmosSeal01Type(String cosmosSeal01Type) {
+	  if(StringUtils.isNotEmpty(cosmosSeal01Type)){
+		  cosmosSeal01Type = cosmosSeal01Type.toUpperCase();
+	  }
     this.cosmosSeal01Type = cosmosSeal01Type;
   }
 
@@ -401,6 +411,9 @@ public class GatePass extends AuditEntity implements Serializable {
   }
 
   public void setCosmosSeal01Number(String cosmosSeal01Number) {
+	  if(StringUtils.isNotEmpty(cosmosSeal01Number)){
+		  cosmosSeal01Number = cosmosSeal01Number.toUpperCase();
+	  }
     this.cosmosSeal01Number = cosmosSeal01Number;
   }
 
@@ -409,6 +422,9 @@ public class GatePass extends AuditEntity implements Serializable {
   }
 
   public void setCosmosSeal02Origin(String cosmosSeal02Origin) {
+	  if(StringUtils.isNotEmpty(cosmosSeal02Origin)){
+		  cosmosSeal02Origin = cosmosSeal02Origin.toUpperCase();
+	  }
     this.cosmosSeal02Origin = cosmosSeal02Origin;
   }
 
@@ -417,6 +433,9 @@ public class GatePass extends AuditEntity implements Serializable {
   }
 
   public void setCosmosSeal02Type(String cosmosSeal02Type) {
+	  if(StringUtils.isNotEmpty(cosmosSeal02Type)){
+		  cosmosSeal02Type = cosmosSeal02Type.toUpperCase();
+	  }
     this.cosmosSeal02Type = cosmosSeal02Type;
   }
 
@@ -425,6 +444,9 @@ public class GatePass extends AuditEntity implements Serializable {
   }
 
   public void setCosmosSeal02Number(String cosmosSeal02Number) {
+	  if(StringUtils.isNotEmpty(cosmosSeal02Type)){
+		  cosmosSeal02Type = cosmosSeal02Type.toUpperCase();
+	  }
     this.cosmosSeal02Number = cosmosSeal02Number;
   }
 
