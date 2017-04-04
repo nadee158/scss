@@ -1,7 +1,6 @@
 package com.privasia.scss.common.dto;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -15,12 +14,15 @@ public class GateOutWriteRequest implements Serializable {
 	private String haulageCode = StringUtils.EMPTY;// -long (clientID)
 	private String truckHeadNo = StringUtils.EMPTY;// -string
 	private String truckPlateNo = StringUtils.EMPTY;// -long (clientID)
-	private long gateOutClient = 0l;
-	private long cardID = 0l;
+	private long gateOutClient;
+	private long cardID;
+	private long gateOutBooth;
 	private String gateOUTDateTime = StringUtils.EMPTY;// -string
-
+	private boolean cancelPickUP = false;
 	private List<ExportContainer> exportContainers;
 	private List<ImportContainer> importContainers;
+	private String impExpFlag;
+	private byte[] transactionZipFile;
 
 	public String getLaneNo() {
 		return laneNo;
@@ -106,19 +108,36 @@ public class GateOutWriteRequest implements Serializable {
 		this.userName = userName;
 	}
 
-	public void initializeWithDefaultValues() {
-		this.userName = "USER01";
-		this.laneNo = "GATE00";// -long (clientID)
-		this.haulageCode = "HAN";// -long (clientID)
-		this.truckHeadNo = "HAN001";// -string
-		this.truckPlateNo = "60P1-2933";// -long (clientID)
-		this.gateOUTDateTime = "04/11/2017 01:22:55 am";// -string
-		this.exportContainers = new ArrayList<ExportContainer>();
-		this.exportContainers.add((new ExportContainer()).initializeWithDefaultValues("VSLCONT0011"));
-		this.exportContainers.add((new ExportContainer()).initializeWithDefaultValues("QASS1234003"));
-		this.importContainers = new ArrayList<ImportContainer>();
-		this.importContainers.add((new ImportContainer()).initializeWithDefaultValues("ASIA1234562"));
-		this.importContainers.add((new ImportContainer()).initializeWithDefaultValues("ASIA1234563"));
+	public String getImpExpFlag() {
+		return impExpFlag;
 	}
 
+	public void setImpExpFlag(String impExpFlag) {
+		this.impExpFlag = impExpFlag;
+	}
+
+	public long getGateOutBooth() {
+		return gateOutBooth;
+	}
+
+	public void setGateOutBooth(long gateOutBooth) {
+		this.gateOutBooth = gateOutBooth;
+	}
+
+	public boolean isCancelPickUP() {
+		return cancelPickUP;
+	}
+
+	public void setCancelPickUP(boolean cancelPickUP) {
+		this.cancelPickUP = cancelPickUP;
+	}
+
+	public byte[] getTransactionZipFile() {
+		return transactionZipFile;
+	}
+
+	public void setTransactionZipFile(byte[] transactionZipFile) {
+		this.transactionZipFile = transactionZipFile;
+	}
+	
 }

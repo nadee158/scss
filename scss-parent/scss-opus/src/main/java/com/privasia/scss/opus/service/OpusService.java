@@ -396,6 +396,10 @@ public class OpusService {
     importContainer.getSealAttribute().setSeal02Number(goReadResponseImportContainer.getContainerSeal2_NO());
     importContainer.getSealAttribute().setSeal01Origin(goReadResponseImportContainer.getContainerSeal1_SL());
     importContainer.getSealAttribute().setSeal02Origin(goReadResponseImportContainer.getContainerSeal2_SL());
+    importContainer.getSealAttribute().setOpuSeal01Number(goReadResponseImportContainer.getContainerSeal1_NO());
+    importContainer.getSealAttribute().setOpusSeal02Number(goReadResponseImportContainer.getContainerSeal2_NO());
+    importContainer.getSealAttribute().setOpusSeal01Origin(goReadResponseImportContainer.getContainerSeal1_SL());
+    importContainer.getSealAttribute().setOpusSeal02Origin(goReadResponseImportContainer.getContainerSeal2_SL());
     return importContainer;
   }
 

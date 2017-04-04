@@ -1,5 +1,6 @@
 package com.privasia.scss.gateout.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -21,12 +22,15 @@ import com.privasia.scss.common.dto.ShipSCNDTO;
 import com.privasia.scss.common.dto.SystemUserDTO;
 import com.privasia.scss.common.enums.ShipStatus;
 import com.privasia.scss.common.enums.TransactionStatus;
+import com.privasia.scss.common.util.DateUtil;
 import com.privasia.scss.core.exception.BusinessException;
 import com.privasia.scss.core.exception.ResultsNotFoundException;
+import com.privasia.scss.core.model.Client;
 import com.privasia.scss.core.model.Exports;
 import com.privasia.scss.core.model.ExportsQ;
 import com.privasia.scss.core.model.ShipCode;
 import com.privasia.scss.core.model.ShipSCN;
+import com.privasia.scss.core.model.SystemUser;
 import com.privasia.scss.core.repository.ClientRepository;
 import com.privasia.scss.core.repository.ExportsQRepository;
 import com.privasia.scss.core.repository.ExportsRepository;
@@ -85,63 +89,53 @@ public class ExportGateOutService {
         exportsRepository.fetchInProgressTransaction(gateOutRequest.getCardID(), TransactionStatus.INPROGRESS);
     List<Exports> inprogressExpList = optExpList.orElseThrow(() -> new BusinessException(
         "No InProgress Export Transaction for the scan card ! " + gateOutRequest.getCardID()));
+   
     List<ExportContainer> exportContainerList = new ArrayList<ExportContainer>();
+    
     inprogressExpList.forEach(export -> {
       ExportContainer exportContainer = new ExportContainer();
       modelMapper.map(export, exportContainer);
 
-      if (!(export.getBaseCommonGateInOutAttribute() == null)) {
-        exportContainer.setBaseCommonGateInOutAttribute(new BaseCommonGateInOutDTO());
-        if (!(export.getBaseCommonGateInOutAttribute().getCard() == null)) {
-          exportContainer.getBaseCommonGateInOutAttribute()
-              .setCard(export.getBaseCommonGateInOutAttribute().getCard().getCardID());
-        }
-        if (!(export.getBaseCommonGateInOutAttribute().getEirStatus() == null)) {
-          exportContainer.getBaseCommonGateInOutAttribute()
-              .setEirStatus(export.getBaseCommonGateInOutAttribute().getEirStatus().getValue());
-        }
-        if (!(export.getBaseCommonGateInOutAttribute().getGateOutBoothClerk() == null)) {
-          SystemUserDTO gateOutBoothClerk = new SystemUserDTO();
-          modelMapper.map(export.getBaseCommonGateInOutAttribute().getGateOutBoothClerk(), gateOutBoothClerk);
-          exportContainer.getBaseCommonGateInOutAttribute().setGateOutBoothClerk(gateOutBoothClerk);
-        }
-        if (!(export.getBaseCommonGateInOutAttribute().getGateOutClient() == null)) {
-          ClientDTO gateOutClient = new ClientDTO();
-          modelMapper.map(export.getBaseCommonGateInOutAttribute().getGateOutClient(), gateOutClient);
-          exportContainer.getBaseCommonGateInOutAttribute().setGateOutClient(gateOutClient);
-        }
-        exportContainer.getBaseCommonGateInOutAttribute()
-            .setGateOutBoothNo(export.getBaseCommonGateInOutAttribute().getGateOutBoothNo());
+      if (export.getBaseCommonGateInOutAttribute() != null) {
+    	  	exportContainer.setBaseCommonGateInOutAttribute(new BaseCommonGateInOutDTO());
+	        if (export.getBaseCommonGateInOutAttribute().getCard() != null) {
+	          exportContainer.getBaseCommonGateInOutAttribute()
+	              .setCard(export.getBaseCommonGateInOutAttribute().getCard().getCardID());
+	        }
+	        if (export.getBaseCommonGateInOutAttribute().getEirStatus() != null) {
+	          exportContainer.getBaseCommonGateInOutAttribute()
+	              .setEirStatus(export.getBaseCommonGateInOutAttribute().getEirStatus().getValue());
+	        }
+	        if (export.getBaseCommonGateInOutAttribute().getGateOutBoothClerk() != null) {
+		          SystemUserDTO gateOutBoothClerk = new SystemUserDTO();
+		          modelMapper.map(export.getBaseCommonGateInOutAttribute().getGateOutBoothClerk(), gateOutBoothClerk);
+		          exportContainer.getBaseCommonGateInOutAttribute().setGateOutBoothClerk(gateOutBoothClerk);
+	        }
+	        if (export.getBaseCommonGateInOutAttribute().getGateOutClient() != null) {
+		          ClientDTO gateOutClient = new ClientDTO();
+		          modelMapper.map(export.getBaseCommonGateInOutAttribute().getGateOutClient(), gateOutClient);
+		          exportContainer.getBaseCommonGateInOutAttribute().setGateOutClient(gateOutClient);
+	        }
+	       
+	        if (export.getBaseCommonGateInOutAttribute().getHpatBooking() != null) {
+	          exportContainer.getBaseCommonGateInOutAttribute()
+	              .setHpatBooking(export.getBaseCommonGateInOutAttribute().getHpatBooking().getBookingID());
+	        }
 
-
-
-        if (!(export.getBaseCommonGateInOutAttribute().getHpatBooking() == null)) {
-          exportContainer.getBaseCommonGateInOutAttribute()
-              .setHpatBooking(export.getBaseCommonGateInOutAttribute().getHpatBooking().getBookingID());
-        }
-
-
-        exportContainer.getBaseCommonGateInOutAttribute()
-            .setPmHeadNo(export.getBaseCommonGateInOutAttribute().getPmHeadNo());
-        exportContainer.getBaseCommonGateInOutAttribute()
-            .setPmPlateNo(export.getBaseCommonGateInOutAttribute().getPmHeadNo());
-        exportContainer.getBaseCommonGateInOutAttribute()
-            .setTimeGateOut(export.getBaseCommonGateInOutAttribute().getTimeGateOut());
-        exportContainer.getBaseCommonGateInOutAttribute()
-            .setTimeGateOutBooth(export.getBaseCommonGateInOutAttribute().getTimeGateOutBooth());
-        exportContainer.getBaseCommonGateInOutAttribute()
-            .setTimeGateOutOk(export.getBaseCommonGateInOutAttribute().getTimeGateOutOk());
+	        exportContainer.getBaseCommonGateInOutAttribute()
+	            .setPmHeadNo(export.getBaseCommonGateInOutAttribute().getPmHeadNo());
+	        exportContainer.getBaseCommonGateInOutAttribute()
+	            .setPmPlateNo(export.getBaseCommonGateInOutAttribute().getPmHeadNo());
+		    
       }
-
-
-      // adding log info
-      exportContainerList.add(exportContainer);
-      if (StringUtils.isEmpty(gateOutRequest.getExpContainer1())) {
-        gateOutRequest.setExpContainer1(export.getContainer().getContainerNumber());
-      } else {
-        gateOutRequest.setExpContainer2(export.getContainer().getContainerNumber());
-      }
-      gateOutRequest.setTruckHeadNo(export.getBaseCommonGateInOutAttribute().getPmHeadNo());
+	      // adding log info
+	      exportContainerList.add(exportContainer);
+	      if (StringUtils.isEmpty(gateOutRequest.getExpContainer1())) {
+	        gateOutRequest.setExpContainer1(export.getContainer().getContainerNumber());
+	      } else {
+	        gateOutRequest.setExpContainer2(export.getContainer().getContainerNumber());
+	      }
+	      gateOutRequest.setTruckHeadNo(export.getBaseCommonGateInOutAttribute().getPmHeadNo());
     });
 
     return exportContainerList;
@@ -189,8 +183,7 @@ public class ExportGateOutService {
   }
 
   @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
-  public void updateGateOutExport(GateOutWriteRequest gateOutWriteRequest) {
-
+  public boolean saveGateOutInfo(GateOutWriteRequest gateOutWriteRequest, Client gateOutClient, SystemUser gateOutClerk, Client booth) {
 
     Optional<List<Exports>> optExpList =
         exportsRepository.fetchInProgressTransaction(gateOutWriteRequest.getCardID(), TransactionStatus.INPROGRESS);
@@ -204,7 +197,17 @@ public class ExportGateOutService {
             .stream().filter(e -> (e.getContainer() != null) && (StringUtils
                 .equals(e.getContainer().getContainerNumber(), exports.getContainer().getContainerNumber())))
             .findFirst().get();
-        modelMapper.map(exportContainer, exports);
+        if(StringUtils.isEmpty(exportContainer.getBaseCommonGateInOutAttribute().getEirStatus()))
+        	throw new BusinessException("");
+        exports.getBaseCommonGateInOutAttribute().setEirStatus(TransactionStatus.fromCode(exportContainer.getBaseCommonGateInOutAttribute().getEirStatus()));
+        exports.getBaseCommonGateInOutAttribute().setTimeGateOut(DateUtil.getLocalDateFromString(gateOutWriteRequest.getGateOUTDateTime()));
+        exports.getBaseCommonGateInOutAttribute().setTimeGateOutOk(LocalDateTime.now());
+        exports.getBaseCommonGateInOutAttribute().setGateOutBoothClerk(gateOutClerk);
+        exports.getBaseCommonGateInOutAttribute().setGateOutBoothNo(String.valueOf(booth.getClientID()));
+        exports.getBaseCommonGateInOutAttribute().setGateOutClerk(gateOutClerk);
+        exports.getBaseCommonGateInOutAttribute().setGateOutClient(gateOutClient);
+        exports.getCommonGateInOut().setRejectReason(exportContainer.getCommonGateInOut().getRejectReason()); // need to set to UPPERCASE
+        
         exportsRepository.save(exports);
 
         Optional<ExportsQ> exportQOpt = exportsQRepository.findOne(exports.getExportID());
@@ -217,11 +220,11 @@ public class ExportGateOutService {
       } else {
         throw new BusinessException("Invalid Request to Update Export !");
       }
+      
     });
+    
+    return true;
   }
 
-  public List<ExportContainer> saveGateOutInfo(GateOutWriteRequest gateOutWriteRequest) {
-    throw new BusinessException("METHOD NOT IMPLEMENTED YET!");
-  }
 
 }

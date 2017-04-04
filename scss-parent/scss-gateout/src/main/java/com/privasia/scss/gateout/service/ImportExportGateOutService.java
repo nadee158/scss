@@ -21,14 +21,17 @@ import com.privasia.scss.common.dto.GateOutWriteRequest;
 import com.privasia.scss.common.dto.ImportContainer;
 import com.privasia.scss.common.dto.InProgressTrxDTO;
 import com.privasia.scss.common.enums.GateInOutStatus;
+import com.privasia.scss.common.enums.ImpExpFlagStatus;
 import com.privasia.scss.common.enums.ReadWriteStatus;
 import com.privasia.scss.common.util.DateUtil;
 import com.privasia.scss.core.exception.BusinessException;
 import com.privasia.scss.core.exception.ResultsNotFoundException;
 import com.privasia.scss.core.model.Card;
 import com.privasia.scss.core.model.Client;
+import com.privasia.scss.core.model.SystemUser;
 import com.privasia.scss.core.repository.CardRepository;
 import com.privasia.scss.core.repository.ClientRepository;
+import com.privasia.scss.core.repository.SystemUserRepository;
 import com.privasia.scss.core.security.model.UserContext;
 import com.privasia.scss.core.service.CommonCardService;
 import com.privasia.scss.opus.dto.OpusGateOutReadRequest;
@@ -62,6 +65,8 @@ public class ImportExportGateOutService {
   private CardRepository cardRepository;
 
   private Gson gson;
+  
+  private SystemUserRepository systemUserRepository;
 
 
   @Autowired
@@ -108,8 +113,13 @@ public class ImportExportGateOutService {
   public void setGson(Gson gson) {
     this.gson = gson;
   }
+  
+  @Autowired
+  public void setSystemUserRepository(SystemUserRepository systemUserRepository) {
+	this.systemUserRepository = systemUserRepository;
+  }
 
-  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
   public GateOutReponse populateGateOut(GateOutRequest gateOutRequest) { // gate out read
 
     Optional<Card> cardOpt = cardRepository.findOne(gateOutRequest.getCardID());
@@ -118,6 +128,12 @@ public class ImportExportGateOutService {
     gateOutRequest.setComID(card.getCompany().getCompanyID());
 
     gateOutRequest.setHaulageCode(commonCardService.getHaulierCodeByScanCard(card));
+    
+    Optional<Client> clientOpt = clientRepository.findOne(gateOutRequest.getClientID());
+    Client client = clientOpt
+        .orElseThrow(() -> new ResultsNotFoundException("Invalid lane ID ! " + gateOutRequest.getClientID()));
+    if(StringUtils.isEmpty(client.getLaneNo())) throw new BusinessException("Lane no does not setup for client "+client.getClientID());
+    gateOutRequest.setLaneNo(client.getLaneNo());
 
     InProgressTrxDTO trxDTO = commonCardService.isTrxInProgress(gateOutRequest.getCardID());
 
@@ -149,12 +165,6 @@ public class ImportExportGateOutService {
       UserContext userContext = (UserContext) authentication.getPrincipal();
       log.info("userContext.getUsername() " + userContext.getUsername());
       gateOutRequest.setUserName(userContext.getUsername());
-
-      Optional<Client> clientOpt = clientRepository.findOne(gateOutRequest.getClientID());
-      Client client = clientOpt
-          .orElseThrow(() -> new ResultsNotFoundException("Invalid lane ID ! " + gateOutRequest.getClientID()));
-      gateOutRequest.setLaneNo(client.getLaneNo());
-      gateOutRequest.setLaneNo("GATE00");
 
       // call opus -
       OpusGateOutReadRequest gateOutReadRequest = opusGateOutReadService.constructOpenGateOutRequest(gateOutRequest);
@@ -198,6 +208,31 @@ public class ImportExportGateOutService {
 
   @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
   public GateOutReponse saveGateOutInfo(GateOutWriteRequest gateOutWriteRequest) {
+    
+    Optional<Card> cardOpt = cardRepository.findOne(gateOutWriteRequest.getCardID());
+    Card card =
+        cardOpt.orElseThrow(() -> new ResultsNotFoundException("Invalid Scan Card ID ! " + gateOutWriteRequest.getCardID()));
+    
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    UserContext userContext = (UserContext) authentication.getPrincipal();
+    log.info("userContext.getUsername() " + userContext.getUsername());
+    gateOutWriteRequest.setUserName(userContext.getUsername());
+    Optional<SystemUser> systemUserOpt  = systemUserRepository.findOne(userContext.getUserID());
+    SystemUser user =
+    		systemUserOpt.orElseThrow(() -> new ResultsNotFoundException("Invalid Login User ! " + userContext.getUsername()));
+    
+    Optional<Client> clientOpt = clientRepository.findOne(gateOutWriteRequest.getGateOutClient());
+    Client client = clientOpt
+        .orElseThrow(() -> new ResultsNotFoundException("Invalid lane ID ! " + gateOutWriteRequest.getGateOutClient()));
+    if(StringUtils.isEmpty(client.getLaneNo())) throw new BusinessException("Lane no does not setup for client "+client.getClientID());
+    gateOutWriteRequest.setLaneNo(client.getLaneNo());
+    
+    Optional<Client> boothOpt = clientRepository.findOne(gateOutWriteRequest.getGateOutBooth());
+    Client booth = boothOpt
+        .orElseThrow(() -> new ResultsNotFoundException("Invalid Booth ID ! " + gateOutWriteRequest.getGateOutBooth()));
+	
+    gateOutWriteRequest.setHaulageCode(commonCardService.getHaulierCodeByScanCard(card));
+    
     List<ImportContainer> importContainers = null;
     List<ExportContainer> exportContainers = null;
 
@@ -212,16 +247,28 @@ public class ImportExportGateOutService {
       // throw new business exception with constructed message - there is
       // an error
       throw new BusinessException(errorMessage);
+      
     }
+    
+    if(StringUtils.isEmpty(gateOutWriteRequest.getImpExpFlag())) throw new BusinessException("Invalid GateOutWriteRequest Empty ImpExpFlag");
+    ImpExpFlagStatus impExpFlag = ImpExpFlagStatus.fromValue(gateOutWriteRequest.getImpExpFlag());
+    
+    switch (impExpFlag) {
+	case IMPORT:
+		importGateOutService.saveGateOutInfo(gateOutWriteRequest, client, user, booth);
+		break;
+	case EXPORT:
+		exportGateOutService.saveGateOutInfo(gateOutWriteRequest, client, user, booth); 
+		break;
+	case IMPORT_EXPORT:
+		importGateOutService.saveGateOutInfo(gateOutWriteRequest, client, user, booth);
+		exportGateOutService.saveGateOutInfo(gateOutWriteRequest, client, user, booth);
+		break;
+	default:
+		break;
+	}
 
-    if (!(gateOutWriteRequest.getExportContainers() == null || gateOutWriteRequest.getExportContainers().isEmpty())) {
-      exportContainers = exportGateOutService.saveGateOutInfo(gateOutWriteRequest);
-    }
-
-    if (!(gateOutWriteRequest.getImportContainers() == null || gateOutWriteRequest.getImportContainers().isEmpty())) {
-      importContainers = importGateOutService.saveGateOutInfo(gateOutWriteRequest);
-    }
-
+ 
     GateOutReponse gateOutReponse = new GateOutReponse();
     gateOutReponse.setImportContainers(importContainers);
     gateOutReponse.setExportContainers(exportContainers);
