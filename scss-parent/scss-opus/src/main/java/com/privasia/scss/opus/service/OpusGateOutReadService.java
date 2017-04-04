@@ -95,12 +95,21 @@ public class OpusGateOutReadService {
 
     log.info(response.toString());
 
+    opusRequestResponseDTO.setResponse(gson.toJson(response.getBody()));
+
     // update to db
-    // while(future.isDone()){
-    // opusRequestResponseDTO.setResponse(gson.toJson(response.getBody()));
-    // opusRequestResponseService.updateOpusResponse(opusRequestResponseDTO, future);
-    // }
-    //
+    /*
+     * while (true) { if (future.isDone()) { try {
+     * opusRequestResponseService.updateOpusResponse(opusRequestResponseDTO, future);
+     * System.out.println("Result from asynchronous process - " + future.get()); } catch
+     * (InterruptedException | ExecutionException e) { e.printStackTrace(); } System.out.println(
+     * "WHILE LOOP BROKEN!!!!. "); break; } System.out.println("Continue doing something else. ");
+     * try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace();
+     * System.out.println("WHILE LOOP BROKEN ON THREAD EXCEPTION!!!!. "); break; } }
+     */
+
+
+
     return response.getBody();
   }
 
