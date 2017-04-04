@@ -10,15 +10,12 @@ import org.springframework.boot.web.support.ErrorPageFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.filter.CharacterEncodingFilter;
-
 
 import com.privasia.scss.core.util.service.CurrentDateTimeService;
 
 @Configuration
-@EnableAsync
 @Import({PersistenceContext.class, ModelMapConfig.class})
 public class SCSSEntryPoint {
 
