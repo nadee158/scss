@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.privasia.scss.common.dto.BaseCommonGateInOutDTO;
 import com.privasia.scss.common.dto.CancelPickUpDTO;
 import com.privasia.scss.common.dto.ClientDTO;
+import com.privasia.scss.common.dto.CommonSealDTO;
 import com.privasia.scss.common.dto.ConfirmedKioskDTO;
 import com.privasia.scss.common.dto.ExportContainer;
 import com.privasia.scss.common.dto.GateOutRequest;
@@ -287,7 +288,8 @@ public class ImportGateOutService {
       gatePass.getBaseCommonGateInOutAttribute()
           .setTimeGateOut(importContainer.getBaseCommonGateInOutAttribute().getTimeGateIn());
       gatePass.getBaseCommonGateInOutAttribute().setTimeGateOutOk(timeGateOutOk);
-
+      
+ 
       gatePassRepository.save(gatePass);
     });
   }
@@ -320,13 +322,49 @@ public class ImportGateOutService {
 		      
 		      gatePass.getBaseCommonGateInOutAttribute().setEirStatus(TransactionStatus.fromCode(importContainer.getBaseCommonGateInOutAttribute().getEirStatus()));
 		      gatePass.getBaseCommonGateInOutAttribute().setTimeGateOut(DateUtil.getLocalDateFromString(gateOutWriteRequest.getGateOUTDateTime()));
+		      gatePass.getBaseCommonGateInOutAttribute().setTimeGateOutBooth(DateUtil.getLocalDateFromString(gateOutWriteRequest.getGateOUTDateTime()));
 		      gatePass.getBaseCommonGateInOutAttribute().setTimeGateOutOk(LocalDateTime.now());
 		      gatePass.getBaseCommonGateInOutAttribute().setGateOutBoothClerk(gateOutClerk);
 		      gatePass.getBaseCommonGateInOutAttribute().setGateOutBoothNo(String.valueOf(booth.getClientID()));
 		      gatePass.getBaseCommonGateInOutAttribute().setGateOutClerk(gateOutClerk);
 		      gatePass.getBaseCommonGateInOutAttribute().setGateOutClient(gateOutClient);
 		      gatePass.getCommonGateInOut().setRejectReason(importContainer.getCommonGateInOut().getRejectReason()); // need to set to UPPERCASE
-		        
+		      gatePass.setGateOutRemarks(importContainer.getGateOutRemarks()); // need to set to UPPERCASE
+		      gatePass.setGateOutLaneNo(gateOutClient.getLaneNo());
+		      
+		      CommonSealAttribute sealAttribute = gatePass.getSealAttribute();
+		      if(sealAttribute==null)
+		    	  sealAttribute = new CommonSealAttribute();
+		      CommonSealDTO sealDTO =  importContainer.getSealAttribute();
+		      if(sealDTO!=null){
+		    	  sealAttribute.setSeal01Number(sealDTO.getSeal01Number());
+		    	  sealAttribute.setSeal02Number(sealDTO.getSeal02Number());
+		    	  sealAttribute.setSeal01Origin(sealDTO.getSeal01Origin());
+		    	  sealAttribute.setSeal02Origin(sealDTO.getSeal02Origin());
+		    	  sealAttribute.setSeal01Type(sealDTO.getSeal01Type());
+		    	  sealAttribute.setSeal02Type(sealDTO.getSeal02Type());
+		    	  gatePass.setSealAttribute(sealAttribute);
+		    	  
+		    	  gatePass.setCosmosSeal01Number(importContainer.getCosmosSeal01Number());
+		    	  gatePass.setCosmosSeal02Number(importContainer.getCosmosSeal01Number());
+		    	  gatePass.setCosmosSeal01Origin(importContainer.getCosmosSeal01Origin());
+		    	  gatePass.setCosmosSeal02Origin(importContainer.getCosmosSeal02Origin());
+		    	  gatePass.setCosmosSeal01Type(importContainer.getCosmosSeal01Type());
+		    	  gatePass.setCosmosSeal02Type(importContainer.getCosmosSeal02Type());
+		    	  gatePass.setRetrievedCosmos(importContainer.isRetrievedCosmos());
+		    	  
+		    	/*
+	                 + ", gtp_in_out = " + SQL.format(inOrOut)
+	           
+	                 + ", gtp_gate_out_lane_no = " + SQL.format(f.getLaneNo())
+		    	  + ", is_change_seal = " + SQL.format(isChangeSeal)
+	                 + ", cont_length = " + SQL.format(contLength)
+		    	  
+		    	  if(StringUtils.isNotEmpty(importContainer.getCosmosSeal01Number())){
+		    		  gatePass.setSealChange(true);
+		    	  }*/
+		      }
+		      
 		      gatePassRepository.save(gatePass);
 		    });
 		    

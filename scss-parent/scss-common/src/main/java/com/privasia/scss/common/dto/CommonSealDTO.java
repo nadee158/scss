@@ -28,18 +28,6 @@ public class CommonSealDTO implements Serializable {
 
 	private String seal02Number;
 
-	private String opusSeal01Origin;
-
-	private String opusSeal01Type;
-
-	private String opuSeal01Number;
-
-	private String opusSeal02Origin;
-
-	private String opusSeal02Type;
-
-	private String opusSeal02Number;
-
 	public String getSeal01Origin() {
 		return seal01Origin;
 	}
@@ -86,54 +74,6 @@ public class CommonSealDTO implements Serializable {
 
 	public void setSeal02Number(String seal02Number) {
 		this.seal02Number = seal02Number;
-	}
-
-	public String getOpusSeal01Origin() {
-		return opusSeal01Origin;
-	}
-
-	public void setOpusSeal01Origin(String opusSeal01Origin) {
-		this.opusSeal01Origin = opusSeal01Origin;
-	}
-
-	public String getOpusSeal01Type() {
-		return opusSeal01Type;
-	}
-
-	public void setOpusSeal01Type(String opusSeal01Type) {
-		this.opusSeal01Type = opusSeal01Type;
-	}
-
-	public String getOpuSeal01Number() {
-		return opuSeal01Number;
-	}
-
-	public void setOpuSeal01Number(String opuSeal01Number) {
-		this.opuSeal01Number = opuSeal01Number;
-	}
-
-	public String getOpusSeal02Origin() {
-		return opusSeal02Origin;
-	}
-
-	public void setOpusSeal02Origin(String opusSeal02Origin) {
-		this.opusSeal02Origin = opusSeal02Origin;
-	}
-
-	public String getOpusSeal02Type() {
-		return opusSeal02Type;
-	}
-
-	public void setOpusSeal02Type(String opusSeal02Type) {
-		this.opusSeal02Type = opusSeal02Type;
-	}
-
-	public String getOpusSeal02Number() {
-		return opusSeal02Number;
-	}
-
-	public void setOpusSeal02Number(String opusSeal02Number) {
-		this.opusSeal02Number = opusSeal02Number;
 	}
 
 	public CommonSealDTO initializeWithDefaultValues() {
