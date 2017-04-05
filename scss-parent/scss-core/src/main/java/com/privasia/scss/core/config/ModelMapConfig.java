@@ -83,6 +83,9 @@ public class ModelMapConfig {
     modelMapper.addConverter(ModelMapEnumConverter.convertStringToCompanyStatus());
     modelMapper.addConverter(ModelMapEnumConverter.convertCompanyStatusToString());
 
+    modelMapper.addConverter(ModelMapEnumConverter.convertReadWriteStatusToString());
+    modelMapper.addConverter(ModelMapEnumConverter.convertStringToReadWriteStatus());
+
     return modelMapper;
   }
 

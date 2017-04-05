@@ -18,7 +18,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.privasia.scss.core.exception.ResultsNotFoundException;
+import com.privasia.scss.core.model.Card;
 import com.privasia.scss.core.model.OpusRequestResponse;
+import com.privasia.scss.core.repository.CardRepository;
 import com.privasia.scss.core.repository.OpusRequestResponseRepository;
 import com.privasia.scss.opus.dto.OpusRequestResponseDTO;
 
@@ -35,6 +38,13 @@ public class OpusRequestResponseService {
 
   private ModelMapper modelMapper;
 
+  private CardRepository cardRepository;
+
+  @Autowired
+  public void setCardRepository(CardRepository cardRepository) {
+    this.cardRepository = cardRepository;
+  }
+
   @Autowired
   public void setOpusRepository(OpusRequestResponseRepository opusRepository) {
     this.opusRepository = opusRepository;
@@ -49,9 +59,22 @@ public class OpusRequestResponseService {
   @Transactional(value = "transactionManager", propagation = Propagation.REQUIRES_NEW, readOnly = false)
   public Future<Long> saveOpusRequest(OpusRequestResponseDTO opusRequestResponseDTO) {
 
-    OpusRequestResponse opusRequestResponse = modelMapper.map(opusRequestResponseDTO, OpusRequestResponse.class);
-    opusRequestResponse.setSendTime(LocalDateTime.now());
-    opusRequestResponse = opusRepository.save(opusRequestResponse);
+    OpusRequestResponse opusRequestResponse = null;
+    Optional<Card> cardOpt = cardRepository.findOne(opusRequestResponseDTO.getCardID());
+    Card card = cardOpt.orElseThrow(
+        () -> new ResultsNotFoundException("Invalid Scan Card ID ! " + opusRequestResponseDTO.getCardID()));
+    try {
+      opusRequestResponse = modelMapper.map(opusRequestResponseDTO, OpusRequestResponse.class);
+      // opusRequestResponse.setOpusReqResID(System.currentTimeMillis());
+      opusRequestResponse.setCard(card);
+      opusRequestResponse.setSendTime(LocalDateTime.now());
+      System.out.println("BEFORE SAVED opusRequestResponse " + opusRequestResponse);
+      opusRequestResponse = opusRepository.save(opusRequestResponse);
+      System.out.println("SAVED opusRequestResponse " + opusRequestResponse);
+    } catch (Exception e) {
+      log.error("Error Occured when update Opus Response " + opusRequestResponse);
+      log.error(e.getMessage());
+    }
     return new AsyncResult<Long>(opusRequestResponse.getOpusReqResID());
   }
 
@@ -67,6 +90,9 @@ public class OpusRequestResponseService {
         opusRequestResponse.setReceivedTime(LocalDateTime.now());
         opusRepository.save(opusRequestResponse);
       } catch (InterruptedException | ExecutionException e) {
+        log.error("Error Occured when update Opus Response " + opusRequestResponse.getOpusReqResID());
+        log.error(e.getMessage());
+      } catch (Exception e) {
         log.error("Error Occured when update Opus Response " + opusRequestResponse.getOpusReqResID());
         log.error(e.getMessage());
       }
