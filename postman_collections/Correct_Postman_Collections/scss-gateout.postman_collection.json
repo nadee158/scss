@@ -1,10 +1,11 @@
 {
-	"id": "ccd34c77-ede8-2789-7207-e8d13fc0feab",
+	"id": "239840d6-eb4d-e401-4f41-99523d4279fc",
 	"name": "scss-gateout",
 	"description": "",
 	"order": [
-		"716f9638-773d-0f63-1391-8a94708bb801",
-		"7b409eac-6824-92fc-f64d-5d5df2e3ede5"
+		"b47808a9-3309-6721-9981-06e335738ed7",
+		"69a64dbe-9460-c559-413b-98c5574074b2",
+		"d0788a72-db35-f565-03a1-873acfd12fe6"
 	],
 	"folders": [],
 	"timestamp": 1491028637537,
@@ -12,33 +13,13 @@
 	"public": false,
 	"requests": [
 		{
-			"id": "716f9638-773d-0f63-1391-8a94708bb801",
-			"headers": "Content-Type: application/json;charset=UTF-8\nX-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJURVNUVCIsInJvbGVzIjpbIkFETUlOSVNUUkFUT1IiXSwiZnVuY3Rpb25zIjpbMzI3LDM5Myw0MzIsNDY3LDYyMiw0NDMsMzYxLDUyMCw2MjEsNDI3LDQ0OCwzMTQsNzAxLDQyNCwzNzEsMzkyLDM4OCw1MTAsNDY1LDIxMSw0NjEsNDEzLDM4MSwxMTIsNDYzLDQxNiwzODAsNDE3LDQ0NiwxMTQsNDUyLDkwMSwxMTMsNDI5LDMyNSw2MjUsMzkwLDQzMywzNzYsNDM1LDM3MiwzNzgsMzg2LDQyNiw0NjgsNDE5LDQ0NywxMTEsNDI4LDM4OSwzODIsMzYyLDMyNiwzMTUsNDMwLDMzMiwzMjIsNDQxLDYyMyw0NjIsMzYwLDIyMSw0NDIsMzIxLDYyNCw0MjMsNDE0LDQ1NCw0NDQsMzMxLDM5NSw3MDIsMzk0LDQ1NiwzNzQsMzg1LDMxMiwzMTMsMzExLDMyNCwzMjMsMzgzLDQzMSwzNzksMzg3LDQ1NSwzNzUsMjIyLDQ0OSw0NjYsNDE1LDM2MywzNDAsNDY0LDM4NCwzNzcsMzkxLDQ1MSw0MTgsNDQ1XSwic3RhZmZOYW1lIjoiTU9IRCBZVVNVRiBCSU4gQUxJQVMiLCJzdGFmZk51bWJlciI6IjYwNTYiLCJ1c2VySUQiOjQsImlzcyI6Imh0dHA6Ly9zY3NzLmNvbS5teSIsImlhdCI6MTQ5MTE1ODI4OCwiZXhwIjoxNDkxMTU5MTg4fQ.xdZ_xHAAhgalUD0AlcPsbiVC9jf0jxtGkdUJ6Dj9GdmJlei2BnFZZ6blPTmqfLOjFuiODHde4ykE3xZMo4Um0w\nX-Requested-With: XMLHttpRequest\n",
-			"url": "http://localhost:8080/scss-gateout/api/gateout/populategateout",
-			"preRequestScript": null,
-			"pathVariables": {},
-			"method": "PUT",
-			"data": [],
-			"dataMode": "raw",
-			"version": 2,
-			"tests": null,
-			"currentHelper": "normal",
-			"helperAttributes": {},
-			"time": 1491158585851,
-			"name": "http://localhost:8080/scss-gateout/api/gateout/populategateout",
-			"description": "check for incomplete transactions before gate in ",
-			"collectionId": "ccd34c77-ede8-2789-7207-e8d13fc0feab",
-			"responses": [],
-			"rawModeData": "{  \r\n   \"cardID\":1998,\r\n   \"clientID\":10,\r\n   \"gateOUTDateTime\":\"04/11/2017 01:22:55 AM\"\r\n}"
-		},
-		{
-			"id": "7b409eac-6824-92fc-f64d-5d5df2e3ede5",
+			"id": "69a64dbe-9460-c559-413b-98c5574074b2",
 			"headers": "Content-Type: application/json;charset=UTF-8\nX-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJURVNUVCIsInJvbGVzIjpbIkFETUlOSVNUUkFUT1IiXSwiZnVuY3Rpb25zIjpbNDQ3LDQxMyw0MzAsMjExLDQxNSwzNzQsMzQwLDYyMyw2MjIsNDU2LDQ0MSw1MTAsMzc2LDM5MywzOTAsMzgxLDM3Nyw0MTgsNDUyLDQzMSw1MjAsMzYzLDM4OSwzMjEsMzYyLDQ1MSwxMTMsNjIxLDQzMywzODgsMzgyLDMyNCw3MDEsMzEzLDQyNCw2MjQsNDYzLDMxNCwxMTIsMzgwLDExMSwzOTUsMzYxLDMxMiwzNjAsNDI5LDExNCw0NjIsMzc5LDMyNiw0NTUsNDY1LDQ0OSw0NDYsNDU0LDM3MSw0MjgsNDM1LDQxNiw0NjcsMzMyLDMxNSwzMjUsNjI1LDQ2NiwzODUsNDI2LDQ2NCwzMjMsNDY4LDQ0Myw0NDIsMzkyLDM4Nyw0NDgsNDE0LDMyMiwzODMsMzc1LDM5MSw0MTksNDQ1LDcwMiwzMzEsOTAxLDQxNyw0MjMsNDYxLDMyNywyMjIsMzcyLDM4NCwzOTQsNDMyLDMxMSw0MjcsMzg2LDM3OCw0NDQsMjIxXSwic3RhZmZOYW1lIjoiTVVIQU1NQUQgRklSREFVWiBCSU4gQUJEVUwgSEFMSU0iLCJzdGFmZk51bWJlciI6IlAxMzQ0IiwidXNlcklEIjoyNDAxLCJpc3MiOiJodHRwOi8vc2Nzcy5jb20ubXkiLCJpYXQiOjE0ODQ1NzI5NjUsImV4cCI6MTQ4NDU3Mzg2NX0._y-oGDEgcpMhWFBFmGGVQ18ufxjtsgCg6F67JKVL9fQnyitr4MZykK94CL7DNXajoBdoNw794ULkgA7qrpa73Q\nX-Requested-With: XMLHttpRequest\n",
 			"url": "http://localhost:8080/scss-gateout/api/manualgate/open/56",
 			"pathVariables": {},
 			"preRequestScript": null,
 			"method": "PUT",
-			"collectionId": "ccd34c77-ede8-2789-7207-e8d13fc0feab",
+			"collectionId": "239840d6-eb4d-e401-4f41-99523d4279fc",
 			"data": null,
 			"dataMode": "params",
 			"name": "http://localhost:8080/scss-gateout/api/manualgate/open/56",
@@ -50,8 +31,47 @@
 			"tests": null,
 			"currentHelper": "normal",
 			"helperAttributes": "{}",
-			"isFromCollection": true,
-			"collectionRequestId": "afa3b10a-49fb-8401-a698-803e53a53723"
+			"isFromCollection": true
+		},
+		{
+			"id": "b47808a9-3309-6721-9981-06e335738ed7",
+			"headers": "Content-Type: application/json;charset=UTF-8\nX-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJURVNUVCIsInJvbGVzIjpbIkFETUlOSVNUUkFUT1IiXSwiZnVuY3Rpb25zIjpbMzExLDQ2MSw0MjcsMzIyLDM0MCwzNjIsMjIyLDYyMyw0NDYsMzkwLDM4OSw0NDIsNDI5LDcwMSwzNjAsMzE0LDQ1MiwzMjYsNDQ3LDQ0Myw5MDEsNDMwLDQ1Niw0NTUsMzkxLDQ2Niw0MzUsMzg0LDQ0NSw0NDEsNDMxLDExNCw0MTYsMzc5LDUxMCwzNzUsMTExLDM3OCwzOTQsNDE1LDM4Miw0NjQsNDQ4LDQ2Miw0MzMsMzg2LDQxOSwyMTEsNjI0LDM5Miw0MjMsMzMyLDQ1NCw0MjYsMzc3LDM4OCwyMjEsMzYzLDYyMSw0NjgsMzk1LDM4NSw0MjgsNDUxLDMxMiw0NjcsMzc2LDMyMywzNzIsNDMyLDQyNCwzODAsMzc0LDYyNSwzMjQsMzYxLDMyMSw1MjAsMzgxLDQ2NSw0MTgsNzAyLDMxNSw0NjMsNDQ5LDQ0NCw0MTMsMzMxLDQxNCwzODMsMzI3LDM5MywzMjUsNjIyLDExMywxMTIsNDE3LDM4NywzNzEsMzEzXSwic3RhZmZOYW1lIjoiTU9IRCBZVVNVRiBCSU4gQUxJQVMiLCJzdGFmZk51bWJlciI6IjYwNTYiLCJ1c2VySUQiOjQsImlzcyI6Imh0dHA6Ly9zY3NzLmNvbS5teSIsImlhdCI6MTQ5MTMyOTA2MCwiZXhwIjoxNDkxMzI5OTYwfQ.f2qHLdgFPiaBVzUxuMXGKatkRzrClAS0GD3khU9JUaB3e8R5PowRVZGOzBPNCsB-UbQyYUwLaItjg_O-3rVEPQ\nX-Requested-With: XMLHttpRequest\n",
+			"url": "http://localhost:8080/scss-gateout/api/gateout/populategateout",
+			"preRequestScript": null,
+			"pathVariables": {},
+			"method": "PUT",
+			"data": [],
+			"dataMode": "raw",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1491329081792,
+			"name": "http://localhost:8080/scss-gateout/api/gateout/populategateout",
+			"description": "check for incomplete transactions before gate in ",
+			"collectionId": "239840d6-eb4d-e401-4f41-99523d4279fc",
+			"responses": [],
+			"rawModeData": "{  \r\n   \"cardID\":1998,\r\n   \"clientID\":10,\r\n   \"gateOUTDateTime\":\"04/11/2017 01:22:55 AM\"\r\n}"
+		},
+		{
+			"id": "d0788a72-db35-f565-03a1-873acfd12fe6",
+			"headers": "Content-Type: application/json;charset=UTF-8\nX-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJURVNUVCIsInJvbGVzIjpbIkFETUlOSVNUUkFUT1IiXSwiZnVuY3Rpb25zIjpbMzc5LDM4Myw0NDksNDQ0LDQ0NSw0MjcsNDI5LDQ1MiwxMTMsMzg3LDM2MSwzNDAsMzI1LDQ2MiwzNzYsNDYzLDQ0MywzMTQsMzcyLDQ1NSwzMjQsNDIzLDYyMSw0MzMsNjI1LDQ0NiwzNzcsMzYwLDQzNSwzODEsNTIwLDQxNyw0MjQsMzIyLDQ1MSwzMjEsMzk0LDM3NCwzOTMsNDY3LDQ0Nyw0MzIsMzg4LDQ2MSw0NDIsMzg0LDQ0MSw0MTQsMzgyLDQxNSwzNzEsNDE5LDExNCwzNjIsMzI3LDM4OSw0NjQsMzkwLDQxNiwzMzIsNzAxLDQyOCwyMjEsMzEyLDQzMCwzOTEsMzE1LDM3OCwzODUsMzYzLDQyNiwzOTIsNDU0LDM3NSw0NjYsNDQ4LDMxMyw3MDIsNjIyLDMyMywzMzEsMzI2LDQ1Niw5MDEsMzgwLDQ2NSw0NjgsMTEyLDMxMSwxMTEsNDE4LDUxMCw2MjMsNjI0LDM4Niw0MTMsNDMxLDM5NSwyMTEsMjIyXSwic3RhZmZOYW1lIjoiTU9IRCBZVVNVRiBCSU4gQUxJQVMiLCJzdGFmZk51bWJlciI6IjYwNTYiLCJ1c2VySUQiOjQsImlzcyI6Imh0dHA6Ly9zY3NzLmNvbS5teSIsImlhdCI6MTQ5MTE0NjE4OSwiZXhwIjoxNDkxMTQ3MDg5fQ.5EiTeGCpa-cuNsWbwTD6m6LV9e4Cobhr1McmpVT7oLftFRMIr6A0xkzub63YjXDAwfBOlhatIIfwqXyN5VE3zQ\nX-Requested-With: XMLHttpRequest\n",
+			"url": "http://localhost:8080/scss-gateout/api/gateout/savegateoutinfo",
+			"preRequestScript": null,
+			"pathVariables": {},
+			"method": "PUT",
+			"data": [],
+			"dataMode": "raw",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1491405303614,
+			"name": "http://localhost:8080/scss-gateout/api/gateout/savegateoutinfo",
+			"description": "To tes the export container save method",
+			"collectionId": "239840d6-eb4d-e401-4f41-99523d4279fc",
+			"responses": [],
+			"rawModeData": "{\r\n   \"truckHeadNo\":\"HAN001\",\r\n   \"truckPlateNo\":\"60P1-2933\",\r\n   \"gateOutClient\":10,\r\n   \"gateOutBooth\":11,\r\n   \"cardID\":1998,\r\n   \"gateOUTDateTime\":\"04/11/2017 01:22:55 AM\",\r\n   \"cancelPickUP\":false,\r\n   \"impExpFlag\":\"IE\",\r\n   \"transactionZipFile\":[],\r\n   \"exportContainers\":[\r\n   \t   {\r\n\t     \"exportID\":10,\r\n         \"container\":{            \r\n            \"containerFullOrEmpty\":\"F\"            \r\n         },\r\n\t\t \"baseCommonGateInOutAttribute\":{\r\n\t\t    \"eirStatus\":\"A\"\r\n\t\t },\r\n         \"commonGateInOut\":{\r\n            \"rejectReason\":\"Sample Reason\"            \r\n         }, \r\n\t\t \"rtgExecustionStatus\":\"EXE\",\r\n\t\t \"rtgExecustionDateTime\":\"04/11/2017 01:22:55 AM\"\t\t \r\n      },\r\n      {\r\n         \"exportID\":11,\r\n\t\t \"container\":{           \r\n            \"containerFullOrEmpty\":\"F\"            \r\n         },\r\n\t\t \"baseCommonGateInOutAttribute\":{\r\n\t\t    \"eirStatus\":\"A\"\r\n\t\t },\r\n         \"commonGateInOut\":{    \r\n            \"rejectReason\":\"Sample Reason\"            \r\n         }, \r\n\t\t \"rtgExecustionStatus\":\"EXE\",\r\n\t\t \"rtgExecustionDateTime\":\"04/11/2017 01:22:55 AM\"\t\t \r\n      }\r\n   ],\r\n   \"importContainers\":[\r\n   \t{         \r\n         \"gatePassID\":24441450101,\r\n         \"gatePassNo\":24441450101,         \r\n         \"container\":{            \r\n            \"containerFullOrEmpty\":\"F\"           \r\n         },\r\n\t\t \"cosmosSeal01Origin\":\"L\",\r\n         \"cosmosSeal01Type\":\"SL\",\r\n         \"cosmosSeal01Number\":\"MQ133880\",\r\n         \"cosmosSeal02Origin\":\"L\",\r\n         \"cosmosSeal02Type\":\"NS\",\r\n         \"cosmosSeal02Number\":\"MQ133881\",\r\n\t\t \"sealAttribute\":{\r\n\t\t\t  \"seal01Origin\":\"L\",\r\n\t\t\t  \"seal01Type\":\"SL\",\r\n\t\t\t  \"seal01Number\":\"B109612\",\r\n\t\t\t  \"seal02Origin\":\"S\",\r\n\t\t\t  \"seal02Type\":\"SL\",\r\n\t\t\t  \"seal02Number\":\"MY0338571\"\r\n\t\t },\r\n\t\t \"baseCommonGateInOutAttribute\":{\r\n\t\t    \"eirStatus\":\"A\"\r\n\t\t },\r\n\t\t \"commonGateInOut\":{           \r\n            \"rejectReason\":\"Sample Reason\"            \r\n         },\r\n\t\t \"gateOutRemarks\":\"gateOutRemarks 2\",\r\n\t\t \"rtgExecustionStatus\":\"RGS\",\r\n\t\t \"rtgExecustionDateTime\":\"04/11/2017 01:22:55 AM\"\t\t \r\n      },\r\n      {\r\n         \"gatePassID\":24441450101,\r\n         \"gatePassNo\":24441450101,  \r\n         \"container\":{            \r\n            \"containerFullOrEmpty\":\"F\"            \r\n         },\r\n\t\t \"cosmosSeal01Origin\":\"L\",\r\n         \"cosmosSeal01Type\":\"SL\",\r\n         \"cosmosSeal01Number\":\"MQ133880\",\r\n         \"cosmosSeal02Origin\":\"L\",\r\n         \"cosmosSeal02Type\":\"NS\",\r\n         \"cosmosSeal02Number\":\"MQ133881\",\r\n\t\t \"sealAttribute\":{\r\n\t\t\t  \"seal01Origin\":\"L\",\r\n\t\t\t  \"seal01Type\":\"SL\",\r\n\t\t\t  \"seal01Number\":\"B109612\",\r\n\t\t\t  \"seal02Origin\":\"S\",\r\n\t\t\t  \"seal02Type\":\"SL\",\r\n\t\t\t  \"seal02Number\":\"MY0338571\"\r\n\t\t },\r\n\t\t \"baseCommonGateInOutAttribute\":{\r\n\t\t    \"eirStatus\":\"R\"\r\n\t\t },\r\n\t\t \"commonGateInOut\":{           \r\n            \"rejectReason\":\"Sample Reason\"            \r\n         },\r\n\t\t \"gateOutRemarks\":\"gateOutRemarks 1\",\r\n\t\t \"rtgExecustionStatus\":\"EXE\",\r\n\t\t \"rtgExecustionDateTime\":\"04/11/2017 01:22:55 AM\"\t\t \r\n      }\r\n   ]\r\n}"
 		}
 	]
 }
