@@ -27,6 +27,8 @@ public class GateInReponse implements Serializable {
   // for gate in write
   private String callCardNo;// 20161130112233,
 
+  private GateOutMessage message;
+
 
   public String getLaneNo() {
     return laneNo;
@@ -107,5 +109,14 @@ public class GateInReponse implements Serializable {
   public void setUserId(String userId) {
     this.userId = userId;
   }
+
+  public GateOutMessage getMessage() {
+    return message;
+  }
+
+  public void setMessage(GateOutMessage message) {
+    this.message = message;
+  }
+
 
 }

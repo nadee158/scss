@@ -6,115 +6,126 @@ import java.util.List;
 
 public class GateOutReponse implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 1L;
 
-	private String userID;
-	private String laneNo;// LNO01,
-	private String haulageCode;// HAUCD,
-	private String truckHeadNo;// TRUCK,
-	private String truckPlateNo;// null,
-	private String gateOUTDateTime;// 20161130112233,
+  private String userID;
+  private String laneNo;// LNO01,
+  private String haulageCode;// HAUCD,
+  private String truckHeadNo;// TRUCK,
+  private String truckPlateNo;// null,
+  private String gateOUTDateTime;// 20161130112233,
 
-	private List<ImportContainer> importContainers = new ArrayList<ImportContainer>();
+  private List<ImportContainer> importContainers = new ArrayList<ImportContainer>();
 
-	private List<ExportContainer> exportContainers = new ArrayList<ExportContainer>();
+  private List<ExportContainer> exportContainers = new ArrayList<ExportContainer>();
 
-	private List<WHODDDTO> whODDContainers = new ArrayList<WHODDDTO>();
+  private List<WHODDDTO> whODDContainers = new ArrayList<WHODDDTO>();
 
-	// for gate in write
-	private String callCardNo;// 20161130112233,
+  // for gate in write
+  private String callCardNo;// 20161130112233,
 
-	private String transactionType;
+  private String transactionType;
 
-	public String getUserID() {
-		return userID;
-	}
+  private GateOutMessage message;
 
-	public void setUserID(String userID) {
-		this.userID = userID;
-	}
+  public String getUserID() {
+    return userID;
+  }
 
-	public String getLaneNo() {
-		return laneNo;
-	}
+  public void setUserID(String userID) {
+    this.userID = userID;
+  }
 
-	public void setLaneNo(String laneNo) {
-		this.laneNo = laneNo;
-	}
+  public String getLaneNo() {
+    return laneNo;
+  }
 
-	public String getHaulageCode() {
-		return haulageCode;
-	}
+  public void setLaneNo(String laneNo) {
+    this.laneNo = laneNo;
+  }
 
-	public void setHaulageCode(String haulageCode) {
-		this.haulageCode = haulageCode;
-	}
+  public String getHaulageCode() {
+    return haulageCode;
+  }
 
-	public String getTruckHeadNo() {
-		return truckHeadNo;
-	}
+  public void setHaulageCode(String haulageCode) {
+    this.haulageCode = haulageCode;
+  }
 
-	public void setTruckHeadNo(String truckHeadNo) {
-		this.truckHeadNo = truckHeadNo;
-	}
+  public String getTruckHeadNo() {
+    return truckHeadNo;
+  }
 
-	public String getTruckPlateNo() {
-		return truckPlateNo;
-	}
+  public void setTruckHeadNo(String truckHeadNo) {
+    this.truckHeadNo = truckHeadNo;
+  }
 
-	public void setTruckPlateNo(String truckPlateNo) {
-		this.truckPlateNo = truckPlateNo;
-	}
+  public String getTruckPlateNo() {
+    return truckPlateNo;
+  }
 
-	public String getGateOUTDateTime() {
-		return gateOUTDateTime;
-	}
+  public void setTruckPlateNo(String truckPlateNo) {
+    this.truckPlateNo = truckPlateNo;
+  }
 
-	public void setGateOUTDateTime(String gateOUTDateTime) {
-		this.gateOUTDateTime = gateOUTDateTime;
-	}
+  public String getGateOUTDateTime() {
+    return gateOUTDateTime;
+  }
 
-	public List<ImportContainer> getImportContainers() {
-		return importContainers;
-	}
+  public void setGateOUTDateTime(String gateOUTDateTime) {
+    this.gateOUTDateTime = gateOUTDateTime;
+  }
 
-	public void setImportContainers(List<ImportContainer> importContainers) {
-		this.importContainers = importContainers;
-	}
+  public List<ImportContainer> getImportContainers() {
+    return importContainers;
+  }
 
-	public List<ExportContainer> getExportContainers() {
-		return exportContainers;
-	}
+  public void setImportContainers(List<ImportContainer> importContainers) {
+    this.importContainers = importContainers;
+  }
 
-	public void setExportContainers(List<ExportContainer> exportContainers) {
-		this.exportContainers = exportContainers;
-	}
+  public List<ExportContainer> getExportContainers() {
+    return exportContainers;
+  }
 
-	public String getCallCardNo() {
-		return callCardNo;
-	}
+  public void setExportContainers(List<ExportContainer> exportContainers) {
+    this.exportContainers = exportContainers;
+  }
 
-	public void setCallCardNo(String callCardNo) {
-		this.callCardNo = callCardNo;
-	}
+  public String getCallCardNo() {
+    return callCardNo;
+  }
 
-	public List<WHODDDTO> getWhODDContainers() {
-		return whODDContainers;
-	}
+  public void setCallCardNo(String callCardNo) {
+    this.callCardNo = callCardNo;
+  }
 
-	public void setWhODDContainers(List<WHODDDTO> whODDContainers) {
-		this.whODDContainers = whODDContainers;
-	}
+  public List<WHODDDTO> getWhODDContainers() {
+    return whODDContainers;
+  }
 
-	public String getTransactionType() {
-		return transactionType;
-	}
+  public void setWhODDContainers(List<WHODDDTO> whODDContainers) {
+    this.whODDContainers = whODDContainers;
+  }
 
-	public void setTransactionType(String transactionType) {
-		this.transactionType = transactionType;
-	}
+  public String getTransactionType() {
+    return transactionType;
+  }
+
+  public void setTransactionType(String transactionType) {
+    this.transactionType = transactionType;
+  }
+
+  public GateOutMessage getMessage() {
+    return message;
+  }
+
+  public void setMessage(GateOutMessage message) {
+    this.message = message;
+  }
+
 
 }
