@@ -184,44 +184,38 @@ public class ExportGateOutService {
 
   @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
   public boolean saveGateOutInfo(GateOutWriteRequest gateOutWriteRequest, Client gateOutClient, SystemUser gateOutClerk, Client booth) {
+	  
+	  List<ExportContainer> exportContainers = gateOutWriteRequest.getExportContainers();
+	  if (!(exportContainers == null || exportContainers.isEmpty())) {
+		  
+		  exportContainers.forEach(exportContainer->{
+			  Optional<Exports> optExport = exportsRepository.findOne(exportContainer.getExportID());
+			  Exports exports = optExport.orElseThrow(() -> new BusinessException(
+				        "Invalid Exports Information to Update ! " + exportContainer.getExportID()));
+			  
+			  if(StringUtils.isEmpty(exportContainer.getBaseCommonGateInOutAttribute().getEirStatus()))
+		        	throw new BusinessException("");
+		        exports.getBaseCommonGateInOutAttribute().setEirStatus(TransactionStatus.fromCode(exportContainer.getBaseCommonGateInOutAttribute().getEirStatus()));
+		        exports.getBaseCommonGateInOutAttribute().setTimeGateOut(DateUtil.getLocalDateFromString(gateOutWriteRequest.getGateOUTDateTime()));
+		        exports.getBaseCommonGateInOutAttribute().setTimeGateOutOk(LocalDateTime.now());
+		        exports.getBaseCommonGateInOutAttribute().setGateOutBoothClerk(gateOutClerk);
+		        exports.getBaseCommonGateInOutAttribute().setGateOutBoothNo(String.valueOf(booth.getClientID()));
+		        exports.getBaseCommonGateInOutAttribute().setGateOutClerk(gateOutClerk);
+		        exports.getBaseCommonGateInOutAttribute().setGateOutClient(gateOutClient);
+		        exports.getCommonGateInOut().setRejectReason(exportContainer.getCommonGateInOut().getRejectReason()); // need to set to UPPERCASE
+		        
+		        exportsRepository.save(exports);
 
-    Optional<List<Exports>> optExpList =
-        exportsRepository.fetchInProgressTransaction(gateOutWriteRequest.getCardID(), TransactionStatus.INPROGRESS);
-    List<Exports> inprogressExpList = optExpList.orElseThrow(() -> new BusinessException(
-        "No InProgress Export Transaction for the scan card ! " + gateOutWriteRequest.getCardID()));
-    List<ExportContainer> exportContainers = gateOutWriteRequest.getExportContainers();
-    inprogressExpList.forEach(exports -> {
-      ExportContainer exportContainer = null;
-      if (!(exportContainers == null || exportContainers.isEmpty())) {
-        exportContainer = exportContainers
-            .stream().filter(e -> (e.getContainer() != null) && (StringUtils
-                .equals(e.getContainer().getContainerNumber(), exports.getContainer().getContainerNumber())))
-            .findFirst().get();
-        if(StringUtils.isEmpty(exportContainer.getBaseCommonGateInOutAttribute().getEirStatus()))
-        	throw new BusinessException("");
-        exports.getBaseCommonGateInOutAttribute().setEirStatus(TransactionStatus.fromCode(exportContainer.getBaseCommonGateInOutAttribute().getEirStatus()));
-        exports.getBaseCommonGateInOutAttribute().setTimeGateOut(DateUtil.getLocalDateFromString(gateOutWriteRequest.getGateOUTDateTime()));
-        exports.getBaseCommonGateInOutAttribute().setTimeGateOutOk(LocalDateTime.now());
-        exports.getBaseCommonGateInOutAttribute().setGateOutBoothClerk(gateOutClerk);
-        exports.getBaseCommonGateInOutAttribute().setGateOutBoothNo(String.valueOf(booth.getClientID()));
-        exports.getBaseCommonGateInOutAttribute().setGateOutClerk(gateOutClerk);
-        exports.getBaseCommonGateInOutAttribute().setGateOutClient(gateOutClient);
-        exports.getCommonGateInOut().setRejectReason(exportContainer.getCommonGateInOut().getRejectReason()); // need to set to UPPERCASE
-        
-        exportsRepository.save(exports);
+		        Optional<ExportsQ> exportQOpt = exportsQRepository.findOne(exports.getExportID());
+		        ExportsQ exportq = exportQOpt.orElseThrow(
+		            () -> new ResultsNotFoundException("Not valid Gate In ExportQ Process found ! " + exports.getExportID()));
 
-        Optional<ExportsQ> exportQOpt = exportsQRepository.findOne(exports.getExportID());
-        ExportsQ exportq = exportQOpt.orElseThrow(
-            () -> new ResultsNotFoundException("Not valid Gate In ExportQ Process found ! " + exports.getExportID()));
-
-        modelMapper.map(exports, exportq);
-        exportsQRepository.save(exportq);
-
-      } else {
-        throw new BusinessException("Invalid Request to Update Export !");
-      }
-      
-    });
+		        modelMapper.map(exports, exportq);
+		        exportsQRepository.save(exportq);
+		  });
+	  }else {
+	        throw new BusinessException("Invalid Request to Update Export !");
+	  }
     
     return true;
   }

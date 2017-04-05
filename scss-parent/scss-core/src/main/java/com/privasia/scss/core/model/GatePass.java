@@ -173,22 +173,22 @@ public class GatePass extends AuditEntity implements Serializable {
   private CardUsage cardUsage;
 
   @Column(name = "COSMOS_GTP_SEAL_1_ORIGIN")
-  private String cosmosSeal01Origin;
+  private String cosmosSeal01Origin = StringUtils.EMPTY;
 
   @Column(name = "COSMOS_GTP_SEAL_1_TYPE")
-  private String cosmosSeal01Type;
+  private String cosmosSeal01Type = StringUtils.EMPTY;
 
   @Column(name = "COSMOS_GTP_SEAL_1_NO")
-  private String cosmosSeal01Number;
+  private String cosmosSeal01Number = StringUtils.EMPTY;
 
   @Column(name = "COSMOS_GTP_SEAL_2_ORIGIN")
-  private String cosmosSeal02Origin;
+  private String cosmosSeal02Origin = StringUtils.EMPTY;
 
   @Column(name = "COSMOS_GTP_SEAL_2_TYPE")
-  private String cosmosSeal02Type;
+  private String cosmosSeal02Type = StringUtils.EMPTY;
 
   @Column(name = "COSMOS_GTP_SEAL_2_NO")
-  private String cosmosSeal02Number;
+  private String cosmosSeal02Number = StringUtils.EMPTY;
 
   @Column(name = "DATE_GATEPASS_VALID")
   private LocalDateTime gatePassValidDate;
@@ -199,7 +199,7 @@ public class GatePass extends AuditEntity implements Serializable {
 
   @Column(name = "IS_CHANGE_SEAL", columnDefinition = "TINYINT")
   @Type(type = "org.hibernate.type.NumericBooleanType")
-  private Boolean sealChange;
+  private Boolean sealChange = false;
 
   @Column(name = "FORCED_SEAL")
   @Type(type = "yes_no")
@@ -517,6 +517,46 @@ public class GatePass extends AuditEntity implements Serializable {
 
   public void setContainerLength(ContainerSize containerLength) {
     this.containerLength = containerLength;
+  }
+  
+  public boolean checkChangeSeal(){
+	  
+	  String seal1C1 = StringUtils.trim(getSealAttribute().getSeal01Number());
+      String seal2C1 = StringUtils.trim(getSealAttribute().getSeal01Number());
+      
+      String cosmosSeal1C1 = StringUtils.trim(this.getCosmosSeal01Number());
+      String cosmosSeal2C1 = StringUtils.trim(this.getCosmosSeal02Number());
+      sealChange = false;
+      
+      if (StringUtils.isNotBlank(cosmosSeal1C1) && StringUtils.isNotBlank(cosmosSeal2C1)) {
+    	  if (seal1C1.equalsIgnoreCase(cosmosSeal1C1) || seal1C1.equalsIgnoreCase(cosmosSeal2C1)){	  
+    	  } else{
+    		  if (seal2C1.equalsIgnoreCase(cosmosSeal1C1) || seal2C1.equalsIgnoreCase(cosmosSeal2C1)){	  
+        	  } else{
+        		  sealChange = true; 
+        	  }
+    	  }
+    	  if (seal2C1.equalsIgnoreCase(cosmosSeal1C1) || seal2C1.equalsIgnoreCase(cosmosSeal2C1)){	  
+    	  } else{
+    		  if (seal1C1.equalsIgnoreCase(cosmosSeal1C1) || seal1C1.equalsIgnoreCase(cosmosSeal2C1)){	  
+        	  } else{
+        		  sealChange = true;
+        	  }
+    	  }
+    	  
+      } else if (StringUtils.isNotBlank(cosmosSeal1C1)){
+    	  if (seal1C1.equalsIgnoreCase(cosmosSeal1C1) || seal2C1.equalsIgnoreCase(cosmosSeal1C1)){
+    	  }else{
+    		  sealChange = true;
+    	  }
+      } else if (StringUtils.isNotBlank(cosmosSeal2C1)){
+    	  if (seal1C1.equalsIgnoreCase(cosmosSeal2C1) || seal2C1.equalsIgnoreCase(cosmosSeal2C1)){
+    	  }else{
+    		  sealChange = true;
+    	  }
+      }
+	  
+	  return sealChange;
   }
 
   public void prepareForInsertFromOpus(Card card, SystemUser gateInClerk, Client gateInClient, PrintEir printEir,

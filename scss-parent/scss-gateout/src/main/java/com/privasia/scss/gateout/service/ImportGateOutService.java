@@ -28,6 +28,7 @@ import com.privasia.scss.common.dto.GateOutWriteRequest;
 import com.privasia.scss.common.dto.ImportContainer;
 import com.privasia.scss.common.dto.SystemUserDTO;
 import com.privasia.scss.common.dto.UpdateSealDTO;
+import com.privasia.scss.common.enums.ContainerFullEmptyType;
 import com.privasia.scss.common.enums.TransactionStatus;
 import com.privasia.scss.common.util.DateUtil;
 import com.privasia.scss.core.exception.BusinessException;
@@ -266,34 +267,6 @@ public class ImportGateOutService {
 
   }
 
-  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
-  public void updateGateOutImport(List<ImportContainer> importContainers) {
-
-    long clientID = importContainers.get(0).getBaseCommonGateInOutAttribute().getGateOutClient().getClientID();
-    Optional<Client> clientOpt = clientRepository.findOne(clientID);
-    Client gateOutClient =
-        clientOpt.orElseThrow(() -> new ResultsNotFoundException("Invalid GateOutClient ID ! " + clientID));
-    SystemUser gateOutClerk = systemUserRepository.findOne(SecurityHelper.getCurrentUserId()).orElseThrow(
-        () -> new AuthenticationServiceException("Log in User Not Found : " + SecurityHelper.getCurrentUserId()));
-
-    LocalDateTime timeGateOutOk = LocalDateTime.now();
-
-    importContainers.forEach(importContainer -> {
-      Optional<GatePass> gatePassOpt = gatePassRepository.findOne(importContainer.getGatePassID());
-      GatePass gatePass = gatePassOpt
-          .orElseThrow(() -> new ResultsNotFoundException("Invalid Gate pass  !" + importContainer.getGatePassID()));
-      gatePass.getBaseCommonGateInOutAttribute().setGateOutClerk(gateOutClerk);
-      gatePass.getBaseCommonGateInOutAttribute()
-          .setEirStatus(TransactionStatus.valueOf(importContainer.getBaseCommonGateInOutAttribute().getEirStatus()));
-      gatePass.getBaseCommonGateInOutAttribute()
-          .setTimeGateOut(importContainer.getBaseCommonGateInOutAttribute().getTimeGateIn());
-      gatePass.getBaseCommonGateInOutAttribute().setTimeGateOutOk(timeGateOutOk);
-      
- 
-      gatePassRepository.save(gatePass);
-    });
-  }
-
   @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
   public void ogaInternalBlockCheck(String containerNo) {
 
@@ -332,37 +305,30 @@ public class ImportGateOutService {
 		      gatePass.setGateOutRemarks(importContainer.getGateOutRemarks()); // need to set to UPPERCASE
 		      gatePass.setGateOutLaneNo(gateOutClient.getLaneNo());
 		      
-		      CommonSealAttribute sealAttribute = gatePass.getSealAttribute();
-		      if(sealAttribute==null)
-		    	  sealAttribute = new CommonSealAttribute();
-		      CommonSealDTO sealDTO =  importContainer.getSealAttribute();
-		      if(sealDTO!=null){
-		    	  sealAttribute.setSeal01Number(sealDTO.getSeal01Number());
-		    	  sealAttribute.setSeal02Number(sealDTO.getSeal02Number());
-		    	  sealAttribute.setSeal01Origin(sealDTO.getSeal01Origin());
-		    	  sealAttribute.setSeal02Origin(sealDTO.getSeal02Origin());
-		    	  sealAttribute.setSeal01Type(sealDTO.getSeal01Type());
-		    	  sealAttribute.setSeal02Type(sealDTO.getSeal02Type());
-		    	  gatePass.setSealAttribute(sealAttribute);
+		      if(gatePass.getContainer().getContainerFullOrEmpty().getValue().equals(ContainerFullEmptyType.FULL.getValue())){
 		    	  
-		    	  gatePass.setCosmosSeal01Number(importContainer.getCosmosSeal01Number());
-		    	  gatePass.setCosmosSeal02Number(importContainer.getCosmosSeal01Number());
-		    	  gatePass.setCosmosSeal01Origin(importContainer.getCosmosSeal01Origin());
-		    	  gatePass.setCosmosSeal02Origin(importContainer.getCosmosSeal02Origin());
-		    	  gatePass.setCosmosSeal01Type(importContainer.getCosmosSeal01Type());
-		    	  gatePass.setCosmosSeal02Type(importContainer.getCosmosSeal02Type());
-		    	  gatePass.setRetrievedCosmos(importContainer.isRetrievedCosmos());
-		    	  
-		    	/*
-	                 + ", gtp_in_out = " + SQL.format(inOrOut)
-	           
-	                 + ", gtp_gate_out_lane_no = " + SQL.format(f.getLaneNo())
-		    	  + ", is_change_seal = " + SQL.format(isChangeSeal)
-	                 + ", cont_length = " + SQL.format(contLength)
-		    	  
-		    	  if(StringUtils.isNotEmpty(importContainer.getCosmosSeal01Number())){
-		    		  gatePass.setSealChange(true);
-		    	  }*/
+		    	  CommonSealAttribute sealAttribute = gatePass.getSealAttribute();
+			      if(sealAttribute==null)
+			    	  sealAttribute = new CommonSealAttribute();
+			      CommonSealDTO sealDTO =  importContainer.getSealAttribute();
+			      if(sealDTO!=null){
+			    	  sealAttribute.setSeal01Number(sealDTO.getSeal01Number());
+			    	  sealAttribute.setSeal02Number(sealDTO.getSeal02Number());
+			    	  sealAttribute.setSeal01Origin(sealDTO.getSeal01Origin());
+			    	  sealAttribute.setSeal02Origin(sealDTO.getSeal02Origin());
+			    	  sealAttribute.setSeal01Type(sealDTO.getSeal01Type());
+			    	  sealAttribute.setSeal02Type(sealDTO.getSeal02Type());
+			    	  gatePass.setSealAttribute(sealAttribute);
+			    	  
+			    	  gatePass.setCosmosSeal01Number(importContainer.getCosmosSeal01Number());
+			    	  gatePass.setCosmosSeal02Number(importContainer.getCosmosSeal01Number());
+			    	  gatePass.setCosmosSeal01Origin(importContainer.getCosmosSeal01Origin());
+			    	  gatePass.setCosmosSeal02Origin(importContainer.getCosmosSeal02Origin());
+			    	  gatePass.setCosmosSeal01Type(importContainer.getCosmosSeal01Type());
+			    	  gatePass.setCosmosSeal02Type(importContainer.getCosmosSeal02Type());
+			    	  gatePass.setRetrievedCosmos(importContainer.isRetrievedCosmos());
+			    	  gatePass.setSealChange(gatePass.checkChangeSeal());
+			      }
 		      }
 		      
 		      gatePassRepository.save(gatePass);

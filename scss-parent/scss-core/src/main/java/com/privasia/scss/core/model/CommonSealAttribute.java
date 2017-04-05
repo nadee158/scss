@@ -22,17 +22,17 @@ public class CommonSealAttribute implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private String seal01Origin;
+	private String seal01Origin = StringUtils.EMPTY;
 	
-	private String seal01Type;
+	private String seal01Type = StringUtils.EMPTY;
 	
-	private String seal01Number;
+	private String seal01Number = StringUtils.EMPTY;
 	
-	private String seal02Origin;
+	private String seal02Origin = StringUtils.EMPTY;
 	
-	private String seal02Type;
+	private String seal02Type = StringUtils.EMPTY;
 	
-	private String seal02Number;
+	private String seal02Number = StringUtils.EMPTY;
 
 	public String getSeal01Origin() {
 		return seal01Origin;
