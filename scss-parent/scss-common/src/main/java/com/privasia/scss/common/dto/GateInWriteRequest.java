@@ -30,6 +30,10 @@ public class GateInWriteRequest implements Serializable {
 
   private String impExpFlag;
 
+  private String fuelWeight;// :"45",
+  private String tireWeight;// ":"45",
+  private String variance;//
+
 
   private List<ExportContainer> exportContainers;
   private List<ImportContainer> importContainers;
@@ -203,5 +207,31 @@ public class GateInWriteRequest implements Serializable {
   public void setImpExpFlag(String impExpFlag) {
     this.impExpFlag = impExpFlag;
   }
+
+  public String getFuelWeight() {
+    return fuelWeight;
+  }
+
+  public void setFuelWeight(String fuelWeight) {
+    this.fuelWeight = fuelWeight;
+  }
+
+  public String getTireWeight() {
+    return tireWeight;
+  }
+
+  public void setTireWeight(String tireWeight) {
+    this.tireWeight = tireWeight;
+  }
+
+  public String getVariance() {
+    return variance;
+  }
+
+  public void setVariance(String variance) {
+    this.variance = variance;
+  }
+
+
 
 }

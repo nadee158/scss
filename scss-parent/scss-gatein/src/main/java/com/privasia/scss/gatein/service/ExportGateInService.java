@@ -253,6 +253,9 @@ public class ExportGateInService {
         exportContainer.getBaseCommonGateInOutAttribute().setPmHeadNo(gateInWriteRequest.getTruckHeadNo());
         exportContainer.getBaseCommonGateInOutAttribute().setPmPlateNo(gateInWriteRequest.getTruckPlateNo());
         exportContainer.getBaseCommonGateInOutAttribute().setTimeGateInOk(LocalDateTime.now());
+        exportContainer.setFuelWeight(gateInWriteRequest.getFuelWeight());
+        exportContainer.setTireWeight(gateInWriteRequest.getTireWeight());
+        exportContainer.setVariance(gateInWriteRequest.getVariance());
 
         if (exportContainer.getCommonGateInOut() == null) {
           exportContainer.setCommonGateInOut(new CommonGateInOutDTO());
