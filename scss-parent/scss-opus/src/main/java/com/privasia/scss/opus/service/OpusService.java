@@ -143,8 +143,8 @@ public class OpusService {
   }
 
   public ExportContainer giWriteResponseExportContainerToExportContainer(
-      GIWriteResponseExportContainer giWriteResponseExportContainer, OpusGateInWriteResponse opusGateInWriteResponse) {
-    ExportContainer exportContainer = new ExportContainer();
+      GIWriteResponseExportContainer giWriteResponseExportContainer, OpusGateInWriteResponse opusGateInWriteResponse,
+		  	ExportContainer exportContainer) {
     CommonContainerDTO commonContainerDTO = new CommonContainerDTO();
     commonContainerDTO.setContainerNumber(giWriteResponseExportContainer.getContainerNo());
     exportContainer.setContainer(commonContainerDTO);
@@ -160,9 +160,8 @@ public class OpusService {
   }
 
   public ImportContainer giWriteResponseImportContainerToImportContainer(
-      GIWriteResponseImportContainer giWriteResponseImportContainer, OpusGateInWriteResponse opusGateInWriteResponse) {
-    ImportContainer importContainer = new ImportContainer();
-
+      GIWriteResponseImportContainer giWriteResponseImportContainer, OpusGateInWriteResponse opusGateInWriteResponse, ImportContainer importContainer) {
+    
     CommonContainerDTO commonContainerDTO = new CommonContainerDTO();
     commonContainerDTO.setContainerNumber(giWriteResponseImportContainer.getContainerNo());
     importContainer.setContainer(commonContainerDTO);
@@ -498,31 +497,54 @@ public class OpusService {
   }
 
   public List<ExportContainer> giWriteResponseExportContainerListToExportContainerList(
-      OpusGateInWriteResponse opusGateInWriteResponse) {
-    List<GIWriteResponseExportContainer> gIReadResponseExporterContainerList =
-        opusGateInWriteResponse.getExportContainerListCY();
+      OpusGateInWriteResponse opusGateInWriteResponse, List<ExportContainer> exportContainers) {
+    List<GIWriteResponseExportContainer> gIReadResponseExporterContainerList = opusGateInWriteResponse.getExportContainerListCY();
     if (!(gIReadResponseExporterContainerList == null || gIReadResponseExporterContainerList.isEmpty())) {
-      List<ExportContainer> exportContainers = new ArrayList<ExportContainer>();
+      List<ExportContainer> constructContainers = new ArrayList<ExportContainer>();
       gIReadResponseExporterContainerList.forEach(gIReadResponseExporterContainer -> {
-        exportContainers.add(
-            giWriteResponseExportContainerToExportContainer(gIReadResponseExporterContainer, opusGateInWriteResponse));
+    	  ExportContainer exportContainer = null;
+    	  if (!(exportContainers == null || exportContainers.isEmpty())) {
+              exportContainer = exportContainers
+                  .stream().filter(e -> (e.getContainer() != null) && (StringUtils
+                      .equals(e.getContainer().getContainerNumber(), gIReadResponseExporterContainer.getContainerNo())))
+                  .findFirst().get();
+            } else {
+              exportContainer = new ExportContainer();
+            }
+    	  
+    	  exportContainer = giWriteResponseExportContainerToExportContainer(gIReadResponseExporterContainer, opusGateInWriteResponse, exportContainer);
+    	  constructContainers.add(exportContainer);
       });
-      return exportContainers;
+      return constructContainers;
     }
     return null;
   }
 
   public List<ImportContainer> giWriteResponseImportContainerListToImportContainerList(
-      OpusGateInWriteResponse opusGateInWriteResponse) {
+      OpusGateInWriteResponse opusGateInWriteResponse, List<ImportContainer> importContainers) {
     List<GIWriteResponseImportContainer> giWriteResponseImportContainerList =
         opusGateInWriteResponse.getImportContainerListCY();
+    
     if (!(giWriteResponseImportContainerList == null || giWriteResponseImportContainerList.isEmpty())) {
-      List<ImportContainer> imortContainers = new ArrayList<ImportContainer>();
-      giWriteResponseImportContainerList.forEach(giWriteResponseImportContainer -> {
-        imortContainers.add(
-            giWriteResponseImportContainerToImportContainer(giWriteResponseImportContainer, opusGateInWriteResponse));
+    	List<ImportContainer> constructContainers = new ArrayList<ImportContainer>();
+      
+    	giWriteResponseImportContainerList.forEach(giWriteResponseImportContainer -> {
+    	  
+    	  ImportContainer importContainer = null;
+          if (!(importContainers == null || importContainers.isEmpty())) {
+            importContainer = importContainers
+                .stream().filter(e -> (e.getContainer() != null) && (StringUtils
+                    .equals(e.getContainer().getContainerNumber(), giWriteResponseImportContainer.getContainerNo())))
+                .findFirst().get();
+          } else {
+            importContainer = new ImportContainer();
+          }
+    	  
+          importContainer = 
+            giWriteResponseImportContainerToImportContainer(giWriteResponseImportContainer, opusGateInWriteResponse, importContainer);
+          constructContainers.add(importContainer);
       });
-      return imortContainers;
+      return constructContainers;
     }
     return null;
   }

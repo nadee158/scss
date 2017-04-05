@@ -40,197 +40,196 @@ import com.privasia.scss.opus.service.OpusService;
 @Service("importExportGateInService")
 public class ImportExportGateInService {
 
-  private static final Log log = LogFactory.getLog(ImportExportGateInService.class);
+	private static final Log log = LogFactory.getLog(ImportExportGateInService.class);
 
-  private ImportGateInService importGateInService;
+	private ImportGateInService importGateInService;
 
-  private ExportGateInService exportGateInService;
+	private ExportGateInService exportGateInService;
 
-  private OpusGateInReadService opusGateInReadService;
+	private OpusGateInReadService opusGateInReadService;
 
-  private OpusGateInWriteService opusGateInWriteService;
+	private OpusGateInWriteService opusGateInWriteService;
 
-  private ClientRepository clientRepository;
+	private ClientRepository clientRepository;
 
-  private CardRepository cardRepository;
+	private CardRepository cardRepository;
 
-  private OpusService opusService;
+	private OpusService opusService;
 
-  private HPABService hpabService;
+	private HPABService hpabService;
 
-  private CommonCardService commonCardService;
+	private CommonCardService commonCardService;
 
+	private Gson gson;
 
-  @Autowired
-  public void setCommonCardService(CommonCardService commonCardService) {
-    this.commonCardService = commonCardService;
-  }
+	@Autowired
+	public void setCommonCardService(CommonCardService commonCardService) {
+		this.commonCardService = commonCardService;
+	}
 
-  @Autowired
-  public void setHpabService(HPABService hpabService) {
-    this.hpabService = hpabService;
-  }
+	@Autowired
+	public void setHpabService(HPABService hpabService) {
+		this.hpabService = hpabService;
+	}
 
-  @Autowired
-  public void setOpusService(OpusService opusService) {
-    this.opusService = opusService;
-  }
+	@Autowired
+	public void setOpusService(OpusService opusService) {
+		this.opusService = opusService;
+	}
 
-  @Autowired
-  public void setOpusGateInReadService(OpusGateInReadService opusGateInReadService) {
-    this.opusGateInReadService = opusGateInReadService;
-  }
+	@Autowired
+	public void setOpusGateInReadService(OpusGateInReadService opusGateInReadService) {
+		this.opusGateInReadService = opusGateInReadService;
+	}
 
-  @Autowired
-  public void setOpusGateInWriteService(OpusGateInWriteService opusGateInWriteService) {
-    this.opusGateInWriteService = opusGateInWriteService;
-  }
+	@Autowired
+	public void setOpusGateInWriteService(OpusGateInWriteService opusGateInWriteService) {
+		this.opusGateInWriteService = opusGateInWriteService;
+	}
 
-  @Autowired
-  public void setImportGateInService(ImportGateInService importGateInService) {
-    this.importGateInService = importGateInService;
-  }
+	@Autowired
+	public void setImportGateInService(ImportGateInService importGateInService) {
+		this.importGateInService = importGateInService;
+	}
 
-  @Autowired
-  public void setExportGateInService(ExportGateInService exportGateInService) {
-    this.exportGateInService = exportGateInService;
-  }
+	@Autowired
+	public void setExportGateInService(ExportGateInService exportGateInService) {
+		this.exportGateInService = exportGateInService;
+	}
 
-  @Autowired
-  public void setClientRepository(ClientRepository clientRepository) {
-    this.clientRepository = clientRepository;
-  }
+	@Autowired
+	public void setClientRepository(ClientRepository clientRepository) {
+		this.clientRepository = clientRepository;
+	}
 
-  @Autowired
-  public void setCardRepository(CardRepository cardRepository) {
-    this.cardRepository = cardRepository;
-  }
+	@Autowired
+	public void setCardRepository(CardRepository cardRepository) {
+		this.cardRepository = cardRepository;
+	}
 
-  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-  public GateInReponse populateGateIn(GateInRequest gateInRequest) {
+	@Autowired
+	public void setGson(Gson gson) {
+		this.gson = gson;
+	}
 
-    Optional<Card> cardOpt = cardRepository.findOne(gateInRequest.getCardID());
-    Card card =
-        cardOpt.orElseThrow(() -> new ResultsNotFoundException("Invalid Card ID ! " + gateInRequest.getCardID()));
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+	public GateInReponse populateGateIn(GateInRequest gateInRequest) {
 
+		Optional<Card> cardOpt = cardRepository.findOne(gateInRequest.getCardID());
+		Card card = cardOpt
+				.orElseThrow(() -> new ResultsNotFoundException("Invalid Card ID ! " + gateInRequest.getCardID()));
 
-    gateInRequest.setHaulageCode(commonCardService.getHaulierCodeByScanCard(card));
+		gateInRequest.setHaulageCode(commonCardService.getHaulierCodeByScanCard(card));
 
-    Optional<Client> clientOpt = clientRepository.findOne(gateInRequest.getClientID());
-    Client client =
-        clientOpt.orElseThrow(() -> new ResultsNotFoundException("Invalid client ID ! " + gateInRequest.getClientID()));
-    System.out.println("client.getLaneNo() " + client.getLaneNo());
-    if (StringUtils.isEmpty(client.getLaneNo())) {
-      throw new ResultsNotFoundException("Invalid lane ID ! " + gateInRequest.getClientID());
-    }
-    gateInRequest.setLaneNo(client.getLaneNo());
-    gateInRequest.setLaneNo("GATE00");
+		Optional<Client> clientOpt = clientRepository.findOne(gateInRequest.getClientID());
+		Client client = clientOpt
+				.orElseThrow(() -> new ResultsNotFoundException("Invalid client ID ! " + gateInRequest.getClientID()));
+		System.out.println("client.getLaneNo() " + client.getLaneNo());
+		if(StringUtils.isEmpty(client.getLaneNo())) throw new BusinessException("Lane no does not setup for client "+client.getClientID());
+		gateInRequest.setLaneNo(client.getLaneNo());
 
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    UserContext userContext = (UserContext) authentication.getPrincipal();
-    System.out.println("userContext.getUsername() " + userContext.getUsername());
-    gateInRequest.setUserName(userContext.getUsername());
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		UserContext userContext = (UserContext) authentication.getPrincipal();
+		System.out.println("userContext.getUsername() " + userContext.getUsername());
+		gateInRequest.setUserName(userContext.getUsername());
 
-    GateInReponse gateInReponse = new GateInReponse();
-    gateInReponse.setCheckPreArrival(gateInRequest.isCheckPreArrival());
+		GateInReponse gateInReponse = new GateInReponse();
+		gateInReponse.setCheckPreArrival(gateInRequest.isCheckPreArrival());
 
-    if ((gateInRequest.getGatePass1() != null && gateInRequest.getGatePass1() > 0)
-        || (gateInRequest.getGatePass2() != null && gateInRequest.getGatePass2() > 0)) {
-      List<Long> gatePassList = Arrays.asList(gateInRequest.getGatePass1(), gateInRequest.getGatePass2());
-      List<ImportContainer> importContainerList = importGateInService.fetchContainerInfo(gatePassList);
-      gateInReponse.setImportContainers(importContainerList);
-    }
+		if ((gateInRequest.getGatePass1() != null && gateInRequest.getGatePass1() > 0)
+				|| (gateInRequest.getGatePass2() != null && gateInRequest.getGatePass2() > 0)) {
+			List<Long> gatePassList = Arrays.asList(gateInRequest.getGatePass1(), gateInRequest.getGatePass2());
+			List<ImportContainer> importContainerList = importGateInService.fetchContainerInfo(gatePassList);
+			gateInReponse.setImportContainers(importContainerList);
+		}
 
-    // call opus -
-    OpusGateInReadRequest gateInReadRequest = opusGateInReadService.constructOpenGateInRequest(gateInRequest);
-    OpusGateInReadResponse gateInReadResponse = opusGateInReadService.getGateInReadResponse(gateInReadRequest);
+		// call opus -
+		OpusGateInReadRequest gateInReadRequest = opusGateInReadService.constructOpenGateInRequest(gateInRequest);
+		OpusGateInReadResponse gateInReadResponse = opusGateInReadService.getGateInReadResponse(gateInReadRequest);
 
-    // check the errorlist of reponse
-    String errorMessage = opusService.hasErrorMessage(gateInReadResponse.getErrorList());
-    log.error("ERROR MESSAGE FROM OPUS SERVICE: " + errorMessage);
-    if (StringUtils.isNotEmpty(errorMessage)) {
-      // save it to the db - TO BE IMPLEMENTED
-      // throw new business exception with constructed message - there is
-      // an error
-      throw new BusinessException(errorMessage);
-    }
+		// check the errorlist of reponse
+		String errorMessage = opusService.hasErrorMessage(gateInReadResponse.getErrorList());
+		log.error("ERROR MESSAGE FROM OPUS SERVICE: " + errorMessage);
+		if (StringUtils.isNotEmpty(errorMessage)) {
+			// save it to the db - TO BE IMPLEMENTED
+			// throw new business exception with constructed message - there is
+			// an error
+			throw new BusinessException(errorMessage);
+		}
 
-    // double check with the documentation
-    gateInReponse = opusGateInReadService.constructGateInReponse(gateInReadResponse, gateInReponse);
+		// double check with the documentation
+		gateInReponse = opusGateInReadService.constructGateInReponse(gateInReadResponse, gateInReponse);
 
-    if (!(StringUtils.isEmpty(gateInRequest.getExpContainer1())
-        || StringUtils.isEmpty(gateInRequest.getExpContainer2()))) {
-      gateInReponse = exportGateInService.populateGateInExports(gateInReponse);
-    }
+		if (!(StringUtils.isEmpty(gateInRequest.getExpContainer1())
+				|| StringUtils.isEmpty(gateInRequest.getExpContainer2()))) {
+			gateInReponse = exportGateInService.populateGateInExports(gateInReponse);
+		}
 
-    if ((gateInRequest.getGatePass1() != null && gateInRequest.getGatePass1() > 0)
-        || (gateInRequest.getGatePass2() != null && gateInRequest.getGatePass2() > 0)) {
-      importGateInService.populateGateInImport(gateInReponse);
-    }
+		if ((gateInRequest.getGatePass1() != null && gateInRequest.getGatePass1() > 0)
+				|| (gateInRequest.getGatePass2() != null && gateInRequest.getGatePass2() > 0)) {
+			importGateInService.populateGateInImport(gateInReponse);
+		}
 
-    // assign details from hpab booking
-    if (StringUtils.isNotEmpty(gateInRequest.getHpabSeqId())) {
-      gateInReponse = hpabService.populateHpabForImpExp(gateInReponse, gateInRequest.getHpabSeqId());
-    }
+		// assign details from hpab booking
+		if (StringUtils.isNotEmpty(gateInRequest.getHpabSeqId())) {
+			gateInReponse = hpabService.populateHpabForImpExp(gateInReponse, gateInRequest.getHpabSeqId());
+		}
 
-    return gateInReponse;
-  }
+		return gateInReponse;
+	}
 
-  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
-  public GateInReponse saveGateInInfo(GateInWriteRequest gateInWriteRequest) {
-    List<ImportContainer> importContainers = null;
-    List<ExportContainer> exportContainers = null;
-    Gson gson = new Gson();
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
+	public GateInReponse saveGateInInfo(GateInWriteRequest gateInWriteRequest) {
 
-    Optional<Card> cardOpt = cardRepository.findOne(gateInWriteRequest.getCardId());
-    Card card =
-        cardOpt.orElseThrow(() -> new ResultsNotFoundException("Invalid Card ID ! " + gateInWriteRequest.getCardId()));
+		Optional<Card> cardOpt = cardRepository.findOne(gateInWriteRequest.getCardId());
+		Card card = cardOpt
+				.orElseThrow(() -> new ResultsNotFoundException("Invalid Card ID ! " + gateInWriteRequest.getCardId()));
 
-    gateInWriteRequest.setHaulageCode(commonCardService.getHaulierCodeByScanCard(card));
+		gateInWriteRequest.setHaulageCode(commonCardService.getHaulierCodeByScanCard(card));
 
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    UserContext userContext = (UserContext) authentication.getPrincipal();
-    gateInWriteRequest.setUserName(userContext.getUsername());
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		UserContext userContext = (UserContext) authentication.getPrincipal();
+		gateInWriteRequest.setUserName(userContext.getUsername());
 
-    Optional<Client> clientOpt = clientRepository.findOne(gateInWriteRequest.getGateInClient());
-    Client client = clientOpt
-        .orElseThrow(() -> new ResultsNotFoundException("Invalid lane ID ! " + gateInWriteRequest.getGateInClient()));
-    gateInWriteRequest.setLaneNo(client.getLaneNo());
+		Optional<Client> clientOpt = clientRepository.findOne(gateInWriteRequest.getGateInClient());
+		Client client = clientOpt.orElseThrow(
+				() -> new ResultsNotFoundException("Invalid lane ID ! " + gateInWriteRequest.getGateInClient()));
+		if(StringUtils.isEmpty(client.getLaneNo())) throw new BusinessException("Lane no does not setup for client "+client.getClientID());
+		gateInWriteRequest.setLaneNo(client.getLaneNo());
 
+		OpusGateInWriteRequest opusGateInWriteRequest = opusGateInWriteService
+				.constructOpusGateInWriteRequest(gateInWriteRequest);
+		System.out.println("opusGateInWriteRequest " + gson.toJson(opusGateInWriteRequest));
 
-    OpusGateInWriteRequest opusGateInWriteRequest =
-        opusGateInWriteService.constructOpusGateInWriteRequest(gateInWriteRequest);
-    System.out.println("opusGateInWriteRequest " + gson.toJson(opusGateInWriteRequest));
+		OpusGateInWriteResponse opusGateInWriteResponse = opusGateInWriteService
+				.getGateInWriteResponse(opusGateInWriteRequest);
 
-    OpusGateInWriteResponse opusGateInWriteResponse =
-        opusGateInWriteService.getGateInWriteResponse(opusGateInWriteRequest);
+		System.out.println("opusGateInWriteResponse " + gson.toJson(opusGateInWriteResponse));
+		String errorMessage = opusService.hasErrorMessage(opusGateInWriteResponse.getErrorList());
+		log.error("ERROR MESSAGE FROM OPUS SERVICE: " + errorMessage);
+		if (StringUtils.isNotEmpty(errorMessage)) {
+			// save it to the db - TO BE IMPLEMENTED
+			// throw new business exception with constructed message - there is
+			// an error
+			throw new BusinessException(errorMessage);
+		}
 
-    System.out.println("opusGateInWriteResponse " + gson.toJson(opusGateInWriteResponse));
-    String errorMessage = opusService.hasErrorMessage(opusGateInWriteResponse.getErrorList());
-    log.error("ERROR MESSAGE FROM OPUS SERVICE: " + errorMessage);
-    if (StringUtils.isNotEmpty(errorMessage)) {
-      // save it to the db - TO BE IMPLEMENTED
-      // throw new business exception with constructed message - there is
-      // an error
-      throw new BusinessException(errorMessage);
-    }
+		GateInReponse gateInReponse = new GateInReponse();
+		gateInReponse.setImportContainers(gateInWriteRequest.getImportContainers());
+		gateInReponse.setExportContainers(gateInWriteRequest.getExportContainers());
+		gateInReponse = opusGateInWriteService.constructGateInReponse(opusGateInWriteResponse, gateInReponse);
+		gateInWriteRequest.setImportContainers(gateInReponse.getImportContainers());
+		gateInWriteRequest.setExportContainers(gateInReponse.getExportContainers());
 
+		if (!(gateInWriteRequest.getExportContainers() == null || gateInWriteRequest.getExportContainers().isEmpty())) {
+			exportGateInService.saveGateInInfo(gateInWriteRequest);
+		}
 
+		if (!(gateInWriteRequest.getImportContainers() == null || gateInWriteRequest.getImportContainers().isEmpty())) {
+			importGateInService.saveGateInInfo(gateInWriteRequest);
+		}
 
-    if (!(gateInWriteRequest.getExportContainers() == null || gateInWriteRequest.getExportContainers().isEmpty())) {
-      exportContainers = exportGateInService.saveGateInInfo(gateInWriteRequest);
-    }
-
-    if (!(gateInWriteRequest.getImportContainers() == null || gateInWriteRequest.getImportContainers().isEmpty())) {
-      importContainers = importGateInService.saveGateInInfo(gateInWriteRequest);
-    }
-
-    GateInReponse gateInReponse = new GateInReponse();
-    gateInReponse.setImportContainers(importContainers);
-    gateInReponse.setExportContainers(exportContainers);
-    gateInReponse = opusGateInWriteService.constructGateInReponse(opusGateInWriteResponse, gateInReponse);
-
-    return gateInReponse;
-  }
+		return gateInReponse;
+	}
 
 }

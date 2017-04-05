@@ -91,6 +91,7 @@ public class OpusGateOutWriteService {
     opusGateOutWriteRequest.setHaulageCode(gateOutWriteRequest.getHaulageCode());
     opusGateOutWriteRequest.setLaneNo(gateOutWriteRequest.getLaneNo());
     opusGateOutWriteRequest.setTruckHeadNo(gateOutWriteRequest.getTruckHeadNo());
+    opusGateOutWriteRequest.setTruckPlateNo(gateOutWriteRequest.getTruckPlateNo());
     opusGateOutWriteRequest.setUserID(gateOutWriteRequest.getUserName());
     opusGateOutWriteRequest.setExportContainerListCY(exportContainerListCY);
     opusGateOutWriteRequest.setImportContainerListCY(importContainerListCY);

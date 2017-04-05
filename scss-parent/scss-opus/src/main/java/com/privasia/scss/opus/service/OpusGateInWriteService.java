@@ -17,8 +17,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.privasia.scss.common.dto.ExportContainer;
 import com.privasia.scss.common.dto.GateInReponse;
 import com.privasia.scss.common.dto.GateInWriteRequest;
+import com.privasia.scss.common.dto.ImportContainer;
 import com.privasia.scss.common.util.CommonUtil;
 import com.privasia.scss.common.util.DateUtil;
 import com.privasia.scss.opus.dto.GIWriteRequestExportContainer;
@@ -63,8 +65,7 @@ public class OpusGateInWriteService {
     return response.getBody();
   }
 
-  public GateInReponse constructGateInReponse(OpusGateInWriteResponse opusGateInWriteResponse,
-      GateInReponse gateInReponse) {
+  public GateInReponse constructGateInReponse(OpusGateInWriteResponse opusGateInWriteResponse, GateInReponse gateInReponse) {
     LocalDateTime localDateTime = DateUtil.getLocalDategFromString(opusGateInWriteResponse.getGateINDateTime());
     gateInReponse.setGateINDateTime(CommonUtil.getFormatteDate(localDateTime));
     gateInReponse.setHaulageCode(opusGateInWriteResponse.getHaulageCode());
@@ -72,9 +73,9 @@ public class OpusGateInWriteService {
     gateInReponse.setTruckHeadNo(opusGateInWriteResponse.getTruckHeadNo());
     gateInReponse.setTruckPlateNo(opusGateInWriteResponse.getTruckPlateNo());
     gateInReponse.setExportContainers(
-        opusService.giWriteResponseExportContainerListToExportContainerList(opusGateInWriteResponse));
+        opusService.giWriteResponseExportContainerListToExportContainerList(opusGateInWriteResponse, gateInReponse.getExportContainers()));
     gateInReponse.setImportContainers(
-        opusService.giWriteResponseImportContainerListToImportContainerList(opusGateInWriteResponse));
+        opusService.giWriteResponseImportContainerListToImportContainerList(opusGateInWriteResponse, gateInReponse.getImportContainers()));
     gateInReponse.setCallCardNo(opusGateInWriteResponse.getCallCardNo());
     return gateInReponse;
   }
