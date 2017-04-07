@@ -19,7 +19,7 @@ public class CommonSolasDTO implements Serializable {
 
   private String solasDetailID;
 
-  private String solasInstruction;
+  private String solasInstruction = SolasInstructionType.VGM_INSTRUCTION_NO_SOLAS.getValue();
 
   private String shipperVGM;
 

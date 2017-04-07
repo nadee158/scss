@@ -193,16 +193,6 @@ public class GateInExpNormalController {
             f.setGateImpOrExp("Exports.EXP_FLAG");
 
 
-            /**
-             * Damage ExportContainer 1
-             */
-            List<String> clearedDamageCodesC1 = getClearedDamageCodes(c1, returnMessage, returnedView);
-
-            /**
-             * Damage ExportContainer 2
-             */
-            List<String> clearedDamageCodesC2 = getClearedDamageCodes(c1, returnMessage, returnedView);
-
             break;
           case PRINT_BTN_PRESSED:
             break;
@@ -221,28 +211,6 @@ public class GateInExpNormalController {
 
 
     return new ResponseEntity<String>(returnedView, HttpStatus.OK);
-  }
-
-  private List<String> getClearedDamageCodes(ExportContainer c, String returnMessage, String returnedView) {
-    List<DamageCodeDTO> damages = c.getDamages();
-    if (!(damages == null || damages.isEmpty())) {
-
-      List<String> originalDamagedCodes =
-          damages.stream().map(DamageCodeDTO::getDamageCode).collect(Collectors.toList());
-
-      long duplicateCount =
-          originalDamagedCodes.stream().filter(i -> Collections.frequency(originalDamagedCodes, i) > 1).count();
-
-      if (duplicateCount == 0) {
-        return originalDamagedCodes;
-      }
-      List<String> clearedDamageCodes = originalDamagedCodes.stream()
-          .filter(i -> Collections.frequency(originalDamagedCodes, i) == 1).collect(Collectors.toList());
-      return clearedDamageCodes;
-
-    }
-    return null;
-
   }
 
   private String checkIfDGContainer(ExportContainer c, String returnMessage) throws Exception {

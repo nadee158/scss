@@ -80,25 +80,18 @@ public class OpusRequestResponseService {
 
   @Async
   @Transactional(value = "transactionManager", propagation = Propagation.REQUIRES_NEW, readOnly = false)
-  public void updateOpusResponse(OpusRequestResponseDTO opusRequestResponseDTO, Future<Long> future) {
-    Optional<OpusRequestResponse> OptOpus = opusRepository.findOne(opusRequestResponseDTO.getOpusReqResID());
-    if (OptOpus.isPresent()) {
-      OpusRequestResponse opusRequestResponse = OptOpus.get();
-      modelMapper.map(opusRequestResponseDTO, opusRequestResponse);
-      try {
-        opusRequestResponse.setOpusReqResID(future.get());
-        opusRequestResponse.setReceivedTime(LocalDateTime.now());
+  public void updateOpusResponse(OpusRequestResponseDTO opusRequestResponseDTO, Future<Long> future) throws InterruptedException, ExecutionException {
+    
+    Optional<OpusRequestResponse> OptOpus = opusRepository.findOne(future.get());
+	if (OptOpus.isPresent()) {
+		OpusRequestResponse opusRequestResponse = OptOpus.get();
+		opusRequestResponse.setResponse(opusRequestResponseDTO.getResponse());
+		opusRequestResponse.setReceivedTime(LocalDateTime.now());
         opusRepository.save(opusRequestResponse);
-      } catch (InterruptedException | ExecutionException e) {
-        log.error("Error Occured when update Opus Response " + opusRequestResponse.getOpusReqResID());
-        log.error(e.getMessage());
-      } catch (Exception e) {
-        log.error("Error Occured when update Opus Response " + opusRequestResponse.getOpusReqResID());
-        log.error(e.getMessage());
-      }
-
+    }else{
+    	log.info("OpusRequestResponse not found "+future.get());
     }
-
+ 
   }
 
 }

@@ -191,7 +191,7 @@ public class ExportContainer {
 
   private DamageCodeDTO damageCode_09;
 
-  private Boolean dontValidateSeal;
+  private Boolean dontValidateSeal = true;
 
   private Boolean wrongDoor;
 
@@ -217,7 +217,7 @@ public class ExportContainer {
 
   private String solasCertNo;
 
-  private CommonSolasDTO solas;
+  private CommonSolasDTO solas = new CommonSolasDTO();
 
   /////////////// EXTRA FILEDS FOUND BASED ON COMPILE ERRORS/////////////////
   private boolean internalBlock = false; // for CosmosExportRepository -
@@ -288,7 +288,7 @@ public class ExportContainer {
                           // constructExportContainerRequestXML
                           // constructExportContainerOperationReeferInfo
 
-  private List<DamageCodeDTO> damages;
+ 
   /////////////////////////////////////
   // FOR OPUS SERVICE
   private String expCarrierType;
@@ -1024,42 +1024,6 @@ public class ExportContainer {
 
   public void setOgaBlock(boolean ogaBlock) {
     this.ogaBlock = ogaBlock;
-  }
-
-  public List<DamageCodeDTO> getDamages() {
-    this.damages = new ArrayList<DamageCodeDTO>();
-    if (!(this.damageCode_01 == null)) {
-      this.damages.add(this.damageCode_01);
-    }
-    if (!(this.damageCode_02 == null)) {
-      this.damages.add(this.damageCode_02);
-    }
-    if (!(this.damageCode_03 == null)) {
-      this.damages.add(this.damageCode_03);
-    }
-    if (!(this.damageCode_04 == null)) {
-      this.damages.add(this.damageCode_04);
-    }
-    if (!(this.damageCode_05 == null)) {
-      this.damages.add(this.damageCode_05);
-    }
-    if (!(this.damageCode_06 == null)) {
-      this.damages.add(this.damageCode_06);
-    }
-    if (!(this.damageCode_07 == null)) {
-      this.damages.add(this.damageCode_07);
-    }
-    if (!(this.damageCode_08 == null)) {
-      this.damages.add(this.damageCode_08);
-    }
-    if (!(this.damageCode_09 == null)) {
-      this.damages.add(this.damageCode_09);
-    }
-    return damages;
-  }
-
-  public void setDamages(List<DamageCodeDTO> damages) {
-    this.damages = damages;
   }
 
   public String getLpkEdiEnabled() {
