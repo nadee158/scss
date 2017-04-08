@@ -35,9 +35,7 @@ import com.privasia.scss.core.model.PrintEir;
 import com.privasia.scss.core.model.SystemUser;
 import com.privasia.scss.core.model.WDCGatePass;
 import com.privasia.scss.core.repository.CardRepository;
-import com.privasia.scss.core.repository.CardUsageRepository;
 import com.privasia.scss.core.repository.ClientRepository;
-import com.privasia.scss.core.repository.DamageCodeRepository;
 import com.privasia.scss.core.repository.GatePassRepository;
 import com.privasia.scss.core.repository.HPATBookingRepository;
 import com.privasia.scss.core.repository.PrintEirRepository;
@@ -60,11 +58,7 @@ public class ImportGateInService {
 
   private PrintEirRepository printEirRepository;
 
-  private CardUsageRepository cardUsageRepository;
-
   private HPATBookingRepository hpatBookingRepository;
-
-  private DamageCodeRepository damageCodeRepository;
 
   private WDCGatePassRepository wdcGatePassRepository;
 
@@ -73,11 +67,6 @@ public class ImportGateInService {
   @Autowired
   public void setSystemUserRepository(SystemUserRepository systemUserRepository) {
     this.systemUserRepository = systemUserRepository;
-  }
-
-  @Autowired
-  public void setDamageCodeRepository(DamageCodeRepository damageCodeRepository) {
-    this.damageCodeRepository = damageCodeRepository;
   }
 
   @Autowired
@@ -93,11 +82,6 @@ public class ImportGateInService {
   @Autowired
   public void setPrintEirRepository(PrintEirRepository printEirRepository) {
     this.printEirRepository = printEirRepository;
-  }
-
-  @Autowired
-  public void setCardUsageRepository(CardUsageRepository cardUsageRepository) {
-    this.cardUsageRepository = cardUsageRepository;
   }
 
   @Autowired
@@ -169,119 +153,6 @@ public class ImportGateInService {
 
     GatePass gatePass =
         scssGatePassOpt.orElseThrow(() -> new BusinessException("Invalid Gate Pass. Not Found !" + gatePassNo));
-
-    if (!(gatePass.getCommonGateInOut() == null || gatePass.getBaseCommonGateInOutAttribute().getEirStatus() == null)) {
-
-      // check gatepass is approved(used), EIRStatus = A?
-      log.debug("-----START check gatepass is approved(used), EIRStatus = A? ----" + gatePassNo);
-      eirStatus = TransactionStatus.APPROVED;
-      if (gatePass.getBaseCommonGateInOutAttribute().getEirStatus().equals(eirStatus)) {
-        /*
-         * throw new BusinessException( CommonUtil.formatMessageCode(ApplicationConstants.
-         * GATE_PASS_IS_USED, new Object[] {gatePassNo}));
-         */
-        throw new BusinessException("Gate Pass No " + gatePassNo + " is already been used");
-
-      }
-
-      log.debug("---END check gatepass gatepass is approved(used), EIRStatus = A? ----" + gatePassNo);
-
-      // check gatepass is in progress (in using), EIRStatus = I?
-      log.debug("--START check gatepass is in progress (in using), EIRStatus = I? --" + gatePassNo);
-      eirStatus = TransactionStatus.INPROGRESS;
-      if (gatePass.getBaseCommonGateInOutAttribute().getEirStatus().equals(eirStatus)) {
-        /*
-         * throw new BusinessException( CommonUtil.formatMessageCode(ApplicationConstants.
-         * GATE_PASS_IN_PROGRESS, new Object[] {gatePassNo}));
-         */
-        throw new BusinessException("Gate Pass No " + gatePassNo + " in progress");
-      }
-      log.debug("--END check gatepass is in progress (in using), EIRStatus = I? --" + gatePassNo);
-
-      if (gatePass.getGatePassStatus() != null) {
-        // check gatepass is cancelled?
-        log.debug("------START check gatepass is cancelled ------" + gatePassNo);
-        gatePassStatus = GatePassStatus.CANCEL;
-        if (gatePass.getGatePassStatus().equals(gatePassStatus)) {
-          /*
-           * throw new BusinessException( CommonUtil.formatMessageCode(ApplicationConstants.
-           * GATE_PASS_CANCEL, new Object[] {gatePassNo}));
-           */
-          throw new BusinessException("Gate Pass No " + gatePassNo + " is already been cancelled");
-        }
-        log.error("-----END check gatepass is cancelled -----" + gatePassNo);
-
-        // check gatepass is valid , EIRStatus = N?
-        log.error("------START check gatepass is valid , EIRStatus = N? ----" + gatePassNo);
-        eirStatus = TransactionStatus.NEW;
-        gatePassStatus = GatePassStatus.ACTIVE;
-        if (gatePass.getBaseCommonGateInOutAttribute().getEirStatus().equals(eirStatus)
-            && gatePass.getGatePassStatus().equals(gatePassStatus)) {
-          /*
-           * throw new
-           * BusinessException(CommonUtil.formatMessageCode(ApplicationConstants.GATE_PASS_INVALID,
-           * new Object[] { gatePassNo }));
-           */
-          throw new BusinessException("Invalid Gate Pass No" + gatePassNo);
-        }
-        log.error("------END check gatepass is valid , EIRStatus = N? ------" + gatePassNo);
-
-      }
-
-      /**
-       * Gate Pass Expiry Date By YPN
-       */
-      LocalDateTime validateDate = gatePass.getGatePassValidDate();
-      log.error("------START check Gate Pass Expiry Date By YPN? ---- gatePassNo: " + gatePassNo + " :validateDate: "
-          + validateDate + " :today: " + today);
-      if (validateDate == null || today.isAfter(validateDate)) {
-        throw new BusinessException("Gate Pass No " + gatePassNo + " is already Expiry");
-        /*
-         * throw new BusinessException(
-         * CommonUtil.formatMessageCode(ApplicationConstants.DATE_GATEPASS_EXPIRY, new Object[]
-         * {gatePassNo}));
-         */
-
-      }
-      log.error("------ENDING CHECKING Gate Pass Expiry Date By YPN ------" + gatePassNo);
-
-
-      log.error("------STARTING CHECKING WDC GATEPASS is valid------" + gatePassNo);
-      Optional<WDCGatePass> wdcGatePassOpt = wdcGatePassRepository.findByGatePassNO(gatePassNo);
-
-      WDCGatePass wdcGatePass =
-          wdcGatePassOpt.orElseThrow(() -> new BusinessException("Invalid Gate Pass In WDC. Not Found !" + gatePassNo));
-
-      /**
-       * Gate Pass Expiry Date
-       */
-      log.error("-------------START WDC Gate Pass Expiry Date -----------" + gatePassNo + ":" + truckHeadNo);
-
-      LocalDateTime wdcValidateDate = wdcGatePass.getGatePassValidDate();
-
-      log.error("------START check WDC Gate Pass Expiry Date By YPN? ---- gatePassNo: " + gatePassNo
-          + " :wdcValidateDate: " + wdcValidateDate + " :today: " + today);
-
-      if (wdcValidateDate == null || today.isAfter(wdcValidateDate)) {
-
-        log.error("------END check WDC Gate Pass Expiry Date By YPN? ---- gatePassNo: " + gatePassNo
-            + " :wdcValidateDate: " + wdcValidateDate + " :today: " + today);
-        throw new BusinessException("Gate Pass No " + gatePassNo + " is already Expiry");
-        /*
-         * throw new BusinessException(
-         * CommonUtil.formatMessageCode(ApplicationConstants.DATE_GATEPASS_EXPIRY, new Object[]
-         * {gatePassNo}));
-         */
-
-
-      }
-      log.error("-------------END Gate Pass Expiry Date -----------" + gatePassNo + ":" + truckHeadNo);
-
-
-    } else {
-      log.debug("--Invalid Gate Pass record --" + gatePassNo);
-      throw new BusinessException("Invalid Gate Pass record " + gatePassNo);
-    }
 
 
 

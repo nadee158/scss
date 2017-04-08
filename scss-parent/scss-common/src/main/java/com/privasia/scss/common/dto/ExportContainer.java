@@ -23,1410 +23,1420 @@ import com.privasia.scss.common.util.CommonUtil;
  */
 public class ExportContainer {
 
-  private static final Log log = LogFactory.getLog(ExportContainer.class);
+	private static final Log log = LogFactory.getLog(ExportContainer.class);
 
-  private Long exportID;
+	private Long exportID;
 
-  private CommonContainerDTO container;
+	private CommonContainerDTO container;
 
-  private CommonGateInOutDTO commonGateInOut;
+	private CommonGateInOutDTO commonGateInOut;
 
-  private BaseCommonGateInOutDTO baseCommonGateInOutAttribute;
+	private BaseCommonGateInOutDTO baseCommonGateInOutAttribute;
 
-  private String manualPlanIndicator;
+	private String manualPlanIndicator;
 
-  private String bookingNo; // opus exportOrderNo
+	private String bookingNo; // opus exportOrderNo
 
-  private String exportOrderType;
+	private String exportOrderType;
 
-  private String exportOrderStatus;
+	private String exportOrderStatus;
 
-  private ShipSCNDTO scn;
+	private ShipSCNDTO scn;
 
-  private String gateInOut;
+	private String gateInOut;
 
-  private String expOut;
+	private String expOut;
 
-  private String expCar;
+	private String expCar;
 
-  private String expSpod;
+	private String expSpod;
 
-  private CommonSealDTO sealAttribute;
+	private CommonSealDTO sealAttribute;
 
-  private Integer expWeightBridge;
+	private Integer expWeightBridge;
 
-  private Integer expNetWeight;
+	private Integer expNetWeight;
 
-  private Boolean referFlag;
+	private Integer emptyWeight;
 
-  private String referTempType;
+	private Boolean referFlag;
 
-  private Integer referTemp;
+	private String referTempType;
 
-  private String imdg;
+	private Integer referTemp;
 
-  private String dgUNCode;
+	private String imdg;
 
-  private String imdgLabelID;
+	private String dgUNCode;
 
-  private Integer oogOH;
+	private String imdgLabelID;
 
-  private Integer oogOL;
+	private Integer oogOH;
 
-  private Integer oogOF;
+	private Integer oogOL;
 
-  private Integer oogOA;
+	private Integer oogOF;
 
-  private String containerPosition;
+	private Integer oogOA;
 
-  @JsonFormat(pattern = CommonUtil.GLOBAL_DATE_PATTERN)
-  @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
-  private LocalDateTime preCheckDate;
+	private String containerPosition;
 
-  private String yardPosition;
+	@JsonFormat(pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+	@DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
+	private LocalDateTime preCheckDate;
 
-  private String yardBayCode;
+	private String yardPosition;
 
-  private Integer pmBTM;
+	private String yardBayCode;
 
-  private Integer trBTM;
+	private Integer pmBTM;
 
-  private Integer oogOR;
+	private Integer trBTM;
 
-  private Integer callCard;
+	private Integer oogOR;
 
-  private String vesselVisitID;
+	private Integer callCard;
 
-  private String vesselVoyageIN;
+	private String vesselVisitID;
 
-  private String vesselVoyageOUT;
+	private String vesselVoyageIN;
 
-  private String vesselCode;
+	private String vesselVoyageOUT;
 
-  private String vesselName;
+	private String vesselCode;
 
-  private String expAgent;
+	private String vesselName;
 
-  private String vesselStatus;
+	private String expAgent;
 
-  private String shipCode;
+	private String vesselStatus;
 
-  private String vesselSCN;
+	private String shipCode;
 
-  @JsonFormat(pattern = CommonUtil.GLOBAL_DATE_PATTERN)
-  @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
-  private LocalDateTime vesselETADate;
+	private String vesselSCN;
 
-  @JsonFormat(pattern = CommonUtil.GLOBAL_DATE_PATTERN)
-  @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
-  private LocalDateTime vesselATADate;
+	@JsonFormat(pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+	@DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
+	private LocalDateTime vesselETADate;
 
-  private String shippingAgent;
+	@JsonFormat(pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+	@DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
+	private LocalDateTime vesselATADate;
 
-  private Boolean oogSSR;
+	private String shippingAgent;
 
-  private Boolean overClosingSSR;
+	private Boolean oogSSR;
 
-  private Boolean replanSSR;
+	private Boolean overClosingSSR;
 
-  private String ssrBlockStatus;
+	private Boolean replanSSR;
 
-  @JsonFormat(pattern = CommonUtil.GLOBAL_DATE_PATTERN)
-  @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
-  private LocalDateTime ssrBlockStatusDate;
+	private String ssrBlockStatus;
 
-  private String gcsBlockStatus;
+	@JsonFormat(pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+	@DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
+	private LocalDateTime ssrBlockStatusDate;
 
-  @JsonFormat(pattern = CommonUtil.GLOBAL_DATE_PATTERN)
-  @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
-  private LocalDateTime gcsBlockStatusDate;
+	private String gcsBlockStatus;
 
-  private String gcsDeclareNo;
+	@JsonFormat(pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+	@DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
+	private LocalDateTime gcsBlockStatusDate;
 
-  @JsonFormat(pattern = CommonUtil.GLOBAL_DATE_PATTERN)
-  @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
-  private LocalDateTime gcsLastCheck;
+	private String gcsDeclareNo;
 
-  private PrintEirDTO printEir;
+	@JsonFormat(pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+	@DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
+	private LocalDateTime gcsLastCheck;
 
-  private String userRemarks;
+	private PrintEirDTO printEir;
 
-  private String kpaApproval;
+	private String userRemarks;
 
-  private String hdlGoodsCode;
+	private String kpaApproval;
 
-  private String dgDescription;
+	private String hdlGoodsCode;
 
-  private String hdlGoodsDescription;
+	private String dgDescription;
 
-  private Integer tareWeight;
+	private String hdlGoodsDescription;
 
-  private Integer grossWeight;
+	private Integer tareWeight;
 
-  private Integer netWeight;
+	private Integer grossWeight;
 
-  private CardUsageDTO cardUsage;
+	private Integer netWeight;
 
-  private Boolean backToback;
+	private CardUsageDTO cardUsage;
 
-  private Double weightDiffPercentage;
+	private Boolean backToback;
 
-  private Double weightDifference;
+	private Double weightDiffPercentage;
 
-  private DamageCodeDTO damageCode_01;
+	private Double weightDifference;
 
-  private DamageCodeDTO damageCode_02;
+	private DamageCodeDTO damageCode_01;
 
-  private DamageCodeDTO damageCode_03;
+	private DamageCodeDTO damageCode_02;
 
-  private DamageCodeDTO damageCode_04;
+	private DamageCodeDTO damageCode_03;
 
-  private DamageCodeDTO damageCode_05;
+	private DamageCodeDTO damageCode_04;
 
-  private DamageCodeDTO damageCode_06;
+	private DamageCodeDTO damageCode_05;
 
-  private DamageCodeDTO damageCode_07;
+	private DamageCodeDTO damageCode_06;
 
-  private DamageCodeDTO damageCode_08;
+	private DamageCodeDTO damageCode_07;
 
-  private DamageCodeDTO damageCode_09;
+	private DamageCodeDTO damageCode_08;
 
-  private Boolean dontValidateSeal = true;
+	private DamageCodeDTO damageCode_09;
 
-  private Boolean wrongDoor;
+	private Boolean dontValidateSeal = true;
 
-  private String hpabISOCode;
+	private Boolean wrongDoor;
 
-  private String cosmosISOCode;
+	private String hpabISOCode;
 
-  private String pmWeight;
+	private String cosmosISOCode;
 
-  private String trailerWeight;
+	private String pmWeight;
 
-  private String trailerPlateNo;
+	private String trailerWeight;
 
-  private String fuelWeight;
+	private String trailerPlateNo;
 
-  private String tireWeight;
+	private String fuelWeight;
 
-  private String variance;
+	private String tireWeight;
 
-  private boolean withinTolerance;
+	private String variance;
 
-  private String calculatedVariance;
+	private boolean withinTolerance;
 
-  private String solasCertNo;
+	private String calculatedVariance;
 
-  private CommonSolasDTO solas = new CommonSolasDTO();
+	private String solasCertNo;
 
-  /////////////// EXTRA FILEDS FOUND BASED ON COMPILE ERRORS/////////////////
-  private boolean internalBlock = false; // for CosmosExportRepository -
-  // extractInternalBlock method
+	private CommonSolasDTO solas = new CommonSolasDTO();
 
-  private String internalBlockDesc; // for CosmosExportRepository -
-                                    // extractInternalBlock method
+	/////////////// EXTRA FILEDS FOUND BASED ON COMPILE ERRORS/////////////////
+	private boolean internalBlock = false; // for CosmosExportRepository -
+	// extractInternalBlock method
 
-  private String lpkEdiEnabled; // for GateInExpNormalController -
-                                // checkIfDGContainer method
+	private String internalBlockDesc; // for CosmosExportRepository -
+										// extractInternalBlock method
 
-  private boolean bypassDg; // for GateInExpNormalController -
-                            // checkIfDGContainer method
+	private String lpkEdiEnabled; // for GateInExpNormalController -
+									// checkIfDGContainer method
 
-  private boolean dgWithinWindowEntry; // for GateInExpNormalController -
-                                       // checkIfDGContainer method
+	private boolean bypassDg; // for GateInExpNormalController -
+								// checkIfDGContainer method
 
-  private String kpaClass; // for GateInExpNormalController -
-                           // checkIfDGContainer method
+	private boolean dgWithinWindowEntry; // for GateInExpNormalController -
+											// checkIfDGContainer method
 
-  private boolean isRegisteredInEarlyEntry; // for GateInExpNormalController -
-                                            // checkIfDGContainer
-                                            // method
+	private String kpaClass; // for GateInExpNormalController -
+								// checkIfDGContainer method
 
-  private String startEarlyEntry; // for GateInExpNormalController -
-                                  // checkIfDGContainer method
+	private boolean isRegisteredInEarlyEntry; // for GateInExpNormalController -
+												// checkIfDGContainer
+												// method
 
-  private String endEarlyEntry; // for GateInExpNormalController -
-                                // checkIfDGContainer method
+	private String startEarlyEntry; // for GateInExpNormalController -
+									// checkIfDGContainer method
 
-  private boolean allowBypassDgValRemote; // for GateInExpNormalController -
-                                          // checkIfDGContainer
-                                          // method
+	private String endEarlyEntry; // for GateInExpNormalController -
+									// checkIfDGContainer method
 
-  private int totalBooking;// for GateInExpNormalController -
-                           // validateContainer method
+	private boolean allowBypassDgValRemote; // for GateInExpNormalController -
+											// checkIfDGContainer
+											// method
 
-  private boolean bookingNoExist;// for GateInExpNormalController -
-                                 // validateContainer method
+	private int totalBooking;// for GateInExpNormalController -
+								// validateContainer method
 
-  private boolean earlyEntry;// for GateInExpNormalController -
-                             // validateContainer method
+	private boolean bookingNoExist;// for GateInExpNormalController -
+									// validateContainer method
 
-  private int storagePeriod;// for ContainerService - isAllowIn method
+	private boolean earlyEntry;// for GateInExpNormalController -
+								// validateContainer method
 
-  private boolean bypassEEntry;// for ContainerService - isAllowIn method
+	private int storagePeriod;// for ContainerService - isAllowIn method
 
-  private String errXMLMsg;// for GateInXMLRequestService -
-                           // constructExportContainerRequestXML
-                           // method
+	private boolean bypassEEntry;// for ContainerService - isAllowIn method
 
-  private String contRefer;// for GateInXMLRequestService -
-                           // constructExportContainerRequestXML
-  // method
+	private String errXMLMsg;// for GateInXMLRequestService -
+								// constructExportContainerRequestXML
+								// method
 
-  private int shipperVGM;// for GateInXMLRequestService -
-                         // constructExportContainerRequestXML
-  // method
+	private String contRefer;// for GateInXMLRequestService -
+								// constructExportContainerRequestXML
+	// method
 
-  private String operationReefer;// for GateInXMLRequestService -
-                                 // constructExportContainerRequestXML
-                                 // constructExportContainerOperationReeferInfo
+	private int shipperVGM;// for GateInXMLRequestService -
+							// constructExportContainerRequestXML
+	// method
 
-  private String temp;// for GateInXMLRequestService -
-                      // constructExportContainerRequestXMLconstructExportContainerOperationReeferInfo
+	private String operationReefer;// for GateInXMLRequestService -
+									// constructExportContainerRequestXML
+									// constructExportContainerOperationReeferInfo
 
-  private String tempUnit;// for GateInXMLRequestService -
-                          // constructExportContainerRequestXML
-                          // constructExportContainerOperationReeferInfo
+	private String temp;// for GateInXMLRequestService -
+						// constructExportContainerRequestXMLconstructExportContainerOperationReeferInfo
 
- 
-  /////////////////////////////////////
-  // FOR OPUS SERVICE
-  private String expCarrierType;
+	private String tempUnit;// for GateInXMLRequestService -
+							// constructExportContainerRequestXML
+							// constructExportContainerOperationReeferInfo
 
-  @JsonFormat(pattern = CommonUtil.GLOBAL_DATE_PATTERN)
-  @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
-  private LocalDateTime yardOpeningDateTime;
+	/////////////////////////////////////
+	// FOR OPUS SERVICE
+	private String expCarrierType;
 
-  private String containerType;
+	@JsonFormat(pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+	@DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
+	private LocalDateTime yardOpeningDateTime;
 
-  private String reeferTempUnit;
+	private String containerType;
 
-  @JsonFormat(pattern = CommonUtil.GLOBAL_DATE_PATTERN)
-  @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
-  private LocalDateTime yardDGOpeningDateTime;
+	private String reeferTempUnit;
 
-  private String shippingLine;
+	@JsonFormat(pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+	@DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
+	private LocalDateTime yardDGOpeningDateTime;
 
-  private String subHandlingType;// ":"1"
-  private String rtgExecustionStatus;// ":"RGS"
+	private String shippingLine;
 
-  @JsonFormat(pattern = CommonUtil.GLOBAL_DATE_PATTERN)
-  @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
-  private LocalDateTime rtgExecustionDateTime;// ;":"20161212101010"
+	private String subHandlingType;// ":"1"
+	private String rtgExecustionStatus;// ":"RGS"
 
-  //////////////////////////////////////
+	@JsonFormat(pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+	@DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
+	private LocalDateTime rtgExecustionDateTime;// ;":"20161212101010"
 
-  private boolean ogaBlock = false;
+	//////////////////////////////////////
 
-  public Long getExportID() {
-    return exportID;
-  }
+	private boolean ogaBlock = false;
 
-  public void setExportID(Long exportID) {
-    this.exportID = exportID;
-  }
+	public Long getExportID() {
+		return exportID;
+	}
 
-  public CommonContainerDTO getContainer() {
-    return container;
-  }
+	public void setExportID(Long exportID) {
+		this.exportID = exportID;
+	}
 
-  public void setContainer(CommonContainerDTO container) {
-    this.container = container;
-  }
+	public CommonContainerDTO getContainer() {
+		return container;
+	}
 
-  public CommonGateInOutDTO getCommonGateInOut() {
-    return commonGateInOut;
-  }
+	public void setContainer(CommonContainerDTO container) {
+		this.container = container;
+	}
 
-  public void setCommonGateInOut(CommonGateInOutDTO commonGateInOut) {
-    this.commonGateInOut = commonGateInOut;
-  }
+	public CommonGateInOutDTO getCommonGateInOut() {
+		return commonGateInOut;
+	}
 
-  public BaseCommonGateInOutDTO getBaseCommonGateInOutAttribute() {
-    return baseCommonGateInOutAttribute;
-  }
+	public void setCommonGateInOut(CommonGateInOutDTO commonGateInOut) {
+		this.commonGateInOut = commonGateInOut;
+	}
 
-  public void setBaseCommonGateInOutAttribute(BaseCommonGateInOutDTO baseCommonGateInOutAttribute) {
-    this.baseCommonGateInOutAttribute = baseCommonGateInOutAttribute;
-  }
+	public BaseCommonGateInOutDTO getBaseCommonGateInOutAttribute() {
+		return baseCommonGateInOutAttribute;
+	}
 
-  public String getBookingNo() {
-    return bookingNo;
-  }
+	public void setBaseCommonGateInOutAttribute(BaseCommonGateInOutDTO baseCommonGateInOutAttribute) {
+		this.baseCommonGateInOutAttribute = baseCommonGateInOutAttribute;
+	}
 
-  public void setBookingNo(String bookingNo) {
-    this.bookingNo = bookingNo;
-  }
+	public String getBookingNo() {
+		return bookingNo;
+	}
 
-  public ShipSCNDTO getScn() {
-    return scn;
-  }
+	public void setBookingNo(String bookingNo) {
+		this.bookingNo = bookingNo;
+	}
 
-  public void setScn(ShipSCNDTO scn) {
-    this.scn = scn;
-  }
+	public ShipSCNDTO getScn() {
+		return scn;
+	}
 
-  public String getGateInOut() {
-    return gateInOut;
-  }
+	public void setScn(ShipSCNDTO scn) {
+		this.scn = scn;
+	}
 
-  public void setGateInOut(String gateInOut) {
-    this.gateInOut = gateInOut;
-  }
+	public String getGateInOut() {
+		return gateInOut;
+	}
 
-  public String getExpOut() {
-    return expOut;
-  }
+	public void setGateInOut(String gateInOut) {
+		this.gateInOut = gateInOut;
+	}
 
-  public void setExpOut(String expOut) {
-    this.expOut = expOut;
-  }
+	public String getExpOut() {
+		return expOut;
+	}
 
-  public String getExpCar() {
-    return expCar;
-  }
+	public void setExpOut(String expOut) {
+		this.expOut = expOut;
+	}
 
-  public void setExpCar(String expCar) {
-    this.expCar = expCar;
-  }
+	public String getExpCar() {
+		return expCar;
+	}
 
-  public String getExpSpod() {
-    return expSpod;
-  }
+	public void setExpCar(String expCar) {
+		this.expCar = expCar;
+	}
 
-  public void setExpSpod(String expSpod) {
-    this.expSpod = expSpod;
-  }
+	public String getExpSpod() {
+		return expSpod;
+	}
 
-  public CommonSealDTO getSealAttribute() {
-    return sealAttribute;
-  }
+	public void setExpSpod(String expSpod) {
+		this.expSpod = expSpod;
+	}
 
-  public void setSealAttribute(CommonSealDTO sealAttribute) {
-    this.sealAttribute = sealAttribute;
-  }
+	public CommonSealDTO getSealAttribute() {
+		return sealAttribute;
+	}
 
-  public Integer getExpWeightBridge() {
-    return expWeightBridge;
-  }
+	public void setSealAttribute(CommonSealDTO sealAttribute) {
+		this.sealAttribute = sealAttribute;
+	}
 
-  public void setExpWeightBridge(Integer expWeightBridge) {
-    this.expWeightBridge = expWeightBridge;
-  }
+	public Integer getExpWeightBridge() {
+		return expWeightBridge;
+	}
 
-  public Integer getExpNetWeight() {
-    return expNetWeight;
-  }
+	public void setExpWeightBridge(Integer expWeightBridge) {
+		this.expWeightBridge = expWeightBridge;
+	}
 
-  public void setExpNetWeight(Integer expNetWeight) {
-    this.expNetWeight = expNetWeight;
-  }
+	public Integer getExpNetWeight() {
+		return expNetWeight;
+	}
 
-  public Boolean getReferFlag() {
-    return referFlag;
-  }
+	public void setExpNetWeight(Integer expNetWeight) {
+		this.expNetWeight = expNetWeight;
+	}
 
-  public void setReferFlag(Boolean referFlag) {
-    this.referFlag = referFlag;
-  }
+	public Boolean getReferFlag() {
+		return referFlag;
+	}
 
-  public String getReferTempType() {
-    return referTempType;
-  }
+	public void setReferFlag(Boolean referFlag) {
+		this.referFlag = referFlag;
+	}
 
-  public void setReferTempType(String referTempType) {
-    this.referTempType = referTempType;
-  }
+	public String getReferTempType() {
+		return referTempType;
+	}
 
-  public Integer getReferTemp() {
-    return referTemp;
-  }
+	public void setReferTempType(String referTempType) {
+		this.referTempType = referTempType;
+	}
 
-  public void setReferTemp(Integer referTemp) {
-    this.referTemp = referTemp;
-  }
+	public Integer getReferTemp() {
+		return referTemp;
+	}
 
-  public String getImdg() {
-    return imdg;
-  }
+	public void setReferTemp(Integer referTemp) {
+		this.referTemp = referTemp;
+	}
 
-  public void setImdg(String imdg) {
-    this.imdg = imdg;
-  }
+	public String getImdg() {
+		return imdg;
+	}
 
-  public String getDgUNCode() {
-    return dgUNCode;
-  }
+	public void setImdg(String imdg) {
+		this.imdg = imdg;
+	}
 
-  public void setDgUNCode(String dgUNCode) {
-    this.dgUNCode = dgUNCode;
-  }
+	public String getDgUNCode() {
+		return dgUNCode;
+	}
 
-  public String getImdgLabelID() {
-    return imdgLabelID;
-  }
+	public void setDgUNCode(String dgUNCode) {
+		this.dgUNCode = dgUNCode;
+	}
 
-  public void setImdgLabelID(String imdgLabelID) {
-    this.imdgLabelID = imdgLabelID;
-  }
+	public String getImdgLabelID() {
+		return imdgLabelID;
+	}
 
-  public Integer getOogOH() {
-    return oogOH;
-  }
+	public void setImdgLabelID(String imdgLabelID) {
+		this.imdgLabelID = imdgLabelID;
+	}
 
-  public void setOogOH(Integer oogOH) {
-    this.oogOH = oogOH;
-  }
+	public Integer getOogOH() {
+		return oogOH;
+	}
 
-  public Integer getOogOL() {
-    return oogOL;
-  }
+	public void setOogOH(Integer oogOH) {
+		this.oogOH = oogOH;
+	}
 
-  public void setOogOL(Integer oogOL) {
-    this.oogOL = oogOL;
-  }
+	public Integer getOogOL() {
+		return oogOL;
+	}
 
-  public Integer getOogOF() {
-    return oogOF;
-  }
+	public void setOogOL(Integer oogOL) {
+		this.oogOL = oogOL;
+	}
 
-  public void setOogOF(Integer oogOF) {
-    this.oogOF = oogOF;
-  }
+	public Integer getOogOF() {
+		return oogOF;
+	}
 
-  public Integer getOogOA() {
-    return oogOA;
-  }
+	public void setOogOF(Integer oogOF) {
+		this.oogOF = oogOF;
+	}
 
-  public void setOogOA(Integer oogOA) {
-    this.oogOA = oogOA;
-  }
+	public Integer getOogOA() {
+		return oogOA;
+	}
 
-  public String getContainerPosition() {
-    return containerPosition;
-  }
+	public void setOogOA(Integer oogOA) {
+		this.oogOA = oogOA;
+	}
 
-  public void setContainerPosition(String containerPosition) {
-    this.containerPosition = containerPosition;
-  }
+	public String getContainerPosition() {
+		return containerPosition;
+	}
 
-  public LocalDateTime getPreCheckDate() {
-    return preCheckDate;
-  }
+	public void setContainerPosition(String containerPosition) {
+		this.containerPosition = containerPosition;
+	}
 
-  public void setPreCheckDate(LocalDateTime preCheckDate) {
-    this.preCheckDate = preCheckDate;
-  }
+	public LocalDateTime getPreCheckDate() {
+		return preCheckDate;
+	}
 
-  public String getYardPosition() {
-    return yardPosition;
-  }
+	public void setPreCheckDate(LocalDateTime preCheckDate) {
+		this.preCheckDate = preCheckDate;
+	}
 
-  public void setYardPosition(String yardPosition) {
-    this.yardPosition = yardPosition;
-  }
+	public String getYardPosition() {
+		return yardPosition;
+	}
 
-  public Integer getPmBTM() {
-    return pmBTM;
-  }
+	public void setYardPosition(String yardPosition) {
+		this.yardPosition = yardPosition;
+	}
 
-  public void setPmBTM(Integer pmBTM) {
-    this.pmBTM = pmBTM;
-  }
+	public Integer getPmBTM() {
+		return pmBTM;
+	}
 
-  public Integer getTrBTM() {
-    return trBTM;
-  }
+	public void setPmBTM(Integer pmBTM) {
+		this.pmBTM = pmBTM;
+	}
 
-  public void setTrBTM(Integer trBTM) {
-    this.trBTM = trBTM;
-  }
+	public Integer getTrBTM() {
+		return trBTM;
+	}
 
-  public Integer getOogOR() {
-    return oogOR;
-  }
+	public void setTrBTM(Integer trBTM) {
+		this.trBTM = trBTM;
+	}
 
-  public void setOogOR(Integer oogOR) {
-    this.oogOR = oogOR;
-  }
+	public Integer getOogOR() {
+		return oogOR;
+	}
 
-  public Integer getCallCard() {
-    return callCard;
-  }
+	public void setOogOR(Integer oogOR) {
+		this.oogOR = oogOR;
+	}
 
-  public void setCallCard(Integer callCard) {
-    this.callCard = callCard;
-  }
+	public Integer getCallCard() {
+		return callCard;
+	}
 
-  public String getVesselVisitID() {
-    return vesselVisitID;
-  }
+	public void setCallCard(Integer callCard) {
+		this.callCard = callCard;
+	}
 
-  public void setVesselVisitID(String vesselVisitID) {
-    this.vesselVisitID = vesselVisitID;
-  }
+	public String getVesselVisitID() {
+		return vesselVisitID;
+	}
 
-  public String getVesselCode() {
-    return vesselCode;
-  }
+	public void setVesselVisitID(String vesselVisitID) {
+		this.vesselVisitID = vesselVisitID;
+	}
 
-  public void setVesselCode(String vesselCode) {
-    this.vesselCode = vesselCode;
-  }
+	public String getVesselCode() {
+		return vesselCode;
+	}
 
-  public String getVesselName() {
-    return vesselName;
-  }
+	public void setVesselCode(String vesselCode) {
+		this.vesselCode = vesselCode;
+	}
 
-  public void setVesselName(String vesselName) {
-    this.vesselName = vesselName;
-  }
+	public String getVesselName() {
+		return vesselName;
+	}
 
-  public String getExpAgent() {
-    return expAgent;
-  }
+	public void setVesselName(String vesselName) {
+		this.vesselName = vesselName;
+	}
 
-  public void setExpAgent(String expAgent) {
-    this.expAgent = expAgent;
-  }
+	public String getExpAgent() {
+		return expAgent;
+	}
 
-  public String getVesselStatus() {
-    return vesselStatus;
-  }
+	public void setExpAgent(String expAgent) {
+		this.expAgent = expAgent;
+	}
 
-  public void setVesselStatus(String vesselStatus) {
-    this.vesselStatus = vesselStatus;
-  }
+	public String getVesselStatus() {
+		return vesselStatus;
+	}
 
-  public String getShipCode() {
-    return shipCode;
-  }
+	public void setVesselStatus(String vesselStatus) {
+		this.vesselStatus = vesselStatus;
+	}
 
-  public void setShipCode(String shipCode) {
-    this.shipCode = shipCode;
-  }
+	public String getShipCode() {
+		return shipCode;
+	}
 
-  public String getVesselSCN() {
-    return vesselSCN;
-  }
+	public void setShipCode(String shipCode) {
+		this.shipCode = shipCode;
+	}
 
-  public void setVesselSCN(String vesselSCN) {
-    this.vesselSCN = vesselSCN;
-  }
+	public String getVesselSCN() {
+		return vesselSCN;
+	}
 
-  public LocalDateTime getVesselETADate() {
-    return vesselETADate;
-  }
+	public void setVesselSCN(String vesselSCN) {
+		this.vesselSCN = vesselSCN;
+	}
 
-  public void setVesselETADate(LocalDateTime vesselETADate) {
-    this.vesselETADate = vesselETADate;
-  }
+	public LocalDateTime getVesselETADate() {
+		return vesselETADate;
+	}
 
-  public LocalDateTime getVesselATADate() {
-    return vesselATADate;
-  }
+	public void setVesselETADate(LocalDateTime vesselETADate) {
+		this.vesselETADate = vesselETADate;
+	}
 
-  public void setVesselATADate(LocalDateTime vesselATADate) {
-    this.vesselATADate = vesselATADate;
-  }
+	public LocalDateTime getVesselATADate() {
+		return vesselATADate;
+	}
 
-  public String getShippingAgent() {
-    return shippingAgent;
-  }
+	public void setVesselATADate(LocalDateTime vesselATADate) {
+		this.vesselATADate = vesselATADate;
+	}
 
-  public void setShippingAgent(String shippingAgent) {
-    this.shippingAgent = shippingAgent;
-  }
+	public String getShippingAgent() {
+		return shippingAgent;
+	}
 
-  public Boolean getOogSSR() {
-    return oogSSR;
-  }
+	public void setShippingAgent(String shippingAgent) {
+		this.shippingAgent = shippingAgent;
+	}
 
-  public void setOogSSR(Boolean oogSSR) {
-    this.oogSSR = oogSSR;
-  }
+	public Boolean getOogSSR() {
+		return oogSSR;
+	}
 
-  public Boolean getOverClosingSSR() {
-    return overClosingSSR;
-  }
+	public void setOogSSR(Boolean oogSSR) {
+		this.oogSSR = oogSSR;
+	}
 
-  public void setOverClosingSSR(Boolean overClosingSSR) {
-    this.overClosingSSR = overClosingSSR;
-  }
+	public Boolean getOverClosingSSR() {
+		return overClosingSSR;
+	}
 
-  public Boolean getReplanSSR() {
-    return replanSSR;
-  }
+	public void setOverClosingSSR(Boolean overClosingSSR) {
+		this.overClosingSSR = overClosingSSR;
+	}
 
-  public void setReplanSSR(Boolean replanSSR) {
-    this.replanSSR = replanSSR;
-  }
+	public Boolean getReplanSSR() {
+		return replanSSR;
+	}
 
-  public String getSsrBlockStatus() {
-    return ssrBlockStatus;
-  }
+	public void setReplanSSR(Boolean replanSSR) {
+		this.replanSSR = replanSSR;
+	}
 
-  public void setSsrBlockStatus(String ssrBlockStatus) {
-    this.ssrBlockStatus = ssrBlockStatus;
-  }
+	public String getSsrBlockStatus() {
+		return ssrBlockStatus;
+	}
 
-  public LocalDateTime getSsrBlockStatusDate() {
-    return ssrBlockStatusDate;
-  }
+	public void setSsrBlockStatus(String ssrBlockStatus) {
+		this.ssrBlockStatus = ssrBlockStatus;
+	}
 
-  public void setSsrBlockStatusDate(LocalDateTime ssrBlockStatusDate) {
-    this.ssrBlockStatusDate = ssrBlockStatusDate;
-  }
+	public LocalDateTime getSsrBlockStatusDate() {
+		return ssrBlockStatusDate;
+	}
 
-  public String getGcsBlockStatus() {
-    return gcsBlockStatus;
-  }
+	public void setSsrBlockStatusDate(LocalDateTime ssrBlockStatusDate) {
+		this.ssrBlockStatusDate = ssrBlockStatusDate;
+	}
 
-  public void setGcsBlockStatus(String gcsBlockStatus) {
-    this.gcsBlockStatus = gcsBlockStatus;
-  }
+	public String getGcsBlockStatus() {
+		return gcsBlockStatus;
+	}
 
-  public LocalDateTime getGcsBlockStatusDate() {
-    return gcsBlockStatusDate;
-  }
+	public void setGcsBlockStatus(String gcsBlockStatus) {
+		this.gcsBlockStatus = gcsBlockStatus;
+	}
 
-  public void setGcsBlockStatusDate(LocalDateTime gcsBlockStatusDate) {
-    this.gcsBlockStatusDate = gcsBlockStatusDate;
-  }
+	public LocalDateTime getGcsBlockStatusDate() {
+		return gcsBlockStatusDate;
+	}
 
-  public String getGcsDeclareNo() {
-    return gcsDeclareNo;
-  }
+	public void setGcsBlockStatusDate(LocalDateTime gcsBlockStatusDate) {
+		this.gcsBlockStatusDate = gcsBlockStatusDate;
+	}
 
-  public void setGcsDeclareNo(String gcsDeclareNo) {
-    this.gcsDeclareNo = gcsDeclareNo;
-  }
+	public String getGcsDeclareNo() {
+		return gcsDeclareNo;
+	}
 
-  public LocalDateTime getGcsLastCheck() {
-    return gcsLastCheck;
-  }
+	public void setGcsDeclareNo(String gcsDeclareNo) {
+		this.gcsDeclareNo = gcsDeclareNo;
+	}
 
-  public void setGcsLastCheck(LocalDateTime gcsLastCheck) {
-    this.gcsLastCheck = gcsLastCheck;
-  }
+	public LocalDateTime getGcsLastCheck() {
+		return gcsLastCheck;
+	}
 
-  public PrintEirDTO getPrintEir() {
-    return printEir;
-  }
+	public void setGcsLastCheck(LocalDateTime gcsLastCheck) {
+		this.gcsLastCheck = gcsLastCheck;
+	}
 
-  public void setPrintEir(PrintEirDTO printEir) {
-    this.printEir = printEir;
-  }
+	public PrintEirDTO getPrintEir() {
+		return printEir;
+	}
 
-  public String getUserRemarks() {
-    return userRemarks;
-  }
+	public void setPrintEir(PrintEirDTO printEir) {
+		this.printEir = printEir;
+	}
 
-  public void setUserRemarks(String userRemarks) {
-    this.userRemarks = userRemarks;
-  }
+	public String getUserRemarks() {
+		return userRemarks;
+	}
 
-  public String getKpaApproval() {
-    return kpaApproval;
-  }
+	public void setUserRemarks(String userRemarks) {
+		this.userRemarks = userRemarks;
+	}
 
-  public void setKpaApproval(String kpaApproval) {
-    this.kpaApproval = kpaApproval;
-  }
+	public String getKpaApproval() {
+		return kpaApproval;
+	}
 
-  public String getHdlGoodsCode() {
-    return hdlGoodsCode;
-  }
+	public void setKpaApproval(String kpaApproval) {
+		this.kpaApproval = kpaApproval;
+	}
 
-  public void setHdlGoodsCode(String hdlGoodsCode) {
-    this.hdlGoodsCode = hdlGoodsCode;
-  }
+	public String getHdlGoodsCode() {
+		return hdlGoodsCode;
+	}
 
-  public String getDgDescription() {
-    return dgDescription;
-  }
+	public void setHdlGoodsCode(String hdlGoodsCode) {
+		this.hdlGoodsCode = hdlGoodsCode;
+	}
 
-  public void setDgDescription(String dgDescription) {
-    this.dgDescription = dgDescription;
-  }
+	public String getDgDescription() {
+		return dgDescription;
+	}
 
-  public String getHdlGoodsDescription() {
-    return hdlGoodsDescription;
-  }
+	public void setDgDescription(String dgDescription) {
+		this.dgDescription = dgDescription;
+	}
 
-  public void setHdlGoodsDescription(String hdlGoodsDescription) {
-    this.hdlGoodsDescription = hdlGoodsDescription;
-  }
+	public String getHdlGoodsDescription() {
+		return hdlGoodsDescription;
+	}
 
-  public Integer getTareWeight() {
-    return tareWeight;
-  }
+	public void setHdlGoodsDescription(String hdlGoodsDescription) {
+		this.hdlGoodsDescription = hdlGoodsDescription;
+	}
 
-  public void setTareWeight(Integer tareWeight) {
-    this.tareWeight = tareWeight;
-  }
+	public Integer getTareWeight() {
+		return tareWeight;
+	}
 
-  public Integer getGrossWeight() {
-    return grossWeight;
-  }
+	public void setTareWeight(Integer tareWeight) {
+		this.tareWeight = tareWeight;
+	}
 
-  public void setGrossWeight(Integer grossWeight) {
-    this.grossWeight = grossWeight;
-  }
+	public Integer getGrossWeight() {
+		return grossWeight;
+	}
 
-  public Integer getNetWeight() {
-    return netWeight;
-  }
+	public void setGrossWeight(Integer grossWeight) {
+		this.grossWeight = grossWeight;
+	}
 
-  public void setNetWeight(Integer netWeight) {
-    this.netWeight = netWeight;
-  }
+	public Integer getNetWeight() {
+		return netWeight;
+	}
 
-  public CardUsageDTO getCardUsage() {
-    return cardUsage;
-  }
+	public void setNetWeight(Integer netWeight) {
+		this.netWeight = netWeight;
+	}
 
-  public void setCardUsage(CardUsageDTO cardUsage) {
-    this.cardUsage = cardUsage;
-  }
+	public CardUsageDTO getCardUsage() {
+		return cardUsage;
+	}
 
-  public Boolean getBackToback() {
-    return backToback;
-  }
+	public void setCardUsage(CardUsageDTO cardUsage) {
+		this.cardUsage = cardUsage;
+	}
 
-  public void setBackToback(Boolean backToback) {
-    this.backToback = backToback;
-  }
+	public Boolean getBackToback() {
+		return backToback;
+	}
 
-  public Double getWeightDiffPercentage() {
-    return weightDiffPercentage;
-  }
+	public void setBackToback(Boolean backToback) {
+		this.backToback = backToback;
+	}
 
-  public void setWeightDiffPercentage(Double weightDiffPercentage) {
-    this.weightDiffPercentage = weightDiffPercentage;
-  }
+	public Double getWeightDiffPercentage() {
+		return weightDiffPercentage;
+	}
 
-  public Double getWeightDifference() {
-    return weightDifference;
-  }
+	public void setWeightDiffPercentage(Double weightDiffPercentage) {
+		this.weightDiffPercentage = weightDiffPercentage;
+	}
 
-  public void setWeightDifference(Double weightDifference) {
-    this.weightDifference = weightDifference;
-  }
+	public Double getWeightDifference() {
+		return weightDifference;
+	}
 
-  public DamageCodeDTO getDamageCode_01() {
-    return damageCode_01;
-  }
+	public void setWeightDifference(Double weightDifference) {
+		this.weightDifference = weightDifference;
+	}
 
-  public void setDamageCode_01(DamageCodeDTO damageCode_01) {
-    this.damageCode_01 = damageCode_01;
-  }
+	public DamageCodeDTO getDamageCode_01() {
+		return damageCode_01;
+	}
 
-  public DamageCodeDTO getDamageCode_02() {
-    return damageCode_02;
-  }
+	public void setDamageCode_01(DamageCodeDTO damageCode_01) {
+		this.damageCode_01 = damageCode_01;
+	}
 
-  public void setDamageCode_02(DamageCodeDTO damageCode_02) {
-    this.damageCode_02 = damageCode_02;
-  }
+	public DamageCodeDTO getDamageCode_02() {
+		return damageCode_02;
+	}
 
-  public DamageCodeDTO getDamageCode_03() {
-    return damageCode_03;
-  }
+	public void setDamageCode_02(DamageCodeDTO damageCode_02) {
+		this.damageCode_02 = damageCode_02;
+	}
 
-  public void setDamageCode_03(DamageCodeDTO damageCode_03) {
-    this.damageCode_03 = damageCode_03;
-  }
+	public DamageCodeDTO getDamageCode_03() {
+		return damageCode_03;
+	}
 
-  public DamageCodeDTO getDamageCode_04() {
-    return damageCode_04;
-  }
+	public void setDamageCode_03(DamageCodeDTO damageCode_03) {
+		this.damageCode_03 = damageCode_03;
+	}
 
-  public void setDamageCode_04(DamageCodeDTO damageCode_04) {
-    this.damageCode_04 = damageCode_04;
-  }
+	public DamageCodeDTO getDamageCode_04() {
+		return damageCode_04;
+	}
 
-  public DamageCodeDTO getDamageCode_05() {
-    return damageCode_05;
-  }
+	public void setDamageCode_04(DamageCodeDTO damageCode_04) {
+		this.damageCode_04 = damageCode_04;
+	}
 
-  public void setDamageCode_05(DamageCodeDTO damageCode_05) {
-    this.damageCode_05 = damageCode_05;
-  }
+	public DamageCodeDTO getDamageCode_05() {
+		return damageCode_05;
+	}
 
-  public DamageCodeDTO getDamageCode_06() {
-    return damageCode_06;
-  }
+	public void setDamageCode_05(DamageCodeDTO damageCode_05) {
+		this.damageCode_05 = damageCode_05;
+	}
 
-  public void setDamageCode_06(DamageCodeDTO damageCode_06) {
-    this.damageCode_06 = damageCode_06;
-  }
+	public DamageCodeDTO getDamageCode_06() {
+		return damageCode_06;
+	}
 
-  public DamageCodeDTO getDamageCode_07() {
-    return damageCode_07;
-  }
+	public void setDamageCode_06(DamageCodeDTO damageCode_06) {
+		this.damageCode_06 = damageCode_06;
+	}
 
-  public void setDamageCode_07(DamageCodeDTO damageCode_07) {
-    this.damageCode_07 = damageCode_07;
-  }
+	public DamageCodeDTO getDamageCode_07() {
+		return damageCode_07;
+	}
 
-  public DamageCodeDTO getDamageCode_08() {
-    return damageCode_08;
-  }
+	public void setDamageCode_07(DamageCodeDTO damageCode_07) {
+		this.damageCode_07 = damageCode_07;
+	}
 
-  public void setDamageCode_08(DamageCodeDTO damageCode_08) {
-    this.damageCode_08 = damageCode_08;
-  }
+	public DamageCodeDTO getDamageCode_08() {
+		return damageCode_08;
+	}
 
-  public DamageCodeDTO getDamageCode_09() {
-    return damageCode_09;
-  }
+	public void setDamageCode_08(DamageCodeDTO damageCode_08) {
+		this.damageCode_08 = damageCode_08;
+	}
 
-  public void setDamageCode_09(DamageCodeDTO damageCode_09) {
-    this.damageCode_09 = damageCode_09;
-  }
+	public DamageCodeDTO getDamageCode_09() {
+		return damageCode_09;
+	}
 
-  public Boolean getDontValidateSeal() {
-    return dontValidateSeal;
-  }
+	public void setDamageCode_09(DamageCodeDTO damageCode_09) {
+		this.damageCode_09 = damageCode_09;
+	}
 
-  public void setDontValidateSeal(Boolean dontValidateSeal) {
-    this.dontValidateSeal = dontValidateSeal;
-  }
+	public Boolean getDontValidateSeal() {
+		return dontValidateSeal;
+	}
 
-  public Boolean getWrongDoor() {
-    return wrongDoor;
-  }
+	public void setDontValidateSeal(Boolean dontValidateSeal) {
+		this.dontValidateSeal = dontValidateSeal;
+	}
 
-  public void setWrongDoor(Boolean wrongDoor) {
-    this.wrongDoor = wrongDoor;
-  }
+	public Boolean getWrongDoor() {
+		return wrongDoor;
+	}
 
-  public String getHpabISOCode() {
-    return hpabISOCode;
-  }
+	public void setWrongDoor(Boolean wrongDoor) {
+		this.wrongDoor = wrongDoor;
+	}
 
-  public void setHpabISOCode(String hpabISOCode) {
-    this.hpabISOCode = hpabISOCode;
-  }
+	public String getHpabISOCode() {
+		return hpabISOCode;
+	}
 
-  public String getCosmosISOCode() {
-    return cosmosISOCode;
-  }
+	public void setHpabISOCode(String hpabISOCode) {
+		this.hpabISOCode = hpabISOCode;
+	}
 
-  public void setCosmosISOCode(String cosmosISOCode) {
-    this.cosmosISOCode = cosmosISOCode;
-  }
+	public String getCosmosISOCode() {
+		return cosmosISOCode;
+	}
 
-  public String getPmWeight() {
-    return pmWeight;
-  }
+	public void setCosmosISOCode(String cosmosISOCode) {
+		this.cosmosISOCode = cosmosISOCode;
+	}
 
-  public void setPmWeight(String pmWeight) {
-    this.pmWeight = pmWeight;
-  }
+	public String getPmWeight() {
+		return pmWeight;
+	}
 
-  public String getTrailerWeight() {
-    return trailerWeight;
-  }
+	public void setPmWeight(String pmWeight) {
+		this.pmWeight = pmWeight;
+	}
 
-  public void setTrailerWeight(String trailerWeight) {
-    this.trailerWeight = trailerWeight;
-  }
+	public String getTrailerWeight() {
+		return trailerWeight;
+	}
 
-  public String getTrailerPlateNo() {
-    return trailerPlateNo;
-  }
+	public void setTrailerWeight(String trailerWeight) {
+		this.trailerWeight = trailerWeight;
+	}
 
-  public void setTrailerPlateNo(String trailerPlateNo) {
-    this.trailerPlateNo = trailerPlateNo;
-  }
+	public String getTrailerPlateNo() {
+		return trailerPlateNo;
+	}
 
-  public String getFuelWeight() {
-    return fuelWeight;
-  }
+	public void setTrailerPlateNo(String trailerPlateNo) {
+		this.trailerPlateNo = trailerPlateNo;
+	}
 
-  public void setFuelWeight(String fuelWeight) {
-    this.fuelWeight = fuelWeight;
-  }
+	public String getFuelWeight() {
+		return fuelWeight;
+	}
 
-  public String getTireWeight() {
-    return tireWeight;
-  }
+	public void setFuelWeight(String fuelWeight) {
+		this.fuelWeight = fuelWeight;
+	}
 
-  public void setTireWeight(String tireWeight) {
-    this.tireWeight = tireWeight;
-  }
+	public String getTireWeight() {
+		return tireWeight;
+	}
 
-  public String getVariance() {
-    return variance;
-  }
+	public void setTireWeight(String tireWeight) {
+		this.tireWeight = tireWeight;
+	}
 
-  public void setVariance(String variance) {
-    this.variance = variance;
-  }
+	public String getVariance() {
+		return variance;
+	}
 
-  public boolean isWithinTolerance() {
-    return withinTolerance;
-  }
+	public void setVariance(String variance) {
+		this.variance = variance;
+	}
 
-  public void setWithinTolerance(boolean withinTolerance) {
-    this.withinTolerance = withinTolerance;
-  }
+	public boolean isWithinTolerance() {
+		return withinTolerance;
+	}
 
-  public String getCalculatedVariance() {
-    return calculatedVariance;
-  }
+	public void setWithinTolerance(boolean withinTolerance) {
+		this.withinTolerance = withinTolerance;
+	}
 
-  public void setCalculatedVariance(String calculatedVariance) {
-    this.calculatedVariance = calculatedVariance;
-  }
+	public String getCalculatedVariance() {
+		return calculatedVariance;
+	}
 
-  public String getSolasCertNo() {
-    return solasCertNo;
-  }
+	public void setCalculatedVariance(String calculatedVariance) {
+		this.calculatedVariance = calculatedVariance;
+	}
 
-  public void setSolasCertNo(String solasCertNo) {
-    this.solasCertNo = solasCertNo;
-  }
+	public String getSolasCertNo() {
+		return solasCertNo;
+	}
 
-  public CommonSolasDTO getSolas() {
-    return solas;
-  }
+	public void setSolasCertNo(String solasCertNo) {
+		this.solasCertNo = solasCertNo;
+	}
 
-  public void setSolas(CommonSolasDTO solas) {
-    this.solas = solas;
-  }
+	public CommonSolasDTO getSolas() {
+		return solas;
+	}
 
-  public static Log getLog() {
-    return log;
-  }
+	public void setSolas(CommonSolasDTO solas) {
+		this.solas = solas;
+	}
 
-  public String getInternalBlockDesc() {
-    return internalBlockDesc;
-  }
+	public String getInternalBlockDesc() {
+		return internalBlockDesc;
+	}
 
-  public void setInternalBlockDesc(String internalBlockDesc) {
-    this.internalBlockDesc = internalBlockDesc;
-  }
+	public void setInternalBlockDesc(String internalBlockDesc) {
+		this.internalBlockDesc = internalBlockDesc;
+	}
 
-  public boolean isInternalBlock() {
-    return internalBlock;
-  }
+	public boolean isInternalBlock() {
+		return internalBlock;
+	}
 
-  public void setInternalBlock(boolean internalBlock) {
-    this.internalBlock = internalBlock;
-  }
+	public void setInternalBlock(boolean internalBlock) {
+		this.internalBlock = internalBlock;
+	}
 
-  public boolean isOgaBlock() {
-    return ogaBlock;
-  }
+	public boolean isOgaBlock() {
+		return ogaBlock;
+	}
 
-  public void setOgaBlock(boolean ogaBlock) {
-    this.ogaBlock = ogaBlock;
-  }
+	public void setOgaBlock(boolean ogaBlock) {
+		this.ogaBlock = ogaBlock;
+	}
 
-  public String getLpkEdiEnabled() {
-    return lpkEdiEnabled;
-  }
+	public String getLpkEdiEnabled() {
+		return lpkEdiEnabled;
+	}
 
-  public void setLpkEdiEnabled(String lpkEdiEnabled) {
-    this.lpkEdiEnabled = lpkEdiEnabled;
-  }
+	public void setLpkEdiEnabled(String lpkEdiEnabled) {
+		this.lpkEdiEnabled = lpkEdiEnabled;
+	}
 
-  public boolean isBypassDg() {
-    return bypassDg;
-  }
+	public boolean isBypassDg() {
+		return bypassDg;
+	}
 
-  public void setBypassDg(boolean bypassDg) {
-    this.bypassDg = bypassDg;
-  }
+	public void setBypassDg(boolean bypassDg) {
+		this.bypassDg = bypassDg;
+	}
 
-  public boolean isDgWithinWindowEntry() {
-    return dgWithinWindowEntry;
-  }
+	public boolean isDgWithinWindowEntry() {
+		return dgWithinWindowEntry;
+	}
 
-  public void setDgWithinWindowEntry(boolean dgWithinWindowEntry) {
-    this.dgWithinWindowEntry = dgWithinWindowEntry;
-  }
+	public void setDgWithinWindowEntry(boolean dgWithinWindowEntry) {
+		this.dgWithinWindowEntry = dgWithinWindowEntry;
+	}
 
-  public String getKpaClass() {
-    return kpaClass;
-  }
+	public String getKpaClass() {
+		return kpaClass;
+	}
 
-  public void setKpaClass(String kpaClass) {
-    this.kpaClass = kpaClass;
-  }
+	public void setKpaClass(String kpaClass) {
+		this.kpaClass = kpaClass;
+	}
 
-  public boolean isRegisteredInEarlyEntry() {
-    return isRegisteredInEarlyEntry;
-  }
+	public boolean isRegisteredInEarlyEntry() {
+		return isRegisteredInEarlyEntry;
+	}
 
-  public void setRegisteredInEarlyEntry(boolean isRegisteredInEarlyEntry) {
-    this.isRegisteredInEarlyEntry = isRegisteredInEarlyEntry;
-  }
+	public void setRegisteredInEarlyEntry(boolean isRegisteredInEarlyEntry) {
+		this.isRegisteredInEarlyEntry = isRegisteredInEarlyEntry;
+	}
 
-  public String getStartEarlyEntry() {
-    return startEarlyEntry;
-  }
+	public String getStartEarlyEntry() {
+		return startEarlyEntry;
+	}
 
-  public void setStartEarlyEntry(String startEarlyEntry) {
-    this.startEarlyEntry = startEarlyEntry;
-  }
+	public void setStartEarlyEntry(String startEarlyEntry) {
+		this.startEarlyEntry = startEarlyEntry;
+	}
 
-  public String getEndEarlyEntry() {
-    return endEarlyEntry;
-  }
+	public String getEndEarlyEntry() {
+		return endEarlyEntry;
+	}
 
-  public void setEndEarlyEntry(String endEarlyEntry) {
-    this.endEarlyEntry = endEarlyEntry;
-  }
+	public void setEndEarlyEntry(String endEarlyEntry) {
+		this.endEarlyEntry = endEarlyEntry;
+	}
 
-  public boolean isAllowBypassDgValRemote() {
-    return allowBypassDgValRemote;
-  }
+	public boolean isAllowBypassDgValRemote() {
+		return allowBypassDgValRemote;
+	}
 
-  public void setAllowBypassDgValRemote(boolean allowBypassDgValRemote) {
-    this.allowBypassDgValRemote = allowBypassDgValRemote;
-  }
+	public void setAllowBypassDgValRemote(boolean allowBypassDgValRemote) {
+		this.allowBypassDgValRemote = allowBypassDgValRemote;
+	}
 
-  public int getTotalBooking() {
-    return totalBooking;
-  }
+	public int getTotalBooking() {
+		return totalBooking;
+	}
 
-  public void setTotalBooking(int totalBooking) {
-    this.totalBooking = totalBooking;
-  }
+	public void setTotalBooking(int totalBooking) {
+		this.totalBooking = totalBooking;
+	}
 
-  public boolean isBookingNoExist() {
-    return bookingNoExist;
-  }
+	public boolean isBookingNoExist() {
+		return bookingNoExist;
+	}
 
-  public void setBookingNoExist(boolean bookingNoExist) {
-    this.bookingNoExist = bookingNoExist;
-  }
+	public void setBookingNoExist(boolean bookingNoExist) {
+		this.bookingNoExist = bookingNoExist;
+	}
 
-  public boolean isEarlyEntry() {
-    return earlyEntry;
-  }
+	public boolean isEarlyEntry() {
+		return earlyEntry;
+	}
 
-  public void setEarlyEntry(boolean earlyEntry) {
-    this.earlyEntry = earlyEntry;
-  }
+	public void setEarlyEntry(boolean earlyEntry) {
+		this.earlyEntry = earlyEntry;
+	}
 
-  public int getStoragePeriod() {
-    return storagePeriod;
-  }
+	public int getStoragePeriod() {
+		return storagePeriod;
+	}
 
-  public void setStoragePeriod(int storagePeriod) {
-    this.storagePeriod = storagePeriod;
-  }
+	public void setStoragePeriod(int storagePeriod) {
+		this.storagePeriod = storagePeriod;
+	}
 
-  public boolean isBypassEEntry() {
-    return bypassEEntry;
-  }
+	public boolean isBypassEEntry() {
+		return bypassEEntry;
+	}
 
-  public void setBypassEEntry(boolean bypassEEntry) {
-    this.bypassEEntry = bypassEEntry;
-  }
+	public void setBypassEEntry(boolean bypassEEntry) {
+		this.bypassEEntry = bypassEEntry;
+	}
 
-  public String getErrXMLMsg() {
-    return errXMLMsg;
-  }
+	public String getErrXMLMsg() {
+		return errXMLMsg;
+	}
 
-  public void setErrXMLMsg(String errXMLMsg) {
-    this.errXMLMsg = errXMLMsg;
-  }
+	public void setErrXMLMsg(String errXMLMsg) {
+		this.errXMLMsg = errXMLMsg;
+	}
 
-  public String getContRefer() {
-    return contRefer;
-  }
+	public String getContRefer() {
+		return contRefer;
+	}
 
-  public void setContRefer(String contRefer) {
-    this.contRefer = contRefer;
-  }
+	public void setContRefer(String contRefer) {
+		this.contRefer = contRefer;
+	}
 
-  public int getShipperVGM() {
-    return shipperVGM;
-  }
+	public int getShipperVGM() {
+		return shipperVGM;
+	}
 
-  public void setShipperVGM(int shipperVGM) {
-    this.shipperVGM = shipperVGM;
-  }
+	public void setShipperVGM(int shipperVGM) {
+		this.shipperVGM = shipperVGM;
+	}
 
-  public String getOperationReefer() {
-    return operationReefer;
-  }
+	public String getOperationReefer() {
+		return operationReefer;
+	}
 
-  public void setOperationReefer(String operationReefer) {
-    this.operationReefer = operationReefer;
-  }
+	public void setOperationReefer(String operationReefer) {
+		this.operationReefer = operationReefer;
+	}
 
-  public String getTemp() {
-    return temp;
-  }
+	public String getTemp() {
+		return temp;
+	}
 
-  public void setTemp(String temp) {
-    this.temp = temp;
-  }
+	public void setTemp(String temp) {
+		this.temp = temp;
+	}
 
-  public String getTempUnit() {
-    return tempUnit;
-  }
+	public String getTempUnit() {
+		return tempUnit;
+	}
 
-  public void setTempUnit(String tempUnit) {
-    this.tempUnit = tempUnit;
-  }
+	public void setTempUnit(String tempUnit) {
+		this.tempUnit = tempUnit;
+	}
 
-  public String getExpCarrierType() {
-    return expCarrierType;
-  }
+	public String getExpCarrierType() {
+		return expCarrierType;
+	}
 
-  public void setExpCarrierType(String expCarrierType) {
-    this.expCarrierType = expCarrierType;
-  }
+	public void setExpCarrierType(String expCarrierType) {
+		this.expCarrierType = expCarrierType;
+	}
 
-  public LocalDateTime getYardOpeningDateTime() {
-    return yardOpeningDateTime;
-  }
+	public LocalDateTime getYardOpeningDateTime() {
+		return yardOpeningDateTime;
+	}
 
-  public void setYardOpeningDateTime(LocalDateTime yardOpeningDateTime) {
-    this.yardOpeningDateTime = yardOpeningDateTime;
-  }
+	public void setYardOpeningDateTime(LocalDateTime yardOpeningDateTime) {
+		this.yardOpeningDateTime = yardOpeningDateTime;
+	}
 
-  public String getContainerType() {
-    return containerType;
-  }
+	public String getContainerType() {
+		return containerType;
+	}
 
-  public void setContainerType(String containerType) {
-    this.containerType = containerType;
-  }
+	public void setContainerType(String containerType) {
+		this.containerType = containerType;
+	}
 
-  public String getReeferTempUnit() {
-    return reeferTempUnit;
-  }
+	public String getReeferTempUnit() {
+		return reeferTempUnit;
+	}
 
-  public void setReeferTempUnit(String reeferTempUnit) {
-    this.reeferTempUnit = reeferTempUnit;
-  }
+	public void setReeferTempUnit(String reeferTempUnit) {
+		this.reeferTempUnit = reeferTempUnit;
+	}
 
-  public LocalDateTime getYardDGOpeningDateTime() {
-    return yardDGOpeningDateTime;
-  }
+	public LocalDateTime getYardDGOpeningDateTime() {
+		return yardDGOpeningDateTime;
+	}
 
-  public void setYardDGOpeningDateTime(LocalDateTime yardDGOpeningDateTime) {
-    this.yardDGOpeningDateTime = yardDGOpeningDateTime;
-  }
+	public void setYardDGOpeningDateTime(LocalDateTime yardDGOpeningDateTime) {
+		this.yardDGOpeningDateTime = yardDGOpeningDateTime;
+	}
 
-  public String getShippingLine() {
-    return shippingLine;
-  }
+	public String getShippingLine() {
+		return shippingLine;
+	}
 
-  public void setShippingLine(String shippingLine) {
-    this.shippingLine = shippingLine;
-  }
+	public void setShippingLine(String shippingLine) {
+		this.shippingLine = shippingLine;
+	}
 
-  public String getSubHandlingType() {
-    return subHandlingType;
-  }
+	public String getSubHandlingType() {
+		return subHandlingType;
+	}
 
-  public void setSubHandlingType(String subHandlingType) {
-    this.subHandlingType = subHandlingType;
-  }
+	public void setSubHandlingType(String subHandlingType) {
+		this.subHandlingType = subHandlingType;
+	}
 
-  public String getRtgExecustionStatus() {
-    return rtgExecustionStatus;
-  }
+	public String getRtgExecustionStatus() {
+		return rtgExecustionStatus;
+	}
 
-  public void setRtgExecustionStatus(String rtgExecustionStatus) {
-    this.rtgExecustionStatus = rtgExecustionStatus;
-  }
+	public void setRtgExecustionStatus(String rtgExecustionStatus) {
+		this.rtgExecustionStatus = rtgExecustionStatus;
+	}
 
-  public LocalDateTime getRtgExecustionDateTime() {
-    return rtgExecustionDateTime;
-  }
+	public LocalDateTime getRtgExecustionDateTime() {
+		return rtgExecustionDateTime;
+	}
 
-  public void setRtgExecustionDateTime(LocalDateTime rtgExecustionDateTime) {
-    this.rtgExecustionDateTime = rtgExecustionDateTime;
-  }
+	public void setRtgExecustionDateTime(LocalDateTime rtgExecustionDateTime) {
+		this.rtgExecustionDateTime = rtgExecustionDateTime;
+	}
 
-  public String getExportOrderType() {
-    return exportOrderType;
-  }
+	public String getExportOrderType() {
+		return exportOrderType;
+	}
 
-  public void setExportOrderType(String exportOrderType) {
-    this.exportOrderType = exportOrderType;
-  }
+	public void setExportOrderType(String exportOrderType) {
+		this.exportOrderType = exportOrderType;
+	}
 
-  public String getExportOrderStatus() {
-    return exportOrderStatus;
-  }
+	public String getExportOrderStatus() {
+		return exportOrderStatus;
+	}
 
-  public void setExportOrderStatus(String exportOrderStatus) {
-    this.exportOrderStatus = exportOrderStatus;
-  }
+	public void setExportOrderStatus(String exportOrderStatus) {
+		this.exportOrderStatus = exportOrderStatus;
+	}
 
-  public String getVesselVoyageIN() {
-    return vesselVoyageIN;
-  }
+	public String getVesselVoyageIN() {
+		return vesselVoyageIN;
+	}
 
-  public void setVesselVoyageIN(String vesselVoyageIN) {
-    this.vesselVoyageIN = vesselVoyageIN;
-  }
+	public void setVesselVoyageIN(String vesselVoyageIN) {
+		this.vesselVoyageIN = vesselVoyageIN;
+	}
 
-  public String getVesselVoyageOUT() {
-    return vesselVoyageOUT;
-  }
+	public String getVesselVoyageOUT() {
+		return vesselVoyageOUT;
+	}
 
-  public void setVesselVoyageOUT(String vesselVoyageOUT) {
-    this.vesselVoyageOUT = vesselVoyageOUT;
-  }
+	public void setVesselVoyageOUT(String vesselVoyageOUT) {
+		this.vesselVoyageOUT = vesselVoyageOUT;
+	}
 
-  public String getManualPlanIndicator() {
-    return manualPlanIndicator;
-  }
+	public String getManualPlanIndicator() {
+		return manualPlanIndicator;
+	}
 
-  public void setManualPlanIndicator(String manualPlanIndicator) {
-    this.manualPlanIndicator = manualPlanIndicator;
-  }
+	public void setManualPlanIndicator(String manualPlanIndicator) {
+		this.manualPlanIndicator = manualPlanIndicator;
+	}
 
-  public String getYardBayCode() {
-    return yardBayCode;
-  }
+	public String getYardBayCode() {
+		return yardBayCode;
+	}
 
-  public void setYardBayCode(String yardBayCode) {
-    this.yardBayCode = yardBayCode;
-  }
+	public void setYardBayCode(String yardBayCode) {
+		this.yardBayCode = yardBayCode;
+	}
 
-  @Override
-  public String toString() {
-    return "ExportContainer [exportID=" + exportID + ", container=" + container + ", commonGateInOut=" + commonGateInOut
-        + ", baseCommonGateInOutAttribute=" + baseCommonGateInOutAttribute + ", manualPlanIndicator="
-        + manualPlanIndicator + ", bookingNo=" + bookingNo + ", scn=" + scn + ", gateInOut=" + gateInOut + ", expOut="
-        + expOut + ", expCar=" + expCar + ", expSpod=" + expSpod + ", sealAttribute=" + sealAttribute
-        + ", expWeightBridge=" + expWeightBridge + ", expNetWeight=" + expNetWeight + ", referFlag=" + referFlag
-        + ", referTempType=" + referTempType + ", referTemp=" + referTemp + ", imdg=" + imdg + ", dgUNCode=" + dgUNCode
-        + ", imdgLabelID=" + imdgLabelID + ", oogOH=" + oogOH + ", oogOL=" + oogOL + ", oogOF=" + oogOF + ", oogOA="
-        + oogOA + ", containerPosition=" + containerPosition + ", preCheckDate=" + preCheckDate + ", yardPosition="
-        + yardPosition + ", yardBayCode=" + yardBayCode + ", pmBTM=" + pmBTM + ", trBTM=" + trBTM + ", oogOR=" + oogOR
-        + ", callCard=" + callCard + ", vesselVisitID=" + vesselVisitID + ", vesselVoyageIN=" + vesselVoyageIN
-        + ", vesselVoyageOUT=" + vesselVoyageOUT + ", vesselCode=" + vesselCode + ", vesselName=" + vesselName
-        + ", expAgent=" + expAgent + ", vesselStatus=" + vesselStatus + ", shipCode=" + shipCode + ", vesselSCN="
-        + vesselSCN + ", vesselETADate=" + vesselETADate + ", vesselATADate=" + vesselATADate + ", shippingAgent="
-        + shippingAgent + ", oogSSR=" + oogSSR + ", overClosingSSR=" + overClosingSSR + ", replanSSR=" + replanSSR
-        + ", ssrBlockStatus=" + ssrBlockStatus + ", ssrBlockStatusDate=" + ssrBlockStatusDate + ", gcsBlockStatus="
-        + gcsBlockStatus + ", gcsBlockStatusDate=" + gcsBlockStatusDate + ", gcsDeclareNo=" + gcsDeclareNo
-        + ", gcsLastCheck=" + gcsLastCheck + ", printEir=" + printEir + ", userRemarks=" + userRemarks
-        + ", kpaApproval=" + kpaApproval + ", hdlGoodsCode=" + hdlGoodsCode + ", dgDescription=" + dgDescription
-        + ", hdlGoodsDescription=" + hdlGoodsDescription + ", tareWeight=" + tareWeight + ", grossWeight=" + grossWeight
-        + ", netWeight=" + netWeight + ", cardUsage=" + cardUsage + ", backToback=" + backToback
-        + ", weightDiffPercentage=" + weightDiffPercentage + ", weightDifference=" + weightDifference
-        + ", damageCode_01=" + damageCode_01 + ", damageCode_02=" + damageCode_02 + ", damageCode_03=" + damageCode_03
-        + ", damageCode_04=" + damageCode_04 + ", damageCode_05=" + damageCode_05 + ", damageCode_06=" + damageCode_06
-        + ", damageCode_07=" + damageCode_07 + ", damageCode_08=" + damageCode_08 + ", damageCode_09=" + damageCode_09
-        + ", dontValidateSeal=" + dontValidateSeal + ", wrongDoor=" + wrongDoor + ", hpabISOCode=" + hpabISOCode
-        + ", cosmosISOCode=" + cosmosISOCode + ", pmWeight=" + pmWeight + ", trailerWeight=" + trailerWeight
-        + ", trailerPlateNo=" + trailerPlateNo + ", fuelWeight=" + fuelWeight + ", tireWeight=" + tireWeight
-        + ", variance=" + variance + ", withinTolerance=" + withinTolerance + ", calculatedVariance="
-        + calculatedVariance + ", solasCertNo=" + solasCertNo + ", solas=" + solas + "]";
-  }
-
-
-  public ExportContainer initializeWithDefaultValues(String containerNumber) {
-    this.setContainer(new CommonContainerDTO().initializeWithDefaultValues(containerNumber));
-    this.setCommonGateInOut(new CommonGateInOutDTO().initializeWithDefaultValues());
-    this.setBaseCommonGateInOutAttribute(new BaseCommonGateInOutDTO().initializeWithDefaultValues());
-    this.manualPlanIndicator = ExportOPTFlagType.OPTFLAG_MANUAL.getValue();
-    this.setBookingNo("BKG193");
-    this.exportOrderType = "OT";
-    this.exportOrderStatus = "OS";
-    this.setScn(new ShipSCNDTO().initializeWithDefaultValues());
-    this.setGateInOut(GateInOutStatus.IN.getValue());
-    this.expOut = "expOut";
-    this.expCar = "expCar";
-    this.expSpod = "expSpod";
-    this.setSealAttribute(new CommonSealDTO().initializeWithDefaultValues());
-    this.expWeightBridge = 34;
-    this.expNetWeight = 23;
-    this.referFlag = false;
-    this.referTempType = ReferTempType.C.getValue();
-    this.referTemp = 15;
-    this.imdg = "3";
-    this.dgUNCode = "1170";
-    this.imdgLabelID = "4";
-    this.oogOH = 1;
-    this.oogOL = 2;
-    this.oogOF = 3;
-    this.oogOA = 4;
-    this.containerPosition = ContainerPosition.MIDDLE.getValue();
-    this.preCheckDate = LocalDateTime.now();
-    this.yardPosition = "4";
-    this.yardBayCode = "4";
-    this.pmBTM = 35;
-    this.trBTM = 35;
-    this.oogOR = 32;
-    this.callCard = 55;
-    this.vesselVisitID = "4";
-    this.vesselVoyageIN = "velVoyIN";
-    this.vesselVoyageOUT = "velVoOUT";
-    this.vesselCode = "25";
-    this.vesselName = "100";
-    this.expAgent = "100";
-    this.vesselStatus = VesselStatus.ACTIVE.getValue();
-    this.shipCode = "59";
-    this.vesselSCN = "45";
-    this.vesselETADate = LocalDateTime.now();
-    this.vesselATADate = LocalDateTime.now();;
-    this.shippingAgent = "shp001";
-    this.oogSSR = true;
-    this.overClosingSSR = true;
-    this.replanSSR = true;
-    this.ssrBlockStatus = GCS_SSRBlockStatusType.RLS.getValue();
-    this.ssrBlockStatusDate = LocalDateTime.now();;
-    this.gcsBlockStatus = GCS_SSRBlockStatusType.BLK.getValue();
-    this.gcsBlockStatusDate = LocalDateTime.now();;
-    this.gcsDeclareNo = "45";
-    this.gcsLastCheck = LocalDateTime.now();
-    this.setPrintEir(new PrintEirDTO().initializeWithIdOnly());
-    this.userRemarks = "userRemarks";
-    this.kpaApproval = "AP";
-    this.hdlGoodsCode = "12";
-    this.dgDescription = "dgDescription";
-    this.hdlGoodsDescription = "hdlGoodsDescription";
-    this.tareWeight = 15;
-    this.grossWeight = 18;
-    this.netWeight = 30;
-    this.setCardUsage(new CardUsageDTO().initializeWithDefaultValues());
-    this.backToback = true;
-    this.weightDiffPercentage = 45d;
-    this.weightDifference = 456d;
-    this.dontValidateSeal = true;
-    this.wrongDoor = false;
-    this.hpabISOCode = "";
-    this.cosmosISOCode = "";
-    this.pmWeight = "454";
-    this.trailerWeight = "5454";
-    this.trailerPlateNo = "JK-4521";
-    this.fuelWeight = "45";
-    this.tireWeight = "45";
-    this.variance = "56";
-    this.withinTolerance = false;
-    this.calculatedVariance = "465";
-    this.solasCertNo = "s0455";
-    this.setSolas(new CommonSolasDTO().initializeWithDefaultValues());
-    this.setSubHandlingType("1");
-    this.setRtgExecustionDateTime(LocalDateTime.now());
-    this.setRtgExecustionStatus("RGS");
-    this.setDamageCode_01(new DamageCodeDTO().initializeWithDefaultValues("30"));
-    this.setDamageCode_02(new DamageCodeDTO().initializeWithDefaultValues("31"));
-    this.setDamageCode_03(new DamageCodeDTO().initializeWithDefaultValues("32"));
-    this.setDamageCode_04(new DamageCodeDTO().initializeWithDefaultValues("33"));
-    this.setDamageCode_05(new DamageCodeDTO().initializeWithDefaultValues("34"));
-    this.setDamageCode_06(new DamageCodeDTO().initializeWithDefaultValues("40"));
-    this.setDamageCode_07(new DamageCodeDTO().initializeWithDefaultValues("41"));
-    this.setDamageCode_08(new DamageCodeDTO().initializeWithDefaultValues("50"));
-    this.setDamageCode_09(new DamageCodeDTO().initializeWithDefaultValues("51"));
-    return this;
-  }
+	public Integer getEmptyWeight() {
+		return emptyWeight;
+	}
+
+	public void setEmptyWeight(Integer emptyWeight) {
+		this.emptyWeight = emptyWeight;
+	}
+
+	@Override
+	public String toString() {
+		return "ExportContainer [exportID=" + exportID + ", container=" + container + ", commonGateInOut="
+				+ commonGateInOut + ", baseCommonGateInOutAttribute=" + baseCommonGateInOutAttribute
+				+ ", manualPlanIndicator=" + manualPlanIndicator + ", bookingNo=" + bookingNo + ", scn=" + scn
+				+ ", gateInOut=" + gateInOut + ", expOut=" + expOut + ", expCar=" + expCar + ", expSpod=" + expSpod
+				+ ", sealAttribute=" + sealAttribute + ", expWeightBridge=" + expWeightBridge + ", expNetWeight="
+				+ expNetWeight + ", referFlag=" + referFlag + ", referTempType=" + referTempType + ", referTemp="
+				+ referTemp + ", imdg=" + imdg + ", dgUNCode=" + dgUNCode + ", imdgLabelID=" + imdgLabelID + ", oogOH="
+				+ oogOH + ", oogOL=" + oogOL + ", oogOF=" + oogOF + ", oogOA=" + oogOA + ", containerPosition="
+				+ containerPosition + ", preCheckDate=" + preCheckDate + ", yardPosition=" + yardPosition
+				+ ", yardBayCode=" + yardBayCode + ", pmBTM=" + pmBTM + ", trBTM=" + trBTM + ", oogOR=" + oogOR
+				+ ", callCard=" + callCard + ", vesselVisitID=" + vesselVisitID + ", vesselVoyageIN=" + vesselVoyageIN
+				+ ", vesselVoyageOUT=" + vesselVoyageOUT + ", vesselCode=" + vesselCode + ", vesselName=" + vesselName
+				+ ", expAgent=" + expAgent + ", vesselStatus=" + vesselStatus + ", shipCode=" + shipCode
+				+ ", vesselSCN=" + vesselSCN + ", vesselETADate=" + vesselETADate + ", vesselATADate=" + vesselATADate
+				+ ", shippingAgent=" + shippingAgent + ", oogSSR=" + oogSSR + ", overClosingSSR=" + overClosingSSR
+				+ ", replanSSR=" + replanSSR + ", ssrBlockStatus=" + ssrBlockStatus + ", ssrBlockStatusDate="
+				+ ssrBlockStatusDate + ", gcsBlockStatus=" + gcsBlockStatus + ", gcsBlockStatusDate="
+				+ gcsBlockStatusDate + ", gcsDeclareNo=" + gcsDeclareNo + ", gcsLastCheck=" + gcsLastCheck
+				+ ", printEir=" + printEir + ", userRemarks=" + userRemarks + ", kpaApproval=" + kpaApproval
+				+ ", hdlGoodsCode=" + hdlGoodsCode + ", dgDescription=" + dgDescription + ", hdlGoodsDescription="
+				+ hdlGoodsDescription + ", tareWeight=" + tareWeight + ", grossWeight=" + grossWeight + ", netWeight="
+				+ netWeight + ", cardUsage=" + cardUsage + ", backToback=" + backToback + ", weightDiffPercentage="
+				+ weightDiffPercentage + ", weightDifference=" + weightDifference + ", damageCode_01=" + damageCode_01
+				+ ", damageCode_02=" + damageCode_02 + ", damageCode_03=" + damageCode_03 + ", damageCode_04="
+				+ damageCode_04 + ", damageCode_05=" + damageCode_05 + ", damageCode_06=" + damageCode_06
+				+ ", damageCode_07=" + damageCode_07 + ", damageCode_08=" + damageCode_08 + ", damageCode_09="
+				+ damageCode_09 + ", dontValidateSeal=" + dontValidateSeal + ", wrongDoor=" + wrongDoor + ", emptyWeight=" + emptyWeight
+				+ ", hpabISOCode=" + hpabISOCode + ", cosmosISOCode=" + cosmosISOCode + ", pmWeight=" + pmWeight
+				+ ", trailerWeight=" + trailerWeight + ", trailerPlateNo=" + trailerPlateNo + ", fuelWeight="
+				+ fuelWeight + ", tireWeight=" + tireWeight + ", variance=" + variance + ", withinTolerance="
+				+ withinTolerance + ", calculatedVariance=" + calculatedVariance + ", solasCertNo=" + solasCertNo
+				+ ", solas=" + solas + "]";
+	}
+
+	public ExportContainer initializeWithDefaultValues(String containerNumber) {
+		this.setContainer(new CommonContainerDTO().initializeWithDefaultValues(containerNumber));
+		this.setCommonGateInOut(new CommonGateInOutDTO().initializeWithDefaultValues());
+		this.setBaseCommonGateInOutAttribute(new BaseCommonGateInOutDTO().initializeWithDefaultValues());
+		this.manualPlanIndicator = ExportOPTFlagType.OPTFLAG_MANUAL.getValue();
+		this.setBookingNo("BKG193");
+		this.exportOrderType = "OT";
+		this.exportOrderStatus = "OS";
+		this.setScn(new ShipSCNDTO().initializeWithDefaultValues());
+		this.setGateInOut(GateInOutStatus.IN.getValue());
+		this.expOut = "expOut";
+		this.expCar = "expCar";
+		this.expSpod = "expSpod";
+		this.setSealAttribute(new CommonSealDTO().initializeWithDefaultValues());
+		this.expWeightBridge = 34;
+		this.expNetWeight = 23;
+		this.referFlag = false;
+		this.referTempType = ReferTempType.C.getValue();
+		this.referTemp = 15;
+		this.imdg = "3";
+		this.dgUNCode = "1170";
+		this.imdgLabelID = "4";
+		this.oogOH = 1;
+		this.oogOL = 2;
+		this.oogOF = 3;
+		this.oogOA = 4;
+		this.containerPosition = ContainerPosition.MIDDLE.getValue();
+		this.preCheckDate = LocalDateTime.now();
+		this.yardPosition = "4";
+		this.yardBayCode = "4";
+		this.pmBTM = 35;
+		this.trBTM = 35;
+		this.oogOR = 32;
+		this.callCard = 55;
+		this.vesselVisitID = "4";
+		this.vesselVoyageIN = "velVoyIN";
+		this.vesselVoyageOUT = "velVoOUT";
+		this.vesselCode = "25";
+		this.vesselName = "100";
+		this.expAgent = "100";
+		this.vesselStatus = VesselStatus.ACTIVE.getValue();
+		this.shipCode = "59";
+		this.vesselSCN = "45";
+		this.vesselETADate = LocalDateTime.now();
+		this.vesselATADate = LocalDateTime.now();
+		;
+		this.shippingAgent = "shp001";
+		this.oogSSR = true;
+		this.overClosingSSR = true;
+		this.replanSSR = true;
+		this.ssrBlockStatus = GCS_SSRBlockStatusType.RLS.getValue();
+		this.ssrBlockStatusDate = LocalDateTime.now();
+		;
+		this.gcsBlockStatus = GCS_SSRBlockStatusType.BLK.getValue();
+		this.gcsBlockStatusDate = LocalDateTime.now();
+		;
+		this.gcsDeclareNo = "45";
+		this.gcsLastCheck = LocalDateTime.now();
+		this.setPrintEir(new PrintEirDTO().initializeWithIdOnly());
+		this.userRemarks = "userRemarks";
+		this.kpaApproval = "AP";
+		this.hdlGoodsCode = "12";
+		this.dgDescription = "dgDescription";
+		this.hdlGoodsDescription = "hdlGoodsDescription";
+		this.tareWeight = 15;
+		this.grossWeight = 18;
+		this.netWeight = 30;
+		this.setCardUsage(new CardUsageDTO().initializeWithDefaultValues());
+		this.backToback = true;
+		this.weightDiffPercentage = 45d;
+		this.weightDifference = 456d;
+		this.dontValidateSeal = true;
+		this.wrongDoor = false;
+		this.hpabISOCode = "";
+		this.cosmosISOCode = "";
+		this.pmWeight = "454";
+		this.trailerWeight = "5454";
+		this.trailerPlateNo = "JK-4521";
+		this.fuelWeight = "45";
+		this.tireWeight = "45";
+		this.variance = "56";
+		this.withinTolerance = false;
+		this.calculatedVariance = "465";
+		this.solasCertNo = "s0455";
+		this.setSolas(new CommonSolasDTO().initializeWithDefaultValues());
+		this.setSubHandlingType("1");
+		this.setRtgExecustionDateTime(LocalDateTime.now());
+		this.setRtgExecustionStatus("RGS");
+		this.setDamageCode_01(new DamageCodeDTO().initializeWithDefaultValues("30"));
+		this.setDamageCode_02(new DamageCodeDTO().initializeWithDefaultValues("31"));
+		this.setDamageCode_03(new DamageCodeDTO().initializeWithDefaultValues("32"));
+		this.setDamageCode_04(new DamageCodeDTO().initializeWithDefaultValues("33"));
+		this.setDamageCode_05(new DamageCodeDTO().initializeWithDefaultValues("34"));
+		this.setDamageCode_06(new DamageCodeDTO().initializeWithDefaultValues("40"));
+		this.setDamageCode_07(new DamageCodeDTO().initializeWithDefaultValues("41"));
+		this.setDamageCode_08(new DamageCodeDTO().initializeWithDefaultValues("50"));
+		this.setDamageCode_09(new DamageCodeDTO().initializeWithDefaultValues("51"));
+		return this;
+	}
 
 }

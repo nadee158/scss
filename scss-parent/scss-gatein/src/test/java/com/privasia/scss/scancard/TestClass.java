@@ -18,7 +18,7 @@ public class TestClass {
 
   @Test
   public void testMethodOne() throws JsonIOException, IOException {
-    Gson gson = new Gson();
+    /*Gson gson = new Gson();
     // GateOutWriteRequest obj = GateOutWriteRequest.emptyGateOutWriteRequest();
 
     GateInWriteRequest obj = new GateInWriteRequest().initializeWithDefaultValues();
@@ -31,7 +31,7 @@ public class TestClass {
     f.flush();
     f.close();
 
-    System.out.println(jsonInString);
+    System.out.println(jsonInString);*/
   }
 
   // @Test
