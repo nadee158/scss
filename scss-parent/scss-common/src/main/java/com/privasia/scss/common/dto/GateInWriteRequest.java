@@ -1,10 +1,8 @@
 package com.privasia.scss.common.dto;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
-import com.privasia.scss.common.enums.TransactionStatus;
 
 public class GateInWriteRequest implements Serializable {
 

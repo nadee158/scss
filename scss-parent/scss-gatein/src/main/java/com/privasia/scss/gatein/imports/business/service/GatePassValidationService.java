@@ -81,7 +81,7 @@ public class GatePassValidationService {
 
 	}
 
-	public void gatePassUsedOrInprogress(GatePass gatePass, TransactionStatus eirStatus) {
+	private void gatePassUsedOrInprogress(GatePass gatePass, TransactionStatus eirStatus) {
 
 		log.debug("-----START check gatepass is status  ----" + gatePass.getGatePassNo() + " / TransactionStatus "
 				+ eirStatus.name());
@@ -97,7 +97,7 @@ public class GatePassValidationService {
 				+ eirStatus.name());
 	}
 
-	public void isGatePassCancelled(GatePass gatePass, GatePassStatus gatePassStatus) {
+	private void isGatePassCancelled(GatePass gatePass, GatePassStatus gatePassStatus) {
 
 		log.debug("-----START check gatepass is cancelled  ----" + gatePass.getGatePassNo() + " / GatePassStatus "
 				+ gatePassStatus.name());
@@ -110,7 +110,7 @@ public class GatePassValidationService {
 				+ gatePassStatus.name());
 	}
 
-	public void isGatePassValid(GatePass gatePass, GatePassStatus gatePassStatus, TransactionStatus eirStatus) {
+	private void isGatePassValid(GatePass gatePass, GatePassStatus gatePassStatus, TransactionStatus eirStatus) {
 
 		log.debug("-----START check gatepass is valid  ----" + gatePass.getGatePassNo() + " / GatePassStatus "
 				+ gatePassStatus.name() + " / TransactionStatus " + eirStatus.name());
@@ -125,7 +125,7 @@ public class GatePassValidationService {
 
 	}
 	
-	public void isGatePassExpired(GatePass gatePass, LocalDateTime today) {
+	private void isGatePassExpired(GatePass gatePass, LocalDateTime today) {
 	    
 		Optional<WDCGatePass> wdcGatePassOpt = wdcGatePassRepository.findByGatePassNO(gatePass.getGatePassNo());
 
@@ -147,7 +147,7 @@ public class GatePassValidationService {
 
 	}
 	
-	public void isGatePassExpiredByYPN(GatePass gatePass, LocalDateTime today) {
+	private void isGatePassExpiredByYPN(GatePass gatePass, LocalDateTime today) {
 
         LocalDateTime validateDate = gatePass.getGatePassValidDate();
 
