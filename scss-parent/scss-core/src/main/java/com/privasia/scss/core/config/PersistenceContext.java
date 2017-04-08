@@ -11,6 +11,7 @@ import javax.sql.DataSource;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.env.Environment;
 import org.springframework.data.auditing.DateTimeProvider;
 import org.springframework.data.domain.AuditorAware;
@@ -34,7 +35,8 @@ import com.zaxxer.hikari.HikariDataSource;
 @Configuration
 @EnableTransactionManagement
 @EnableJpaAuditing(dateTimeProviderRef = "dateTimeProvider")
-@EnableJpaRepositories(basePackages = {"com.privasia.scss"})
+@EnableJpaRepositories(basePackages = "com.privasia.scss", entityManagerFactoryRef = "entityManagerFactory",
+    transactionManagerRef = "transactionManager")
 @EnableAutoConfiguration(exclude = {org.springframework.boot.autoconfigure.security.SecurityAutoConfiguration.class})
 public class PersistenceContext {
 
@@ -84,7 +86,8 @@ public class PersistenceContext {
 
   }
 
-  @Bean
+  @Primary
+  @Bean(name = "entityManagerFactory")
   public LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource, Environment env) {
     LocalContainerEntityManagerFactoryBean entityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();
     entityManagerFactoryBean.setDataSource(dataSource);
