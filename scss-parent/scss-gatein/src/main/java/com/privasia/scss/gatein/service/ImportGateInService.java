@@ -228,6 +228,7 @@ public class ImportGateInService {
     return null;
   }
 
+
   private void importContainerToGatePass(ImportContainer importContainer, GatePass gatePass) {
     if (gatePass.getCommonGateInOut() == null) {
       gatePass.setCommonGateInOut(new CommonGateInOutAttribute());
