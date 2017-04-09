@@ -16,11 +16,19 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.privasia.scss.common.enums.GatePassStatus;
 import com.privasia.scss.common.enums.TransactionStatus;
+import com.privasia.scss.common.enums.WDCGateOrderType;
 import com.privasia.scss.core.exception.BusinessException;
+import com.privasia.scss.core.exception.ResultsNotFoundException;
+import com.privasia.scss.core.model.Card;
 import com.privasia.scss.core.model.GatePass;
 import com.privasia.scss.core.model.WDCGatePass;
+import com.privasia.scss.core.model.WDCGlobalSetting;
+import com.privasia.scss.core.repository.CardRepository;
 import com.privasia.scss.core.repository.GatePassRepository;
 import com.privasia.scss.core.repository.WDCGatePassRepository;
+import com.privasia.scss.core.repository.WDCGlobalSettingRepository;
+import com.privasia.scss.etpws.service.EdoExpiryForLineResponseType;
+import com.privasia.scss.etpws.service.client.ETPWebserviceClient;
 
 /**
  * @author Janaka
@@ -32,19 +40,39 @@ public class GatePassValidationService {
 	private static final Log log = LogFactory.getLog(GatePassValidationService.class);
 
 	private GatePassRepository gatePassRepository;
-	
+
 	private WDCGatePassRepository wdcGatePassRepository;
+
+	private WDCGlobalSettingRepository wdcGlobalSettingRepository;
+
+	private ETPWebserviceClient etpWebserviceClient;
+	
+	 private CardRepository cardRepository;
 
 	@Autowired
 	public void setGatePassRepository(GatePassRepository gatePassRepository) {
 		this.gatePassRepository = gatePassRepository;
 	}
-	
+
 	@Autowired
 	public void setWdcGatePassRepository(WDCGatePassRepository wdcGatePassRepository) {
 		this.wdcGatePassRepository = wdcGatePassRepository;
 	}
 
+	@Autowired
+	public void setWdcGlobalSettingRepository(WDCGlobalSettingRepository wdcGlobalSettingRepository) {
+		this.wdcGlobalSettingRepository = wdcGlobalSettingRepository;
+	}
+
+	@Autowired
+	public void setEtpWebserviceClient(ETPWebserviceClient etpWebserviceClient) {
+		this.etpWebserviceClient = etpWebserviceClient;
+	}
+	
+	@Autowired
+	public void setCardRepository(CardRepository cardRepository) {
+		this.cardRepository = cardRepository;
+	}
 
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
 	public void validateGatePass(Long cardIdSeq, Long gatePassNo, boolean checkPreArrival, String hpatSeqId,
@@ -61,6 +89,9 @@ public class GatePassValidationService {
 
 		GatePass gatePass = scssGatePassOpt
 				.orElseThrow(() -> new BusinessException("Invalid Gate Pass. Not Found !" + gatePassNo));
+		Optional<WDCGatePass> wdcGatePassOpt = wdcGatePassRepository.findByGatePassNO(gatePass.getGatePassNo());
+		WDCGatePass wdcGatePass = wdcGatePassOpt
+				.orElseThrow(() -> new BusinessException("Gate Pass Not Found In WDC !" + gatePass.getGatePassNo()));
 
 		if (gatePass.getBaseCommonGateInOutAttribute() != null
 				&& gatePass.getBaseCommonGateInOutAttribute().getEirStatus() != null
@@ -70,9 +101,21 @@ public class GatePassValidationService {
 			gatePassUsedOrInprogress(gatePass, eirStatus);
 			isGatePassCancelled(gatePass, gatePassStatus);
 			isGatePassValid(gatePass, gatePassStatus, eirStatus);
-			isGatePassExpired(gatePass, today);
+			isGatePassExpired(gatePass, today, wdcGatePass);
 			isGatePassExpiredByYPN(gatePass, today);
 			
+			Optional<WDCGlobalSetting> wdcGlobalSettingOpt = wdcGlobalSettingRepository.findOne("EDO_EXP");
+			if (wdcGlobalSettingOpt.isPresent()) {
+				WDCGlobalSetting wdcGlobalSetting = wdcGlobalSettingOpt.get();
+				String etpEdoExpiryDateFlag = wdcGlobalSetting.getGlobalString();
+				isEDOExpired(gatePass, today, wdcGatePass, etpEdoExpiryDateFlag);
+			}
+			
+			Optional<Card> cardOpt = cardRepository.findOne(cardIdSeq);
+		    Card card = cardOpt
+		        .orElseThrow(() -> new ResultsNotFoundException("Card could not be Found for given card Id ! " + cardIdSeq));
+		    matchCompany(gatePass, card);
+		    
 		} else {
 			log.info("--Invalid Gate Pass record -- GatePassNo " + gatePassNo + " / TransactionStatus " + eirStatus
 					+ " / GatePassStatus " + gatePassStatus);
@@ -124,44 +167,112 @@ public class GatePassValidationService {
 				+ " / GatePassStatus " + gatePassStatus.name() + " / TransactionStatus " + eirStatus.name());
 
 	}
-	
-	private void isGatePassExpired(GatePass gatePass, LocalDateTime today) {
-	    
-		Optional<WDCGatePass> wdcGatePassOpt = wdcGatePassRepository.findByGatePassNO(gatePass.getGatePassNo());
 
-	    WDCGatePass wdcGatePass =
-	          wdcGatePassOpt.orElseThrow(() -> new BusinessException("Gate Pass Not Found In WDC !" + gatePass.getGatePassNo()));
+	private void isGatePassExpired(GatePass gatePass, LocalDateTime today, WDCGatePass wdcGatePass) {
 
-        LocalDateTime wdcValidateDate = wdcGatePass.getGatePassValidDate();
+		LocalDateTime wdcValidateDate = wdcGatePass.getGatePassValidDate();
 
-	    log.debug("------START check gatepass is valid ---- GatePassNo: " + gatePass.getGatePassNo() + " / Today " + today + " / WDCValidateDate " + wdcValidateDate);
+		log.debug("------START check gatepass is valid ---- GatePassNo: " + gatePass.getGatePassNo() + " / Today "
+				+ today + " / WDCValidateDate " + wdcValidateDate);
 
-	      if (wdcValidateDate == null || today.isAfter(wdcValidateDate)) {
+		if (wdcValidateDate == null || today.isAfter(wdcValidateDate)) {
 
-	        log.debug("------END check gatepass is valid ---- GatePassNo: " + gatePass.getGatePassNo() + " / Today " + today + " / WDCValidateDate " + wdcValidateDate);
-	        throw new BusinessException("Gate Pass No " + gatePass.getGatePassNo() + " is already Expired");
-	        
-	      }
+			log.debug("------END check gatepass is valid ---- GatePassNo: " + gatePass.getGatePassNo() + " / Today "
+					+ today + " / WDCValidateDate " + wdcValidateDate);
+			throw new BusinessException("Gate Pass No " + gatePass.getGatePassNo() + " is already Expired");
 
-	    log.debug("------END check gatepass is valid ---- GatePassNo: " + gatePass.getGatePassNo() + " / Today " + today + " / WDCValidateDate " + wdcValidateDate);
+		}
+
+		log.debug("------END check gatepass is valid ---- GatePassNo: " + gatePass.getGatePassNo() + " / Today " + today
+				+ " / WDCValidateDate " + wdcValidateDate);
+
+	}
+
+	private void isGatePassExpiredByYPN(GatePass gatePass, LocalDateTime today) {
+
+		LocalDateTime validateDate = gatePass.getGatePassValidDate();
+
+		log.debug("------START check gatepass is valid ---- GatePassNo: " + gatePass.getGatePassNo() + " / Today "
+				+ today + " / ValidateDate " + validateDate);
+
+		if (validateDate == null || today.isAfter(validateDate)) {
+
+			log.debug("------END check gatepass is valid ---- GatePassNo: " + gatePass.getGatePassNo() + " / Today "
+					+ today + " / ValidateDate " + validateDate);
+			throw new BusinessException("Gate Pass No " + gatePass.getGatePassNo() + " is already Expired");
+
+		}
+
+		log.debug("------END check gatepass is valid ---- GatePassNo: " + gatePass.getGatePassNo() + " / Today " + today
+				+ " / ValidateDate " + validateDate);
 
 	}
 	
-	private void isGatePassExpiredByYPN(GatePass gatePass, LocalDateTime today) {
+	private void isEDOExpired(GatePass gatePass, LocalDateTime today, WDCGatePass wdcGatePass, String etpEdoExpiryDateFlag) {
 
-        LocalDateTime validateDate = gatePass.getGatePassValidDate();
+		/**
+		 * Edo Expiry Date //edo logs
+		 */
+			if (StringUtils.equalsIgnoreCase("Y", etpEdoExpiryDateFlag)) {
 
-	    log.debug("------START check gatepass is valid ---- GatePassNo: " + gatePass.getGatePassNo() + " / Today " + today + " / ValidateDate " + validateDate);
+				log.debug("------START check EDO Expired ---- GatePassNo: " + gatePass.getGatePassNo()
+						+ " / etpEdoExpiryDateFlag " + etpEdoExpiryDateFlag + " / GateOrder "
+						+ wdcGatePass.getGateOrder() + " / Today " + today + " / LineCode "
+						+ wdcGatePass.getGateOrder().getLineCode() +" / ETPEdoExpiryDateFlag " + etpEdoExpiryDateFlag);
 
-	      if (validateDate == null || today.isAfter(validateDate)) {
+				if (wdcGatePass.getGateOrder() != null) {
+					String gateOrderType = wdcGatePass.getGateOrder().getTypeCode();
+					if (StringUtils.equalsIgnoreCase(WDCGateOrderType.IMPORT.getValue(), gateOrderType)
+							|| StringUtils.equalsIgnoreCase(WDCGateOrderType.IMPORT_CHARGABLE.getValue(), gateOrderType)
+							|| StringUtils.equalsIgnoreCase(WDCGateOrderType.IMPORT_NON_CHARGABLE.getValue(),
+									gateOrderType)) {
+						LocalDateTime edoExpiryDate = wdcGatePass.getEdoExpiryDate();
+						if (edoExpiryDate != null) {
+							if (today.isAfter(edoExpiryDate)) {
+								throw new BusinessException(
+										"Gate Pass No " + gatePass.getGatePassNo() + "  Demurrage already Expired");
+							}
+						} else {
+							String lineCode = wdcGatePass.getGateOrder().getLineCode();
+							if (StringUtils.isNotBlank(lineCode)) {
+								EdoExpiryForLineResponseType responseType = etpWebserviceClient
+										.getEdoExpiryForLine(lineCode);
+								if (responseType.isEdoExpiryEnabled()) {
+									if (edoExpiryDate == null) {
+										throw new BusinessException("Gate Pass No " + gatePass.getGatePassNo()
+												+ "  Demurrage Expiry Date is Empty");
+									}
+								}
+							}
+						}
+					}
+				}
+			}
 
-	        log.debug("------END check gatepass is valid ---- GatePassNo: " + gatePass.getGatePassNo() + " / Today " + today + " / ValidateDate " + validateDate);
-	        throw new BusinessException("Gate Pass No " + gatePass.getGatePassNo() + " is already Expired");
-	        
-	      }
+			log.debug("------End check EDO Expired ---- GatePassNo: " + gatePass.getGatePassNo()
+					+ " / etpEdoExpiryDateFlag " + etpEdoExpiryDateFlag + " / GateOrder " + wdcGatePass.getGateOrder()
+					+ " / Today " + today + " / LineCode " + wdcGatePass.getGateOrder().getLineCode() +" / ETPEdoExpiryDateFlag " + etpEdoExpiryDateFlag);
+	}
 
-	    log.debug("------END check gatepass is valid ---- GatePassNo: " + gatePass.getGatePassNo() + " / Today " + today + " / ValidateDate " + validateDate);
+	private void matchCompany(GatePass gatePass, Card card) {
 
+		/**
+		 * Match Company
+		 * 
+		 */
+		log.debug("-------------START Match Company -------- GataPass " + gatePass.getGatePassNo()+ " / CardID " + card.getCardID());
+
+		if (gatePass.getCompany() != null || card.getCompany() != null) {
+			if (gatePass.getCompany().getCompanyID().longValue() != card.getCompany().getCompanyID().longValue()) {
+				throw new BusinessException(
+						"Company''s Gate Pass No " + gatePass.getGatePassNo() + " and Smart Card No do not match");
+			}
+			log.debug("-------------End Match Company -------- GataPass " + gatePass.getGatePassNo()+ " / CardID " + card.getCardID());
+		} else {
+			log.debug("-------------End Match Company -------- GataPass " + gatePass.getGatePassNo()+ " / CardID " + card.getCardID());
+			throw new BusinessException(
+					"Company could not be Found for given Gate Pass No ! " + gatePass.getGatePassNo());
+		}
 	}
 
 }

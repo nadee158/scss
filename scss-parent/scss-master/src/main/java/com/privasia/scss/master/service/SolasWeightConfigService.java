@@ -21,7 +21,6 @@ import com.privasia.scss.core.model.SolasWeightConfig;
 import com.privasia.scss.core.repository.SolasWeightConfigRepository;
 import com.privasia.scss.master.dto.SolasWeightConfigDTO;
 
-
 /**
  * @author Janaka
  *
@@ -29,47 +28,50 @@ import com.privasia.scss.master.dto.SolasWeightConfigDTO;
 @Service("solasWeightConfigService")
 public class SolasWeightConfigService {
 
-  @Autowired
-  private SolasWeightConfigRepository solasWeightConfigRepository;
+	private SolasWeightConfigRepository solasWeightConfigRepository;
 
-  @Autowired
-  private ModelMapper modelMapper;
+	private ModelMapper modelMapper;
+	
+	@Autowired
+	public void setSolasWeightConfigRepository(SolasWeightConfigRepository solasWeightConfigRepository) {
+		this.solasWeightConfigRepository = solasWeightConfigRepository;
+	}
+	
+	@Autowired
+	public void setModelMapper(ModelMapper modelMapper) {
+		this.modelMapper = modelMapper;
+	}
 
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+	public Map<String, SolasWeightConfigDTO> fetchSolasWeightConfig(boolean byWeightType, String weightType,
+			int weightTypeSize) {
 
+		List<SolasWeightConfig> list = null;
 
-  @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-  public Map<String, SolasWeightConfigDTO> fetchSolasWeightConfig(boolean byWeightType, String weightType,
-      int weightTypeSize) {
+		if (byWeightType) {
+			SolasWeightType solasWeightType = SolasWeightType.fromValue(weightType);
+			SolasWeightTypeSize solasWeightTypeSize = SolasWeightTypeSize.fromValue(weightTypeSize);
+			list = solasWeightConfigRepository.findByWeightTypeAndWeightTypeSize(solasWeightType, solasWeightTypeSize)
+					.orElse(null);
+		} else {
+			list = solasWeightConfigRepository.findAll().collect(Collectors.toList());
+		}
 
-    List<SolasWeightConfig> list = null;
+		if (list == null || list.isEmpty())
+			throw new ResultsNotFoundException("No records could be found!");
 
-    SolasWeightType solasWeightType = SolasWeightType.fromValue(weightType);
-    SolasWeightTypeSize solasWeightTypeSize = SolasWeightTypeSize.fromValue(weightTypeSize);
+		Map<String, SolasWeightConfigDTO> map = new HashMap<String, SolasWeightConfigDTO>();
+		list.forEach(item -> {
+			SolasWeightConfigDTO dto = convertDomainToDto(item);
+			map.put(dto.getWeightType() + "_" + dto.getWeightTypeSize(), dto);
+		});
+		return map;
 
-    if (byWeightType) {
-      list = solasWeightConfigRepository.findByWeightTypeAndWeightTypeSize(solasWeightType, solasWeightTypeSize)
-          .orElse(null);
-    } else {
-      list = solasWeightConfigRepository.findAll().collect(Collectors.toList());
-    }
+	}
 
-    if (!(list == null || list.isEmpty())) {
-      Map<String, SolasWeightConfigDTO> map = new HashMap<String, SolasWeightConfigDTO>();
-      list.forEach(item -> {
-        SolasWeightConfigDTO dto = convertDomainToDto(item);
-        map.put(dto.getWeightType() + "_" + dto.getWeightTypeSize(), dto);
-      });
-      return map;
-    }
-
-    throw new ResultsNotFoundException("No records could be found!");
-  }
-
-
-  private SolasWeightConfigDTO convertDomainToDto(SolasWeightConfig solasWeightConfig) {
-    SolasWeightConfigDTO solasWeightConfigDTO = modelMapper.map(solasWeightConfig, SolasWeightConfigDTO.class);
-    return solasWeightConfigDTO;
-  }
-
+	private SolasWeightConfigDTO convertDomainToDto(SolasWeightConfig solasWeightConfig) {
+		SolasWeightConfigDTO solasWeightConfigDTO = modelMapper.map(solasWeightConfig, SolasWeightConfigDTO.class);
+		return solasWeightConfigDTO;
+	}
 
 }

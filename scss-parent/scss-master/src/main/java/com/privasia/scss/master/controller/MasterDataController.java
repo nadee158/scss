@@ -146,7 +146,7 @@ public class MasterDataController {
 
   }
 
-  @RequestMapping(value = "/damagelist", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
+  @RequestMapping(value = "/damagecodelist", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
       consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public CustomResponseEntity<ApiResponseObject<?>> getDamageList() {
     List<DamageCodeDTO> damageCodeDTOList = damageCodeService.getDamageList();
