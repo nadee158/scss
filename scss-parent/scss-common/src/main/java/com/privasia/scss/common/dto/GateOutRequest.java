@@ -1,8 +1,14 @@
 package com.privasia.scss.common.dto;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
+
+import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.StringUtils;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.privasia.scss.common.util.DateUtil;
 
 public class GateOutRequest implements Serializable {
 
@@ -11,15 +17,24 @@ public class GateOutRequest implements Serializable {
   private String userName;
   private Long gatePass1;// -long
   private Long gatePass2;// -long
+
+  @NotNull(message = "cardID is required!")
   private Long cardID;
+
   private Long comID;
   private String expContainer1;// -string
   private String expContainer2;// -string
   private String impContainer1;// -string
   private String impContainer2;// -string
   private String truckHeadNo;// -string
-  private String gateOUTDateTime;// -string
+
+  @NotNull(message = "gateOUTDateTime is required!")
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateUtil.GLOBAL_DATE_TIME_PATTERN)
+  private LocalDateTime gateOUTDateTime;// -string
+
+  @NotNull(message = "clientID is required!")
   private Long clientID;// -long (clientID)
+
   private String laneNo;// -long (clientID)
   private Integer expWeightBridge;// -long
   private boolean checkPreArrival;// -boolean
@@ -49,11 +64,12 @@ public class GateOutRequest implements Serializable {
     this.truckHeadNo = truckHeadNo;
   }
 
-  public String getGateOUTDateTime() {
+
+  public LocalDateTime getGateOUTDateTime() {
     return gateOUTDateTime;
   }
 
-  public void setGateOUTDateTime(String gateOUTDateTime) {
+  public void setGateOUTDateTime(LocalDateTime gateOUTDateTime) {
     this.gateOUTDateTime = gateOUTDateTime;
   }
 
@@ -167,7 +183,7 @@ public class GateOutRequest implements Serializable {
     this.impContainer1 = StringUtils.EMPTY;// -string
     this.impContainer2 = StringUtils.EMPTY;// -string
     this.truckHeadNo = StringUtils.EMPTY;// -string
-    this.gateOUTDateTime = StringUtils.EMPTY;// -string
+    this.gateOUTDateTime = LocalDateTime.now();// -string
     this.clientID = 0l;// -long (clientID)
     this.laneNo = StringUtils.EMPTY;// -long (clientID)
     this.expWeightBridge = 0;// -long

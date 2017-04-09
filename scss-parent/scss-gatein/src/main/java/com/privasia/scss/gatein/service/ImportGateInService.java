@@ -25,7 +25,6 @@ import com.privasia.scss.common.enums.ContainerPosition;
 import com.privasia.scss.common.enums.GateInOutStatus;
 import com.privasia.scss.common.enums.ImpExpFlagStatus;
 import com.privasia.scss.common.enums.TransactionStatus;
-import com.privasia.scss.common.util.CommonUtil;
 import com.privasia.scss.core.exception.ResultsNotFoundException;
 import com.privasia.scss.core.model.BaseCommonGateInOutAttribute;
 import com.privasia.scss.core.model.Card;
@@ -169,8 +168,7 @@ public class ImportGateInService {
           importContainer.setBaseCommonGateInOutAttribute(new BaseCommonGateInOutDTO());
         }
         System.out.println("gateInWriteRequest.getGateInDateTime() " + gateInWriteRequest.getGateInDateTime());
-        importContainer.getBaseCommonGateInOutAttribute()
-            .setTimeGateIn(CommonUtil.getParsedDate(gateInWriteRequest.getGateInDateTime()));
+        importContainer.getBaseCommonGateInOutAttribute().setTimeGateIn(gateInWriteRequest.getGateInDateTime());
 
         // assign values from header level to container level
         importContainer.getBaseCommonGateInOutAttribute().setEirStatus(TransactionStatus.INPROGRESS.getValue());

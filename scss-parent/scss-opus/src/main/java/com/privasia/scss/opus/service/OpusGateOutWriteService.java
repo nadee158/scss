@@ -86,8 +86,7 @@ public class OpusGateOutWriteService {
     List<GOWriteRequestImportContainer> importContainerListCY =
         opusService.importContainerListToGOWriteRequestImportContainerList(gateOutWriteRequest.getImportContainers());
 
-    LocalDateTime gateOutDateTime = CommonUtil.getParsedDate(gateOutWriteRequest.getGateOUTDateTime());
-    opusGateOutWriteRequest.setGateOUTDateTime(DateUtil.getJsonDateFromDate(gateOutDateTime));
+    opusGateOutWriteRequest.setGateOUTDateTime(DateUtil.getJsonDateFromDate(gateOutWriteRequest.getGateOUTDateTime()));
     opusGateOutWriteRequest.setHaulageCode(gateOutWriteRequest.getHaulageCode());
     opusGateOutWriteRequest.setLaneNo(gateOutWriteRequest.getLaneNo());
     opusGateOutWriteRequest.setTruckHeadNo(gateOutWriteRequest.getTruckHeadNo());

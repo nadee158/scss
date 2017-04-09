@@ -294,8 +294,8 @@ public class ImportGateOutService {
 		    		  optGatePass.orElseThrow(() -> new ResultsNotFoundException("Invalid GatePass to Update ! " + importContainer.getGatePassNo()));
 		      
 		      gatePass.getBaseCommonGateInOutAttribute().setEirStatus(TransactionStatus.fromCode(importContainer.getBaseCommonGateInOutAttribute().getEirStatus()));
-		      gatePass.getBaseCommonGateInOutAttribute().setTimeGateOut(DateUtil.getLocalDateFromString(gateOutWriteRequest.getGateOUTDateTime()));
-		      gatePass.getBaseCommonGateInOutAttribute().setTimeGateOutBooth(DateUtil.getLocalDateFromString(gateOutWriteRequest.getGateOUTDateTime()));
+		      gatePass.getBaseCommonGateInOutAttribute().setTimeGateOut(gateOutWriteRequest.getGateOUTDateTime());
+		      gatePass.getBaseCommonGateInOutAttribute().setTimeGateOutBooth(gateOutWriteRequest.getGateOUTDateTime());
 		      gatePass.getBaseCommonGateInOutAttribute().setTimeGateOutOk(LocalDateTime.now());
 		      gatePass.getBaseCommonGateInOutAttribute().setGateOutBoothClerk(gateOutClerk);
 		      gatePass.getBaseCommonGateInOutAttribute().setGateOutBoothNo(String.valueOf(booth.getClientID()));

@@ -73,7 +73,8 @@ public class GateInController {
 
   @RequestMapping(value = "/savegateininfo", method = RequestMethod.PUT,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-  public CustomResponseEntity<ApiResponseObject<?>> saveGateInInfo(@RequestBody GateInWriteRequest gateInWriteRequest) {
+  public CustomResponseEntity<ApiResponseObject<?>> saveGateInInfo(
+      @Valid @RequestBody GateInWriteRequest gateInWriteRequest) {
 
     GateInReponse gateInWriteReponse = importExportGateInService.saveGateInInfo(gateInWriteRequest);
 

@@ -26,6 +26,8 @@ public class GateInReponse implements Serializable {
 
   private List<ExportContainer> exportContainers = new ArrayList<ExportContainer>();
 
+  private List<WHODDDTO> whoddContainers;
+
   private Integer expWeightBridge;// -long
 
   // for gate in write
@@ -138,6 +140,14 @@ public class GateInReponse implements Serializable {
 
   public void setSolasInstruction(String solasInstruction) {
     this.solasInstruction = solasInstruction;
+  }
+
+  public List<WHODDDTO> getWhoddContainers() {
+    return whoddContainers;
+  }
+
+  public void setWhoddContainers(List<WHODDDTO> whoddContainers) {
+    this.whoddContainers = whoddContainers;
   }
 
 

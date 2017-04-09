@@ -19,7 +19,6 @@ import com.privasia.scss.common.dto.GateInWriteRequest;
 import com.privasia.scss.common.dto.ShipSCNDTO;
 import com.privasia.scss.common.enums.ShipStatus;
 import com.privasia.scss.common.enums.TransactionStatus;
-import com.privasia.scss.common.util.CommonUtil;
 import com.privasia.scss.core.exception.ResultsNotFoundException;
 import com.privasia.scss.core.model.Card;
 import com.privasia.scss.core.model.Client;
@@ -30,18 +29,14 @@ import com.privasia.scss.core.model.PrintEir;
 import com.privasia.scss.core.model.ShipCode;
 import com.privasia.scss.core.model.ShipSCN;
 import com.privasia.scss.core.model.SystemUser;
-import com.privasia.scss.core.repository.CardRepository;
-import com.privasia.scss.core.repository.CardUsageRepository;
-import com.privasia.scss.core.repository.ClientRepository;
 import com.privasia.scss.core.repository.DamageCodeRepository;
 import com.privasia.scss.core.repository.DgDetailRepository;
 import com.privasia.scss.core.repository.ExportsQRepository;
 import com.privasia.scss.core.repository.ExportsRepository;
 import com.privasia.scss.core.repository.HPATBookingRepository;
-import com.privasia.scss.core.repository.PrintEirRepository;
 import com.privasia.scss.core.repository.ShipCodeRepository;
 import com.privasia.scss.core.repository.ShipSCNRepository;
-import com.privasia.scss.core.repository.SystemUserRepository;
+import com.privasia.scss.core.repository.WDCGlobalSettingRepository;
 
 @Service("exportGateInService")
 public class ExportGateInService {
@@ -58,22 +53,27 @@ public class ExportGateInService {
 
   private ExportsQRepository exportsQRepository;
 
-  private SystemUserRepository systemUserRepository;
-
-  private CardRepository cardRepository;
-
-  private ClientRepository clientRepository;
-
-  private PrintEirRepository printEirRepository;
-
-  private CardUsageRepository cardUsageRepository;
-
   private HPATBookingRepository hpatBookingRepository;
 
   private DamageCodeRepository damageCodeRepository;
 
   private DgDetailRepository dgDetailRepository;
 
+  private WDCGlobalSettingRepository globalSettingRepository;
+
+  private LPKEDIService lpkediService;
+
+  @Autowired
+  public void setLpkediService(LPKEDIService lpkediService) {
+    this.lpkediService = lpkediService;
+  }
+
+  @Autowired
+  public void setGlobalSettingRepository(WDCGlobalSettingRepository globalSettingRepository) {
+    this.globalSettingRepository = globalSettingRepository;
+  }
+
+  @Autowired
   public void setDgDetailRepository(DgDetailRepository dgDetailRepository) {
     this.dgDetailRepository = dgDetailRepository;
   }
@@ -83,30 +83,6 @@ public class ExportGateInService {
     this.damageCodeRepository = damageCodeRepository;
   }
 
-  @Autowired
-  public void setSystemUserRepository(SystemUserRepository systemUserRepository) {
-    this.systemUserRepository = systemUserRepository;
-  }
-
-  @Autowired
-  public void setCardRepository(CardRepository cardRepository) {
-    this.cardRepository = cardRepository;
-  }
-
-  @Autowired
-  public void setClientRepository(ClientRepository clientRepository) {
-    this.clientRepository = clientRepository;
-  }
-
-  @Autowired
-  public void setPrintEirRepository(PrintEirRepository printEirRepository) {
-    this.printEirRepository = printEirRepository;
-  }
-
-  @Autowired
-  public void setCardUsageRepository(CardUsageRepository cardUsageRepository) {
-    this.cardUsageRepository = cardUsageRepository;
-  }
 
   @Autowired
   public void setHPATBookingRepository(HPATBookingRepository hpatBookingRepository) {
@@ -141,13 +117,14 @@ public class ExportGateInService {
 
   @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
   public GateInReponse populateGateInExports(GateInReponse gateInReponse) {
-
+    Optional<String> globalSetting = globalSettingRepository.fetchGlobalStringByGlobalCode("LPK_EDI");
     if (!(gateInReponse.getExportContainers() == null || gateInReponse.getExportContainers().isEmpty())) {
       gateInReponse.getExportContainers().forEach(container -> {
         container.setExpWeightBridge(gateInReponse.getExpWeightBridge());
         setStoragePeriod(container);
         setSCN(container);
         checkDg(container);
+        findLpkEdiMsg(container, globalSetting);
       });
     }
 
@@ -156,15 +133,15 @@ public class ExportGateInService {
   }
 
 
-
-  public List<ExportContainer> fetchContainerInfo(List<String> exportContainerNumbers) {
-
-    return null;
-
+  private void findLpkEdiMsg(ExportContainer container, Optional<String> globalSettingOpt) {
+    if (StringUtils.equalsIgnoreCase(container.getImdg(), "Y")) {
+      globalSettingOpt.orElseThrow(() -> new ResultsNotFoundException("Global Setting not available ! LPK_EDI"));
+      lpkediService.findLPKEDITDigiMessage(container);
+    }
   }
 
   @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-  private void checkDg(ExportContainer exportContainer) {
+  public void checkDg(ExportContainer exportContainer) {
     if (!(exportContainer == null || exportContainer.getContainer() == null || exportContainer.getScn() == null)) {
       if (!(StringUtils.isEmpty(exportContainer.getContainer().getContainerNumber())
           || StringUtils.isEmpty(exportContainer.getScn().getScnNo()))) {
@@ -229,7 +206,7 @@ public class ExportGateInService {
 
   }
 
-
+  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
   public List<ExportContainer> saveGateInInfo(GateInWriteRequest gateInWriteRequest, Client gateInClient,
       SystemUser gateInClerk, Card card) {
     // construct a new export entity for each exportcontainer and save
@@ -262,8 +239,7 @@ public class ExportGateInService {
         }
         exportContainer.getCommonGateInOut().setGateInStatus(gateInWriteRequest.getGateInStatus());
 
-        exportContainer.getBaseCommonGateInOutAttribute()
-            .setTimeGateIn(CommonUtil.getParsedDate(gateInWriteRequest.getGateInDateTime()));
+        exportContainer.getBaseCommonGateInOutAttribute().setTimeGateIn(gateInWriteRequest.getGateInDateTime());
         exportContainer.getBaseCommonGateInOutAttribute().setTimeGateInOk(LocalDateTime.now());
 
 
