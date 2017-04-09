@@ -9,7 +9,7 @@ import org.springframework.validation.Validator;
 import com.privasia.scss.common.dto.GateInRequest;
 
 @Component
-public class GateInDateTimeValidator implements Validator {
+public class GateInRequestValidator implements Validator {
 
   @Override
   public boolean supports(Class<?> clazz) {
@@ -21,9 +21,9 @@ public class GateInDateTimeValidator implements Validator {
     GateInRequest gateInRequest = (GateInRequest) target;
     System.out.println("gateInRequest.getGateInDateTime() " + gateInRequest.getGateInDateTime());
     if (gateInRequest.getGateInDateTime() == null) {
-      errors.rejectValue("gateInDateTime", "NULL_DATE", "Please enter a date for Gate in date time");
+      errors.rejectValue("gateInDateTime", "NULL_DATE", "gateInDateTime is required!");
     } else if (gateInRequest.getGateInDateTime().isAfter(LocalDateTime.now())) {
-      errors.rejectValue("gateInDateTime", "FUTURE_DATE", "Gate in date time cannot be a future date/time");
+      errors.rejectValue("gateInDateTime", "FUTURE_DATE", "gateInDateTime cannot be a future date/time");
     }
 
   }

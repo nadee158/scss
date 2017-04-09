@@ -22,7 +22,8 @@ import com.privasia.scss.common.dto.GateInWriteRequest;
 import com.privasia.scss.common.dto.GateInfo;
 import com.privasia.scss.gatein.service.GateInService;
 import com.privasia.scss.gatein.service.ImportExportGateInService;
-import com.privasia.scss.gatein.util.GateInDateTimeValidator;
+import com.privasia.scss.gatein.util.GateInRequestValidator;
+import com.privasia.scss.gatein.util.GateInWriteRequestValidator;
 
 
 
@@ -39,9 +40,10 @@ public class GateInController {
   private ImportExportGateInService importExportGateInService;
 
   @Autowired
-  private GateInDateTimeValidator gateInDateTimeValidator;
+  private GateInRequestValidator gateInRequestValidator;
 
-
+  @Autowired
+  private GateInWriteRequestValidator gateInWriteRequestValidator;
 
   @RequestMapping(value = "/allow", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
       consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -57,10 +59,7 @@ public class GateInController {
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public CustomResponseEntity<ApiResponseObject<?>> populateGateIn(@Valid @RequestBody GateInRequest gateInRequest,
       BindingResult bindingResult) throws BindException {
-    gateInDateTimeValidator.validate(gateInRequest, bindingResult);
-    System.out.println("bindingResult.hasErrors() " + bindingResult.hasErrors());
-    System.out.println("bindingResult.bindingResult.hasFieldErrors()() " + bindingResult.hasFieldErrors());
-    System.out.println("bindingResult.hasGlobalErrors() " + bindingResult.hasGlobalErrors());
+    gateInRequestValidator.validate(gateInRequest, bindingResult);
     if (bindingResult.hasErrors()) {
       throw new BindException(bindingResult);
     }
@@ -74,8 +73,11 @@ public class GateInController {
   @RequestMapping(value = "/savegateininfo", method = RequestMethod.PUT,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public CustomResponseEntity<ApiResponseObject<?>> saveGateInInfo(
-      @Valid @RequestBody GateInWriteRequest gateInWriteRequest) {
-
+      @Valid @RequestBody GateInWriteRequest gateInWriteRequest, BindingResult bindingResult) throws BindException {
+    gateInWriteRequestValidator.validate(gateInWriteRequest, bindingResult);
+    if (bindingResult.hasErrors()) {
+      throw new BindException(bindingResult);
+    }
     GateInReponse gateInWriteReponse = importExportGateInService.saveGateInInfo(gateInWriteRequest);
 
     return new CustomResponseEntity<ApiResponseObject<?>>(
