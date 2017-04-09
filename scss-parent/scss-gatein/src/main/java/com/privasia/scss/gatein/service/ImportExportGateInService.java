@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -20,13 +21,17 @@ import com.privasia.scss.common.dto.GateInRequest;
 import com.privasia.scss.common.dto.GateInWriteRequest;
 import com.privasia.scss.common.dto.GateOutMessage;
 import com.privasia.scss.common.dto.ImportContainer;
+import com.privasia.scss.common.enums.ImpExpFlagStatus;
 import com.privasia.scss.core.exception.BusinessException;
 import com.privasia.scss.core.exception.ResultsNotFoundException;
 import com.privasia.scss.core.model.Card;
 import com.privasia.scss.core.model.Client;
+import com.privasia.scss.core.model.SystemUser;
 import com.privasia.scss.core.repository.CardRepository;
 import com.privasia.scss.core.repository.ClientRepository;
+import com.privasia.scss.core.repository.SystemUserRepository;
 import com.privasia.scss.core.security.model.UserContext;
+import com.privasia.scss.core.security.util.SecurityHelper;
 import com.privasia.scss.core.service.CommonCardService;
 import com.privasia.scss.hpat.service.HPABService;
 import com.privasia.scss.opus.dto.OpusGateInReadRequest;
@@ -61,6 +66,13 @@ public class ImportExportGateInService {
   private CommonCardService commonCardService;
 
   private Gson gson;
+
+  private SystemUserRepository systemUserRepository;
+
+  @Autowired
+  public void setSystemUserRepository(SystemUserRepository systemUserRepository) {
+    this.systemUserRepository = systemUserRepository;
+  }
 
   @Autowired
   public void setCommonCardService(CommonCardService commonCardService) {
@@ -161,6 +173,12 @@ public class ImportExportGateInService {
     // double check with the documentation
     gateInReponse = opusGateInReadService.constructGateInReponse(gateInReadResponse, gateInReponse);
 
+    if (gateInRequest.getExpWeightBridge() <= 0) {
+      throw new BusinessException("Invalid Exp Weight Bridge" + gateInRequest.getExpWeightBridge());
+    }
+
+    gateInReponse.setExpWeightBridge(gateInRequest.getExpWeightBridge());
+
     if (!(StringUtils.isEmpty(gateInRequest.getExpContainer1())
         || StringUtils.isEmpty(gateInRequest.getExpContainer2()))) {
       gateInReponse = exportGateInService.populateGateInExports(gateInReponse);
@@ -182,9 +200,9 @@ public class ImportExportGateInService {
   @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
   public GateInReponse saveGateInInfo(GateInWriteRequest gateInWriteRequest) {
 
-    Optional<Card> cardOpt = cardRepository.findOne(gateInWriteRequest.getCardId());
-    Card card =
-        cardOpt.orElseThrow(() -> new ResultsNotFoundException("Invalid Card ID ! " + gateInWriteRequest.getCardId()));
+
+    Card card = cardRepository.findOne(gateInWriteRequest.getCardId())
+        .orElseThrow(() -> new ResultsNotFoundException("Invalid Card : " + gateInWriteRequest.getCardId()));
 
     gateInWriteRequest.setHaulageCode(commonCardService.getHaulierCodeByScanCard(card));
 
@@ -192,12 +210,19 @@ public class ImportExportGateInService {
     UserContext userContext = (UserContext) authentication.getPrincipal();
     gateInWriteRequest.setUserName(userContext.getUsername());
 
-    Optional<Client> clientOpt = clientRepository.findOne(gateInWriteRequest.getGateInClient());
-    Client client = clientOpt
-        .orElseThrow(() -> new ResultsNotFoundException("Invalid lane ID ! " + gateInWriteRequest.getGateInClient()));
-    if (StringUtils.isEmpty(client.getLaneNo()))
-      throw new BusinessException("Lane no does not setup for client " + client.getClientID());
-    gateInWriteRequest.setLaneNo(client.getLaneNo());
+
+    Client gateInClient = clientRepository.findOne(gateInWriteRequest.getGateInClient())
+        .orElseThrow(() -> new ResultsNotFoundException("Invalid Client Id : " + gateInWriteRequest.getGateInClient()));
+
+    if (StringUtils.isEmpty(gateInClient.getLaneNo()))
+      throw new BusinessException("Lane no does not setup for client " + gateInClient.getClientID());
+    gateInWriteRequest.setLaneNo(gateInClient.getLaneNo());
+
+
+    SystemUser gateInClerk = systemUserRepository.findOne(SecurityHelper.getCurrentUserId()).orElseThrow(
+        () -> new AuthenticationServiceException("Log in User Not Found : " + SecurityHelper.getCurrentUserId()));
+    System.out.println("gateInClerk " + gateInClerk);
+
 
     OpusGateInWriteRequest opusGateInWriteRequest =
         opusGateInWriteService.constructOpusGateInWriteRequest(gateInWriteRequest);
@@ -223,13 +248,25 @@ public class ImportExportGateInService {
     gateInWriteRequest.setImportContainers(gateInReponse.getImportContainers());
     gateInWriteRequest.setExportContainers(gateInReponse.getExportContainers());
 
-    if (!(gateInWriteRequest.getExportContainers() == null || gateInWriteRequest.getExportContainers().isEmpty())) {
-      exportGateInService.saveGateInInfo(gateInWriteRequest);
+    if (StringUtils.isEmpty(gateInWriteRequest.getImpExpFlag()))
+      throw new BusinessException("Invalid GateOutWriteRequest Empty ImpExpFlag");
+    ImpExpFlagStatus impExpFlag = ImpExpFlagStatus.fromValue(gateInWriteRequest.getImpExpFlag());
+
+    switch (impExpFlag) {
+      case IMPORT:
+        importGateInService.saveGateInInfo(gateInWriteRequest, gateInClient, gateInClerk, card);
+        break;
+      case EXPORT:
+        exportGateInService.saveGateInInfo(gateInWriteRequest, gateInClient, gateInClerk, card);
+        break;
+      case IMPORT_EXPORT:
+        importGateInService.saveGateInInfo(gateInWriteRequest, gateInClient, gateInClerk, card);
+        exportGateInService.saveGateInInfo(gateInWriteRequest, gateInClient, gateInClerk, card);
+        break;
+      default:
+        break;
     }
 
-    if (!(gateInWriteRequest.getImportContainers() == null || gateInWriteRequest.getImportContainers().isEmpty())) {
-      importGateInService.saveGateInInfo(gateInWriteRequest);
-    }
 
     GateOutMessage gateOutMessage = new GateOutMessage();
     gateOutMessage.setCode(GateOutMessage.OK);

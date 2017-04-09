@@ -18,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.privasia.scss.common.dto.ExportContainer;
 import com.privasia.scss.common.dto.GateInReponse;
-import com.privasia.scss.common.dto.GateOutReponse;
 import com.privasia.scss.common.dto.HpatDto;
 import com.privasia.scss.common.dto.ImportContainer;
 import com.privasia.scss.common.dto.TransactionDTO;
@@ -209,8 +208,6 @@ public class HPABService {
     HPABBooking booking =
         hpatBookingOpt.orElseThrow(() -> new ResultsNotFoundException("Invalid HPAB Bookibg ID ! " + hpabSeqId));
 
-    final GateOutReponse reponse = booking.constructGateOutReponse();
-
     List<ImportContainer> updatedImportContainers = new ArrayList<ImportContainer>();
     List<ExportContainer> updatedExportContainers = new ArrayList<ExportContainer>();
 
@@ -228,9 +225,8 @@ public class HPABService {
             // add to a list
             ImportContainer importContainer = null;
             if (!(gateInReponse.getImportContainers() == null || gateInReponse.getImportContainers().isEmpty())) {
-              importContainer = gateInReponse.getImportContainers()
-                  .stream().filter(e -> (e.getContainer() != null) && (StringUtils
-                      .equals(e.getContainer().getContainerNumber(), bookingDetail.getContainerNumber())))
+              importContainer = gateInReponse.getImportContainers().stream().filter(e -> (e.getContainer() != null)
+                  && (StringUtils.equals(e.getContainer().getContainerNumber(), bookingDetail.getContainerNumber())))
                   .findFirst().get();
             }
             updatedImportContainers.add(bookingDetail.constructImportContainer(importContainer));
@@ -242,13 +238,14 @@ public class HPABService {
 
             ExportContainer exportContainer = null;
             if (!(gateInReponse.getExportContainers() == null || gateInReponse.getExportContainers().isEmpty())) {
-              exportContainer = gateInReponse.getExportContainers()
-                  .stream().filter(e -> (e.getContainer() != null) && (StringUtils
-                      .equals(e.getContainer().getContainerNumber(), bookingDetail.getContainerNumber())))
+              exportContainer = gateInReponse.getExportContainers().stream().filter(e -> (e.getContainer() != null)
+                  && (StringUtils.equals(e.getContainer().getContainerNumber(), bookingDetail.getContainerNumber())))
                   .findFirst().get();
             }
 
-            updatedExportContainers.add(bookingDetail.constructExportContainer(exportContainer));
+            ExportContainer exportContainerCons = bookingDetail.constructExportContainer(exportContainer);
+            gateInReponse.setSolasInstruction(exportContainerCons.getSolas().getSolasInstruction());
+            updatedExportContainers.add(exportContainerCons);
             break;
           case EMPTY_PICKUP:
 

@@ -3,6 +3,8 @@ package com.privasia.scss.gatein.controller;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -58,7 +60,7 @@ public class GateInController {
 
   @RequestMapping(value = "/populategatein", method = RequestMethod.PUT,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-  public CustomResponseEntity<ApiResponseObject<?>> populateGateIn(@RequestBody GateInRequest gateInRequest) {
+  public CustomResponseEntity<ApiResponseObject<?>> populateGateIn(@Valid @RequestBody GateInRequest gateInRequest) {
 
     GateInReponse gateInReponse = importExportGateInService.populateGateIn(gateInRequest);
 

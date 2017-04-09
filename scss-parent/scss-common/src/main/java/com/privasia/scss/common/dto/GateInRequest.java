@@ -2,23 +2,32 @@ package com.privasia.scss.common.dto;
 
 import java.io.Serializable;
 
+import javax.validation.constraints.NotNull;
+
 import org.apache.commons.lang3.StringUtils;
 
 public class GateInRequest implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
+
   private Long userId;
   private String userName;
   private Long gatePass1;// -long
   private Long gatePass2;// -long
+
+  @NotNull
   private Long cardID;
+
   private String expContainer1;// -string
   private String expContainer2;// -string
   private String impContainer1;// -string
   private String impContainer2;// -string
   private String truckHeadNo;// -string
+
+  @NotNull
   private String gateInDateTime;// -string
+
   private Long clientID;// -long (clientID)
   private String laneNo;// -long (clientID)
   private Integer expWeightBridge;// -long

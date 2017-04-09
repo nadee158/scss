@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.privasia.scss.common.enums.SolasInstructionType;
+
 public class GateInReponse implements Serializable {
 
   /**
@@ -24,10 +26,14 @@ public class GateInReponse implements Serializable {
 
   private List<ExportContainer> exportContainers = new ArrayList<ExportContainer>();
 
+  private Integer expWeightBridge;// -long
+
   // for gate in write
   private String callCardNo;// 20161130112233,
 
   private GateOutMessage message;
+
+  private String solasInstruction = SolasInstructionType.VGM_INSTRUCTION_NO_SOLAS.getValue();
 
 
   public String getLaneNo() {
@@ -116,6 +122,22 @@ public class GateInReponse implements Serializable {
 
   public void setMessage(GateOutMessage message) {
     this.message = message;
+  }
+
+  public Integer getExpWeightBridge() {
+    return expWeightBridge;
+  }
+
+  public void setExpWeightBridge(Integer expWeightBridge) {
+    this.expWeightBridge = expWeightBridge;
+  }
+
+  public String getSolasInstruction() {
+    return solasInstruction;
+  }
+
+  public void setSolasInstruction(String solasInstruction) {
+    this.solasInstruction = solasInstruction;
   }
 
 

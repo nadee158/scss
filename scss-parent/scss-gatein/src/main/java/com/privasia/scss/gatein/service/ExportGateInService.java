@@ -7,7 +7,6 @@ import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,7 +42,6 @@ import com.privasia.scss.core.repository.PrintEirRepository;
 import com.privasia.scss.core.repository.ShipCodeRepository;
 import com.privasia.scss.core.repository.ShipSCNRepository;
 import com.privasia.scss.core.repository.SystemUserRepository;
-import com.privasia.scss.core.security.util.SecurityHelper;
 
 @Service("exportGateInService")
 public class ExportGateInService {
@@ -146,6 +144,7 @@ public class ExportGateInService {
 
     if (!(gateInReponse.getExportContainers() == null || gateInReponse.getExportContainers().isEmpty())) {
       gateInReponse.getExportContainers().forEach(container -> {
+        container.setExpWeightBridge(gateInReponse.getExpWeightBridge());
         setStoragePeriod(container);
         setSCN(container);
         checkDg(container);
@@ -231,7 +230,8 @@ public class ExportGateInService {
   }
 
 
-  public List<ExportContainer> saveGateInInfo(GateInWriteRequest gateInWriteRequest) {
+  public List<ExportContainer> saveGateInInfo(GateInWriteRequest gateInWriteRequest, Client gateInClient,
+      SystemUser gateInClerk, Card card) {
     // construct a new export entity for each exportcontainer and save
     backToback = false;
     if (!(gateInWriteRequest.getExportContainers() == null || gateInWriteRequest.getExportContainers().isEmpty())) {
@@ -272,13 +272,6 @@ public class ExportGateInService {
         modelMapper.map(exportContainer, exports);
         System.out.println("exports after modal map from exportContainer " + exports);
 
-        // if any of entitiees are not found throw exception
-        SystemUser gateInClerk = systemUserRepository.findOne(SecurityHelper.getCurrentUserId()).orElseThrow(
-            () -> new AuthenticationServiceException("Log in User Not Found : " + SecurityHelper.getCurrentUserId()));
-        System.out.println("gateInClerk " + gateInClerk);
-
-        Card card = cardRepository.findOne(gateInWriteRequest.getCardId())
-            .orElseThrow(() -> new ResultsNotFoundException("Invalid Card : " + gateInWriteRequest.getCardId()));
 
         HPABBooking hpatBooking = null;
 
@@ -289,8 +282,6 @@ public class ExportGateInService {
           }
         }
 
-        Client gateInClient = clientRepository.findOne(gateInWriteRequest.getGateInClient()).orElseThrow(
-            () -> new ResultsNotFoundException("Invalid Client Id : " + gateInWriteRequest.getGateInClient()));
         ShipSCN scn = null;
         if (!(exportContainer.getScn() == null)) {
           scn = shipSCNRepository.findOne(exportContainer.getScn().getShipSCNID())
