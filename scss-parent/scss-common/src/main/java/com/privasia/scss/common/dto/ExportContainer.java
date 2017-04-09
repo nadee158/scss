@@ -1,11 +1,7 @@
 package com.privasia.scss.common.dto;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -15,15 +11,13 @@ import com.privasia.scss.common.enums.GCS_SSRBlockStatusType;
 import com.privasia.scss.common.enums.GateInOutStatus;
 import com.privasia.scss.common.enums.ReferTempType;
 import com.privasia.scss.common.enums.VesselStatus;
-import com.privasia.scss.common.util.CommonUtil;
+import com.privasia.scss.common.util.DateUtil;
 
 /**
  * @author nadee158
  *
  */
 public class ExportContainer {
-
-	private static final Log log = LogFactory.getLog(ExportContainer.class);
 
 	private Long exportID;
 
@@ -81,8 +75,8 @@ public class ExportContainer {
 
 	private String containerPosition;
 
-	@JsonFormat(pattern = CommonUtil.GLOBAL_DATE_PATTERN)
-	@DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
+	@JsonFormat(pattern = DateUtil.GLOBAL_DATE_TIME_PATTERN)
+	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
 	private LocalDateTime preCheckDate;
 
 	private String yardPosition;
@@ -115,11 +109,11 @@ public class ExportContainer {
 
 	private String vesselSCN;
 
-	@JsonFormat(pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+	@JsonFormat(pattern = DateUtil.GLOBAL_DATE_TIME_PATTERN)
 	@DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
 	private LocalDateTime vesselETADate;
 
-	@JsonFormat(pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+	@JsonFormat(pattern = DateUtil.GLOBAL_DATE_TIME_PATTERN)
 	@DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
 	private LocalDateTime vesselATADate;
 
@@ -133,19 +127,19 @@ public class ExportContainer {
 
 	private String ssrBlockStatus;
 
-	@JsonFormat(pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+	@JsonFormat(pattern = DateUtil.GLOBAL_DATE_TIME_PATTERN)
 	@DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
 	private LocalDateTime ssrBlockStatusDate;
 
 	private String gcsBlockStatus;
 
-	@JsonFormat(pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+	@JsonFormat(pattern = DateUtil.GLOBAL_DATE_TIME_PATTERN)
 	@DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
 	private LocalDateTime gcsBlockStatusDate;
 
 	private String gcsDeclareNo;
 
-	@JsonFormat(pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+	@JsonFormat(pattern = DateUtil.GLOBAL_DATE_TIME_PATTERN)
 	@DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
 	private LocalDateTime gcsLastCheck;
 
@@ -294,7 +288,7 @@ public class ExportContainer {
 	// FOR OPUS SERVICE
 	private String expCarrierType;
 
-	@JsonFormat(pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+	@JsonFormat(pattern = DateUtil.GLOBAL_DATE_TIME_PATTERN)
 	@DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
 	private LocalDateTime yardOpeningDateTime;
 
@@ -302,7 +296,7 @@ public class ExportContainer {
 
 	private String reeferTempUnit;
 
-	@JsonFormat(pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+	@JsonFormat(pattern = DateUtil.GLOBAL_DATE_TIME_PATTERN)
 	@DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
 	private LocalDateTime yardDGOpeningDateTime;
 
@@ -311,7 +305,7 @@ public class ExportContainer {
 	private String subHandlingType;// ":"1"
 	private String rtgExecustionStatus;// ":"RGS"
 
-	@JsonFormat(pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+	@JsonFormat(pattern = DateUtil.GLOBAL_DATE_TIME_PATTERN)
 	@DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
 	private LocalDateTime rtgExecustionDateTime;// ;":"20161212101010"
 
@@ -1331,12 +1325,12 @@ public class ExportContainer {
 				+ ", damageCode_02=" + damageCode_02 + ", damageCode_03=" + damageCode_03 + ", damageCode_04="
 				+ damageCode_04 + ", damageCode_05=" + damageCode_05 + ", damageCode_06=" + damageCode_06
 				+ ", damageCode_07=" + damageCode_07 + ", damageCode_08=" + damageCode_08 + ", damageCode_09="
-				+ damageCode_09 + ", dontValidateSeal=" + dontValidateSeal + ", wrongDoor=" + wrongDoor + ", emptyWeight=" + emptyWeight
-				+ ", hpabISOCode=" + hpabISOCode + ", cosmosISOCode=" + cosmosISOCode + ", pmWeight=" + pmWeight
-				+ ", trailerWeight=" + trailerWeight + ", trailerPlateNo=" + trailerPlateNo + ", fuelWeight="
-				+ fuelWeight + ", tireWeight=" + tireWeight + ", variance=" + variance + ", withinTolerance="
-				+ withinTolerance + ", calculatedVariance=" + calculatedVariance + ", solasCertNo=" + solasCertNo
-				+ ", solas=" + solas + "]";
+				+ damageCode_09 + ", dontValidateSeal=" + dontValidateSeal + ", wrongDoor=" + wrongDoor
+				+ ", emptyWeight=" + emptyWeight + ", hpabISOCode=" + hpabISOCode + ", cosmosISOCode=" + cosmosISOCode
+				+ ", pmWeight=" + pmWeight + ", trailerWeight=" + trailerWeight + ", trailerPlateNo=" + trailerPlateNo
+				+ ", fuelWeight=" + fuelWeight + ", tireWeight=" + tireWeight + ", variance=" + variance
+				+ ", withinTolerance=" + withinTolerance + ", calculatedVariance=" + calculatedVariance
+				+ ", solasCertNo=" + solasCertNo + ", solas=" + solas + "]";
 	}
 
 	public ExportContainer initializeWithDefaultValues(String containerNumber) {

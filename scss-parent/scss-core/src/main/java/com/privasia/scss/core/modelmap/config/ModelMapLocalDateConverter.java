@@ -12,7 +12,7 @@ import org.modelmapper.Converter;
 import org.modelmapper.Provider;
 import org.modelmapper.spi.MappingContext;
 
-import com.privasia.scss.common.util.CommonUtil;
+import com.privasia.scss.common.util.DateUtil;
 
 /**
  * @author Janaka
@@ -21,48 +21,48 @@ import com.privasia.scss.common.util.CommonUtil;
 
 public final class ModelMapLocalDateConverter {
 
-	public static Converter<LocalDateTime, String> convertLocalDateTimeToString() {
+  public static Converter<LocalDateTime, String> convertLocalDateTimeToString() {
 
-		return new Converter<LocalDateTime, String>() {
-			@Override
-			public String convert(MappingContext<LocalDateTime, String> context) {
-				if (context.getSource() != null) {
-					DateTimeFormatter formatter = DateTimeFormatter.ofPattern(CommonUtil.GLOBAL_DATE_PATTERN);
-					return context.getSource().format(formatter);
-				} else {
-					return null;
-				}
-			}
-		};
+    return new Converter<LocalDateTime, String>() {
+      @Override
+      public String convert(MappingContext<LocalDateTime, String> context) {
+        if (context.getSource() != null) {
+          DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DateUtil.GLOBAL_DATE_TIME_PATTERN);
+          return context.getSource().format(formatter);
+        } else {
+          return null;
+        }
+      }
+    };
 
-	}
-	
-	public static Converter<String, LocalDateTime> convertStringToLocalDateTime() {
+  }
 
-		return new Converter<String, LocalDateTime>() {
-			@Override
-			public LocalDateTime convert(MappingContext<String, LocalDateTime> context) {
-				if (StringUtils.isNotBlank(context.getSource())) {
-					DateTimeFormatter formatter = DateTimeFormatter.ofPattern(CommonUtil.GLOBAL_DATE_PATTERN);
-					LocalDateTime localDateTime = LocalDateTime.parse(context.getSource() , formatter);
-					return localDateTime;
-				} else {
-					return null;
-				}
-			}
-		};
+  public static Converter<String, LocalDateTime> convertStringToLocalDateTime() {
 
-	}
-	
-	public static Provider<LocalDateTime> getLocalDateTimeProvider() {
+    return new Converter<String, LocalDateTime>() {
+      @Override
+      public LocalDateTime convert(MappingContext<String, LocalDateTime> context) {
+        if (StringUtils.isNotBlank(context.getSource())) {
+          DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DateUtil.GLOBAL_DATE_TIME_PATTERN);
+          LocalDateTime localDateTime = LocalDateTime.parse(context.getSource(), formatter);
+          return localDateTime;
+        } else {
+          return null;
+        }
+      }
+    };
 
-		return  new AbstractProvider<LocalDateTime>() {
-	        @Override
-	        public LocalDateTime get() {
-	            return LocalDateTime.now();
-	        }
-	    };
+  }
 
-	}
+  public static Provider<LocalDateTime> getLocalDateTimeProvider() {
+
+    return new AbstractProvider<LocalDateTime>() {
+      @Override
+      public LocalDateTime get() {
+        return LocalDateTime.now();
+      }
+    };
+
+  }
 
 }

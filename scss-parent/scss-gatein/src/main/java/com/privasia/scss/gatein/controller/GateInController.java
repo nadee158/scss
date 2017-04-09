@@ -7,6 +7,8 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.validation.BindException;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -20,6 +22,7 @@ import com.privasia.scss.common.dto.GateInWriteRequest;
 import com.privasia.scss.common.dto.GateInfo;
 import com.privasia.scss.gatein.service.GateInService;
 import com.privasia.scss.gatein.service.ImportExportGateInService;
+import com.privasia.scss.gatein.util.GateInDateTimeValidator;
 
 
 
@@ -35,6 +38,9 @@ public class GateInController {
   @Autowired
   private ImportExportGateInService importExportGateInService;
 
+  @Autowired
+  private GateInDateTimeValidator gateInDateTimeValidator;
+
 
 
   @RequestMapping(value = "/allow", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
@@ -49,8 +55,15 @@ public class GateInController {
 
   @RequestMapping(value = "/populategatein", method = RequestMethod.PUT,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-  public CustomResponseEntity<ApiResponseObject<?>> populateGateIn(@Valid @RequestBody GateInRequest gateInRequest) {
-
+  public CustomResponseEntity<ApiResponseObject<?>> populateGateIn(@Valid @RequestBody GateInRequest gateInRequest,
+      BindingResult bindingResult) throws BindException {
+    gateInDateTimeValidator.validate(gateInRequest, bindingResult);
+    System.out.println("bindingResult.hasErrors() " + bindingResult.hasErrors());
+    System.out.println("bindingResult.bindingResult.hasFieldErrors()() " + bindingResult.hasFieldErrors());
+    System.out.println("bindingResult.hasGlobalErrors() " + bindingResult.hasGlobalErrors());
+    if (bindingResult.hasErrors()) {
+      throw new BindException(bindingResult);
+    }
     GateInReponse gateInReponse = importExportGateInService.populateGateIn(gateInRequest);
 
     return new CustomResponseEntity<ApiResponseObject<?>>(

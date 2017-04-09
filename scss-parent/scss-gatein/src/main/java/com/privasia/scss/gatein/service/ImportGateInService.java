@@ -20,11 +20,18 @@ import com.privasia.scss.common.dto.GateInReponse;
 import com.privasia.scss.common.dto.GateInRequest;
 import com.privasia.scss.common.dto.GateInWriteRequest;
 import com.privasia.scss.common.dto.ImportContainer;
+import com.privasia.scss.common.enums.ContainerFullEmptyType;
+import com.privasia.scss.common.enums.ContainerPosition;
+import com.privasia.scss.common.enums.GateInOutStatus;
+import com.privasia.scss.common.enums.ImpExpFlagStatus;
 import com.privasia.scss.common.enums.TransactionStatus;
 import com.privasia.scss.common.util.CommonUtil;
 import com.privasia.scss.core.exception.ResultsNotFoundException;
+import com.privasia.scss.core.model.BaseCommonGateInOutAttribute;
 import com.privasia.scss.core.model.Card;
 import com.privasia.scss.core.model.Client;
+import com.privasia.scss.core.model.CommonContainerAttribute;
+import com.privasia.scss.core.model.CommonGateInOutAttribute;
 import com.privasia.scss.core.model.GatePass;
 import com.privasia.scss.core.model.HPABBooking;
 import com.privasia.scss.core.model.PrintEir;
@@ -202,7 +209,8 @@ public class ImportGateInService {
             // printEirRepository.findOne(importContainer.getPrintEir().getPrintEIRID()).orElse(null);
             // }
 
-            modelMapper.map(importContainer, gatePass);
+            // modelMapper.map(importContainer, gatePass);
+            importContainerToGatePass(importContainer, gatePass);
 
             gatePass.prepareForInsertFromOpus(card, gateInClerk, gateInClient, printEir, hpatBooking);
             System.out.println("gatePass after initializeing " + gatePass);
@@ -218,6 +226,48 @@ public class ImportGateInService {
       return gateInWriteRequest.getImportContainers();
     }
     return null;
+  }
+
+  private void importContainerToGatePass(ImportContainer importContainer, GatePass gatePass) {
+    if (gatePass.getCommonGateInOut() == null) {
+      gatePass.setCommonGateInOut(new CommonGateInOutAttribute());
+    }
+    gatePass.getCommonGateInOut().setEirNumber(importContainer.getPrintEIRNo());
+    if (gatePass.getBaseCommonGateInOutAttribute() == null) {
+      gatePass.setBaseCommonGateInOutAttribute(new BaseCommonGateInOutAttribute());
+    }
+    gatePass.getBaseCommonGateInOutAttribute().setEirStatus(TransactionStatus.INPROGRESS);
+    gatePass.getBaseCommonGateInOutAttribute()
+        .setTimeGateIn(importContainer.getBaseCommonGateInOutAttribute().getTimeGateIn());
+    gatePass.getBaseCommonGateInOutAttribute().setTimeGateInOk(LocalDateTime.now());
+    gatePass.getCommonGateInOut().setImpExpFlag(
+        ImpExpFlagStatus.fromValue(StringUtils.upperCase(importContainer.getCommonGateInOut().getImpExpFlag())));
+    gatePass.setOrderNo(StringUtils.upperCase(importContainer.getOrderNo()));
+    gatePass.setCurrentPosition(StringUtils.upperCase(importContainer.getCurrentPosition()));
+    gatePass.setGateInOut(GateInOutStatus.fromValue(StringUtils.upperCase(importContainer.getGateInOut())));
+
+    if (gatePass.getContainer() == null) {
+      gatePass.setContainer(new CommonContainerAttribute());
+    }
+    gatePass.getContainer().setContainerFullOrEmpty(ContainerFullEmptyType
+        .fromValue(StringUtils.upperCase(importContainer.getContainer().getContainerFullOrEmpty())));
+    gatePass.setShippingLine(StringUtils.upperCase(importContainer.getShippingLine()));
+    gatePass.getContainer()
+        .setContainerISOCode(StringUtils.upperCase(importContainer.getContainer().getContainerISOCode()));
+    gatePass.setGateInLaneNo(StringUtils.upperCase(importContainer.getGateInLaneNo()));
+    gatePass.getBaseCommonGateInOutAttribute()
+        .setPmHeadNo(StringUtils.upperCase(importContainer.getBaseCommonGateInOutAttribute().getPmHeadNo()));
+    gatePass.getBaseCommonGateInOutAttribute()
+        .setPmPlateNo(StringUtils.upperCase(importContainer.getBaseCommonGateInOutAttribute().getPmPlateNo()));
+    gatePass.setYardPosition(StringUtils.upperCase(importContainer.getYardPosition()));
+    gatePass.setBayCode(StringUtils.upperCase(importContainer.getYardBayCode()));
+    gatePass.setContainerPosition(
+        ContainerPosition.fromValue(StringUtils.upperCase(importContainer.getContainerPosition())));
+    gatePass.setCallCard(importContainer.getCallCard());
+    gatePass.getCommonGateInOut()
+        .setRejectReason(StringUtils.upperCase(importContainer.getCommonGateInOut().getRejectReason()));
+    gatePass.getCommonGateInOut().setGateInStatus(
+        TransactionStatus.fromCode(StringUtils.upperCase(importContainer.getCommonGateInOut().getGateInStatus())));
   }
 
 }

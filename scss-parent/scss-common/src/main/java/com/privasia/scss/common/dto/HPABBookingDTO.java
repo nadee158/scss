@@ -7,7 +7,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.privasia.scss.common.util.CommonUtil;
+import com.privasia.scss.common.util.DateUtil;
 
 /**
  * @author Janaka
@@ -15,205 +15,205 @@ import com.privasia.scss.common.util.CommonUtil;
  */
 public class HPABBookingDTO implements Serializable {
 
-	/**
-	* 
-	*/
-	private static final long serialVersionUID = 1L;
+  /**
+  * 
+  */
+  private static final long serialVersionUID = 1L;
 
-	private String bookingID;
-	
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
-	private LocalDateTime appointmentStartDate;
+  private String bookingID;
 
-	private String buffer;
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateUtil.GLOBAL_DATE_TIME_PATTERN)
+  private LocalDateTime appointmentStartDate;
 
-	private String cardNo;
-	
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
-	private LocalDateTime hpabCreationDate;
+  private String buffer;
 
-	private String driverName;
+  private String cardNo;
 
-	private String driverICNumber;
-	
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
-	private LocalDateTime hpabLastModifiedDate;
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateUtil.GLOBAL_DATE_TIME_PATTERN)
+  private LocalDateTime hpabCreationDate;
 
-	private String pmNumber;
+  private String driverName;
 
-	private String status;
+  private String driverICNumber;
 
-	private String trailerNo;
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateUtil.GLOBAL_DATE_TIME_PATTERN)
+  private LocalDateTime hpabLastModifiedDate;
 
-	private String trailerType;
+  private String pmNumber;
 
-	private String haulierCode;
-	
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
-	private LocalDateTime appointmentEndDate;
+  private String status;
 
-	private String pmWeight;
+  private String trailerNo;
 
-	private String axleWeight;
+  private String trailerType;
 
-	private String trailerPlate;
+  private String haulierCode;
 
-	private Boolean axleVerified;
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateUtil.GLOBAL_DATE_TIME_PATTERN)
+  private LocalDateTime appointmentEndDate;
 
-	private Boolean pmVerified;
+  private String pmWeight;
 
-	public String getBookingID() {
-		return bookingID;
-	}
+  private String axleWeight;
 
-	public void setBookingID(String bookingID) {
-		this.bookingID = bookingID;
-	}
+  private String trailerPlate;
 
-	public LocalDateTime getAppointmentStartDate() {
-		return appointmentStartDate;
-	}
+  private Boolean axleVerified;
 
-	public void setAppointmentStartDate(LocalDateTime appointmentStartDate) {
-		this.appointmentStartDate = appointmentStartDate;
-	}
+  private Boolean pmVerified;
 
-	public String getBuffer() {
-		return buffer;
-	}
+  public String getBookingID() {
+    return bookingID;
+  }
 
-	public void setBuffer(String buffer) {
-		this.buffer = buffer;
-	}
+  public void setBookingID(String bookingID) {
+    this.bookingID = bookingID;
+  }
 
-	public String getCardNo() {
-		return cardNo;
-	}
+  public LocalDateTime getAppointmentStartDate() {
+    return appointmentStartDate;
+  }
 
-	public void setCardNo(String cardNo) {
-		this.cardNo = cardNo;
-	}
+  public void setAppointmentStartDate(LocalDateTime appointmentStartDate) {
+    this.appointmentStartDate = appointmentStartDate;
+  }
 
-	public LocalDateTime getHpabCreationDate() {
-		return hpabCreationDate;
-	}
+  public String getBuffer() {
+    return buffer;
+  }
 
-	public void setHpabCreationDate(LocalDateTime hpabCreationDate) {
-		this.hpabCreationDate = hpabCreationDate;
-	}
+  public void setBuffer(String buffer) {
+    this.buffer = buffer;
+  }
 
-	public String getDriverName() {
-		return driverName;
-	}
+  public String getCardNo() {
+    return cardNo;
+  }
 
-	public void setDriverName(String driverName) {
-		this.driverName = driverName;
-	}
+  public void setCardNo(String cardNo) {
+    this.cardNo = cardNo;
+  }
 
-	public String getDriverICNumber() {
-		return driverICNumber;
-	}
+  public LocalDateTime getHpabCreationDate() {
+    return hpabCreationDate;
+  }
 
-	public void setDriverICNumber(String driverICNumber) {
-		this.driverICNumber = driverICNumber;
-	}
+  public void setHpabCreationDate(LocalDateTime hpabCreationDate) {
+    this.hpabCreationDate = hpabCreationDate;
+  }
 
-	public LocalDateTime getHpabLastModifiedDate() {
-		return hpabLastModifiedDate;
-	}
+  public String getDriverName() {
+    return driverName;
+  }
 
-	public void setHpabLastModifiedDate(LocalDateTime hpabLastModifiedDate) {
-		this.hpabLastModifiedDate = hpabLastModifiedDate;
-	}
+  public void setDriverName(String driverName) {
+    this.driverName = driverName;
+  }
 
-	public String getPmNumber() {
-		return pmNumber;
-	}
+  public String getDriverICNumber() {
+    return driverICNumber;
+  }
 
-	public void setPmNumber(String pmNumber) {
-		this.pmNumber = pmNumber;
-	}
+  public void setDriverICNumber(String driverICNumber) {
+    this.driverICNumber = driverICNumber;
+  }
 
-	public String getStatus() {
-		return status;
-	}
+  public LocalDateTime getHpabLastModifiedDate() {
+    return hpabLastModifiedDate;
+  }
 
-	public void setStatus(String status) {
-		this.status = status;
-	}
+  public void setHpabLastModifiedDate(LocalDateTime hpabLastModifiedDate) {
+    this.hpabLastModifiedDate = hpabLastModifiedDate;
+  }
 
-	public String getTrailerNo() {
-		return trailerNo;
-	}
+  public String getPmNumber() {
+    return pmNumber;
+  }
 
-	public void setTrailerNo(String trailerNo) {
-		this.trailerNo = trailerNo;
-	}
+  public void setPmNumber(String pmNumber) {
+    this.pmNumber = pmNumber;
+  }
 
-	public String getTrailerType() {
-		return trailerType;
-	}
+  public String getStatus() {
+    return status;
+  }
 
-	public void setTrailerType(String trailerType) {
-		this.trailerType = trailerType;
-	}
+  public void setStatus(String status) {
+    this.status = status;
+  }
 
-	public String getHaulierCode() {
-		return haulierCode;
-	}
+  public String getTrailerNo() {
+    return trailerNo;
+  }
 
-	public void setHaulierCode(String haulierCode) {
-		this.haulierCode = haulierCode;
-	}
+  public void setTrailerNo(String trailerNo) {
+    this.trailerNo = trailerNo;
+  }
 
-	public LocalDateTime getAppointmentEndDate() {
-		return appointmentEndDate;
-	}
+  public String getTrailerType() {
+    return trailerType;
+  }
 
-	public void setAppointmentEndDate(LocalDateTime appointmentEndDate) {
-		this.appointmentEndDate = appointmentEndDate;
-	}
+  public void setTrailerType(String trailerType) {
+    this.trailerType = trailerType;
+  }
 
-	public String getPmWeight() {
-		return pmWeight;
-	}
+  public String getHaulierCode() {
+    return haulierCode;
+  }
 
-	public void setPmWeight(String pmWeight) {
-		this.pmWeight = pmWeight;
-	}
+  public void setHaulierCode(String haulierCode) {
+    this.haulierCode = haulierCode;
+  }
 
-	public String getAxleWeight() {
-		return axleWeight;
-	}
+  public LocalDateTime getAppointmentEndDate() {
+    return appointmentEndDate;
+  }
 
-	public void setAxleWeight(String axleWeight) {
-		this.axleWeight = axleWeight;
-	}
+  public void setAppointmentEndDate(LocalDateTime appointmentEndDate) {
+    this.appointmentEndDate = appointmentEndDate;
+  }
 
-	public String getTrailerPlate() {
-		return trailerPlate;
-	}
+  public String getPmWeight() {
+    return pmWeight;
+  }
 
-	public void setTrailerPlate(String trailerPlate) {
-		this.trailerPlate = trailerPlate;
-	}
+  public void setPmWeight(String pmWeight) {
+    this.pmWeight = pmWeight;
+  }
 
-	public Boolean getAxleVerified() {
-		return axleVerified;
-	}
+  public String getAxleWeight() {
+    return axleWeight;
+  }
 
-	public void setAxleVerified(Boolean axleVerified) {
-		this.axleVerified = axleVerified;
-	}
+  public void setAxleWeight(String axleWeight) {
+    this.axleWeight = axleWeight;
+  }
 
-	public Boolean getPmVerified() {
-		return pmVerified;
-	}
+  public String getTrailerPlate() {
+    return trailerPlate;
+  }
 
-	public void setPmVerified(Boolean pmVerified) {
-		this.pmVerified = pmVerified;
-	}
-	
-	
+  public void setTrailerPlate(String trailerPlate) {
+    this.trailerPlate = trailerPlate;
+  }
+
+  public Boolean getAxleVerified() {
+    return axleVerified;
+  }
+
+  public void setAxleVerified(Boolean axleVerified) {
+    this.axleVerified = axleVerified;
+  }
+
+  public Boolean getPmVerified() {
+    return pmVerified;
+  }
+
+  public void setPmVerified(Boolean pmVerified) {
+    this.pmVerified = pmVerified;
+  }
+
+
 
 }

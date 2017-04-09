@@ -60,7 +60,7 @@ public class OpusGateInReadService {
 
     // 20161130112233 - yyyyMMddHHmmss
     System.out.println("gateInRequest.getGateInDateTime() " + gateInRequest.getGateInDateTime());
-    opusGateInRequest.setGateINDateTime(DateUtil.getJsonDateFromUtilDate(gateInRequest.getGateInDateTime()));
+    opusGateInRequest.setGateINDateTime(DateUtil.getJsonDateFromDate(gateInRequest.getGateInDateTime()));
     System.out.println("opusGateInRequest.getGateINDateTime() " + opusGateInRequest.getGateINDateTime());
     opusGateInRequest.setHaulageCode(gateInRequest.getHaulageCode());
     opusGateInRequest.setLaneNo(gateInRequest.getLaneNo());
