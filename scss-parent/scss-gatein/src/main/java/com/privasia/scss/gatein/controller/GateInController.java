@@ -1,8 +1,6 @@
 package com.privasia.scss.gatein.controller;
 
 
-import java.util.List;
-
 import javax.validation.Valid;
 
 import org.apache.log4j.Logger;
@@ -16,16 +14,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.privasia.scss.common.dto.ApiResponseObject;
 import com.privasia.scss.common.dto.CustomResponseEntity;
-import com.privasia.scss.common.dto.ExportContainer;
 import com.privasia.scss.common.dto.GateInReponse;
 import com.privasia.scss.common.dto.GateInRequest;
 import com.privasia.scss.common.dto.GateInWriteRequest;
 import com.privasia.scss.common.dto.GateInfo;
-import com.privasia.scss.common.dto.ImportContainer;
-import com.privasia.scss.gatein.service.ExportGateInService;
 import com.privasia.scss.gatein.service.GateInService;
 import com.privasia.scss.gatein.service.ImportExportGateInService;
-import com.privasia.scss.gatein.service.ImportGateInService;
 
 
 
@@ -41,11 +35,6 @@ public class GateInController {
   @Autowired
   private ImportExportGateInService importExportGateInService;
 
-  @Autowired
-  private ImportGateInService importGateInService;
-
-  @Autowired
-  private ExportGateInService exportGateInService;
 
 
   @RequestMapping(value = "/allow", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
@@ -79,54 +68,6 @@ public class GateInController {
         new ApiResponseObject<GateInReponse>(HttpStatus.OK, gateInWriteReponse), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/tetssaveimportcontainer", method = RequestMethod.PUT,
-      produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-  public CustomResponseEntity<ApiResponseObject<?>> testSaveImportContainer(
-      @RequestBody GateInWriteRequest gateInWriteRequest) {
-
-    List<ImportContainer> reponse = null;
-
-    try {
-      reponse = importGateInService.saveGateInInfo(gateInWriteRequest);
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-
-    System.out.println("reponse" + reponse);
-
-
-    CustomResponseEntity<ApiResponseObject<?>> obj = new CustomResponseEntity<ApiResponseObject<?>>(
-        new ApiResponseObject<String>(HttpStatus.OK, "Import Containers are saved!"), HttpStatus.OK);
-
-    System.out.println("obj  +" + obj);
-
-    return obj;
-  }
-
-
-  @RequestMapping(value = "/tetssaveexportcontainer", method = RequestMethod.PUT,
-      produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-  public CustomResponseEntity<ApiResponseObject<?>> testSaveExportContainer(
-      @RequestBody GateInWriteRequest gateInWriteRequest) {
-
-    List<ExportContainer> reponse = null;
-
-    try {
-      reponse = exportGateInService.saveGateInInfo(gateInWriteRequest);
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-
-    System.out.println("reponse" + reponse);
-
-
-    CustomResponseEntity<ApiResponseObject<?>> obj = new CustomResponseEntity<ApiResponseObject<?>>(
-        new ApiResponseObject<String>(HttpStatus.OK, "Export Containers are saved!"), HttpStatus.OK);
-
-    System.out.println("obj  +" + obj);
-
-    return obj;
-  }
 
 
 }

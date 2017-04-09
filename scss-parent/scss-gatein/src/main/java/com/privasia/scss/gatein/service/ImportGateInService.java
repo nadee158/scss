@@ -203,6 +203,7 @@ public class ImportGateInService {
             // }
 
             modelMapper.map(importContainer, gatePass);
+
             gatePass.prepareForInsertFromOpus(card, gateInClerk, gateInClient, printEir, hpatBooking);
             System.out.println("gatePass after initializeing " + gatePass);
             gatePass = gatePassRepository.save(gatePass);

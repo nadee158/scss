@@ -1,10 +1,16 @@
 package com.privasia.scss.common.dto;
 
 import java.io.Serializable;
+import java.util.Calendar;
+import java.util.Date;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Past;
 
 import org.apache.commons.lang3.StringUtils;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.privasia.scss.common.util.CommonUtil;
 
 public class GateInRequest implements Serializable {
 
@@ -25,8 +31,11 @@ public class GateInRequest implements Serializable {
   private String impContainer2;// -string
   private String truckHeadNo;// -string
 
-  @NotNull
-  private String gateInDateTime;// -string
+  @NotNull(message = "Please enter a date")
+  @Past(message = "Only the past is valid")
+  @JsonFormat(pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+  // @DateTimeFormat(pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+  private Date gateInDateTime;// -string
 
   private Long clientID;// -long (clientID)
   private String laneNo;// -long (clientID)
@@ -59,14 +68,15 @@ public class GateInRequest implements Serializable {
     this.truckHeadNo = truckHeadNo;
   }
 
-  public String getGateInDateTime() {
+
+
+  public Date getGateInDateTime() {
     return gateInDateTime;
   }
 
-  public void setGateInDateTime(String gateInDateTime) {
+  public void setGateInDateTime(Date gateInDateTime) {
     this.gateInDateTime = gateInDateTime;
   }
-
 
   public Long getClientID() {
     return clientID;
@@ -183,7 +193,7 @@ public class GateInRequest implements Serializable {
     this.impContainer1 = StringUtils.EMPTY;// -string
     this.impContainer2 = StringUtils.EMPTY;// -string
     this.truckHeadNo = StringUtils.EMPTY;// -string
-    this.gateInDateTime = StringUtils.EMPTY;// -string
+    this.gateInDateTime = Calendar.getInstance().getTime();// -string
     this.clientID = 0l;// -long (clientID)
     this.laneNo = StringUtils.EMPTY;// -long (clientID)
     this.expWeightBridge = 0;// -long

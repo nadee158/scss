@@ -59,8 +59,9 @@ public class OpusGateInReadService {
     opusGateInRequest.setContainerNo2ExportCY(gateInRequest.getExpContainer2());
 
     // 20161130112233 - yyyyMMddHHmmss
-    LocalDateTime gateInDateTime = CommonUtil.getParsedDate(gateInRequest.getGateInDateTime());
-    opusGateInRequest.setGateINDateTime(DateUtil.getJsonDateFromDate(gateInDateTime));
+    System.out.println("gateInRequest.getGateInDateTime() " + gateInRequest.getGateInDateTime());
+    opusGateInRequest.setGateINDateTime(DateUtil.getJsonDateFromUtilDate(gateInRequest.getGateInDateTime()));
+    System.out.println("opusGateInRequest.getGateINDateTime() " + opusGateInRequest.getGateINDateTime());
     opusGateInRequest.setHaulageCode(gateInRequest.getHaulageCode());
     opusGateInRequest.setLaneNo(gateInRequest.getLaneNo());
     opusGateInRequest.setTruckHeadNo(gateInRequest.getTruckHeadNo());
