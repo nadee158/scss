@@ -26,7 +26,7 @@ public final class CommonUtil {
   private static final Logger LOGGER = Logger.getLogger(CommonUtil.class);
   private static Map<String, Properties> fileNamePropertiesMapping = new HashMap<String, Properties>();
 
-  public static final String GLOBAL_DATE_PATTERN = "MM/dd/yyyy hh:mm:ss a";
+
   public static final String UPPER_CASE = "U";
   public static final String LOWER_CASE = "L";
 
@@ -186,7 +186,7 @@ public final class CommonUtil {
 
   public static String getFormatteDate(LocalDateTime localDateTime) {
     if (localDateTime != null) {
-      DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern(GLOBAL_DATE_PATTERN);
+      DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern(DateUtil.GLOBAL_DATE_PATTERN);
       return localDateTime.format(dateFormat);
     }
     return null;
@@ -194,7 +194,23 @@ public final class CommonUtil {
 
   public static LocalDateTime getParsedDate(String dateString) {
     if (StringUtils.isNotEmpty(dateString)) {
-      DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern(GLOBAL_DATE_PATTERN);
+      DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern(DateUtil.GLOBAL_DATE_PATTERN);
+      return LocalDateTime.parse(dateString, dateFormat);
+    }
+    return null;
+  }
+
+  public static String getFormatteDateTime(LocalDateTime localDateTime) {
+    if (localDateTime != null) {
+      DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern(DateUtil.GLOBAL_DATE_TIME_PATTERN);
+      return localDateTime.format(dateFormat);
+    }
+    return null;
+  }
+
+  public static LocalDateTime getParsedDateTime(String dateString) {
+    if (StringUtils.isNotEmpty(dateString)) {
+      DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern(DateUtil.GLOBAL_DATE_TIME_PATTERN);
       return LocalDateTime.parse(dateString, dateFormat);
     }
     return null;

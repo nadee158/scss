@@ -14,6 +14,9 @@ import org.apache.commons.lang3.time.DateUtils;
 
 public class DateUtil {
 
+  public static final String GLOBAL_DATE_PATTERN = "dd-MM-yyyy";
+  public static final String GLOBAL_DATE_TIME_PATTERN = "dd-MM-yyyy HH:mm:ss";
+
   // List of all date formats that we want to parse.
   // Add your own format here.
   private static List<SimpleDateFormat> dateFormats = new ArrayList<SimpleDateFormat>() {
@@ -27,6 +30,8 @@ public class DateUtil {
       add(new SimpleDateFormat("dd.M.yyyy hh:mm:ss a"));
       add(new SimpleDateFormat("dd.MMM.yyyy"));
       add(new SimpleDateFormat("dd-MMM-yyyy"));
+      add(new SimpleDateFormat("dd-MM-yyyy"));
+      add(new SimpleDateFormat("dd-MM-yyyy HH:mm:ss Z"));
     }
   };
 
@@ -120,17 +125,17 @@ public class DateUtil {
     return null;
   }
 
-  public static String getJsonDateFromUtilDate(Date localDate) {
-    try {
-      if (localDate != null) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
-        return dateFormat.format(localDate);
-      }
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-    return null;
-  }
+  // public static String getJsonDateFromUtilDate(Date localDate) {
+  // try {
+  // if (localDate != null) {
+  // SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+  // return dateFormat.format(localDate);
+  // }
+  // } catch (Exception e) {
+  // e.printStackTrace();
+  // }
+  // return null;
+  // }
 
   public static LocalDateTime getLocalDategFromString(String gateINDateTime) {
     try {

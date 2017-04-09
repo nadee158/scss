@@ -9,7 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.privasia.scss.common.enums.HDBSStatus;
 import com.privasia.scss.common.enums.SCSSHDBSStatus;
-import com.privasia.scss.common.util.CommonUtil;
+import com.privasia.scss.common.util.DateUtil;
 
 public class HDBSBkgDetailGridDTO implements Serializable {
 
@@ -25,7 +25,7 @@ public class HDBSBkgDetailGridDTO implements Serializable {
 
   private String hDBSBkgMasterCardNo;
 
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateUtil.GLOBAL_DATE_TIME_PATTERN)
   private LocalDateTime hDBSBkgMasterDateTimeAdd;
 
   private String hDBSBkgMasterHdbsBookingSeq;
@@ -44,13 +44,13 @@ public class HDBSBkgDetailGridDTO implements Serializable {
 
   private String containerSize;
 
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateUtil.GLOBAL_DATE_TIME_PATTERN)
   private LocalDateTime apptDateTimeFrom;
 
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateUtil.GLOBAL_DATE_TIME_PATTERN)
   private LocalDateTime apptDateTimeTo;
 
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateUtil.GLOBAL_DATE_TIME_PATTERN)
   private LocalDateTime apptDateTimeToActual;
 
   private Integer apptWindow;
@@ -79,10 +79,10 @@ public class HDBSBkgDetailGridDTO implements Serializable {
 
   private String containerLocation;
 
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateUtil.GLOBAL_DATE_TIME_PATTERN)
   private LocalDateTime gateInDateTime;
 
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateUtil.GLOBAL_DATE_TIME_PATTERN)
   private LocalDateTime gateOutDateTime;
 
   private HDBSStatus statusCode;
@@ -103,30 +103,30 @@ public class HDBSBkgDetailGridDTO implements Serializable {
 
   private SCSSHDBSStatus scssStatusCode;
 
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateUtil.GLOBAL_DATE_TIME_PATTERN)
   private LocalDateTime newDate;
 
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateUtil.GLOBAL_DATE_TIME_PATTERN)
   private LocalDateTime accpetedDate;
 
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateUtil.GLOBAL_DATE_TIME_PATTERN)
   private LocalDateTime approvedDate;
 
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateUtil.GLOBAL_DATE_TIME_PATTERN)
   private LocalDateTime completedDate;
 
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateUtil.GLOBAL_DATE_TIME_PATTERN)
   private LocalDateTime cancelledDate;
 
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateUtil.GLOBAL_DATE_TIME_PATTERN)
   private LocalDateTime rejectedDate;
 
   // private WHODD oddIdSeq;
 
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateUtil.GLOBAL_DATE_TIME_PATTERN)
   private LocalDateTime oddTimeGateInOk;
 
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateUtil.GLOBAL_DATE_TIME_PATTERN)
   private LocalDateTime oddTimeGateOutOk;
 
   private String hdbsSynch;

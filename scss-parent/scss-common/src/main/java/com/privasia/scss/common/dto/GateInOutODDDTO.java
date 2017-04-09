@@ -8,7 +8,7 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.privasia.scss.common.util.CommonUtil;
+import com.privasia.scss.common.util.DateUtil;
 
 public class GateInOutODDDTO implements Serializable {
 
@@ -22,7 +22,7 @@ public class GateInOutODDDTO implements Serializable {
 
   private String gateInStatus = StringUtils.EMPTY;
 
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateUtil.GLOBAL_DATE_TIME_PATTERN)
   private LocalDateTime timeGateIn;
 
   private List<WHODDDTO> whoddds;

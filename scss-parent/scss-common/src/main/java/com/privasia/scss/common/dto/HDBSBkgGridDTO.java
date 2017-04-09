@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.privasia.scss.common.util.CommonUtil;
+import com.privasia.scss.common.util.DateUtil;
 
 public class HDBSBkgGridDTO implements Serializable {
 
@@ -20,7 +20,7 @@ public class HDBSBkgGridDTO implements Serializable {
 
   private String showManual;
 
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateUtil.GLOBAL_DATE_TIME_PATTERN)
   private LocalDateTime arrivalTime;
 
   private List<HDBSBkgDetailGridDTO> hdbsBkgDetailGridDTOList;

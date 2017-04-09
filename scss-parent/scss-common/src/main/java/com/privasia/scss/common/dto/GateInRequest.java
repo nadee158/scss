@@ -1,16 +1,14 @@
 package com.privasia.scss.common.dto;
 
 import java.io.Serializable;
-import java.util.Calendar;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Past;
 
 import org.apache.commons.lang3.StringUtils;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.privasia.scss.common.util.CommonUtil;
+import com.privasia.scss.common.util.DateUtil;
 
 public class GateInRequest implements Serializable {
 
@@ -31,11 +29,9 @@ public class GateInRequest implements Serializable {
   private String impContainer2;// -string
   private String truckHeadNo;// -string
 
-  @NotNull(message = "Please enter a date")
-  @Past(message = "Only the past is valid")
-  @JsonFormat(pattern = CommonUtil.GLOBAL_DATE_PATTERN)
-  // @DateTimeFormat(pattern = CommonUtil.GLOBAL_DATE_PATTERN)
-  private Date gateInDateTime;// -string
+  @NotNull(message = "Please enter a date for Gate in date time")
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateUtil.GLOBAL_DATE_TIME_PATTERN)
+  private LocalDateTime gateInDateTime;// -string
 
   private Long clientID;// -long (clientID)
   private String laneNo;// -long (clientID)
@@ -69,12 +65,11 @@ public class GateInRequest implements Serializable {
   }
 
 
-
-  public Date getGateInDateTime() {
+  public LocalDateTime getGateInDateTime() {
     return gateInDateTime;
   }
 
-  public void setGateInDateTime(Date gateInDateTime) {
+  public void setGateInDateTime(LocalDateTime gateInDateTime) {
     this.gateInDateTime = gateInDateTime;
   }
 
@@ -193,7 +188,7 @@ public class GateInRequest implements Serializable {
     this.impContainer1 = StringUtils.EMPTY;// -string
     this.impContainer2 = StringUtils.EMPTY;// -string
     this.truckHeadNo = StringUtils.EMPTY;// -string
-    this.gateInDateTime = Calendar.getInstance().getTime();// -string
+    this.gateInDateTime = LocalDateTime.now();// -string
     this.clientID = 0l;// -long (clientID)
     this.laneNo = StringUtils.EMPTY;// -long (clientID)
     this.expWeightBridge = 0;// -long

@@ -7,7 +7,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.privasia.scss.common.util.CommonUtil;
+import com.privasia.scss.common.util.DateUtil;
 
 /**
  * @author Janaka
@@ -15,193 +15,193 @@ import com.privasia.scss.common.util.CommonUtil;
  */
 public class HPABBookingDetailDTO implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 1L;
 
-	private Long hpatBookingDetailID;
+  private Long hpatBookingDetailID;
 
-	private String bookingType;
-	
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
-	private LocalDateTime closingTime;
+  private String bookingType;
 
-	private String containerISO;
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateUtil.GLOBAL_DATE_TIME_PATTERN)
+  private LocalDateTime closingTime;
 
-	private String containerLength;
+  private String containerISO;
 
-	private String containerNumber;
+  private String containerLength;
 
-	private String containerSize;
+  private String containerNumber;
 
-	private String containerType;
+  private String containerSize;
 
-	private String cosmosStatus;
+  private String containerType;
 
-	private String expSealNo01;
+  private String cosmosStatus;
 
-	private String expSealNo02;
+  private String expSealNo01;
 
-	private String impGatePassNumber;
+  private String expSealNo02;
 
-	private String oddLocation;
+  private String impGatePassNumber;
 
-	private String oddPickOrDrop;
-	
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonUtil.GLOBAL_DATE_PATTERN)
-	private LocalDateTime yardOpeningTime;
+  private String oddLocation;
 
-	private HPABBookingDTO hpatBooking;
+  private String oddPickOrDrop;
 
-	private String expBookingNo;
-	
-	private SolasInfo solas;
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateUtil.GLOBAL_DATE_TIME_PATTERN)
+  private LocalDateTime yardOpeningTime;
 
-	public Long getHpatBookingDetailID() {
-		return hpatBookingDetailID;
-	}
+  private HPABBookingDTO hpatBooking;
 
-	public void setHpatBookingDetailID(Long hpatBookingDetailID) {
-		this.hpatBookingDetailID = hpatBookingDetailID;
-	}
+  private String expBookingNo;
 
-	public String getBookingType() {
-		return bookingType;
-	}
+  private SolasInfo solas;
 
-	public void setBookingType(String bookingType) {
-		this.bookingType = bookingType;
-	}
+  public Long getHpatBookingDetailID() {
+    return hpatBookingDetailID;
+  }
 
-	public LocalDateTime getClosingTime() {
-		return closingTime;
-	}
+  public void setHpatBookingDetailID(Long hpatBookingDetailID) {
+    this.hpatBookingDetailID = hpatBookingDetailID;
+  }
 
-	public void setClosingTime(LocalDateTime closingTime) {
-		this.closingTime = closingTime;
-	}
+  public String getBookingType() {
+    return bookingType;
+  }
 
-	public String getContainerISO() {
-		return containerISO;
-	}
+  public void setBookingType(String bookingType) {
+    this.bookingType = bookingType;
+  }
 
-	public void setContainerISO(String containerISO) {
-		this.containerISO = containerISO;
-	}
+  public LocalDateTime getClosingTime() {
+    return closingTime;
+  }
 
-	public String getContainerLength() {
-		return containerLength;
-	}
+  public void setClosingTime(LocalDateTime closingTime) {
+    this.closingTime = closingTime;
+  }
 
-	public void setContainerLength(String containerLength) {
-		this.containerLength = containerLength;
-	}
+  public String getContainerISO() {
+    return containerISO;
+  }
 
-	public String getContainerNumber() {
-		return containerNumber;
-	}
+  public void setContainerISO(String containerISO) {
+    this.containerISO = containerISO;
+  }
 
-	public void setContainerNumber(String containerNumber) {
-		this.containerNumber = containerNumber;
-	}
+  public String getContainerLength() {
+    return containerLength;
+  }
 
-	public String getContainerSize() {
-		return containerSize;
-	}
+  public void setContainerLength(String containerLength) {
+    this.containerLength = containerLength;
+  }
 
-	public void setContainerSize(String containerSize) {
-		this.containerSize = containerSize;
-	}
+  public String getContainerNumber() {
+    return containerNumber;
+  }
 
-	public String getContainerType() {
-		return containerType;
-	}
+  public void setContainerNumber(String containerNumber) {
+    this.containerNumber = containerNumber;
+  }
 
-	public void setContainerType(String containerType) {
-		this.containerType = containerType;
-	}
+  public String getContainerSize() {
+    return containerSize;
+  }
 
-	public String getCosmosStatus() {
-		return cosmosStatus;
-	}
+  public void setContainerSize(String containerSize) {
+    this.containerSize = containerSize;
+  }
 
-	public void setCosmosStatus(String cosmosStatus) {
-		this.cosmosStatus = cosmosStatus;
-	}
+  public String getContainerType() {
+    return containerType;
+  }
 
-	public String getExpSealNo01() {
-		return expSealNo01;
-	}
+  public void setContainerType(String containerType) {
+    this.containerType = containerType;
+  }
 
-	public void setExpSealNo01(String expSealNo01) {
-		this.expSealNo01 = expSealNo01;
-	}
+  public String getCosmosStatus() {
+    return cosmosStatus;
+  }
 
-	public String getExpSealNo02() {
-		return expSealNo02;
-	}
+  public void setCosmosStatus(String cosmosStatus) {
+    this.cosmosStatus = cosmosStatus;
+  }
 
-	public void setExpSealNo02(String expSealNo02) {
-		this.expSealNo02 = expSealNo02;
-	}
+  public String getExpSealNo01() {
+    return expSealNo01;
+  }
 
-	public String getImpGatePassNumber() {
-		return impGatePassNumber;
-	}
+  public void setExpSealNo01(String expSealNo01) {
+    this.expSealNo01 = expSealNo01;
+  }
 
-	public void setImpGatePassNumber(String impGatePassNumber) {
-		this.impGatePassNumber = impGatePassNumber;
-	}
+  public String getExpSealNo02() {
+    return expSealNo02;
+  }
 
-	public String getOddLocation() {
-		return oddLocation;
-	}
+  public void setExpSealNo02(String expSealNo02) {
+    this.expSealNo02 = expSealNo02;
+  }
 
-	public void setOddLocation(String oddLocation) {
-		this.oddLocation = oddLocation;
-	}
+  public String getImpGatePassNumber() {
+    return impGatePassNumber;
+  }
 
-	public String getOddPickOrDrop() {
-		return oddPickOrDrop;
-	}
+  public void setImpGatePassNumber(String impGatePassNumber) {
+    this.impGatePassNumber = impGatePassNumber;
+  }
 
-	public void setOddPickOrDrop(String oddPickOrDrop) {
-		this.oddPickOrDrop = oddPickOrDrop;
-	}
+  public String getOddLocation() {
+    return oddLocation;
+  }
 
-	public LocalDateTime getYardOpeningTime() {
-		return yardOpeningTime;
-	}
+  public void setOddLocation(String oddLocation) {
+    this.oddLocation = oddLocation;
+  }
 
-	public void setYardOpeningTime(LocalDateTime yardOpeningTime) {
-		this.yardOpeningTime = yardOpeningTime;
-	}
+  public String getOddPickOrDrop() {
+    return oddPickOrDrop;
+  }
 
-	public HPABBookingDTO getHpatBooking() {
-		return hpatBooking;
-	}
+  public void setOddPickOrDrop(String oddPickOrDrop) {
+    this.oddPickOrDrop = oddPickOrDrop;
+  }
 
-	public void setHpatBooking(HPABBookingDTO hpatBooking) {
-		this.hpatBooking = hpatBooking;
-	}
+  public LocalDateTime getYardOpeningTime() {
+    return yardOpeningTime;
+  }
 
-	public String getExpBookingNo() {
-		return expBookingNo;
-	}
+  public void setYardOpeningTime(LocalDateTime yardOpeningTime) {
+    this.yardOpeningTime = yardOpeningTime;
+  }
 
-	public void setExpBookingNo(String expBookingNo) {
-		this.expBookingNo = expBookingNo;
-	}
+  public HPABBookingDTO getHpatBooking() {
+    return hpatBooking;
+  }
 
-	public SolasInfo getSolas() {
-		return solas;
-	}
+  public void setHpatBooking(HPABBookingDTO hpatBooking) {
+    this.hpatBooking = hpatBooking;
+  }
 
-	public void setSolas(SolasInfo solas) {
-		this.solas = solas;
-	}
-	
-	
+  public String getExpBookingNo() {
+    return expBookingNo;
+  }
+
+  public void setExpBookingNo(String expBookingNo) {
+    this.expBookingNo = expBookingNo;
+  }
+
+  public SolasInfo getSolas() {
+    return solas;
+  }
+
+  public void setSolas(SolasInfo solas) {
+    this.solas = solas;
+  }
+
+
 
 }
