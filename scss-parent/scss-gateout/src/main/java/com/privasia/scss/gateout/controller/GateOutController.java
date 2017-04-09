@@ -1,6 +1,8 @@
 package com.privasia.scss.gateout.controller;
 
 
+import javax.validation.Valid;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -41,7 +43,7 @@ public class GateOutController {
 
   @RequestMapping(value = "/populategateout", method = RequestMethod.PUT,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-  public CustomResponseEntity<ApiResponseObject<?>> populateGateOut(@RequestBody GateOutRequest gateOutRequest,
+  public CustomResponseEntity<ApiResponseObject<?>> populateGateOut(@Valid @RequestBody GateOutRequest gateOutRequest,
       BindingResult bindingResult) throws BindException {
     gateOutRequestValidator.validate(gateOutRequest, bindingResult);
     if (bindingResult.hasErrors()) {
@@ -57,7 +59,7 @@ public class GateOutController {
   @RequestMapping(value = "/savegateoutinfo", method = RequestMethod.PUT,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public CustomResponseEntity<ApiResponseObject<?>> saveGateOutOutfo(
-      @RequestBody GateOutWriteRequest gateOutWriteRequest, BindingResult bindingResult) throws BindException {
+      @Valid @RequestBody GateOutWriteRequest gateOutWriteRequest, BindingResult bindingResult) throws BindException {
     gateOutWriteRequestValidator.validate(gateOutWriteRequest, bindingResult);
     if (bindingResult.hasErrors()) {
       throw new BindException(bindingResult);
