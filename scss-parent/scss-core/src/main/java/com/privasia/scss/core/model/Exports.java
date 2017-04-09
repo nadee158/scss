@@ -387,7 +387,7 @@ public class Exports extends AuditEntity implements Serializable {
 
   @Column(name = "WITHIN_TOLERANCE", nullable = true)
   @Type(type = "true_false")
-  private boolean withinTolerance;
+  private boolean withinTolerance = false;
 
   @Column(name = "CAL_VARIANCE")
   private String calculatedVariance;

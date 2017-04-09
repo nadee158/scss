@@ -213,7 +213,7 @@ public class ExportContainer {
 
 	private String variance;
 
-	private boolean withinTolerance;
+	private boolean withinTolerance = false;
 
 	private String calculatedVariance;
 

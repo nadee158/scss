@@ -8,198 +8,196 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.privasia.scss.common.util.CommonUtil;
 
 public class GateInRequest implements Serializable {
 
-  private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
+	private Long userId;
+	private String userName;
+	private Long gatePass1;// -long
+	private Long gatePass2;// -long
 
-  private Long userId;
-  private String userName;
-  private Long gatePass1;// -long
-  private Long gatePass2;// -long
+	@NotNull
+	private Long cardID;
 
-  @NotNull
-  private Long cardID;
+	private String expContainer1;// -string
+	private String expContainer2;// -string
+	private String impContainer1;// -string
+	private String impContainer2;// -string
+	private String truckHeadNo;// -string
 
-  private String expContainer1;// -string
-  private String expContainer2;// -string
-  private String impContainer1;// -string
-  private String impContainer2;// -string
-  private String truckHeadNo;// -string
+	@NotNull(message = "Please enter a date")
+	@Past(message = "Only the past is valid")
+	@JsonFormat(pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+	// @DateTimeFormat(pattern = CommonUtil.GLOBAL_DATE_PATTERN)
+	private Date gateInDateTime;// -string
 
-  @NotNull(message = "Please enter a date")
-  @Past(message = "Only the past is valid")
-  @JsonFormat(pattern = CommonUtil.GLOBAL_DATE_PATTERN)
-  // @DateTimeFormat(pattern = CommonUtil.GLOBAL_DATE_PATTERN)
-  private Date gateInDateTime;// -string
+	private Long clientID;// -long (clientID)
+	private String laneNo;// -long (clientID)
+	private Integer expWeightBridge;// -long
+	private boolean checkPreArrival = false;// -boolean
+	private String hpabSeqId;// -string
+	private String haulageCode;
 
-  private Long clientID;// -long (clientID)
-  private String laneNo;// -long (clientID)
-  private Integer expWeightBridge;// -long
-  private boolean checkPreArrival = false;// -boolean
-  private String hpabSeqId;// -string
-  private String haulageCode;
+	public String getExpContainer1() {
+		return expContainer1;
+	}
 
-  public String getExpContainer1() {
-    return expContainer1;
-  }
+	public void setExpContainer1(String expContainer1) {
+		this.expContainer1 = expContainer1;
+	}
 
-  public void setExpContainer1(String expContainer1) {
-    this.expContainer1 = expContainer1;
-  }
+	public String getExpContainer2() {
+		return expContainer2;
+	}
 
-  public String getExpContainer2() {
-    return expContainer2;
-  }
+	public void setExpContainer2(String expContainer2) {
+		this.expContainer2 = expContainer2;
+	}
 
-  public void setExpContainer2(String expContainer2) {
-    this.expContainer2 = expContainer2;
-  }
+	public String getTruckHeadNo() {
+		return truckHeadNo;
+	}
 
-  public String getTruckHeadNo() {
-    return truckHeadNo;
-  }
+	public void setTruckHeadNo(String truckHeadNo) {
+		this.truckHeadNo = truckHeadNo;
+	}
 
-  public void setTruckHeadNo(String truckHeadNo) {
-    this.truckHeadNo = truckHeadNo;
-  }
+	public Date getGateInDateTime() {
+		return gateInDateTime;
+	}
 
+	public void setGateInDateTime(Date gateInDateTime) {
+		this.gateInDateTime = gateInDateTime;
+	}
 
+	public Long getClientID() {
+		return clientID;
+	}
 
-  public Date getGateInDateTime() {
-    return gateInDateTime;
-  }
+	public void setClientID(Long clientID) {
+		this.clientID = clientID;
+	}
 
-  public void setGateInDateTime(Date gateInDateTime) {
-    this.gateInDateTime = gateInDateTime;
-  }
+	public String getLaneNo() {
+		return laneNo;
+	}
 
-  public Long getClientID() {
-    return clientID;
-  }
+	public void setLaneNo(String laneNo) {
+		this.laneNo = laneNo;
+	}
 
-  public void setClientID(Long clientID) {
-    this.clientID = clientID;
-  }
+	public boolean isCheckPreArrival() {
+		return checkPreArrival;
+	}
 
-  public String getLaneNo() {
-    return laneNo;
-  }
+	public void setCheckPreArrival(boolean checkPreArrival) {
+		this.checkPreArrival = checkPreArrival;
+	}
 
-  public void setLaneNo(String laneNo) {
-    this.laneNo = laneNo;
-  }
+	public String getHpabSeqId() {
+		return hpabSeqId;
+	}
 
-  public boolean isCheckPreArrival() {
-    return checkPreArrival;
-  }
+	public void setHpabSeqId(String hpabSeqId) {
+		this.hpabSeqId = hpabSeqId;
+	}
 
-  public void setCheckPreArrival(boolean checkPreArrival) {
-    this.checkPreArrival = checkPreArrival;
-  }
+	public Long getUserId() {
+		return userId;
+	}
 
-  public String getHpabSeqId() {
-    return hpabSeqId;
-  }
+	public void setUserId(Long userId) {
+		this.userId = userId;
+	}
 
-  public void setHpabSeqId(String hpabSeqId) {
-    this.hpabSeqId = hpabSeqId;
-  }
+	public String getUserName() {
+		return userName;
+	}
 
-  public Long getUserId() {
-    return userId;
-  }
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
 
-  public void setUserId(Long userId) {
-    this.userId = userId;
-  }
+	public Long getGatePass1() {
+		return gatePass1;
+	}
 
-  public String getUserName() {
-    return userName;
-  }
+	public void setGatePass1(Long gatePass1) {
+		this.gatePass1 = gatePass1;
+	}
 
-  public void setUserName(String userName) {
-    this.userName = userName;
-  }
+	public Long getGatePass2() {
+		return gatePass2;
+	}
 
-  public Long getGatePass1() {
-    return gatePass1;
-  }
+	public void setGatePass2(Long gatePass2) {
+		this.gatePass2 = gatePass2;
+	}
 
-  public void setGatePass1(Long gatePass1) {
-    this.gatePass1 = gatePass1;
-  }
+	public Integer getExpWeightBridge() {
+		return expWeightBridge;
+	}
 
-  public Long getGatePass2() {
-    return gatePass2;
-  }
+	public void setExpWeightBridge(Integer expWeightBridge) {
+		this.expWeightBridge = expWeightBridge;
+	}
 
-  public void setGatePass2(Long gatePass2) {
-    this.gatePass2 = gatePass2;
-  }
+	public Long getCardID() {
+		return cardID;
+	}
 
-  public Integer getExpWeightBridge() {
-    return expWeightBridge;
-  }
+	public void setCardID(Long cardID) {
+		this.cardID = cardID;
+	}
 
-  public void setExpWeightBridge(Integer expWeightBridge) {
-    this.expWeightBridge = expWeightBridge;
-  }
+	public String getImpContainer1() {
+		return impContainer1;
+	}
 
-  public Long getCardID() {
-    return cardID;
-  }
+	public void setImpContainer1(String impContainer1) {
+		this.impContainer1 = impContainer1;
+	}
 
-  public void setCardID(Long cardID) {
-    this.cardID = cardID;
-  }
+	public String getImpContainer2() {
+		return impContainer2;
+	}
 
-  public String getImpContainer1() {
-    return impContainer1;
-  }
+	public void setImpContainer2(String impContainer2) {
+		this.impContainer2 = impContainer2;
+	}
 
-  public void setImpContainer1(String impContainer1) {
-    this.impContainer1 = impContainer1;
-  }
+	public String getHaulageCode() {
+		return haulageCode;
+	}
 
-  public String getImpContainer2() {
-    return impContainer2;
-  }
+	public void setHaulageCode(String haulageCode) {
+		this.haulageCode = haulageCode;
+	}
 
-  public void setImpContainer2(String impContainer2) {
-    this.impContainer2 = impContainer2;
-  }
-
-  public String getHaulageCode() {
-    return haulageCode;
-  }
-
-  public void setHaulageCode(String haulageCode) {
-    this.haulageCode = haulageCode;
-  }
-
-  public void initializeWithDefaultValues() {
-    this.userId = 0l;
-    this.userName = StringUtils.EMPTY;
-    this.gatePass1 = 0l;// -long
-    this.gatePass2 = 0l;// -long
-    this.cardID = 0l;
-    this.expContainer1 = StringUtils.EMPTY;// -string
-    this.expContainer2 = StringUtils.EMPTY;// -string
-    this.impContainer1 = StringUtils.EMPTY;// -string
-    this.impContainer2 = StringUtils.EMPTY;// -string
-    this.truckHeadNo = StringUtils.EMPTY;// -string
-    this.gateInDateTime = Calendar.getInstance().getTime();// -string
-    this.clientID = 0l;// -long (clientID)
-    this.laneNo = StringUtils.EMPTY;// -long (clientID)
-    this.expWeightBridge = 0;// -long
-    this.checkPreArrival = false;// -boolean
-    this.hpabSeqId = StringUtils.EMPTY;// -string
-    this.haulageCode = StringUtils.EMPTY;
-  }
+	public void initializeWithDefaultValues() {
+		this.userId = 0l;
+		this.userName = StringUtils.EMPTY;
+		this.gatePass1 = 0l;// -long
+		this.gatePass2 = 0l;// -long
+		this.cardID = 0l;
+		this.expContainer1 = StringUtils.EMPTY;// -string
+		this.expContainer2 = StringUtils.EMPTY;// -string
+		this.impContainer1 = StringUtils.EMPTY;// -string
+		this.impContainer2 = StringUtils.EMPTY;// -string
+		this.truckHeadNo = StringUtils.EMPTY;// -string
+		this.gateInDateTime = Calendar.getInstance().getTime();// -string
+		this.clientID = 0l;// -long (clientID)
+		this.laneNo = StringUtils.EMPTY;// -long (clientID)
+		this.expWeightBridge = 0;// -long
+		this.checkPreArrival = false;// -boolean
+		this.hpabSeqId = StringUtils.EMPTY;// -string
+		this.haulageCode = StringUtils.EMPTY;
+	}
 
 }

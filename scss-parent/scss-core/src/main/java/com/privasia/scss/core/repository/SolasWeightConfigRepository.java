@@ -14,12 +14,14 @@ import com.privasia.scss.core.model.SolasWeightConfig;
 
 public interface SolasWeightConfigRepository extends BaseRepository<SolasWeightConfig, Long> {
 
-  Optional<List<SolasWeightConfig>> findByWeightType(SolasWeightType weightType);
+  public Optional<List<SolasWeightConfig>> findByWeightType(SolasWeightType weightType);
 
-  Optional<List<SolasWeightConfig>> findByWeightTypeSize(SolasWeightTypeSize weightTypeSize);
+  public Optional<List<SolasWeightConfig>> findByWeightTypeSize(SolasWeightTypeSize weightTypeSize);
 
-  Optional<List<SolasWeightConfig>> findByWeightTypeAndWeightTypeSize(SolasWeightType weightType,
+  public Optional<List<SolasWeightConfig>> findByWeightTypeAndWeightTypeSize(SolasWeightType weightType,
       SolasWeightTypeSize weightTypeSize);
+  
+  public Optional<List<SolasWeightConfig>> findByWeightTypeIn(List<SolasWeightType> weightTypes);
 
 
 }
