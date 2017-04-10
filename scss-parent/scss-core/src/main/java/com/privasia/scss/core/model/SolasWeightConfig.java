@@ -9,8 +9,6 @@ import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -47,7 +45,7 @@ public class SolasWeightConfig extends AuditEntity implements Serializable {
   private Long solasWegConfigID;
 
   @Column(name = "WEIGHT_TYPE")
-  @Type(type = "com.privasia.scss.common.enumusertype.SolasWeightType")
+  @Type(type = "com.privasia.scss.common.enumusertype.SolasWeightTypeEnumUserType")
   private SolasWeightType weightType;
 
   @Column(name = "MIN_VALUE")
