@@ -19,7 +19,7 @@ public class SolasWeightConfigDTO implements Serializable {
 
   private int defaultValue;
 
-  private int weightTypeSize;
+  private String weightTypeSize;
 
   public Long getSolasWegConfigID() {
     return solasWegConfigID;
@@ -61,11 +61,11 @@ public class SolasWeightConfigDTO implements Serializable {
     this.defaultValue = defaultValue;
   }
 
-  public int getWeightTypeSize() {
+  public String getWeightTypeSize() {
     return weightTypeSize;
   }
 
-  public void setWeightTypeSize(int weightTypeSize) {
+  public void setWeightTypeSize(String weightTypeSize) {
     this.weightTypeSize = weightTypeSize;
   }
 
