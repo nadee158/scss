@@ -17,6 +17,8 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Type;
+
 import com.privasia.scss.common.enums.SolasWeightType;
 import com.privasia.scss.common.enums.SolasWeightTypeSize;
 
@@ -45,7 +47,7 @@ public class SolasWeightConfig extends AuditEntity implements Serializable {
   private Long solasWegConfigID;
 
   @Column(name = "WEIGHT_TYPE")
-  @Enumerated(EnumType.STRING)
+  @Type(type = "com.privasia.scss.common.enumusertype.SolasWeightType")
   private SolasWeightType weightType;
 
   @Column(name = "MIN_VALUE")
@@ -58,7 +60,7 @@ public class SolasWeightConfig extends AuditEntity implements Serializable {
   private int defaultValue;
 
   @Column(name = "WEIGHT_TYPE_SIZE")
-  @Enumerated(EnumType.STRING)
+  @Type(type = "com.privasia.scss.common.enumusertype.SolasWeightTypeSizeEnumUserType")
   private SolasWeightTypeSize weightTypeSize;
 
   public Long getSolasWegConfigID() {
