@@ -3,11 +3,13 @@ package com.privasia.scss.gatein.service;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.Future;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -153,6 +155,8 @@ public class ImportExportGateInService {
         || (gateInRequest.getGatePass2() != null && gateInRequest.getGatePass2() > 0)) {
       List<Long> gatePassList = Arrays.asList(gateInRequest.getGatePass1(), gateInRequest.getGatePass2());
       List<ImportContainer> importContainerList = importGateInService.fetchContainerInfo(gatePassList);
+      // GatePassValidationService call validate - within another method
+      importGateInService.validateImport(gateInRequest, importContainerList);
       gateInReponse.setImportContainers(importContainerList);
     }
 
@@ -248,30 +252,59 @@ public class ImportExportGateInService {
     gateInWriteRequest.setImportContainers(gateInReponse.getImportContainers());
     gateInWriteRequest.setExportContainers(gateInReponse.getExportContainers());
 
+    Future<Boolean> impSave = null;
+    Future<Boolean> expSave = null;
+
     if (StringUtils.isEmpty(gateInWriteRequest.getImpExpFlag()))
       throw new BusinessException("Invalid GateOutWriteRequest Empty ImpExpFlag");
     ImpExpFlagStatus impExpFlag = ImpExpFlagStatus.fromValue(gateInWriteRequest.getImpExpFlag());
 
     switch (impExpFlag) {
       case IMPORT:
-        importGateInService.saveGateInInfo(gateInWriteRequest, gateInClient, gateInClerk, card);
+        impSave = importGateInService.saveGateInInfo(gateInWriteRequest, gateInClient, gateInClerk, card);
+        expSave = new AsyncResult<Boolean>(true);
         break;
       case EXPORT:
-        exportGateInService.saveGateInInfo(gateInWriteRequest, gateInClient, gateInClerk, card);
+        impSave = new AsyncResult<Boolean>(true);
+        exportGateInService.validateExport(gateInWriteRequest.getExportContainers());
+        expSave = exportGateInService.saveGateInInfo(gateInWriteRequest, gateInClient, gateInClerk, card);
         break;
       case IMPORT_EXPORT:
-        importGateInService.saveGateInInfo(gateInWriteRequest, gateInClient, gateInClerk, card);
-        exportGateInService.saveGateInInfo(gateInWriteRequest, gateInClient, gateInClerk, card);
+        impSave = importGateInService.saveGateInInfo(gateInWriteRequest, gateInClient, gateInClerk, card);
+
+        exportGateInService.validateExport(gateInWriteRequest.getExportContainers());
+        expSave = exportGateInService.saveGateInInfo(gateInWriteRequest, gateInClient, gateInClerk, card);
         break;
       default:
+        impSave = new AsyncResult<Boolean>(true);
+        expSave = new AsyncResult<Boolean>(true);
         break;
     }
 
-
     GateOutMessage gateOutMessage = new GateOutMessage();
-    gateOutMessage.setCode(GateOutMessage.OK);
-    gateOutMessage.setDescription("Saved Successfully!");
-    gateInReponse.setMessage(gateOutMessage);
+    gateOutMessage.setCode(GateOutMessage.NOK);
+    gateOutMessage.setDescription("Save Pending!");
+
+    while (true) {
+      if (impSave.isDone() && expSave.isDone()) {
+
+        gateOutMessage.setCode(GateOutMessage.OK);
+        gateOutMessage.setDescription("Saved Successfully!");
+        gateInReponse.setMessage(gateOutMessage);
+
+        System.out.println("WHILE LOOP BROKEN!!!!. ");
+        break;
+      }
+      System.out.println("Continue doing something else. ");
+
+      try {
+        Thread.sleep(1000);
+      } catch (InterruptedException e) {
+        log.error(e.getMessage());
+        System.out.println("WHILE LOOP BROKEN ON THREAD EXCEPTION!!!!. ");
+        break;
+      }
+    }
 
     return gateInReponse;
   }

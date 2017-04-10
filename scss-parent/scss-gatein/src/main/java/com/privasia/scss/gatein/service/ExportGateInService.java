@@ -3,10 +3,13 @@ package com.privasia.scss.gatein.service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.Future;
 
 import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,6 +40,8 @@ import com.privasia.scss.core.repository.HPATBookingRepository;
 import com.privasia.scss.core.repository.ShipCodeRepository;
 import com.privasia.scss.core.repository.ShipSCNRepository;
 import com.privasia.scss.core.repository.WDCGlobalSettingRepository;
+import com.privasia.scss.gatein.exports.business.service.DamageCodeService;
+import com.privasia.scss.gatein.exports.business.service.SealValidationService;
 
 @Service("exportGateInService")
 public class ExportGateInService {
@@ -62,6 +67,20 @@ public class ExportGateInService {
   private WDCGlobalSettingRepository globalSettingRepository;
 
   private LPKEDIService lpkediService;
+
+  private DamageCodeService damageCodeService;
+
+  private SealValidationService sealValidationService;
+
+  @Autowired
+  public void setSealValidationService(SealValidationService sealValidationService) {
+    this.sealValidationService = sealValidationService;
+  }
+
+  @Autowired
+  public void setDamageCodeService(DamageCodeService damageCodeService) {
+    this.damageCodeService = damageCodeService;
+  }
 
   @Autowired
   public void setLpkediService(LPKEDIService lpkediService) {
@@ -206,8 +225,9 @@ public class ExportGateInService {
 
   }
 
+  @Async
   @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
-  public List<ExportContainer> saveGateInInfo(GateInWriteRequest gateInWriteRequest, Client gateInClient,
+  public Future<Boolean> saveGateInInfo(GateInWriteRequest gateInWriteRequest, Client gateInClient,
       SystemUser gateInClerk, Card card) {
     // construct a new export entity for each exportcontainer and save
     backToback = false;
@@ -278,12 +298,21 @@ public class ExportGateInService {
         System.out.println("exportsQ " + exportsQ);
         exportsQRepository.save(exportsQ);
       });
-      return gateInWriteRequest.getExportContainers();
     }
-
-    return null;
+    return new AsyncResult<Boolean>(true);
   }
 
+  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+  public void validateExport(List<ExportContainer> exportContainers) {
+    if (!(exportContainers == null || exportContainers.isEmpty())) {
+      exportContainers.forEach(exportContainer -> {
+        // 1. DAMAGE CONTAINER CHECK - 1313 (DamageCodeService )
+        damageCodeService.checkDuplicateDameCodeExistence(exportContainer);
+        // 2. Shipping Line Seal Validation -1578 (SealValidationServicve)
+        sealValidationService.validateSeal(exportContainer);
 
+      });
+    }
+  }
 
 }

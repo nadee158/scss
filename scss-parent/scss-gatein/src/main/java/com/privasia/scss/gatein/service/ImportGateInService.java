@@ -4,12 +4,15 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.Future;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -158,8 +161,9 @@ public class ImportGateInService {
 
   }
 
+  @Async
   @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
-  public List<ImportContainer> saveGateInInfo(GateInWriteRequest gateInWriteRequest, Client gateInClient,
+  public Future<Boolean> saveGateInInfo(GateInWriteRequest gateInWriteRequest, Client gateInClient,
       SystemUser gateInClerk, Card card) {
     // construct a new export entity for each exportcontainer and save
     if (!(gateInWriteRequest.getImportContainers() == null || gateInWriteRequest.getImportContainers().isEmpty())) {
@@ -221,9 +225,8 @@ public class ImportGateInService {
         }
 
       });
-      return gateInWriteRequest.getImportContainers();
     }
-    return null;
+    return new AsyncResult<Boolean>(true);
   }
 
 
@@ -268,5 +271,18 @@ public class ImportGateInService {
     gatePass.getCommonGateInOut().setGateInStatus(
         TransactionStatus.fromCode(StringUtils.upperCase(importContainer.getCommonGateInOut().getGateInStatus())));
   }
+
+  public void validateImport(GateInRequest gateInRequest, List<ImportContainer> importContainers) {
+    if (!(importContainers == null || importContainers.isEmpty())) {
+      importContainers.forEach(importContainer -> {
+        // // GatePassValidationService call validate - within another method
+        gatePassValidationService.validateGatePass(gateInRequest.getCardID(), importContainer.getGatePassNo(),
+            gateInRequest.isCheckPreArrival(), gateInRequest.getHpabSeqId(), gateInRequest.getTruckHeadNo());
+
+      });
+    }
+
+  }
+
 
 }
