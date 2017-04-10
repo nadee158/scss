@@ -85,6 +85,12 @@ public class ModelMapConfig {
 
     modelMapper.addConverter(ModelMapEnumConverter.convertReadWriteStatusToString());
     modelMapper.addConverter(ModelMapEnumConverter.convertStringToReadWriteStatus());
+    
+    modelMapper.addConverter(ModelMapEnumConverter.convertIntegerToSolasWeightTypeSize());
+    modelMapper.addConverter(ModelMapEnumConverter.convertSolasWeightTypeSizeToInteger());
+    
+    modelMapper.addConverter(ModelMapEnumConverter.convertStringToSolasWeightType());
+    modelMapper.addConverter(ModelMapEnumConverter.convertSolasWeightTypeToString());
 
     return modelMapper;
   }
