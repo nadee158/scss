@@ -4,6 +4,7 @@
 package com.privasia.scss.hpat.controller;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +43,10 @@ public class HPATController {
     System.out.println(bookingTypes + "bookingTypes");
 
     List<HpatDto> dtos = hpatService.findEtpHpab4ImpAndExp(cardID, LocalDateTime.now(), bookingTypes);
+
+    if (dtos == null) {
+      dtos = new ArrayList<HpatDto>();
+    }
 
     return new CustomResponseEntity<ApiResponseObject<?>>(new ApiResponseObject<List<HpatDto>>(HttpStatus.OK, dtos),
         HttpStatus.OK);

@@ -47,6 +47,7 @@ public class HPABService {
   @Autowired
   private CardRepository cardRepository;
 
+  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
   public List<HpatDto> createPredicatesAndFindHpab4ImpAndExp(Long cardId, LocalDateTime date,
       List<BookingType> bookingTypes) {
     List<HpatDto> dtoList = new ArrayList<HpatDto>();
@@ -72,7 +73,7 @@ public class HPABService {
   }
 
 
-  @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
+  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
   public List<HpatDto> findEtpHpab4ImpAndExp(Long cardId, LocalDateTime systemDateTime, List<String> bookingTypes)
       throws ResultsNotFoundException {
 
@@ -114,12 +115,12 @@ public class HPABService {
 
     } else {
       // need to discuss with etp team to manage web services between etp and scss
-      throw new ResultsNotFoundException("No HPAT Bookings Founds !");
+      throw new ResultsNotFoundException("No HPAT Bookings were found!");
     }
   }
 
 
-  @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
+  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
   public TransactionDTO getEtpHpab4ImpAndExp(String bookingID) {
 
     Optional<HPABBooking> hpatBooking =
@@ -199,7 +200,7 @@ public class HPABService {
 
   // rename method to populateHpabForImpExp
   // return GateOutReponse
-  @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
+  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
   public GateInReponse populateHpabForImpExp(GateInReponse gateInReponse, String hpabSeqId) {
 
     Optional<HPABBooking> hpatBookingOpt =
