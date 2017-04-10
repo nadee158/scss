@@ -8,6 +8,7 @@ import java.util.Properties;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -52,7 +53,8 @@ public class PersistenceContext {
     return new AuditingDateTimeProvider(currentDateTimeService);
   }
 
-  @Bean(destroyMethod = "close")
+  @Primary
+  @Bean(name = "dataSource", destroyMethod = "close")
   public DataSource dataSource(Environment env) {
 
     HikariConfig dataSourceConfig = new HikariConfig();
@@ -88,7 +90,8 @@ public class PersistenceContext {
 
   @Primary
   @Bean(name = "entityManagerFactory")
-  public LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource, Environment env) {
+  public LocalContainerEntityManagerFactoryBean entityManagerFactory(@Qualifier("dataSource") DataSource dataSource,
+      Environment env) {
     LocalContainerEntityManagerFactoryBean entityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();
     entityManagerFactoryBean.setDataSource(dataSource);
     entityManagerFactoryBean.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
@@ -124,7 +127,8 @@ public class PersistenceContext {
   }
 
   @Bean(name = "transactionManager")
-  public JpaTransactionManager transactionManager(EntityManagerFactory entityManagerFactory) {
+  public JpaTransactionManager transactionManager(
+      @Qualifier("entityManagerFactory") EntityManagerFactory entityManagerFactory) {
     JpaTransactionManager transactionManager = new JpaTransactionManager();
     transactionManager.setEntityManagerFactory(entityManagerFactory);
     return transactionManager;

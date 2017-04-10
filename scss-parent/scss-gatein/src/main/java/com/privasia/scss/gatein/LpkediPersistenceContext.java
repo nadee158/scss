@@ -27,7 +27,8 @@ import com.zaxxer.hikari.HikariDataSource;
 @Configuration
 @EnableTransactionManagement
 @EnableAutoConfiguration(exclude = {org.springframework.boot.autoconfigure.security.SecurityAutoConfiguration.class})
-@EnableJpaRepositories(basePackages = {"com.privasia.scss.gatein.lpkedi.repository"})
+@EnableJpaRepositories(basePackages = "com.privasia.scss.gatein.lpkedi.repository",
+    transactionManagerRef = "lpkediTransactionManager")
 public class LpkediPersistenceContext {
 
 
