@@ -18,92 +18,94 @@ import com.privasia.scss.common.enums.ContainerStatus;
 @Repository
 public class CosmosExportRepository {
 
-	@Autowired
-	@Qualifier("as400JdbcTemplate")
-	private JdbcTemplate jdbcTemplate;
+  @Autowired
+  @Qualifier("as400JdbcTemplate")
+  private JdbcTemplate jdbcTemplate;
 
-	@Value("${export.ogaBlock}")
-	private String queryOGABlock;
+  @Value("${export.ogaBlock}")
+  private String queryOGABlock;
 
-	@Value("${export.internalBlock}")
-	private String queryInternalBlock;
-	
-	@Value("${export.containerStatus}")
-	private String queryContainerStatus;
-	
-	@Value("${export.containerInfo}")
-	private String queryContainerInfo;
+  @Value("${export.internalBlock}")
+  private String queryInternalBlock;
 
-	
-	@Transactional(value = "as400TransactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-	public ExportContainer isOGABlock(ExportContainer exportContainer) {
+  @Value("${export.containerStatus}")
+  private String queryContainerStatus;
 
-		String containerNo = StringUtils.upperCase(exportContainer.getContainer().getContainerNumber());
-		return jdbcTemplate.queryForObject(queryOGABlock, new Object[] { containerNo }, (rs, i) -> extractOGABlock(exportContainer, rs)); 
+  @Value("${export.containerInfo}")
+  private String queryContainerInfo;
 
-	}
 
-	private ExportContainer extractOGABlock(ExportContainer exportContainer, ResultSet rs) throws SQLException {
+  @Transactional(value = "as400TransactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+  public ExportContainer isOGABlock(ExportContainer exportContainer) {
 
-		if (rs.next()) {
-			exportContainer.setOgaBlock(true);
-		}
-		return exportContainer;
-	}
+    String containerNo = StringUtils.upperCase(exportContainer.getContainer().getContainerNumber());
+    return jdbcTemplate.queryForObject(queryOGABlock, new Object[] {containerNo},
+        (rs, i) -> extractOGABlock(exportContainer, rs));
 
-	@Transactional(value = "as400TransactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-	public ExportContainer isInternalBlock(ExportContainer exportContainer, String containerNo) {
+  }
 
-		containerNo = StringUtils.upperCase(containerNo);
-		return jdbcTemplate.queryForObject(queryInternalBlock, new Object[] { containerNo },
-				(rs, i) -> extractInternalBlock(exportContainer, rs, i));
+  private ExportContainer extractOGABlock(ExportContainer exportContainer, ResultSet rs) throws SQLException {
 
-	}
+    if (rs.next()) {
+      exportContainer.setOgaBlock(true);
+    }
+    return exportContainer;
+  }
 
-	private ExportContainer extractInternalBlock(ExportContainer exportContainer, ResultSet rs, int rowNum)
-			throws SQLException {
+  @Transactional(value = "as400TransactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+  public ExportContainer isInternalBlock(ExportContainer exportContainer, String containerNo) {
 
-		if (rs.next()) {
-			exportContainer.setInternalBlock(true);
-			exportContainer.setInternalBlockDesc(rs.getString("inop30"));
-		} 
-		return exportContainer;
-	}
-	
-	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-	public String checkContainerStatus(String containerNo, String timeGateIn) {
+    containerNo = StringUtils.upperCase(containerNo);
+    return jdbcTemplate.queryForObject(queryInternalBlock, new Object[] {containerNo},
+        (rs, i) -> extractInternalBlock(exportContainer, rs, i));
 
-		containerNo = StringUtils.upperCase(containerNo);
-		return jdbcTemplate.queryForObject(queryContainerStatus, new Object[] { containerNo, timeGateIn },
-				(rs, i) -> extractContainerStatus(rs));
+  }
 
-	}
+  private ExportContainer extractInternalBlock(ExportContainer exportContainer, ResultSet rs, int rowNum)
+      throws SQLException {
 
-	private String extractContainerStatus(ResultSet rs) throws SQLException {
+    if (rs.next()) {
+      exportContainer.setInternalBlock(true);
+      exportContainer.setInternalBlockDesc(rs.getString("inop30"));
+    }
+    return exportContainer;
+  }
 
-		if (rs != null && rs.next()) {
-  		  return rs.getString("hdfs03");
-  	  	} else {
-  	  		
-  	  	return ContainerStatus.NON_EXECUTE.getValue();
-  	  	}
+  @Transactional(value = "as400TransactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+  public String checkContainerStatus(String containerNo, String timeGateIn) {
 
-	}
-	
-	@Transactional(value = "as400TransactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-	public ExportContainer fetchContainerInfo(String exportContainerNo) {
+    containerNo = StringUtils.upperCase(containerNo);
+    return jdbcTemplate.queryForObject(queryContainerStatus, new Object[] {containerNo, timeGateIn},
+        (rs, i) -> extractContainerStatus(rs));
 
-		exportContainerNo = StringUtils.upperCase(exportContainerNo);
-		return jdbcTemplate.queryForObject(queryContainerInfo, new Object[] { exportContainerNo }, (rs, i) -> extractContainerInfo(rs, i)); 
+  }
 
-	}
+  private String extractContainerStatus(ResultSet rs) throws SQLException {
 
-	private ExportContainer extractContainerInfo(ResultSet rs, int rowNum) throws SQLException {
+    if (rs != null && rs.next()) {
+      return rs.getString("hdfs03");
+    } else {
 
-		if (rs.next()) {
-			
-		}
-		return new ExportContainer();
-	}
+      return ContainerStatus.NON_EXECUTE.getValue();
+    }
+
+  }
+
+  @Transactional(value = "as400TransactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+  public ExportContainer fetchContainerInfo(String exportContainerNo) {
+
+    exportContainerNo = StringUtils.upperCase(exportContainerNo);
+    return jdbcTemplate.queryForObject(queryContainerInfo, new Object[] {exportContainerNo},
+        (rs, i) -> extractContainerInfo(rs, i));
+
+  }
+
+  private ExportContainer extractContainerInfo(ResultSet rs, int rowNum) throws SQLException {
+
+    if (rs.next()) {
+
+    }
+    return new ExportContainer();
+  }
 
 }
