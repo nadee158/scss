@@ -22,7 +22,7 @@ import com.privasia.scss.common.enums.ContainerPosition;
 import com.privasia.scss.common.enums.HpatReferStatus;
 import com.privasia.scss.common.enums.ReferStatus;
 import com.privasia.scss.common.enums.TransactionStatus;
-import com.privasia.scss.common.util.CommonUtil;
+import com.privasia.scss.common.util.DateUtil;
 import com.privasia.scss.core.exception.BusinessException;
 import com.privasia.scss.core.exception.ResultsNotFoundException;
 import com.privasia.scss.core.model.BaseCommonGateInOutAttribute;
@@ -170,9 +170,9 @@ public class ReferRejectService {
     // need to clarify from feroz this. here we need to save this time
     if (StringUtils.isEmpty(referRejectObjetDto.getTimeGateIn()))
       throw new BusinessException("Gate In Time Required !");
-    baseCommonGateInOut.setTimeGateIn(CommonUtil.getParsedDate(referRejectObjetDto.getTimeGateIn()));
+    baseCommonGateInOut.setTimeGateIn(DateUtil.getParsedDateTime(referRejectObjetDto.getTimeGateIn()));
 
-    baseCommonGateInOut.setTimeGateInOk(CommonUtil.getParsedDate(referRejectObjetDto.getTimeGateInOk()));
+    baseCommonGateInOut.setTimeGateInOk(DateUtil.getParsedDateTime(referRejectObjetDto.getTimeGateInOk()));
 
     referReject.setBaseCommonGateInOut(baseCommonGateInOut);
 
@@ -320,7 +320,7 @@ public class ReferRejectService {
           .findByReferReject_ReferRejectIDAndContainerNo(dto.getReferRejectID(), dto.getContainerNo());
       if (!(referRejectDetail == null)) {
         referRejectDetail.setLineCode(StringUtils.upperCase(dto.getLineCode()));
-        referRejectDetail.setGateInTime(CommonUtil.getParsedDate(dto.getGateInTime()));
+        referRejectDetail.setGateInTime(DateUtil.getParsedDateTime(dto.getGateInTime()));
         ReferRejectDetail persisted = referRejectDetailRepository.save(referRejectDetail);
         if (!(persisted == null || persisted.getReferRejectDetailID() <= 0)) {
           if (persisted.getReferReject().getReferRejectID() == dto.getReferRejectID()) {

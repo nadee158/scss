@@ -5,7 +5,7 @@ import java.io.Serializable;
 import org.apache.commons.lang3.StringUtils;
 
 import com.privasia.scss.common.enums.HpatReferStatus;
-import com.privasia.scss.common.util.CommonUtil;
+import com.privasia.scss.common.util.DateUtil;
 
 public class BookingDTO implements Serializable {
 
@@ -115,8 +115,8 @@ public class BookingDTO implements Serializable {
       this.setBookingType("ODD" + gridDtoItem.getHdbsBkgType());
     }
 
-    this.setBookingStartTime(CommonUtil.getFormatteDate(gridDtoItem.getApptDateTimeFrom()));
-    this.setBookingEndTime(CommonUtil.getFormatteDate(gridDtoItem.getApptDateTimeToActual()));
+    this.setBookingStartTime(DateUtil.getFormatteDateTime(gridDtoItem.getApptDateTimeFrom()));
+    this.setBookingEndTime(DateUtil.getFormatteDateTime(gridDtoItem.getApptDateTimeToActual()));
 
     this.setTruckHeadNo(gridDtoItem.getPmHeadNo());
   }

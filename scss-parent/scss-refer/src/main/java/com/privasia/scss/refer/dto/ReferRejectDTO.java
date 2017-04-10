@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.privasia.scss.common.util.CommonUtil;
+import com.privasia.scss.common.util.DateUtil;
 import com.privasia.scss.core.model.BaseCommonGateInOutAttribute;
 import com.privasia.scss.core.model.ReferReject;
 import com.privasia.scss.core.model.ReferRejectDetail;
@@ -107,15 +107,15 @@ public class ReferRejectDTO implements Serializable {
 
       this.gateOutBoothNo = com.getGateOutBoothNo();
 
-      this.timeGateIn = CommonUtil.getFormatteDate(com.getTimeGateIn());
+      this.timeGateIn = DateUtil.getFormatteDateTime(com.getTimeGateIn());
 
-      this.timeGateInOk = CommonUtil.getFormatteDate(com.getTimeGateInOk());
+      this.timeGateInOk = DateUtil.getFormatteDateTime(com.getTimeGateInOk());
 
-      this.timeGateOut = CommonUtil.getFormatteDate(com.getTimeGateOut());
+      this.timeGateOut = DateUtil.getFormatteDateTime(com.getTimeGateOut());
 
-      this.timeGateOutOk = CommonUtil.getFormatteDate(com.getTimeGateOutOk());
+      this.timeGateOutOk = DateUtil.getFormatteDateTime(com.getTimeGateOutOk());
 
-      this.timeGateOutBooth = CommonUtil.getFormatteDate(com.getTimeGateOutBooth());
+      this.timeGateOutBooth = DateUtil.getFormatteDateTime(com.getTimeGateOutBooth());
 
       if (!(com.getCard() == null)) {
         this.cardID = com.getCard().getCardID();
@@ -139,7 +139,7 @@ public class ReferRejectDTO implements Serializable {
         this.gateOutBoothClerkId = com.getGateOutBoothClerk().getSystemUserID();
       }
     }
-    this.referDateTime = CommonUtil.getFormatteDate(referReject.getReferDateTime());
+    this.referDateTime = DateUtil.getFormatteDateTime(referReject.getReferDateTime());
 
     this.pmWeight = referReject.getPmWeight();
 

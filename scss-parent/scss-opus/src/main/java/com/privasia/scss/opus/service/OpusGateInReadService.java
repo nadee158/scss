@@ -22,7 +22,6 @@ import com.privasia.scss.common.dto.ExportContainer;
 import com.privasia.scss.common.dto.GateInReponse;
 import com.privasia.scss.common.dto.GateInRequest;
 import com.privasia.scss.common.dto.ImportContainer;
-import com.privasia.scss.common.util.CommonUtil;
 import com.privasia.scss.common.util.DateUtil;
 // import com.privasia.scss.core.exception.ResultsNotFoundException;
 import com.privasia.scss.opus.dto.OpusGateInReadRequest;
@@ -93,7 +92,7 @@ public class OpusGateInReadService {
     gateInReponse.setUserId(opusGateInReadResponse.getUserID());
     LocalDateTime localDateTime = DateUtil.getLocalDategFromString(opusGateInReadResponse.getGateInDateTime());
 
-    gateInReponse.setGateINDateTime(CommonUtil.getFormatteDate(localDateTime));
+    gateInReponse.setGateINDateTime(DateUtil.getFormatteDateTime(localDateTime));
     gateInReponse.setHaulageCode(opusGateInReadResponse.getHaulageCode());
     gateInReponse.setLaneNo(opusGateInReadResponse.getLaneNo());
     gateInReponse.setTruckHeadNo(opusGateInReadResponse.getTruckHeadNo());

@@ -29,7 +29,7 @@ import com.privasia.scss.common.enums.HDBSBookingType;
 import com.privasia.scss.common.enums.HDBSStatus;
 import com.privasia.scss.common.enums.ImpExpFlagStatus;
 import com.privasia.scss.common.util.ApplicationConstants;
-import com.privasia.scss.common.util.CommonUtil;
+import com.privasia.scss.common.util.DateUtil;
 import com.privasia.scss.core.exception.BusinessException;
 import com.privasia.scss.core.model.Card;
 import com.privasia.scss.core.model.HDBSBkgDetail;
@@ -64,7 +64,7 @@ public class HDBSService {
 
   @Autowired
   private ModelMapper modelMapper;
-  
+
   @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
   public List<HDBSBkgDetail> findHDBSBookingDetailByIDList(List<String> bkgDetailIDList) {
 
@@ -72,60 +72,64 @@ public class HDBSService {
 
     return bkgDetails.collect(Collectors.toList());
   }
-  
-  
+
+
   @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
   public String validateSelectedHDBSBookingDetails(HDBSBkgGridDTO bkgDetailGridDTO) {
-	  
-	List<String> bkgDetailIDList = new ArrayList<>();
-	
-	if(bkgDetailGridDTO == null || bkgDetailGridDTO.getHdbsBkgDetailGridDTOList().isEmpty()){
-		return "Booking selection is Empty";
-	}
-	
-	bkgDetailGridDTO.getHdbsBkgDetailGridDTOList().forEach(gridDTO ->{
-		bkgDetailIDList.add(gridDTO.getHdbsBKGDetailID());
-	});
 
-	List<HDBSBkgDetail> bkgDetails = findHDBSBookingDetailByIDList(bkgDetailIDList);
-    
-	Long import40Count = bkgDetails.stream().filter(bkgDetail -> {
-		return bkgDetail.getHdbsBkgType().equals(HDBSBookingType.PICKUP) && bkgDetail.getContainerSize().equals(ContainerSize.SIZE_40);
-	}).count();
-	
-	if(import40Count > 1)
-		throw new BusinessException("Two Import 40ft Length Container");
-	
-	Long import20Count = bkgDetails.stream().filter(bkgDetail -> {
-		return bkgDetail.getHdbsBkgType().equals(HDBSBookingType.PICKUP) && bkgDetail.getContainerSize().equals(ContainerSize.SIZE_20);
-	}).count();
-	
-	if(import20Count > 2)
-		throw new BusinessException("More than two 20ft Length Container");
-	
-	if(import40Count == 1 && import20Count == 1)
-		throw new BusinessException("Invalid transaction with two container sizes exceeding 40ft");
-	
-	Long export40Count = bkgDetails.stream().filter(bkgDetail -> {
-		return bkgDetail.getHdbsBkgType().equals(HDBSBookingType.DROP) && bkgDetail.getContainerSize().equals(ContainerSize.SIZE_40);
-	}).count();
-	
-	if(export40Count > 1)
-		throw new BusinessException("Two Export 40ft Length Container");
-	
-	Long export20Count = bkgDetails.stream().filter(bkgDetail -> {
-		return bkgDetail.getHdbsBkgType().equals(HDBSBookingType.PICKUP) && bkgDetail.getContainerSize().equals(ContainerSize.SIZE_20);
-	}).count();
-	
-	
-	if(export20Count > 2)
-		throw new BusinessException("More than two Export 20ft Length Container");
-    
-	if(export40Count == 1 && export20Count == 1)
-		throw new BusinessException("Invalid transaction with two container sizes exceeding 40ft");
-	
-	return "validation success";
-    
+    List<String> bkgDetailIDList = new ArrayList<>();
+
+    if (bkgDetailGridDTO == null || bkgDetailGridDTO.getHdbsBkgDetailGridDTOList().isEmpty()) {
+      return "Booking selection is Empty";
+    }
+
+    bkgDetailGridDTO.getHdbsBkgDetailGridDTOList().forEach(gridDTO -> {
+      bkgDetailIDList.add(gridDTO.getHdbsBKGDetailID());
+    });
+
+    List<HDBSBkgDetail> bkgDetails = findHDBSBookingDetailByIDList(bkgDetailIDList);
+
+    Long import40Count = bkgDetails.stream().filter(bkgDetail -> {
+      return bkgDetail.getHdbsBkgType().equals(HDBSBookingType.PICKUP)
+          && bkgDetail.getContainerSize().equals(ContainerSize.SIZE_40);
+    }).count();
+
+    if (import40Count > 1)
+      throw new BusinessException("Two Import 40ft Length Container");
+
+    Long import20Count = bkgDetails.stream().filter(bkgDetail -> {
+      return bkgDetail.getHdbsBkgType().equals(HDBSBookingType.PICKUP)
+          && bkgDetail.getContainerSize().equals(ContainerSize.SIZE_20);
+    }).count();
+
+    if (import20Count > 2)
+      throw new BusinessException("More than two 20ft Length Container");
+
+    if (import40Count == 1 && import20Count == 1)
+      throw new BusinessException("Invalid transaction with two container sizes exceeding 40ft");
+
+    Long export40Count = bkgDetails.stream().filter(bkgDetail -> {
+      return bkgDetail.getHdbsBkgType().equals(HDBSBookingType.DROP)
+          && bkgDetail.getContainerSize().equals(ContainerSize.SIZE_40);
+    }).count();
+
+    if (export40Count > 1)
+      throw new BusinessException("Two Export 40ft Length Container");
+
+    Long export20Count = bkgDetails.stream().filter(bkgDetail -> {
+      return bkgDetail.getHdbsBkgType().equals(HDBSBookingType.PICKUP)
+          && bkgDetail.getContainerSize().equals(ContainerSize.SIZE_20);
+    }).count();
+
+
+    if (export20Count > 2)
+      throw new BusinessException("More than two Export 20ft Length Container");
+
+    if (export40Count == 1 && export20Count == 1)
+      throw new BusinessException("Invalid transaction with two container sizes exceeding 40ft");
+
+    return "validation success";
+
   }
 
   @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
@@ -181,8 +185,9 @@ public class HDBSService {
     LocalDateTime acceptDateTo = systemDateTime.plusMinutes(hdbsAcceptEnd);
 
     setAcceptBookingStatus(gridDTo, acceptDateFrom, acceptDateTo);
-    
-    Collections.sort(gridDTo.getHdbsBkgDetailGridDTOList(), (d1, d2) -> d1.getApptDateTimeFrom().compareTo(d2.getApptDateTimeFrom()));
+
+    Collections.sort(gridDTo.getHdbsBkgDetailGridDTOList(),
+        (d1, d2) -> d1.getApptDateTimeFrom().compareTo(d2.getApptDateTimeFrom()));
 
     return gridDTo;
   }
@@ -226,7 +231,7 @@ public class HDBSService {
     return gridDTo;
 
   }
-  
+
   @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
   public HDBSBkgGridDTO createPredicatesAndFindHDBS(Card card, LocalDateTime dateFrom, LocalDateTime dateTo,
       List<HDBSStatus> statusList, HDBSBkgGridDTO gridDTo) {
@@ -248,12 +253,12 @@ public class HDBSService {
     Iterable<HDBSBkgMaster> bookingList = hdbsBookingMasterRepository.findAll(condition, orderByAPPStartDate);
 
     bookingList.forEach((hdbsbkgMaster) -> {
-        hdbsbkgMaster.getHdbsBookingDetails().forEach(detail -> {
-          HDBSBkgDetailGridDTO hdbs = constructDetailGridDetailDTO(detail);
-          setDuration(hdbs);
-          hdbsBookingList.add(hdbs);
-        });
-      
+      hdbsbkgMaster.getHdbsBookingDetails().forEach(detail -> {
+        HDBSBkgDetailGridDTO hdbs = constructDetailGridDetailDTO(detail);
+        setDuration(hdbs);
+        hdbsBookingList.add(hdbs);
+      });
+
     });
 
     gridDTo.setHdbsBkgDetailGridDTOList(hdbsBookingList);
@@ -295,13 +300,13 @@ public class HDBSService {
     if (systemDateTime.isAfter(hdbs.getApptDateTimeToActual())) {
 
       durration =
-          CommonUtil.getFormattedDiffrenceBetweenDays(hdbs.getApptDateTimeToActual(), systemDateTime, units, false);
+          DateUtil.getFormattedDiffrenceBetweenDays(hdbs.getApptDateTimeToActual(), systemDateTime, units, false);
       status = ApplicationConstants.LATE;
       onTimeFlag = "N";
 
     } else if (systemDateTime.isBefore(hdbs.getApptDateTimeFrom())) {
 
-      durration = CommonUtil.getFormattedDiffrenceBetweenDays(systemDateTime, hdbs.getApptDateTimeFrom(), units, false);
+      durration = DateUtil.getFormattedDiffrenceBetweenDays(systemDateTime, hdbs.getApptDateTimeFrom(), units, false);
       status = ApplicationConstants.EARLY;
       onTimeFlag = "N";
 
@@ -316,66 +321,68 @@ public class HDBSService {
     hdbs.setOnTimeFlag(onTimeFlag);
 
   }
-  
+
   @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-  public List<WHODDDTO> populateODDInfo(String timeGateIn, List<String> bkgDetailIDList){
-	  
-	  List<HDBSBkgDetail> bkgDetails = findHDBSBookingDetailByIDList(bkgDetailIDList);
-	  List<WHODDDTO> oddInfoList = new ArrayList<WHODDDTO>();
-	  
-	  WHODDDTO importODDDTO = new WHODDDTO();
-	  WHODDDTO exportODDDTO = new WHODDDTO();
-	 
-	  bkgDetails.stream().filter(bkgDetail -> {
-			return bkgDetail.getHdbsBkgType().equals(HDBSBookingType.PICKUP);
-	  }).forEach(bkgDetail->{
-		  importODDDTO.setTimeGateIn(CommonUtil.getParsedDate(timeGateIn));
-		  setODDContainerInfo(importODDDTO, bkgDetail, ImpExpFlagStatus.IMPORT);
-		  oddInfoList.add(importODDDTO);
-		  
-	  });
-	  
-	  bkgDetails.stream().filter(bkgDetail -> {
-			return bkgDetail.getHdbsBkgType().equals(HDBSBookingType.DROP);
-	  }).forEach(bkgDetail->{
-		  exportODDDTO.setTimeGateIn(CommonUtil.getParsedDate(timeGateIn));
-		  setODDContainerInfo(exportODDDTO, bkgDetail, ImpExpFlagStatus.EXPORT);
-		  oddInfoList.add(exportODDDTO);
-	  });
-	  
-	  return oddInfoList;
-		
+  public List<WHODDDTO> populateODDInfo(String timeGateIn, List<String> bkgDetailIDList) {
+
+    List<HDBSBkgDetail> bkgDetails = findHDBSBookingDetailByIDList(bkgDetailIDList);
+    List<WHODDDTO> oddInfoList = new ArrayList<WHODDDTO>();
+
+    WHODDDTO importODDDTO = new WHODDDTO();
+    WHODDDTO exportODDDTO = new WHODDDTO();
+
+    bkgDetails.stream().filter(bkgDetail -> {
+      return bkgDetail.getHdbsBkgType().equals(HDBSBookingType.PICKUP);
+    }).forEach(bkgDetail -> {
+      importODDDTO.setTimeGateIn(DateUtil.getParsedDateTime(timeGateIn));
+      setODDContainerInfo(importODDDTO, bkgDetail, ImpExpFlagStatus.IMPORT);
+      oddInfoList.add(importODDDTO);
+
+    });
+
+    bkgDetails.stream().filter(bkgDetail -> {
+      return bkgDetail.getHdbsBkgType().equals(HDBSBookingType.DROP);
+    }).forEach(bkgDetail -> {
+      exportODDDTO.setTimeGateIn(DateUtil.getParsedDateTime(timeGateIn));
+      setODDContainerInfo(exportODDDTO, bkgDetail, ImpExpFlagStatus.EXPORT);
+      oddInfoList.add(exportODDDTO);
+    });
+
+    return oddInfoList;
+
   }
-  
+
   @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-  public WHODDDTO setODDContainerInfo (WHODDDTO oddDTO, HDBSBkgDetail bkgDetails, ImpExpFlagStatus impExpFlag){
-	  
-	  ODDContainerDetailsDTO containerDetailsDTO = new ODDContainerDetailsDTO();
-	  containerDetailsDTO.setContainerNo(bkgDetails.getContainerNo());
-	  containerDetailsDTO.setLocation(bkgDetails.gethDBSBkgMaster().getDepotCode());
-	  containerDetailsDTO.setHdbsBkgDetailNoId(bkgDetails.getHdbsBKGDetailID());
-	  containerDetailsDTO.setHdbsStatus(bkgDetails.getStatusCode().getValue());
-	  containerDetailsDTO.setContainerSize(bkgDetails.getContainerSize() == null ? "" : bkgDetails.getContainerSize().getValue());
-	 
-	  if (oddDTO.getTimeGateIn().isAfter(bkgDetails.getApptDateTimeToActual())){
-		  containerDetailsDTO.setHdbsArrivalStatus(ApplicationConstants.LATE);
-	  }else if (oddDTO.getTimeGateIn().isAfter(bkgDetails.getApptDateTimeFrom()) && oddDTO.getTimeGateIn().isBefore(bkgDetails.getApptDateTimeToActual())) {
-		  containerDetailsDTO.setHdbsArrivalStatus(ApplicationConstants.ACTIVE);
-	  } else if (oddDTO.getTimeGateIn().isBefore(bkgDetails.getApptDateTimeFrom())) {
-		  containerDetailsDTO.setHdbsArrivalStatus(ApplicationConstants.EARLY);
-	  }	
-	  
-	  if(oddDTO.getContainer01() == null){
-		  oddDTO.setPmHeadNo(bkgDetails.gethDBSBkgMaster().getPmHeadNo());
-		  oddDTO.setPmPlateNo(bkgDetails.gethDBSBkgMaster().getPlateNo());
-		  oddDTO.setImpExpFlag(impExpFlag.getValue());
-		  oddDTO.setContainer01(containerDetailsDTO);
-	  }else{
-		  oddDTO.setContainer02(containerDetailsDTO); 
-	  }
-	 
-	  return oddDTO;
-		
+  public WHODDDTO setODDContainerInfo(WHODDDTO oddDTO, HDBSBkgDetail bkgDetails, ImpExpFlagStatus impExpFlag) {
+
+    ODDContainerDetailsDTO containerDetailsDTO = new ODDContainerDetailsDTO();
+    containerDetailsDTO.setContainerNo(bkgDetails.getContainerNo());
+    containerDetailsDTO.setLocation(bkgDetails.gethDBSBkgMaster().getDepotCode());
+    containerDetailsDTO.setHdbsBkgDetailNoId(bkgDetails.getHdbsBKGDetailID());
+    containerDetailsDTO.setHdbsStatus(bkgDetails.getStatusCode().getValue());
+    containerDetailsDTO
+        .setContainerSize(bkgDetails.getContainerSize() == null ? "" : bkgDetails.getContainerSize().getValue());
+
+    if (oddDTO.getTimeGateIn().isAfter(bkgDetails.getApptDateTimeToActual())) {
+      containerDetailsDTO.setHdbsArrivalStatus(ApplicationConstants.LATE);
+    } else if (oddDTO.getTimeGateIn().isAfter(bkgDetails.getApptDateTimeFrom())
+        && oddDTO.getTimeGateIn().isBefore(bkgDetails.getApptDateTimeToActual())) {
+      containerDetailsDTO.setHdbsArrivalStatus(ApplicationConstants.ACTIVE);
+    } else if (oddDTO.getTimeGateIn().isBefore(bkgDetails.getApptDateTimeFrom())) {
+      containerDetailsDTO.setHdbsArrivalStatus(ApplicationConstants.EARLY);
+    }
+
+    if (oddDTO.getContainer01() == null) {
+      oddDTO.setPmHeadNo(bkgDetails.gethDBSBkgMaster().getPmHeadNo());
+      oddDTO.setPmPlateNo(bkgDetails.gethDBSBkgMaster().getPlateNo());
+      oddDTO.setImpExpFlag(impExpFlag.getValue());
+      oddDTO.setContainer01(containerDetailsDTO);
+    } else {
+      oddDTO.setContainer02(containerDetailsDTO);
+    }
+
+    return oddDTO;
+
   }
 
 }

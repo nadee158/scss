@@ -25,7 +25,7 @@ import com.privasia.scss.common.dto.HpatDto;
 import com.privasia.scss.common.dto.TransactionDTO;
 import com.privasia.scss.common.enums.BookingType;
 import com.privasia.scss.common.enums.HpatReferStatus;
-import com.privasia.scss.common.util.CommonUtil;
+import com.privasia.scss.common.util.DateUtil;
 
 /**
  * @author Janaka
@@ -33,10 +33,10 @@ import com.privasia.scss.common.util.CommonUtil;
  */
 @Entity
 @Table(name = "ETP_BOOKING_HPAT")
-@AttributeOverrides({@AttributeOverride(name = "addBy", column = @Column(name = "ADD_BY") ),
-    @AttributeOverride(name = "updateBy", column = @Column(name = "UPDATE_BY") ),
-    @AttributeOverride(name = "dateTimeAdd", column = @Column(name = "DATETIME_ADD") ),
-    @AttributeOverride(name = "dateTimeUpdate", column = @Column(name = "DATETIME_UPDATE") )})
+@AttributeOverrides({@AttributeOverride(name = "addBy", column = @Column(name = "ADD_BY")),
+    @AttributeOverride(name = "updateBy", column = @Column(name = "UPDATE_BY")),
+    @AttributeOverride(name = "dateTimeAdd", column = @Column(name = "DATETIME_ADD")),
+    @AttributeOverride(name = "dateTimeUpdate", column = @Column(name = "DATETIME_UPDATE"))})
 public class HPABBooking extends AuditEntity implements Serializable {
 
   /**
@@ -124,10 +124,10 @@ public class HPABBooking extends AuditEntity implements Serializable {
     dto.setApptEndDate(this.getAppointmentEndDate());
 
     if (this.getAppointmentStartDate() != null) {
-      dto.setApptStart(CommonUtil.getFormatteDate(this.getAppointmentStartDate()));
+      dto.setApptStart(DateUtil.getFormatteDateTime(this.getAppointmentStartDate()));
     }
     if (this.getAppointmentEndDate() != null) {
-      dto.setApptEnd(CommonUtil.getFormatteDate(this.getAppointmentEndDate()));
+      dto.setApptEnd(DateUtil.getFormatteDateTime(this.getAppointmentEndDate()));
     }
 
     this.getHpatBookingDetails().forEach(detail -> setGatePassAndContainDetail(detail, dto));

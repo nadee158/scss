@@ -7,7 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 
 import com.privasia.scss.common.enums.HpatReferStatus;
-import com.privasia.scss.common.util.CommonUtil;
+import com.privasia.scss.common.util.DateUtil;
 import com.privasia.scss.core.model.BaseCommonGateInOutAttribute;
 import com.privasia.scss.core.model.ReferReject;
 
@@ -222,7 +222,7 @@ public class ReferRejectObjetDto implements Serializable {
     if (StringUtils.isNotEmpty(statusCode)) {
       referReject.setStatusCode(HpatReferStatus.fromCode(statusCode));
     }
-    referReject.setReferDateTime(CommonUtil.getParsedDate(referDateTime));
+    referReject.setReferDateTime(DateUtil.getParsedDateTime(referDateTime));
     referReject.setPmWeight(pmWeight);
     referReject.setTrailerWeight(trailerWeight);
     referReject.setTrailerPlateNo(trailerPlateNo);

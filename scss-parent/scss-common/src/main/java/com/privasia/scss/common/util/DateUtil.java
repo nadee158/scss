@@ -1,10 +1,13 @@
 package com.privasia.scss.common.util;
 
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -125,17 +128,6 @@ public class DateUtil {
     return null;
   }
 
-  // public static String getJsonDateFromUtilDate(Date localDate) {
-  // try {
-  // if (localDate != null) {
-  // SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
-  // return dateFormat.format(localDate);
-  // }
-  // } catch (Exception e) {
-  // e.printStackTrace();
-  // }
-  // return null;
-  // }
 
   public static LocalDateTime getLocalDategFromString(String gateINDateTime) {
     try {
@@ -145,6 +137,85 @@ public class DateUtil {
       }
     } catch (Exception e) {
       e.printStackTrace();
+    }
+    return null;
+  }
+
+  public static String getFormatteDate(LocalDateTime localDateTime) {
+    if (localDateTime != null) {
+      DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern(DateUtil.GLOBAL_DATE_PATTERN);
+      return localDateTime.format(dateFormat);
+    }
+    return null;
+  }
+
+  public static LocalDateTime getParsedDate(String dateString) {
+    if (StringUtils.isNotEmpty(dateString)) {
+      DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern(DateUtil.GLOBAL_DATE_PATTERN);
+      return LocalDateTime.parse(dateString, dateFormat);
+    }
+    return null;
+  }
+
+  public static String getFormatteDateTime(LocalDateTime localDateTime) {
+    if (localDateTime != null) {
+      DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern(DateUtil.GLOBAL_DATE_TIME_PATTERN);
+      return localDateTime.format(dateFormat);
+    }
+    return null;
+  }
+
+  public static LocalDateTime getParsedDateTime(String dateString) {
+    if (StringUtils.isNotEmpty(dateString)) {
+      DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern(DateUtil.GLOBAL_DATE_TIME_PATTERN);
+      return LocalDateTime.parse(dateString, dateFormat);
+    }
+    return null;
+  }
+
+  public static Date getSqlDateFromUtilDate(java.util.Date utilDate) {
+    if (!(utilDate == null)) {
+      return new Date(utilDate.getTime());
+    }
+    return null;
+  }
+
+  public static Timestamp getSqlTimeStampFromUtilDate(java.util.Date utilDate) {
+    if (!(utilDate == null)) {
+      return new Timestamp(utilDate.getTime());
+    }
+    return null;
+  }
+
+  private static LocalDateTime tempDateTime;
+
+  public static String getFormattedDiffrenceBetweenDays(LocalDateTime startDate, LocalDateTime endDate,
+      List<ChronoUnit> units, boolean doAppendChronoUnit) {
+    tempDateTime = null;
+    if (startDate != null && endDate != null) {
+      StringBuilder time = new StringBuilder("");
+      tempDateTime = LocalDateTime.from(startDate);
+      if (units == null || units.isEmpty()) {
+        ChronoUnit[] construtedUnits = {ChronoUnit.YEARS, ChronoUnit.MONTHS, ChronoUnit.DAYS, ChronoUnit.HOURS,
+            ChronoUnit.MINUTES, ChronoUnit.SECONDS, ChronoUnit.MILLIS};
+        units = Arrays.asList(construtedUnits);
+      }
+      units.forEach(chronoUnit -> {
+        long amount = tempDateTime.until(endDate, chronoUnit);
+        tempDateTime = tempDateTime.plus(amount, chronoUnit);
+        if (doAppendChronoUnit) {
+          time.append(String.format("%02d %s", amount, chronoUnit.toString()));
+          time.append(" : ");
+        } else {
+          time.append(String.format("%02d", amount));
+          time.append(":");
+        }
+      });
+      String constructedTime = StringUtils.trim(time.toString());
+      if (constructedTime.endsWith(":")) {
+        constructedTime = constructedTime.substring(0, constructedTime.length() - 1);
+      }
+      return constructedTime;
     }
     return null;
   }

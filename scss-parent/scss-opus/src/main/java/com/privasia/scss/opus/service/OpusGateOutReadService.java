@@ -21,7 +21,6 @@ import org.springframework.web.client.RestTemplate;
 import com.google.gson.Gson;
 import com.privasia.scss.common.dto.GateOutReponse;
 import com.privasia.scss.common.dto.GateOutRequest;
-import com.privasia.scss.common.util.CommonUtil;
 import com.privasia.scss.common.util.DateUtil;
 import com.privasia.scss.opus.dto.OpusGateOutReadRequest;
 import com.privasia.scss.opus.dto.OpusGateOutReadResponse;
@@ -129,7 +128,7 @@ public class OpusGateOutReadService {
 
     gateOutReponse.setUserID(opusGateOutReadResponse.getUserID());
     LocalDateTime localDateTime = DateUtil.getLocalDategFromString(opusGateOutReadResponse.getGateOUTDateTime());
-    gateOutReponse.setGateOUTDateTime(CommonUtil.getFormatteDate(localDateTime));
+    gateOutReponse.setGateOUTDateTime(DateUtil.getFormatteDateTime(localDateTime));
     gateOutReponse.setHaulageCode(opusGateOutReadResponse.getHaulageCode());
     gateOutReponse.setLaneNo(opusGateOutReadResponse.getLaneNo());
     gateOutReponse.setTruckHeadNo(opusGateOutReadResponse.getTruckHeadNo());

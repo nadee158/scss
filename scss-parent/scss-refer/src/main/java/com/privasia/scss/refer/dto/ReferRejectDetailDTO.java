@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.privasia.scss.common.util.CommonUtil;
+import com.privasia.scss.common.util.DateUtil;
 import com.privasia.scss.core.model.ReferRejectDetail;
 import com.privasia.scss.core.model.ReferRejectReason;
 
@@ -104,7 +104,7 @@ public class ReferRejectDetailDTO implements Serializable {
 
     this.lineCode = detail.getLineCode();
 
-    this.gateInTime = CommonUtil.getFormatteDate(detail.getGateInTime());
+    this.gateInTime = DateUtil.getFormatteDateTime(detail.getGateInTime());
 
     if (!(detail.getPosition() == null)) {
       this.position = detail.getPosition().getValue();

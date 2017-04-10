@@ -19,7 +19,6 @@ import org.springframework.web.client.RestTemplate;
 
 import com.privasia.scss.common.dto.GateInReponse;
 import com.privasia.scss.common.dto.GateInWriteRequest;
-import com.privasia.scss.common.util.CommonUtil;
 import com.privasia.scss.common.util.DateUtil;
 import com.privasia.scss.opus.dto.GIWriteRequestExportContainer;
 import com.privasia.scss.opus.dto.GIWriteRequestImportContainer;
@@ -66,7 +65,7 @@ public class OpusGateInWriteService {
   public GateInReponse constructGateInReponse(OpusGateInWriteResponse opusGateInWriteResponse,
       GateInReponse gateInReponse) {
     LocalDateTime localDateTime = DateUtil.getLocalDategFromString(opusGateInWriteResponse.getGateINDateTime());
-    gateInReponse.setGateINDateTime(CommonUtil.getFormatteDate(localDateTime));
+    gateInReponse.setGateINDateTime(DateUtil.getFormatteDateTime(localDateTime));
     gateInReponse.setHaulageCode(opusGateInWriteResponse.getHaulageCode());
     gateInReponse.setLaneNo(opusGateInWriteResponse.getLaneNo());
     gateInReponse.setTruckHeadNo(opusGateInWriteResponse.getTruckHeadNo());

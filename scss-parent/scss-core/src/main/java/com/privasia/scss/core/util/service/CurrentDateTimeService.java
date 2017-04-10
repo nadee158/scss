@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 import org.springframework.stereotype.Component;
 
-import com.privasia.scss.common.util.CommonUtil;
+import com.privasia.scss.common.util.DateUtil;
 
 
 
@@ -23,7 +23,7 @@ public class CurrentDateTimeService {
   }
 
   public String getFormattedCurrentDateAndTime() {
-    return CommonUtil.getFormatteDate(LocalDateTime.now());
+    return DateUtil.getFormatteDateTime(LocalDateTime.now());
   }
 
 }

@@ -10,7 +10,7 @@ import com.privasia.scss.common.enums.ReferStatus;
 import com.privasia.scss.common.enums.SealOriginType;
 import com.privasia.scss.common.enums.SealType;
 import com.privasia.scss.common.enums.SolasInstructionType;
-import com.privasia.scss.common.util.CommonUtil;
+import com.privasia.scss.common.util.DateUtil;
 import com.privasia.scss.core.model.CommonSealAttribute;
 import com.privasia.scss.core.model.CommonSolasAttribute;
 import com.privasia.scss.core.model.ReferRejectDetail;
@@ -364,7 +364,7 @@ public class ReferRejectDetailObjetDto implements Serializable {
     referRejectDetail.setExpNetWeight(expNetWeight);
     referRejectDetail.setDoubleBooking(doubleBooking);
     referRejectDetail.setLineCode(lineCode);
-    referRejectDetail.setGateInTime(CommonUtil.getParsedDate(gateInTime));
+    referRejectDetail.setGateInTime(DateUtil.getParsedDateTime(gateInTime));
     if (StringUtils.isNotEmpty(position)) {
       referRejectDetail.setPosition(ContainerPosition.fromValue(position));
     }
