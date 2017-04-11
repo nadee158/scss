@@ -66,8 +66,8 @@ public class SolasService {
 
 		if (optFirstContainer.isPresent()) {
 			ExportContainer firstContainer = optFirstContainer.get();
-			int pmWeight = Integer.parseInt(firstContainer.getPmWeight());
-			int axelWeight =  Integer.parseInt(firstContainer.getTrailerWeight());
+			int pmWeight = Integer.parseInt(firstContainer.getPmWeight()); // if null make it zero
+			int axelWeight =  Integer.parseInt(firstContainer.getTrailerWeight()); // if null make it zero
 			
 			Optional<List<SolasWeightConfig>> optSolasMasterData = 
 					solasWeightConfigRepository.findByWeightTypeIn(Arrays.asList(SolasWeightType.FUEL, SolasWeightType.TYRE, SolasWeightType.VARIANCE));

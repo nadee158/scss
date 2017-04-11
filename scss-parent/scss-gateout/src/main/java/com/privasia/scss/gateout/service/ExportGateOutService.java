@@ -166,21 +166,6 @@ public class ExportGateOutService {
     return null;
   }
 
-  public void checkSCN(ExportContainer exportContainer) throws Exception {
-    Optional<ShipSCN> shipSCNOpt =
-        shipSCNRepository.findByContainerNo(exportContainer.getContainer().getContainerNumber());
-    if (shipSCNOpt.isPresent()) {
-      ShipSCN shipSCN = shipSCNOpt.orElse(null);
-      if (!(shipSCN == null)) {
-        ShipSCNDTO shipSCNDTO = new ShipSCNDTO();
-        modelMapper.map(shipSCN, shipSCNDTO);
-        exportContainer.setScn(shipSCNDTO);
-        exportContainer.setBypassEEntry(shipSCN.getScnByPass());
-        exportContainer.setRegisteredInEarlyEntry(true);
-      }
-    }
-  }
-
   @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
   public boolean saveGateOutInfo(GateOutWriteRequest gateOutWriteRequest, Client gateOutClient, SystemUser gateOutClerk,
       Client booth) {

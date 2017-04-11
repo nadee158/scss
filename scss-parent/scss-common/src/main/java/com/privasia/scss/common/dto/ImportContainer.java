@@ -18,8 +18,6 @@ public class ImportContainer implements Serializable {
 
   private PrintEirDTO printEir;
 
-  private CardUsageDTO cardUsage;
-
   private Long gatePassID;
 
   private Long gatePassNo;
@@ -713,14 +711,6 @@ public class ImportContainer implements Serializable {
     this.damageCodeInfo = damageCodeInfo;
   }
 
-  public CardUsageDTO getCardUsage() {
-    return cardUsage;
-  }
-
-  public void setCardUsage(CardUsageDTO cardUsage) {
-    this.cardUsage = cardUsage;
-  }
-
   public PrintEirDTO getPrintEir() {
     return printEir;
   }
@@ -866,7 +856,6 @@ public class ImportContainer implements Serializable {
 
   public ImportContainer initializeWithDefaultValues(String containerNo) {
     this.setPrintEir(new PrintEirDTO().initializeWithIdOnly());
-    this.setCardUsage(new CardUsageDTO().initializeWithDefaultValues());
     this.gatePassID = 24441450101l;
     this.gatePassNo = 24441450101l;
     this.gateOrderNo = 2444145l;

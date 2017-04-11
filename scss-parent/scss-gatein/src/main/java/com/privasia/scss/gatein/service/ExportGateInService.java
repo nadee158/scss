@@ -19,7 +19,6 @@ import com.privasia.scss.common.dto.CommonGateInOutDTO;
 import com.privasia.scss.common.dto.ExportContainer;
 import com.privasia.scss.common.dto.GateInReponse;
 import com.privasia.scss.common.dto.GateInWriteRequest;
-import com.privasia.scss.common.dto.ShipSCNDTO;
 import com.privasia.scss.common.enums.ShipStatus;
 import com.privasia.scss.common.enums.TransactionStatus;
 import com.privasia.scss.core.exception.ResultsNotFoundException;
@@ -161,9 +160,9 @@ public class ExportGateInService {
 
   @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
   public void checkDg(ExportContainer exportContainer) {
-    if (!(exportContainer == null || exportContainer.getContainer() == null || exportContainer.getScn() == null)) {
+    if (!(exportContainer == null || exportContainer.getContainer() == null || exportContainer.getVesselSCN() == null)) {
       if (!(StringUtils.isEmpty(exportContainer.getContainer().getContainerNumber())
-          || StringUtils.isEmpty(exportContainer.getScn().getScnNo()))) {
+          || StringUtils.isEmpty(exportContainer.getVesselSCN()))) {
         Long count = dgDetailRepository.countByScnAndContainerNo(exportContainer.getVesselSCN(),
             exportContainer.getContainer().getContainerNumber());
         if (!(count == null || count <= 0)) {
@@ -192,26 +191,22 @@ public class ExportGateInService {
   }
 
 
-
   @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
   public void setSCN(ExportContainer exportContainer) {
 
     String exportContainerNumber = null;
-    String scn = null;
+    String vesselSCN = null; //vessel scn and ship scn are same
 
     if (!(exportContainer == null)) {
 
       exportContainerNumber = exportContainer.getContainer().getContainerNumber();
-      scn = exportContainer.getVesselSCN();
-      System.out.println("scn " + scn);
+      vesselSCN = exportContainer.getVesselSCN(); 
+      System.out.println("scn " + vesselSCN);
 
-      Optional<ShipSCN> optionalshipSCN = shipSCNRepository.fetchContainerSCN(scn, exportContainerNumber);
+      Optional<ShipSCN> optionalshipSCN = shipSCNRepository.fetchContainerSCN(vesselSCN, exportContainerNumber);
 
       if (optionalshipSCN.isPresent()) {
         ShipSCN shipSCN = optionalshipSCN.get();
-        ShipSCNDTO shipSCNDTO = new ShipSCNDTO();
-        modelMapper.map(shipSCN, shipSCNDTO);
-        exportContainer.setScn(shipSCNDTO);
         exportContainer.setBypassEEntry(shipSCN.getScnByPass());
         exportContainer.setRegisteredInEarlyEntry(true);
       } else {
@@ -279,9 +274,10 @@ public class ExportGateInService {
         }
 
         ShipSCN scn = null;
-        if (!(exportContainer.getScn() == null)) {
-          scn = shipSCNRepository.findOne(exportContainer.getScn().getShipSCNID())
-              .orElseThrow(() -> new ResultsNotFoundException("Invalid Ship SCN : " + exportContainer.getScn()));
+        if (!(exportContainer.getVesselSCN() == null)) {  // scn = VesselSCN
+        	scn = shipSCNRepository.fetchContainerSCN(exportContainer.getVesselSCN(), exportContainer.getContainer().getContainerNumber()).
+        				orElseThrow(() -> new ResultsNotFoundException("Invalid Ship SCN : " + exportContainer.getVesselSCN()));
+          
         }
         PrintEir printEir = null;
         // if (!(exportContainer.getPrintEir() == null ||

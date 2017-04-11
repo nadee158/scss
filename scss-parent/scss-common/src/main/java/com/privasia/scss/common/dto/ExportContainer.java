@@ -35,7 +35,7 @@ public class ExportContainer {
 
 	private String exportOrderStatus;
 
-	private ShipSCNDTO scn;
+	//private ShipSCNDTO shipSCN; //perviously it was scn
 
 	private String gateInOut;
 
@@ -160,8 +160,6 @@ public class ExportContainer {
 	private Integer grossWeight;
 
 	private Integer netWeight;
-
-	private CardUsageDTO cardUsage;
 
 	private Boolean backToback;
 
@@ -353,13 +351,13 @@ public class ExportContainer {
 		this.bookingNo = bookingNo;
 	}
 
-	public ShipSCNDTO getScn() {
-		return scn;
+	/*public ShipSCNDTO getShipSCN() {
+		return shipSCN;
 	}
 
-	public void setScn(ShipSCNDTO scn) {
-		this.scn = scn;
-	}
+	public void setShipSCN(ShipSCNDTO shipSCN) {
+		this.shipSCN = shipSCN;
+	}*/
 
 	public String getGateInOut() {
 		return gateInOut;
@@ -775,14 +773,6 @@ public class ExportContainer {
 
 	public void setNetWeight(Integer netWeight) {
 		this.netWeight = netWeight;
-	}
-
-	public CardUsageDTO getCardUsage() {
-		return cardUsage;
-	}
-
-	public void setCardUsage(CardUsageDTO cardUsage) {
-		this.cardUsage = cardUsage;
 	}
 
 	public Boolean getBackToback() {
@@ -1301,7 +1291,7 @@ public class ExportContainer {
 	public String toString() {
 		return "ExportContainer [exportID=" + exportID + ", container=" + container + ", commonGateInOut="
 				+ commonGateInOut + ", baseCommonGateInOutAttribute=" + baseCommonGateInOutAttribute
-				+ ", manualPlanIndicator=" + manualPlanIndicator + ", bookingNo=" + bookingNo + ", scn=" + scn
+				+ ", manualPlanIndicator=" + manualPlanIndicator + ", bookingNo=" + bookingNo 
 				+ ", gateInOut=" + gateInOut + ", expOut=" + expOut + ", expCar=" + expCar + ", expSpod=" + expSpod
 				+ ", sealAttribute=" + sealAttribute + ", expWeightBridge=" + expWeightBridge + ", expNetWeight="
 				+ expNetWeight + ", referFlag=" + referFlag + ", referTempType=" + referTempType + ", referTemp="
@@ -1320,7 +1310,7 @@ public class ExportContainer {
 				+ ", printEir=" + printEir + ", userRemarks=" + userRemarks + ", kpaApproval=" + kpaApproval
 				+ ", hdlGoodsCode=" + hdlGoodsCode + ", dgDescription=" + dgDescription + ", hdlGoodsDescription="
 				+ hdlGoodsDescription + ", tareWeight=" + tareWeight + ", grossWeight=" + grossWeight + ", netWeight="
-				+ netWeight + ", cardUsage=" + cardUsage + ", backToback=" + backToback + ", weightDiffPercentage="
+				+ netWeight + ", backToback=" + backToback + ", weightDiffPercentage="
 				+ weightDiffPercentage + ", weightDifference=" + weightDifference + ", damageCode_01=" + damageCode_01
 				+ ", damageCode_02=" + damageCode_02 + ", damageCode_03=" + damageCode_03 + ", damageCode_04="
 				+ damageCode_04 + ", damageCode_05=" + damageCode_05 + ", damageCode_06=" + damageCode_06
@@ -1341,7 +1331,7 @@ public class ExportContainer {
 		this.setBookingNo("BKG193");
 		this.exportOrderType = "OT";
 		this.exportOrderStatus = "OS";
-		this.setScn(new ShipSCNDTO().initializeWithDefaultValues());
+		//this.setShipSCN(new ShipSCNDTO().initializeWithDefaultValues());
 		this.setGateInOut(GateInOutStatus.IN.getValue());
 		this.expOut = "expOut";
 		this.expCar = "expCar";
@@ -1396,11 +1386,10 @@ public class ExportContainer {
 		this.kpaApproval = "AP";
 		this.hdlGoodsCode = "12";
 		this.dgDescription = "dgDescription";
-		this.hdlGoodsDescription = "hdlGoodsDescription";
+		this.hdlGoodsDescription = "hdlGoodsDescription"; 
 		this.tareWeight = 15;
 		this.grossWeight = 18;
 		this.netWeight = 30;
-		this.setCardUsage(new CardUsageDTO().initializeWithDefaultValues());
 		this.backToback = true;
 		this.weightDiffPercentage = 45d;
 		this.weightDifference = 456d;

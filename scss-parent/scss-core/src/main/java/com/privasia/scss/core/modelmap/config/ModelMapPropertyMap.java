@@ -97,7 +97,6 @@ public final class ModelMapPropertyMap {
         skip().getBaseCommonGateInOutAttribute().setGateOutBoothClerk(null);
         skip().getBaseCommonGateInOutAttribute().setGateOutClerk(null);
         skip().getBaseCommonGateInOutAttribute().setGateOutClient(null);
-        skip().setCardUsage(null);
         skip().setPrintEir(null);
       }
     };
@@ -131,9 +130,7 @@ public final class ModelMapPropertyMap {
         skip().getBaseCommonGateInOutAttribute().setGateOutBoothClerk(null);
         skip().getBaseCommonGateInOutAttribute().setGateOutClerk(null);
         skip().getBaseCommonGateInOutAttribute().setGateOutClient(null);
-        skip().setCardUsage(null);
         skip().setPrintEir(null);
-        skip().setScn(null);
 
       }
     };
