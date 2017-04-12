@@ -3,7 +3,6 @@
  */
 package com.privasia.scss.hpat.service;
 
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -12,6 +11,7 @@ import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +30,8 @@ import com.privasia.scss.core.model.HPABBooking;
 import com.privasia.scss.core.predicate.HPABBookingPredicates;
 import com.privasia.scss.core.repository.CardRepository;
 import com.privasia.scss.core.repository.HPATBookingRepository;
+import com.privasia.scss.core.repository.WDCGlobalSettingRepository;
+import com.privasia.scss.etpws.service.client.ETPWebserviceClient;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Predicate;
@@ -41,237 +43,295 @@ import com.querydsl.core.types.Predicate;
 @Service("hpabService")
 public class HPABService {
 
-  @Autowired
-  private HPATBookingRepository hpatBookingRepository;
+	private HPATBookingRepository hpatBookingRepository;
 
-  @Autowired
-  private CardRepository cardRepository;
+	private CardRepository cardRepository;
 
-  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-  public List<HpatDto> createPredicatesAndFindHpab4ImpAndExp(Long cardId, LocalDateTime date,
-      List<BookingType> bookingTypes) {
-    List<HpatDto> dtoList = new ArrayList<HpatDto>();
-    Optional<Card> card = cardRepository.findOne(cardId); // need to handle optional
-    if (card.isPresent()) {
-      Predicate byCardNo = HPABBookingPredicates.byCardNo(String.valueOf(card.get().getCardNo()));
-      Predicate byBookingStatus = HPABBookingPredicates.byBookingStatus(HpatReferStatus.ACTIVE.getValue());
-      Predicate byAppointmentEndDate = HPABBookingPredicates.byAppointmentEndDate(date);
-      Predicate byBookingTypes = HPABBookingPredicates.byBookingDetailTypes(bookingTypes);
-      Predicate condition = ExpressionUtils.allOf(byCardNo, byBookingStatus, byAppointmentEndDate, byBookingTypes);
-      OrderSpecifier<LocalDateTime> sortSpec = HPABBookingPredicates.orderByAppointmentStartDateAsc();
+	private ETPWebserviceClient etpWebserviceClient;
 
-      Iterable<HPABBooking> bookingList = hpatBookingRepository.findAll(condition, sortSpec);
+	private WDCGlobalSettingRepository wdcGlobalSettingRepository;
 
-      bookingList.forEach((HPABBooking b) -> {
-        dtoList.add(b.constructHpatDto());
-      });
-      return dtoList;
-    } else {
-      throw new ResultsNotFoundException("No HPAB Bookings Founds !");
-    }
+	@Autowired
+	public void setHpatBookingRepository(HPATBookingRepository hpatBookingRepository) {
+		this.hpatBookingRepository = hpatBookingRepository;
+	}
 
-  }
+	@Autowired
+	public void setCardRepository(CardRepository cardRepository) {
+		this.cardRepository = cardRepository;
+	}
 
+	@Autowired
+	public void setEtpWebserviceClient(ETPWebserviceClient etpWebserviceClient) {
+		this.etpWebserviceClient = etpWebserviceClient;
+	}
 
-  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-  public List<HpatDto> findEtpHpab4ImpAndExp(Long cardId, LocalDateTime systemDateTime, List<String> bookingTypes)
-      throws ResultsNotFoundException {
+	@Autowired
+	public void setWdcGlobalSettingRepository(WDCGlobalSettingRepository wdcGlobalSettingRepository) {
+		this.wdcGlobalSettingRepository = wdcGlobalSettingRepository;
+	}
 
-    List<HpatDto> hpats = null;
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+	public List<HpatDto> createPredicatesAndFindHpab4ImpAndExp(Long cardId, LocalDateTime date,
+			List<BookingType> bookingTypes) {
+		List<HpatDto> dtoList = new ArrayList<HpatDto>();
+		Optional<Card> card = cardRepository.findOne(cardId); // need to handle
+																// optional
+		if (card.isPresent()) {
+			Predicate byCardNo = HPABBookingPredicates.byCardNo(String.valueOf(card.get().getCardNo()));
+			Predicate byBookingStatus = HPABBookingPredicates.byBookingStatus(HpatReferStatus.ACTIVE.getValue());
+			Predicate byAppointmentEndDate = HPABBookingPredicates.byAppointmentEndDate(date);
+			Predicate byBookingTypes = HPABBookingPredicates.byBookingDetailTypes(bookingTypes);
+			Predicate condition = ExpressionUtils.allOf(byCardNo, byBookingStatus, byAppointmentEndDate,
+					byBookingTypes);
+			OrderSpecifier<LocalDateTime> sortSpec = HPABBookingPredicates.orderByAppointmentStartDateAsc();
 
-    List<BookingType> convertedBookingTypes = new ArrayList<>();
-    System.out.println("bookingTypes :" + bookingTypes);
-    bookingTypes.forEach(bookingType -> {
-      BookingType bk = BookingType.fromValue(bookingType);
-      if (bk != null) {
-        convertedBookingTypes.add(bk);
-      } else {
-        throw new BusinessException("Invalid Booking Type!");
-      }
-    });
-    System.out.println("convertedBookingTypes :" + convertedBookingTypes);
-    hpats = createPredicatesAndFindHpab4ImpAndExp(cardId, systemDateTime, convertedBookingTypes);
-    if (hpats != null && !hpats.isEmpty()) {
+			Iterable<HPABBooking> bookingList = hpatBookingRepository.findAll(condition, sortSpec);
 
-      for (HpatDto hpat : hpats) {
-        if (StringUtils.isBlank(hpat.getApptStart()))
-          continue;
-        if (systemDateTime.isAfter(hpat.getApptEndDate()))
-          hpat.setStatus(HpatDto.LATE);
-        if (systemDateTime.isAfter(hpat.getApptStartDate()) && systemDateTime.isBefore(hpat.getApptEndDate())) {
-          hpat.setStatus(HpatDto.ACTIVE);
-          hpat.setOnTimeFlag("Y");
-        } else if (systemDateTime.isBefore(hpat.getApptEndDate())) {
-          hpat.setStatus(HpatDto.EARLY);
-          hpat.setOnTimeFlag("N");
-        }
+			bookingList.forEach((HPABBooking b) -> {
+				dtoList.add(b.constructHpatDto());
+			});
+			return dtoList;
+		} else {
+			throw new ResultsNotFoundException("No HPAB Bookings Founds !");
+		}
 
-      }
-      Comparator<HpatDto> byApptStartDate = (o1, o2) -> o1.getApptStartDate().compareTo(o2.getApptStartDate());
-      List<HpatDto> sortedHpats = new ArrayList<HpatDto>();
-      hpats.stream().sorted(byApptStartDate).forEach(e -> sortedHpats.add(e));
+	}
 
-      return sortedHpats;
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+	public List<HpatDto> findEtpHpab4ImpAndExp(Long cardId, LocalDateTime systemDateTime, List<String> bookingTypes)
+			throws ResultsNotFoundException {
 
-    } else {
-      // need to discuss with etp team to manage web services between etp and scss
-      throw new ResultsNotFoundException("No HPAT Bookings were found!");
-    }
-  }
+		List<HpatDto> hpats = null;
 
+		List<BookingType> convertedBookingTypes = new ArrayList<>();
+		System.out.println("bookingTypes :" + bookingTypes);
+		bookingTypes.forEach(bookingType -> {
+			BookingType bk = BookingType.fromValue(bookingType);
+			if (bk != null) {
+				convertedBookingTypes.add(bk);
+			} else {
+				throw new BusinessException("Invalid Booking Type!");
+			}
+		});
+		System.out.println("convertedBookingTypes :" + convertedBookingTypes);
+		hpats = createPredicatesAndFindHpab4ImpAndExp(cardId, systemDateTime, convertedBookingTypes);
+		if (hpats != null && !hpats.isEmpty()) {
 
-  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-  public TransactionDTO getEtpHpab4ImpAndExp(String bookingID) {
+			for (HpatDto hpat : hpats) {
+				if (StringUtils.isBlank(hpat.getApptStart()))
+					continue;
+				if (systemDateTime.isAfter(hpat.getApptEndDate()))
+					hpat.setStatus(HpatDto.LATE);
+				if (systemDateTime.isAfter(hpat.getApptStartDate()) && systemDateTime.isBefore(hpat.getApptEndDate())) {
+					hpat.setStatus(HpatDto.ACTIVE);
+					hpat.setOnTimeFlag("Y");
+				} else if (systemDateTime.isBefore(hpat.getApptEndDate())) {
+					hpat.setStatus(HpatDto.EARLY);
+					hpat.setOnTimeFlag("N");
+				}
 
-    Optional<HPABBooking> hpatBooking =
-        hpatBookingRepository.findByBookingIDAndStatus(bookingID, HpatReferStatus.ACTIVE);
+			}
+			Comparator<HpatDto> byApptStartDate = (o1, o2) -> o1.getApptStartDate().compareTo(o2.getApptStartDate());
+			List<HpatDto> sortedHpats = new ArrayList<HpatDto>();
+			hpats.stream().sorted(byApptStartDate).forEach(e -> sortedHpats.add(e));
 
-    if (hpatBooking.isPresent()) {
+			return sortedHpats;
 
-      HPABBooking booking = hpatBooking.get();
+		} else {
+			// need to discuss with etp team to manage web services between etp
+			// and scss
+			throw new ResultsNotFoundException("No HPAT Bookings were found!");
+		}
+	}
 
-      TransactionDTO transactionDTO = booking.constructTransactionDTO();
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+	public TransactionDTO getEtpHpab4ImpAndExp(String bookingID) {
 
-      if (!(booking.getHpatBookingDetails() == null || booking.getHpatBookingDetails().isEmpty())) {
+		Optional<HPABBooking> hpatBooking = hpatBookingRepository.findByBookingIDAndStatus(bookingID,
+				HpatReferStatus.ACTIVE);
 
-        booking.getHpatBookingDetails().forEach(bookingDetail -> {
+		if (hpatBooking.isPresent()) {
 
-          BookingType bookingType = bookingDetail.getBookingType();
-          bookingDetail.getImpGatePassNumber();
-          switch (bookingType) {
-            case IMPORT:
+			HPABBooking booking = hpatBooking.get();
 
-              if (transactionDTO.getImportContainer01() == null) {
-                if (!(bookingDetail == null)) {
-                  transactionDTO.setImportContainer01(bookingDetail.constructImportContainer(null));
-                }
-              } else {
-                if (!(bookingDetail == null)) {
-                  transactionDTO.setImportContainer02(bookingDetail.constructImportContainer(null));
-                }
-              }
+			TransactionDTO transactionDTO = booking.constructTransactionDTO();
 
-              break;
-            case EXPORT:
+			if (!(booking.getHpatBookingDetails() == null || booking.getHpatBookingDetails().isEmpty())) {
 
-              if (transactionDTO.getExportContainer01() == null) {
-                if (!(bookingDetail == null)) {
-                  transactionDTO.setExportContainer01(bookingDetail.constructExportContainer(null));
-                }
-              } else {
-                transactionDTO.setExportContainer02(bookingDetail.constructExportContainer(null));
-              }
+				booking.getHpatBookingDetails().forEach(bookingDetail -> {
 
-              break;
-            case IMPORT_ITT:
+					BookingType bookingType = bookingDetail.getBookingType();
+					bookingDetail.getImpGatePassNumber();
+					switch (bookingType) {
+					case IMPORT:
 
-              if (transactionDTO.getImportContainer01() == null) {
-                if (!(bookingDetail == null)) {
-                  transactionDTO.setImportContainer01(bookingDetail.constructImportContainer(null));
-                }
-              } else {
-                if (!(bookingDetail == null)) {
-                  transactionDTO.setImportContainer02(bookingDetail.constructImportContainer(null));
-                }
-              }
+						if (transactionDTO.getImportContainer01() == null) {
+							if (!(bookingDetail == null)) {
+								transactionDTO.setImportContainer01(bookingDetail.constructImportContainer(null));
+							}
+						} else {
+							if (!(bookingDetail == null)) {
+								transactionDTO.setImportContainer02(bookingDetail.constructImportContainer(null));
+							}
+						}
 
-              break;
-            case EMPTY_PICKUP:
+						break;
+					case EXPORT:
 
-              break;
-            case EMPTY_RETURN:
+						if (transactionDTO.getExportContainer01() == null) {
+							if (!(bookingDetail == null)) {
+								transactionDTO.setExportContainer01(bookingDetail.constructExportContainer(null));
+							}
+						} else {
+							transactionDTO.setExportContainer02(bookingDetail.constructExportContainer(null));
+						}
 
-              break;
+						break;
+					case IMPORT_ITT:
 
-            default:
-              break;
-          }
+						if (transactionDTO.getImportContainer01() == null) {
+							if (!(bookingDetail == null)) {
+								transactionDTO.setImportContainer01(bookingDetail.constructImportContainer(null));
+							}
+						} else {
+							if (!(bookingDetail == null)) {
+								transactionDTO.setImportContainer02(bookingDetail.constructImportContainer(null));
+							}
+						}
 
-        });
-      }
+						break;
+					case EMPTY_PICKUP:
 
-      return transactionDTO;
+						break;
+					case EMPTY_RETURN:
 
-    } else {
-      // need to discuss with etp team to manage web services between etp and scss
-      throw new ResultsNotFoundException("No HPAT Booking was Found !");
-    }
-  }
+						break;
 
-  // rename method to populateHpabForImpExp
-  // return GateOutReponse
-  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-  public GateInReponse populateHpabForImpExp(GateInReponse gateInReponse, String hpabSeqId) {
+					default:
+						break;
+					}
 
-    Optional<HPABBooking> hpatBookingOpt =
-        hpatBookingRepository.findByBookingIDAndStatus(hpabSeqId, HpatReferStatus.ACTIVE);
+				});
+			}
 
-    HPABBooking booking =
-        hpatBookingOpt.orElseThrow(() -> new ResultsNotFoundException("Invalid HPAB Bookibg ID ! " + hpabSeqId));
+			return transactionDTO;
 
-    List<ImportContainer> updatedImportContainers = new ArrayList<ImportContainer>();
-    List<ExportContainer> updatedExportContainers = new ArrayList<ExportContainer>();
+		} else {
+			// need to discuss with etp team to manage web services between etp
+			// and scss
+			throw new ResultsNotFoundException("No HPAT Booking was Found !");
+		}
+	}
 
-    if (!(booking.getHpatBookingDetails() == null || booking.getHpatBookingDetails().isEmpty())) {
+	// rename method to populateHpabForImpExp
+	// return GateOutReponse
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+	public GateInReponse populateHpabForImpExp(GateInReponse gateInReponse, String hpabSeqId) {
 
-      // construct DTO from domain
-      booking.getHpatBookingDetails().forEach(bookingDetail -> {
+		Optional<HPABBooking> hpatBookingOpt = hpatBookingRepository.findByBookingIDAndStatus(hpabSeqId,
+				HpatReferStatus.ACTIVE);
 
-        BookingType bookingType = bookingDetail.getBookingType();
-        switch (bookingType) {
-          case IMPORT:
-          case IMPORT_ITT:
-            /// create a import conatiner
-            // fetch details from hpat
-            // add to a list
-            ImportContainer importContainer = null;
-            if (!(gateInReponse.getImportContainers() == null || gateInReponse.getImportContainers().isEmpty())) {
-              importContainer = gateInReponse.getImportContainers().stream().filter(e -> (e.getContainer() != null)
-                  && (StringUtils.equals(e.getContainer().getContainerNumber(), bookingDetail.getContainerNumber())))
-                  .findFirst().get();
-            }
-            updatedImportContainers.add(bookingDetail.constructImportContainer(importContainer));
-            break;
-          case EXPORT:
-            /// create a export conatiner
-            // fetch details from hpat
-            // add to a list
+		HPABBooking booking = hpatBookingOpt
+				.orElseThrow(() -> new ResultsNotFoundException("Invalid HPAB Bookibg ID ! " + hpabSeqId));
 
-            ExportContainer exportContainer = null;
-            if (!(gateInReponse.getExportContainers() == null || gateInReponse.getExportContainers().isEmpty())) {
-              exportContainer = gateInReponse.getExportContainers().stream().filter(e -> (e.getContainer() != null)
-                  && (StringUtils.equals(e.getContainer().getContainerNumber(), bookingDetail.getContainerNumber())))
-                  .findFirst().get();
-            }
+		List<ImportContainer> updatedImportContainers = new ArrayList<ImportContainer>();
+		List<ExportContainer> updatedExportContainers = new ArrayList<ExportContainer>();
 
-            ExportContainer exportContainerCons = bookingDetail.constructExportContainer(exportContainer);
-            gateInReponse.setSolasInstruction(exportContainerCons.getSolas().getSolasInstruction());
-            updatedExportContainers.add(exportContainerCons);
-            break;
-          case EMPTY_PICKUP:
+		if (!(booking.getHpatBookingDetails() == null || booking.getHpatBookingDetails().isEmpty())) {
 
-            break;
-          case EMPTY_RETURN:
+			// construct DTO from domain
+			booking.getHpatBookingDetails().forEach(bookingDetail -> {
 
-            break;
+				BookingType bookingType = bookingDetail.getBookingType();
+				switch (bookingType) {
+				case IMPORT:
+				case IMPORT_ITT:
+					/// create a import conatiner
+					// fetch details from hpat
+					// add to a list
+					ImportContainer importContainer = null;
+					if (!(gateInReponse.getImportContainers() == null
+							|| gateInReponse.getImportContainers().isEmpty())) {
+						importContainer = gateInReponse.getImportContainers().stream()
+								.filter(e -> (e.getContainer() != null)
+										&& (StringUtils.equals(e.getContainer().getContainerNumber(),
+												bookingDetail.getContainerNumber())))
+								.findFirst().get();
+					}
+					updatedImportContainers.add(bookingDetail.constructImportContainer(importContainer));
+					break;
+				case EXPORT:
+					/// create a export conatiner
+					// fetch details from hpat
+					// add to a list
 
-          default:
-            break;
-        }
+					ExportContainer exportContainer = null;
+					if (!(gateInReponse.getExportContainers() == null
+							|| gateInReponse.getExportContainers().isEmpty())) {
+						exportContainer = gateInReponse.getExportContainers().stream()
+								.filter(e -> (e.getContainer() != null)
+										&& (StringUtils.equals(e.getContainer().getContainerNumber(),
+												bookingDetail.getContainerNumber())))
+								.findFirst().get();
+					}
 
-      });
-    }
+					ExportContainer exportContainerCons = bookingDetail.constructExportContainer(exportContainer);
+					gateInReponse.setSolasInstruction(exportContainerCons.getSolas().getSolasInstruction());
+					updatedExportContainers.add(exportContainerCons);
+					break;
+				case EMPTY_PICKUP:
 
-    if (!(updatedImportContainers == null || updatedImportContainers.isEmpty())) {
-      gateInReponse.setImportContainers(updatedImportContainers);
-    }
+					break;
+				case EMPTY_RETURN:
 
-    if (!(updatedExportContainers == null || updatedExportContainers.isEmpty())) {
-      gateInReponse.setExportContainers(updatedExportContainers);
-    }
+					break;
 
-    return gateInReponse;
+				default:
+					break;
+				}
 
-  }
+			});
+		}
+
+		if (!(updatedImportContainers == null || updatedImportContainers.isEmpty())) {
+			gateInReponse.setImportContainers(updatedImportContainers);
+		}
+
+		if (!(updatedExportContainers == null || updatedExportContainers.isEmpty())) {
+			gateInReponse.setExportContainers(updatedExportContainers);
+		}
+
+		return gateInReponse;
+
+	}
+
+	@Async
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRES_NEW, readOnly = false)
+	public boolean updateHPABAfterGateIn(String hpabID) {
+
+		Optional<HPABBooking> hpatBookingOpt = hpatBookingRepository.findByBookingIDAndStatus(hpabID,
+				HpatReferStatus.ACTIVE);
+
+		HPABBooking booking = hpatBookingOpt
+				.orElseThrow(() -> new ResultsNotFoundException("Invalid HPAB Bookibg ID Provided ! " + hpabID));
+
+		booking.setStatus(HpatReferStatus.COMPLETE);
+
+		hpatBookingRepository.save(booking);
+
+		Optional<String> optGlobalString = wdcGlobalSettingRepository.fetchGlobalStringByGlobalCode("ETP_HPAT");
+
+		if (optGlobalString.isPresent()) {
+
+			if (StringUtils.isNotBlank(optGlobalString.get())
+					&& StringUtils.equalsIgnoreCase("Y", optGlobalString.get())) {
+				etpWebserviceClient.updateHpatStatus(hpabID);
+			}
+		}
+
+		return true;
+
+	}
 
 }

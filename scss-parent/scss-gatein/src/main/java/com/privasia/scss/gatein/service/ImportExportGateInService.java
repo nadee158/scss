@@ -153,9 +153,9 @@ public class ImportExportGateInService {
 
     if ((gateInRequest.getGatePass1() != null && gateInRequest.getGatePass1() > 0)
         || (gateInRequest.getGatePass2() != null && gateInRequest.getGatePass2() > 0)) {
-      List<Long> gatePassList = Arrays.asList(gateInRequest.getGatePass1(), gateInRequest.getGatePass2());
-      List<ImportContainer> importContainerList = importGateInService.fetchContainerInfo(gatePassList);
-      // GatePassValidationService call validate - within another method
+      //List<Long> gatePassList = Arrays.asList(gateInRequest.getGatePass1(), gateInRequest.getGatePass2());
+      List<ImportContainer> importContainerList = importGateInService.populateGateInImport(gateInRequest);
+      // GatePassValidationService call validate - within another method 
       importGateInService.validateImport(gateInRequest, importContainerList);
       gateInReponse.setImportContainers(importContainerList);
     }
@@ -188,10 +188,10 @@ public class ImportExportGateInService {
       gateInReponse = exportGateInService.populateGateInExports(gateInReponse);
     }
 
-    if ((gateInRequest.getGatePass1() != null && gateInRequest.getGatePass1() > 0)
+    /*if ((gateInRequest.getGatePass1() != null && gateInRequest.getGatePass1() > 0)
         || (gateInRequest.getGatePass2() != null && gateInRequest.getGatePass2() > 0)) {
       importGateInService.populateGateInImport(gateInReponse);
-    }
+    }*/
 
     // assign details from hpab booking
     if (StringUtils.isNotEmpty(gateInRequest.getHpabSeqId())) {

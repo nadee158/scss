@@ -1,6 +1,7 @@
 package com.privasia.scss.opus.dto;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class OpusGateInWriteRequest extends OpusBaseGateWriteRequest implements Serializable {
@@ -51,6 +52,9 @@ public class OpusGateInWriteRequest extends OpusBaseGateWriteRequest implements 
 	}
 
 	public void setExportContainerListCY(List<GIWriteRequestExportContainer> exportContainerListCY) {
+		if(exportContainerListCY == null){
+			exportContainerListCY = new ArrayList<GIWriteRequestExportContainer>();
+		}
 		this.exportContainerListCY = exportContainerListCY;
 	}
 
@@ -59,6 +63,9 @@ public class OpusGateInWriteRequest extends OpusBaseGateWriteRequest implements 
 	}
 
 	public void setImportContainerListCY(List<GIWriteRequestImportContainer> importContainerListCY) {
+		if(importContainerListCY == null){
+			importContainerListCY = new ArrayList<GIWriteRequestImportContainer>();
+		}
 		this.importContainerListCY = importContainerListCY;
 	}
 

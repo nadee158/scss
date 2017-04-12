@@ -30,7 +30,7 @@ public class WDCGlobalSetting extends AuditEntity implements Serializable {
 	private String globalName;
 
 	@Column(name = "GLOBAL_ITEMS")
-	private int globalItems;
+	private Integer globalItems;
 
 	@Column(name = "GLOBAL_AMOUNT")
 	private BigDecimal globalAmount;
@@ -57,11 +57,11 @@ public class WDCGlobalSetting extends AuditEntity implements Serializable {
 		this.globalName = globalName;
 	}
 
-	public int getGlobalItems() {
+	public Integer getGlobalItems() {
 		return globalItems;
 	}
 
-	public void setGlobalItems(int globalItems) {
+	public void setGlobalItems(Integer globalItems) {
 		this.globalItems = globalItems;
 	}
 

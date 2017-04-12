@@ -64,6 +64,7 @@ public class OpusGateInWriteService {
 
   public GateInReponse constructGateInReponse(OpusGateInWriteResponse opusGateInWriteResponse,
       GateInReponse gateInReponse) {
+	  
     LocalDateTime localDateTime = DateUtil.getLocalDategFromString(opusGateInWriteResponse.getGateINDateTime());
     gateInReponse.setGateINDateTime(DateUtil.getFormatteDateTime(localDateTime));
     gateInReponse.setHaulageCode(opusGateInWriteResponse.getHaulageCode());
@@ -81,15 +82,13 @@ public class OpusGateInWriteService {
   public OpusGateInWriteRequest constructOpusGateInWriteRequest(GateInWriteRequest gateInWriteRequest) {
     OpusGateInWriteRequest opusGateInWriteRequest = new OpusGateInWriteRequest();
 
-
-
     List<GIWriteRequestExportContainer> exportContainerListCY =
         opusService.exportContainerListToGIWriteRequestExportContainerList(gateInWriteRequest);
     List<GIWriteRequestImportContainer> importContainerListCY =
         opusService.importContainerListToGIWriteRequestImportContainerList(gateInWriteRequest);
 
     opusGateInWriteRequest.setGateINDateTime(DateUtil.getJsonDateFromDate(gateInWriteRequest.getGateInDateTime()));
-    opusGateInWriteRequest.setHaulageCode("HAN");
+    opusGateInWriteRequest.setHaulageCode(gateInWriteRequest.getHaulageCode());
     opusGateInWriteRequest.setLaneNo(gateInWriteRequest.getLaneNo());
     opusGateInWriteRequest.setTruckHeadNo(gateInWriteRequest.getTruckHeadNo());
     opusGateInWriteRequest.setUserID(gateInWriteRequest.getUserName());

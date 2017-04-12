@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 import com.privasia.scss.core.config.SCSSEntryPoint;
 import com.privasia.scss.cosmos.AS400DBConfig;
@@ -31,6 +32,7 @@ import com.privasia.scss.cosmos.AS400DBConfig;
     "classpath:lpkedi_sql.properties"})
 @Import({AS400DBConfig.class, SCSSEntryPoint.class})
 @EnableJpaRepositories(basePackages = {"com.privasia.scss.core.repository"})
+@EnableAsync
 public class GateInEntryPoint extends SpringBootServletInitializer {
 
   public static void main(String[] args) {

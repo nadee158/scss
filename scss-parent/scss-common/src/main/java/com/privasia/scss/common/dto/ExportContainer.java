@@ -74,6 +74,8 @@ public class ExportContainer {
 	private Integer oogOA;
 
 	private String containerPosition;
+	
+	private String gateOutRemarks;
 
 	@JsonFormat(pattern = DateUtil.GLOBAL_DATE_TIME_PATTERN)
 	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
@@ -161,7 +163,7 @@ public class ExportContainer {
 
 	private Integer netWeight;
 
-	private Boolean backToback;
+	private Boolean backToback = false;
 
 	private Double weightDiffPercentage;
 
@@ -1286,6 +1288,14 @@ public class ExportContainer {
 	public void setEmptyWeight(Integer emptyWeight) {
 		this.emptyWeight = emptyWeight;
 	}
+	
+	public String getGateOutRemarks() {
+		return gateOutRemarks;
+	}
+
+	public void setGateOutRemarks(String gateOutRemarks) {
+		this.gateOutRemarks = gateOutRemarks;
+	}
 
 	@Override
 	public String toString() {
@@ -1310,7 +1320,7 @@ public class ExportContainer {
 				+ ", printEir=" + printEir + ", userRemarks=" + userRemarks + ", kpaApproval=" + kpaApproval
 				+ ", hdlGoodsCode=" + hdlGoodsCode + ", dgDescription=" + dgDescription + ", hdlGoodsDescription="
 				+ hdlGoodsDescription + ", tareWeight=" + tareWeight + ", grossWeight=" + grossWeight + ", netWeight="
-				+ netWeight + ", backToback=" + backToback + ", weightDiffPercentage="
+				+ netWeight + ", backToback=" + backToback + ", gateOutRemarks=" + gateOutRemarks+ ", weightDiffPercentage="
 				+ weightDiffPercentage + ", weightDifference=" + weightDifference + ", damageCode_01=" + damageCode_01
 				+ ", damageCode_02=" + damageCode_02 + ", damageCode_03=" + damageCode_03 + ", damageCode_04="
 				+ damageCode_04 + ", damageCode_05=" + damageCode_05 + ", damageCode_06=" + damageCode_06

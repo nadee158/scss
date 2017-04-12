@@ -65,7 +65,6 @@ public class OpusRequestResponseService {
         () -> new ResultsNotFoundException("Invalid Scan Card ID ! " + opusRequestResponseDTO.getCardID()));
     try {
       opusRequestResponse = modelMapper.map(opusRequestResponseDTO, OpusRequestResponse.class);
-      // opusRequestResponse.setOpusReqResID(System.currentTimeMillis());
       opusRequestResponse.setCard(card);
       opusRequestResponse.setSendTime(LocalDateTime.now());
       System.out.println("BEFORE SAVED opusRequestResponse " + opusRequestResponse);

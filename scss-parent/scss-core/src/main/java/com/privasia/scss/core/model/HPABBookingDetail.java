@@ -293,6 +293,11 @@ public class HPABBookingDetail extends AuditEntity implements Serializable {
     if (exportContainer == null) {
       exportContainer = new ExportContainer();
     }
+    
+    if (exportContainer.getBaseCommonGateInOutAttribute() == null) {
+    	exportContainer.setBaseCommonGateInOutAttribute(new BaseCommonGateInOutDTO());
+      }
+    exportContainer.getBaseCommonGateInOutAttribute().setHpatBooking(this.hpatBooking.getBookingID());
 
     if (exportContainer.getContainer() == null) {
       exportContainer.setContainer(new CommonContainerDTO());
@@ -312,7 +317,7 @@ public class HPABBookingDetail extends AuditEntity implements Serializable {
       exportContainer.getSolas().setSolasRefNumber(solasInfo.getSolasRefNumber());
 
     }
-    exportContainer.getContainer().setContainerNumber(containerNumber);
+    //exportContainer.getContainer().setContainerNumber(containerNumber);
     exportContainer.setSealAttribute(new CommonSealDTO());
     exportContainer.getSealAttribute().setSeal01Number(expSealNo01);
     exportContainer.getSealAttribute().setSeal02Number(expSealNo02);
@@ -335,7 +340,7 @@ public class HPABBookingDetail extends AuditEntity implements Serializable {
     if (importContainer.getContainer() == null) {
       importContainer.setContainer(new CommonContainerDTO());
     }
-    importContainer.getContainer().setContainerNumber(this.containerNumber);
+    //importContainer.getContainer().setContainerNumber(this.containerNumber);
     importContainer.getContainer().setContainerISOCode(this.containerISO);
     importContainer.getContainer().setContainerHeight(Integer.parseInt(this.containerSize));
 

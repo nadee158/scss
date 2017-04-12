@@ -19,15 +19,10 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name="SCSS_CLIENT_GATE_TYPE")
-@AttributeOverrides({
-    @AttributeOverride(name="addBy",
-                       column=@Column(name="GTYPE_CREATEDBY")),
-    @AttributeOverride(name="updateBy",
-                       column=@Column(name="GTYPE_UPDATEDBY")),
-    @AttributeOverride(name="dateTimeAdd",
-    				   column=@Column(name="GTYPE_DATECREATE")),
-    @AttributeOverride(name="dateTimeUpdate",
-                       column=@Column(name="GTYPE_DATEUPDATE"))
+@AttributeOverrides({@AttributeOverride(name="addBy",column=@Column(name="GTYPE_CREATEDBY")),
+    @AttributeOverride(name="updateBy",column=@Column(name="GTYPE_UPDATEDBY")),
+    @AttributeOverride(name="dateTimeAdd",column=@Column(name="GTYPE_DATECREATE")),
+    @AttributeOverride(name="dateTimeUpdate",column=@Column(name="GTYPE_DATEUPDATE"))
 })
 public class ClientGateType extends AuditEntity implements Serializable {
 

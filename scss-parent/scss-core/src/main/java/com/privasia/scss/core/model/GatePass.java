@@ -559,8 +559,7 @@ public class GatePass extends AuditEntity implements Serializable {
 	  return sealChange;
   }
 
-  public void prepareForInsertFromOpus(Card card, SystemUser gateInClerk, Client gateInClient, PrintEir printEir,
-      HPABBooking hpatBooking) {
+  public void prepareForInsertFromOpus(Card card, SystemUser gateInClerk, Client gateInClient, HPABBooking hpatBooking) {
     if (this.baseCommonGateInOutAttribute == null) {
       this.setBaseCommonGateInOutAttribute(new BaseCommonGateInOutAttribute());
     }

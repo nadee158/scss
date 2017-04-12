@@ -6,6 +6,8 @@ import java.util.Optional;
 import java.util.concurrent.Future;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -21,13 +23,13 @@ import com.privasia.scss.common.dto.GateInReponse;
 import com.privasia.scss.common.dto.GateInWriteRequest;
 import com.privasia.scss.common.enums.ShipStatus;
 import com.privasia.scss.common.enums.TransactionStatus;
+import com.privasia.scss.core.exception.BusinessException;
 import com.privasia.scss.core.exception.ResultsNotFoundException;
 import com.privasia.scss.core.model.Card;
 import com.privasia.scss.core.model.Client;
 import com.privasia.scss.core.model.Exports;
 import com.privasia.scss.core.model.ExportsQ;
 import com.privasia.scss.core.model.HPABBooking;
-import com.privasia.scss.core.model.PrintEir;
 import com.privasia.scss.core.model.ShipCode;
 import com.privasia.scss.core.model.ShipSCN;
 import com.privasia.scss.core.model.SystemUser;
@@ -44,271 +46,264 @@ import com.privasia.scss.gatein.exports.business.service.SealValidationService;
 
 @Service("exportGateInService")
 public class ExportGateInService {
+	
+	private static final Log log = LogFactory.getLog(ExportGateInService.class);
 
-  boolean backToback = false;
+	private ModelMapper modelMapper;
 
-  private ModelMapper modelMapper;
+	private ShipCodeRepository shipCodeRepository;
 
-  private ShipCodeRepository shipCodeRepository;
+	private ShipSCNRepository shipSCNRepository;
 
-  private ShipSCNRepository shipSCNRepository;
+	private ExportsRepository exportsRepository;
 
-  private ExportsRepository exportsRepository;
+	private ExportsQRepository exportsQRepository;
 
-  private ExportsQRepository exportsQRepository;
+	private HPATBookingRepository hpatBookingRepository;
 
-  private HPATBookingRepository hpatBookingRepository;
+	private DamageCodeRepository damageCodeRepository;
 
-  private DamageCodeRepository damageCodeRepository;
+	private DgDetailRepository dgDetailRepository;
 
-  private DgDetailRepository dgDetailRepository;
+	private WDCGlobalSettingRepository globalSettingRepository;
 
-  private WDCGlobalSettingRepository globalSettingRepository;
+	private LPKEDIService lpkediService;
 
-  private LPKEDIService lpkediService;
+	private DamageCodeService damageCodeService;
 
-  private DamageCodeService damageCodeService;
+	private SealValidationService sealValidationService;
 
-  private SealValidationService sealValidationService;
+	@Autowired
+	public void setSealValidationService(SealValidationService sealValidationService) {
+		this.sealValidationService = sealValidationService;
+	}
 
-  @Autowired
-  public void setSealValidationService(SealValidationService sealValidationService) {
-    this.sealValidationService = sealValidationService;
-  }
+	@Autowired
+	public void setDamageCodeService(DamageCodeService damageCodeService) {
+		this.damageCodeService = damageCodeService;
+	}
 
-  @Autowired
-  public void setDamageCodeService(DamageCodeService damageCodeService) {
-    this.damageCodeService = damageCodeService;
-  }
+	@Autowired
+	public void setLpkediService(LPKEDIService lpkediService) {
+		this.lpkediService = lpkediService;
+	}
 
-  @Autowired
-  public void setLpkediService(LPKEDIService lpkediService) {
-    this.lpkediService = lpkediService;
-  }
+	@Autowired
+	public void setGlobalSettingRepository(WDCGlobalSettingRepository globalSettingRepository) {
+		this.globalSettingRepository = globalSettingRepository;
+	}
 
-  @Autowired
-  public void setGlobalSettingRepository(WDCGlobalSettingRepository globalSettingRepository) {
-    this.globalSettingRepository = globalSettingRepository;
-  }
+	@Autowired
+	public void setDgDetailRepository(DgDetailRepository dgDetailRepository) {
+		this.dgDetailRepository = dgDetailRepository;
+	}
 
-  @Autowired
-  public void setDgDetailRepository(DgDetailRepository dgDetailRepository) {
-    this.dgDetailRepository = dgDetailRepository;
-  }
+	@Autowired
+	public void setDamageCodeRepository(DamageCodeRepository damageCodeRepository) {
+		this.damageCodeRepository = damageCodeRepository;
+	}
 
-  @Autowired
-  public void setDamageCodeRepository(DamageCodeRepository damageCodeRepository) {
-    this.damageCodeRepository = damageCodeRepository;
-  }
+	@Autowired
+	public void setHPATBookingRepository(HPATBookingRepository hpatBookingRepository) {
+		this.hpatBookingRepository = hpatBookingRepository;
+	}
 
+	@Autowired
+	public void setModelMapper(ModelMapper modelMapper) {
+		this.modelMapper = modelMapper;
+	}
 
-  @Autowired
-  public void setHPATBookingRepository(HPATBookingRepository hpatBookingRepository) {
-    this.hpatBookingRepository = hpatBookingRepository;
-  }
+	@Autowired
+	public void setShipCodeRepository(ShipCodeRepository shipCodeRepository) {
+		this.shipCodeRepository = shipCodeRepository;
+	}
 
-  @Autowired
-  public void setModelMapper(ModelMapper modelMapper) {
-    this.modelMapper = modelMapper;
-  }
+	@Autowired
+	public void setShipSCNRepository(ShipSCNRepository shipSCNRepository) {
+		this.shipSCNRepository = shipSCNRepository;
+	}
 
-  @Autowired
-  public void setShipCodeRepository(ShipCodeRepository shipCodeRepository) {
-    this.shipCodeRepository = shipCodeRepository;
-  }
+	@Autowired
+	public void setExportsRepository(ExportsRepository exportsRepository) {
+		this.exportsRepository = exportsRepository;
+	}
 
-  @Autowired
-  public void setShipSCNRepository(ShipSCNRepository shipSCNRepository) {
-    this.shipSCNRepository = shipSCNRepository;
-  }
+	@Autowired
+	public void setExportsQRepository(ExportsQRepository exportsQRepository) {
+		this.exportsQRepository = exportsQRepository;
+	}
 
-  @Autowired
-  public void setExportsRepository(ExportsRepository exportsRepository) {
-    this.exportsRepository = exportsRepository;
-  }
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+	public GateInReponse populateGateInExports(GateInReponse gateInReponse) {
+		Optional<String> globalSetting = globalSettingRepository.fetchGlobalStringByGlobalCode("LPK_EDI");
+		if (!(gateInReponse.getExportContainers() == null || gateInReponse.getExportContainers().isEmpty())) {
+			gateInReponse.getExportContainers().forEach(container -> {
+				container.setExpWeightBridge(gateInReponse.getExpWeightBridge());
+				setStoragePeriod(container);
+				setSCN(container);
+				checkDg(container);
+				findLpkEdiMsg(container, globalSetting);
+			});
+		}
 
-  @Autowired
-  public void setExportsQRepository(ExportsQRepository exportsQRepository) {
-    this.exportsQRepository = exportsQRepository;
-  }
+		return gateInReponse;
 
+	}
 
-  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-  public GateInReponse populateGateInExports(GateInReponse gateInReponse) {
-    Optional<String> globalSetting = globalSettingRepository.fetchGlobalStringByGlobalCode("LPK_EDI");
-    if (!(gateInReponse.getExportContainers() == null || gateInReponse.getExportContainers().isEmpty())) {
-      gateInReponse.getExportContainers().forEach(container -> {
-        container.setExpWeightBridge(gateInReponse.getExpWeightBridge());
-        setStoragePeriod(container);
-        setSCN(container);
-        checkDg(container);
-        findLpkEdiMsg(container, globalSetting);
-      });
-    }
+	private void findLpkEdiMsg(ExportContainer container, Optional<String> globalSettingOpt) {
+		if (StringUtils.equalsIgnoreCase(container.getImdg(), "Y")) {
+			globalSettingOpt.orElseThrow(() -> new ResultsNotFoundException("Global Setting not available ! LPK_EDI"));
+			lpkediService.findLPKEDITDigiMessage(container);
+		}
+	}
 
-    return gateInReponse;
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+	public void checkDg(ExportContainer exportContainer) {
+		if (!(exportContainer == null || exportContainer.getContainer() == null
+				|| exportContainer.getVesselSCN() == null)) {
+			if (!(StringUtils.isEmpty(exportContainer.getContainer().getContainerNumber())
+					|| StringUtils.isEmpty(exportContainer.getVesselSCN()))) {
+				Long count = dgDetailRepository.countByScnAndContainerNo(exportContainer.getVesselSCN(),
+						exportContainer.getContainer().getContainerNumber());
+				if (!(count == null || count <= 0)) {
+					exportContainer.setBypassDg(true);
+				}
+			}
+		}
+	}
 
-  }
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+	public void setStoragePeriod(ExportContainer exportContainer) {
+		if (!(exportContainer == null)) {
 
+			String shipCodeStr = exportContainer.getShippingLine();
+			System.out.println("shipCodeStr " + shipCodeStr);
 
-  private void findLpkEdiMsg(ExportContainer container, Optional<String> globalSettingOpt) {
-    if (StringUtils.equalsIgnoreCase(container.getImdg(), "Y")) {
-      globalSettingOpt.orElseThrow(() -> new ResultsNotFoundException("Global Setting not available ! LPK_EDI"));
-      lpkediService.findLPKEDITDigiMessage(container);
-    }
-  }
+			Optional<ShipCode> optionalShipCode = shipCodeRepository.findByShipStatusAndShippingCode(ShipStatus.ACTIVE,
+					shipCodeStr);
 
-  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-  public void checkDg(ExportContainer exportContainer) {
-    if (!(exportContainer == null || exportContainer.getContainer() == null || exportContainer.getVesselSCN() == null)) {
-      if (!(StringUtils.isEmpty(exportContainer.getContainer().getContainerNumber())
-          || StringUtils.isEmpty(exportContainer.getVesselSCN()))) {
-        Long count = dgDetailRepository.countByScnAndContainerNo(exportContainer.getVesselSCN(),
-            exportContainer.getContainer().getContainerNumber());
-        if (!(count == null || count <= 0)) {
-          exportContainer.setBypassDg(true);
-        }
-      }
-    }
-  }
+			ShipCode shipCode = optionalShipCode.orElseThrow(() -> new ResultsNotFoundException(
+					"Ship Code could be found for the given Ship Code ! " + shipCodeStr));
 
-  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-  public void setStoragePeriod(ExportContainer exportContainer) {
-    if (!(exportContainer == null)) {
+			exportContainer.setStoragePeriod(shipCode.getStoragePeriod());
+		}
 
-      String shipCodeStr = exportContainer.getShippingLine();
-      System.out.println("shipCodeStr " + shipCodeStr);
+	}
 
-      Optional<ShipCode> optionalShipCode =
-          shipCodeRepository.findByShipStatusAndShippingCode(ShipStatus.ACTIVE, shipCodeStr);
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+	public void setSCN(ExportContainer exportContainer) {
 
-      ShipCode shipCode = optionalShipCode.orElseThrow(
-          () -> new ResultsNotFoundException("Ship Code could be found for the given Ship Code ! " + shipCodeStr));
+		String exportContainerNumber = null;
+		String vesselSCN = null; // vessel scn and ship scn are same
 
-      exportContainer.setStoragePeriod(shipCode.getStoragePeriod());
-    }
+		if (!(exportContainer == null)) {
 
-  }
+			exportContainerNumber = exportContainer.getContainer().getContainerNumber();
+			vesselSCN = exportContainer.getVesselSCN();
+			System.out.println("scn " + vesselSCN);
 
+			Optional<ShipSCN> optionalshipSCN = shipSCNRepository.fetchContainerSCN(vesselSCN, exportContainerNumber);
 
-  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-  public void setSCN(ExportContainer exportContainer) {
+			if (optionalshipSCN.isPresent()) {
+				ShipSCN shipSCN = optionalshipSCN.get();
+				exportContainer.setBypassEEntry(shipSCN.getScnByPass());
+				exportContainer.setRegisteredInEarlyEntry(true);
+			} else {
+				exportContainer.setRegisteredInEarlyEntry(false);
+				// throw new ResultsNotFoundException(
+				// "Ship SCN could be found for the given " + " SCN /
+				// ContainerNo Info! " + scn + " / " +
+				// exportContainer);
+			}
 
-    String exportContainerNumber = null;
-    String vesselSCN = null; //vessel scn and ship scn are same
+		}
 
-    if (!(exportContainer == null)) {
+	}
 
-      exportContainerNumber = exportContainer.getContainer().getContainerNumber();
-      vesselSCN = exportContainer.getVesselSCN(); 
-      System.out.println("scn " + vesselSCN);
+	@Async
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRES_NEW, readOnly = false)
+	public Future<Boolean> saveGateInInfo(GateInWriteRequest gateInWriteRequest, Client gateInClient,
+			SystemUser gateInClerk, Card card) {
+		// construct a new export entity for each exportcontainer and save
 
-      Optional<ShipSCN> optionalshipSCN = shipSCNRepository.fetchContainerSCN(vesselSCN, exportContainerNumber);
+		if (gateInWriteRequest.getExportContainers() == null || gateInWriteRequest.getExportContainers().isEmpty())
+			throw new BusinessException("Invalid GateInWriteRequest to save Exports ! ");
+		System.out.println(
+				"gateInWriteRequest.getExportContainers().size() " + gateInWriteRequest.getExportContainers().size());
+		
+		gateInWriteRequest.getExportContainers().forEach(exportContainer -> {
+			if (exportContainer.getBaseCommonGateInOutAttribute() == null) {
+				exportContainer.setBaseCommonGateInOutAttribute(new BaseCommonGateInOutDTO());
+			}
+			System.out.println("gateInWriteRequest.getGateInDateTime() " + gateInWriteRequest.getGateInDateTime());
+			
+			if (gateInWriteRequest.getExportContainers().size() > 1) {
+				exportContainer.setBackToback(true);
+			}
+			
+			// assign values from header level to container level
+			exportContainer.getBaseCommonGateInOutAttribute().setEirStatus(TransactionStatus.INPROGRESS.getValue());
+			exportContainer.getBaseCommonGateInOutAttribute().setHpatBooking(gateInWriteRequest.getHpatBookingId());
+			exportContainer.getBaseCommonGateInOutAttribute().setPmHeadNo(gateInWriteRequest.getTruckHeadNo());
+			exportContainer.getBaseCommonGateInOutAttribute().setPmPlateNo(gateInWriteRequest.getTruckPlateNo());
+			exportContainer.getBaseCommonGateInOutAttribute().setTimeGateInOk(LocalDateTime.now());
+			exportContainer.setFuelWeight(gateInWriteRequest.getFuelWeight());
+			exportContainer.setTireWeight(gateInWriteRequest.getTireWeight());
+			exportContainer.setVariance(gateInWriteRequest.getVariance());
 
-      if (optionalshipSCN.isPresent()) {
-        ShipSCN shipSCN = optionalshipSCN.get();
-        exportContainer.setBypassEEntry(shipSCN.getScnByPass());
-        exportContainer.setRegisteredInEarlyEntry(true);
-      } else {
-        exportContainer.setRegisteredInEarlyEntry(false);
-        // throw new ResultsNotFoundException(
-        // "Ship SCN could be found for the given " + " SCN / ContainerNo Info! " + scn + " / " +
-        // exportContainer);
-      }
+			if (exportContainer.getCommonGateInOut() == null) {
+				exportContainer.setCommonGateInOut(new CommonGateInOutDTO());
+			}
+			exportContainer.getCommonGateInOut().setGateInStatus(gateInWriteRequest.getGateInStatus());
 
-    }
+			exportContainer.getBaseCommonGateInOutAttribute().setTimeGateIn(gateInWriteRequest.getGateInDateTime());
+			exportContainer.getBaseCommonGateInOutAttribute().setTimeGateInOk(LocalDateTime.now());
 
-  }
+			Exports exports = new Exports();
+			System.out.println("exportContainer " + exportContainer);
+			modelMapper.map(exportContainer, exports);
 
-  @Async
-  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
-  public Future<Boolean> saveGateInInfo(GateInWriteRequest gateInWriteRequest, Client gateInClient,
-      SystemUser gateInClerk, Card card) {
-    // construct a new export entity for each exportcontainer and save
-    backToback = false;
-    if (!(gateInWriteRequest.getExportContainers() == null || gateInWriteRequest.getExportContainers().isEmpty())) {
-      System.out.println(
-          "gateInWriteRequest.getExportContainers().size() " + gateInWriteRequest.getExportContainers().size());
-      if (gateInWriteRequest.getExportContainers().size() > 1) {
-        backToback = true;
-      }
-      gateInWriteRequest.getExportContainers().forEach(exportContainer -> {
-        if (exportContainer.getBaseCommonGateInOutAttribute() == null) {
-          exportContainer.setBaseCommonGateInOutAttribute(new BaseCommonGateInOutDTO());
-        }
-        System.out.println("gateInWriteRequest.getGateInDateTime() " + gateInWriteRequest.getGateInDateTime());
-        exportContainer.setBackToback(backToback);
+			HPABBooking hpatBooking = null;
 
-        // assign values from header level to container level
-        exportContainer.getBaseCommonGateInOutAttribute().setEirStatus(TransactionStatus.INPROGRESS.getValue());
-        exportContainer.getBaseCommonGateInOutAttribute().setHpatBooking(gateInWriteRequest.getHpatBookingId());
-        exportContainer.getBaseCommonGateInOutAttribute().setPmHeadNo(gateInWriteRequest.getTruckHeadNo());
-        exportContainer.getBaseCommonGateInOutAttribute().setPmPlateNo(gateInWriteRequest.getTruckPlateNo());
-        exportContainer.getBaseCommonGateInOutAttribute().setTimeGateInOk(LocalDateTime.now());
-        exportContainer.setFuelWeight(gateInWriteRequest.getFuelWeight());
-        exportContainer.setTireWeight(gateInWriteRequest.getTireWeight());
-        exportContainer.setVariance(gateInWriteRequest.getVariance());
+			if (!(exportContainer.getBaseCommonGateInOutAttribute() == null)) {
+				if (StringUtils.isNotEmpty(exportContainer.getBaseCommonGateInOutAttribute().getHpatBooking())) {
+					hpatBooking = hpatBookingRepository
+							.findOne(exportContainer.getBaseCommonGateInOutAttribute().getHpatBooking()).orElse(null);
+				}
+			}
 
-        if (exportContainer.getCommonGateInOut() == null) {
-          exportContainer.setCommonGateInOut(new CommonGateInOutDTO());
-        }
-        exportContainer.getCommonGateInOut().setGateInStatus(gateInWriteRequest.getGateInStatus());
+			ShipSCN scn = null;
+			if (!(exportContainer.getVesselSCN() == null)) { // scn = VesselSCN
+				scn = shipSCNRepository
+						.fetchContainerSCN(exportContainer.getVesselSCN(),
+								exportContainer.getContainer().getContainerNumber())
+						.orElseThrow(() -> new ResultsNotFoundException(
+								"Invalid Ship SCN : " + exportContainer.getVesselSCN()));
 
-        exportContainer.getBaseCommonGateInOutAttribute().setTimeGateIn(gateInWriteRequest.getGateInDateTime());
-        exportContainer.getBaseCommonGateInOutAttribute().setTimeGateInOk(LocalDateTime.now());
+			}
+			exports.prepareForInsertFromOpus(gateInClerk, card, gateInClient, scn, hpatBooking, damageCodeRepository);
+			exports = exportsRepository.save(exports);
+			log.info("########## Save Exports ###############");
+			ExportsQ exportsQ = new ExportsQ();
+			modelMapper.map(exports, exportsQ);
+			exportsQRepository.save(exportsQ);
+		});
 
+		return new AsyncResult<Boolean>(true);
+	}
 
-        Exports exports = new Exports();
-        System.out.println("exportContainer " + exportContainer);
-        modelMapper.map(exportContainer, exports);
-        System.out.println("exports after modal map from exportContainer " + exports);
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+	public void validateExport(List<ExportContainer> exportContainers) {
+		if (!(exportContainers == null || exportContainers.isEmpty())) {
+			exportContainers.forEach(exportContainer -> {
+				// 1. DAMAGE CONTAINER CHECK - 1313 (DamageCodeService )
+				damageCodeService.checkDuplicateDameCodeExistence(exportContainer);
+				// 2. Shipping Line Seal Validation -1578
+				// (SealValidationServicve)
+				sealValidationService.validateSeal(exportContainer);
 
-
-        HPABBooking hpatBooking = null;
-
-        if (!(exportContainer.getBaseCommonGateInOutAttribute() == null)) {
-          if (StringUtils.isNotEmpty(exportContainer.getBaseCommonGateInOutAttribute().getHpatBooking())) {
-            hpatBooking = hpatBookingRepository
-                .findOne(exportContainer.getBaseCommonGateInOutAttribute().getHpatBooking()).orElse(null);
-          }
-        }
-
-        ShipSCN scn = null;
-        if (!(exportContainer.getVesselSCN() == null)) {  // scn = VesselSCN
-        	scn = shipSCNRepository.fetchContainerSCN(exportContainer.getVesselSCN(), exportContainer.getContainer().getContainerNumber()).
-        				orElseThrow(() -> new ResultsNotFoundException("Invalid Ship SCN : " + exportContainer.getVesselSCN()));
-          
-        }
-        PrintEir printEir = null;
-        // if (!(exportContainer.getPrintEir() == null ||
-        // exportContainer.getPrintEir().getPrintEIRID() == null)) {
-        // printEir =
-        // printEirRepository.findOne(exportContainer.getPrintEir().getPrintEIRID()).orElse(null);
-        // }
-        exports.prepareForInsertFromOpus(gateInClerk, card, gateInClient, scn, printEir, hpatBooking,
-            damageCodeRepository);
-        System.out.println("exports after initializeing " + exports);
-        exports = exportsRepository.save(exports);
-        ExportsQ exportsQ = new ExportsQ();
-        modelMapper.map(exports, exportsQ);
-        System.out.println("exportsQ " + exportsQ);
-        exportsQRepository.save(exportsQ);
-      });
-    }
-    return new AsyncResult<Boolean>(true);
-  }
-
-  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-  public void validateExport(List<ExportContainer> exportContainers) {
-    if (!(exportContainers == null || exportContainers.isEmpty())) {
-      exportContainers.forEach(exportContainer -> {
-        // 1. DAMAGE CONTAINER CHECK - 1313 (DamageCodeService )
-        damageCodeService.checkDuplicateDameCodeExistence(exportContainer);
-        // 2. Shipping Line Seal Validation -1578 (SealValidationServicve)
-        sealValidationService.validateSeal(exportContainer);
-
-      });
-    }
-  }
+			});
+		}
+	}
 
 }

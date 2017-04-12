@@ -296,7 +296,7 @@ public class Exports extends AuditEntity implements Serializable {
 
 	@Column(name = " BACK_TO_BACK", nullable = true)
 	@Type(type = "yes_no")
-	private Boolean backToback;
+	private Boolean backToback = false;
 
 	@Column(name = "WEIGHT_DIFF_PERCENTAGE", nullable = true)
 	private Double weightDiffPercentage;
@@ -1155,7 +1155,7 @@ public class Exports extends AuditEntity implements Serializable {
 	}
 
 	public void prepareForInsertFromOpus(SystemUser gateInClerk, Card card, Client gateInClient, ShipSCN scn,
-			PrintEir printEir, HPABBooking hpatBooking, DamageCodeRepository damageCodeRepository) {
+			 HPABBooking hpatBooking, DamageCodeRepository damageCodeRepository) {
 		if (this.getBaseCommonGateInOutAttribute() == null) {
 			this.setBaseCommonGateInOutAttribute(new BaseCommonGateInOutAttribute());
 		}

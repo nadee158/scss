@@ -188,11 +188,7 @@ public class ExportGateOutService {
         exports.getBaseCommonGateInOutAttribute().setGateOutBoothNo(String.valueOf(booth.getClientID()));
         exports.getBaseCommonGateInOutAttribute().setGateOutClerk(gateOutClerk);
         exports.getBaseCommonGateInOutAttribute().setGateOutClient(gateOutClient);
-        exports.getCommonGateInOut().setRejectReason(exportContainer.getCommonGateInOut().getRejectReason()); // need
-                                                                                                              // to
-                                                                                                              // set
-                                                                                                              // to
-                                                                                                              // UPPERCASE
+        exports.getCommonGateInOut().setRejectReason(exportContainer.getGateOutRemarks()); 
 
         exportsRepository.save(exports);
 
