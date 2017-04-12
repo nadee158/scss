@@ -2,11 +2,13 @@ package com.privasia.scss.gateout.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.Future;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -252,20 +254,25 @@ public class ImportExportGateOutService {
 
     }
 
+    Future<Boolean> impSave = null;
+    Future<Boolean> expSave = null;
+
     if (StringUtils.isEmpty(gateOutWriteRequest.getImpExpFlag()))
       throw new BusinessException("Invalid GateOutWriteRequest Empty ImpExpFlag");
     ImpExpFlagStatus impExpFlag = ImpExpFlagStatus.fromValue(gateOutWriteRequest.getImpExpFlag());
 
     switch (impExpFlag) {
       case IMPORT:
-        importGateOutService.saveGateOutInfo(gateOutWriteRequest, client, user, booth);
+        impSave = importGateOutService.saveGateOutInfo(gateOutWriteRequest, client, user, booth);
+        expSave = new AsyncResult<Boolean>(true);
         break;
       case EXPORT:
-        exportGateOutService.saveGateOutInfo(gateOutWriteRequest, client, user, booth);
+        impSave = new AsyncResult<Boolean>(true);
+        expSave = exportGateOutService.saveGateOutInfo(gateOutWriteRequest, client, user, booth);
         break;
       case IMPORT_EXPORT:
-        importGateOutService.saveGateOutInfo(gateOutWriteRequest, client, user, booth);
-        exportGateOutService.saveGateOutInfo(gateOutWriteRequest, client, user, booth);
+        impSave = importGateOutService.saveGateOutInfo(gateOutWriteRequest, client, user, booth);
+        expSave = exportGateOutService.saveGateOutInfo(gateOutWriteRequest, client, user, booth);
         break;
       default:
         break;
@@ -276,11 +283,31 @@ public class ImportExportGateOutService {
     gateOutReponse.setExportContainers(exportContainers);
     gateOutReponse = opusGateOutWriteService.constructGateOutReponse(opusGateOutWriteResponse, gateOutReponse);
 
-    GateOutMessage gateOutMessage = new GateOutMessage();
-    gateOutMessage.setCode(GateOutMessage.OK);
-    gateOutMessage.setDescription("Saved Successfully!");
-    gateOutReponse.setMessage(gateOutMessage);
 
+    GateOutMessage gateOutMessage = new GateOutMessage();
+    gateOutMessage.setCode(GateOutMessage.NOK);
+    gateOutMessage.setDescription("Save Pending!");
+
+    while (true) {
+      if (impSave.isDone() && expSave.isDone()) {
+
+        gateOutMessage.setCode(GateOutMessage.OK);
+        gateOutMessage.setDescription("Saved Successfully!");
+
+        System.out.println("WHILE LOOP BROKEN!!!!. ");
+        break;
+      }
+      System.out.println("Continue doing something else. ");
+
+      try {
+        Thread.sleep(1000);
+      } catch (InterruptedException e) {
+        log.error(e.getMessage());
+        System.out.println("WHILE LOOP BROKEN ON THREAD EXCEPTION!!!!. ");
+        break;
+      }
+    }
+    gateOutReponse.setMessage(gateOutMessage);
     return gateOutReponse;
   }
 

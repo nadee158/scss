@@ -4,11 +4,14 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,7 +21,6 @@ import com.privasia.scss.common.dto.ClientDTO;
 import com.privasia.scss.common.dto.ExportContainer;
 import com.privasia.scss.common.dto.GateOutRequest;
 import com.privasia.scss.common.dto.GateOutWriteRequest;
-import com.privasia.scss.common.dto.ShipSCNDTO;
 import com.privasia.scss.common.dto.SystemUserDTO;
 import com.privasia.scss.common.enums.ShipStatus;
 import com.privasia.scss.common.enums.TransactionStatus;
@@ -28,7 +30,6 @@ import com.privasia.scss.core.model.Client;
 import com.privasia.scss.core.model.Exports;
 import com.privasia.scss.core.model.ExportsQ;
 import com.privasia.scss.core.model.ShipCode;
-import com.privasia.scss.core.model.ShipSCN;
 import com.privasia.scss.core.model.SystemUser;
 import com.privasia.scss.core.repository.ClientRepository;
 import com.privasia.scss.core.repository.ExportsQRepository;
@@ -166,9 +167,10 @@ public class ExportGateOutService {
     return null;
   }
 
-  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
-  public boolean saveGateOutInfo(GateOutWriteRequest gateOutWriteRequest, Client gateOutClient, SystemUser gateOutClerk,
-      Client booth) {
+  @Async
+  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRES_NEW, readOnly = false)
+  public Future<Boolean> saveGateOutInfo(GateOutWriteRequest gateOutWriteRequest, Client gateOutClient,
+      SystemUser gateOutClerk, Client booth) {
 
     List<ExportContainer> exportContainers = gateOutWriteRequest.getExportContainers();
     if (!(exportContainers == null || exportContainers.isEmpty())) {
@@ -188,7 +190,7 @@ public class ExportGateOutService {
         exports.getBaseCommonGateInOutAttribute().setGateOutBoothNo(String.valueOf(booth.getClientID()));
         exports.getBaseCommonGateInOutAttribute().setGateOutClerk(gateOutClerk);
         exports.getBaseCommonGateInOutAttribute().setGateOutClient(gateOutClient);
-        exports.getCommonGateInOut().setRejectReason(exportContainer.getGateOutRemarks()); 
+        exports.getCommonGateInOut().setRejectReason(exportContainer.getGateOutRemarks());
 
         exportsRepository.save(exports);
 
@@ -203,7 +205,7 @@ public class ExportGateOutService {
       throw new BusinessException("Invalid Request to Update Export !");
     }
 
-    return true;
+    return new AsyncResult<Boolean>(true);
   }
 
 

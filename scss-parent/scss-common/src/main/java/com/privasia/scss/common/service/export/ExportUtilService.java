@@ -4,16 +4,17 @@ import org.apache.commons.lang3.StringUtils;
 
 public class ExportUtilService {
 
-  public static String getReferTempSign(int value) {
-
-    if (value > 0) {
-      return "+";
-    } else if (value < 0) {
-      return "-";
-    } else {
-      return "";
+  public static String getReferTempSign(Double value) {
+    if (!(value == null)) {
+      if (value > 0) {
+        return "+";
+      } else if (value < 0) {
+        return "-";
+      } else {
+        return "";
+      }
     }
-
+    return "";
   }
 
   public static String getStringRepresentationOfBoolean(Boolean value) {
@@ -41,11 +42,6 @@ public class ExportUtilService {
     }
   }
 
-  public static void main(String args[]) {
-    int j = -8;
-    System.out.println(Math.abs(0));
-    System.out.println(ExportUtilService.getReferTempSign(-9));
-  }
 
   public static String getStringFromBoolean(Boolean bool) {
     if (!(bool == null)) {

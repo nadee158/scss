@@ -1,6 +1,5 @@
 package com.privasia.scss.gatein.service;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Future;
@@ -153,9 +152,10 @@ public class ImportExportGateInService {
 
     if ((gateInRequest.getGatePass1() != null && gateInRequest.getGatePass1() > 0)
         || (gateInRequest.getGatePass2() != null && gateInRequest.getGatePass2() > 0)) {
-      //List<Long> gatePassList = Arrays.asList(gateInRequest.getGatePass1(), gateInRequest.getGatePass2());
+      // List<Long> gatePassList = Arrays.asList(gateInRequest.getGatePass1(),
+      // gateInRequest.getGatePass2());
       List<ImportContainer> importContainerList = importGateInService.populateGateInImport(gateInRequest);
-      // GatePassValidationService call validate - within another method 
+      // GatePassValidationService call validate - within another method
       importGateInService.validateImport(gateInRequest, importContainerList);
       gateInReponse.setImportContainers(importContainerList);
     }
@@ -188,10 +188,11 @@ public class ImportExportGateInService {
       gateInReponse = exportGateInService.populateGateInExports(gateInReponse);
     }
 
-    /*if ((gateInRequest.getGatePass1() != null && gateInRequest.getGatePass1() > 0)
-        || (gateInRequest.getGatePass2() != null && gateInRequest.getGatePass2() > 0)) {
-      importGateInService.populateGateInImport(gateInReponse);
-    }*/
+    /*
+     * if ((gateInRequest.getGatePass1() != null && gateInRequest.getGatePass1() > 0) ||
+     * (gateInRequest.getGatePass2() != null && gateInRequest.getGatePass2() > 0)) {
+     * importGateInService.populateGateInImport(gateInReponse); }
+     */
 
     // assign details from hpab booking
     if (StringUtils.isNotEmpty(gateInRequest.getHpabSeqId())) {
@@ -290,7 +291,6 @@ public class ImportExportGateInService {
 
         gateOutMessage.setCode(GateOutMessage.OK);
         gateOutMessage.setDescription("Saved Successfully!");
-        gateInReponse.setMessage(gateOutMessage);
 
         System.out.println("WHILE LOOP BROKEN!!!!. ");
         break;
@@ -305,6 +305,8 @@ public class ImportExportGateInService {
         break;
       }
     }
+
+    gateInReponse.setMessage(gateOutMessage);
 
     return gateInReponse;
   }

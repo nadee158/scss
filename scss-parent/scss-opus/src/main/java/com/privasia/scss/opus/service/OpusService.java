@@ -312,7 +312,7 @@ public class OpusService {
     // private String containerReeferTempValue;// null,
     if (StringUtils.isNotEmpty(gIReadResponseExporterContainer.getContainerReeferTempValue())) {
       exportContainer.setReferTemp(
-          ExportUtilService.getIntegerValueFromString(gIReadResponseExporterContainer.getContainerReeferTempValue()));
+          ExportUtilService.getDoubleValueFromString(gIReadResponseExporterContainer.getContainerReeferTempValue()));
     }
     // private String containerReeferTempUnit;// null,
     exportContainer.setReeferTempUnit(gIReadResponseExporterContainer.getContainerReeferTempUnit());
