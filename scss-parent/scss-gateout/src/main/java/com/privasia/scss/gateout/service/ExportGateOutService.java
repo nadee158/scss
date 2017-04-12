@@ -172,6 +172,9 @@ public class ExportGateOutService {
   public Future<Boolean> saveGateOutInfo(GateOutWriteRequest gateOutWriteRequest, Client gateOutClient,
       SystemUser gateOutClerk, Client booth) {
 
+    if (gateOutWriteRequest.getExportContainers() == null || gateOutWriteRequest.getExportContainers().isEmpty())
+      throw new BusinessException("Invalid GateOutWriteRequest to save Exports ! ");
+
     List<ExportContainer> exportContainers = gateOutWriteRequest.getExportContainers();
     if (!(exportContainers == null || exportContainers.isEmpty())) {
 

@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -50,6 +51,9 @@ import com.privasia.scss.opus.service.OpusService;
 public class ImportExportGateOutService {
 
   private static final Log log = LogFactory.getLog(ImportExportGateOutService.class);
+
+  @Value("${async.wait.time}")
+  private long asyncWaitTime;
 
   private ImportGateOutService importGateOutService;
 
@@ -300,7 +304,7 @@ public class ImportExportGateOutService {
       System.out.println("Continue doing something else. ");
 
       try {
-        Thread.sleep(1000);
+        Thread.sleep(asyncWaitTime);
       } catch (InterruptedException e) {
         log.error(e.getMessage());
         System.out.println("WHILE LOOP BROKEN ON THREAD EXCEPTION!!!!. ");

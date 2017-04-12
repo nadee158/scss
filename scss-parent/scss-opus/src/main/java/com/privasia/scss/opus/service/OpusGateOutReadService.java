@@ -34,6 +34,9 @@ import com.privasia.scss.opus.dto.OpusRequestResponseDTO;
 @Service("opusGateOutReadService")
 public class OpusGateOutReadService {
 
+  @Value("${async.wait.time}")
+  private long asyncWaitTime;
+
   private static final Logger log = LoggerFactory.getLogger(OpusGateOutReadService.class);
 
   @Value("${gate_out.read.response.url}")
@@ -112,7 +115,7 @@ public class OpusGateOutReadService {
       System.out.println("Continue doing something else. ");
 
       try {
-        Thread.sleep(1000);
+        Thread.sleep(asyncWaitTime);
       } catch (InterruptedException e) {
         log.error(e.getMessage());
         System.out.println("WHILE LOOP BROKEN ON THREAD EXCEPTION!!!!. ");
