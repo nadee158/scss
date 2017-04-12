@@ -64,19 +64,26 @@ public class SolasService {
           + optFirstContainer.get().getContainer().getContainerNumber());
 
     }
+    Optional<ExportContainer> optLastContainer = null;
+    if (optFirstContainer.isPresent()) {
 
-    Optional<ExportContainer> optLastContainer =
-        exportContainers.stream().reduce((a, b) -> b).filter(expCon -> StringUtils
-            .equalsIgnoreCase(ContainerFullEmptyType.FULL.getValue(), expCon.getContainer().getContainerFullOrEmpty()));
+      optLastContainer = exportContainers.stream()
+          .filter(expCon -> (StringUtils.equalsIgnoreCase(ContainerFullEmptyType.FULL.getValue(),
+              expCon.getContainer().getContainerFullOrEmpty())
+              && (!(StringUtils.equals(expCon.getContainer().getContainerNumber(),
+                  optFirstContainer.get().getContainer().getContainerNumber())))))
+          .findFirst();
 
-    System.out.println("optLastContainer.isPresent() " + optLastContainer.isPresent());
-    if (optLastContainer.isPresent()) {
-      System.out.println("optLastContainer.get().getContainer().getContainerNumber() "
-          + optLastContainer.get().getContainer().getContainerNumber());
+      System.out.println("optLastContainer.isPresent() " + optLastContainer.isPresent());
+      if (optLastContainer.isPresent()) {
+        System.out.println("optLastContainer.get().getContainer().getContainerNumber() "
+            + optLastContainer.get().getContainer().getContainerNumber());
+
+      }
 
     }
 
-    System.out.println();
+
 
     if (optFirstContainer.isPresent()) {
       ExportContainer firstContainer = optFirstContainer.get();
@@ -116,7 +123,7 @@ public class SolasService {
 
 
       firstContainer.setWithinTolerance(false);
-      if (optLastContainer.isPresent()) {
+      if ((!(optLastContainer == null)) && optLastContainer.isPresent()) {
         ExportContainer lastContainer = optLastContainer.get();
         lastContainer.setWithinTolerance(false);
         if (firstContainer.getExpWeightBridge() - lastContainer.getExpWeightBridge() == 0) {
@@ -170,20 +177,21 @@ public class SolasService {
 
     BigDecimal tolerancePercentage = new BigDecimal(tolerance);
 
-    exportContainers.forEach(container -> {
-      BigDecimal shipperVGM = new BigDecimal(container.getSolas().getShipperVGM()).setScale(2, BigDecimal.ROUND_UP);
-      BigDecimal terminalVGM = new BigDecimal(container.getNetWeight()).setScale(2, BigDecimal.ROUND_UP);
-      BigDecimal variance = ((shipperVGM.subtract(terminalVGM)).divide(shipperVGM, 4, BigDecimal.ROUND_HALF_UP))
-          .multiply(new BigDecimal(100));
-      container.setVariance(String.valueOf(variance));
+    exportContainers.stream().filter(expCon -> StringUtils.equalsIgnoreCase(ContainerFullEmptyType.FULL.getValue(),
+        expCon.getContainer().getContainerFullOrEmpty())).forEach(container -> {
+          BigDecimal shipperVGM = new BigDecimal(container.getSolas().getShipperVGM()).setScale(2, BigDecimal.ROUND_UP);
+          BigDecimal terminalVGM = new BigDecimal(container.getNetWeight()).setScale(2, BigDecimal.ROUND_UP);
+          BigDecimal variance = ((shipperVGM.subtract(terminalVGM)).divide(shipperVGM, 4, BigDecimal.ROUND_HALF_UP))
+              .multiply(new BigDecimal(100));
+          container.setVariance(String.valueOf(variance));
 
-      // checking if in range
-      if (variance.compareTo(tolerancePercentage) <= 0 && variance.compareTo(tolerancePercentage.negate()) >= 0) {
-        container.setWithinTolerance(true);
-      } else {
-        container.setWithinTolerance(false);
-      }
-    });
+          // checking if in range
+          if (variance.compareTo(tolerancePercentage) <= 0 && variance.compareTo(tolerancePercentage.negate()) >= 0) {
+            container.setWithinTolerance(true);
+          } else {
+            container.setWithinTolerance(false);
+          }
+        });
 
     return exportContainers;
 
