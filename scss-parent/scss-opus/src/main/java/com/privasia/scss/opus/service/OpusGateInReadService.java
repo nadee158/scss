@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import com.google.gson.Gson;
+import com.privasia.scss.common.annotation.LogOpusData;
 import com.privasia.scss.common.dto.ExportContainer;
 import com.privasia.scss.common.dto.GateInReponse;
 import com.privasia.scss.common.dto.GateInRequest;
@@ -67,7 +68,8 @@ public class OpusGateInReadService {
     opusGateInRequest.setUserID(gateInRequest.getUserName());
     return opusGateInRequest;
   }
-
+  
+  @LogOpusData
   public OpusGateInReadResponse getGateInReadResponse(OpusGateInReadRequest opusGateInReadRequest) {
     System.out.println("gateInReadResponseURL " + gateInReadResponseURL);
     RestTemplate restTemplate = new RestTemplate();
