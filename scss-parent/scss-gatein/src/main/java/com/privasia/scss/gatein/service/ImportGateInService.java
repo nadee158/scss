@@ -154,9 +154,9 @@ public class ImportGateInService {
 
 	}
 
-	@Async
-	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRES_NEW, readOnly = false)
-	public Future<Boolean> saveGateInInfo(GateInWriteRequest gateInWriteRequest, Client gateInClient,
+	//@Async
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
+	public void saveGateInInfo(GateInWriteRequest gateInWriteRequest, Client gateInClient,
 			SystemUser gateInClerk, Card card) {
 		// construct a new export entity for each exportcontainer and save
 		if (gateInWriteRequest.getImportContainers() == null || gateInWriteRequest.getImportContainers().isEmpty())
@@ -210,7 +210,7 @@ public class ImportGateInService {
 			}
 
 		});
-		return new AsyncResult<Boolean>(true);
+		//return new AsyncResult<Boolean>(true);
 	}
 
 	private void importContainerToGatePass(ImportContainer importContainer, GatePass gatePass) {

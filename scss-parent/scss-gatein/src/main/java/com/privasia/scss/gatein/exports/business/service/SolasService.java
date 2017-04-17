@@ -32,169 +32,184 @@ import com.privasia.scss.core.repository.SolasWeightConfigRepository;
 @Service("solasService")
 public class SolasService {
 
-  @Value("${solas.cert.name}")
-  private String solasCertName;
+	@Value("${solas.cert.name}")
+	private String solasCertName;
 
-  private SolasWeightConfigRepository solasWeightConfigRepository;
+	private SolasWeightConfigRepository solasWeightConfigRepository;
 
-  @Autowired
-  public void setSolasWeightConfigRepository(SolasWeightConfigRepository solasWeightConfigRepository) {
-    this.solasWeightConfigRepository = solasWeightConfigRepository;
-  }
+	@Autowired
+	public void setSolasWeightConfigRepository(SolasWeightConfigRepository solasWeightConfigRepository) {
+		this.solasWeightConfigRepository = solasWeightConfigRepository;
+	}
 
-  public String generateSolasCertificateId(LocalDateTime gateInOK) throws ParseException {
+	public String generateSolasCertificateId(LocalDateTime gateInOK) throws ParseException {
 
-    StringBuffer buffer = new StringBuffer();
-    buffer.append(solasCertName);
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS");
-    buffer.append(gateInOK.format(formatter));
-    return buffer.toString();
+		StringBuffer buffer = new StringBuffer();
+		buffer.append(solasCertName);
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS");
+		buffer.append(gateInOK.format(formatter));
+		return buffer.toString();
 
-  }
+	}
 
-  public List<ExportContainer> calculateTerminalVGM(List<ExportContainer> exportContainers) {
+	public List<ExportContainer> calculateTerminalVGM(List<ExportContainer> exportContainers) {
 
-    Optional<ExportContainer> optFirstContainer =
-        exportContainers.stream().filter(expCon -> StringUtils.equalsIgnoreCase(ContainerFullEmptyType.FULL.getValue(),
-            expCon.getContainer().getContainerFullOrEmpty())).findFirst();
+		Optional<ExportContainer> optFirstContainer = exportContainers.stream()
+				.filter(expCon -> StringUtils.equalsIgnoreCase(ContainerFullEmptyType.FULL.getValue(),
+						expCon.getContainer().getContainerFullOrEmpty()))
+				.findFirst();
 
-    System.out.println("optFirstContainer.isPresent() " + optFirstContainer.isPresent());
-    if (optFirstContainer.isPresent()) {
-      System.out.println("optFirstContainer.get().getContainer().getContainerNumber() "
-          + optFirstContainer.get().getContainer().getContainerNumber());
+		System.out.println("optFirstContainer.isPresent() " + optFirstContainer.isPresent());
+		if (optFirstContainer.isPresent()) {
+			System.out.println("optFirstContainer.get().getContainer().getContainerNumber() "
+					+ optFirstContainer.get().getContainer().getContainerNumber());
 
-    }
-    Optional<ExportContainer> optLastContainer = null;
-    if (optFirstContainer.isPresent()) {
+		}
+		Optional<ExportContainer> optLastContainer = null;
 
-      optLastContainer = exportContainers.stream()
-          .filter(expCon -> (StringUtils.equalsIgnoreCase(ContainerFullEmptyType.FULL.getValue(),
-              expCon.getContainer().getContainerFullOrEmpty())
-              && (!(StringUtils.equals(expCon.getContainer().getContainerNumber(),
-                  optFirstContainer.get().getContainer().getContainerNumber())))))
-          .findFirst();
+		if (optFirstContainer.isPresent()) {
+			optLastContainer = exportContainers.stream()
+					.filter(expCon -> (StringUtils.equalsIgnoreCase(ContainerFullEmptyType.FULL.getValue(),
+							expCon.getContainer().getContainerFullOrEmpty())
+							&& (!(StringUtils.equals(expCon.getContainer().getContainerNumber(),
+									optFirstContainer.get().getContainer().getContainerNumber())))))
+					.findFirst();
+			ExportContainer firstContainer = optFirstContainer.get();
+			
 
-      System.out.println("optLastContainer.isPresent() " + optLastContainer.isPresent());
-      if (optLastContainer.isPresent()) {
-        System.out.println("optLastContainer.get().getContainer().getContainerNumber() "
-            + optLastContainer.get().getContainer().getContainerNumber());
+			Optional<List<SolasWeightConfig>> optSolasMasterData = solasWeightConfigRepository.findByWeightTypeIn(
+					Arrays.asList(SolasWeightType.FUEL, SolasWeightType.TYRE, SolasWeightType.VARIANCE, SolasWeightType.PM, SolasWeightType.TRAILER));
 
-      }
+			List<SolasWeightConfig> solasMasterData = optSolasMasterData.orElseThrow(
+					() -> new ResultsNotFoundException("Solas Master data for Fuel, Type, Tolerance not Found ! "));
 
-    }
+			Optional<SolasWeightConfig> optFuelWeight = solasMasterData.stream().filter(solasConfig -> StringUtils
+					.equalsIgnoreCase(SolasWeightType.FUEL.getValue(), solasConfig.getWeightType().getValue()))
+					.findFirst();
 
+			int fuelWeight = optFuelWeight
+					.orElseThrow(() -> new ResultsNotFoundException("Solas data for Fuel not Found ! "))
+					.getDefaultValue();
 
+			Optional<SolasWeightConfig> optTyreWeight = solasMasterData.stream().filter(solasConfig -> StringUtils
+					.equalsIgnoreCase(SolasWeightType.TYRE.getValue(), solasConfig.getWeightType().getValue()))
+					.findFirst();
 
-    if (optFirstContainer.isPresent()) {
-      ExportContainer firstContainer = optFirstContainer.get();
-      int pmWeight = 0;
-      int axelWeight = 0;
+			int tireWeight = optTyreWeight
+					.orElseThrow(() -> new ResultsNotFoundException("Solas data for Tyre not Found ! "))
+					.getDefaultValue();
 
-      if (StringUtils.isNotEmpty(firstContainer.getPmWeight())) {
-        pmWeight = Integer.parseInt(firstContainer.getPmWeight()); // if null make it zero
-      }
-      if (StringUtils.isNotEmpty(firstContainer.getTrailerWeight())) {
-        axelWeight = Integer.parseInt(firstContainer.getTrailerWeight()); // if null make it zero
-      }
+			Optional<SolasWeightConfig> optTolerance = solasMasterData.stream().filter(solasConfig -> StringUtils
+					.equalsIgnoreCase(SolasWeightType.VARIANCE.getValue(), solasConfig.getWeightType().getValue()))
+					.findFirst();
 
-      Optional<List<SolasWeightConfig>> optSolasMasterData = solasWeightConfigRepository
-          .findByWeightTypeIn(Arrays.asList(SolasWeightType.FUEL, SolasWeightType.TYRE, SolasWeightType.VARIANCE));
+			int tolerance = optTolerance
+					.orElseThrow(() -> new ResultsNotFoundException("Solas data for Tolerance not Found ! "))
+					.getDefaultValue();
+			
+			int pmWeight = 0;
+			int axelWeight = 0;
 
-      List<SolasWeightConfig> solasMasterData = optSolasMasterData
-          .orElseThrow(() -> new ResultsNotFoundException("Solas Master data for Fuel, Type, Tolerance not Found ! "));
+			if (StringUtils.isNotEmpty(firstContainer.getPmWeight())) {
+				pmWeight = Integer.parseInt(firstContainer.getPmWeight());
+			}else{
+				Optional<SolasWeightConfig> optPM = solasMasterData.stream().filter(solasConfig -> StringUtils
+						.equalsIgnoreCase(SolasWeightType.PM.getValue(), solasConfig.getWeightType().getValue()))
+						.findFirst();
+				pmWeight = optPM
+						.orElseThrow(() -> new ResultsNotFoundException("Solas data for PM not Found ! "))
+						.getDefaultValue();
+			}
+			
+			if (StringUtils.isNotEmpty(firstContainer.getTrailerWeight())) {
+				axelWeight = Integer.parseInt(firstContainer.getTrailerWeight());
+			}else{
+				Optional<SolasWeightConfig> optAxel = solasMasterData.stream().filter(solasConfig -> StringUtils
+						.equalsIgnoreCase(SolasWeightType.TRAILER.getValue(), solasConfig.getWeightType().getValue()))
+						.findFirst();
+				axelWeight = optAxel
+						.orElseThrow(() -> new ResultsNotFoundException("Solas data for Trailer not Found ! "))
+						.getDefaultValue();
+			}
 
-      Optional<SolasWeightConfig> optFuelWeight = solasMasterData.stream().filter(solasConfig -> StringUtils
-          .equalsIgnoreCase(SolasWeightType.FUEL.getValue(), solasConfig.getWeightType().getValue())).findFirst();
+			firstContainer.setWithinTolerance(false);
+			if (optLastContainer != null && optLastContainer.isPresent()) {
+				ExportContainer lastContainer = optLastContainer.get();
+				lastContainer.setWithinTolerance(false);
+				if (firstContainer.getExpWeightBridge() - lastContainer.getExpWeightBridge() == 0) {
+					int terminalVGM = firstContainer.getExpWeightBridge() - pmWeight - axelWeight - fuelWeight
+							- tireWeight;
+					firstContainer.setExpNetWeight(terminalVGM / 2);
+					firstContainer.setTireWeight(String.valueOf(tireWeight));
+					firstContainer.setFuelWeight(String.valueOf(fuelWeight));
 
-      int fuelWeight = optFuelWeight.orElseThrow(() -> new ResultsNotFoundException("Solas data for Fuel not Found ! "))
-          .getDefaultValue();
+					lastContainer.setExpNetWeight(terminalVGM / 2);
+					lastContainer.setTireWeight(String.valueOf(tireWeight));
+					lastContainer.setFuelWeight(String.valueOf(fuelWeight));
 
-      Optional<SolasWeightConfig> optTyreWeight = solasMasterData.stream().filter(solasConfig -> StringUtils
-          .equalsIgnoreCase(SolasWeightType.TYRE.getValue(), solasConfig.getWeightType().getValue())).findFirst();
+				} else if (firstContainer.getExpWeightBridge() < lastContainer.getExpWeightBridge()) {
 
-      int tireWeight = optTyreWeight.orElseThrow(() -> new ResultsNotFoundException("Solas data for Tyre not Found ! "))
-          .getDefaultValue();
+					int terminalVGMC1 = firstContainer.getExpWeightBridge() - pmWeight - axelWeight - fuelWeight
+							- tireWeight;
+					firstContainer.setExpNetWeight(terminalVGMC1);
 
-      Optional<SolasWeightConfig> optTolerance = solasMasterData.stream().filter(solasConfig -> StringUtils
-          .equalsIgnoreCase(SolasWeightType.VARIANCE.getValue(), solasConfig.getWeightType().getValue())).findFirst();
+					int terminalVGMC2 = lastContainer.getExpWeightBridge() - firstContainer.getExpWeightBridge();
+					lastContainer.setExpNetWeight(terminalVGMC2);
 
-      int tolerance = optTolerance
-          .orElseThrow(() -> new ResultsNotFoundException("Solas data for Tolerance not Found ! ")).getDefaultValue();
+				} else {// container 02 lifted
 
+					int terminalVGMC2 = lastContainer.getExpWeightBridge() - pmWeight - axelWeight - fuelWeight
+							- tireWeight;
+					lastContainer.setExpNetWeight(terminalVGMC2);
 
-      firstContainer.setWithinTolerance(false);
-      if ((!(optLastContainer == null)) && optLastContainer.isPresent()) {
-        ExportContainer lastContainer = optLastContainer.get();
-        lastContainer.setWithinTolerance(false);
-        if (firstContainer.getExpWeightBridge() - lastContainer.getExpWeightBridge() == 0) {
-          int terminalVGM = firstContainer.getExpWeightBridge() - pmWeight - axelWeight - fuelWeight - tireWeight;
-          firstContainer.setNetWeight(terminalVGM / 2);
-          firstContainer.setTireWeight(String.valueOf(tireWeight));
-          firstContainer.setFuelWeight(String.valueOf(fuelWeight));
+					int terminalVGMC1 = firstContainer.getExpWeightBridge() - lastContainer.getExpWeightBridge();
+					firstContainer.setExpNetWeight(terminalVGMC1);
 
-          lastContainer.setNetWeight(terminalVGM / 2);
-          lastContainer.setTireWeight(String.valueOf(tireWeight));
-          lastContainer.setFuelWeight(String.valueOf(fuelWeight));
+				}
 
-        } else if (firstContainer.getExpWeightBridge() < lastContainer.getExpWeightBridge()) {
+			} else {// this is for single container
+				int terminalVGM = firstContainer.getExpWeightBridge() - pmWeight - axelWeight - fuelWeight - tireWeight;
+				firstContainer.setExpNetWeight(terminalVGM);
+				firstContainer.setTireWeight(String.valueOf(tireWeight));
+				firstContainer.setFuelWeight(String.valueOf(fuelWeight));
+			}
 
-          int terminalVGMC1 = firstContainer.getExpWeightBridge() - pmWeight - axelWeight - fuelWeight - tireWeight;
-          firstContainer.setNetWeight(terminalVGMC1);
+			if (StringUtils.equalsIgnoreCase(firstContainer.getSolas().getSolasInstruction(),
+					SolasInstructionType.VGM_INSTRUCTION_SHIPPER.getValue())) {
+				calculateTolerance(exportContainers, tolerance);
+			}
+		} else {
+			throw new BusinessException("Solas Applicable only for Full Containers !");
+		}
 
-          int terminalVGMC2 = lastContainer.getExpWeightBridge() - firstContainer.getExpWeightBridge();
-          lastContainer.setNetWeight(terminalVGMC2);
+		return exportContainers;
 
-        } else {// container 02 lifted
+	}
 
-          int terminalVGMC2 = lastContainer.getExpWeightBridge() - pmWeight - axelWeight - fuelWeight - tireWeight;
-          lastContainer.setNetWeight(terminalVGMC2);
+	public List<ExportContainer> calculateTolerance(List<ExportContainer> exportContainers, int tolerance) {
 
-          int terminalVGMC1 = firstContainer.getExpWeightBridge() - lastContainer.getExpWeightBridge();
-          firstContainer.setNetWeight(terminalVGMC1);
+		BigDecimal tolerancePercentage = new BigDecimal(tolerance);
 
-        }
+		exportContainers.stream().filter(expCon -> StringUtils.equalsIgnoreCase(ContainerFullEmptyType.FULL.getValue(),
+				expCon.getContainer().getContainerFullOrEmpty())).forEach(container -> {
+					BigDecimal shipperVGM = new BigDecimal(container.getSolas().getShipperVGM()).setScale(2,
+							BigDecimal.ROUND_UP);
+					BigDecimal terminalVGM = new BigDecimal(container.getExpNetWeight()).setScale(2, BigDecimal.ROUND_UP);
+					BigDecimal variance = ((shipperVGM.subtract(terminalVGM)).divide(shipperVGM, 4,
+							BigDecimal.ROUND_HALF_UP)).multiply(new BigDecimal(100));
+					container.setVariance(String.valueOf(variance));
 
-      } else {// this is for single container
-        int terminalVGM = firstContainer.getExpWeightBridge() - pmWeight - axelWeight - fuelWeight - tireWeight;
-        firstContainer.setNetWeight(terminalVGM);
-        firstContainer.setTireWeight(String.valueOf(tireWeight));
-        firstContainer.setFuelWeight(String.valueOf(fuelWeight));
-      }
+					// checking if in range
+					if (variance.compareTo(tolerancePercentage) <= 0
+							&& variance.compareTo(tolerancePercentage.negate()) >= 0) {
+						container.setWithinTolerance(true);
+					} else {
+						container.setWithinTolerance(false);
+					}
+				});
 
-      if (StringUtils.equalsIgnoreCase(firstContainer.getSolas().getSolasInstruction(),
-          SolasInstructionType.VGM_INSTRUCTION_SHIPPER.getValue())) {
-        calculateTolerance(exportContainers, tolerance);
-      }
-    } else {
-      throw new BusinessException("Solas Applicable only for Full Containers !");
-    }
+		return exportContainers;
 
-    return exportContainers;
-
-  }
-
-  public List<ExportContainer> calculateTolerance(List<ExportContainer> exportContainers, int tolerance) {
-
-    BigDecimal tolerancePercentage = new BigDecimal(tolerance);
-
-    exportContainers.stream().filter(expCon -> StringUtils.equalsIgnoreCase(ContainerFullEmptyType.FULL.getValue(),
-        expCon.getContainer().getContainerFullOrEmpty())).forEach(container -> {
-          BigDecimal shipperVGM = new BigDecimal(container.getSolas().getShipperVGM()).setScale(2, BigDecimal.ROUND_UP);
-          BigDecimal terminalVGM = new BigDecimal(container.getNetWeight()).setScale(2, BigDecimal.ROUND_UP);
-          BigDecimal variance = ((shipperVGM.subtract(terminalVGM)).divide(shipperVGM, 4, BigDecimal.ROUND_HALF_UP))
-              .multiply(new BigDecimal(100));
-          container.setVariance(String.valueOf(variance));
-
-          // checking if in range
-          if (variance.compareTo(tolerancePercentage) <= 0 && variance.compareTo(tolerancePercentage.negate()) >= 0) {
-            container.setWithinTolerance(true);
-          } else {
-            container.setWithinTolerance(false);
-          }
-        });
-
-    return exportContainers;
-
-  }
+	}
 
 }

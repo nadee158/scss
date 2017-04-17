@@ -247,6 +247,21 @@ public class ImportExportGateOutService {
     // call opus -
     OpusGateOutWriteRequest opusGateOutWriteRequest =
         opusGateOutWriteService.constructOpusGateOutWriteRequest(gateOutWriteRequest);
+    
+    
+    OpusRequestResponseDTO opusRequestResponseDTO = new OpusRequestResponseDTO();
+    opusRequestResponseDTO.setRequest(gson.toJson(opusGateOutWriteRequest));
+    opusRequestResponseDTO.setGateinTime(DateUtil.getLocalDateFromString(opusGateOutWriteRequest.getGateOUTDateTime()));
+    //opusRequestResponseDTO.setCardID(gateInRequest.getCardID());
+    //opusRequestResponseDTO.setTransactionType(trxDTO.getTrxType().getValue());
+    //opusRequestResponseDTO.setImpContainer01(gateInReadRequest.getContainerNo1ImportCY());
+    //opusRequestResponseDTO.setImpContainer02(gateInReadRequest.getContainerNo2ImportCY());
+    //opusRequestResponseDTO.setExpContainer01(gateInReadRequest.getContainerNo1ExportCY());
+    //opusRequestResponseDTO.setExpContainer02(gateInReadRequest.getContainerNo2ExportCY());
+    opusRequestResponseDTO.setGateInOut(GateInOutStatus.OUT.getValue());
+    opusRequestResponseDTO.setReadWrite(ReadWriteStatus.WRITE.getValue());
+    
+    
     OpusGateOutWriteResponse opusGateOutWriteResponse =
         opusGateOutWriteService.getGateOutWriteResponse(opusGateOutWriteRequest);
 
@@ -258,8 +273,8 @@ public class ImportExportGateOutService {
 
     }
 
-    Future<Boolean> impSave = null;
-    Future<Boolean> expSave = null;
+    /*Future<Boolean> impSave = null;
+    Future<Boolean> expSave = null;*/
 
     if (StringUtils.isEmpty(gateOutWriteRequest.getImpExpFlag()))
       throw new BusinessException("Invalid GateOutWriteRequest Empty ImpExpFlag");
@@ -267,16 +282,16 @@ public class ImportExportGateOutService {
 
     switch (impExpFlag) {
       case IMPORT:
-        impSave = importGateOutService.saveGateOutInfo(gateOutWriteRequest, client, user, booth);
-        expSave = new AsyncResult<Boolean>(true);
+        importGateOutService.saveGateOutInfo(gateOutWriteRequest, client, user, booth);
+        //expSave = new AsyncResult<Boolean>(true);
         break;
       case EXPORT:
-        impSave = new AsyncResult<Boolean>(true);
-        expSave = exportGateOutService.saveGateOutInfo(gateOutWriteRequest, client, user, booth);
+        //impSave = new AsyncResult<Boolean>(true);
+        exportGateOutService.saveGateOutInfo(gateOutWriteRequest, client, user, booth);
         break;
       case IMPORT_EXPORT:
-        impSave = importGateOutService.saveGateOutInfo(gateOutWriteRequest, client, user, booth);
-        expSave = exportGateOutService.saveGateOutInfo(gateOutWriteRequest, client, user, booth);
+        importGateOutService.saveGateOutInfo(gateOutWriteRequest, client, user, booth);
+        exportGateOutService.saveGateOutInfo(gateOutWriteRequest, client, user, booth);
         break;
       default:
         break;
@@ -289,10 +304,10 @@ public class ImportExportGateOutService {
 
 
     GateOutMessage gateOutMessage = new GateOutMessage();
-    gateOutMessage.setCode(GateOutMessage.NOK);
-    gateOutMessage.setDescription("Save Pending!");
+    gateOutMessage.setCode(GateOutMessage.OK);
+    gateOutMessage.setDescription("Saved Successfully!");
 
-    while (true) {
+    /*while (true) {
       if (impSave.isDone() && expSave.isDone()) {
 
         gateOutMessage.setCode(GateOutMessage.OK);
@@ -310,7 +325,7 @@ public class ImportExportGateOutService {
         System.out.println("WHILE LOOP BROKEN ON THREAD EXCEPTION!!!!. ");
         break;
       }
-    }
+    }*/
     gateOutReponse.setMessage(gateOutMessage);
     return gateOutReponse;
   }

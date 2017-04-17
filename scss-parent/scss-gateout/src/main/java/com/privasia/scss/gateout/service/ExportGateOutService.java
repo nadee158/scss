@@ -167,9 +167,9 @@ public class ExportGateOutService {
     return null;
   }
 
-  @Async
-  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRES_NEW, readOnly = false)
-  public Future<Boolean> saveGateOutInfo(GateOutWriteRequest gateOutWriteRequest, Client gateOutClient,
+  //@Async
+  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
+  public void saveGateOutInfo(GateOutWriteRequest gateOutWriteRequest, Client gateOutClient,
       SystemUser gateOutClerk, Client booth) {
 
     if (gateOutWriteRequest.getExportContainers() == null || gateOutWriteRequest.getExportContainers().isEmpty())
@@ -208,7 +208,7 @@ public class ExportGateOutService {
       throw new BusinessException("Invalid Request to Update Export !");
     }
 
-    return new AsyncResult<Boolean>(true);
+    //return new AsyncResult<Boolean>(true);
   }
 
 

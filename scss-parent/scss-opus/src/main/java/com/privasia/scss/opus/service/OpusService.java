@@ -73,9 +73,14 @@ public class OpusService {
 
     if (exportContainer.getReferTemp() != null) {
       giWriteRequestExpContainer
-          .setContainerReeferTempSign(ExportUtilService.getReferTempSign(exportContainer.getReferTemp()));
+          .setContainerReeferTempSign(exportContainer.getReferTempType());
       giWriteRequestExpContainer.setContainerReeferTempUnit(exportContainer.getReeferTempUnit());
-      giWriteRequestExpContainer.setContainerReeferTempValue(String.valueOf(Math.abs(exportContainer.getReferTemp())));
+      if(exportContainer.getReferTemp()==null){
+    	  giWriteRequestExpContainer.setContainerReeferTempValue(null);
+      }else{
+    	  giWriteRequestExpContainer.setContainerReeferTempValue(String.valueOf(Math.abs(exportContainer.getReferTemp())));
+      }
+      
     }
 
     giWriteRequestExpContainer.setContainerDGImdg(exportContainer.getImdg());
@@ -200,7 +205,7 @@ public class OpusService {
     importContainer.setContainerSubHandlingType(gIReadResponseImportContainer.getContainerSubHandlingType());
     // private double containerHeight;// 8,
     importContainer.getContainer().setContainerHeight(
-        ExportUtilService.getIntegerValueFromString(gIReadResponseImportContainer.getContainerHeight()));
+        ExportUtilService.getDoubleValueFromString(gIReadResponseImportContainer.getContainerHeight()));
     // private String containerIso;// 4001,
     importContainer.getContainer().setContainerISOCode(gIReadResponseImportContainer.getContainerIso());
     // private double containerSize;// 40,
@@ -288,7 +293,7 @@ public class OpusService {
         ExportUtilService.getIntValueFromString(gIReadResponseExporterContainer.getContainerGrossWeight()));
     // private double containerNetWeight;// 9000,
     exportContainer
-        .setNetWeight(ExportUtilService.getIntValueFromString(gIReadResponseExporterContainer.getContainerNetWeight()));
+        .setCosmosNetWeight(ExportUtilService.getIntValueFromString(gIReadResponseExporterContainer.getContainerNetWeight()));
     exportContainer.setTareWeight(
         ExportUtilService.getIntValueFromString(gIReadResponseExporterContainer.getContainerTareWeight()));
 
@@ -712,7 +717,7 @@ public class OpusService {
         if (!(importContainers == null || importContainers.isEmpty())) {
           importContainer = importContainers.stream()
               .filter(e -> (e.getContainer() != null)
-                  && (StringUtils.equals(e.getContainer().getContainerNumber(), opusExportContainer.getContainerNo())))
+                  && (StringUtils.equals(e.getContainer().getContainerNumber(), opusExportContainer.getContainerNo()))) 
               .findFirst().get();
         }
         importContainer = giReadResponseImportContainerToImportContainer(opusExportContainer, importContainer);
@@ -741,5 +746,6 @@ public class OpusService {
     }
     return null;
   }
+  
 
 }

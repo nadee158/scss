@@ -538,19 +538,19 @@ public class GateInXMLRequestService {
     if ("Y".equals(exportContainer.getOperationReefer())) {
       String tempSignC1 = "";
       String tempC1 = "";
-      int tempC1Length = exportContainer.getTemp().length();
+      //int tempC1Length = exportContainer.getTemp().length();
 
-      if (exportContainer.getTemp().startsWith("+") || exportContainer.getTemp().startsWith("-")) {
-        tempSignC1 = exportContainer.getTemp().substring(0, 1);
-        tempC1 = exportContainer.getTemp().substring(1, tempC1Length - 1);
+      /*if (exportContainer.getTemp().startsWith("+") || exportContainer.getTemp().startsWith("-")) {
+       // tempSignC1 = exportContainer.getReferTemp().substring(0, 1);
+        //tempC1 = exportContainer.getTemp().substring(1, tempC1Length - 1);
       } else {
-        tempC1 = exportContainer.getTemp();
-      }
+       // tempC1 = exportContainer.getTemp();
+      }*/
       //@formatter:off
       operationRefer.append("<CNORSE>").append(toUpperCase(exportContainer.getOperationReefer())).append("</CNORSE>\n") //Operational Refer : To capture Operational Refer Y/N, Conditional if exi/st
                       .append("<PLMNSE>").append(tempSignC1).append("</PLMNSE>\n")
                       .append("<RGRTSE>").append(tempC1).append("</RGRTSE>\n") // Temperature : To capture temperature (5,2, Conditional if exist )
-                      .append("<RGTESE>").append(exportContainer.getTempUnit()).append("</RGTESE>\n"); // Temp uni
+                      .append("<RGTESE>").append(exportContainer.getReeferTempUnit()).append("</RGTESE>\n"); // Temp uni
     //@formatter:on
 
     } else {

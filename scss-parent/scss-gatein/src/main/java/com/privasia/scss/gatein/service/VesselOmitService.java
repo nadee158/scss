@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.privasia.scss.common.dto.ExportContainer;
-import com.privasia.scss.core.exception.ResultsNotFoundException;
+import com.privasia.scss.core.exception.BusinessException;
 import com.privasia.scss.core.model.VesselOmit;
 import com.privasia.scss.core.model.VesselOmitPK;
 import com.privasia.scss.core.repository.VesselOmitRepository;
@@ -20,42 +20,49 @@ import com.privasia.scss.core.repository.VesselOmitRepository;
 @Service("vesselOmitService")
 public class VesselOmitService {
 
-  @Autowired
-  private VesselOmitRepository vesselOmitRepository;
+	private VesselOmitRepository vesselOmitRepository;
 
-  @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
-  public VesselOmit getVesselOmit(String lineCode, String agentCode) {
-    VesselOmitPK primaryKey = new VesselOmitPK();
-    primaryKey.setAgent(StringUtils.trim(agentCode));
-    primaryKey.setLine(StringUtils.trim(lineCode));
-    Optional<VesselOmit> vesselOmit = vesselOmitRepository.findOne(primaryKey);
-    return vesselOmit.orElseThrow(() -> new ResultsNotFoundException(
-        "VesselOmit not found for linecode / agentCode : " + lineCode + " / " + agentCode));
-  }
+	@Autowired
+	public void setVesselOmitRepository(VesselOmitRepository vesselOmitRepository) {
+		this.vesselOmitRepository = vesselOmitRepository;
+	}
 
-  public boolean isValidVesselOmit(ExportContainer c) {
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+	public Optional<VesselOmit> getVesselOmit(String lineCode, String agentCode) {
+		VesselOmitPK primaryKey = new VesselOmitPK();
+		primaryKey.setAgent(StringUtils.trim(agentCode));
+		primaryKey.setLine(StringUtils.trim(lineCode));
+		Optional<VesselOmit> optVesselOmit = vesselOmitRepository.findOne(primaryKey);
+		return optVesselOmit;
+	}
 
-    VesselOmit vesselOmit = getVesselOmit(c.getShippingLine(), c.getShippingAgent());
-    if (StringUtils.contains(c.getVesselVoyageIN(), vesselOmit.getVesselVoyIN())) {
-      // return business exception
-      /*
-       * returnmsg += MessageCode.format("ERR_MSG_081", new Object[] { f.getContainerNoC2(),
-       * vesselOmitDto.getLineCode(), vesselOmitDto.getAgentCode(), vesselOmitDto.getVesselVoyIn()
-       * }) + ReturnMsg.SEPARATOR;
-       */
-    }
+	public boolean isValidVesselOmit(ExportContainer c) {
 
-    if (StringUtils.contains(c.getVesselVoyageOUT(), vesselOmit.getVesselVoyOUT())) {
-      // return business exception
-      /*
-       * returnmsg += MessageCode.format("ERR_MSG_081", new Object[] { f.getContainerNoC2(),
-       * vesselOmitDto.getLineCode(), vesselOmitDto.getAgentCode(), vesselOmitDto.getVesselVoyOut()
-       * }) + ReturnMsg.SEPARATOR;
-       */
-    }
-    return true;
-  }
+		if (StringUtils.isNotBlank(c.getShippingLine()) && StringUtils.isNotBlank(c.getShippingAgent())) {
 
+			Optional<VesselOmit> optVesselOmit = getVesselOmit(c.getShippingLine(), c.getShippingAgent());
 
+			if (optVesselOmit.isPresent()) {
+				VesselOmit vesselOmit = optVesselOmit.get();
+				if (StringUtils.isNotBlank(vesselOmit.getVesselVoyIN())) {
+					if (StringUtils.contains(c.getVesselVoyageIN(), vesselOmit.getVesselVoyIN())) {
+
+						throw new BusinessException("Container : " + c.getContainer().getContainerNumber()
+								+ "Vessel for " + vesselOmit.getVesselOmitID().getLine() + " / "
+								+ vesselOmit.getVesselOmitID().getAgent() + " is " + vesselOmit.getVesselVoyIN() + "!");
+					}
+				} else if (StringUtils.isNotBlank(vesselOmit.getVesselVoyOUT())) {
+					if (StringUtils.contains(c.getVesselVoyageOUT(), vesselOmit.getVesselVoyOUT())) {
+						throw new BusinessException("Container : " + c.getContainer().getContainerNumber()
+								+ "Vessel for " + vesselOmit.getVesselOmitID().getLine() + " / "
+								+ vesselOmit.getVesselOmitID().getAgent() + " is " + vesselOmit.getVesselVoyOUT()
+								+ "!");
+					}
+				}
+			}
+		}
+
+		return true;
+	}
 
 }

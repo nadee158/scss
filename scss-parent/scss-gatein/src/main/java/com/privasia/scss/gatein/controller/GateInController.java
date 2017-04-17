@@ -83,6 +83,20 @@ public class GateInController {
     return new CustomResponseEntity<ApiResponseObject<?>>(
         new ApiResponseObject<GateInReponse>(HttpStatus.OK, gateInWriteReponse), HttpStatus.OK);
   }
+  
+  @RequestMapping(value = "/testsavegateininfo", method = RequestMethod.PUT,
+	      produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	  public CustomResponseEntity<ApiResponseObject<?>> saveTestGateInInfo(
+	      @Valid @RequestBody GateInWriteRequest gateInWriteRequest, BindingResult bindingResult) throws BindException {
+	    gateInWriteRequestValidator.validate(gateInWriteRequest, bindingResult);
+	    if (bindingResult.hasErrors()) {
+	      throw new BindException(bindingResult);
+	    }
+	    GateInReponse gateInWriteReponse = importExportGateInService.saveTestGateInInfo(gateInWriteRequest);
+
+	    return new CustomResponseEntity<ApiResponseObject<?>>(
+	        new ApiResponseObject<GateInReponse>(HttpStatus.OK, gateInWriteReponse), HttpStatus.OK);
+	  }
 
 
 
