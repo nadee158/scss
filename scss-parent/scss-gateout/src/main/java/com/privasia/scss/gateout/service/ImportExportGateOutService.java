@@ -2,14 +2,12 @@ package com.privasia.scss.gateout.service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.Future;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -24,10 +22,7 @@ import com.privasia.scss.common.dto.GateOutRequest;
 import com.privasia.scss.common.dto.GateOutWriteRequest;
 import com.privasia.scss.common.dto.ImportContainer;
 import com.privasia.scss.common.dto.InProgressTrxDTO;
-import com.privasia.scss.common.enums.GateInOutStatus;
 import com.privasia.scss.common.enums.ImpExpFlagStatus;
-import com.privasia.scss.common.enums.ReadWriteStatus;
-import com.privasia.scss.common.util.DateUtil;
 import com.privasia.scss.core.exception.BusinessException;
 import com.privasia.scss.core.exception.ResultsNotFoundException;
 import com.privasia.scss.core.model.Card;
@@ -176,17 +171,9 @@ public class ImportExportGateOutService {
       // call opus -
       OpusGateOutReadRequest gateOutReadRequest = opusGateOutReadService.constructOpenGateOutRequest(gateOutRequest);
 
-      OpusRequestResponseDTO opusRequestResponseDTO = new OpusRequestResponseDTO();
-      opusRequestResponseDTO.setRequest(gson.toJson(gateOutReadRequest));
-      opusRequestResponseDTO.setGateinTime(DateUtil.getLocalDateFromString(gateOutReadRequest.getGateOUTDateTime()));
-      opusRequestResponseDTO.setCardID(gateOutRequest.getCardID());
-      opusRequestResponseDTO.setTransactionType(trxDTO.getTrxType().getValue());
-      opusRequestResponseDTO.setImpContainer01(gateOutReadRequest.getContainerNo1ImportCY());
-      opusRequestResponseDTO.setImpContainer02(gateOutReadRequest.getContainerNo2ImportCY());
-      opusRequestResponseDTO.setExpContainer01(gateOutReadRequest.getContainerNo1ExportCY());
-      opusRequestResponseDTO.setExpContainer02(gateOutReadRequest.getContainerNo2ExportCY());
-      opusRequestResponseDTO.setGateInOut(GateInOutStatus.OUT.getValue());
-      opusRequestResponseDTO.setReadWrite(ReadWriteStatus.READ.getValue());
+      OpusRequestResponseDTO opusRequestResponseDTO =
+          new OpusRequestResponseDTO(gateOutReadRequest, gson, gateOutRequest.getCardID());
+      System.out.println("populateGateOut :: opusRequestResponseDTO " + opusRequestResponseDTO);
 
       OpusGateOutReadResponse gateOutReadResponse =
           opusGateOutReadService.getGateOutReadResponse(gateOutReadRequest, opusRequestResponseDTO);
@@ -247,21 +234,12 @@ public class ImportExportGateOutService {
     // call opus -
     OpusGateOutWriteRequest opusGateOutWriteRequest =
         opusGateOutWriteService.constructOpusGateOutWriteRequest(gateOutWriteRequest);
-    
-    
-    OpusRequestResponseDTO opusRequestResponseDTO = new OpusRequestResponseDTO();
-    opusRequestResponseDTO.setRequest(gson.toJson(opusGateOutWriteRequest));
-    opusRequestResponseDTO.setGateinTime(DateUtil.getLocalDateFromString(opusGateOutWriteRequest.getGateOUTDateTime()));
-    //opusRequestResponseDTO.setCardID(gateInRequest.getCardID());
-    //opusRequestResponseDTO.setTransactionType(trxDTO.getTrxType().getValue());
-    //opusRequestResponseDTO.setImpContainer01(gateInReadRequest.getContainerNo1ImportCY());
-    //opusRequestResponseDTO.setImpContainer02(gateInReadRequest.getContainerNo2ImportCY());
-    //opusRequestResponseDTO.setExpContainer01(gateInReadRequest.getContainerNo1ExportCY());
-    //opusRequestResponseDTO.setExpContainer02(gateInReadRequest.getContainerNo2ExportCY());
-    opusRequestResponseDTO.setGateInOut(GateInOutStatus.OUT.getValue());
-    opusRequestResponseDTO.setReadWrite(ReadWriteStatus.WRITE.getValue());
-    
-    
+
+
+    OpusRequestResponseDTO opusRequestResponseDTO =
+        new OpusRequestResponseDTO(opusGateOutWriteRequest, gson, gateOutWriteRequest.getCardID());
+    System.out.println("saveGateOutInfo :: opusRequestResponseDTO " + opusRequestResponseDTO);
+
     OpusGateOutWriteResponse opusGateOutWriteResponse =
         opusGateOutWriteService.getGateOutWriteResponse(opusGateOutWriteRequest);
 
@@ -273,8 +251,9 @@ public class ImportExportGateOutService {
 
     }
 
-    /*Future<Boolean> impSave = null;
-    Future<Boolean> expSave = null;*/
+    /*
+     * Future<Boolean> impSave = null; Future<Boolean> expSave = null;
+     */
 
     if (StringUtils.isEmpty(gateOutWriteRequest.getImpExpFlag()))
       throw new BusinessException("Invalid GateOutWriteRequest Empty ImpExpFlag");
@@ -283,10 +262,10 @@ public class ImportExportGateOutService {
     switch (impExpFlag) {
       case IMPORT:
         importGateOutService.saveGateOutInfo(gateOutWriteRequest, client, user, booth);
-        //expSave = new AsyncResult<Boolean>(true);
+        // expSave = new AsyncResult<Boolean>(true);
         break;
       case EXPORT:
-        //impSave = new AsyncResult<Boolean>(true);
+        // impSave = new AsyncResult<Boolean>(true);
         exportGateOutService.saveGateOutInfo(gateOutWriteRequest, client, user, booth);
         break;
       case IMPORT_EXPORT:
@@ -307,25 +286,19 @@ public class ImportExportGateOutService {
     gateOutMessage.setCode(GateOutMessage.OK);
     gateOutMessage.setDescription("Saved Successfully!");
 
-    /*while (true) {
-      if (impSave.isDone() && expSave.isDone()) {
-
-        gateOutMessage.setCode(GateOutMessage.OK);
-        gateOutMessage.setDescription("Saved Successfully!");
-
-        System.out.println("WHILE LOOP BROKEN!!!!. ");
-        break;
-      }
-      System.out.println("Continue doing something else. ");
-
-      try {
-        Thread.sleep(asyncWaitTime);
-      } catch (InterruptedException e) {
-        log.error(e.getMessage());
-        System.out.println("WHILE LOOP BROKEN ON THREAD EXCEPTION!!!!. ");
-        break;
-      }
-    }*/
+    /*
+     * while (true) { if (impSave.isDone() && expSave.isDone()) {
+     * 
+     * gateOutMessage.setCode(GateOutMessage.OK); gateOutMessage.setDescription(
+     * "Saved Successfully!");
+     * 
+     * System.out.println("WHILE LOOP BROKEN!!!!. "); break; } System.out.println(
+     * "Continue doing something else. ");
+     * 
+     * try { Thread.sleep(asyncWaitTime); } catch (InterruptedException e) {
+     * log.error(e.getMessage()); System.out.println("WHILE LOOP BROKEN ON THREAD EXCEPTION!!!!. ");
+     * break; } }
+     */
     gateOutReponse.setMessage(gateOutMessage);
     return gateOutReponse;
   }

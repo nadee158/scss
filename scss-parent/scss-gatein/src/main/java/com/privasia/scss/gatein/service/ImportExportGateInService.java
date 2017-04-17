@@ -171,6 +171,7 @@ public class ImportExportGateInService {
 
     OpusRequestResponseDTO opusRequestResponseDTO =
         new OpusRequestResponseDTO(gateInReadRequest, gson, gateInRequest.getCardID());
+    System.out.println("populateGateIn :: opusRequestResponseDTO " + opusRequestResponseDTO);
 
     OpusGateInReadResponse gateInReadResponse = opusGateInReadService.getGateInReadResponse(gateInReadRequest);
 
@@ -244,6 +245,7 @@ public class ImportExportGateInService {
 
     OpusRequestResponseDTO opusRequestResponseDTO =
         new OpusRequestResponseDTO(opusGateInWriteRequest, gson, gateInWriteRequest.getCardId());
+    System.out.println("saveGateInInfo :: opusRequestResponseDTO " + opusRequestResponseDTO);
 
 
     OpusGateInWriteResponse opusGateInWriteResponse =
