@@ -242,7 +242,8 @@ public class ImportExportGateInService {
         opusGateInWriteService.constructOpusGateInWriteRequest(gateInWriteRequest);
     System.out.println("opusGateInWriteRequest " + gson.toJson(opusGateInWriteRequest));
 
-    OpusRequestResponseDTO opusRequestResponseDTO = new OpusRequestResponseDTO(opusGateInWriteRequest, gson);
+    OpusRequestResponseDTO opusRequestResponseDTO =
+        new OpusRequestResponseDTO(opusGateInWriteRequest, gson, gateInWriteRequest.getCardId());
 
 
     OpusGateInWriteResponse opusGateInWriteResponse =
