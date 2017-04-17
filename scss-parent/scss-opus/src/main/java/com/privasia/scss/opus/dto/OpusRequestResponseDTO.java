@@ -6,6 +6,12 @@ package com.privasia.scss.opus.dto;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+import com.google.gson.Gson;
+import com.privasia.scss.common.enums.GateInOutStatus;
+import com.privasia.scss.common.enums.ReadWriteStatus;
+import com.privasia.scss.common.enums.TransactionType;
+import com.privasia.scss.common.util.DateUtil;
+
 
 /**
  * @author Janaka
@@ -45,6 +51,57 @@ public class OpusRequestResponseDTO implements Serializable {
   private LocalDateTime sendTime;
 
   private LocalDateTime receivedTime;
+
+  public OpusRequestResponseDTO() {}
+
+  public OpusRequestResponseDTO(OpusGateInReadRequest gateInReadRequest, Gson gson, long cardId) {
+    this.setRequest(gson.toJson(gateInReadRequest));
+    this.setGateinTime(DateUtil.getLocalDateFromString(gateInReadRequest.getGateINDateTime()));
+    this.setCardID(cardId);
+    this.setImpContainer01(gateInReadRequest.getContainerNo1ImportCY());
+    this.setImpContainer02(gateInReadRequest.getContainerNo2ImportCY());
+    this.setExpContainer01(gateInReadRequest.getContainerNo1ExportCY());
+    this.setExpContainer02(gateInReadRequest.getContainerNo2ExportCY());
+    this.setTransactionType(this.determineTransactionType());
+    this.setGateInOut(GateInOutStatus.IN.getValue());
+    this.setReadWrite(ReadWriteStatus.READ.getValue());
+  }
+
+  public OpusRequestResponseDTO(OpusGateInWriteRequest opusGateInWriteRequest, Gson gson) {
+    this.setRequest(gson.toJson(opusGateInWriteRequest));
+    this.setGateinTime(DateUtil.getLocalDateFromString(opusGateInWriteRequest.getGateINDateTime()));
+    // opusRequestResponseDTO.setCardID(gateInRequest.getCardID());
+    // opusRequestResponseDTO.setTransactionType(trxDTO.getTrxType().getValue());
+    // opusRequestResponseDTO.setImpContainer01(gateInReadRequest.getContainerNo1ImportCY());
+    // opusRequestResponseDTO.setImpContainer02(gateInReadRequest.getContainerNo2ImportCY());
+    // opusRequestResponseDTO.setExpContainer01(gateInReadRequest.getContainerNo1ExportCY());
+    // opusRequestResponseDTO.setExpContainer02(gateInReadRequest.getContainerNo2ExportCY());
+    this.setGateInOut(GateInOutStatus.IN.getValue());
+    this.setReadWrite(ReadWriteStatus.WRITE.getValue());
+  }
+
+  public String determineTransactionType() {
+    boolean isExportPresent = false;
+    boolean isImportPresent = false;
+    if (!(this.getExpContainer01() == null || this.getExpContainer02() == null)) {
+      isExportPresent = true;
+    }
+    if (!(this.getImpContainer01() == null || this.getImpContainer02() == null)) {
+      isImportPresent = true;
+    }
+    if (isExportPresent && isImportPresent) {
+      return TransactionType.IMPORT_EXPORT.getValue();
+    }
+
+    if (isExportPresent) {
+      return TransactionType.EXPORT.getValue();
+    }
+
+    if (isImportPresent) {
+      return TransactionType.IMPORT.getValue();
+    }
+    return null;
+  }
 
   public Long getOpusReqResID() {
     return opusReqResID;
