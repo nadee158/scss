@@ -190,18 +190,15 @@ public class ExportGateInService {
 
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
 	public void setStoragePeriod(ExportContainer exportContainer) {
-		if (!(exportContainer == null)) {
-
+		if (exportContainer != null) {
 			String shipCodeStr = exportContainer.getShippingLine();
-			System.out.println("shipCodeStr " + shipCodeStr);
-
 			Optional<ShipCode> optionalShipCode = shipCodeRepository.findByShipStatusAndShippingCode(ShipStatus.ACTIVE,
 					shipCodeStr);
-
-			ShipCode shipCode = optionalShipCode.orElseThrow(() -> new ResultsNotFoundException(
-					"Ship Code could be found for the given Ship Code ! " + shipCodeStr));
-
-			exportContainer.setStoragePeriod(shipCode.getStoragePeriod());
+			if(optionalShipCode.isPresent()){
+				ShipCode shipCode = optionalShipCode.get();
+				exportContainer.setStoragePeriod(shipCode.getStoragePeriod());
+			}
+			
 		}
 
 	}
@@ -222,14 +219,11 @@ public class ExportGateInService {
 
 			if (optionalshipSCN.isPresent()) {
 				ShipSCN shipSCN = optionalshipSCN.get();
+				exportContainer.setShipSCNID(Optional.of(shipSCN.getShipSCNID()));
 				exportContainer.setBypassEEntry(shipSCN.getScnByPass());
 				exportContainer.setRegisteredInEarlyEntry(true);
 			} else {
 				exportContainer.setRegisteredInEarlyEntry(false);
-				// throw new ResultsNotFoundException(
-				// "Ship SCN could be found for the given " + " SCN /
-				// ContainerNo Info! " + scn + " / " +
-				// exportContainer);
 			}
 
 		}

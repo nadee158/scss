@@ -1,4 +1,4 @@
-package com.privasia.scss.gatein.service;
+package com.privasia.scss.gatein.exports.business.service;
 
 import java.util.Optional;
 

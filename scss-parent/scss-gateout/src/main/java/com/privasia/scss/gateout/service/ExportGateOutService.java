@@ -173,18 +173,18 @@ public class ExportGateOutService {
       SystemUser gateOutClerk, Client booth) {
 
     if (gateOutWriteRequest.getExportContainers() == null || gateOutWriteRequest.getExportContainers().isEmpty())
-      throw new BusinessException("Invalid GateOutWriteRequest to save Exports ! ");
+      throw new BusinessException("Invalid Request to Update Export !");
 
     List<ExportContainer> exportContainers = gateOutWriteRequest.getExportContainers();
-    if (!(exportContainers == null || exportContainers.isEmpty())) {
-
+   
       exportContainers.forEach(exportContainer -> {
         Optional<Exports> optExport = exportsRepository.findOne(exportContainer.getExportID());
         Exports exports = optExport.orElseThrow(
             () -> new BusinessException("Invalid Exports Information to Update ! " + exportContainer.getExportID()));
 
         if (StringUtils.isEmpty(exportContainer.getBaseCommonGateInOutAttribute().getEirStatus()))
-          throw new BusinessException("");
+          throw new BusinessException("Invalid EIR Status for Exports : " + exportContainer.getExportID());
+        
         exports.getBaseCommonGateInOutAttribute()
             .setEirStatus(TransactionStatus.fromCode(exportContainer.getBaseCommonGateInOutAttribute().getEirStatus()));
         exports.getBaseCommonGateInOutAttribute().setTimeGateOut(gateOutWriteRequest.getGateOUTDateTime());
@@ -204,10 +204,6 @@ public class ExportGateOutService {
         modelMapper.map(exports, exportq);
         exportsQRepository.save(exportq);
       });
-    } else {
-      throw new BusinessException("Invalid Request to Update Export !");
-    }
-
     //return new AsyncResult<Boolean>(true);
   }
 

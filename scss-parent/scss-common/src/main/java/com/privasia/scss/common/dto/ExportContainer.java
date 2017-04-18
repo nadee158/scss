@@ -1,6 +1,7 @@
 package com.privasia.scss.common.dto;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -257,7 +258,7 @@ public class ExportContainer {
 	private boolean earlyEntry;// for GateInExpNormalController -
 								// validateContainer method
 
-	private int storagePeriod;// for ContainerService - isAllowIn method
+	private int storagePeriod = -1;// for ContainerService - isAllowIn method
 
 	private boolean bypassEEntry;// for ContainerService - isAllowIn method
 
@@ -312,6 +313,8 @@ public class ExportContainer {
 	//////////////////////////////////////
 
 	private boolean ogaBlock = false;
+	
+	private Optional<Long> shipSCNID;
 
 	public Long getExportID() {
 		return exportID;
@@ -1289,6 +1292,14 @@ public class ExportContainer {
 		this.gateOutRemarks = gateOutRemarks;
 	}
 
+	public Optional<Long> getShipSCNID() {
+		return shipSCNID;
+	}
+
+	public void setShipSCNID(Optional<Long> shipSCNID) {
+		this.shipSCNID = shipSCNID;
+	}
+
 	@Override
 	public String toString() {
 		return "ExportContainer [exportID=" + exportID + ", container=" + container + ", commonGateInOut="
@@ -1312,7 +1323,7 @@ public class ExportContainer {
 				+ ", printEir=" + printEir + ", userRemarks=" + userRemarks + ", kpaApproval=" + kpaApproval
 				+ ", hdlGoodsCode=" + hdlGoodsCode + ", dgDescription=" + dgDescription + ", hdlGoodsDescription="
 				+ hdlGoodsDescription + ", tareWeight=" + tareWeight + ", grossWeight=" + grossWeight + ", cosmosNetWeight="
-				+ cosmosNetWeight + ", backToback=" + backToback + ", gateOutRemarks=" + gateOutRemarks
+				+ cosmosNetWeight + ", backToback=" + backToback + ", gateOutRemarks=" + gateOutRemarks + ", shipSCNID=" + shipSCNID
 				+ ", weightDiffPercentage=" + weightDiffPercentage + ", weightDifference=" + weightDifference
 				+ ", damageCode_01=" + damageCode_01 + ", damageCode_02=" + damageCode_02 + ", damageCode_03="
 				+ damageCode_03 + ", damageCode_04=" + damageCode_04 + ", damageCode_05=" + damageCode_05

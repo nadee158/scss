@@ -304,12 +304,8 @@ public class ImportGateOutService {
       gatePass.getBaseCommonGateInOutAttribute().setGateOutBoothNo(String.valueOf(booth.getClientID()));
       gatePass.getBaseCommonGateInOutAttribute().setGateOutClerk(gateOutClerk);
       gatePass.getBaseCommonGateInOutAttribute().setGateOutClient(gateOutClient);
-      gatePass.getCommonGateInOut().setRejectReason(importContainer.getCommonGateInOut().getRejectReason()); // need
-                                                                                                             // to
-                                                                                                             // set
-                                                                                                             // to
-                                                                                                             // UPPERCASE
-      gatePass.setGateOutRemarks(importContainer.getGateOutRemarks()); // need to set to UPPERCASE
+      gatePass.getCommonGateInOut().setRejectReason(importContainer.getCommonGateInOut().getRejectReason()); 
+      gatePass.setGateOutRemarks(importContainer.getGateOutRemarks());
       gatePass.setGateOutLaneNo(gateOutClient.getLaneNo());
 
       if (gatePass.getContainer().getContainerFullOrEmpty().getValue().equals(ContainerFullEmptyType.FULL.getValue())) {
