@@ -3,8 +3,6 @@ package com.privasia.scss.gatein.service;
 import java.sql.SQLException;
 import java.sql.SQLTimeoutException;
 
-import javax.transaction.Transactional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +11,6 @@ import com.privasia.scss.core.exception.BusinessException;
 import com.privasia.scss.gatein.lpkedi.repository.LPKEDIRepository;
 
 @Service("lpkediService")
-@Transactional
 public class LPKEDIService {
 
   @Autowired

@@ -5,15 +5,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.Future;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,236 +42,238 @@ import com.privasia.scss.gatein.imports.business.service.GatePassValidationServi
 @Service("importGateInService")
 public class ImportGateInService {
 
-	private static final Log log = LogFactory.getLog(ImportGateInService.class);
+  private static final Log log = LogFactory.getLog(ImportGateInService.class);
 
-	private GatePassRepository gatePassRepository;
+  private GatePassRepository gatePassRepository;
 
-	private ModelMapper modelMapper;
+  private ModelMapper modelMapper;
 
-	private HPATBookingRepository hpatBookingRepository;
+  private HPATBookingRepository hpatBookingRepository;
 
-	private GatePassValidationService gatePassValidationService;
+  private GatePassValidationService gatePassValidationService;
 
-	@Autowired
-	public void setHPATBookingRepository(HPATBookingRepository hpatBookingRepository) {
-		this.hpatBookingRepository = hpatBookingRepository;
-	}
+  @Autowired
+  public void setHPATBookingRepository(HPATBookingRepository hpatBookingRepository) {
+    this.hpatBookingRepository = hpatBookingRepository;
+  }
 
-	@Autowired
-	public void setGatePassRepository(GatePassRepository gatePassRepository) {
-		this.gatePassRepository = gatePassRepository;
-	}
+  @Autowired
+  public void setGatePassRepository(GatePassRepository gatePassRepository) {
+    this.gatePassRepository = gatePassRepository;
+  }
 
-	@Autowired
-	public void setModelMapper(ModelMapper modelMapper) {
-		this.modelMapper = modelMapper;
-	}
+  @Autowired
+  public void setModelMapper(ModelMapper modelMapper) {
+    this.modelMapper = modelMapper;
+  }
 
-	@Autowired
-	public void setGatePassValidationService(GatePassValidationService gatePassValidationService) {
-		this.gatePassValidationService = gatePassValidationService;
-	}
+  @Autowired
+  public void setGatePassValidationService(GatePassValidationService gatePassValidationService) {
+    this.gatePassValidationService = gatePassValidationService;
+  }
 
-	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-	public GateInRequest findContainerNoByGatePass(GateInRequest gateInRequest) {
+  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+  public GateInRequest findContainerNoByGatePass(GateInRequest gateInRequest) {
 
-		if (gateInRequest.getGatePass1() != null && gateInRequest.getGatePass1() != 0) {
-			String impContainer01 = gatePassRepository.findContainerNoByGatePassNo(gateInRequest.getGatePass1());
-			gateInRequest.setImpContainer1(impContainer01);
-		}
-		if (gateInRequest.getGatePass2() != null && gateInRequest.getGatePass2() != 0) {
-			String impContainer02 = gatePassRepository.findContainerNoByGatePassNo(gateInRequest.getGatePass2());
-			gateInRequest.setImpContainer2(impContainer02);
-		}
-		return gateInRequest;
+    if (gateInRequest.getGatePass1() != null && gateInRequest.getGatePass1() != 0) {
+      String impContainer01 = gatePassRepository.findContainerNoByGatePassNo(gateInRequest.getGatePass1());
+      gateInRequest.setImpContainer1(impContainer01);
+    }
+    if (gateInRequest.getGatePass2() != null && gateInRequest.getGatePass2() != 0) {
+      String impContainer02 = gatePassRepository.findContainerNoByGatePassNo(gateInRequest.getGatePass2());
+      gateInRequest.setImpContainer2(impContainer02);
+    }
+    return gateInRequest;
 
-	}
+  }
 
-	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-	public List<ImportContainer> populateGateInImport(GateInRequest gateInRequest) {
-		
-		System.out.println("gateInRequest.getGatePass1() : "+gateInRequest.getGatePass1());
-		System.out.println("gateInRequest.getGatePass2() : "+gateInRequest.getGatePass2());
-		
-		List<Long> gatePassNumberList = Arrays.asList(gateInRequest.getGatePass1(), gateInRequest.getGatePass2());
+  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+  public List<ImportContainer> populateGateInImport(GateInRequest gateInRequest) {
 
-		Optional<List<GatePass>> optionalGatePassList = gatePassRepository.findByGatePassNoIn(gatePassNumberList);
-		
-		List<GatePass> gatePassList = optionalGatePassList.get();
-		
-		if(gatePassList.isEmpty())
-			throw new ResultsNotFoundException("No Import Containers could be found for the given Gate Pass Numbers!");
-		
-		System.out.println("gatePassList.size() : "+gatePassList.size());
-		List<ImportContainer> importContainers = new ArrayList<ImportContainer>();
-		gatePassList.forEach(gatePass -> {
-			System.out.println("ggatePass.getGatePassID : "+gatePass.getGatePassID());
-			ImportContainer importContainer = new ImportContainer();
-			modelMapper.map(gatePass, importContainer);
+    System.out.println("gateInRequest.getGatePass1() : " + gateInRequest.getGatePass1());
+    System.out.println("gateInRequest.getGatePass2() : " + gateInRequest.getGatePass2());
 
-			// log.info("item " + item);
-			// log.info("importContainer " + importContainer);
-			log.info("getGateInOut " + importContainer.getGateInOut());
-			log.info("getShippingLine " + importContainer.getShippingLine());
-			log.info("getContainer().getContainerNumber() " + importContainer.getContainer().getContainerNumber());
-			log.info("getBaseCommonGateInOutAttribute().getPmHeadNo() "
-					+ importContainer.getBaseCommonGateInOutAttribute().getPmHeadNo());
-			log.info("getBaseCommonGateInOutAttribute().getPmPlateNo()"
-					+ importContainer.getBaseCommonGateInOutAttribute().getPmPlateNo());
+    List<Long> gatePassNumberList = Arrays.asList(gateInRequest.getGatePass1(), gateInRequest.getGatePass2());
 
-			importContainers.add(importContainer);
-			if (StringUtils.isEmpty(gateInRequest.getImpContainer1())) {
-				gateInRequest.setImpContainer1(gatePass.getContainer().getContainerNumber());
-			} else {
-				gateInRequest.setImpContainer2(gatePass.getContainer().getContainerNumber());
-			}
+    Optional<List<GatePass>> optionalGatePassList = gatePassRepository.findByGatePassNoIn(gatePassNumberList);
 
-		});
-		return importContainers;
+    List<GatePass> gatePassList = optionalGatePassList.get();
 
-	}
+    if (gatePassList.isEmpty())
+      throw new ResultsNotFoundException("No Import Containers could be found for the given Gate Pass Numbers!");
 
-	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-	public List<ImportContainer> fetchContainerInfo(List<Long> gatePassNumberList) {
+    System.out.println("gatePassList.size() : " + gatePassList.size());
+    List<ImportContainer> importContainers = new ArrayList<ImportContainer>();
+    gatePassList.forEach(gatePass -> {
+      System.out.println("ggatePass.getGatePassID : " + gatePass.getGatePassID());
+      ImportContainer importContainer = new ImportContainer();
+      modelMapper.map(gatePass, importContainer);
 
-		Optional<List<GatePass>> optionalGatePassList = gatePassRepository.findByGatePassNoIn(gatePassNumberList);
+      // log.info("item " + item);
+      // log.info("importContainer " + importContainer);
+      log.info("getGateInOut " + importContainer.getGateInOut());
+      log.info("getShippingLine " + importContainer.getShippingLine());
+      log.info("getContainer().getContainerNumber() " + importContainer.getContainer().getContainerNumber());
+      log.info("getBaseCommonGateInOutAttribute().getPmHeadNo() "
+          + importContainer.getBaseCommonGateInOutAttribute().getPmHeadNo());
+      log.info("getBaseCommonGateInOutAttribute().getPmPlateNo()"
+          + importContainer.getBaseCommonGateInOutAttribute().getPmPlateNo());
 
-		List<GatePass> gatePassList = optionalGatePassList.orElseThrow(() -> new ResultsNotFoundException(
-				"No Import Containers could be found for the given Gate Pass Numbers!"));
-		List<ImportContainer> importContainers = new ArrayList<ImportContainer>();
-		gatePassList.forEach(item -> {
-			ImportContainer importContainer = new ImportContainer();
-			modelMapper.map(item, importContainer);
+      importContainers.add(importContainer);
+      if (StringUtils.isEmpty(gateInRequest.getImpContainer1())) {
+        gateInRequest.setImpContainer1(gatePass.getContainer().getContainerNumber());
+      } else {
+        gateInRequest.setImpContainer2(gatePass.getContainer().getContainerNumber());
+      }
 
-			// log.info("item " + item);
-			// log.info("importContainer " + importContainer);
-			log.info("getGateInOut " + importContainer.getGateInOut());
-			log.info("getShippingLine " + importContainer.getShippingLine());
-			log.info("getContainer().getContainerNumber() " + importContainer.getContainer().getContainerNumber());
-			log.info("getBaseCommonGateInOutAttribute().getPmHeadNo() "
-					+ importContainer.getBaseCommonGateInOutAttribute().getPmHeadNo());
-			log.info("getBaseCommonGateInOutAttribute().getPmPlateNo()"
-					+ importContainer.getBaseCommonGateInOutAttribute().getPmPlateNo());
+    });
+    return importContainers;
 
-			importContainers.add(importContainer);
-		});
-		return importContainers;
+  }
 
-	}
+  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+  public List<ImportContainer> fetchContainerInfo(List<Long> gatePassNumberList) {
 
-	//@Async
-	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
-	public void saveGateInInfo(GateInWriteRequest gateInWriteRequest, Client gateInClient,
-			SystemUser gateInClerk, Card card) {
-		// construct a new export entity for each exportcontainer and save
-		if (gateInWriteRequest.getImportContainers() == null || gateInWriteRequest.getImportContainers().isEmpty())
-			throw new BusinessException("Invalid GateInWriteRequest to save Imports ! ");
-		gateInWriteRequest.getImportContainers().forEach(importContainer -> {
-			if (importContainer.getBaseCommonGateInOutAttribute() == null) {
-				importContainer.setBaseCommonGateInOutAttribute(new BaseCommonGateInOutDTO());
-			}
-			System.out.println("gateInWriteRequest.getGateInDateTime() " + gateInWriteRequest.getGateInDateTime());
-			importContainer.getBaseCommonGateInOutAttribute().setTimeGateIn(gateInWriteRequest.getGateInDateTime());
+    Optional<List<GatePass>> optionalGatePassList = gatePassRepository.findByGatePassNoIn(gatePassNumberList);
 
-			// assign values from header level to container level
-			importContainer.getBaseCommonGateInOutAttribute().setEirStatus(TransactionStatus.INPROGRESS.getValue());
-			importContainer.getBaseCommonGateInOutAttribute().setHpatBooking(gateInWriteRequest.getHpatBookingId());
-			importContainer.getBaseCommonGateInOutAttribute().setPmHeadNo(gateInWriteRequest.getTruckHeadNo());
-			importContainer.getBaseCommonGateInOutAttribute().setPmPlateNo(gateInWriteRequest.getTruckPlateNo());
-			importContainer.getBaseCommonGateInOutAttribute().setTimeGateInOk(LocalDateTime.now());
+    List<GatePass> gatePassList = optionalGatePassList.orElseThrow(
+        () -> new ResultsNotFoundException("No Import Containers could be found for the given Gate Pass Numbers!"));
+    List<ImportContainer> importContainers = new ArrayList<ImportContainer>();
+    gatePassList.forEach(item -> {
+      ImportContainer importContainer = new ImportContainer();
+      modelMapper.map(item, importContainer);
 
-			if (importContainer.getCommonGateInOut() == null) {
-				importContainer.setCommonGateInOut(new CommonGateInOutDTO());
-			}
-			importContainer.getCommonGateInOut().setGateInStatus(gateInWriteRequest.getGateInStatus());
+      // log.info("item " + item);
+      // log.info("importContainer " + importContainer);
+      log.info("getGateInOut " + importContainer.getGateInOut());
+      log.info("getShippingLine " + importContainer.getShippingLine());
+      log.info("getContainer().getContainerNumber() " + importContainer.getContainer().getContainerNumber());
+      log.info("getBaseCommonGateInOutAttribute().getPmHeadNo() "
+          + importContainer.getBaseCommonGateInOutAttribute().getPmHeadNo());
+      log.info("getBaseCommonGateInOutAttribute().getPmPlateNo()"
+          + importContainer.getBaseCommonGateInOutAttribute().getPmPlateNo());
 
-			System.out.println("importContainer " + importContainer);
+      importContainers.add(importContainer);
+    });
+    return importContainers;
 
-			if (!(importContainer.getGatePassNo() == null)) {
+  }
 
-				GatePass gatePass = gatePassRepository.findByGatePassNo(importContainer.getGatePassNo())
-						.orElseThrow(() -> new ResultsNotFoundException(
-								"Invalid Gate Pass Number : " + importContainer.getGatePassNo()));
-				if (!(gatePass == null)) {
+  // @Async
+  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
+  public void saveGateInInfo(GateInWriteRequest gateInWriteRequest, Client gateInClient, SystemUser gateInClerk,
+      Card card) {
+    // construct a new export entity for each exportcontainer and save
+    if (gateInWriteRequest.getImportContainers() == null || gateInWriteRequest.getImportContainers().isEmpty())
+      throw new BusinessException("Invalid GateInWriteRequest to save Imports ! ");
+    gateInWriteRequest.getImportContainers().forEach(importContainer -> {
+      if (importContainer.getBaseCommonGateInOutAttribute() == null) {
+        importContainer.setBaseCommonGateInOutAttribute(new BaseCommonGateInOutDTO());
+      }
+      System.out.println("gateInWriteRequest.getGateInDateTime() " + gateInWriteRequest.getGateInDateTime());
+      importContainer.getBaseCommonGateInOutAttribute().setTimeGateIn(gateInWriteRequest.getGateInDateTime());
 
-					HPABBooking hpatBooking = null;
-					if (!(importContainer.getBaseCommonGateInOutAttribute() == null)) {
-						if (StringUtils
-								.isNotEmpty(importContainer.getBaseCommonGateInOutAttribute().getHpatBooking())) {
-							hpatBooking = hpatBookingRepository
-									.findOne(importContainer.getBaseCommonGateInOutAttribute().getHpatBooking())
-									.orElse(null);
-						}
-					}
+      // assign values from header level to container level
+      importContainer.getBaseCommonGateInOutAttribute().setEirStatus(TransactionStatus.INPROGRESS.getValue());
+      importContainer.getBaseCommonGateInOutAttribute().setHpatBooking(gateInWriteRequest.getHpatBookingId());
+      importContainer.getBaseCommonGateInOutAttribute().setPmHeadNo(gateInWriteRequest.getTruckHeadNo());
+      importContainer.getBaseCommonGateInOutAttribute().setPmPlateNo(gateInWriteRequest.getTruckPlateNo());
+      importContainer.getBaseCommonGateInOutAttribute().setTimeGateInOk(LocalDateTime.now());
 
-					importContainerToGatePass(importContainer, gatePass);
+      if (importContainer.getCommonGateInOut() == null) {
+        importContainer.setCommonGateInOut(new CommonGateInOutDTO());
+      }
+      importContainer.getCommonGateInOut().setGateInStatus(gateInWriteRequest.getGateInStatus());
 
-					gatePass.prepareForInsertFromOpus(card, gateInClerk, gateInClient, hpatBooking);
-					gatePass = gatePassRepository.save(gatePass);
-				} else {
-					throw new ResultsNotFoundException("Gatepass could not be found with the given gate pass number!");
-				}
+      System.out.println("importContainer " + importContainer);
 
-			}
+      if (!(importContainer.getGatePassNo() == null)) {
 
-		});
-		//return new AsyncResult<Boolean>(true);
-	}
+        GatePass gatePass = gatePassRepository.findByGatePassNo(importContainer.getGatePassNo()).orElseThrow(
+            () -> new ResultsNotFoundException("Invalid Gate Pass Number : " + importContainer.getGatePassNo()));
+        if (!(gatePass == null)) {
 
-	private void importContainerToGatePass(ImportContainer importContainer, GatePass gatePass) {
-		if (gatePass.getCommonGateInOut() == null) {
-			gatePass.setCommonGateInOut(new CommonGateInOutAttribute());
-		}
-		gatePass.getCommonGateInOut().setEirNumber(importContainer.getPrintEIRNo());
-		if (gatePass.getBaseCommonGateInOutAttribute() == null) {
-			gatePass.setBaseCommonGateInOutAttribute(new BaseCommonGateInOutAttribute());
-		}
-		gatePass.getBaseCommonGateInOutAttribute().setEirStatus(TransactionStatus.INPROGRESS);
-		gatePass.getBaseCommonGateInOutAttribute()
-				.setTimeGateIn(importContainer.getBaseCommonGateInOutAttribute().getTimeGateIn());
-		gatePass.getBaseCommonGateInOutAttribute().setTimeGateInOk(LocalDateTime.now());
-		gatePass.getCommonGateInOut().setImpExpFlag(ImpExpFlagStatus
-				.fromValue(StringUtils.upperCase(importContainer.getCommonGateInOut().getImpExpFlag())));
-		gatePass.setOrderNo(StringUtils.upperCase(importContainer.getOrderNo()));
-		gatePass.setCurrentPosition(StringUtils.upperCase(importContainer.getCurrentPosition()));
-		gatePass.setGateInOut(GateInOutStatus.fromValue(StringUtils.upperCase(importContainer.getGateInOut())));
+          HPABBooking hpatBooking = null;
+          if (!(importContainer.getBaseCommonGateInOutAttribute() == null)) {
+            if (StringUtils.isNotEmpty(importContainer.getBaseCommonGateInOutAttribute().getHpatBooking())) {
+              hpatBooking = hpatBookingRepository
+                  .findOne(importContainer.getBaseCommonGateInOutAttribute().getHpatBooking()).orElse(null);
+            }
+          }
 
-		if (gatePass.getContainer() == null) {
-			gatePass.setContainer(new CommonContainerAttribute());
-		}
-		gatePass.getContainer().setContainerFullOrEmpty(ContainerFullEmptyType
-				.fromValue(StringUtils.upperCase(importContainer.getContainer().getContainerFullOrEmpty())));
-		gatePass.setShippingLine(StringUtils.upperCase(importContainer.getShippingLine()));
-		gatePass.getContainer()
-				.setContainerISOCode(StringUtils.upperCase(importContainer.getContainer().getContainerISOCode()));
-		gatePass.setGateInLaneNo(StringUtils.upperCase(importContainer.getGateInLaneNo()));
-		gatePass.getBaseCommonGateInOutAttribute()
-				.setPmHeadNo(StringUtils.upperCase(importContainer.getBaseCommonGateInOutAttribute().getPmHeadNo()));
-		gatePass.getBaseCommonGateInOutAttribute()
-				.setPmPlateNo(StringUtils.upperCase(importContainer.getBaseCommonGateInOutAttribute().getPmPlateNo()));
-		gatePass.setYardPosition(StringUtils.upperCase(importContainer.getYardPosition()));
-		gatePass.setBayCode(StringUtils.upperCase(importContainer.getYardBayCode()));
-		gatePass.setContainerPosition(
-				ContainerPosition.fromValue(StringUtils.upperCase(importContainer.getContainerPosition())));
-		gatePass.setCallCard(importContainer.getCallCard());
-		gatePass.getCommonGateInOut()
-				.setRejectReason(StringUtils.upperCase(importContainer.getCommonGateInOut().getRejectReason()));
-		gatePass.getCommonGateInOut().setGateInStatus(TransactionStatus
-				.fromCode(StringUtils.upperCase(importContainer.getCommonGateInOut().getGateInStatus())));
-	}
+          importContainerToGatePass(importContainer, gatePass);
+          System.out.println("importContainer.getContainer().getContainerFullOrEmpty() "
+              + importContainer.getContainer().getContainerFullOrEmpty());
+          System.out.println(
+              "gatePass.getContainer().getContainerFullOrEmpty() " + gatePass.getContainer().getContainerFullOrEmpty());
 
-	public void validateImport(GateInRequest gateInRequest, List<ImportContainer> importContainers) {
-		if (!(importContainers == null || importContainers.isEmpty())) {
-			importContainers.forEach(importContainer -> {
-				// // GatePassValidationService call validate - within another
-				// method
-				gatePassValidationService.validateGatePass(gateInRequest.getCardID(), importContainer.getGatePassNo(),
-						gateInRequest.isCheckPreArrival(), gateInRequest.getHpabSeqId(),
-						gateInRequest.getTruckHeadNo());
+          gatePass.prepareForInsertFromOpus(card, gateInClerk, gateInClient, hpatBooking);
+          System.out.println("gatePass.getContainer().getContainerFullOrEmpty() after "
+              + gatePass.getContainer().getContainerFullOrEmpty());
+          gatePass = gatePassRepository.save(gatePass);
+        } else {
+          throw new ResultsNotFoundException("Gatepass could not be found with the given gate pass number!");
+        }
 
-			});
-		}
+      }
 
-	}
+    });
+    // return new AsyncResult<Boolean>(true);
+  }
+
+  private void importContainerToGatePass(ImportContainer importContainer, GatePass gatePass) {
+    if (gatePass.getCommonGateInOut() == null) {
+      gatePass.setCommonGateInOut(new CommonGateInOutAttribute());
+    }
+    gatePass.getCommonGateInOut().setEirNumber(importContainer.getPrintEIRNo());
+    if (gatePass.getBaseCommonGateInOutAttribute() == null) {
+      gatePass.setBaseCommonGateInOutAttribute(new BaseCommonGateInOutAttribute());
+    }
+    gatePass.getBaseCommonGateInOutAttribute().setEirStatus(TransactionStatus.INPROGRESS);
+    gatePass.getBaseCommonGateInOutAttribute()
+        .setTimeGateIn(importContainer.getBaseCommonGateInOutAttribute().getTimeGateIn());
+    gatePass.getBaseCommonGateInOutAttribute().setTimeGateInOk(LocalDateTime.now());
+    gatePass.getCommonGateInOut().setImpExpFlag(
+        ImpExpFlagStatus.fromValue(StringUtils.upperCase(importContainer.getCommonGateInOut().getImpExpFlag())));
+    gatePass.setOrderNo(StringUtils.upperCase(importContainer.getOrderNo()));
+    gatePass.setCurrentPosition(StringUtils.upperCase(importContainer.getCurrentPosition()));
+    gatePass.setGateInOut(GateInOutStatus.fromValue(StringUtils.upperCase(importContainer.getGateInOut())));
+
+    if (gatePass.getContainer() == null) {
+      gatePass.setContainer(new CommonContainerAttribute());
+    }
+    gatePass.getContainer().setContainerFullOrEmpty(ContainerFullEmptyType
+        .fromValue(StringUtils.upperCase(importContainer.getContainer().getContainerFullOrEmpty())));
+    gatePass.setShippingLine(StringUtils.upperCase(importContainer.getShippingLine()));
+    gatePass.getContainer()
+        .setContainerISOCode(StringUtils.upperCase(importContainer.getContainer().getContainerISOCode()));
+    gatePass.setGateInLaneNo(StringUtils.upperCase(importContainer.getGateInLaneNo()));
+    gatePass.getBaseCommonGateInOutAttribute()
+        .setPmHeadNo(StringUtils.upperCase(importContainer.getBaseCommonGateInOutAttribute().getPmHeadNo()));
+    gatePass.getBaseCommonGateInOutAttribute()
+        .setPmPlateNo(StringUtils.upperCase(importContainer.getBaseCommonGateInOutAttribute().getPmPlateNo()));
+    gatePass.setYardPosition(StringUtils.upperCase(importContainer.getYardPosition()));
+    gatePass.setBayCode(StringUtils.upperCase(importContainer.getYardBayCode()));
+    gatePass.setContainerPosition(
+        ContainerPosition.fromValue(StringUtils.upperCase(importContainer.getContainerPosition())));
+    gatePass.setCallCard(importContainer.getCallCard());
+    gatePass.getCommonGateInOut()
+        .setRejectReason(StringUtils.upperCase(importContainer.getCommonGateInOut().getRejectReason()));
+    gatePass.getCommonGateInOut().setGateInStatus(
+        TransactionStatus.fromCode(StringUtils.upperCase(importContainer.getCommonGateInOut().getGateInStatus())));
+  }
+
+  public void validateImport(GateInRequest gateInRequest, List<ImportContainer> importContainers) {
+    if (!(importContainers == null || importContainers.isEmpty())) {
+      importContainers.forEach(importContainer -> {
+        // // GatePassValidationService call validate - within another
+        // method
+        gatePassValidationService.validateGatePass(gateInRequest.getCardID(), importContainer.getGatePassNo(),
+            gateInRequest.isCheckPreArrival(), gateInRequest.getHpabSeqId(), gateInRequest.getTruckHeadNo());
+
+      });
+    }
+
+  }
 
 }

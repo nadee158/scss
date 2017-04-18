@@ -21,10 +21,7 @@ import com.privasia.scss.common.dto.GateInRequest;
 import com.privasia.scss.common.dto.GateInWriteRequest;
 import com.privasia.scss.common.dto.GateOutMessage;
 import com.privasia.scss.common.dto.ImportContainer;
-import com.privasia.scss.common.enums.GateInOutStatus;
 import com.privasia.scss.common.enums.ImpExpFlagStatus;
-import com.privasia.scss.common.enums.ReadWriteStatus;
-import com.privasia.scss.common.util.DateUtil;
 import com.privasia.scss.core.exception.BusinessException;
 import com.privasia.scss.core.exception.ResultsNotFoundException;
 import com.privasia.scss.core.model.Card;
@@ -173,7 +170,8 @@ public class ImportExportGateInService {
         new OpusRequestResponseDTO(gateInReadRequest, gson, gateInRequest.getCardID());
     System.out.println("populateGateIn :: opusRequestResponseDTO " + opusRequestResponseDTO);
 
-    OpusGateInReadResponse gateInReadResponse = opusGateInReadService.getGateInReadResponse(gateInReadRequest);
+    OpusGateInReadResponse gateInReadResponse =
+        opusGateInReadService.getGateInReadResponse(gateInReadRequest, opusRequestResponseDTO);
 
     // check the errorlist of reponse
     String errorMessage = opusService.hasErrorMessage(gateInReadResponse.getErrorList());
@@ -249,7 +247,7 @@ public class ImportExportGateInService {
 
 
     OpusGateInWriteResponse opusGateInWriteResponse =
-        opusGateInWriteService.getGateInWriteResponse(opusGateInWriteRequest);
+        opusGateInWriteService.getGateInWriteResponse(opusGateInWriteRequest, opusRequestResponseDTO);
 
     System.out.println("opusGateInWriteResponse " + gson.toJson(opusGateInWriteResponse));
     String errorMessage = opusService.hasErrorMessage(opusGateInWriteResponse.getErrorList());
@@ -357,20 +355,12 @@ public class ImportExportGateInService {
         opusGateInWriteService.constructOpusGateInWriteRequest(gateInWriteRequest);
     System.out.println("opusGateInWriteRequest " + gson.toJson(opusGateInWriteRequest));
 
-    OpusRequestResponseDTO opusRequestResponseDTO = new OpusRequestResponseDTO();
-    opusRequestResponseDTO.setRequest(gson.toJson(opusGateInWriteRequest));
-    opusRequestResponseDTO.setGateinTime(DateUtil.getLocalDateFromString(opusGateInWriteRequest.getGateINDateTime()));
-    // opusRequestResponseDTO.setCardID(gateInRequest.getCardID());
-    // opusRequestResponseDTO.setTransactionType(trxDTO.getTrxType().getValue());
-    // opusRequestResponseDTO.setImpContainer01(gateInReadRequest.getContainerNo1ImportCY());
-    // opusRequestResponseDTO.setImpContainer02(gateInReadRequest.getContainerNo2ImportCY());
-    // opusRequestResponseDTO.setExpContainer01(gateInReadRequest.getContainerNo1ExportCY());
-    // opusRequestResponseDTO.setExpContainer02(gateInReadRequest.getContainerNo2ExportCY());
-    opusRequestResponseDTO.setGateInOut(GateInOutStatus.IN.getValue());
-    opusRequestResponseDTO.setReadWrite(ReadWriteStatus.WRITE.getValue());
+    OpusRequestResponseDTO opusRequestResponseDTO =
+        new OpusRequestResponseDTO(opusGateInWriteRequest, gson, gateInWriteRequest.getCardId());
+    System.out.println("populateGateIn :: opusRequestResponseDTO " + opusRequestResponseDTO);
 
     OpusGateInWriteResponse opusGateInWriteResponse =
-        opusGateInWriteService.getGateInWriteResponse(opusGateInWriteRequest);
+        opusGateInWriteService.getGateInWriteResponse(opusGateInWriteRequest, opusRequestResponseDTO);
 
     System.out.println("opusGateInWriteResponse " + gson.toJson(opusGateInWriteResponse));
     String errorMessage = opusService.hasErrorMessage(opusGateInWriteResponse.getErrorList());

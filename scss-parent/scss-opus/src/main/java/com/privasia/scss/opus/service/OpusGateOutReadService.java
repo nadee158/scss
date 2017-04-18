@@ -92,6 +92,7 @@ public class OpusGateOutReadService {
         new HttpEntity<OpusGateOutReadRequest>(opusGateOutReadRequest, headers);
     // save in to db
     Future<Long> future = opusRequestResponseService.saveOpusRequest(opusRequestResponseDTO);
+    
     ResponseEntity<OpusGateOutReadResponse> response =
         restTemplate.postForEntity(gateOutReadResponseURL, request, OpusGateOutReadResponse.class);
 
@@ -103,22 +104,22 @@ public class OpusGateOutReadService {
     while (true) {
       if (future.isDone()) {
         try {
-          System.out.println("Result from asynchronous process - " + future.get());
+          System.out.println("Result from asynchronous process getGateOutReadResponse - " + future.get());
           opusRequestResponseService.updateOpusResponse(opusRequestResponseDTO, future);
         } catch (InterruptedException | ExecutionException e) {
-          log.error("Error Occured when update Opus Response " + opusRequestResponseDTO.getGateinTime().toString());
+          log.error("Error Occured when update Opus Response getGateOutReadResponse " + opusRequestResponseDTO.getGateinTime().toString());
           log.error(e.getMessage());
         }
-        System.out.println("WHILE LOOP BROKEN!!!!. ");
+        System.out.println("WHILE LOOP BROKEN getGateOutReadResponse!!!!. ");
         break;
       }
-      System.out.println("Continue doing something else. ");
+      System.out.println("Continue doing something else. getGateOutReadResponse ");
 
       try {
         Thread.sleep(asyncWaitTime);
       } catch (InterruptedException e) {
         log.error(e.getMessage());
-        System.out.println("WHILE LOOP BROKEN ON THREAD EXCEPTION!!!!. ");
+        System.out.println("WHILE LOOP BROKEN ON THREAD EXCEPTION getGateOutReadResponse!!!!. ");
         break;
       }
     }

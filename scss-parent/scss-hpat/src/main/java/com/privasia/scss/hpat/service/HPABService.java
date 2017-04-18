@@ -308,7 +308,7 @@ public class HPABService {
 
 	@Async
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRES_NEW, readOnly = false)
-	public boolean updateHPABAfterGateIn(String hpabID) {
+	public void updateHPABAfterGateIn(String hpabID) {
 
 		Optional<HPABBooking> hpatBookingOpt = hpatBookingRepository.findByBookingIDAndStatus(hpabID,
 				HpatReferStatus.ACTIVE);
@@ -330,7 +330,7 @@ public class HPABService {
 			}
 		}
 
-		return true;
+//		return true;
 
 	}
 

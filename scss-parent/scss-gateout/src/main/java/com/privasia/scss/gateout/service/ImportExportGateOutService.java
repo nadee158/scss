@@ -241,7 +241,7 @@ public class ImportExportGateOutService {
     System.out.println("saveGateOutInfo :: opusRequestResponseDTO " + opusRequestResponseDTO);
 
     OpusGateOutWriteResponse opusGateOutWriteResponse =
-        opusGateOutWriteService.getGateOutWriteResponse(opusGateOutWriteRequest);
+        opusGateOutWriteService.getGateOutWriteResponse(opusGateOutWriteRequest, opusRequestResponseDTO);
 
     String errorMessage = opusService.hasErrorMessage(opusGateOutWriteResponse.getErrorList());
     if (StringUtils.isNotEmpty(errorMessage)) {
