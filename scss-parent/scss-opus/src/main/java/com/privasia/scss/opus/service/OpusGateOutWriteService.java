@@ -51,13 +51,16 @@ public class OpusGateOutWriteService {
     HttpHeaders headers = new HttpHeaders();
 
     headers.setContentType(MediaType.APPLICATION_JSON);
+    
+    System.out.println(opusGateOutWriteRequest.toString());
 
     HttpEntity<OpusGateOutWriteRequest> request =
         new HttpEntity<OpusGateOutWriteRequest>(opusGateOutWriteRequest, headers);
 
     ResponseEntity<OpusGateOutWriteResponse> response =
         restTemplate.postForEntity(gateOutWriteResponseURL, request, OpusGateOutWriteResponse.class);
-
+    
+    System.out.println(response.toString());
     log.info(response.toString());
     return response.getBody();
   }

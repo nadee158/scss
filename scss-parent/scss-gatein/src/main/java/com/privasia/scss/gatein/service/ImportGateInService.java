@@ -92,15 +92,23 @@ public class ImportGateInService {
 
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
 	public List<ImportContainer> populateGateInImport(GateInRequest gateInRequest) {
-
+		
+		System.out.println("gateInRequest.getGatePass1() : "+gateInRequest.getGatePass1());
+		System.out.println("gateInRequest.getGatePass2() : "+gateInRequest.getGatePass2());
+		
 		List<Long> gatePassNumberList = Arrays.asList(gateInRequest.getGatePass1(), gateInRequest.getGatePass2());
 
 		Optional<List<GatePass>> optionalGatePassList = gatePassRepository.findByGatePassNoIn(gatePassNumberList);
-
-		List<GatePass> gatePassList = optionalGatePassList.orElseThrow(() -> new ResultsNotFoundException(
-				"No Import Containers could be found for the given Gate Pass Numbers!"));
+		
+		List<GatePass> gatePassList = optionalGatePassList.get();
+		
+		if(gatePassList.isEmpty())
+			throw new ResultsNotFoundException("No Import Containers could be found for the given Gate Pass Numbers!");
+		
+		System.out.println("gatePassList.size() : "+gatePassList.size());
 		List<ImportContainer> importContainers = new ArrayList<ImportContainer>();
 		gatePassList.forEach(gatePass -> {
+			System.out.println("ggatePass.getGatePassID : "+gatePass.getGatePassID());
 			ImportContainer importContainer = new ImportContainer();
 			modelMapper.map(gatePass, importContainer);
 
