@@ -1,8 +1,11 @@
 package com.privasia.scss.common.dto;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Optional;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -238,11 +241,11 @@ public class ExportContainer {
 	private boolean isRegisteredInEarlyEntry; // for GateInExpNormalController -
 												// checkIfDGContainer
 												// method
-
-	private String startEarlyEntry; // for GateInExpNormalController -
+	
+	private LocalTime startEarlyEntry; // for GateInExpNormalController -
 									// checkIfDGContainer method
-
-	private String endEarlyEntry; // for GateInExpNormalController -
+	
+	private LocalTime endEarlyEntry; // for GateInExpNormalController -
 									// checkIfDGContainer method
 
 	private boolean allowBypassDgValRemote; // for GateInExpNormalController -
@@ -255,7 +258,7 @@ public class ExportContainer {
 	private boolean bookingNoExist;// for GateInExpNormalController -
 									// validateContainer method
 
-	private boolean earlyEntry;// for GateInExpNormalController -
+	private boolean earlyEntry = false;// for GateInExpNormalController -
 								// validateContainer method
 
 	private int storagePeriod = -1;// for ContainerService - isAllowIn method
@@ -1050,19 +1053,19 @@ public class ExportContainer {
 		this.isRegisteredInEarlyEntry = isRegisteredInEarlyEntry;
 	}
 
-	public String getStartEarlyEntry() {
+	public LocalTime getStartEarlyEntry() {
 		return startEarlyEntry;
 	}
 
-	public void setStartEarlyEntry(String startEarlyEntry) {
+	public void setStartEarlyEntry(LocalTime startEarlyEntry) {
 		this.startEarlyEntry = startEarlyEntry;
 	}
 
-	public String getEndEarlyEntry() {
+	public LocalTime getEndEarlyEntry() {
 		return endEarlyEntry;
 	}
 
-	public void setEndEarlyEntry(String endEarlyEntry) {
+	public void setEndEarlyEntry(LocalTime endEarlyEntry) {
 		this.endEarlyEntry = endEarlyEntry;
 	}
 
@@ -1299,8 +1302,13 @@ public class ExportContainer {
 	public void setShipSCNID(Optional<Long> shipSCNID) {
 		this.shipSCNID = shipSCNID;
 	}
-
+	
 	@Override
+	public String toString(){
+	    return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
+	}
+
+	/*@Override
 	public String toString() {
 		return "ExportContainer [exportID=" + exportID + ", container=" + container + ", commonGateInOut="
 				+ commonGateInOut + ", baseCommonGateInOutAttribute=" + baseCommonGateInOutAttribute
@@ -1334,7 +1342,7 @@ public class ExportContainer {
 				+ ", trailerPlateNo=" + trailerPlateNo + ", fuelWeight=" + fuelWeight + ", tireWeight=" + tireWeight
 				+ ", variance=" + variance + ", withinTolerance=" + withinTolerance + ", calculatedVariance="
 				+ calculatedVariance + ", solasCertNo=" + solasCertNo + ", solas=" + solas + "]";
-	}
+	}*/
 
 	public ExportContainer initializeWithDefaultValues(String containerNumber) {
 		this.setContainer(new CommonContainerDTO().initializeWithDefaultValues(containerNumber));

@@ -143,10 +143,10 @@ public class OpusRequestResponseDTO implements Serializable {
   public String determineTransactionType() {
     boolean isExportPresent = false;
     boolean isImportPresent = false;
-    if (!(StringUtils.isEmpty(this.getExpContainer01()) || StringUtils.isEmpty(this.getExpContainer02()))) {
+    if (StringUtils.isNotEmpty(this.getExpContainer01()) || StringUtils.isNotEmpty(this.getExpContainer02())) {
       isExportPresent = true;
     }
-    if (!(StringUtils.isEmpty(this.getImpContainer01()) || StringUtils.isEmpty(this.getImpContainer02()))) {
+    if (StringUtils.isNotEmpty(this.getImpContainer01()) || StringUtils.isNotEmpty(this.getImpContainer02())) {
       isImportPresent = true;
     }
     if (isExportPresent && isImportPresent) {

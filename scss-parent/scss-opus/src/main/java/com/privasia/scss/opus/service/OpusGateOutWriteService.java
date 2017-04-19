@@ -74,7 +74,7 @@ public class OpusGateOutWriteService {
 
     headers.setContentType(MediaType.APPLICATION_JSON);
 
-    System.out.println(opusGateOutWriteRequest.toString());
+    log.info("OpusGateOutWriteResponse : -" + (new Gson()).toJson(opusGateOutWriteRequest));
 
     HttpEntity<OpusGateOutWriteRequest> request =
         new HttpEntity<OpusGateOutWriteRequest>(opusGateOutWriteRequest, headers);
@@ -86,7 +86,7 @@ public class OpusGateOutWriteService {
         restTemplate.postForEntity(gateOutWriteResponseURL, request, OpusGateOutWriteResponse.class);
 
     System.out.println(response.toString());
-    log.info(response.toString());
+    log.info("RESPONSE FROM OPUS: " + response.toString());
 
     opusRequestResponseDTO.setResponse(gson.toJson(response.getBody()));
 

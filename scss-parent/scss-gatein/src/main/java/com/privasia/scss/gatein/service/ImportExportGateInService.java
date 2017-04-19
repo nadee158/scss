@@ -212,7 +212,23 @@ public class ImportExportGateInService {
 
   @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
   public GateInReponse saveGateInInfo(GateInWriteRequest gateInWriteRequest) {
-
+	
+	  
+	if(gateInWriteRequest.getExportContainers()!=null && !gateInWriteRequest.getExportContainers().isEmpty()){
+		gateInWriteRequest.getExportContainers().forEach(con->{
+			log.info("########################### EXPORT CONTAINER DETAILS GATE IN #########################################");
+			log.info(con.toString());
+			log.info("########################### END EXPORT CONTAINER DETAILS GATE IN #########################################");
+		});
+	}
+	
+	if(gateInWriteRequest.getImportContainers()!=null && !gateInWriteRequest.getImportContainers().isEmpty()){
+		gateInWriteRequest.getImportContainers().forEach(con->{
+			log.info("########################### IMPORT CONTAINER DETAILS GATE IN #########################################");
+			log.info(con.toString());
+			log.info("########################### END IMPORT CONTAINER DETAILS GATE IN #########################################");
+		});
+	}
 
     Card card = cardRepository.findOne(gateInWriteRequest.getCardId())
         .orElseThrow(() -> new ResultsNotFoundException("Invalid Card : " + gateInWriteRequest.getCardId()));

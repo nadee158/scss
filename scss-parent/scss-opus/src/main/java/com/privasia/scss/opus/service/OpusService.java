@@ -148,18 +148,16 @@ public class OpusService {
   public ExportContainer giWriteResponseExportContainerToExportContainer(
       GIWriteResponseExportContainer giWriteResponseExportContainer, OpusGateInWriteResponse opusGateInWriteResponse,
       ExportContainer exportContainer) {
-    CommonContainerDTO commonContainerDTO = new CommonContainerDTO();
+    /*CommonContainerDTO commonContainerDTO = new CommonContainerDTO();
     commonContainerDTO.setContainerNumber(giWriteResponseExportContainer.getContainerNo());
-    exportContainer.setContainer(commonContainerDTO);
+    exportContainer.setContainer(commonContainerDTO);*/
     exportContainer.setYardPosition(giWriteResponseExportContainer.getYardPosition());
     exportContainer.setYardBayCode(giWriteResponseExportContainer.getYardBayCode());
     exportContainer.setManualPlanIndicator(giWriteResponseExportContainer.getManualPlanIndicator());
     if (StringUtils.isNotEmpty(opusGateInWriteResponse.getCallCardNo())) {
       exportContainer.setCallCard(Integer.parseInt(opusGateInWriteResponse.getCallCardNo()));
     }
-    // importContainer.setEirNumber(150l);// eirNumber value should be come
-    // from opus in the
-    // giWriteResponse
+    
     return exportContainer;
   }
 
@@ -167,9 +165,9 @@ public class OpusService {
       GIWriteResponseImportContainer giWriteResponseImportContainer, OpusGateInWriteResponse opusGateInWriteResponse,
       ImportContainer importContainer) {
 
-    CommonContainerDTO commonContainerDTO = new CommonContainerDTO();
+    /*CommonContainerDTO commonContainerDTO = new CommonContainerDTO();
     commonContainerDTO.setContainerNumber(giWriteResponseImportContainer.getContainerNo());
-    importContainer.setContainer(commonContainerDTO);
+    importContainer.setContainer(commonContainerDTO);*/
     importContainer.setYardPosition(giWriteResponseImportContainer.getYardPosition());
     importContainer.setYardBayCode(giWriteResponseImportContainer.getYardBayCode());
     if (StringUtils.isNotEmpty(opusGateInWriteResponse.getCallCardNo())) {

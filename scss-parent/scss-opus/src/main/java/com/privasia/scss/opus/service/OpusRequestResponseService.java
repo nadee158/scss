@@ -55,8 +55,8 @@ public class OpusRequestResponseService {
     this.modelMapper = modelMapper;
   }
 
-  
-  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
+  @Async
+  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRES_NEW, readOnly = false)
   public Future<Long> saveOpusRequest(OpusRequestResponseDTO opusRequestResponseDTO) {
 
     OpusRequestResponse opusRequestResponse = null;

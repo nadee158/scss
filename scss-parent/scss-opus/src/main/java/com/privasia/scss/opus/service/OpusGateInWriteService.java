@@ -79,11 +79,13 @@ public class OpusGateInWriteService {
 
     // save in to db
     Future<Long> future = opusRequestResponseService.saveOpusRequest(opusRequestResponseDTO);
+    
+    log.info("OpusGateInWriteResponse : -" + (new Gson()).toJson(opusGateInWriteRequest));
 
     ResponseEntity<OpusGateInWriteResponse> response =
         restTemplate.postForEntity(gateInWriteResponseURL, request, OpusGateInWriteResponse.class);
 
-    log.info(response.toString());
+    log.info("RESPONSE FROM OPUS: " + response.toString());
 
     opusRequestResponseDTO.setResponse(gson.toJson(response.getBody()));
 

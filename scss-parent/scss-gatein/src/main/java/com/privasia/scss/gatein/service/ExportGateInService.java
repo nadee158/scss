@@ -278,7 +278,10 @@ public class ExportGateInService {
 
       exportContainer.getBaseCommonGateInOutAttribute().setTimeGateIn(gateInWriteRequest.getGateInDateTime());
       exportContainer.getBaseCommonGateInOutAttribute().setTimeGateInOk(LocalDateTime.now());
-
+      
+      System.out.println("BEFORE MODEL MAP exportContainer.getContainer().getContainerFullOrEmpty() "
+              + exportContainer.getContainer().getContainerFullOrEmpty());
+      
       Exports exports = new Exports();
       System.out.println("exportContainer " + exportContainer);
       modelMapper.map(exportContainer, exports);

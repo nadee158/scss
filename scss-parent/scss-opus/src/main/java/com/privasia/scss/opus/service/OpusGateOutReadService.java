@@ -96,9 +96,11 @@ public class OpusGateOutReadService {
     ResponseEntity<OpusGateOutReadResponse> response =
         restTemplate.postForEntity(gateOutReadResponseURL, request, OpusGateOutReadResponse.class);
 
-    log.info(response.toString());
+    log.info("OpusGateOutReadRequest : -" + (new Gson()).toJson(opusGateOutReadRequest));
 
     opusRequestResponseDTO.setResponse(gson.toJson(response.getBody()));
+    
+    log.info("RESPONSE FROM OPUS: " + response.toString());
 
     // update to db
     while (true) {

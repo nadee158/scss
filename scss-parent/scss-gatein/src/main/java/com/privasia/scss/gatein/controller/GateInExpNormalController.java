@@ -49,7 +49,7 @@ public class GateInExpNormalController {
 
   @Autowired
   private VesselOmitService vesselOmitService;
-
+ 
 
   @Autowired
   private ClientService clientService;
@@ -303,18 +303,18 @@ public class GateInExpNormalController {
                     if (!inEarlyEntryWindow) {
 
                       final SimpleDateFormat time = new SimpleDateFormat("h:mm a");
-                      Date strtFullDate = getParsedFullDate(c.getStartEarlyEntry());
+                      /*Date strtFullDate = getParsedFullDate(c.getStartEarlyEntry());
                       Date edFullDate = getParsedFullDate(c.getEndEarlyEntry());
 
                       if (strtFullDate.after(edFullDate)) {
                         edFullDate = DateUtil.addDate(edFullDate, 1);
-                      }
+                      }*/
                       /**
                        * generate message for early entry window
                        */
-                      returnMessage = returnMessage + CommonUtil.formatMessageCode("ERR_MSG_101", new Object[] {
+                      /*returnMessage = returnMessage + CommonUtil.formatMessageCode("ERR_MSG_101", new Object[] {
                           c.getContainer().getContainerNumber(), time.format(strtFullDate), time.format(edFullDate)})
-                          + ReturnMsg.SEPARATOR;
+                          + ReturnMsg.SEPARATOR;*/
 
                       c.setDgWithinWindowEntry(false);
                       // return mapping.findForward(VIEW.INPUT);
