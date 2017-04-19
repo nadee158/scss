@@ -1,17 +1,15 @@
 package com.privasia.scss.gateout.service;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.privasia.scss.common.dto.BaseCommonGateInOutDTO;
 import com.privasia.scss.common.dto.ClientDTO;
 import com.privasia.scss.common.dto.ExportContainer;
+import com.privasia.scss.common.dto.GateOutReponse;
 import com.privasia.scss.common.dto.GateOutRequest;
 import com.privasia.scss.common.dto.GateOutWriteRequest;
 import com.privasia.scss.common.dto.SystemUserDTO;
@@ -83,7 +82,7 @@ public class ExportGateOutService {
   }
 
   @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-  public List<ExportContainer> populateGateOut(GateOutRequest gateOutRequest) {
+  public List<ExportContainer> populateGateOut(GateOutRequest gateOutRequest, GateOutReponse gateOutReponse) {
 
     Optional<List<Exports>> optExpList =
         exportsRepository.fetchInProgressTransaction(gateOutRequest.getCardID(), TransactionStatus.INPROGRESS);
@@ -106,15 +105,30 @@ public class ExportGateOutService {
           exportContainer.getBaseCommonGateInOutAttribute()
               .setEirStatus(export.getBaseCommonGateInOutAttribute().getEirStatus().getValue());
         }
-        if (export.getBaseCommonGateInOutAttribute().getGateOutBoothClerk() != null) {
-          SystemUserDTO gateOutBoothClerk = new SystemUserDTO();
-          modelMapper.map(export.getBaseCommonGateInOutAttribute().getGateOutBoothClerk(), gateOutBoothClerk);
-          exportContainer.getBaseCommonGateInOutAttribute().setGateOutBoothClerk(gateOutBoothClerk);
+
+        // changed gateout cleark to gateout clierk
+        if (export.getBaseCommonGateInOutAttribute().getGateInClerk() != null) {
+          SystemUserDTO gateInClerk = new SystemUserDTO();
+          modelMapper.map(export.getBaseCommonGateInOutAttribute().getGateInClerk(), gateInClerk);
+          if (!(export.getBaseCommonGateInOutAttribute().getGateInClerk().getCommonContactAttribute() == null)) {
+            gateOutReponse.setClerkName(
+                export.getBaseCommonGateInOutAttribute().getGateInClerk().getCommonContactAttribute().getPersonName());
+          }
+          exportContainer.getBaseCommonGateInOutAttribute().setGateInClerk(gateInClerk);
         }
-        if (export.getBaseCommonGateInOutAttribute().getGateOutClient() != null) {
-          ClientDTO gateOutClient = new ClientDTO();
-          modelMapper.map(export.getBaseCommonGateInOutAttribute().getGateOutClient(), gateOutClient);
-          exportContainer.getBaseCommonGateInOutAttribute().setGateOutClient(gateOutClient);
+
+        if (!(export.getBaseCommonGateInOutAttribute().getTimeGateIn() == null)) {
+          LocalDateTime timeGateIn = export.getBaseCommonGateInOutAttribute().getTimeGateIn();
+          DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy HH:mm");
+          gateOutReponse.setGateInDateTime(timeGateIn.format(formatter));
+        }
+
+        // changed gateout client to gatein client
+        if (export.getBaseCommonGateInOutAttribute().getGateInClient() != null) {
+          ClientDTO gateInClient = new ClientDTO();
+          modelMapper.map(export.getBaseCommonGateInOutAttribute().getGateInClient(), gateInClient);
+          gateOutReponse.setGateInLaneNo(export.getBaseCommonGateInOutAttribute().getGateInClient().getLaneNo());
+          exportContainer.getBaseCommonGateInOutAttribute().setGateInClient(gateInClient);
         }
 
         if (export.getBaseCommonGateInOutAttribute().getHpatBooking() != null) {
@@ -167,44 +181,44 @@ public class ExportGateOutService {
     return null;
   }
 
-  //@Async
+  // @Async
   @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
-  public void saveGateOutInfo(GateOutWriteRequest gateOutWriteRequest, Client gateOutClient,
-      SystemUser gateOutClerk, Client booth) {
+  public void saveGateOutInfo(GateOutWriteRequest gateOutWriteRequest, Client gateOutClient, SystemUser gateOutClerk,
+      Client booth) {
 
     if (gateOutWriteRequest.getExportContainers() == null || gateOutWriteRequest.getExportContainers().isEmpty())
       throw new BusinessException("Invalid Request to Update Export !");
 
     List<ExportContainer> exportContainers = gateOutWriteRequest.getExportContainers();
-   
-      exportContainers.forEach(exportContainer -> {
-        Optional<Exports> optExport = exportsRepository.findOne(exportContainer.getExportID());
-        Exports exports = optExport.orElseThrow(
-            () -> new BusinessException("Invalid Exports Information to Update ! " + exportContainer.getExportID()));
 
-        if (StringUtils.isEmpty(exportContainer.getBaseCommonGateInOutAttribute().getEirStatus()))
-          throw new BusinessException("Invalid EIR Status for Exports : " + exportContainer.getExportID());
-        
-        exports.getBaseCommonGateInOutAttribute()
-            .setEirStatus(TransactionStatus.fromCode(exportContainer.getBaseCommonGateInOutAttribute().getEirStatus()));
-        exports.getBaseCommonGateInOutAttribute().setTimeGateOut(gateOutWriteRequest.getGateOUTDateTime());
-        exports.getBaseCommonGateInOutAttribute().setTimeGateOutOk(LocalDateTime.now());
-        exports.getBaseCommonGateInOutAttribute().setGateOutBoothClerk(gateOutClerk);
-        exports.getBaseCommonGateInOutAttribute().setGateOutBoothNo(String.valueOf(booth.getClientID()));
-        exports.getBaseCommonGateInOutAttribute().setGateOutClerk(gateOutClerk);
-        exports.getBaseCommonGateInOutAttribute().setGateOutClient(gateOutClient);
-        exports.getCommonGateInOut().setRejectReason(exportContainer.getGateOutRemarks());
+    exportContainers.forEach(exportContainer -> {
+      Optional<Exports> optExport = exportsRepository.findOne(exportContainer.getExportID());
+      Exports exports = optExport.orElseThrow(
+          () -> new BusinessException("Invalid Exports Information to Update ! " + exportContainer.getExportID()));
 
-        exportsRepository.save(exports);
+      if (StringUtils.isEmpty(exportContainer.getBaseCommonGateInOutAttribute().getEirStatus()))
+        throw new BusinessException("Invalid EIR Status for Exports : " + exportContainer.getExportID());
 
-        Optional<ExportsQ> exportQOpt = exportsQRepository.findOne(exports.getExportID());
-        ExportsQ exportq = exportQOpt.orElseThrow(
-            () -> new ResultsNotFoundException("Not valid Gate In ExportQ Process found ! " + exports.getExportID()));
+      exports.getBaseCommonGateInOutAttribute()
+          .setEirStatus(TransactionStatus.fromCode(exportContainer.getBaseCommonGateInOutAttribute().getEirStatus()));
+      exports.getBaseCommonGateInOutAttribute().setTimeGateOut(gateOutWriteRequest.getGateOUTDateTime());
+      exports.getBaseCommonGateInOutAttribute().setTimeGateOutOk(LocalDateTime.now());
+      exports.getBaseCommonGateInOutAttribute().setGateOutBoothClerk(gateOutClerk);
+      exports.getBaseCommonGateInOutAttribute().setGateOutBoothNo(String.valueOf(booth.getClientID()));
+      exports.getBaseCommonGateInOutAttribute().setGateOutClerk(gateOutClerk);
+      exports.getBaseCommonGateInOutAttribute().setGateOutClient(gateOutClient);
+      exports.getCommonGateInOut().setRejectReason(exportContainer.getGateOutRemarks());
 
-        modelMapper.map(exports, exportq);
-        exportsQRepository.save(exportq);
-      });
-    //return new AsyncResult<Boolean>(true);
+      exportsRepository.save(exports);
+
+      Optional<ExportsQ> exportQOpt = exportsQRepository.findOne(exports.getExportID());
+      ExportsQ exportq = exportQOpt.orElseThrow(
+          () -> new ResultsNotFoundException("Not valid Gate In ExportQ Process found ! " + exports.getExportID()));
+
+      modelMapper.map(exports, exportq);
+      exportsQRepository.save(exportq);
+    });
+    // return new AsyncResult<Boolean>(true);
   }
 
 

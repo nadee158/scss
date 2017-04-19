@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.Properties;
 import java.util.ResourceBundle;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -22,6 +23,7 @@ public final class CommonUtil {
 
   public static final String UPPER_CASE = "U";
   public static final String LOWER_CASE = "L";
+  private static final AtomicLong LAST_TIME_MS = new AtomicLong();
 
   /**
    * To check whether a string is empty or null
@@ -178,6 +180,22 @@ public final class CommonUtil {
       }
     }
     return null;
+  }
+
+
+
+  /**
+   * @return 13 character length unique long
+   */
+  public static long getUniqueID() {
+    long now = System.currentTimeMillis();
+    while (true) {
+      long lastTime = LAST_TIME_MS.get();
+      if (lastTime >= now)
+        now = lastTime + 1;
+      if (LAST_TIME_MS.compareAndSet(lastTime, now))
+        return now;
+    }
   }
 
 }

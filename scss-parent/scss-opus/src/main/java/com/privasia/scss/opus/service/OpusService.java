@@ -15,6 +15,7 @@ import com.privasia.scss.common.dto.DamageCodeDTO;
 import com.privasia.scss.common.dto.ExportContainer;
 import com.privasia.scss.common.dto.GateInWriteRequest;
 import com.privasia.scss.common.dto.ImportContainer;
+import com.privasia.scss.common.enums.ContainerStatus;
 import com.privasia.scss.common.service.export.ExportUtilService;
 import com.privasia.scss.common.util.DateUtil;
 import com.privasia.scss.opus.dto.GIReadResponseExporterContainer;
@@ -72,15 +73,15 @@ public class OpusService {
         ExportUtilService.getStringRepresentationOfBoolean(exportContainer.getReferFlag()));
 
     if (exportContainer.getReferTemp() != null) {
-      giWriteRequestExpContainer
-          .setContainerReeferTempSign(exportContainer.getReferTempType());
+      giWriteRequestExpContainer.setContainerReeferTempSign(exportContainer.getReferTempType());
       giWriteRequestExpContainer.setContainerReeferTempUnit(exportContainer.getReeferTempUnit());
-      if(exportContainer.getReferTemp()==null){
-    	  giWriteRequestExpContainer.setContainerReeferTempValue(null);
-      }else{
-    	  giWriteRequestExpContainer.setContainerReeferTempValue(String.valueOf(Math.abs(exportContainer.getReferTemp())));
+      if (exportContainer.getReferTemp() == null) {
+        giWriteRequestExpContainer.setContainerReeferTempValue(null);
+      } else {
+        giWriteRequestExpContainer
+            .setContainerReeferTempValue(String.valueOf(Math.abs(exportContainer.getReferTemp())));
       }
-      
+
     }
 
     giWriteRequestExpContainer.setContainerDGImdg(exportContainer.getImdg());
@@ -148,16 +149,18 @@ public class OpusService {
   public ExportContainer giWriteResponseExportContainerToExportContainer(
       GIWriteResponseExportContainer giWriteResponseExportContainer, OpusGateInWriteResponse opusGateInWriteResponse,
       ExportContainer exportContainer) {
-    /*CommonContainerDTO commonContainerDTO = new CommonContainerDTO();
-    commonContainerDTO.setContainerNumber(giWriteResponseExportContainer.getContainerNo());
-    exportContainer.setContainer(commonContainerDTO);*/
+    /*
+     * CommonContainerDTO commonContainerDTO = new CommonContainerDTO();
+     * commonContainerDTO.setContainerNumber(giWriteResponseExportContainer.getContainerNo());
+     * exportContainer.setContainer(commonContainerDTO);
+     */
     exportContainer.setYardPosition(giWriteResponseExportContainer.getYardPosition());
     exportContainer.setYardBayCode(giWriteResponseExportContainer.getYardBayCode());
     exportContainer.setManualPlanIndicator(giWriteResponseExportContainer.getManualPlanIndicator());
     if (StringUtils.isNotEmpty(opusGateInWriteResponse.getCallCardNo())) {
       exportContainer.setCallCard(Integer.parseInt(opusGateInWriteResponse.getCallCardNo()));
     }
-    
+
     return exportContainer;
   }
 
@@ -165,9 +168,11 @@ public class OpusService {
       GIWriteResponseImportContainer giWriteResponseImportContainer, OpusGateInWriteResponse opusGateInWriteResponse,
       ImportContainer importContainer) {
 
-    /*CommonContainerDTO commonContainerDTO = new CommonContainerDTO();
-    commonContainerDTO.setContainerNumber(giWriteResponseImportContainer.getContainerNo());
-    importContainer.setContainer(commonContainerDTO);*/
+    /*
+     * CommonContainerDTO commonContainerDTO = new CommonContainerDTO();
+     * commonContainerDTO.setContainerNumber(giWriteResponseImportContainer.getContainerNo());
+     * importContainer.setContainer(commonContainerDTO);
+     */
     importContainer.setYardPosition(giWriteResponseImportContainer.getYardPosition());
     importContainer.setYardBayCode(giWriteResponseImportContainer.getYardBayCode());
     if (StringUtils.isNotEmpty(opusGateInWriteResponse.getCallCardNo())) {
@@ -290,8 +295,8 @@ public class OpusService {
     exportContainer.setGrossWeight(
         ExportUtilService.getIntValueFromString(gIReadResponseExporterContainer.getContainerGrossWeight()));
     // private double containerNetWeight;// 9000,
-    exportContainer
-        .setCosmosNetWeight(ExportUtilService.getIntValueFromString(gIReadResponseExporterContainer.getContainerNetWeight()));
+    exportContainer.setCosmosNetWeight(
+        ExportUtilService.getIntValueFromString(gIReadResponseExporterContainer.getContainerNetWeight()));
     exportContainer.setTareWeight(
         ExportUtilService.getIntValueFromString(gIReadResponseExporterContainer.getContainerTareWeight()));
 
@@ -377,7 +382,12 @@ public class OpusService {
     exportContainer.getContainer().setContainerFullOrEmpty(goReadResponseExporterContainer.getContainerFullOrEmpty());
     exportContainer.setRtgExecustionDateTime(
         DateUtil.getLocalDategFromString(goReadResponseExporterContainer.getRtgExecustionDateTime()));
-    exportContainer.setRtgExecustionStatus(goReadResponseExporterContainer.getRtgExecustionStatus());
+
+    if (StringUtils.equalsIgnoreCase("EXE", goReadResponseExporterContainer.getRtgExecustionStatus())) {
+      exportContainer.setRtgExecustionStatus(ContainerStatus.EXECUTE.getValue());
+    } else {
+      exportContainer.setRtgExecustionStatus("NON EXECUTE");
+    }
 
     return exportContainer;
   }
@@ -674,10 +684,11 @@ public class OpusService {
       exportContainerListCY.forEach(opusExportContainer -> {
         ExportContainer exportContainer = null;
         if (!(exportContainers == null || exportContainers.isEmpty())) {
-          exportContainer = exportContainers.stream()
-              .filter(e -> (e.getContainer() != null)
-                  && (StringUtils.equals(e.getContainer().getContainerNumber(), opusExportContainer.getContainerNo())))
-              .findFirst().get();
+          exportContainer =
+              exportContainers
+                  .stream().filter(e -> (e.getContainer() != null) && (StringUtils
+                      .equals(e.getContainer().getContainerNumber(), opusExportContainer.getContainerNo())))
+                  .findFirst().get();
         }
         exportContainer = giReadResponseExporterContainerToExportContainer(opusExportContainer, exportContainer);
 
@@ -713,10 +724,11 @@ public class OpusService {
       importContainerListCY.forEach(opusExportContainer -> {
         ImportContainer importContainer = null;
         if (!(importContainers == null || importContainers.isEmpty())) {
-          importContainer = importContainers.stream()
-              .filter(e -> (e.getContainer() != null)
-                  && (StringUtils.equals(e.getContainer().getContainerNumber(), opusExportContainer.getContainerNo()))) 
-              .findFirst().get();
+          importContainer =
+              importContainers
+                  .stream().filter(e -> (e.getContainer() != null) && (StringUtils
+                      .equals(e.getContainer().getContainerNumber(), opusExportContainer.getContainerNo())))
+                  .findFirst().get();
         }
         importContainer = giReadResponseImportContainerToImportContainer(opusExportContainer, importContainer);
 
@@ -744,6 +756,6 @@ public class OpusService {
     }
     return null;
   }
-  
+
 
 }

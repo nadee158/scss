@@ -1,11 +1,11 @@
 package com.privasia.scss.gateout.service;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -13,8 +13,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -25,6 +23,7 @@ import com.privasia.scss.common.dto.CancelPickUpDTO;
 import com.privasia.scss.common.dto.ClientDTO;
 import com.privasia.scss.common.dto.CommonSealDTO;
 import com.privasia.scss.common.dto.ConfirmedKioskDTO;
+import com.privasia.scss.common.dto.GateOutReponse;
 import com.privasia.scss.common.dto.GateOutRequest;
 import com.privasia.scss.common.dto.GateOutWriteRequest;
 import com.privasia.scss.common.dto.ImportContainer;
@@ -93,8 +92,10 @@ public class ImportGateOutService {
     this.cosmosImportRepository = cosmosImportRepository;
   }
 
+
+
   @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-  public List<ImportContainer> populateGateOut(GateOutRequest gateOutRequest) {
+  public List<ImportContainer> populateGateOut(GateOutRequest gateOutRequest, GateOutReponse gateOutReponse) {
 
     Optional<List<GatePass>> optGatePassList = gatePassRepository.fetchInProgressTransaction(gateOutRequest.getCardID(),
         gateOutRequest.getComID(), TransactionStatus.INPROGRESS);
@@ -115,15 +116,27 @@ public class ImportGateOutService {
           importContainer.getBaseCommonGateInOutAttribute()
               .setEirStatus(gatePass.getBaseCommonGateInOutAttribute().getEirStatus().getValue());
         }
-        if (gatePass.getBaseCommonGateInOutAttribute().getGateOutBoothClerk() != null) {
-          SystemUserDTO gateOutBoothClerk = new SystemUserDTO();
-          modelMapper.map(gatePass.getBaseCommonGateInOutAttribute().getGateOutBoothClerk(), gateOutBoothClerk);
-          importContainer.getBaseCommonGateInOutAttribute().setGateOutBoothClerk(gateOutBoothClerk);
+        if (gatePass.getBaseCommonGateInOutAttribute().getGateInClerk() != null) {
+          SystemUserDTO gateInClerk = new SystemUserDTO();
+          modelMapper.map(gatePass.getBaseCommonGateInOutAttribute().getGateInClerk(), gateInClerk);
+          if (!(gatePass.getBaseCommonGateInOutAttribute().getGateInClerk().getCommonContactAttribute() == null)) {
+            gateOutReponse.setClerkName(gatePass.getBaseCommonGateInOutAttribute().getGateInClerk()
+                .getCommonContactAttribute().getPersonName());
+          }
+          importContainer.getBaseCommonGateInOutAttribute().setGateInClerk(gateInClerk);
         }
-        if (gatePass.getBaseCommonGateInOutAttribute().getGateOutClient() != null) {
-          ClientDTO gateOutClient = new ClientDTO();
-          modelMapper.map(gatePass.getBaseCommonGateInOutAttribute().getGateOutClient(), gateOutClient);
-          importContainer.getBaseCommonGateInOutAttribute().setGateOutClient(gateOutClient);
+
+        if (!(gatePass.getBaseCommonGateInOutAttribute().getTimeGateIn() == null)) {
+          LocalDateTime timeGateIn = gatePass.getBaseCommonGateInOutAttribute().getTimeGateIn();
+          DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy HH:mm");
+          gateOutReponse.setGateInDateTime(timeGateIn.format(formatter));
+        }
+
+        if (gatePass.getBaseCommonGateInOutAttribute().getGateInClient() != null) {
+          ClientDTO gateInClient = new ClientDTO();
+          modelMapper.map(gatePass.getBaseCommonGateInOutAttribute().getGateInClient(), gateInClient);
+          gateOutReponse.setGateInLaneNo(gatePass.getBaseCommonGateInOutAttribute().getGateInClient().getLaneNo());
+          importContainer.getBaseCommonGateInOutAttribute().setGateInClient(gateInClient);
         }
 
         if (gatePass.getBaseCommonGateInOutAttribute().getHpatBooking() != null) {
@@ -281,10 +294,10 @@ public class ImportGateOutService {
     }
   }
 
-  //@Async
+  // @Async
   @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
-  public void saveGateOutInfo(GateOutWriteRequest gateOutWriteRequest, Client gateOutClient,
-      SystemUser gateOutClerk, Client booth) {
+  public void saveGateOutInfo(GateOutWriteRequest gateOutWriteRequest, Client gateOutClient, SystemUser gateOutClerk,
+      Client booth) {
     if (gateOutWriteRequest.getImportContainers() == null || gateOutWriteRequest.getImportContainers().isEmpty())
       throw new BusinessException("Invalid GateOutWriteRequest to save Imports ! ");
     List<ImportContainer> importContainers = gateOutWriteRequest.getImportContainers();
@@ -304,7 +317,7 @@ public class ImportGateOutService {
       gatePass.getBaseCommonGateInOutAttribute().setGateOutBoothNo(String.valueOf(booth.getClientID()));
       gatePass.getBaseCommonGateInOutAttribute().setGateOutClerk(gateOutClerk);
       gatePass.getBaseCommonGateInOutAttribute().setGateOutClient(gateOutClient);
-      gatePass.getCommonGateInOut().setRejectReason(importContainer.getCommonGateInOut().getRejectReason()); 
+      gatePass.getCommonGateInOut().setRejectReason(importContainer.getCommonGateInOut().getRejectReason());
       gatePass.setGateOutRemarks(importContainer.getGateOutRemarks());
       gatePass.setGateOutLaneNo(gateOutClient.getLaneNo());
 
@@ -337,7 +350,7 @@ public class ImportGateOutService {
       gatePassRepository.save(gatePass);
     });
 
-    //return new AsyncResult<Boolean>(true);
+    // return new AsyncResult<Boolean>(true);
   }
 
 }

@@ -31,6 +31,13 @@ public class GateOutReponse implements Serializable {
 
   private GateOutMessage message;
 
+  private String clerkName;// - string
+
+  private String gateInLaneNo;// -string
+
+  // MM-dd-yyyy HH:mm
+  private String gateInDateTime;// -string
+
   public String getUserID() {
     return userID;
   }
@@ -125,6 +132,30 @@ public class GateOutReponse implements Serializable {
 
   public void setMessage(GateOutMessage message) {
     this.message = message;
+  }
+
+  public String getClerkName() {
+    return clerkName;
+  }
+
+  public void setClerkName(String clerkName) {
+    this.clerkName = clerkName;
+  }
+
+  public String getGateInLaneNo() {
+    return gateInLaneNo;
+  }
+
+  public void setGateInLaneNo(String gateInLaneNo) {
+    this.gateInLaneNo = gateInLaneNo;
+  }
+
+  public String getGateInDateTime() {
+    return gateInDateTime;
+  }
+
+  public void setGateInDateTime(String gateInDateTime) {
+    this.gateInDateTime = gateInDateTime;
   }
 
 

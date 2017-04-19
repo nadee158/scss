@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.privasia.scss.common.util.CommonUtil;
 import com.privasia.scss.core.exception.ResultsNotFoundException;
 import com.privasia.scss.core.model.Card;
 import com.privasia.scss.core.model.OpusRequestResponse;
@@ -68,6 +69,8 @@ public class OpusRequestResponseService {
       opusRequestResponse.setCard(card);
       opusRequestResponse.setSendTime(LocalDateTime.now());
       System.out.println("BEFORE SAVED opusRequestResponse " + opusRequestResponse);
+      // set id upon save dfdf
+      opusRequestResponse.setOpusReqResID(CommonUtil.getUniqueID());
       opusRequestResponse = opusRepository.save(opusRequestResponse);
       System.out.println("SAVED opusRequestResponse " + opusRequestResponse);
     } catch (Exception e) {
@@ -79,18 +82,21 @@ public class OpusRequestResponseService {
 
   @Async
   @Transactional(value = "transactionManager", propagation = Propagation.REQUIRES_NEW, readOnly = false)
-  public void updateOpusResponse(OpusRequestResponseDTO opusRequestResponseDTO, Future<Long> future) throws InterruptedException, ExecutionException {
-    
+  public void updateOpusResponse(OpusRequestResponseDTO opusRequestResponseDTO, Future<Long> future)
+      throws InterruptedException, ExecutionException {
+
     Optional<OpusRequestResponse> OptOpus = opusRepository.findOne(future.get());
-	if (OptOpus.isPresent()) {
-		OpusRequestResponse opusRequestResponse = OptOpus.get();
-		opusRequestResponse.setResponse(opusRequestResponseDTO.getResponse());
-		opusRequestResponse.setReceivedTime(LocalDateTime.now());
-        opusRepository.save(opusRequestResponse);
-    }else{
-    	log.info("OpusRequestResponse not found "+future.get());
+    if (OptOpus.isPresent()) {
+      OpusRequestResponse opusRequestResponse = OptOpus.get();
+      opusRequestResponse.setResponse(opusRequestResponseDTO.getResponse());
+      opusRequestResponse.setReceivedTime(LocalDateTime.now());
+      opusRepository.save(opusRequestResponse);
+    } else {
+      log.info("OpusRequestResponse not found " + future.get());
     }
- 
+
   }
+
+
 
 }
