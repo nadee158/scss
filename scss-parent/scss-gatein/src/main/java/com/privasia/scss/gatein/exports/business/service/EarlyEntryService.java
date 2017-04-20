@@ -59,15 +59,15 @@ public class EarlyEntryService {
 				 * Check if it is allowed for early entry
 				 */
 				if (container.getShipSCNID().isPresent()) {
+					container.setEarlyEntry(true);
+					
 					/**
 					 * check if container coming during early entry window.
 					 */
+					
 					if (withInEarlyEntryWindow(container)) {
-						container.setEarlyEntry(true);
 						return true;
 					} else {
-						//container.setEarlyEntry(true);
-						container.setEarlyEntry(false);
 						if (container.isBypassEEntry()) {
 							return true;
 						} else {
