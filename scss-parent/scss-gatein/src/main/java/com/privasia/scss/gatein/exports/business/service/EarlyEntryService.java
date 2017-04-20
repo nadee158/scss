@@ -98,7 +98,7 @@ public class EarlyEntryService {
 
 		DateTimeFormatter dateformatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 		DateTimeFormatter timeformatter = DateTimeFormatter.ofPattern("h:mm a");
-		DateTimeFormatter dateTimeformatter = DateTimeFormatter.ofPattern("dd/MM/yyyy h:mm a");
+		DateTimeFormatter dateTimeformatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
 
 		container.setStartEarlyEntry(LocalTime.parse(wdcGlobalSetting.getGlobalString(), timeformatter));
 		container.setEndEarlyEntry(LocalTime.parse(wdcGlobalSetting.getParamValue1(), timeformatter));
@@ -110,7 +110,7 @@ public class EarlyEntryService {
 		LocalDateTime endFullDate = nowDate.atTime(container.getEndEarlyEntry());
 
 		if (startFullDate.isAfter(endFullDate)) {
-			if (StringUtils.contains(timeformatter.format(now), "AM")) {
+			if (now.getHour() < 12) {//StringUtils.contains(dateTime.format(now),"AM")
 				startFullDate = startFullDate.minusDays(1);
 			} else {
 				endFullDate = endFullDate.plusDays(1);
