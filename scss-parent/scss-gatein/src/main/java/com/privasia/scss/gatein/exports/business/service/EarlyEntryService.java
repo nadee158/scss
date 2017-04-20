@@ -36,7 +36,7 @@ public class EarlyEntryService {
 		this.wdcGlobalSettingRepository = wdcGlobalSettingRepository;
 	}
 
-	public boolean isContainerHasOpening(ExportContainer container) {//!c1.isAllowIn()
+	public boolean isContainerHasOpening(ExportContainer container) {// !c1.isAllowIn()
 
 		final LocalDateTime now = LocalDateTime.now();
 
@@ -60,21 +60,31 @@ public class EarlyEntryService {
 				 */
 				if (container.getShipSCNID().isPresent()) {
 					container.setEarlyEntry(true);
-					
+
 					/**
 					 * check if container coming during early entry window.
 					 */
-					
+
 					if (withInEarlyEntryWindow(container)) {
 						return true;
 					} else {
 						if (container.isBypassEEntry()) {
 							return true;
 						} else {
-							//return false;
-							throw new BusinessException("Container "+ container.getContainer().getContainerNumber() +"does not have opening");
+							// return false;
+
+							// here !c1.isAllowIn() && c1.isEarlyEntry() = true
+							throw new BusinessException("Container " + container.getContainer().getContainerNumber()
+									+ "does not have opening." + "<br/> Early entry out of window. Early entry at "
+									+ container.getStartFullEarlyEntryTime() + " to " + container.getEndFullEarlyEntryTime());
 						}
 					}
+				} else {
+					// here !c1.isAllowIn() && c1.isEarlyEntry() = false
+					// should return false
+					container.setEarlyEntry(false);
+					throw new BusinessException(
+							"Container " + container.getContainer().getContainerNumber() + "does not have opening");
 				}
 			}
 		} else {
@@ -82,9 +92,6 @@ public class EarlyEntryService {
 			return true;
 		}
 
-		//return false;
-		
-		return true;
 	}
 
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
@@ -110,19 +117,19 @@ public class EarlyEntryService {
 		LocalDateTime endFullDate = nowDate.atTime(container.getEndEarlyEntry());
 
 		if (startFullDate.isAfter(endFullDate)) {
-			if (now.getHour() < 12) {//StringUtils.contains(dateTime.format(now),"AM")
+			if (now.getHour() < 12) {// StringUtils.contains(dateTime.format(now),"AM")
 				startFullDate = startFullDate.minusDays(1);
 			} else {
 				endFullDate = endFullDate.plusDays(1);
 			}
-			throw new BusinessException("Container "+ container.getContainer().getContainerNumber() +"does not have opening."
-					+ "<br/> Early entry out of window. Early entry at "+timeformatter.format(startFullDate) +" to "+
-					timeformatter.format(endFullDate));
 		}
 
 		if (now.isAfter(startFullDate) && now.isBefore(endFullDate)) {
 			isInWindow = true;
 		}
+		
+		container.setStartFullEarlyEntryTime(startFullDate.toLocalTime());
+		container.setEndFullEarlyEntryTime(endFullDate.toLocalTime());
 		return isInWindow;
 
 	}
