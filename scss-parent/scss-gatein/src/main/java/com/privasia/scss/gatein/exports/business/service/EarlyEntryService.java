@@ -128,8 +128,8 @@ public class EarlyEntryService {
 			isInWindow = true;
 		}
 		
-		container.setStartFullEarlyEntryTime(startFullDate.toLocalTime());
-		container.setEndFullEarlyEntryTime(endFullDate.toLocalTime());
+		container.setStartFullEarlyEntryTime(startFullDate.toLocalTime().format(timeformatter));
+		container.setEndFullEarlyEntryTime(endFullDate.toLocalTime().format(timeformatter));
 		return isInWindow;
 
 	}

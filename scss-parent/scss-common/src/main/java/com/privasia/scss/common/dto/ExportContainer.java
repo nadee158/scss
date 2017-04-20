@@ -248,9 +248,9 @@ public class ExportContainer {
 	private LocalTime endEarlyEntry; // for GateInExpNormalController -
 									// checkIfDGContainer method
 	
-	private LocalTime startFullEarlyEntryTime;
+	private String startFullEarlyEntryTime;
 	
-	private LocalTime endFullEarlyEntryTime;
+	private String endFullEarlyEntryTime;
 
 	private boolean allowBypassDgValRemote; // for GateInExpNormalController -
 											// checkIfDGContainer
@@ -1307,19 +1307,19 @@ public class ExportContainer {
 		this.shipSCNID = shipSCNID;
 	}
 	
-	public LocalTime getStartFullEarlyEntryTime() {
+	public String getStartFullEarlyEntryTime() {
 		return startFullEarlyEntryTime;
 	}
 
-	public void setStartFullEarlyEntryTime(LocalTime startFullEarlyEntryTime) {
+	public void setStartFullEarlyEntryTime(String startFullEarlyEntryTime) {
 		this.startFullEarlyEntryTime = startFullEarlyEntryTime;
 	}
 
-	public LocalTime getEndFullEarlyEntryTime() {
+	public String getEndFullEarlyEntryTime() {
 		return endFullEarlyEntryTime;
 	}
 
-	public void setEndFullEarlyEntryTime(LocalTime endFullEarlyEntryTime) {
+	public void setEndFullEarlyEntryTime(String endFullEarlyEntryTime) {
 		this.endFullEarlyEntryTime = endFullEarlyEntryTime;
 	}
 
