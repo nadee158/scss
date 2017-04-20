@@ -84,7 +84,7 @@ public class ReferRejectService {
   @Autowired
   private PrintRejectRepository printRejectRepository;
 
-  @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
+  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
   public ModelMap getReferRejectList(ModelMap map, int page, int pageSize) {
 
     Pageable pageRequest = new PageRequest(page, pageSize, Sort.Direction.DESC, "referDateTime");
@@ -105,7 +105,7 @@ public class ReferRejectService {
     }
   }
 
-  @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
+  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
   public ReferRejectDTO getReferRejectByReferId(long referId) {
     Optional<ReferReject> optionalReferReject = referRejectRepository.findOne(referId);
     ReferReject referReject = optionalReferReject
@@ -113,7 +113,7 @@ public class ReferRejectService {
     return new ReferRejectDTO(referReject);
   }
 
-  @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
+  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
   public Long saveReferReject(ReferRejectObjetDto referRejectObjetDto) {
 
     if (referRejectObjetDto != null) {
@@ -241,7 +241,7 @@ public class ReferRejectService {
 
   }
 
-  @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
+  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
   public String updateReferReject(ReferRejectUpdateObjetDto dto) {
     String status = "ERROR";
     ReferReject persisted = null;
@@ -312,7 +312,7 @@ public class ReferRejectService {
     return status;
   }
 
-  @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
+  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
   public String updateLineCodeAndGateInDateForReferRejectDetail(ReferRejectDetailUpdateObjetDto dto) {
     String status = "ERROR";
     if (!(dto == null)) {
@@ -334,7 +334,7 @@ public class ReferRejectService {
     return status;
   }
 
-  @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
+  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
   public String savePrintReject(long referId, String ipAddress) {
     System.out.println("referId :" + referId);
     String status = "ERROR";
