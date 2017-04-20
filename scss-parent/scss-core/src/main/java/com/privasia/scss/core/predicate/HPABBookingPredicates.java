@@ -62,5 +62,6 @@ public final class HPABBookingPredicates {
   public static OrderSpecifier<LocalDateTime> orderByAppointmentStartDateAsc() {
     return QHPABBooking.hPABBooking.appointmentStartDate.asc();
   }
+  
 
 }

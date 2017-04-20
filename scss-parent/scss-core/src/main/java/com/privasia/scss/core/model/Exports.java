@@ -27,7 +27,7 @@ import org.hibernate.annotations.Type;
 
 import com.privasia.scss.common.enums.ContainerPosition;
 import com.privasia.scss.common.enums.ExportOPTFlagType;
-import com.privasia.scss.common.enums.GCS_SSRBlockStatusType;
+import com.privasia.scss.common.enums.SSRBlockType;
 import com.privasia.scss.common.enums.GateInOutStatus;
 import com.privasia.scss.common.enums.ImpExpFlagStatus;
 import com.privasia.scss.common.enums.ReferTempType;
@@ -243,15 +243,15 @@ public class Exports extends AuditEntity implements Serializable {
 	private Boolean replanSSR;
 
 	@Column(name = "EXP_SSR_BLOCK_STATUS", nullable = true)
-	@Type(type = "com.privasia.scss.common.enumusertype.GCS_SSRBlockStatusEnumUserType")
-	private GCS_SSRBlockStatusType ssrBlockStatus;
+	@Type(type = "com.privasia.scss.common.enumusertype.SSRBlockTypeEnumUserType")
+	private SSRBlockType ssrBlockStatus;
 
 	@Column(name = "EXP_SSR_BLOCK_STATUS_DATETIME")
 	private LocalDateTime ssrBlockStatusDate;
 
 	@Column(name = "EXP_GCS_BLOCK_STATUS", nullable = true)
-	@Type(type = "com.privasia.scss.common.enumusertype.GCS_SSRBlockStatusEnumUserType")
-	private GCS_SSRBlockStatusType gcsBlockStatus;
+	@Type(type = "com.privasia.scss.common.enumusertype.SSRBlockTypeEnumUserType")
+	private SSRBlockType gcsBlockStatus;
 
 	@Column(name = "EXP_GCS_BLOCK_STATUS_DATETIME")
 	private LocalDateTime gcsBlockStatusDate;
@@ -666,11 +666,11 @@ public class Exports extends AuditEntity implements Serializable {
 		this.replanSSR = replanSSR;
 	}
 
-	public GCS_SSRBlockStatusType getSsrBlockStatus() {
+	public SSRBlockType getSsrBlockStatus() {
 		return ssrBlockStatus;
 	}
 
-	public void setSsrBlockStatus(GCS_SSRBlockStatusType ssrBlockStatus) {
+	public void setSsrBlockStatus(SSRBlockType ssrBlockStatus) {
 		this.ssrBlockStatus = ssrBlockStatus;
 	}
 
@@ -682,11 +682,11 @@ public class Exports extends AuditEntity implements Serializable {
 		this.ssrBlockStatusDate = ssrBlockStatusDate;
 	}
 
-	public GCS_SSRBlockStatusType getGcsBlockStatus() {
+	public SSRBlockType getGcsBlockStatus() {
 		return gcsBlockStatus;
 	}
 
-	public void setGcsBlockStatus(GCS_SSRBlockStatusType gcsBlockStatus) {
+	public void setGcsBlockStatus(SSRBlockType gcsBlockStatus) {
 		this.gcsBlockStatus = gcsBlockStatus;
 	}
 
@@ -1336,7 +1336,7 @@ public class Exports extends AuditEntity implements Serializable {
 		this.setVesselVoyageIN(CommonUtil.changeCase(this.vesselVoyageIN, CommonUtil.UPPER_CASE));
 		this.setGcsBlockStatusDate(LocalDateTime.now());
 		if (!(this.ssrBlockStatus == null)) {
-			if (this.ssrBlockStatus == GCS_SSRBlockStatusType.BLK) {
+			if (this.ssrBlockStatus == SSRBlockType.BLK) {
 				this.setSsrBlockStatusDate(LocalDateTime.now());
 			}
 		}

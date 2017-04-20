@@ -11,7 +11,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.privasia.scss.common.enums.ContainerPosition;
 import com.privasia.scss.common.enums.ExportOPTFlagType;
-import com.privasia.scss.common.enums.GCS_SSRBlockStatusType;
+import com.privasia.scss.common.enums.SSRBlockType;
 import com.privasia.scss.common.enums.GateInOutStatus;
 import com.privasia.scss.common.enums.ReferTempType;
 import com.privasia.scss.common.enums.VesselStatus;
@@ -125,11 +125,11 @@ public class ExportContainer {
 
 	private String shippingAgent;
 
-	private Boolean oogSSR;
+	private boolean oogSSR = false;
 
-	private Boolean overClosingSSR;
+	private boolean overClosingSSR = false;
 
-	private Boolean replanSSR;
+	private boolean replanSSR = false;
 
 	private String ssrBlockStatus;
 
@@ -637,27 +637,27 @@ public class ExportContainer {
 		this.shippingAgent = shippingAgent;
 	}
 
-	public Boolean getOogSSR() {
+	public boolean isOogSSR() {
 		return oogSSR;
 	}
 
-	public void setOogSSR(Boolean oogSSR) {
+	public void setOogSSR(boolean oogSSR) {
 		this.oogSSR = oogSSR;
 	}
 
-	public Boolean getOverClosingSSR() {
+	public boolean isOverClosingSSR() {
 		return overClosingSSR;
 	}
 
-	public void setOverClosingSSR(Boolean overClosingSSR) {
+	public void setOverClosingSSR(boolean overClosingSSR) { 
 		this.overClosingSSR = overClosingSSR;
 	}
 
-	public Boolean getReplanSSR() {
+	public boolean isReplanSSR() {
 		return replanSSR;
 	}
 
-	public void setReplanSSR(Boolean replanSSR) {
+	public void setReplanSSR(boolean replanSSR) {
 		this.replanSSR = replanSSR;
 	}
 
@@ -1394,10 +1394,10 @@ public class ExportContainer {
 		this.oogSSR = true;
 		this.overClosingSSR = true;
 		this.replanSSR = true;
-		this.ssrBlockStatus = GCS_SSRBlockStatusType.RLS.getValue();
+		this.ssrBlockStatus = SSRBlockType.RLS.getValue();
 		this.ssrBlockStatusDate = LocalDateTime.now();
 		;
-		this.gcsBlockStatus = GCS_SSRBlockStatusType.BLK.getValue();
+		this.gcsBlockStatus = SSRBlockType.BLK.getValue();
 		this.gcsBlockStatusDate = LocalDateTime.now();
 		;
 		this.gcsDeclareNo = "45";

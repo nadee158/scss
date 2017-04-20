@@ -16,7 +16,7 @@ import com.privasia.scss.common.enums.ContainerFullEmptyType;
 import com.privasia.scss.common.enums.ContainerPosition;
 import com.privasia.scss.common.enums.ContainerSize;
 import com.privasia.scss.common.enums.ExportOPTFlagType;
-import com.privasia.scss.common.enums.GCS_SSRBlockStatusType;
+import com.privasia.scss.common.enums.SSRBlockType;
 import com.privasia.scss.common.enums.GateInOutStatus;
 import com.privasia.scss.common.enums.GatePassStatus;
 import com.privasia.scss.common.enums.HDBSArrivalStatus;
@@ -852,16 +852,16 @@ public class ModelMapEnumConverter {
     };
   }
 
-  public static Converter<String, GCS_SSRBlockStatusType> convertStringToGCS_SSRBlockStatusType() {
-    return new Converter<String, GCS_SSRBlockStatusType>() {
+  public static Converter<String, SSRBlockType> convertStringToGCS_SSRBlockStatusType() {
+    return new Converter<String, SSRBlockType>() {
       @Override
-      public GCS_SSRBlockStatusType convert(MappingContext<String, GCS_SSRBlockStatusType> context) {
+      public SSRBlockType convert(MappingContext<String, SSRBlockType> context) {
         if (StringUtils.isNotBlank(context.getSource())) {
           switch (context.getSource()) {
             case "BLK":
-              return GCS_SSRBlockStatusType.BLK;
+              return SSRBlockType.BLK;
             case "RLS":
-              return GCS_SSRBlockStatusType.RLS;
+              return SSRBlockType.RLS;
             default:
               return null;
           }
@@ -872,16 +872,16 @@ public class ModelMapEnumConverter {
     };
   }
 
-  public static Converter<GCS_SSRBlockStatusType, String> convertGCS_SSRBlockStatusTypeToString() {
-    return new Converter<GCS_SSRBlockStatusType, String>() {
+  public static Converter<SSRBlockType, String> convertGCS_SSRBlockStatusTypeToString() {
+    return new Converter<SSRBlockType, String>() {
       @Override
-      public String convert(MappingContext<GCS_SSRBlockStatusType, String> context) {
+      public String convert(MappingContext<SSRBlockType, String> context) {
         if (context.getSource() != null) {
           switch (context.getSource()) {
             case BLK:
-              return GCS_SSRBlockStatusType.BLK.getValue();
+              return SSRBlockType.BLK.getValue();
             case RLS:
-              return GCS_SSRBlockStatusType.RLS.getValue();
+              return SSRBlockType.RLS.getValue();
             default:
               return null;
           }

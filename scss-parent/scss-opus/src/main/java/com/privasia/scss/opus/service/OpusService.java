@@ -121,11 +121,11 @@ public class OpusService {
     giWriteRequestExpContainer
         .setWrongDoorIndicator(ExportUtilService.getStringRepresentationOfBoolean(exportContainer.getWrongDoor()));
     giWriteRequestExpContainer
-        .setContainerHasOCSSR(ExportUtilService.getStringRepresentationOfBoolean(exportContainer.getOverClosingSSR()));
+        .setContainerHasOCSSR(ExportUtilService.getStringRepresentationOfBoolean(exportContainer.isOverClosingSSR()));
     giWriteRequestExpContainer
-        .setContainerHasRPSSR(ExportUtilService.getStringRepresentationOfBoolean(exportContainer.getReplanSSR()));
+        .setContainerHasRPSSR(ExportUtilService.getStringRepresentationOfBoolean(exportContainer.isReplanSSR()));
     giWriteRequestExpContainer
-        .setContainerHasOOGSSR(ExportUtilService.getStringRepresentationOfBoolean(exportContainer.getOogSSR()));
+        .setContainerHasOOGSSR(ExportUtilService.getStringRepresentationOfBoolean(exportContainer.isOogSSR()));
 
     CommonSolasDTO solasDTO = exportContainer.getSolas();
     if (solasDTO != null) {

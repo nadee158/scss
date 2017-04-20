@@ -18,9 +18,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.privasia.scss.common.dto.ApiResponseObject;
 import com.privasia.scss.common.dto.CustomResponseEntity;
-import com.privasia.scss.common.dto.GateInOutODDDTO;
+import com.privasia.scss.common.dto.GateInWriteRequest;
 import com.privasia.scss.core.model.HDBSBkgDetail;
-import com.privasia.scss.gatein.service.ODDService;
+import com.privasia.scss.gatein.service.ImportExportGateInService;
 import com.privasia.scss.hdbs.service.HDBSService;
 
 /**
@@ -32,31 +32,36 @@ import com.privasia.scss.hdbs.service.HDBSService;
 @RequestMapping("**/gatein/odd")
 public class GateInODDController {
 
-  @Autowired
-  private HDBSService hdbsService;
+	@Autowired
+	private HDBSService hdbsService;
 
-  @Autowired
-  private ODDService oddService;
+	@Autowired
+	private ImportExportGateInService importExportGateInService;
+	
+	@Autowired
+	public void setHdbsService(HDBSService hdbsService) {
+		this.hdbsService = hdbsService;
+	}
+	
+	@Autowired
+	public void setImportExportGateInService(ImportExportGateInService importExportGateInService) {
+		this.importExportGateInService = importExportGateInService;
+	}
 
-  @RequestMapping(value = "/whodd/save", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
-      consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-  public CustomResponseEntity<ApiResponseObject<?>> saveWhodd(@RequestBody GateInOutODDDTO gateInOutODDDTO) {
+	@RequestMapping(value = "/whodd/save", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public CustomResponseEntity<ApiResponseObject<?>> saveWhodd(@RequestBody GateInWriteRequest gateInWriteRequest) {
 
-    System.out.println("gateInOutODDDTO :" + gateInOutODDDTO);
+		Long generatedId = importExportGateInService.saveODDGateInFo(gateInWriteRequest);
 
-    long generatedId = oddService.savempWHODDDB(gateInOutODDDTO);
+		return new CustomResponseEntity<ApiResponseObject<?>>(
+				new ApiResponseObject<Long>(HttpStatus.CREATED, generatedId), HttpStatus.CREATED);
+	}
 
-    return new CustomResponseEntity<ApiResponseObject<?>>(new ApiResponseObject<Long>(HttpStatus.CREATED, generatedId),
-        HttpStatus.CREATED);
-  }
-
-
-  @RequestMapping(value = "/hdbs/bkgdetails/ids", method = RequestMethod.POST,
-      produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<List<HDBSBkgDetail>> gateInImpNormal(@RequestBody List<String> bkgDetailIDList,
-      HttpServletRequest request) {
-    List<HDBSBkgDetail> hdbsDetails = hdbsService.findHDBSBookingDetailByIDList(bkgDetailIDList);
-    return new ResponseEntity<List<HDBSBkgDetail>>(hdbsDetails, HttpStatus.OK);
-  }
+	@RequestMapping(value = "/hdbs/bkgdetails/ids", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<HDBSBkgDetail>> gateInImpNormal(@RequestBody List<String> bkgDetailIDList,
+			HttpServletRequest request) {
+		List<HDBSBkgDetail> hdbsDetails = hdbsService.findHDBSBookingDetailByIDList(bkgDetailIDList);
+		return new ResponseEntity<List<HDBSBkgDetail>>(hdbsDetails, HttpStatus.OK);
+	}
 
 }
