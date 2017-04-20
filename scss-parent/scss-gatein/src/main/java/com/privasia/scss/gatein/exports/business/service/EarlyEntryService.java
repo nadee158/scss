@@ -36,7 +36,7 @@ public class EarlyEntryService {
 		this.wdcGlobalSettingRepository = wdcGlobalSettingRepository;
 	}
 
-	public boolean isContainerHasOpening(ExportContainer container) {
+	public boolean isContainerHasOpening(ExportContainer container) {//!c1.isAllowIn()
 
 		final LocalDateTime now = LocalDateTime.now();
 
@@ -115,7 +115,6 @@ public class EarlyEntryService {
 			} else {
 				endFullDate = endFullDate.plusDays(1);
 			}
-			container.setEarlyEntry(false);
 			throw new BusinessException("Container "+ container.getContainer().getContainerNumber() +"does not have opening."
 					+ "<br/> Early entry out of window. Early entry at "+timeformatter.format(startFullDate) +" to "+
 					timeformatter.format(endFullDate));
