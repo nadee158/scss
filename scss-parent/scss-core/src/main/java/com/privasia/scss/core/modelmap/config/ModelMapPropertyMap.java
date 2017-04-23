@@ -8,11 +8,17 @@ import org.modelmapper.PropertyMap;
 import com.privasia.scss.common.dto.ExportContainer;
 import com.privasia.scss.common.dto.ImportContainer;
 import com.privasia.scss.common.dto.KioskBoothRightsDTO;
+import com.privasia.scss.common.dto.ReferRejectDTO;
+import com.privasia.scss.common.dto.ReferRejectDetailDTO;
+import com.privasia.scss.common.dto.ReferRejectReasonDTO;
 import com.privasia.scss.common.enums.TransactionStatus;
 import com.privasia.scss.core.model.Exports;
 import com.privasia.scss.core.model.ExportsQ;
 import com.privasia.scss.core.model.GatePass;
 import com.privasia.scss.core.model.KioskBoothRights;
+import com.privasia.scss.core.model.ReferReject;
+import com.privasia.scss.core.model.ReferRejectDetail;
+import com.privasia.scss.core.model.ReferRejectReason;
 
 /**
  * @author Janaka
@@ -168,6 +174,38 @@ public final class ModelMapPropertyMap {
       protected void configure() {
         map().getBaseCommonGateInOutAttribute()
             .setEirStatus(TransactionStatus.valueOf(source.getBaseCommonGateInOutAttribute().getEirStatus()));
+      }
+    };
+  }
+
+  public static PropertyMap<ReferRejectDTO, ReferReject> referRejectDTOToReferReject() {
+    return new PropertyMap<ReferRejectDTO, ReferReject>() {
+      protected void configure() {
+        skip().getBaseCommonGateInOut().setHpatBooking(null);
+        skip().getBaseCommonGateInOut().setCard(null);
+        skip().getBaseCommonGateInOut().setGateInClerk(null);
+        skip().getBaseCommonGateInOut().setGateInClient(null);
+        skip().getBaseCommonGateInOut().setGateOutBoothClerk(null);
+        skip().getBaseCommonGateInOut().setGateOutClerk(null);
+        skip().getBaseCommonGateInOut().setGateOutClient(null);
+        skip().setCompany(null);
+      }
+    };
+  }
+
+  public static PropertyMap<ReferRejectDetailDTO, ReferRejectDetail> referRejectDetailDTOToReferRejectDetail() {
+    return new PropertyMap<ReferRejectDetailDTO, ReferRejectDetail>() {
+      protected void configure() {
+        skip().setReferReject(null);
+      }
+    };
+  }
+
+  public static PropertyMap<ReferRejectReasonDTO, ReferRejectReason> referRejectReasonDTOToReferRejectReason() {
+    return new PropertyMap<ReferRejectReasonDTO, ReferRejectReason>() {
+      protected void configure() {
+        skip().setReferReason(null);
+        skip().setReferRejectDetail(null);
       }
     };
   }

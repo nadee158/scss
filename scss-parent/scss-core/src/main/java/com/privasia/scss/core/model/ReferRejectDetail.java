@@ -35,10 +35,10 @@ import com.privasia.scss.common.enums.ReferStatus;
 
 @Entity
 @Table(name = "SCSS_REFER_REJECT_DET")
-@AttributeOverrides({@AttributeOverride(name = "addBy", column = @Column(name = "ADD_BY") ),
-    @AttributeOverride(name = "updateBy", column = @Column(name = "UPDATE_BY") ),
-    @AttributeOverride(name = "dateTimeAdd", column = @Column(name = "DATETIME_ADD") ),
-    @AttributeOverride(name = "dateTimeUpdate", column = @Column(name = "DATETIME_UPDATE") )})
+@AttributeOverrides({@AttributeOverride(name = "addBy", column = @Column(name = "ADD_BY")),
+    @AttributeOverride(name = "updateBy", column = @Column(name = "UPDATE_BY")),
+    @AttributeOverride(name = "dateTimeAdd", column = @Column(name = "DATETIME_ADD")),
+    @AttributeOverride(name = "dateTimeUpdate", column = @Column(name = "DATETIME_UPDATE"))})
 public class ReferRejectDetail extends AuditEntity implements Serializable {
 
   /**
@@ -47,7 +47,7 @@ public class ReferRejectDetail extends AuditEntity implements Serializable {
   private static final long serialVersionUID = 1L;
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_SCSS_REFER_REJECT_DET")
-  @SequenceGenerator(name = "SEQ_SCSS_REFER_REJECT_DET", sequenceName = "SEQ_SCSS_REFER_REJECT_DET", allocationSize=1)
+  @SequenceGenerator(name = "SEQ_SCSS_REFER_REJECT_DET", sequenceName = "SEQ_SCSS_REFER_REJECT_DET", allocationSize = 1)
   @Column(name = "REFER_REJECT_DET_ID")
   private Long referRejectDetailID;
 
@@ -57,17 +57,17 @@ public class ReferRejectDetail extends AuditEntity implements Serializable {
   @Column(name = "CONT_ISO_CODE")
   private String containerIsoCode;
 
-  @ManyToOne(fetch = FetchType.LAZY, cascade=CascadeType.MERGE)
+  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
   @JoinColumn(name = "REFER_ID", nullable = false)
   private ReferReject referReject;
 
   @Embedded
-  @AttributeOverrides({@AttributeOverride(name = "seal01Origin", column = @Column(name = "EXP_SEAL_1_ORIGIN") ),
-      @AttributeOverride(name = "seal01Type", column = @Column(name = "EXP_SEAL_1_TYPE") ),
-      @AttributeOverride(name = "seal01Number", column = @Column(name = "EXP_SEAL_1_NUMBER") ),
-      @AttributeOverride(name = "seal02Origin", column = @Column(name = "EXP_SEAL_2_ORIGIN") ),
-      @AttributeOverride(name = "seal02Type", column = @Column(name = "EXP_SEAL_2_TYPE") ),
-      @AttributeOverride(name = "seal02Number", column = @Column(name = "EXP_SEAL_2_NUMBER") )})
+  @AttributeOverrides({@AttributeOverride(name = "seal01Origin", column = @Column(name = "EXP_SEAL_1_ORIGIN")),
+      @AttributeOverride(name = "seal01Type", column = @Column(name = "EXP_SEAL_1_TYPE")),
+      @AttributeOverride(name = "seal01Number", column = @Column(name = "EXP_SEAL_1_NUMBER")),
+      @AttributeOverride(name = "seal02Origin", column = @Column(name = "EXP_SEAL_2_ORIGIN")),
+      @AttributeOverride(name = "seal02Type", column = @Column(name = "EXP_SEAL_2_TYPE")),
+      @AttributeOverride(name = "seal02Number", column = @Column(name = "EXP_SEAL_2_NUMBER"))})
   private CommonSealAttribute seal;
 
   @Column(name = "REMARKS")
@@ -267,5 +267,7 @@ public class ReferRejectDetail extends AuditEntity implements Serializable {
   public void setReferRejectReason(Set<ReferRejectReason> referRejectReason) {
     this.referRejectReason = referRejectReason;
   }
+
+
 
 }
