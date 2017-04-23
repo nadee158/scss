@@ -152,7 +152,6 @@ public class FileService {
 		return fileDTO;
 	}
 
-	@Transactional(propagation=Propagation.REQUIRES_NEW, readOnly = false)
 	public void saveReference(FileDTO fileDTO) {
 		TransactionType trxType = fileDTO.getTrxType();
 		switch (trxType) {
@@ -176,7 +175,6 @@ public class FileService {
 		}
 	}
 	
-	@Transactional(propagation=Propagation.REQUIRED, readOnly = false)
 	public void updateExportReference(FileDTO fileDTO) {
 
 		Optional<List<Exports>> exportsOptList = exportsRepository.findByExportIDIn(
@@ -210,7 +208,6 @@ public class FileService {
 		return exports;
 	}
 	
-	@Transactional(propagation=Propagation.REQUIRED, readOnly = false)
 	public void updateGatePassReference(FileDTO fileDTO) {
 
 		Optional<List<GatePass>> gatePassOptList = gatePassRepository.findByGatePassNoIn(
@@ -241,7 +238,6 @@ public class FileService {
 		return gatePass;
 	}
 	
-	@Transactional(propagation=Propagation.REQUIRED, readOnly = false)
 	public void updateODDReference(FileDTO fileDTO) {
 		
 		Optional<List<WHODD>> oddOptList = oddRepository.findByOddIdSeqIn(

@@ -126,20 +126,25 @@ public class ODDGateInService {
 		Predicate bycon01ODDStatus = ODDPredicates.byContainer01Status(whodd.getContainer01().getOddStatus());
 		Predicate bycon02ODDStatus = ODDPredicates.byContainer02Status(whodd.getContainer02().getOddStatus());
 		Predicate byTransactionType = ODDPredicates.byTransactionType(whodd.getImpExpFlag());
-
-		Predicate condition = ExpressionUtils.allOf(byHeadNo, byPlateNo, bycon01ODDStatus, bycon02ODDStatus,
-				byTransactionType);
+		
+		Predicate condition =ExpressionUtils.allOf(
+			      ExpressionUtils.or(
+			          ExpressionUtils.and(ExpressionUtils.or(byHeadNo,byPlateNo),bycon01ODDStatus),
+			          ExpressionUtils.and(ExpressionUtils.or(byHeadNo,byPlateNo),bycon02ODDStatus)
+			      ),
+			      byTransactionType);
+		
 
 		Iterable<WHODD> oddList = oddRepository.findAll(condition);
 
 		if (oddList == null || Stream.of(oddList).count() == 0)
-			return true;
-
-		/*
-		 * Stream.of(oddList).filter(usedODD ->
-		 * StringUtils.equalsIgnoreCase(usedODD.getPmHeadNo(),
-		 * whodd.getPmHeadNo())).findAny().isPresent();
-		 */
+			return false;
+		
+		if(oddList.iterator().hasNext()){
+			WHODD dbODD = oddList.iterator().next();
+		}
+		
+		
 
 		return false;
 
