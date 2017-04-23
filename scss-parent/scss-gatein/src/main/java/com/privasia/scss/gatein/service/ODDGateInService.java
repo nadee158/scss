@@ -58,7 +58,7 @@ public class ODDGateInService {
 
 		// check is empty
 		
-		if(gateInWriteRequest.getWhoddContainers() == null || gateInWriteRequest.getWhoddContainers().isEmpty())
+		if(gateInWriteRequest.getWhoddContainers() == null || gateInWriteRequest.getWhoddContainers().isEmpty()) 
 			throw new BusinessException("Invalid GateInWriteRequest to save ODD ! ");
 		
 		gateInWriteRequest.getWhoddContainers().forEach(whODDdto -> {
@@ -91,13 +91,13 @@ public class ODDGateInService {
 			}
 			if (whODDdto.getContainer02() != null) {
 				whODD.getContainer02().setOddStatus(TransactionStatus.INPROGRESS);
-				if (whODDdto.getContainer02().getHdbsBkgDetailNoId() != null) {
+				if (whODDdto.getContainer02().get().getHdbsBkgDetailNoId() != null) {
 
 					Optional<HDBSBkgDetail> optHDBSBookingDetail = hdbsBookingDetailRepository
-							.findOne(whODDdto.getContainer02().getHdbsBkgDetailNoId());
+							.findOne(whODDdto.getContainer02().get().getHdbsBkgDetailNoId());
 					HDBSBkgDetail hdbsBookingDetail = optHDBSBookingDetail
 							.orElseThrow(() -> new ResultsNotFoundException("Invalid HDBS Booking Detail ID :"
-									+ whODDdto.getContainer02().getHdbsBkgDetailNoId()));
+									+ whODDdto.getContainer02().get().getHdbsBkgDetailNoId()));
 
 					whODD.getContainer02().setHdbsBkgDetailNo(hdbsBookingDetail);
 					whODD.getContainer02().setHdbsStatus(hdbsBookingDetail.getStatusCode());

@@ -243,7 +243,7 @@ public class HDBSService {
     Predicate byAPPTDateTo = HDBSBookingMasterPredicates.byApptDateTimeToActual(dateTo);
     Predicate byDrayageBooking = HDBSBookingMasterPredicates.byDrayageBooking(0);
     Predicate byHDBSStatus = HDBSBookingMasterPredicates.byHDBSStatusTypes(statusList);
-    Predicate byNullableSCSS = HDBSBookingMasterPredicates.byNullableSCSSStatusCode();
+    Predicate byNullableSCSS = HDBSBookingMasterPredicates.byNullableSCSSStatusCode(); 
 
     Predicate condition =
         ExpressionUtils.allOf(byCardNo, byAPPTDateFrom, byAPPTDateTo, byDrayageBooking, byHDBSStatus, byNullableSCSS);
@@ -378,7 +378,7 @@ public class HDBSService {
       oddDTO.setImpExpFlag(impExpFlag.getValue());
       oddDTO.setContainer01(containerDetailsDTO);
     } else {
-      oddDTO.setContainer02(containerDetailsDTO);
+      //oddDTO.setContainer02(containerDetailsDTO);
     }
 
     return oddDTO;
