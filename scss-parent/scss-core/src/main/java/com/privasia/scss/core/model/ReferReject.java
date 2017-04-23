@@ -5,6 +5,7 @@ package com.privasia.scss.core.model;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Set;
 
 import javax.persistence.AssociationOverride;
@@ -25,8 +26,10 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.Type;
 
+import com.privasia.scss.common.dto.ReferRejectListDTO;
 import com.privasia.scss.common.enums.HpatReferStatus;
 
 /**
@@ -35,20 +38,20 @@ import com.privasia.scss.common.enums.HpatReferStatus;
  */
 @Entity
 @Table(name = "SCSS_REFER_REJECT")
-@AttributeOverrides({@AttributeOverride(name = "addBy", column = @Column(name = "ADD_BY") ),
-    @AttributeOverride(name = "updateBy", column = @Column(name = "UPDATE_BY") ),
-    @AttributeOverride(name = "dateTimeAdd", column = @Column(name = "DATETIME_ADD") ),
-    @AttributeOverride(name = "dateTimeUpdate", column = @Column(name = "DATETIME_UPDATE") )})
+@AttributeOverrides({@AttributeOverride(name = "addBy", column = @Column(name = "ADD_BY")),
+    @AttributeOverride(name = "updateBy", column = @Column(name = "UPDATE_BY")),
+    @AttributeOverride(name = "dateTimeAdd", column = @Column(name = "DATETIME_ADD")),
+    @AttributeOverride(name = "dateTimeUpdate", column = @Column(name = "DATETIME_UPDATE"))})
 public class ReferReject extends AuditEntity implements Serializable {
 
   /**
    * 
    */
   private static final long serialVersionUID = 1L;
-  
+
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_SCSS_REFER_REJECT")
-  @SequenceGenerator(name = "SEQ_SCSS_REFER_REJECT", sequenceName = "SEQ_SCSS_REFER_ID", allocationSize=1)
+  @SequenceGenerator(name = "SEQ_SCSS_REFER_REJECT", sequenceName = "SEQ_SCSS_REFER_ID", allocationSize = 1)
   @Column(name = "REFER_ID")
   private Long referRejectID;
 
@@ -67,28 +70,36 @@ public class ReferReject extends AuditEntity implements Serializable {
   private HpatReferStatus statusCode;
 
   @Embedded
-  @AttributeOverrides({@AttributeOverride(name = "timeGateIn", column = @Column(name = "REF_GATEIN_TIME") ),
-      @AttributeOverride(name = "timeGateInOk", column = @Column(name = "REF_GATEIN_OK_TIME") ),
-      @AttributeOverride(name = "timeGateOut", column = @Column(name = "REF_GATEOUT_TIME") ),
-      @AttributeOverride(name = "timeGateOutOk", column = @Column(name = "REF_GATEOUT_OK_TIME") ),
-      @AttributeOverride(name = "eirStatus", column = @Column(name = "REF_EIRSTATUS") ),
-      @AttributeOverride(name = "pmHeadNo", column = @Column(name = "PM_HEAD_NO") ),
-      @AttributeOverride(name = "pmPlateNo", column = @Column(name = "EXP_TRUCK_PLATE_NO") ),
+  @AttributeOverrides({@AttributeOverride(name = "timeGateIn", column = @Column(name = "REF_GATEIN_TIME")),
+      @AttributeOverride(name = "timeGateInOk", column = @Column(name = "REF_GATEIN_OK_TIME")),
+      @AttributeOverride(name = "timeGateOut", column = @Column(name = "REF_GATEOUT_TIME")),
+      @AttributeOverride(name = "timeGateOutOk", column = @Column(name = "REF_GATEOUT_OK_TIME")),
+      @AttributeOverride(name = "eirStatus", column = @Column(name = "REF_EIRSTATUS")),
+      @AttributeOverride(name = "pmHeadNo", column = @Column(name = "PM_HEAD_NO")),
+      @AttributeOverride(name = "pmPlateNo", column = @Column(name = "EXP_TRUCK_PLATE_NO")),
       @AttributeOverride(name = "transactionSlipPrinted",
-          column = @Column(name = "TRANSACTION_SLIP_PRINTED", nullable = true) ),
-      @AttributeOverride(name = "gateOutBoothNo", column = @Column(name = "REF_GATE_OUT_BOOTH_NO") ),
-      @AttributeOverride(name = "gateOutBoothClerk", column = @Column(name = "REF_GATEOUT_BOOTH_CLERKID") ),
-      @AttributeOverride(name = "timeGateOutBooth", column = @Column(name = "REF_TIMEGATEOUT_BOOTH") ),
+          column = @Column(name = "TRANSACTION_SLIP_PRINTED", nullable = true)),
+      @AttributeOverride(name = "gateOutBoothNo", column = @Column(name = "REF_GATE_OUT_BOOTH_NO")),
+      @AttributeOverride(name = "gateOutBoothClerk", column = @Column(name = "REF_GATEOUT_BOOTH_CLERKID")),
+      @AttributeOverride(name = "timeGateOutBooth", column = @Column(name = "REF_TIMEGATEOUT_BOOTH")),
       @AttributeOverride(name = "hpatBooking", column = @Column(name = "BOOKING_ID"))
 
   })
   @AssociationOverrides({
-      @AssociationOverride(name = "card", joinColumns = @JoinColumn(name = "CRD_CARDID_SEQ", referencedColumnName = "CRD_CARDID_SEQ") ),
-      @AssociationOverride(name = "gateInClerk", joinColumns = @JoinColumn(name = "GATE_CLERK_ID", referencedColumnName = "SYS_USERID_SEQ") ),
-      @AssociationOverride(name = "gateOutClerk", joinColumns = @JoinColumn(name = "REF_GATEOUT_CLERKID", referencedColumnName = "SYS_USERID_SEQ", nullable = true) ),
-      @AssociationOverride(name = "gateInClient", joinColumns = @JoinColumn(name = "CLI_CLIENT_SEQ", referencedColumnName = "CLI_CLIENTID_SEQ") ),
-      @AssociationOverride(name = "gateOutClient",joinColumns = @JoinColumn(name = "CLI_CLIENTID_GATEOUT", referencedColumnName = "CLI_CLIENTID_SEQ", nullable = true) ),
-      @AssociationOverride(name = "gateOutBoothClerk", joinColumns = @JoinColumn(name = "REF_GATEOUT_BOOTH_CLERKID", referencedColumnName = "SYS_USERID_SEQ", nullable = true) )})
+      @AssociationOverride(name = "card",
+          joinColumns = @JoinColumn(name = "CRD_CARDID_SEQ", referencedColumnName = "CRD_CARDID_SEQ")),
+      @AssociationOverride(name = "gateInClerk",
+          joinColumns = @JoinColumn(name = "GATE_CLERK_ID", referencedColumnName = "SYS_USERID_SEQ")),
+      @AssociationOverride(name = "gateOutClerk",
+          joinColumns = @JoinColumn(name = "REF_GATEOUT_CLERKID", referencedColumnName = "SYS_USERID_SEQ",
+              nullable = true)),
+      @AssociationOverride(name = "gateInClient",
+          joinColumns = @JoinColumn(name = "CLI_CLIENT_SEQ", referencedColumnName = "CLI_CLIENTID_SEQ")),
+      @AssociationOverride(name = "gateOutClient",
+          joinColumns = @JoinColumn(name = "CLI_CLIENTID_GATEOUT", referencedColumnName = "CLI_CLIENTID_SEQ",
+              nullable = true)),
+      @AssociationOverride(name = "gateOutBoothClerk", joinColumns = @JoinColumn(name = "REF_GATEOUT_BOOTH_CLERKID",
+          referencedColumnName = "SYS_USERID_SEQ", nullable = true))})
   private BaseCommonGateInOutAttribute baseCommonGateInOut;
 
   @Column(name = "REFER_DATE_TIME")
@@ -217,6 +228,52 @@ public class ReferReject extends AuditEntity implements Serializable {
   public void setReferRejectDetails(Set<ReferRejectDetail> referRejectDetails) {
     this.referRejectDetails = referRejectDetails;
   }
+
+  public ReferRejectListDTO constructReferRejectListDTO() {
+    ReferRejectListDTO listDTO = new ReferRejectListDTO();
+    listDTO.setReferId(Long.toString(this.getReferRejectID()));
+    BaseCommonGateInOutAttribute baseCommonGateInOut = this.getBaseCommonGateInOut();
+    listDTO.setPmHeadNo(baseCommonGateInOut.getPmHeadNo());
+
+    Client client = baseCommonGateInOut.getGateInClient();
+    if (client != null) {
+      listDTO.setBoothNo(client.getUnitNo());
+    }
+
+    Card card = baseCommonGateInOut.getCard();
+    if (card != null) {
+      Company company = card.getCompany();
+      if (company != null) {
+        listDTO.setHaulierCompany(company.getCompanyName());
+      }
+
+      SmartCardUser smartCardUser = card.getSmartCardUser();
+      if (card != null) {
+        listDTO.setDriverName(smartCardUser.getCommonContactAttribute().getPersonName());
+      }
+
+      if (this.getReferDateTime() != null) {
+        listDTO.setReferDateTime(this.getReferDateTime().format(DateTimeFormatter.ofPattern("dd/MM/yyyy - HH:mm a")));
+      }
+
+    }
+
+    this.getReferRejectDetails().forEach(referRejectDetail -> {
+      if (StringUtils.isBlank(listDTO.getContNo01())) {
+        listDTO.setContNo01(referRejectDetail.getContainerNo());
+      } else {
+        listDTO.setContNo02(referRejectDetail.getContainerNo());
+      }
+
+      if (StringUtils.isBlank(listDTO.getDoubleBooking())) {
+        listDTO.setDoubleBooking(referRejectDetail.getDoubleBooking());
+      } else {
+        listDTO.setDoubleBooking(referRejectDetail.getDoubleBooking());
+      }
+    });
+    return listDTO;
+  }
+
 
 
 }

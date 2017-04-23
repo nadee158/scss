@@ -2,6 +2,7 @@ package com.privasia.scss.common.dto;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import javax.validation.constraints.NotNull;
 
@@ -35,6 +36,8 @@ public class GateInRequest implements Serializable {
   @NotNull(message = "Please enter a date for Gate in date time")
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateUtil.GLOBAL_DATE_TIME_PATTERN)
   private LocalDateTime gateInDateTime;// -string
+
+  private Optional<Long> referID;
 
   public Long getUserId() {
     return userId;
@@ -170,6 +173,14 @@ public class GateInRequest implements Serializable {
 
   public void setGateInDateTime(LocalDateTime gateInDateTime) {
     this.gateInDateTime = gateInDateTime;
+  }
+
+  public Optional<Long> getReferID() {
+    return referID;
+  }
+
+  public void setReferID(Optional<Long> referID) {
+    this.referID = referID;
   }
 
 

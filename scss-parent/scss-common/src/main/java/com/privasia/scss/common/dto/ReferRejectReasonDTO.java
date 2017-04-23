@@ -1,8 +1,6 @@
-package com.privasia.scss.refer.dto;
+package com.privasia.scss.common.dto;
 
 import java.io.Serializable;
-
-import com.privasia.scss.core.model.ReferRejectReason;
 
 public class ReferRejectReasonDTO implements Serializable {
 
@@ -12,13 +10,6 @@ public class ReferRejectReasonDTO implements Serializable {
 
   private String reasonDescription;
 
-  public ReferRejectReasonDTO(ReferRejectReason reason) {
-    this.referRejectReasonID = reason.getReferRejectReasonID();
-    if (!(reason.getReferReason() == null)) {
-      this.setReferReasonID(reason.getReferReason().getReferReasonID());
-      this.setReasonDescription(reason.getReferReason().getReasonDescription());
-    }
-  }
 
   /**
    * 
