@@ -22,6 +22,7 @@ import com.privasia.scss.common.dto.GateInWriteRequest;
 import com.privasia.scss.common.dto.GateOutMessage;
 import com.privasia.scss.common.dto.ImportContainer;
 import com.privasia.scss.common.enums.ImpExpFlagStatus;
+import com.privasia.scss.common.util.DateUtil;
 import com.privasia.scss.core.exception.BusinessException;
 import com.privasia.scss.core.exception.ResultsNotFoundException;
 import com.privasia.scss.core.model.Card;
@@ -194,7 +195,7 @@ public class ImportExportGateInService {
 		gateInReponse.setExpWeightBridge(gateInRequest.getExpWeightBridge());
 
 		if (!(gateInReponse.getExportContainers() == null || gateInReponse.getExportContainers().isEmpty())) {
-			gateInReponse = exportGateInService.populateGateInExports(gateInReponse);
+			gateInReponse = exportGateInService.populateGateInExports(gateInReponse, gateInRequest.getGateInDateTime());
 		}
 
 		/*

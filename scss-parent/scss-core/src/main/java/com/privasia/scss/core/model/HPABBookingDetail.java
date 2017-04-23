@@ -23,7 +23,6 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Type;
 
 import com.privasia.scss.common.dto.BaseCommonGateInOutDTO;
-import com.privasia.scss.common.dto.CardUsageDTO;
 import com.privasia.scss.common.dto.CommonContainerDTO;
 import com.privasia.scss.common.dto.CommonSealDTO;
 import com.privasia.scss.common.dto.CommonSolasDTO;

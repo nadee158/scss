@@ -16,5 +16,7 @@ public interface ExportsRepository extends BaseRepository<Exports, Long> {
   
   @Query(name = "Exports.fetchInProgressTransaction")
   public Optional<List<Exports>> fetchInProgressTransaction(@Param("cardID") long cardId, @Param("eirStatus") TransactionStatus eirStatus);
+  
+  public Optional<List<Exports>> findByExportIDIn(List<Long> expIDList);
 
 }

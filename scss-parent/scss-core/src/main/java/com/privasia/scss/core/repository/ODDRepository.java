@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.querydsl.QueryDslPredicateExecutor;
 import org.springframework.data.repository.query.Param;
 
 import com.privasia.scss.common.enums.TransactionStatus;
@@ -16,7 +17,7 @@ import com.privasia.scss.core.model.WHODD;
  * @author Janaka
  *
  */
-public interface ODDRepository extends BaseRepository<WHODD, Long> {
+public interface ODDRepository extends BaseRepository<WHODD, Long>, QueryDslPredicateExecutor<WHODD> {
 	
 	@Query(name="WHODD.countByPMPlateNoAndOddStatus")
 	public int countByPMPlateNoAndOddStatus(@Param("plateNumber") String plateNumber, @Param("oddStatus") TransactionStatus oddStatus);
@@ -29,6 +30,8 @@ public interface ODDRepository extends BaseRepository<WHODD, Long> {
 	
 	@Query(name="WHODD.findByCardIDAndOddStatus")
 	public Optional<List<WHODD>> findByCardIDAndEirStatus(@Param("cardID") long cardId, @Param("oddStatus") TransactionStatus oddStatus);
+	
+	public Optional<List<WHODD>> findByOddIdSeqIn(List<Long> oddIdSeqList);
 	
 
 }

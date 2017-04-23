@@ -271,6 +271,12 @@ public class ImportExportGateOutService {
 
 		List<ImportContainer> importContainers = null;
 		List<ExportContainer> exportContainers = null;
+		
+		if (StringUtils.isEmpty(gateOutWriteRequest.getImpExpFlag()))
+			throw new BusinessException("Invalid GateOutWriteRequest Empty ImpExpFlag");
+		ImpExpFlagStatus impExpFlag = ImpExpFlagStatus.fromValue(gateOutWriteRequest.getImpExpFlag());
+		
+		importExportCommonGateOutBusinessService.isValidGateOutLane(client, gateOutWriteRequest);
 
 		// call opus -
 		OpusGateOutWriteRequest opusGateOutWriteRequest = opusGateOutWriteService
@@ -295,15 +301,9 @@ public class ImportExportGateOutService {
 		 * Future<Boolean> impSave = null; Future<Boolean> expSave = null;
 		 */
 
-		if (StringUtils.isEmpty(gateOutWriteRequest.getImpExpFlag()))
-			throw new BusinessException("Invalid GateOutWriteRequest Empty ImpExpFlag");
-		ImpExpFlagStatus impExpFlag = ImpExpFlagStatus.fromValue(gateOutWriteRequest.getImpExpFlag());
-		
-		importExportCommonGateOutBusinessService.isValidGateOutLane(client, gateOutWriteRequest);
-
 		switch (impExpFlag) {
 		case IMPORT:
-			portService.checkContainerTobeReleasedByPort(client, gateOutWriteRequest.getImportContainers());
+			//portService.checkContainerTobeReleasedByPort(client, gateOutWriteRequest.getImportContainers());
 			importGateOutService.saveGateOutInfo(gateOutWriteRequest, client, user, booth);
 			// expSave = new AsyncResult<Boolean>(true);
 			break;
@@ -312,7 +312,7 @@ public class ImportExportGateOutService {
 			exportGateOutService.saveGateOutInfo(gateOutWriteRequest, client, user, booth);
 			break;
 		case IMPORT_EXPORT:
-			portService.checkContainerTobeReleasedByPort(client, gateOutWriteRequest.getImportContainers());
+			//portService.checkContainerTobeReleasedByPort(client, gateOutWriteRequest.getImportContainers());
 			importGateOutService.saveGateOutInfo(gateOutWriteRequest, client, user, booth);
 			exportGateOutService.saveGateOutInfo(gateOutWriteRequest, client, user, booth);
 			break;

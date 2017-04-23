@@ -10,7 +10,6 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -47,6 +46,8 @@ public class EarlyEntryService {
 
 		long earlyEnrtyDate = 0;
 		LocalDateTime vesselETADate = container.getVesselETADate();
+		if(vesselETADate==null)
+			throw new BusinessException("Container " + container.getContainer().getContainerNumber() + "vessel ETA date not provided for early entry !");
 		vesselETADate.minusDays(1);
 		earlyEnrtyDate = vesselETADate.until(now, ChronoUnit.DAYS);
 
@@ -75,7 +76,7 @@ public class EarlyEntryService {
 
 							// here !c1.isAllowIn() && c1.isEarlyEntry() = true
 							throw new BusinessException("Container " + container.getContainer().getContainerNumber()
-									+ "does not have opening." + "<br/> Early entry out of window. Early entry at "
+									+ "does not have opening." + System.lineSeparator() +"Early entry out of window. Early entry at "
 									+ container.getStartFullEarlyEntryTime() + " to " + container.getEndFullEarlyEntryTime());
 						}
 					}
@@ -103,15 +104,13 @@ public class EarlyEntryService {
 		WDCGlobalSetting wdcGlobalSetting = optWDCGlobalSetting.orElseThrow(
 				() -> new ResultsNotFoundException("No Result Found for WDCGlobalSetting Global Code : EE_TIME"));
 
-		DateTimeFormatter dateformatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 		DateTimeFormatter timeformatter = DateTimeFormatter.ofPattern("h:mm a");
-		DateTimeFormatter dateTimeformatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
 
 		container.setStartEarlyEntry(LocalTime.parse(wdcGlobalSetting.getGlobalString(), timeformatter));
 		container.setEndEarlyEntry(LocalTime.parse(wdcGlobalSetting.getParamValue1(), timeformatter));
 
-		final LocalDateTime now = LocalDateTime.parse(LocalDateTime.now().toString(), dateTimeformatter);
-		final LocalDate nowDate = LocalDate.parse(now.toLocalDate().toString(), dateformatter);
+		LocalDateTime now = LocalDateTime.now();
+		LocalDate nowDate = now.toLocalDate();
 
 		LocalDateTime startFullDate = nowDate.atTime(container.getStartEarlyEntry());
 		LocalDateTime endFullDate = nowDate.atTime(container.getEndEarlyEntry());
@@ -133,5 +132,7 @@ public class EarlyEntryService {
 		return isInWindow;
 
 	}
+	
+	
 
 }

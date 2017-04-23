@@ -36,24 +36,24 @@ public class VesselOmitService {
 		return optVesselOmit;
 	}
 
-	public boolean isValidVesselOmit(ExportContainer c) {
+	public boolean isValidVesselOmit(ExportContainer container) {
 
-		if (StringUtils.isNotBlank(c.getShippingLine()) && StringUtils.isNotBlank(c.getShippingAgent())) {
+		if (StringUtils.isNotBlank(container.getShippingLine()) && StringUtils.isNotBlank(container.getShippingAgent())) {
 
-			Optional<VesselOmit> optVesselOmit = getVesselOmit(c.getShippingLine(), c.getShippingAgent());
+			Optional<VesselOmit> optVesselOmit = getVesselOmit(container.getShippingLine(), container.getShippingAgent());
 
 			if (optVesselOmit.isPresent()) {
 				VesselOmit vesselOmit = optVesselOmit.get();
 				if (StringUtils.isNotBlank(vesselOmit.getVesselVoyIN())) {
-					if (StringUtils.contains(c.getVesselVoyageIN(), vesselOmit.getVesselVoyIN())) {
+					if (StringUtils.contains(container.getVesselVoyageIN(), vesselOmit.getVesselVoyIN())) {
 
-						throw new BusinessException("Container : " + c.getContainer().getContainerNumber()
+						throw new BusinessException("Container : " + container.getContainer().getContainerNumber()
 								+ "Vessel for " + vesselOmit.getVesselOmitID().getLine() + " / "
 								+ vesselOmit.getVesselOmitID().getAgent() + " is " + vesselOmit.getVesselVoyIN() + "!");
 					}
 				} else if (StringUtils.isNotBlank(vesselOmit.getVesselVoyOUT())) {
-					if (StringUtils.contains(c.getVesselVoyageOUT(), vesselOmit.getVesselVoyOUT())) {
-						throw new BusinessException("Container : " + c.getContainer().getContainerNumber()
+					if (StringUtils.contains(container.getVesselVoyageOUT(), vesselOmit.getVesselVoyOUT())) {
+						throw new BusinessException("Container : " + container.getContainer().getContainerNumber()
 								+ "Vessel for " + vesselOmit.getVesselOmitID().getLine() + " / "
 								+ vesselOmit.getVesselOmitID().getAgent() + " is " + vesselOmit.getVesselVoyOUT()
 								+ "!");

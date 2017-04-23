@@ -136,19 +136,24 @@ public class HPABBooking extends AuditEntity implements Serializable {
 
   public void setGatePassAndContainDetail(HPABBookingDetail hpabBookingDetail, HpatDto dto) {
 
-    if (StringUtils.isEmpty(dto.getExpContainer01())) {
-      dto.setExpContainer01(hpabBookingDetail.getContainerNumber());
-    } else {
-      dto.setExpContainer02(hpabBookingDetail.getContainerNumber());
-    }
+    if (StringUtils.equals(BookingType.EXPORT.getValue(), hpabBookingDetail.getBookingType().getValue())) {
+    	
+    	if (StringUtils.isEmpty(dto.getExpContainer01())) {
+    		dto.setExpContainer01(hpabBookingDetail.getContainerNumber());
+    	}else{
+    		dto.setExpContainer02(hpabBookingDetail.getContainerNumber());
+    	}
+    } 
 
     if (StringUtils.equals(BookingType.IMPORT.getValue(), hpabBookingDetail.getBookingType().getValue())) {
 
       if (StringUtils.isEmpty(dto.getImpGatePass01())) {
         dto.setImpGatePass01(hpabBookingDetail.getImpGatePassNumber());
+        dto.setImpContainer01(hpabBookingDetail.getContainerNumber());
 
       } else {
         dto.setImpGatePass02(hpabBookingDetail.getImpGatePassNumber());
+        dto.setImpContainer02(hpabBookingDetail.getContainerNumber());
 
       }
     }
@@ -156,9 +161,11 @@ public class HPABBooking extends AuditEntity implements Serializable {
     if (StringUtils.equals(BookingType.IMPORT_ITT.getValue(), hpabBookingDetail.getBookingType().getValue())) {
       if (StringUtils.isEmpty(dto.getIttGatePass01())) {
         dto.setIttGatePass01(hpabBookingDetail.getImpGatePassNumber());
+        dto.setImpContainer01(hpabBookingDetail.getContainerNumber());
 
       } else {
         dto.setIttGatePass02(hpabBookingDetail.getImpGatePassNumber());
+        dto.setImpContainer02(hpabBookingDetail.getContainerNumber());
       }
     }
 

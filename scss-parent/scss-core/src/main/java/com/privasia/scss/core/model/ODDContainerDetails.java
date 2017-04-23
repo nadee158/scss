@@ -7,6 +7,7 @@ import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
 import javax.persistence.OneToOne;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.Type;
 
 import com.privasia.scss.common.enums.ContainerFullEmptyType;
@@ -54,6 +55,9 @@ public class ODDContainerDetails implements Serializable {
 	}
 
 	public void setContainerNo(String containerNo) {
+		if(StringUtils.isNotEmpty(containerNo)){
+			containerNo = StringUtils.upperCase(containerNo);
+		}
 		this.containerNo = containerNo;
 	}
 
@@ -62,6 +66,9 @@ public class ODDContainerDetails implements Serializable {
 	}
 
 	public void setLocation(String location) {
+		if(StringUtils.isNotEmpty(location)){
+			location = StringUtils.upperCase(location);
+		}
 		this.location = location;
 	}
 
@@ -70,6 +77,9 @@ public class ODDContainerDetails implements Serializable {
 	}
 
 	public void setRemarks(String remarks) {
+		if(StringUtils.isNotEmpty(remarks)){
+			remarks = StringUtils.upperCase(remarks);
+		}
 		this.remarks = remarks;
 	}
 
@@ -86,6 +96,9 @@ public class ODDContainerDetails implements Serializable {
 	}
 
 	public void setRejectionReason(String rejectionReason) {
+		if(StringUtils.isNotEmpty(rejectionReason)){
+			rejectionReason = StringUtils.upperCase(rejectionReason);
+		}
 		this.rejectionReason = rejectionReason;
 	}
 

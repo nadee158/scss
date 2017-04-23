@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.privasia.scss.common.dto.ExportContainer;
 import com.privasia.scss.common.enums.SSRBlockType;
+import com.privasia.scss.core.exception.BusinessException;
 
 /**
  * @author Janaka
@@ -20,6 +21,8 @@ public class SSRService {
 	public void checkExportSSR(LocalDateTime timeGateIn, ExportContainer exportContainer) {
 
 		LocalDateTime etaDate = exportContainer.getVesselETADate();
+		if(etaDate==null)
+			throw new BusinessException("Container " + exportContainer.getContainer().getContainerNumber() + "vessel ETA date not provided for ssr !");
 		etaDate.minusHours(4);
 
 		if (etaDate.isBefore(timeGateIn)) {

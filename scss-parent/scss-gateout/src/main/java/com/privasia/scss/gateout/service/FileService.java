@@ -1,17 +1,20 @@
 package com.privasia.scss.gateout.service;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
-import org.apache.commons.lang3.StringUtils;
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import com.mongodb.gridfs.GridFSFile;
-import com.privasia.scss.common.util.ApplicationConstants;
+import com.privasia.scss.common.enums.TransactionType;
+import com.privasia.scss.core.exception.BusinessException;
 import com.privasia.scss.core.model.Exports;
 import com.privasia.scss.core.model.GatePass;
 import com.privasia.scss.core.model.WHODD;
@@ -24,241 +27,251 @@ import com.privasia.scss.gateout.mongo.repository.GridFSRepository;
 @Service("fileService")
 public class FileService {
 
-  @Autowired
-  private GridFSRepository gridFSRepository;
+	private GridFSRepository gridFSRepository;
 
-  @Autowired
-  private ODDRepository oddRepository;
+	private ODDRepository oddRepository;
 
-  @Autowired
-  private GatePassRepository gatePassRepository;
+	private GatePassRepository gatePassRepository;
 
-  @Autowired
-  private ExportsRepository exportsRepository;
+	private ExportsRepository exportsRepository;
 
-  public String saveFileToMongoDB(FileDTO fileDTO) {
+	@Autowired
+	public void setGridFSRepository(GridFSRepository gridFSRepository) {
+		this.gridFSRepository = gridFSRepository;
+	}
 
-    String uniqueId = createFileId(fileDTO);
-    fileDTO.setFileName(uniqueId);
+	@Autowired
+	public void setOddRepository(ODDRepository oddRepository) {
+		this.oddRepository = oddRepository;
+	}
 
-    DBObject metaData = new BasicDBObject();
+	@Autowired
+	public void setGatePassRepository(GatePassRepository gatePassRepository) {
+		this.gatePassRepository = gatePassRepository;
+	}
 
-    Document doc = new Document().append("trxType", fileDTO.getTrxType()).append("trxId", fileDTO.getFileName())
-        .append("fileSize", fileDTO.getFileSize());
+	@Autowired
+	public void setExportsRepository(ExportsRepository exportsRepository) {
+		this.exportsRepository = exportsRepository;
+	}
 
-    metaData.put("trxType", fileDTO.getTrxType());
-    metaData.put("trxId", fileDTO.getFileName());
-    metaData.put("fileSize", fileDTO.getFileSize());
+	public String saveFileToMongoDB(FileDTO fileDTO) {
 
-    metaData.put(fileDTO.getFileName() + "_Info", doc);
+		DBObject metaData = new BasicDBObject();
 
-    GridFSFile gridFSFile = gridFSRepository.storeFile(fileDTO.getCameraImage(), metaData);
+		Document doc = new Document().append("trxType", fileDTO.getTrxType().getValue())
+				.append("trxId", fileDTO.getFileName()).append("fileSize", fileDTO.getFileSize());
 
-    if (!(gridFSFile == null)) {
-      saveReference(fileDTO);
-    }
+		metaData.put("trxType", fileDTO.getTrxType());
+		metaData.put("trxId", fileDTO.getFileName());
+		metaData.put("fileSize", fileDTO.getFileSize());
 
+		metaData.put(fileDTO.getFileName() + "_Info", doc);
 
-    return uniqueId;
-  }
+		GridFSFile gridFSFile = gridFSRepository.storeFile(fileDTO.getCameraImage(), metaData);
 
+		if (!(gridFSFile == null)) {
+			saveReference(fileDTO);
+		}
 
+		return fileDTO.getFileName();
+	}
 
-  public String createFileId(FileDTO fileDTO) {
-    StringBuilder uniqueId = new StringBuilder("");
+	public FileDTO createFileId(FileDTO fileDTO) {
+		StringBuilder uniqueId = new StringBuilder("");
 
-    String trxType = fileDTO.getTrxType();
+		TransactionType trxType = fileDTO.getTrxType();
 
-    switch (fileDTO.getCollectionType()) {
-      case ApplicationConstants.PDF_FILE_COLLECTION:
-        uniqueId.append("PDF");
-        break;
-      case ApplicationConstants.SOLAS_CERTIFICATE_COLLECTION:
-        uniqueId.append("SOLAS");
-        break;
-      case ApplicationConstants.ZIP_FILE_COLLECTION:
-        uniqueId.append("ZIP");
-        break;
-      default:
-        break;
-    }
+		switch (fileDTO.getCollectionType()) {
+		case PDF_FILE_COLLECTION:
+			uniqueId.append("PDF");
+			break;
+		case SOLAS_CERTIFICATE_COLLECTION:
+			uniqueId.append("SOLAS");
+			break;
+		case ZIP_FILE_COLLECTION:
+			uniqueId.append("ZIP");
+			break;
+		default:
+			break;
 
-    switch (trxType) {
-      case ApplicationConstants.ODD_TRANSACTION:
-        if (StringUtils.isNotEmpty(fileDTO.getOddIDSeq1())) {
-          uniqueId.append("_").append(fileDTO.getOddIDSeq1());
-        }
-        if (StringUtils.isNotEmpty(fileDTO.getOddIDSeq2())) {
-          uniqueId.append("_").append(fileDTO.getOddIDSeq2());
-        }
-        break;
-      case ApplicationConstants.IMP_TRANSACTION:
-        if (StringUtils.isNotEmpty(fileDTO.getGTPPassNo1())) {
-          uniqueId.append("_").append(fileDTO.getGTPPassNo1());
-        }
-        if (StringUtils.isNotEmpty(fileDTO.getGTPPassNo2())) {
-          uniqueId.append("_").append(fileDTO.getGTPPassNo2());
-        }
-        break;
-      case ApplicationConstants.EXP_TRANSACTION:
-        if (StringUtils.isNotEmpty(fileDTO.getExpExportNoSeq1())) {
-          uniqueId.append("_").append(fileDTO.getExpExportNoSeq1());
-        }
-        if (StringUtils.isNotEmpty(fileDTO.getExpExportNoSeq2())) {
-          uniqueId.append("_").append(fileDTO.getExpExportNoSeq2());
-        }
-        break;
-      case ApplicationConstants.IMP_EXP_TRANSACTION:
-        if (StringUtils.isNotEmpty(fileDTO.getGTPPassNo1())) {
-          uniqueId.append("_").append(fileDTO.getGTPPassNo1());
-        }
-        if (StringUtils.isNotEmpty(fileDTO.getGTPPassNo2())) {
-          uniqueId.append("_").append(fileDTO.getGTPPassNo2());
-        }
-        if (StringUtils.isNotEmpty(fileDTO.getExpExportNoSeq1())) {
-          uniqueId.append("_").append(fileDTO.getExpExportNoSeq1());
-        }
-        if (StringUtils.isNotEmpty(fileDTO.getExpExportNoSeq2())) {
-          uniqueId.append("_").append(fileDTO.getExpExportNoSeq2());
-        }
-        break;
-      default:
-        break;
-    }
+		}
 
-    return uniqueId.toString();
-  }
+		switch (trxType) {
+		case ODD_EXPORT:
+		case ODD_IMPORT:
+		case ODD_IMPORT_EXPORT:
+			if (fileDTO.getOddImpSeq1().isPresent()) {
+				uniqueId.append("_").append(fileDTO.getOddImpSeq1().get());
+			}
+			if (fileDTO.getOddImpSeq2().isPresent()) {
+				uniqueId.append("_").append(fileDTO.getOddImpSeq2().get());
+			}
+			if (fileDTO.getOddExpSeq1().isPresent()) {
+				uniqueId.append("_").append(fileDTO.getOddExpSeq1().get());
+			}
+			if (fileDTO.getOddExpSeq2().isPresent()) {
+				uniqueId.append("_").append(fileDTO.getOddExpSeq2().get());
+			}
+			break;
+		case IMPORT:
+			if (fileDTO.getGatePassNo1().isPresent()) {
+				uniqueId.append("_").append(fileDTO.getGatePassNo1().get());
+			}
+			if (fileDTO.getGatePassNo2().isPresent()) {
+				uniqueId.append("_").append(fileDTO.getGatePassNo2().get());
+			}
+			break;
+		case EXPORT:
+			if (fileDTO.getExportNoSeq1().isPresent()) {
+				uniqueId.append("_").append(fileDTO.getExportNoSeq1().get());
+			}
+			if (fileDTO.getExportNoSeq2().isPresent()) {
+				uniqueId.append("_").append(fileDTO.getExportNoSeq2().get());
+			}
+			break;
+		case IMPORT_EXPORT:
+			if (fileDTO.getGatePassNo1().isPresent()) {
+				uniqueId.append("_").append(fileDTO.getGatePassNo1().get());
+			}
+			if (fileDTO.getGatePassNo2().isPresent()) {
+				uniqueId.append("_").append(fileDTO.getGatePassNo2().get());
+			}
+			if (fileDTO.getExportNoSeq1().isPresent()) {
+				uniqueId.append("_").append(fileDTO.getExportNoSeq1().get());
+			}
+			if (fileDTO.getExportNoSeq2().isPresent()) {
+				uniqueId.append("_").append(fileDTO.getExportNoSeq2().get());
+			}
+			break;
+		default:
+			break;
+		}
 
-  @Transactional(readOnly = false)
-  public void saveReference(FileDTO fileDTO) {
-    String trxType = fileDTO.getTrxType();
-    switch (trxType) {
-      case ApplicationConstants.ODD_TRANSACTION:
-        updateODDReference(fileDTO);
-        break;
-      case ApplicationConstants.IMP_TRANSACTION:
-        updateGatePassReference(fileDTO);
-        break;
-      case ApplicationConstants.EXP_TRANSACTION:
-        updateExportReference(fileDTO);
-        break;
-      case ApplicationConstants.IMP_EXP_TRANSACTION:
-        updateGatePassReference(fileDTO);
-        updateExportReference(fileDTO);
-        break;
-      default:
-        break;
-    }
-  }
+		fileDTO.setFileName(uniqueId.toString());
+		return fileDTO;
+	}
 
+	@Transactional(propagation=Propagation.REQUIRES_NEW, readOnly = false)
+	public void saveReference(FileDTO fileDTO) {
+		TransactionType trxType = fileDTO.getTrxType();
+		switch (trxType) {
+		case ODD_EXPORT:
+		case ODD_IMPORT:
+		case ODD_IMPORT_EXPORT:
+			updateODDReference(fileDTO);
+			break;
+		case IMPORT:
+			updateGatePassReference(fileDTO);
+			break;
+		case EXPORT:
+			updateExportReference(fileDTO);
+			break;
+		case IMPORT_EXPORT:
+			updateGatePassReference(fileDTO);
+			updateExportReference(fileDTO);
+			break;
+		default:
+			break;
+		}
+	}
+	
+	@Transactional(propagation=Propagation.REQUIRED, readOnly = false)
+	public void updateExportReference(FileDTO fileDTO) {
 
+		Optional<List<Exports>> exportsOptList = exportsRepository.findByExportIDIn(
+				Arrays.asList(fileDTO.getExportNoSeq1().orElse(0l), fileDTO.getExportNoSeq2().orElse(0l)));
 
-  private void updateExportReference(FileDTO fileDTO) {
-    if (StringUtils.isNotEmpty(fileDTO.getExpExportNoSeq1())) {
-      Optional<Exports> exportsOpt = exportsRepository.findOne(Long.parseLong(fileDTO.getExpExportNoSeq1()));
-      if (exportsOpt.isPresent()) {
-        Exports exports = assignUpdatedValuesExports(exportsOpt.get(), fileDTO);
-        exportsRepository.save(exports);
-      }
-    }
-    if (StringUtils.isNotEmpty(fileDTO.getExpExportNoSeq2())) {
-      Optional<Exports> exportsOpt = exportsRepository.findOne(Long.parseLong(fileDTO.getExpExportNoSeq2()));
-      if (exportsOpt.isPresent()) {
-        Exports exports = assignUpdatedValuesExports(exportsOpt.get(), fileDTO);
-        exportsRepository.save(exports);
-      }
-    }
-  }
+		if (!(exportsOptList.orElse(null) == null || exportsOptList.get().isEmpty())) {
+			exportsOptList.get().forEach(exports -> {
+				assignUpdatedValuesExports(exports, fileDTO);
+				exportsRepository.save(exports);
+			});
+		} else {
+			throw new BusinessException("Invalid Exports ID to update file reference : "
+					+ fileDTO.getExportNoSeq1().orElse(null) + " / " + fileDTO.getExportNoSeq2().orElse(null));
+		}
+	}
 
+	private Exports assignUpdatedValuesExports(Exports exports, FileDTO fileDTO) {
+		switch (fileDTO.getCollectionType()) {
+		case PDF_FILE_COLLECTION:
+			exports.getCommonGateInOut().setTrxSlipNo(fileDTO.getFileName());
+			break;
+		case ZIP_FILE_COLLECTION:
+			exports.getCommonGateInOut().setZipFileNo(fileDTO.getFileName());
+			break;
+		case SOLAS_CERTIFICATE_COLLECTION:
+			exports.setSolasCertNo(fileDTO.getFileName());
+			break;
+		default:
+			break;
+		}
+		return exports;
+	}
+	
+	@Transactional(propagation=Propagation.REQUIRED, readOnly = false)
+	public void updateGatePassReference(FileDTO fileDTO) {
 
+		Optional<List<GatePass>> gatePassOptList = gatePassRepository.findByGatePassNoIn(
+				Arrays.asList(fileDTO.getGatePassNo1().orElse(0l), fileDTO.getGatePassNo2().orElse(0l)));
 
-  private Exports assignUpdatedValuesExports(Exports exports, FileDTO fileDTO) {
-    switch (fileDTO.getCollectionType()) {
-      case ApplicationConstants.PDF_FILE_COLLECTION:
-        exports.getCommonGateInOut().setTrxSlipNo(fileDTO.getFileName());
-        break;
-      case ApplicationConstants.ZIP_FILE_COLLECTION:
-        exports.getCommonGateInOut().setZipFileNo(fileDTO.getFileName());
-        break;
-      case ApplicationConstants.SOLAS_CERTIFICATE_COLLECTION:
-        exports.setSolasCertNo(fileDTO.getFileName());
-        break;
-      default:
-        break;
-    }
-    return exports;
-  }
+		if (!(gatePassOptList.orElse(null) == null || gatePassOptList.get().isEmpty())) {
+			gatePassOptList.get().forEach(gatePass -> {
+				assignUpdatedValuesGatePass(gatePass, fileDTO);
+				gatePassRepository.save(gatePass);
+			});
+		} else {
+			throw new BusinessException("Invalid GatePass ID to update file reference : "
+					+ fileDTO.getGatePassNo1().orElse(null) + " / " + fileDTO.getGatePassNo2().orElse(null));
+		}
+	}
 
+	private GatePass assignUpdatedValuesGatePass(GatePass gatePass, FileDTO fileDTO) {
+		switch (fileDTO.getCollectionType()) {
+		case PDF_FILE_COLLECTION:
+			gatePass.getCommonGateInOut().setTrxSlipNo(fileDTO.getFileName());
+			break;
+		case ZIP_FILE_COLLECTION:
+			gatePass.getCommonGateInOut().setZipFileNo(fileDTO.getFileName());
+			break;
+		default:
+			break;
+		}
+		return gatePass;
+	}
+	
+	@Transactional(propagation=Propagation.REQUIRED, readOnly = false)
+	public void updateODDReference(FileDTO fileDTO) {
+		
+		Optional<List<WHODD>> oddOptList = oddRepository.findByOddIdSeqIn(
+				Arrays.asList(fileDTO.getOddImpSeq1().orElse(0l), fileDTO.getOddImpSeq2().orElse(0l), 
+						fileDTO.getOddExpSeq1().orElse(0l), fileDTO.getOddExpSeq2().orElse(0l)));
 
+		if (!(oddOptList.orElse(null) == null || oddOptList.get().isEmpty())) {
+			oddOptList.get().forEach(whODD -> {
+				assignUpdatedValuedWHODDobj(whODD, fileDTO);
+				oddRepository.save(whODD);
+			});
+		} else {
+			throw new BusinessException("Invalid WhODD ID to update file reference : "
+					+ fileDTO.getOddImpSeq1().orElse(null) + " / " + fileDTO.getOddImpSeq2().orElse(null)
+					+ " / " + fileDTO.getOddExpSeq1().orElse(null) + " / " + fileDTO.getOddExpSeq2().orElse(null));
+		}
+	}
 
-  private void updateGatePassReference(FileDTO fileDTO) {
-    if (StringUtils.isNotEmpty(fileDTO.getGTPPassNo1())) {
-      Optional<GatePass> gatePassOpt = gatePassRepository.findOne(Long.parseLong(fileDTO.getGTPPassNo1()));
-      if (gatePassOpt.isPresent()) {
-        GatePass gatePass = assignUpdatedValuesGatePass(gatePassOpt.get(), fileDTO);
-        gatePassRepository.save(gatePass);
-      }
-    }
-    if (StringUtils.isNotEmpty(fileDTO.getGTPPassNo2())) {
-      Optional<GatePass> gatePassOpt = gatePassRepository.findOne(Long.parseLong(fileDTO.getGTPPassNo2()));
-      if (gatePassOpt.isPresent()) {
-        GatePass gatePass = assignUpdatedValuesGatePass(gatePassOpt.get(), fileDTO);
-        gatePassRepository.save(gatePass);
-      }
-    }
-  }
-
-
-
-  private GatePass assignUpdatedValuesGatePass(GatePass gatePass, FileDTO fileDTO) {
-    switch (fileDTO.getCollectionType()) {
-      case ApplicationConstants.PDF_FILE_COLLECTION:
-        gatePass.getCommonGateInOut().setTrxSlipNo(fileDTO.getFileName());
-        break;
-      case ApplicationConstants.ZIP_FILE_COLLECTION:
-        gatePass.getCommonGateInOut().setZipFileNo(fileDTO.getFileName());
-        break;
-      default:
-        break;
-    }
-    return gatePass;
-  }
-
-
-
-  public void updateODDReference(FileDTO fileDTO) {
-    if (StringUtils.isNotEmpty(fileDTO.getOddIDSeq1())) {
-      Optional<WHODD> whodd = oddRepository.findOne(Long.parseLong(fileDTO.getOddIDSeq1()));
-      if (whodd.isPresent()) {
-        WHODD whoDDobj = whodd.get();
-        whoDDobj = assignUpdatedValuedWHODDobj(whoDDobj, fileDTO);
-        oddRepository.save(whoDDobj);
-      }
-    }
-    if (StringUtils.isNotEmpty(fileDTO.getOddIDSeq2())) {
-      Optional<WHODD> whodd = oddRepository.findOne(Long.parseLong(fileDTO.getOddIDSeq2()));
-      if (whodd.isPresent()) {
-        WHODD whoDDobj = whodd.get();
-        whoDDobj = assignUpdatedValuedWHODDobj(whoDDobj, fileDTO);
-        oddRepository.save(whoDDobj);
-      }
-    }
-  }
-
-
-
-  public WHODD assignUpdatedValuedWHODDobj(WHODD whoDDobj, FileDTO fileDTO) {
-    switch (fileDTO.getCollectionType()) {
-      case ApplicationConstants.PDF_FILE_COLLECTION:
-        whoDDobj.setTrxSlipNo(fileDTO.getFileName());
-        break;
-      case ApplicationConstants.ZIP_FILE_COLLECTION:
-        whoDDobj.setZipFileNo(fileDTO.getFileName());
-        break;
-      default:
-        break;
-    }
-    return whoDDobj;
-  }
+	private WHODD assignUpdatedValuedWHODDobj(WHODD whoDDobj, FileDTO fileDTO) {
+		switch (fileDTO.getCollectionType()) {
+		case PDF_FILE_COLLECTION:
+			whoDDobj.setTrxSlipNo(fileDTO.getFileName());
+			break;
+		case ZIP_FILE_COLLECTION:
+			whoDDobj.setZipFileNo(fileDTO.getFileName());
+			break;
+		default:
+			break;
+		}
+		return whoDDobj;
+	}
 
 }

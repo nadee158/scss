@@ -1328,42 +1328,6 @@ public class ExportContainer {
 	    return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
 	}
 
-	/*@Override
-	public String toString() {
-		return "ExportContainer [exportID=" + exportID + ", container=" + container + ", commonGateInOut="
-				+ commonGateInOut + ", baseCommonGateInOutAttribute=" + baseCommonGateInOutAttribute
-				+ ", manualPlanIndicator=" + manualPlanIndicator + ", bookingNo=" + bookingNo + ", gateInOut="
-				+ gateInOut + ", expOut=" + expOut + ", expCar=" + expCar + ", expSpod=" + expSpod + ", sealAttribute="
-				+ sealAttribute + ", expWeightBridge=" + expWeightBridge + ", expNetWeight=" + expNetWeight
-				+ ", referFlag=" + referFlag + ", referTempType=" + referTempType + ", referTemp=" + referTemp
-				+ ", imdg=" + imdg + ", dgUNCode=" + dgUNCode + ", imdgLabelID=" + imdgLabelID + ", oogOH=" + oogOH
-				+ ", oogOL=" + oogOL + ", oogOF=" + oogOF + ", oogOA=" + oogOA + ", containerPosition="
-				+ containerPosition + ", preCheckDate=" + preCheckDate + ", yardPosition=" + yardPosition
-				+ ", yardBayCode=" + yardBayCode + ", pmBTM=" + pmBTM + ", trBTM=" + trBTM + ", oogOR=" + oogOR
-				+ ", callCard=" + callCard + ", vesselVisitID=" + vesselVisitID + ", vesselVoyageIN=" + vesselVoyageIN
-				+ ", vesselVoyageOUT=" + vesselVoyageOUT + ", vesselCode=" + vesselCode + ", vesselName=" + vesselName
-				+ ", expAgent=" + expAgent + ", vesselStatus=" + vesselStatus + ", shipCode=" + shipCode
-				+ ", vesselSCN=" + vesselSCN + ", vesselETADate=" + vesselETADate + ", vesselATADate=" + vesselATADate
-				+ ", shippingAgent=" + shippingAgent + ", oogSSR=" + oogSSR + ", overClosingSSR=" + overClosingSSR
-				+ ", replanSSR=" + replanSSR + ", ssrBlockStatus=" + ssrBlockStatus + ", ssrBlockStatusDate="
-				+ ssrBlockStatusDate + ", gcsBlockStatus=" + gcsBlockStatus + ", gcsBlockStatusDate="
-				+ gcsBlockStatusDate + ", gcsDeclareNo=" + gcsDeclareNo + ", gcsLastCheck=" + gcsLastCheck
-				+ ", printEir=" + printEir + ", userRemarks=" + userRemarks + ", kpaApproval=" + kpaApproval
-				+ ", hdlGoodsCode=" + hdlGoodsCode + ", dgDescription=" + dgDescription + ", hdlGoodsDescription="
-				+ hdlGoodsDescription + ", tareWeight=" + tareWeight + ", grossWeight=" + grossWeight + ", cosmosNetWeight="
-				+ cosmosNetWeight + ", backToback=" + backToback + ", gateOutRemarks=" + gateOutRemarks + ", shipSCNID=" + shipSCNID
-				+ ", weightDiffPercentage=" + weightDiffPercentage + ", weightDifference=" + weightDifference
-				+ ", damageCode_01=" + damageCode_01 + ", damageCode_02=" + damageCode_02 + ", damageCode_03="
-				+ damageCode_03 + ", damageCode_04=" + damageCode_04 + ", damageCode_05=" + damageCode_05
-				+ ", damageCode_06=" + damageCode_06 + ", damageCode_07=" + damageCode_07 + ", damageCode_08="
-				+ damageCode_08 + ", damageCode_09=" + damageCode_09 + ", dontValidateSeal=" + dontValidateSeal
-				+ ", wrongDoor=" + wrongDoor + ", emptyWeight=" + emptyWeight + ", hpabISOCode=" + hpabISOCode
-				+ ", cosmosISOCode=" + cosmosISOCode + ", pmWeight=" + pmWeight + ", trailerWeight=" + trailerWeight
-				+ ", trailerPlateNo=" + trailerPlateNo + ", fuelWeight=" + fuelWeight + ", tireWeight=" + tireWeight
-				+ ", variance=" + variance + ", withinTolerance=" + withinTolerance + ", calculatedVariance="
-				+ calculatedVariance + ", solasCertNo=" + solasCertNo + ", solas=" + solas + "]";
-	}*/
-
 	public ExportContainer initializeWithDefaultValues(String containerNumber) {
 		this.setContainer(new CommonContainerDTO().initializeWithDefaultValues(containerNumber));
 		this.setCommonGateInOut(new CommonGateInOutDTO().initializeWithDefaultValues());
