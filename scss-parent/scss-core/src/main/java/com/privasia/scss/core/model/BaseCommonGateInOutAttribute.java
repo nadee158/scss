@@ -5,6 +5,7 @@ package com.privasia.scss.core.model;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
@@ -12,6 +13,7 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.Type;
 
 import com.privasia.scss.common.enums.TransactionStatus;
@@ -83,6 +85,9 @@ public class BaseCommonGateInOutAttribute implements Serializable {
   }
 
   public void setPmHeadNo(String pmHeadNo) {
+	  if(StringUtils.isNotEmpty(pmHeadNo)){
+		  pmHeadNo = StringUtils.upperCase(pmHeadNo);
+	  }
     this.pmHeadNo = pmHeadNo;
   }
 
@@ -91,6 +96,9 @@ public class BaseCommonGateInOutAttribute implements Serializable {
   }
 
   public void setPmPlateNo(String pmPlateNo) {
+	  if(StringUtils.isNotEmpty(pmPlateNo)){
+		  pmPlateNo = StringUtils.upperCase(pmPlateNo);
+	  }
     this.pmPlateNo = pmPlateNo;
   }
 
@@ -166,8 +174,8 @@ public class BaseCommonGateInOutAttribute implements Serializable {
     this.transactionSlipPrinted = transactionSlipPrinted;
   }
 
-  public HPABBooking getHpatBooking() {
-    return hpatBooking;
+  public Optional<HPABBooking> getHpatBooking() {
+    return Optional.ofNullable(hpatBooking);
   }
 
   public void setHpatBooking(HPABBooking hpatBooking) {

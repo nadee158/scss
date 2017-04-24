@@ -1,7 +1,6 @@
 package com.privasia.scss.gatein.service;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,7 +21,6 @@ import com.privasia.scss.common.dto.GateInWriteRequest;
 import com.privasia.scss.common.enums.ContainerFullEmptyType;
 import com.privasia.scss.common.enums.ShipStatus;
 import com.privasia.scss.common.enums.TransactionStatus;
-import com.privasia.scss.common.util.DateUtil;
 import com.privasia.scss.core.exception.BusinessException;
 import com.privasia.scss.core.exception.ResultsNotFoundException;
 import com.privasia.scss.core.model.Card;
@@ -166,7 +164,7 @@ public class ExportGateInService {
 	}
 
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-	public GateInReponse populateGateInExports(GateInReponse gateInReponse, LocalDateTime timegateIn) {
+	public GateInReponse validateGateInExports(GateInReponse gateInReponse, LocalDateTime timegateIn) {
 
 		Optional<String> globalSetting = globalSettingRepository.fetchGlobalStringByGlobalCode("LPK_EDI");
 
@@ -267,30 +265,29 @@ public class ExportGateInService {
 		System.out.println(
 				"gateInWriteRequest.getExportContainers().size() " + gateInWriteRequest.getExportContainers().size());
 
-		HPABBooking hpatBooking = null;
+		HPABBooking hpabBooking = null;
 		Optional<ExportContainer> exportContainerFirstOpt = gateInWriteRequest.getExportContainers().stream()
 				.findFirst();
-		if (exportContainerFirstOpt.isPresent()) {
+		if (exportContainerFirstOpt.isPresent()) { 
 			ExportContainer exportContainerFirst = exportContainerFirstOpt.get();
 			if (!(exportContainerFirst.getBaseCommonGateInOutAttribute() == null)) {
-				if (StringUtils.isNotEmpty(exportContainerFirst.getBaseCommonGateInOutAttribute().getHpatBooking())) {
-					hpatBooking = hpatBookingRepository
-							.findOne(exportContainerFirst.getBaseCommonGateInOutAttribute().getHpatBooking())
-							.orElse(null);
+				if (exportContainerFirst.getBaseCommonGateInOutAttribute().getHpatBooking().isPresent()) {
+					hpabBooking = hpatBookingRepository
+							.findOne(exportContainerFirst.getBaseCommonGateInOutAttribute().getHpatBooking().get()).
+							orElseThrow(() -> new ResultsNotFoundException("No HPAB Booking found ! : "+
+									exportContainerFirst.getBaseCommonGateInOutAttribute().getHpatBooking().get()));
 				}
 			}
 		}
-		final HPABBooking hpatBookingFinal = hpatBooking;
+		final HPABBooking hpabBookingFinal = hpabBooking;
+		
+		boolean backToback = gateInWriteRequest.getExportContainers().size() == 2 ? true : false;
 
 		gateInWriteRequest.getExportContainers().forEach(exportContainer -> {
 			if (exportContainer.getBaseCommonGateInOutAttribute() == null) {
 				exportContainer.setBaseCommonGateInOutAttribute(new BaseCommonGateInOutDTO());
 			}
 			System.out.println("gateInWriteRequest.getGateInDateTime() " + gateInWriteRequest.getGateInDateTime());
-
-			if (gateInWriteRequest.getExportContainers().size() > 1) {
-				exportContainer.setBackToback(true);
-			}
 
 			// assign values from header level to container level
 			exportContainer.getBaseCommonGateInOutAttribute().setEirStatus(TransactionStatus.INPROGRESS.getValue());
@@ -302,6 +299,8 @@ public class ExportGateInService {
 			exportContainer.setFuelWeight(gateInWriteRequest.getFuelWeight());
 			exportContainer.setTireWeight(gateInWriteRequest.getTireWeight());
 			exportContainer.setVariance(gateInWriteRequest.getVariance());
+			exportContainer.setBackToback(backToback);
+			
 
 			if (exportContainer.getCommonGateInOut() == null) {
 				exportContainer.setCommonGateInOut(new CommonGateInOutDTO());
@@ -326,7 +325,7 @@ public class ExportGateInService {
 				scn = shipSCNRepository.fetchContainerSCN(exportContainer.getVesselSCN(),
 						exportContainer.getContainer().getContainerNumber()).orElse(null);
 			}
-			exports.prepareForInsertFromOpus(gateInClerk, card, gateInClient, scn, hpatBookingFinal,
+			exports.prepareForInsertFromOpus(gateInClerk, card, gateInClient, scn, hpabBookingFinal,
 					damageCodeRepository);
 			exports = exportsRepository.save(exports);
 			log.info("########## Save Exports ###############");

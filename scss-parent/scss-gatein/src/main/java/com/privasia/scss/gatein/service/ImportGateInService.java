@@ -193,11 +193,12 @@ public class ImportGateInService {
             () -> new ResultsNotFoundException("Invalid Gate Pass Number : " + importContainer.getGatePassNo()));
         if (!(gatePass == null)) {
 
-          HPABBooking hpatBooking = null;
+          HPABBooking hpabBooking = null;
           if (!(importContainer.getBaseCommonGateInOutAttribute() == null)) {
-            if (StringUtils.isNotEmpty(importContainer.getBaseCommonGateInOutAttribute().getHpatBooking())) {
-              hpatBooking = hpatBookingRepository
-                  .findOne(importContainer.getBaseCommonGateInOutAttribute().getHpatBooking()).orElse(null);
+            if (importContainer.getBaseCommonGateInOutAttribute().getHpatBooking().isPresent()) {
+            	hpabBooking = hpatBookingRepository
+                  .findOne(importContainer.getBaseCommonGateInOutAttribute().getHpatBooking().get()).orElseThrow(() -> new ResultsNotFoundException("No HPAB Booking found ! : "+
+                		  importContainer.getBaseCommonGateInOutAttribute().getHpatBooking().get()));
             }
           }
 
@@ -207,7 +208,7 @@ public class ImportGateInService {
           System.out.println(
               "gatePass.getContainer().getContainerFullOrEmpty() " + gatePass.getContainer().getContainerFullOrEmpty());
 
-          gatePass.prepareForInsertFromOpus(card, gateInClerk, gateInClient, hpatBooking);
+          gatePass.prepareForInsertFromOpus(card, gateInClerk, gateInClient, hpabBooking);
           System.out.println("gatePass.getContainer().getContainerFullOrEmpty() after "
               + gatePass.getContainer().getContainerFullOrEmpty());
           gatePass = gatePassRepository.save(gatePass);

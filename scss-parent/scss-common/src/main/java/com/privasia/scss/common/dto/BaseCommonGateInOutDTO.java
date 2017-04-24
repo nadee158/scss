@@ -5,6 +5,7 @@ package com.privasia.scss.common.dto;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -82,8 +83,8 @@ public class BaseCommonGateInOutDTO implements Serializable {
     this.pmPlateNo = pmPlateNo;
   }
 
-  public String getHpatBooking() {
-    return hpatBooking;
+  public Optional<String> getHpatBooking() {
+    return Optional.ofNullable(hpatBooking);
   }
 
   public void setHpatBooking(String hpatBooking) {

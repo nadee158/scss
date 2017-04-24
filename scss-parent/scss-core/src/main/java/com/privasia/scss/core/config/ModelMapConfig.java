@@ -85,10 +85,10 @@ public class ModelMapConfig {
 
     modelMapper.addConverter(ModelMapEnumConverter.convertReadWriteStatusToString());
     modelMapper.addConverter(ModelMapEnumConverter.convertStringToReadWriteStatus());
-    
+
     modelMapper.addConverter(ModelMapEnumConverter.convertIntegerToSolasWeightTypeSize());
     modelMapper.addConverter(ModelMapEnumConverter.convertSolasWeightTypeSizeToInteger());
-    
+
     modelMapper.addConverter(ModelMapEnumConverter.convertStringToSolasWeightType());
     modelMapper.addConverter(ModelMapEnumConverter.convertSolasWeightTypeToString());
 
@@ -96,7 +96,6 @@ public class ModelMapConfig {
   }
 
   public ModelMapper configProperty(ModelMapper modelMapper) {
-
     modelMapper.addMappings(ModelMapPropertyMap.kioskBoothRightsDomainToDto());
     modelMapper.addMappings(ModelMapPropertyMap.kioskBoothRightsDtoToDomain());
     modelMapper.addMappings(ModelMapPropertyMap.gatePassToImportContainer());
@@ -104,7 +103,9 @@ public class ModelMapConfig {
     modelMapper.addMappings(ModelMapPropertyMap.importContainerToGatePass());
     modelMapper.addMappings(ModelMapPropertyMap.exportContainerToExports());
     modelMapper.addMappings(ModelMapPropertyMap.exportsToExportContainer());
-
+    //modelMapper.addMappings(ModelMapPropertyMap.referRejectDTOToReferReject());
+    modelMapper.addMappings(ModelMapPropertyMap.referRejectDetailDTOToReferRejectDetail());
+    modelMapper.addMappings(ModelMapPropertyMap.referRejectReasonDTOToReferRejectReason());
     return modelMapper;
   }
 

@@ -883,9 +883,9 @@ public class GatePassService {
 
         gatePass.setSealAttribute(sealAttribute);
 
-        if (StringUtils.isNotEmpty(container.getBaseCommonGateInOutAttribute().getHpatBooking())) {
+        if (container.getBaseCommonGateInOutAttribute().getHpatBooking().isPresent()) {
           Optional<HPABBooking> hpatBooking = hpatBookingRepository
-              .findOne(StringUtils.upperCase(container.getBaseCommonGateInOutAttribute().getHpatBooking()));
+              .findOne(container.getBaseCommonGateInOutAttribute().getHpatBooking().get());
           if (hpatBooking.isPresent()) {
             baseCommonGateInOutAttribute.setHpatBooking(hpatBooking.get());
           }

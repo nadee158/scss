@@ -1,6 +1,7 @@
 package com.privasia.scss.core.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Pageable;
 
@@ -14,7 +15,7 @@ public interface ReferRejectDetailRepository extends BaseRepository<ReferRejectD
 
   public ReferRejectDetail findByReferRejectReferRejectID(Long referId);
 
-  ReferRejectDetail findByReferReject_ReferRejectIDAndContainerNo(Long referRejectID, String containerNo);
+  Optional<ReferRejectDetail> findByReferReject_ReferRejectIDAndContainerNo(Long referRejectID, String containerNo);
 
 
 }
