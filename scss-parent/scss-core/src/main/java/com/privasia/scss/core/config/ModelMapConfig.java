@@ -4,6 +4,7 @@
 package com.privasia.scss.core.config;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
@@ -121,7 +122,8 @@ public class ModelMapConfig {
   }
 
   public ModelMapper configOptionalMapper(ModelMapper modelMapper) {
-    modelMapper.addConverter(new ModelMapOptionalConverter());
+	modelMapper.createTypeMap(Optional.class, Optional.class).setConverter(new ModelMapOptionalConverter());
+    //modelMapper.addConverter(new ModelMapOptionalConverter());
     return modelMapper;
   }
 }
