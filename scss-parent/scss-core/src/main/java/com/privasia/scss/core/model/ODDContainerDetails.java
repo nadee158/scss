@@ -1,6 +1,7 @@
 package com.privasia.scss.core.model;
 
 import java.io.Serializable;
+import java.util.Optional;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
@@ -118,8 +119,8 @@ public class ODDContainerDetails implements Serializable {
 		this.containerSize = containerSize;
 	}
 
-	public HDBSBkgDetail getHdbsBkgDetailNo() {
-		return hdbsBkgDetailNo;
+	public Optional<HDBSBkgDetail> getHdbsBkgDetailNo() {
+		return Optional.ofNullable(hdbsBkgDetailNo);
 	}
 
 	public void setHdbsBkgDetailNo(HDBSBkgDetail hdbsBkgDetailNo) {

@@ -17,15 +17,18 @@ import com.privasia.scss.common.dto.WHODDDTO;
 import com.privasia.scss.common.enums.ContainerFullEmptyType;
 import com.privasia.scss.common.enums.GateInOutStatus;
 import com.privasia.scss.common.enums.ImpExpFlagStatus;
+import com.privasia.scss.common.enums.SCSSHDBSStatus;
 import com.privasia.scss.common.enums.TransactionStatus;
 import com.privasia.scss.core.exception.BusinessException;
 import com.privasia.scss.core.exception.ResultsNotFoundException;
 import com.privasia.scss.core.model.Card;
 import com.privasia.scss.core.model.Client;
+import com.privasia.scss.core.model.HDBSBkgDetail;
 import com.privasia.scss.core.model.ODDContainerDetails;
 import com.privasia.scss.core.model.ODDLocation;
 import com.privasia.scss.core.model.SystemUser;
 import com.privasia.scss.core.model.WHODD;
+import com.privasia.scss.core.repository.HDBSBookingDetailRepository;
 import com.privasia.scss.core.repository.ODDLocationRepository;
 import com.privasia.scss.core.repository.ODDRepository;
 import com.privasia.scss.cosmos.repository.CosmosODDRepository;
@@ -40,6 +43,8 @@ public class GateOutODDService {
 	private ODDLocationRepository oddLocationRepository;
 	
 	private ModelMapper modelMapper;
+	
+	private HDBSBookingDetailRepository hdbsBookingDetailRepository;
 
 	@Autowired
 	public void setCosmosODDRepository(CosmosODDRepository cosmosODDRepository) {
@@ -60,6 +65,12 @@ public class GateOutODDService {
 	public void setModelMapper(ModelMapper modelMapper) {
 		this.modelMapper = modelMapper;
 	}
+	
+	@Autowired
+	public void setHdbsBookingDetailRepository(HDBSBookingDetailRepository hdbsBookingDetailRepository) {
+		this.hdbsBookingDetailRepository = hdbsBookingDetailRepository;
+	}
+
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = true, value="as400TransactionManager")
 	public ContainerValidationInfo validateODDContainers(ContainerValidationInfo containerValidationInfo) {
@@ -110,7 +121,7 @@ public class GateOutODDService {
 	
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
 	public Long saveODDGateOutInFo(GateOutWriteRequest gateOutWriteRequest, Card card, Client gateOutClient,
-			SystemUser gateOutClerk, ImpExpFlagStatus impExpFlag) {
+			SystemUser gateOutClerk, ImpExpFlagStatus impExpFlag, Optional<Client> gateOutBooth, Optional<SystemUser> gateOutBoothClerk) {
 
 		
 		if(gateOutWriteRequest.getWhoddContainers() == null || gateOutWriteRequest.getWhoddContainers().isEmpty())
@@ -157,6 +168,19 @@ public class GateOutODDService {
 			whODD.getContainer01().setFullOrEmpty(ContainerFullEmptyType.fromValue(whODDdto.getContainer01().getFullOrEmpty()));
 			whODD.getContainer01().setOddStatus(TransactionStatus.fromCode(whODDdto.getContainer01().getOddStatus()));
 			
+			if (whODD.getContainer01().getHdbsBkgDetailNo().isPresent()) {
+
+				Optional<HDBSBkgDetail> optHDBSBookingDetail = hdbsBookingDetailRepository
+						.findOne(whODD.getContainer01().getHdbsBkgDetailNo().get().getHdbsBKGDetailID());
+				HDBSBkgDetail hdbsBookingDetail = optHDBSBookingDetail
+						.orElseThrow(() -> new ResultsNotFoundException("Invalid HDBS Booking Detail ID :"
+								+ whODD.getContainer01().getHdbsBkgDetailNo().get().getHdbsBKGDetailID()));
+
+				hdbsBookingDetail.setScssStatusCode(SCSSHDBSStatus.fromValue(whODDdto.getContainer02().get().getOddStatus()));
+				hdbsBookingDetail.setOddTimeGateOutOk(whODD.getTimeGateInOk());
+				hdbsBookingDetail.setContainerNo(whODD.getContainer01().getContainerNo());
+			}
+			
 			if(whODDdto.getContainer02().isPresent()){
 				
 				if(StringUtils.equalsIgnoreCase(ImpExpFlagStatus.IMPORT.getValue(), whODDdto.getImpExpFlag())){
@@ -178,6 +202,19 @@ public class GateOutODDService {
 				}
 				
 				whODD.getContainer02().setOddStatus(TransactionStatus.fromCode(whODDdto.getContainer02().get().getOddStatus()));
+				
+				if (whODD.getContainer02().getHdbsBkgDetailNo().isPresent()) {
+
+					Optional<HDBSBkgDetail> optHDBSBookingDetail = hdbsBookingDetailRepository
+							.findOne(whODD.getContainer02().getHdbsBkgDetailNo().get().getHdbsBKGDetailID());
+					HDBSBkgDetail hdbsBookingDetail = optHDBSBookingDetail
+							.orElseThrow(() -> new ResultsNotFoundException("Invalid HDBS Booking Detail ID :"
+									+ whODD.getContainer02().getHdbsBkgDetailNo().get().getHdbsBKGDetailID()));
+
+					hdbsBookingDetail.setScssStatusCode(SCSSHDBSStatus.fromValue(whODDdto.getContainer02().get().getOddStatus()));
+					hdbsBookingDetail.setOddTimeGateOutOk(whODD.getTimeGateInOk());
+					hdbsBookingDetail.setContainerNo(whODD.getContainer02().getContainerNo());
+				}
 			}
 			
 			whODD.setInOutFlag(GateInOutStatus.OUT);
@@ -185,6 +222,12 @@ public class GateOutODDService {
 			whODD.setTimeGateOutOk(LocalDateTime.now());
 			whODD.setGateOutClerk(gateOutClerk);
 			whODD.setGateOutClient(gateOutClient);
+			
+			if(gateOutBooth.isPresent()){
+				whODD.setGateOutBoothNo(String.valueOf(gateOutBooth.get().getClientID()));
+				whODD.setGateOutBoothClerk(gateOutBoothClerk.get());
+				whODD.setTimeGateOutBooth(whODD.getTimeGateOut());
+			}
 			
 			oddRepository.save(whODD);
 			

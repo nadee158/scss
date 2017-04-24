@@ -498,28 +498,7 @@ public class ImportExportGateInService {
 			break;
 		}
 
-		/*
-		 * if (!(gateInOutODDDTO == null || gateInOutODDDTO.getWhoddds() == null
-		 * || gateInOutODDDTO.getWhoddds().isEmpty())) {
-		 * gateInOutODDDTO.getWhoddds().forEach(item -> { WHODD whodd = new
-		 * WHODD(); modelMapper.map(gateInOutODDDTO, whodd);
-		 * System.out.println("Initial_MAPPING_gateInOutODDDTO" + whodd);
-		 * modelMapper.map(item, whodd);
-		 * System.out.println("Secod_MAPPING_gateInOutODDDTO" + whodd); if
-		 * (whodd.getGateInStatus() == null) {
-		 * whodd.setGateInStatus(TransactionStatus.APPROVED); } if
-		 * (!(whodd.getContainer01() == null)) { if
-		 * (StringUtils.isNotEmpty(whodd.getContainer01().getLocation()) ||
-		 * StringUtils.isNotEmpty(whodd.getContainer01().getRejectionReason()))
-		 * { whodd.getContainer01().setOddStatus(TransactionStatus.INPROGRESS);
-		 * } } if (!(whodd.getContainer02() == null)) { if
-		 * (StringUtils.isNotEmpty(whodd.getContainer02().getLocation()) ||
-		 * StringUtils.isNotEmpty(whodd.getContainer02().getRejectionReason()))
-		 * { whodd.getContainer02().setOddStatus(TransactionStatus.INPROGRESS);
-		 * } } whodd = whoddRepository.save(whodd); }); } else { throw new
-		 * BusinessException("No object to be saved!"); }
-		 */
-
+		
 		return null;
 	}
 
