@@ -244,7 +244,7 @@ public class ReferReject extends AuditEntity implements Serializable {
 
 			SmartCardUser smartCardUser = card.getSmartCardUser();
 			if (card != null) {
-				listDTO.setDriverName(smartCardUser.getCommonContactAttribute().getPersonName());
+				listDTO.setDriverName(smartCardUser.getPersonName()); 
 			}
 
 			if (this.getReferDateTime() != null) {

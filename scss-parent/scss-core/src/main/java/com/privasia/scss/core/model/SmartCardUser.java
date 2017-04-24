@@ -7,19 +7,15 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Set;
 
-import javax.persistence.AssociationOverride;
-import javax.persistence.AssociationOverrides;
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Basic;
 import javax.persistence.Column;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
@@ -81,28 +77,15 @@ public class SmartCardUser extends AuditEntity implements Serializable {
 	@Lob
 	@Column(name = "SCU_PHOTO")
 	private byte[] photo;
-
-	@Embedded
-	@AttributeOverrides({ @AttributeOverride(name = "phoneOffice", column = @Column(name = "SCU_PHONEHOME")),
-			@AttributeOverride(name = "personName", column = @Column(name = "SCU_NAME")),
-			@AttributeOverride(name = "emailAddress", column = @Column(name = "SCU_EMAIL")),
-			@AttributeOverride(name = "phoneMobile", column = @Column(name = "SCU_PHONEMOBILE")),
-			@AttributeOverride(name = "newNRICNO", column = @Column(name = "SCU_NEWNRICNO")),
-			@AttributeOverride(name = "oldNRICNO", column = @Column(name = "SCU_OLDNRICNO")),
-			@AttributeOverride(name = "designation", column = @Column(name = "SCU_DESIGNATION")),
-			@AttributeOverride(name = "postalCode", column = @Column(name = "SCU_ADDRPOSTCODE")),
-			@AttributeOverride(name = "blockNo", column = @Column(name = "SCU_ADDRBLOCKNO")),
-			@AttributeOverride(name = "buildingName", column = @Column(name = "SCU_ADDRBUILDNAME")),
-			@AttributeOverride(name = "buildingNo", column = @Column(name = "SCU_ADDRBUILDNO")),
-			@AttributeOverride(name = "streetName01", column = @Column(name = "SCU_ADDRSTNAME1")),
-			@AttributeOverride(name = "streetName02", column = @Column(name = "SCU_ADDRSTNAME2")),
-			@AttributeOverride(name = "streetName03", column = @Column(name = "SCU_ADDRSTNAME3")),
-			@AttributeOverride(name = "city", column = @Column(name = "SCU_ADDRTOWNCITY")),
-			@AttributeOverride(name = "state", column = @Column(name = "SCU_ADDRSTATE")) })
-
-	@AssociationOverrides({
-			@AssociationOverride(name = "country", joinColumns = @JoinColumn(name = "SCU_ADDRCOUNTRY", referencedColumnName = "CON_CODE")) })
-	private CommonContactAttribute commonContactAttribute;
+	
+	@Column(name = "SCU_NAME")
+	private String personName;
+	
+	@Column(name = "SCU_NEWNRICNO")
+	private String newNRICNO;
+	
+	@Column(name = "SCU_OLDNRICNO")
+	private String oldNRICNO;
 
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "cardID")
 	private Set<Card> card;
@@ -147,12 +130,28 @@ public class SmartCardUser extends AuditEntity implements Serializable {
 		this.nationality = nationality;
 	}
 
-	public CommonContactAttribute getCommonContactAttribute() {
-		return commonContactAttribute;
+	public String getPersonName() {
+		return personName;
 	}
 
-	public void setCommonContactAttribute(CommonContactAttribute commonContactAttribute) {
-		this.commonContactAttribute = commonContactAttribute;
+	public void setPersonName(String personName) {
+		this.personName = personName;
+	}
+
+	public String getNewNRICNO() {
+		return newNRICNO;
+	}
+
+	public void setNewNRICNO(String newNRICNO) {
+		this.newNRICNO = newNRICNO;
+	}
+
+	public String getOldNRICNO() {
+		return oldNRICNO;
+	}
+
+	public void setOldNRICNO(String oldNRICNO) {
+		this.oldNRICNO = oldNRICNO;
 	}
 
 	public Long getSmartCardUserID() {

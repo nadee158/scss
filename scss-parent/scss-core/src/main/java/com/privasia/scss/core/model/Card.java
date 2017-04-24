@@ -290,13 +290,13 @@ public class Card extends AuditEntity implements Serializable {
     this.cardType = cardType;
   }
 
-  public CardDto constructCardDto() {
+  public CardDto constructCardDto() { 
     CardDto dto = new CardDto();
     dto.setCrdScardNo(Long.toString(this.getCardID()));
     dto.setCompId(Long.toString(this.getCompany().getCompanyID()));
     dto.setCompCode(this.getCompany().getCompanyCode());
-    dto.setNewICNo(this.getSmartCardUser().getCommonContactAttribute().getNewNRICNO());
-    dto.setOldICNo(this.getSmartCardUser().getCommonContactAttribute().getOldNRICNO());
+    dto.setNewICNo(this.getSmartCardUser().getNewNRICNO());
+    dto.setOldICNo(this.getSmartCardUser().getOldNRICNO());
     dto.setPassportNo(this.getSmartCardUser().getPassportNo());
     return dto;
   }

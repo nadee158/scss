@@ -233,7 +233,7 @@ public class ReferRejectService {
 
 		});
 
-		return referRejectRepository.save(referRejectF);
+		return referRejectRepository.save(referRejectF); 
 
 	}
 
@@ -422,7 +422,7 @@ public class ReferRejectService {
 								.getSmartCardUser();
 						if (cardUser != null) {
 							printReject.setDriverIC(cardUser.getPassportNo());
-							printReject.setDriverName(cardUser.getCommonContactAttribute().getPersonName());
+							printReject.setDriverName(cardUser.getPersonName());
 						}
 					}
 

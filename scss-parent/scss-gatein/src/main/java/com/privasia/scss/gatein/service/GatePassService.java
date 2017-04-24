@@ -441,16 +441,15 @@ public class GatePassService {
         // Call Web Service
         if (!isHpatExist) {
 
-          if (!(smartCardUser == null || company == null || company.getCompanyType() == null
-              || smartCardUser.getCommonContactAttribute() == null)) {
+          if (!(smartCardUser == null || company == null || company.getCompanyType() == null)) {
             if (company.getCompanyType().equals(CompanyType.HAULAGE)) {
 
               String icNo = "";
 
-              if (StringUtils.isNotBlank(smartCardUser.getCommonContactAttribute().getNewNRICNO())) {
-                icNo = smartCardUser.getCommonContactAttribute().getNewNRICNO();
-              } else if (StringUtils.isNotBlank(smartCardUser.getCommonContactAttribute().getOldNRICNO())) {
-                icNo = smartCardUser.getCommonContactAttribute().getOldNRICNO();
+              if (StringUtils.isNotBlank(smartCardUser.getNewNRICNO())) {
+                icNo = smartCardUser.getNewNRICNO();
+              } else if (StringUtils.isNotBlank(smartCardUser.getOldNRICNO())) {
+                icNo = smartCardUser.getOldNRICNO();
               } else if (StringUtils.isNotBlank(smartCardUser.getPassportNo())) {
                 icNo = smartCardUser.getPassportNo();
               }

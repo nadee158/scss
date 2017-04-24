@@ -59,11 +59,10 @@ public class ExpressService {
             if (!inProgressTrxDTO.isInProgress()) {
               log.error("Seq:" + card.getCardID());
 
-              if (!(card.getSmartCardUser() == null || card.getSmartCardUser().getCommonContactAttribute() == null
-                  || card.getCompany() == null)) {
+              if (!(card.getSmartCardUser() == null || card.getCompany() == null)) {
 
                 SmartCardUser smartCardUser = card.getSmartCardUser();
-                dto.setDriverName(smartCardUser.getCommonContactAttribute().getPersonName());
+                dto.setDriverName(smartCardUser.getPersonName());
                 dto.setDriverPhoto(smartCardUser.getPhoto());
                 dto.setCompanyName(card.getCompany().getCompanyName());
 
