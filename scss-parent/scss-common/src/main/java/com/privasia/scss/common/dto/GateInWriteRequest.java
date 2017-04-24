@@ -3,6 +3,7 @@ package com.privasia.scss.common.dto;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import javax.validation.constraints.NotNull;
 
@@ -65,8 +66,9 @@ public class GateInWriteRequest implements Serializable {
     return laneNo;
   }
 
-  public ReferRejectDTO getReferRejectDTO() {
-    return referRejectDTO;
+
+  public Optional<ReferRejectDTO> getReferRejectDTO() {
+    return Optional.ofNullable(referRejectDTO);
   }
 
   public void setReferRejectDTO(ReferRejectDTO referRejectDTO) {

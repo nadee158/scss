@@ -27,7 +27,7 @@ import com.privasia.scss.core.model.ReferRejectReason;
 
 public final class ModelMapPropertyMap {
 
-  public static PropertyMap<KioskBoothRights, KioskBoothRightsDTO> kioskBoothRightsDomainToDto() { 
+  public static PropertyMap<KioskBoothRights, KioskBoothRightsDTO> kioskBoothRightsDomainToDto() {
 
     return new PropertyMap<KioskBoothRights, KioskBoothRightsDTO>() {
       protected void configure() {
@@ -178,20 +178,23 @@ public final class ModelMapPropertyMap {
     };
   }
 
-  /*public static PropertyMap<ReferRejectDTO, ReferReject> referRejectDTOToReferReject() {
+  public static PropertyMap<ReferRejectDTO, ReferReject> referRejectDTOToReferReject() {
     return new PropertyMap<ReferRejectDTO, ReferReject>() {
       protected void configure() {
-        skip().getBaseCommonGateInOut().setHpatBooking(null);
-        skip().getBaseCommonGateInOut().setCard(null);
-        skip().getBaseCommonGateInOut().setGateInClerk(null);
-        skip().getBaseCommonGateInOut().setGateInClient(null);
-        skip().getBaseCommonGateInOut().setGateOutBoothClerk(null);
-        skip().getBaseCommonGateInOut().setGateOutClerk(null);
-        skip().getBaseCommonGateInOut().setGateOutClient(null);
+        if (map().getBaseCommonGateInOut().isPresent()) {
+          skip().getBaseCommonGateInOut().get().setHpatBooking(null);
+          skip().getBaseCommonGateInOut().get().setCard(null);
+          skip().getBaseCommonGateInOut().get().setGateInClerk(null);
+          skip().getBaseCommonGateInOut().get().setGateInClient(null);
+          skip().getBaseCommonGateInOut().get().setGateOutBoothClerk(null);
+          skip().getBaseCommonGateInOut().get().setGateOutClerk(null);
+          skip().getBaseCommonGateInOut().get().setGateOutClient(null);
+        }
+        // skip().setReferRejectDetails(null);
         skip().setCompany(null);
       }
     };
-  }*/
+  }
 
   public static PropertyMap<ReferRejectDetailDTO, ReferRejectDetail> referRejectDetailDTOToReferRejectDetail() {
     return new PropertyMap<ReferRejectDetailDTO, ReferRejectDetail>() {

@@ -3,6 +3,8 @@ package com.privasia.scss.common.dto;
 import java.io.Serializable;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 import com.privasia.scss.common.enums.CompanyAccountType;
 import com.privasia.scss.common.enums.CompanyStatus;
@@ -132,10 +134,7 @@ public class CompanyDTO implements Serializable {
 
   @Override
   public String toString() {
-    return "CompanyDTO [companyID=" + companyID + ", companyName=" + companyName + ", companyAccountNo="
-        + companyAccountNo + ", companyAccountType=" + companyAccountType + ", companyCode=" + companyCode
-        + ", companyType=" + companyType + ", companyRegistrationNumber=" + companyRegistrationNumber
-        + ", companyStatus=" + companyStatus + ", nameOnCard=" + nameOnCard + ", faxOffice=" + faxOffice + "]";
+    return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
   }
 
   public CompanyDTO initializeWithDefaultValues() {
