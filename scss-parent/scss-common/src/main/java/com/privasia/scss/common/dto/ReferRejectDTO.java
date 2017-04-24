@@ -177,7 +177,7 @@ public class ReferRejectDTO implements Serializable {
     this.company = company;
   }
 
-  public void initializeWithDefaultValues() {
+  public ReferRejectDTO initializeWithDefaultValues() {
     this.referRejectID = 10l;
     this.company = new CompanyDTO().initializeWithDefaultValues();
     this.expWeightBridge = 4500;
@@ -194,6 +194,8 @@ public class ReferRejectDTO implements Serializable {
     this.referRejectDetails = new HashSet<ReferRejectDetailDTO>();
     this.referRejectDetails.add(new ReferRejectDetailDTO().initializeWithDefaultValues());
     this.referRejectDetails.add(new ReferRejectDetailDTO().initializeWithDefaultValues());
+    return this;
+
   }
 
 

@@ -3,7 +3,6 @@ package com.privasia.scss.common.dto;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 import javax.validation.constraints.NotNull;
 
@@ -60,10 +59,18 @@ public class GateInWriteRequest implements Serializable {
 
   private List<WHODDDTO> whoddContainers;
 
-  private Optional<ReferRejectDTO> referRejectDTO;
+  private ReferRejectDTO referRejectDTO;
 
   public String getLaneNo() {
     return laneNo;
+  }
+
+  public ReferRejectDTO getReferRejectDTO() {
+    return referRejectDTO;
+  }
+
+  public void setReferRejectDTO(ReferRejectDTO referRejectDTO) {
+    this.referRejectDTO = referRejectDTO;
   }
 
   public void setLaneNo(String laneNo) {
@@ -254,13 +261,6 @@ public class GateInWriteRequest implements Serializable {
     this.oddReject = oddReject;
   }
 
-  public Optional<ReferRejectDTO> getReferRejectDTO() {
-    return referRejectDTO;
-  }
-
-  public void setReferRejectDTO(Optional<ReferRejectDTO> referRejectDTO) {
-    this.referRejectDTO = referRejectDTO;
-  }
 
   @Override
   public String toString() {

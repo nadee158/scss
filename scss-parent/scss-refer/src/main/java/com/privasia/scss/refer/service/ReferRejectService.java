@@ -119,8 +119,10 @@ public class ReferRejectService {
   @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
   public Long saveReferReject(GateInWriteRequest gateInWriteRequest) {
 
-    ReferRejectDTO referRejectDTO = gateInWriteRequest.getReferRejectDTO()
-        .orElseThrow(() -> new BusinessException("No refer reject data is available to save"));
+    if (gateInWriteRequest.getReferRejectDTO() == null)
+      throw new BusinessException("No refer reject data is available to save");
+
+    ReferRejectDTO referRejectDTO = gateInWriteRequest.getReferRejectDTO();
 
     if ((referRejectDTO.getReferRejectDetails() == null || referRejectDTO.getReferRejectDetails().isEmpty()))
       throw new BusinessException("No Refer Reject detail Data given to be updated!");

@@ -2,7 +2,6 @@ package com.privasia.scss.refer;
 
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Optional;
 
 import org.junit.Test;
 
@@ -20,7 +19,7 @@ public class TestClass {
     ReferRejectDTO obj = new ReferRejectDTO();
     obj.initializeWithDefaultValues();
     GateInWriteRequest gateInWriteRequest = new GateInWriteRequest();
-    gateInWriteRequest.setReferRejectDTO(Optional.of(obj));
+    gateInWriteRequest.setReferRejectDTO(obj);
     // 1. Java object to JSON, and save into a file
     gson.toJson(obj, new FileWriter("D:\\file.json"));
 

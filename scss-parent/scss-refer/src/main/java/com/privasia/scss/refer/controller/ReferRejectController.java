@@ -58,6 +58,7 @@ public class ReferRejectController {
       consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public CustomResponseEntity<ApiResponseObject<?>> saveReferReject(
       @RequestBody GateInWriteRequest gateInWriteRequest) {
+
     System.out.println("gateInWriteRequest " + gateInWriteRequest);
     Long referId = referRejectService.saveReferReject(gateInWriteRequest);
 
