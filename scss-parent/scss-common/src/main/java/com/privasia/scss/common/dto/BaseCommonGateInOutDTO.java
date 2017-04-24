@@ -7,6 +7,8 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -213,6 +215,11 @@ public class BaseCommonGateInOutDTO implements Serializable {
     this.gateOutClient = new ClientDTO().initializeWithIdOnly();
     this.gateOutBoothClerk = new SystemUserDTO().initializeWithDefaultValues();
     return this;
+  }
+
+  @Override
+  public String toString() {
+    return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
   }
 
 

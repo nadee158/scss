@@ -32,158 +32,157 @@ import com.privasia.scss.common.enums.Nationality;
  *
  */
 @Entity
-@Table(name = "SCSS_SCUSER", uniqueConstraints = { @UniqueConstraint(columnNames = { "SCU_PASSPORTNO" }),
-		@UniqueConstraint(columnNames = { "SCU_EMAIL" }), @UniqueConstraint(columnNames = { "SCU_NEWNRICNO" }),
-		@UniqueConstraint(columnNames = { "SCU_OLDNRICNO" }) })
+@Table(name = "SCSS_SCUSER", uniqueConstraints = {@UniqueConstraint(columnNames = {"SCU_PASSPORTNO"}),
+    @UniqueConstraint(columnNames = {"SCU_NEWNRICNO"}), @UniqueConstraint(columnNames = {"SCU_OLDNRICNO"})})
 
-@AttributeOverrides({ @AttributeOverride(name = "addBy", column = @Column(name = "SCU_CREATEDBY")),
-		@AttributeOverride(name = "updateBy", column = @Column(name = "SCU_UPDATEDBY")),
-		@AttributeOverride(name = "dateTimeAdd", column = @Column(name = "SCU_DATECREATE")),
-		@AttributeOverride(name = "dateTimeUpdate", column = @Column(name = "SCU_DATEUPDATE")) })
+@AttributeOverrides({@AttributeOverride(name = "addBy", column = @Column(name = "SCU_CREATEDBY") ),
+    @AttributeOverride(name = "updateBy", column = @Column(name = "SCU_UPDATEDBY") ),
+    @AttributeOverride(name = "dateTimeAdd", column = @Column(name = "SCU_DATECREATE") ),
+    @AttributeOverride(name = "dateTimeUpdate", column = @Column(name = "SCU_DATEUPDATE") )})
 public class SmartCardUser extends AuditEntity implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 1L;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_SCU_USERID")
-	@SequenceGenerator(name = "SEQ_SCU_USERID", sequenceName = "SCU_USERID_SEQ")
-	@Column(name = "SCU_USERID_SEQ")
-	private Long smartCardUserID;
+  @Id
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_SCU_USERID")
+  @SequenceGenerator(name = "SEQ_SCU_USERID", sequenceName = "SCU_USERID_SEQ")
+  @Column(name = "SCU_USERID_SEQ")
+  private Long smartCardUserID;
 
-	@Column(name = "SCU_GENDER")
-	@Type(type = "com.privasia.scss.common.enumusertype.GenderEnumUserType")
-	private Gender gender;
+  @Column(name = "SCU_GENDER")
+  @Type(type = "com.privasia.scss.common.enumusertype.GenderEnumUserType")
+  private Gender gender;
 
-	@Column(name = "SCU_DOB")
-	private LocalDateTime dateOfBirth;
+  @Column(name = "SCU_DOB")
+  private LocalDateTime dateOfBirth;
 
-	@Column(name = "SCU_NATIONALITY")
-	@Type(type = "com.privasia.scss.common.enumusertype.NationalityEnumUserType")
-	private Nationality nationality;
+  @Column(name = "SCU_NATIONALITY")
+  @Type(type = "com.privasia.scss.common.enumusertype.NationalityEnumUserType")
+  private Nationality nationality;
 
-	@Column(name = "SCU_PASSPORTNO")
-	private String passportNo;
+  @Column(name = "SCU_PASSPORTNO")
+  private String passportNo;
 
-	@Column(name = "SCU_PASSPORTEXPDATE")
-	private LocalDateTime passportExpireDate;
+  @Column(name = "SCU_PASSPORTEXPDATE")
+  private LocalDateTime passportExpireDate;
 
-	@Column(name = "SCU_NAMEONCARD")
-	private String nameOnCard;
+  @Column(name = "SCU_NAMEONCARD")
+  private String nameOnCard;
 
-	@Basic(fetch = FetchType.LAZY, optional = true)
-	@Lob
-	@Column(name = "SCU_PHOTO")
-	private byte[] photo;
-	
-	@Column(name = "SCU_NAME")
-	private String personName;
-	
-	@Column(name = "SCU_NEWNRICNO")
-	private String newNRICNO;
-	
-	@Column(name = "SCU_OLDNRICNO")
-	private String oldNRICNO;
+  @Basic(fetch = FetchType.LAZY, optional = true)
+  @Lob
+  @Column(name = "SCU_PHOTO")
+  private byte[] photo;
 
-	@OneToMany(fetch = FetchType.EAGER, mappedBy = "cardID")
-	private Set<Card> card;
+  @Column(name = "SCU_NAME")
+  private String personName;
 
-	public Gender getGender() {
-		return gender;
-	}
+  @Column(name = "SCU_NEWNRICNO")
+  private String newNRICNO;
 
-	public void setGender(Gender gender) {
-		this.gender = gender;
-	}
+  @Column(name = "SCU_OLDNRICNO")
+  private String oldNRICNO;
 
-	public LocalDateTime getDateOfBirth() {
-		return dateOfBirth;
-	}
+  @OneToMany(fetch = FetchType.EAGER, mappedBy = "cardID")
+  private Set<Card> card;
 
-	public void setDateOfBirth(LocalDateTime dateOfBirth) {
-		this.dateOfBirth = dateOfBirth;
-	}
+  public Gender getGender() {
+    return gender;
+  }
 
-	public String getPassportNo() {
-		return passportNo;
-	}
+  public void setGender(Gender gender) {
+    this.gender = gender;
+  }
 
-	public void setPassportNo(String passportNo) {
-		this.passportNo = passportNo;
-	}
+  public LocalDateTime getDateOfBirth() {
+    return dateOfBirth;
+  }
 
-	public LocalDateTime getPassportExpireDate() {
-		return passportExpireDate;
-	}
+  public void setDateOfBirth(LocalDateTime dateOfBirth) {
+    this.dateOfBirth = dateOfBirth;
+  }
 
-	public void setPassportExpireDate(LocalDateTime passportExpireDate) {
-		this.passportExpireDate = passportExpireDate;
-	}
+  public String getPassportNo() {
+    return passportNo;
+  }
 
-	public Nationality getNationality() {
-		return nationality;
-	}
+  public void setPassportNo(String passportNo) {
+    this.passportNo = passportNo;
+  }
 
-	public void setNationality(Nationality nationality) {
-		this.nationality = nationality;
-	}
+  public LocalDateTime getPassportExpireDate() {
+    return passportExpireDate;
+  }
 
-	public String getPersonName() {
-		return personName;
-	}
+  public void setPassportExpireDate(LocalDateTime passportExpireDate) {
+    this.passportExpireDate = passportExpireDate;
+  }
 
-	public void setPersonName(String personName) {
-		this.personName = personName;
-	}
+  public Nationality getNationality() {
+    return nationality;
+  }
 
-	public String getNewNRICNO() {
-		return newNRICNO;
-	}
+  public void setNationality(Nationality nationality) {
+    this.nationality = nationality;
+  }
 
-	public void setNewNRICNO(String newNRICNO) {
-		this.newNRICNO = newNRICNO;
-	}
+  public String getPersonName() {
+    return personName;
+  }
 
-	public String getOldNRICNO() {
-		return oldNRICNO;
-	}
+  public void setPersonName(String personName) {
+    this.personName = personName;
+  }
 
-	public void setOldNRICNO(String oldNRICNO) {
-		this.oldNRICNO = oldNRICNO;
-	}
+  public String getNewNRICNO() {
+    return newNRICNO;
+  }
 
-	public Long getSmartCardUserID() {
-		return smartCardUserID;
-	}
+  public void setNewNRICNO(String newNRICNO) {
+    this.newNRICNO = newNRICNO;
+  }
 
-	public void setSmartCardUserID(Long smartCardUserID) {
-		this.smartCardUserID = smartCardUserID;
-	}
+  public String getOldNRICNO() {
+    return oldNRICNO;
+  }
 
-	public String getNameOnCard() {
-		return nameOnCard;
-	}
+  public void setOldNRICNO(String oldNRICNO) {
+    this.oldNRICNO = oldNRICNO;
+  }
 
-	public void setNameOnCard(String nameOnCard) {
-		this.nameOnCard = nameOnCard;
-	}
+  public Long getSmartCardUserID() {
+    return smartCardUserID;
+  }
 
-	public byte[] getPhoto() {
-		return photo;
-	}
+  public void setSmartCardUserID(Long smartCardUserID) {
+    this.smartCardUserID = smartCardUserID;
+  }
 
-	public void setPhoto(byte[] photo) {
-		this.photo = photo;
-	}
+  public String getNameOnCard() {
+    return nameOnCard;
+  }
 
-	public Set<Card> getCard() {
-		return card;
-	}
+  public void setNameOnCard(String nameOnCard) {
+    this.nameOnCard = nameOnCard;
+  }
 
-	public void setCard(Set<Card> card) {
-		this.card = card;
-	}
+  public byte[] getPhoto() {
+    return photo;
+  }
+
+  public void setPhoto(byte[] photo) {
+    this.photo = photo;
+  }
+
+  public Set<Card> getCard() {
+    return card;
+  }
+
+  public void setCard(Set<Card> card) {
+    this.card = card;
+  }
 
 }

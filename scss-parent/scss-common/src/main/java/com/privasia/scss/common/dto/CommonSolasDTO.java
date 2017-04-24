@@ -2,6 +2,9 @@ package com.privasia.scss.common.dto;
 
 import java.io.Serializable;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 import com.privasia.scss.common.enums.SolasInstructionType;
 
 public class CommonSolasDTO implements Serializable {
@@ -103,9 +106,7 @@ public class CommonSolasDTO implements Serializable {
 
   @Override
   public String toString() {
-    return "CommonSolasDTO [mgw=" + mgw + ", faLedgerCode=" + faLedgerCode + ", solasRefNumber=" + solasRefNumber
-        + ", solasDetailID=" + solasDetailID + ", solasInstruction=" + solasInstruction + ", shipperVGM=" + shipperVGM
-        + "]";
+    return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
   }
 
   public CommonSolasDTO initializeWithDefaultValues() {

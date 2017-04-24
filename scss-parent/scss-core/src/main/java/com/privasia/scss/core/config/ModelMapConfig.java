@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Configuration;
 
 import com.privasia.scss.core.modelmap.config.ModelMapEnumConverter;
 import com.privasia.scss.core.modelmap.config.ModelMapLocalDateConverter;
+import com.privasia.scss.core.modelmap.config.ModelMapOptionalConverter;
 import com.privasia.scss.core.modelmap.config.ModelMapPropertyMap;
 
 /**
@@ -26,6 +27,7 @@ public class ModelMapConfig {
     configEnums(modelMapper);
     configLocalDateTime(modelMapper);
     configProperty(modelMapper);
+    configOptionalMapper(modelMapper);
     return modelMapper;
   }
 
@@ -103,7 +105,7 @@ public class ModelMapConfig {
     modelMapper.addMappings(ModelMapPropertyMap.importContainerToGatePass());
     modelMapper.addMappings(ModelMapPropertyMap.exportContainerToExports());
     modelMapper.addMappings(ModelMapPropertyMap.exportsToExportContainer());
-    //modelMapper.addMappings(ModelMapPropertyMap.referRejectDTOToReferReject());
+    modelMapper.addMappings(ModelMapPropertyMap.referRejectDTOToReferReject());
     modelMapper.addMappings(ModelMapPropertyMap.referRejectDetailDTOToReferRejectDetail());
     modelMapper.addMappings(ModelMapPropertyMap.referRejectReasonDTOToReferRejectReason());
     return modelMapper;
@@ -115,6 +117,11 @@ public class ModelMapConfig {
     modelMapper.addConverter(ModelMapLocalDateConverter.convertStringToLocalDateTime());
     modelMapper.createTypeMap(LocalDateTime.class, String.class);
     modelMapper.addConverter(ModelMapLocalDateConverter.convertLocalDateTimeToString());
+    return modelMapper;
+  }
+
+  public ModelMapper configOptionalMapper(ModelMapper modelMapper) {
+    modelMapper.addConverter(new ModelMapOptionalConverter());
     return modelMapper;
   }
 }
