@@ -46,4 +46,11 @@ public class ReferRejectReasonDTO implements Serializable {
         + ", reasonDescription=" + reasonDescription + "]";
   }
 
+  public ReferRejectReasonDTO initializeWithDefaultValues() {
+    this.referRejectReasonID = 50l;
+    this.referReasonID = 10l;
+    this.reasonDescription = "";
+    return this;
+  }
+
 }

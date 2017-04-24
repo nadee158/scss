@@ -1,7 +1,14 @@
 package com.privasia.scss.common.dto;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
+
+import org.apache.commons.lang3.StringUtils;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.privasia.scss.common.util.DateUtil;
 
 public class ReferRejectDetailDTO implements Serializable {
 
@@ -33,7 +40,8 @@ public class ReferRejectDetailDTO implements Serializable {
 
   private String lineCode;
 
-  private String gateInTime;
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateUtil.GLOBAL_DATE_TIME_PATTERN)
+  private LocalDateTime gateInTime;
 
   private String position;
 
@@ -150,11 +158,12 @@ public class ReferRejectDetailDTO implements Serializable {
     this.lineCode = lineCode;
   }
 
-  public String getGateInTime() {
+
+  public LocalDateTime getGateInTime() {
     return gateInTime;
   }
 
-  public void setGateInTime(String gateInTime) {
+  public void setGateInTime(LocalDateTime gateInTime) {
     this.gateInTime = gateInTime;
   }
 
@@ -211,6 +220,31 @@ public class ReferRejectDetailDTO implements Serializable {
         + doubleBooking + ", lineCode=" + lineCode + ", gateInTime=" + gateInTime + ", position=" + position
         + ", measuredWeightBridge=" + measuredWeightBridge + ", solas=" + solas + ", referRejectReasons="
         + referRejectReasons + "]";
+  }
+
+  public ReferRejectDetailDTO initializeWithDefaultValues() {
+    this.referRejectID = 10l;
+    this.referRejectDetailID = 11l;
+    this.containerNo = StringUtils.EMPTY;
+    this.containerIsoCode = StringUtils.EMPTY;
+    this.seal = new CommonSealDTO().initializeWithDefaultValues();
+    this.remarks = StringUtils.EMPTY;
+    this.status = StringUtils.EMPTY;
+    this.supervisorRemarks = StringUtils.EMPTY;
+    this.rejectBy = 50l;
+    this.referBy = 20l;
+    this.expPmBTM = 250;
+    this.expNetWeight = 550;
+    this.doubleBooking = StringUtils.EMPTY;
+    this.lineCode = StringUtils.EMPTY;
+    this.gateInTime = LocalDateTime.now();
+    this.position = StringUtils.EMPTY;
+    this.measuredWeightBridge = 450;
+    this.solas = new CommonSolasDTO().initializeWithDefaultValues();
+    this.referRejectReasons = new HashSet<ReferRejectReasonDTO>();
+    this.referRejectReasons.add(new ReferRejectReasonDTO().initializeWithDefaultValues());
+    this.referRejectReasons.add(new ReferRejectReasonDTO().initializeWithDefaultValues());
+    return this;
   }
 
 }

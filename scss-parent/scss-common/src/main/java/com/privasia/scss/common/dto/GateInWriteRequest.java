@@ -262,5 +262,18 @@ public class GateInWriteRequest implements Serializable {
     this.referRejectDTO = referRejectDTO;
   }
 
+  @Override
+  public String toString() {
+    return "GateInWriteRequest [userName=" + userName + ", laneNo=" + laneNo + ", haulageCode=" + haulageCode
+        + ", truckHeadNo=" + truckHeadNo + ", truckPlateNo=" + truckPlateNo + ", truckWeight=" + truckWeight
+        + ", trailerNo=" + trailerNo + ", trailerWeight=" + trailerWeight + ", gateInDateTime=" + gateInDateTime
+        + ", weightBridge=" + weightBridge + ", totalEmptyWeightBridge=" + totalEmptyWeightBridge + ", gateInClient="
+        + gateInClient + ", cardId=" + cardId + ", hpatBookingId=" + hpatBookingId + ", rejectReason=" + rejectReason
+        + ", gateInStatus=" + gateInStatus + ", oddReject=" + oddReject + ", impExpFlag=" + impExpFlag + ", fuelWeight="
+        + fuelWeight + ", tireWeight=" + tireWeight + ", variance=" + variance + ", exportContainers="
+        + exportContainers + ", importContainers=" + importContainers + ", whoddContainers=" + whoddContainers
+        + ", referRejectDTO=" + referRejectDTO + "]";
+  }
+
 
 }

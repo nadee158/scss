@@ -1,7 +1,13 @@
 package com.privasia.scss.common.dto;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.privasia.scss.common.enums.HpatReferStatus;
+import com.privasia.scss.common.util.DateUtil;
 
 public class ReferRejectDTO implements Serializable {
 
@@ -21,7 +27,8 @@ public class ReferRejectDTO implements Serializable {
 
   private Boolean transactionSlipPrinted;
 
-  private String referDateTime;
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateUtil.GLOBAL_DATE_TIME_PATTERN)
+  private LocalDateTime referDateTime;
 
   private Integer pmWeight;
 
@@ -83,13 +90,16 @@ public class ReferRejectDTO implements Serializable {
   }
 
 
-  public String getReferDateTime() {
+
+  public LocalDateTime getReferDateTime() {
     return referDateTime;
   }
 
-  public void setReferDateTime(String referDateTime) {
+
+  public void setReferDateTime(LocalDateTime referDateTime) {
     this.referDateTime = referDateTime;
   }
+
 
   public Integer getPmWeight() {
     return pmWeight;
@@ -166,5 +176,26 @@ public class ReferRejectDTO implements Serializable {
   public void setCompany(CompanyDTO company) {
     this.company = company;
   }
+
+  public void initializeWithDefaultValues() {
+    this.referRejectID = 10l;
+    this.company = new CompanyDTO().initializeWithDefaultValues();
+    this.expWeightBridge = 4500;
+    this.expNetWeight = 250;
+    this.statusCode = HpatReferStatus.ACTIVE.getValue();
+    this.baseCommonGateInOut = new BaseCommonGateInOutDTO().initializeWithDefaultValues();
+    this.transactionSlipPrinted = false;
+    this.referDateTime = LocalDateTime.now();
+    this.pmWeight = 4500;
+    this.trailerWeight = 5500;
+    this.trailerPlateNo = "";
+    this.axleVerified = true;
+    this.pmVerified = true;
+    this.referRejectDetails = new HashSet<ReferRejectDetailDTO>();
+    this.referRejectDetails.add(new ReferRejectDetailDTO().initializeWithDefaultValues());
+    this.referRejectDetails.add(new ReferRejectDetailDTO().initializeWithDefaultValues());
+  }
+
+
 
 }

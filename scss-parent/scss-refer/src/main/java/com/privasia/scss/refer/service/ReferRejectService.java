@@ -1,5 +1,6 @@
 package com.privasia.scss.refer.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -18,6 +19,8 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 
+import com.privasia.scss.common.dto.BaseCommonGateInOutDTO;
+import com.privasia.scss.common.dto.ClientDTO;
 import com.privasia.scss.common.dto.GateInWriteRequest;
 import com.privasia.scss.common.dto.ReferRejectDTO;
 import com.privasia.scss.common.dto.ReferRejectDetailDTO;
@@ -26,7 +29,6 @@ import com.privasia.scss.common.dto.ReferRejectReasonDTO;
 import com.privasia.scss.common.enums.HpatReferStatus;
 import com.privasia.scss.common.enums.ReferStatus;
 import com.privasia.scss.common.enums.TransactionStatus;
-import com.privasia.scss.common.util.DateUtil;
 import com.privasia.scss.core.exception.BusinessException;
 import com.privasia.scss.core.exception.ResultsNotFoundException;
 import com.privasia.scss.core.model.BaseCommonGateInOutAttribute;
@@ -122,6 +124,26 @@ public class ReferRejectService {
 
     if ((referRejectDTO.getReferRejectDetails() == null || referRejectDTO.getReferRejectDetails().isEmpty()))
       throw new BusinessException("No Refer Reject detail Data given to be updated!");
+
+    // update refer reject dto object from gateInWriteRequest
+    if (referRejectDTO.getBaseCommonGateInOut() == null) {
+      referRejectDTO.setBaseCommonGateInOut(new BaseCommonGateInOutDTO());
+    }
+    referRejectDTO.getBaseCommonGateInOut().setCard(gateInWriteRequest.getCardId());
+    referRejectDTO.getBaseCommonGateInOut().setTimeGateInOk(LocalDateTime.now());
+    ClientDTO gateInClient = new ClientDTO();
+    gateInClient.setClientID(gateInWriteRequest.getGateInClient());
+    referRejectDTO.getBaseCommonGateInOut().setGateInClient(gateInClient);
+    referRejectDTO.getBaseCommonGateInOut().setTimeGateIn(gateInWriteRequest.getGateInDateTime());
+    referRejectDTO.getBaseCommonGateInOut().setEirStatus(TransactionStatus.INPROGRESS.getValue());
+    referRejectDTO.getBaseCommonGateInOut().setHpatBooking(gateInWriteRequest.getHpatBookingId());
+    referRejectDTO.getBaseCommonGateInOut().setPmHeadNo(gateInWriteRequest.getTruckHeadNo());
+    referRejectDTO.getBaseCommonGateInOut().setPmPlateNo(gateInWriteRequest.getTruckPlateNo());
+    referRejectDTO.getBaseCommonGateInOut().setTimeGateInOk(LocalDateTime.now());
+    referRejectDTO.setTrailerWeight(gateInWriteRequest.getTrailerWeight());
+    referRejectDTO.setPmWeight(gateInWriteRequest.getTruckWeight());
+    referRejectDTO.setTrailerPlateNo(gateInWriteRequest.getTrailerNo());
+    referRejectDTO.setExpWeightBridge(gateInWriteRequest.getWeightBridge());
 
     ReferReject referReject = new ReferReject();
 
@@ -304,7 +326,7 @@ public class ReferRejectService {
         .orElseThrow(() -> new ResultsNotFoundException("Refer reject detail was not found!"));
 
     referRejectDetail.setLineCode(StringUtils.upperCase(dto.getLineCode()));
-    referRejectDetail.setGateInTime(DateUtil.getParsedDateTime(dto.getGateInTime()));
+    referRejectDetail.setGateInTime(dto.getGateInTime());
     ReferRejectDetail persisted = referRejectDetailRepository.save(referRejectDetail);
     if (!(persisted == null || persisted.getReferRejectDetailID() <= 0)) {
       if (persisted.getReferReject().getReferRejectID() == dto.getReferRejectID()) {

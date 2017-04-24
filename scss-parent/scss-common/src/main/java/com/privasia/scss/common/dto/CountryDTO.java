@@ -2,6 +2,8 @@ package com.privasia.scss.common.dto;
 
 import java.io.Serializable;
 
+import org.apache.commons.lang3.StringUtils;
+
 public class CountryDTO implements Serializable {
 
   /**
@@ -32,6 +34,12 @@ public class CountryDTO implements Serializable {
   @Override
   public String toString() {
     return "CountryDTO [code=" + code + ", name=" + name + "]";
+  }
+
+  public CountryDTO initializeWithDefaultValues() {
+    this.code = StringUtils.EMPTY;
+    this.name = StringUtils.EMPTY;
+    return this;
   }
 
 

@@ -2,6 +2,8 @@ package com.privasia.scss.common.dto;
 
 import java.io.Serializable;
 
+import org.apache.commons.lang3.StringUtils;
+
 public class CommonContactAttributeDTO implements Serializable {
 
   /**
@@ -171,6 +173,27 @@ public class CommonContactAttributeDTO implements Serializable {
         + buildingName + ", buildingNo=" + buildingNo + ", streetName01=" + streetName01 + ", streetName02="
         + streetName02 + ", streetName03=" + streetName03 + ", city=" + city + ", state=" + state + ", country="
         + country + "]";
+  }
+
+  public CommonContactAttributeDTO initializeWithDefaultValues() {
+    this.phoneOffice = StringUtils.EMPTY;
+    this.personName = StringUtils.EMPTY;
+    this.emailAddress = StringUtils.EMPTY;
+    this.phoneMobile = StringUtils.EMPTY;
+    this.newNRICNO = StringUtils.EMPTY;
+    this.oldNRICNO = StringUtils.EMPTY;
+    this.designation = StringUtils.EMPTY;
+    this.postalCode = StringUtils.EMPTY;
+    this.blockNo = StringUtils.EMPTY;
+    this.buildingName = StringUtils.EMPTY;
+    this.buildingNo = StringUtils.EMPTY;
+    this.streetName01 = StringUtils.EMPTY;
+    this.streetName02 = StringUtils.EMPTY;
+    this.streetName03 = StringUtils.EMPTY;
+    this.city = StringUtils.EMPTY;
+    this.state = StringUtils.EMPTY;
+    this.country = new CountryDTO().initializeWithDefaultValues();
+    return this;
   }
 
 

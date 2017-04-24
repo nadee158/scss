@@ -2,6 +2,12 @@ package com.privasia.scss.common.dto;
 
 import java.io.Serializable;
 
+import org.apache.commons.lang3.StringUtils;
+
+import com.privasia.scss.common.enums.CompanyAccountType;
+import com.privasia.scss.common.enums.CompanyStatus;
+import com.privasia.scss.common.enums.CompanyType;
+
 public class CompanyDTO implements Serializable {
 
   /**
@@ -130,6 +136,21 @@ public class CompanyDTO implements Serializable {
         + companyAccountNo + ", companyAccountType=" + companyAccountType + ", companyCode=" + companyCode
         + ", companyType=" + companyType + ", companyRegistrationNumber=" + companyRegistrationNumber
         + ", companyStatus=" + companyStatus + ", nameOnCard=" + nameOnCard + ", faxOffice=" + faxOffice + "]";
+  }
+
+  public CompanyDTO initializeWithDefaultValues() {
+    this.companyID = 5l;
+    this.companyName = StringUtils.EMPTY;
+    this.companyAccountNo = StringUtils.EMPTY;
+    this.companyAccountType = CompanyAccountType.CASH.getValue();
+    this.companyCode = StringUtils.EMPTY;
+    this.companyType = CompanyType.FOREIGN_WORKER.getValue();
+    this.companyRegistrationNumber = StringUtils.EMPTY;
+    this.companyStatus = CompanyStatus.ACTIVE.getValue();
+    this.nameOnCard = StringUtils.EMPTY;
+    this.commonContactAttribute = new CommonContactAttributeDTO().initializeWithDefaultValues();
+    this.faxOffice = StringUtils.EMPTY;
+    return this;
   }
 
 
