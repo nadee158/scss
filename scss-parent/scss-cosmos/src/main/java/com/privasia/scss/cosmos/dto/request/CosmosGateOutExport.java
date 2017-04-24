@@ -1,12 +1,15 @@
-package com.privasia.scss.cosmos.dto.expresponse;
+package com.privasia.scss.cosmos.dto.request;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 
-public class Message {
+import com.privasia.scss.cosmos.dto.request.CSMCTL;
+import com.privasia.scss.cosmos.dto.request.GOTTRCINF;
+
+public class CosmosGateOutExport {
 
 	CSMCTL CSMCTL;
-	XMLERRINF XMLERRINF;
+	GOTTRCINF GOTTRCINF;
 	int Index;
 
 	public CSMCTL getCSMCTL() {
@@ -18,13 +21,13 @@ public class Message {
 		CSMCTL = cSMCTL;
 	}
 
-	public XMLERRINF getXMLERRINF() {
-		return XMLERRINF;
+	public GOTTRCINF getGOTTRCINF() {
+		return GOTTRCINF;
 	}
 
 	@XmlElement
-	public void setXMLERRINF(XMLERRINF xMLERRINF) {
-		XMLERRINF = xMLERRINF;
+	public void setGOTTRCINF(GOTTRCINF gOTTRCINF) {
+		GOTTRCINF = gOTTRCINF;
 	}
 
 	public int getIndex() {
