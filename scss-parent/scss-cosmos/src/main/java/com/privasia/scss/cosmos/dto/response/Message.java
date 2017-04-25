@@ -3,7 +3,7 @@ package com.privasia.scss.cosmos.dto.response;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 
-import com.privasia.scss.cosmos.dto.expresponse.XMLERRINF;
+import com.privasia.scss.cosmos.dto.response.XMLERRINF;
 
 public class Message {
 
