@@ -19,7 +19,7 @@ public class TestClass {
     ReferRejectDTO obj = new ReferRejectDTO();
     obj.initializeWithDefaultValues();
     GateInWriteRequest gateInWriteRequest = new GateInWriteRequest();
-    gateInWriteRequest.setReferRejectDTO(obj);
+    // gateInWriteRequest.setReferRejectDTO(obj);
     // 1. Java object to JSON, and save into a file
     gson.toJson(obj, new FileWriter("D:\\file.json"));
 

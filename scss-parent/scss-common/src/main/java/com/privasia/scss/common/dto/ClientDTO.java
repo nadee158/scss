@@ -120,12 +120,8 @@ public class ClientDTO implements Serializable {
     this.unitNo = unitNo;
   }
 
-  public int getCosmosPortNo() {
+  public Integer getCosmosPortNo() {
     return cosmosPortNo;
-  }
-
-  public void setCosmosPortNo(int cosmosPortNo) {
-    this.cosmosPortNo = cosmosPortNo;
   }
 
   public String getWebIPAddress() {
