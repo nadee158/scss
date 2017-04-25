@@ -17,17 +17,165 @@ import com.privasia.scss.cosmos.dto.exprequest.CSMCTL;
 import com.privasia.scss.cosmos.dto.exprequest.GOTTRCINF;
 import com.privasia.scss.cosmos.dto.exprequest.Message;
 import com.privasia.scss.cosmos.dto.exprequest.SGS2Cosmos;
+import com.privasia.scss.cosmos.dto.request.CosmosGateInExport;
+import com.privasia.scss.cosmos.dto.request.CosmosGateInImport;
+import com.privasia.scss.cosmos.dto.request.CosmosGateInWriteRequest;
 import com.privasia.scss.cosmos.dto.request.CosmosGateOutExport;
 import com.privasia.scss.cosmos.dto.request.CosmosGateOutImport;
 import com.privasia.scss.cosmos.dto.request.CosmosGateOutWriteRequest;
-import com.privasia.scss.cosmos.dto.request.GOTCNTINF;
+import com.privasia.scss.cosmos.dto.request.GINCNTDRP;
+import com.privasia.scss.cosmos.dto.request.GINCNTPUP;
 
 public class GateOutXMLRequestService {
 
 	public static void main(String[] args) {
 		// sendRequestExample();
 		// readResponseExample();
-		testNewCosmosGateOutWriteRequest("impexp");// imp, exp, impexp
+		//testNewCosmosGateOutWriteRequest("impexp");// imp, exp, impexp
+		testNewCosmosGateInWriteRequest("exnnp");// imp, exp, impexp
+	}
+
+	private static void testNewCosmosGateInWriteRequest(String type) {
+		
+		final SimpleDateFormat yyyymmdd = new SimpleDateFormat("yyyyMMdd");
+		final SimpleDateFormat hhmmss = new SimpleDateFormat("HHmmss");
+		String date = yyyymmdd.format(new java.util.Date());
+		String time = hhmmss.format(new java.util.Date());
+		
+		com.privasia.scss.cosmos.dto.request.CSMCTL csmctl = new com.privasia.scss.cosmos.dto.request.CSMCTL();
+		csmctl.setRQST("GSRQS");
+		csmctl.setACTN("CRT");
+		csmctl.setRTNC("0");
+		csmctl.setERRI("ErrorMessage");
+		csmctl.setRQDS("CTEDSC");
+		csmctl.setRTNM("AS");
+		csmctl.setUSID(toUpperCase("isuru"));
+		csmctl.setRQUI(String.valueOf(System.currentTimeMillis()));
+		csmctl.setTRMC("WPT1");
+		
+		com.privasia.scss.cosmos.dto.request.GOTTRCINF gottrcinf = new com.privasia.scss.cosmos.dto.request.GOTTRCINF();
+		gottrcinf.setMSGTSC("GOTTRCINF");
+		gottrcinf.setLANESC(toUpperCase("gate08"));
+		gottrcinf.setVMIDSC(toUpperCase("truck123"));
+		gottrcinf.setATDDSC(date);
+		gottrcinf.setATDTSC(time);
+		gottrcinf.setVMYKSC("VMYKSC");
+		
+		GINCNTPUP gincntpup = new GINCNTPUP();
+		gincntpup.setMSGTSE("GINCNTPUP");
+		gincntpup.setUNITSE("UNITSE");
+		gincntpup.setUNBTSE("UNBTSE");
+		gincntpup.setCNPVSE("CNPVSE");
+		gincntpup.setUPLKSE("MY");
+		gincntpup.setUPPKSE("PKG");
+		gincntpup.setUPOMSE("PKG");
+		gincntpup.setCYOISE("N");
+		gincntpup.setCYCISE("N");
+		gincntpup.setACHISE("Y");
+		gincntpup.setPCHISE("Y");
+		gincntpup.setCRORSE("Y");
+		
+		GINCNTDRP gincntdrp = new GINCNTDRP();
+		gincntdrp.setMSGTSE("GINCNTDRP");
+		gincntdrp.setUNISSE("UNISSE");
+		gincntdrp.setORRFSE("ORRFSE");
+		gincntdrp.setUNISSE("UNISSE");
+		gincntdrp.setUNBTSE("UNBTSE");
+		gincntdrp.setCNPVSE("CNPVSE");
+		gincntdrp.setORGVSE("ORGVSE");
+		gincntdrp.setLYNDSE("LYNDSE");
+
+		gincntdrp.setDM01SE("DM01SE");
+		gincntdrp.setDM02SE("DM02SE");
+		gincntdrp.setDM03SE("DM03SE");
+		gincntdrp.setDM04SE("DM04SE");
+		gincntdrp.setDM05SE("DM05SE");
+		gincntdrp.setDM06SE("DM06SE");
+		gincntdrp.setDM07SE("DM07SE");
+		gincntdrp.setDM08SE("DM08SE");
+		gincntdrp.setDM09SE("DM09SE");
+
+		gincntdrp.setSO01SE("SO01SE");
+		gincntdrp.setST01SE("ST01SE");
+		gincntdrp.setSN01SE("SN01SE");
+		gincntdrp.setSO02SE("SO02SE");
+		gincntdrp.setST02SE("ST02SE");
+		gincntdrp.setSN02SE("SN02SE");
+		
+		gincntdrp.setUNBGSE("UNBGSE");
+		
+		gincntdrp.setCNORSE("CNORSE");
+		gincntdrp.setPLMNSE("PLMNSE");
+		gincntdrp.setRGRTSE("RGRTSE");
+		gincntdrp.setRGTESE("RGTESE");
+
+		gincntdrp.setOOGISE("OOGISE");
+		gincntdrp.setOVSVSE("OVSVSE");
+		gincntdrp.setOVSASE("OVSASE");
+		gincntdrp.setOVSLSE("OVSLSE");
+		gincntdrp.setOVHGSE("OVHGSE");
+		gincntdrp.setOVSRSE("OVSRSE");
+		
+		gincntdrp.setCNIMSE("CNIMSE");
+		gincntdrp.setCIM1SE("CIM1SE");
+		gincntdrp.setISA1SE("ISA1SE");
+		
+		gincntdrp.setCUN1SE("CUN1SE");
+
+		gincntdrp.setUOLCSE("MY");
+		gincntdrp.setUOLLSE("PKG");
+		gincntdrp.setUOLOSE("PKG");
+		gincntdrp.setCYOISE("N");
+		gincntdrp.setCYCISE("N");
+		gincntdrp.setACHISE("Y");
+		gincntdrp.setPCHISE("Y");
+		
+		CosmosGateInExport export = new CosmosGateInExport();
+		export.setCSMCTL(csmctl);
+		export.setGINCNTDRP(gincntdrp);
+		export.setIndex(1);
+
+		CosmosGateInImport import1 = new CosmosGateInImport();
+		import1.setCSMCTL(csmctl);
+		import1.setGINCNTPUP(gincntpup);
+		import1.setGOTTRCINF(gottrcinf);
+		import1.setIndex(1);
+		
+		CosmosGateInWriteRequest cosmos = new CosmosGateInWriteRequest();
+		if (type.equals("exp")) {
+			List<CosmosGateInExport> exportList = new ArrayList<>();
+			exportList.add(export);
+			cosmos.setExportList(exportList);
+			cosmos.setImportList(null);
+		} else if(type.equals("imp")){
+			List<CosmosGateInImport> importList = new ArrayList<>();
+			importList.add(import1);
+			cosmos.setImportList(importList);
+			cosmos.setExportList(null);
+		} else {
+			List<CosmosGateInExport> exportList = new ArrayList<>();
+			exportList.add(export);
+			cosmos.setExportList(exportList);
+			List<CosmosGateInImport> importList = new ArrayList<>();
+			importList.add(import1);
+			cosmos.setImportList(importList);
+		}
+		
+		try {
+			// Marshalling
+			JAXBContext jaxbContext = JAXBContext.newInstance(CosmosGateInWriteRequest.class);
+			Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+
+			// output pretty printed
+			jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+
+			jaxbMarshaller.marshal(cosmos, System.out);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		}
+		
 	}
 
 	public static void testNewCosmosGateOutWriteRequest(String type) {
