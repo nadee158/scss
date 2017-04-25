@@ -243,7 +243,7 @@ public class ReferRejectService {
       throw new BusinessException("Incorrect Weight Bridge !");
 
     // update refer reject dto object from gateInWriteRequest
-    if (!referRejectDTO.getBaseCommonGateInOut().isPresent()) {
+    if (referRejectDTO.getBaseCommonGateInOut() == null || (!(referRejectDTO.getBaseCommonGateInOut().isPresent()))) {
       referRejectDTO.setBaseCommonGateInOut(Optional.of(new BaseCommonGateInOutDTO()));
     }
 

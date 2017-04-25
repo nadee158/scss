@@ -117,7 +117,7 @@ public class ModelMapConfig {
     // modelMapper.addMappings(ModelMapPropertyMap.referRejectDTOToReferReject());
     modelMapper.addMappings(ModelMapPropertyMap.referRejectDetailDTOToReferRejectDetail());
     modelMapper.addMappings(ModelMapPropertyMap.referRejectReasonDTOToReferRejectReason());
-    modelMapper.addMappings(ModelMapPropertyMap.baseCommonGateInOutAttributeToBaseCommonGateInOutDTO());
+    modelMapper.addMappings(ModelMapPropertyMap.referRejectToReferRejectDTO());
 
     return modelMapper;
   }
