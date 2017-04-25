@@ -223,48 +223,4 @@ public class ReferReject extends AuditEntity implements Serializable {
 	public void setReferRejectDetails(Optional<Set<ReferRejectDetail>> optReferRejectDetails) {
 		this.referRejectDetails = optReferRejectDetails.orElse(null);
 	}
-
-	public ReferRejectListDTO constructReferRejectListDTO() {
-		ReferRejectListDTO listDTO = new ReferRejectListDTO();
-		listDTO.setReferId(Long.toString(this.getReferRejectID()));
-		BaseCommonGateInOutAttribute baseCommonGateInOut = this.getBaseCommonGateInOut().get();
-		listDTO.setPmHeadNo(baseCommonGateInOut.getPmHeadNo());
-
-		Client client = baseCommonGateInOut.getGateInClient();
-		if (client != null) {
-			listDTO.setBoothNo(client.getUnitNo());
-		}
-
-		Card card = baseCommonGateInOut.getCard();
-		if (card != null) {
-			Company company = card.getCompany();
-			if (company != null) {
-				listDTO.setHaulierCompany(company.getCompanyName());
-			}
-
-			SmartCardUser smartCardUser = card.getSmartCardUser();
-			if (card != null) {
-				listDTO.setDriverName(smartCardUser.getPersonName()); 
-			}
-
-			if (this.getReferDateTime() != null) {
-				listDTO.setReferDateTime(
-						this.getReferDateTime().format(DateTimeFormatter.ofPattern("dd/MM/yyyy - HH:mm a")));
-			}
-
-		}
-
-		this.getReferRejectDetails().get().forEach(referRejectDetail -> {
-			if (StringUtils.isBlank(listDTO.getContNo01())) {
-				listDTO.setContNo01(referRejectDetail.getContainerNo());
-			} else {
-				listDTO.setContNo02(referRejectDetail.getContainerNo());
-			}
-
-			listDTO.setDoubleBooking(referRejectDetail.getDoubleBooking());
-
-		});
-		return listDTO;
-	}
-
 }

@@ -36,7 +36,7 @@ import com.privasia.scss.hpat.service.HPABService;
 @Transactional()
 public class ExpressService {
 
-	private Logger log = Logger.getLogger(this.getClass());
+	private Logger log = Logger.getLogger(this.getClass()); 
 
 	private HPABService hpabService;
 

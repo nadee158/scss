@@ -157,9 +157,9 @@ public class HPABService {
 
 			TransactionDTO transactionDTO = booking.constructTransactionDTO();
 
-			if (!(booking.getHpatBookingDetails() == null || booking.getHpatBookingDetails().isEmpty())) {
+			if (!(booking.getHpabBookingDetails() == null || booking.getHpabBookingDetails().isEmpty())) {
 
-				booking.getHpatBookingDetails().forEach(bookingDetail -> {
+				booking.getHpabBookingDetails().forEach(bookingDetail -> {
 
 					BookingType bookingType = bookingDetail.getBookingType();
 					bookingDetail.getImpGatePassNumber();
@@ -238,10 +238,10 @@ public class HPABService {
 		List<ImportContainer> updatedImportContainers = new ArrayList<ImportContainer>();
 		List<ExportContainer> updatedExportContainers = new ArrayList<ExportContainer>();
 
-		if (!(booking.getHpatBookingDetails() == null || booking.getHpatBookingDetails().isEmpty())) {
+		if (!(booking.getHpabBookingDetails() == null || booking.getHpabBookingDetails().isEmpty())) {
 
 			// construct DTO from domain
-			booking.getHpatBookingDetails().forEach(bookingDetail -> {
+			booking.getHpabBookingDetails().forEach(bookingDetail -> {
 
 				BookingType bookingType = bookingDetail.getBookingType();
 				switch (bookingType) {
@@ -310,10 +310,10 @@ public class HPABService {
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRES_NEW, readOnly = false)
 	public void updateHPABAfterGateIn(String hpabID) {
 
-		Optional<HPABBooking> hpatBookingOpt = hpabBookingRepository.findByBookingIDAndStatus(hpabID,
+		Optional<HPABBooking> hpabBookingOpt = hpabBookingRepository.findByBookingIDAndStatus(hpabID, 
 				HpatReferStatus.ACTIVE);
 
-		HPABBooking booking = hpatBookingOpt
+		HPABBooking booking = hpabBookingOpt
 				.orElseThrow(() -> new ResultsNotFoundException("Invalid HPAB Bookibg ID Provided ! " + hpabID));
 
 		booking.setStatus(HpatReferStatus.COMPLETE);
@@ -326,7 +326,7 @@ public class HPABService {
 
 			if (StringUtils.isNotBlank(optGlobalString.get())
 					&& StringUtils.equalsIgnoreCase("Y", optGlobalString.get())) {
-				etpWebserviceClient.updateHpatStatus(hpabID);
+				etpWebserviceClient.updateHpabStatus(hpabID);
 			}
 		}
 

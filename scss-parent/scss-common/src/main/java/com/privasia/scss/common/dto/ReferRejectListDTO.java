@@ -1,16 +1,20 @@
 package com.privasia.scss.common.dto;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.privasia.scss.common.util.DateUtil;
 
 public class ReferRejectListDTO implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
 	// ReferReject.referRejectID;
-	private String referId;;
+	private Long referId;
 
 	// ReferReject.baseCommonGateInOut.gateInClient.unitNo
 	private String boothNo;
@@ -25,7 +29,8 @@ public class ReferRejectListDTO implements Serializable {
 	private String driverName;
 
 	// ReferReject.referDateTime
-	private String referDateTime;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateUtil.GLOBAL_DATE_TIME_PATTERN)
+	private LocalDateTime referDateTime;
 
 	// ReferReject.referRejectDetails.containerNo
 	private String contNo01;
@@ -35,12 +40,20 @@ public class ReferRejectListDTO implements Serializable {
 	// ReferReject.referRejectDetails.doubleBooking
 	private boolean doubleBooking = false;
 
-	public String getReferId() {
+	public Long getReferId() {
 		return referId;
 	}
 
-	public void setReferId(String referId) {
+	public void setReferId(Long referId) {
 		this.referId = referId;
+	}
+
+	public LocalDateTime getReferDateTime() {
+		return referDateTime;
+	}
+
+	public void setReferDateTime(LocalDateTime referDateTime) {
+		this.referDateTime = referDateTime;
 	}
 
 	public String getBoothNo() {
@@ -73,14 +86,6 @@ public class ReferRejectListDTO implements Serializable {
 
 	public void setDriverName(String driverName) {
 		this.driverName = driverName;
-	}
-
-	public String getReferDateTime() {
-		return referDateTime;
-	}
-
-	public void setReferDateTime(String referDateTime) {
-		this.referDateTime = referDateTime;
 	}
 
 	public boolean isDoubleBooking() {

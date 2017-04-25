@@ -6,10 +6,10 @@ import com.privasia.scss.core.model.HPABBookingDetail;
 
 public interface HPABBookingDetailRepository extends BaseRepository<HPABBookingDetail, Long> {
 
-  HPABBookingDetail findByContainerNumberAndBookingTypeAndHpatBooking_StatusAndHpatBooking_CardNo(String containerNo,
+  HPABBookingDetail findByContainerNumberAndBookingTypeAndHpabBooking_StatusAndHpabBooking_CardNo(String containerNo,
       BookingType import1, HpatReferStatus active, String cardNo);
 
-  HPABBookingDetail findByContainerNumberAndBookingTypeAndHpatBooking_StatusAndHpatBooking_CardNoAndHpatBooking_PmNumber(
+  HPABBookingDetail findByContainerNumberAndBookingTypeAndHpabBooking_StatusAndHpabBooking_CardNoAndHpabBooking_PmNumber(
       String containerNo, BookingType type, HpatReferStatus hpatReferStatus, String cardNo, String truckHeadNo);
 
 }

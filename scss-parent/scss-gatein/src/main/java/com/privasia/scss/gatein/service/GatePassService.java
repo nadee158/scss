@@ -78,7 +78,7 @@ public class GatePassService {
   private WDCGlobalSettingRepository wdcGlobalSettingRepository;
 
   @Autowired
-  private HPABBookingDetailRepository hpatBookingDetailRepository;
+  private HPABBookingDetailRepository hpabBookingDetailRepository;
 
   private CardRepository cardRepository;
 
@@ -101,7 +101,7 @@ public class GatePassService {
   private CardUsageRepository cardUsageRepository;
 
   @Autowired
-  private HPABBookingRepository hpatBookingRepository;
+  private HPABBookingRepository hpabBookingRepository;
 
   private CosmosImportRepository cosmosImportRepository;
 
@@ -436,7 +436,7 @@ public class GatePassService {
         SmartCardUser smartCardUser = card.getSmartCardUser();
         Company company = card.getCompany();
 
-        boolean isHpatExist = this.checkHpatBookingExist(containerNo, truckHeadNo, card);
+        boolean isHpatExist = this.checkHpabBookingExist(containerNo, truckHeadNo, card);
 
         // Call Web Service
         if (!isHpatExist) {
@@ -484,29 +484,29 @@ public class GatePassService {
     return false;
   }
 
-  private boolean checkHpatBookingExist(String containerNo, String truckHeadNo, Card card) throws Exception {
+  private boolean checkHpabBookingExist(String containerNo, String truckHeadNo, Card card) throws Exception {
     if (!(card == null)) {
       String cardNo = Long.toString((card.getCardNo()));
       containerNo = StringUtils.upperCase(containerNo);
       BookingType type = BookingType.IMPORT;
       HpatReferStatus hpatReferStatus = HpatReferStatus.ACTIVE;
 
-      HPABBookingDetail hpatBookingDetail = null;
+      HPABBookingDetail hpabBookingDetail = null;
 
       if (StringUtils.isNotBlank(truckHeadNo)) {
 
         truckHeadNo = StringUtils.upperCase(truckHeadNo);
 
-        hpatBookingDetail = hpatBookingDetailRepository
-            .findByContainerNumberAndBookingTypeAndHpatBooking_StatusAndHpatBooking_CardNoAndHpatBooking_PmNumber(
+        hpabBookingDetail = hpabBookingDetailRepository
+            .findByContainerNumberAndBookingTypeAndHpabBooking_StatusAndHpabBooking_CardNoAndHpabBooking_PmNumber(
                 containerNo, type, hpatReferStatus, cardNo, truckHeadNo);
       } else {
-        hpatBookingDetail =
-            hpatBookingDetailRepository.findByContainerNumberAndBookingTypeAndHpatBooking_StatusAndHpatBooking_CardNo(
+    	  hpabBookingDetail =
+        		hpabBookingDetailRepository.findByContainerNumberAndBookingTypeAndHpabBooking_StatusAndHpabBooking_CardNo(
                 containerNo, type, hpatReferStatus, cardNo);
       }
 
-      if (!(hpatBookingDetail == null)) {
+      if (!(hpabBookingDetail == null)) {
         return true;
       }
 
@@ -883,10 +883,10 @@ public class GatePassService {
         gatePass.setSealAttribute(sealAttribute);
 
         if (container.getBaseCommonGateInOutAttribute().getHpabBooking().isPresent()) {
-          Optional<HPABBooking> hpatBooking = hpatBookingRepository
+          Optional<HPABBooking> hpabBooking = hpabBookingRepository
               .findOne(container.getBaseCommonGateInOutAttribute().getHpabBooking().get());
-          if (hpatBooking.isPresent()) {
-            baseCommonGateInOutAttribute.setHpabBooking(Optional.of(hpatBooking.get()));
+          if (hpabBooking.isPresent()) {
+            baseCommonGateInOutAttribute.setHpabBooking(Optional.of(hpabBooking.get()));
           }
         }
         commonGateInOut.setRejectReason(StringUtils.upperCase(container.getCommonGateInOut().getRejectReason()));

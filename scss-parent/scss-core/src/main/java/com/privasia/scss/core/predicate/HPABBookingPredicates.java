@@ -51,7 +51,7 @@ public final class HPABBookingPredicates {
   }
 
   public static Predicate byBookingDetailTypes(List<BookingType> bookingTypes) {
-    return QHPABBooking.hPABBooking.hpatBookingDetails.any().bookingType.in(bookingTypes);
+    return QHPABBooking.hPABBooking.hpabBookingDetails.any().bookingType.in(bookingTypes);
   }
 
   /**

@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.gson.Gson;
+import com.privasia.scss.common.annotation.OpenGate;
 import com.privasia.scss.common.dto.BaseCommonGateInOutDTO;
 import com.privasia.scss.common.dto.CommonSealDTO;
 import com.privasia.scss.common.dto.CommonSolasDTO;
@@ -289,7 +290,8 @@ public class ImportExportGateInService {
     }
 
   }
-
+  
+  @OpenGate
   @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
   public GateInReponse saveGateInInfo(GateInWriteRequest gateInWriteRequest) {
 
@@ -332,7 +334,7 @@ public class ImportExportGateInService {
     SystemUser gateInClerk = systemUserRepository.findOne(SecurityHelper.getCurrentUserId()).orElseThrow(
         () -> new AuthenticationServiceException("Log in User Not Found : " + SecurityHelper.getCurrentUserId()));
     System.out.println("gateInClerk " + gateInClerk);
-
+    
     OpusGateInWriteRequest opusGateInWriteRequest =
         opusGateInWriteService.constructOpusGateInWriteRequest(gateInWriteRequest);
     System.out.println("opusGateInWriteRequest " + gson.toJson(opusGateInWriteRequest));
@@ -417,11 +419,13 @@ public class ImportExportGateInService {
 
     return gateInReponse;
   }
-
+  
+  @OpenGate
   @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
   public GateInReponse saveTestGateInInfo(GateInWriteRequest gateInWriteRequest) {
-
-    Card card = cardRepository.findOne(gateInWriteRequest.getCardId())
+	  
+	 System.out.println("################# REQUEST : ############ "+gateInWriteRequest.toString()); 
+    /*Card card = cardRepository.findOne(gateInWriteRequest.getCardId())
         .orElseThrow(() -> new ResultsNotFoundException("Invalid Card : " + gateInWriteRequest.getCardId()));
 
     gateInWriteRequest.setHaulageCode(commonCardService.getHaulierCodeByScanCard(card));
@@ -474,7 +478,7 @@ public class ImportExportGateInService {
      * Future<Boolean> impSave = null; Future<Boolean> expSave = null;
      */
 
-    if (StringUtils.isEmpty(gateInWriteRequest.getImpExpFlag()))
+    /*if (StringUtils.isEmpty(gateInWriteRequest.getImpExpFlag()))
       throw new BusinessException("Invalid GateOutWriteRequest Empty ImpExpFlag");
     ImpExpFlagStatus impExpFlag = ImpExpFlagStatus.fromValue(gateInWriteRequest.getImpExpFlag());
 
@@ -503,7 +507,7 @@ public class ImportExportGateInService {
     if (StringUtils.isNotEmpty(gateInWriteRequest.getHpatBookingId())) {
       hpabService.updateHPABAfterGateIn(gateInWriteRequest.getHpatBookingId());
     }
-
+    */
     GateOutMessage gateOutMessage = new GateOutMessage();
     gateOutMessage.setCode(GateOutMessage.OK);
     gateOutMessage.setDescription("Saved Successfully!");

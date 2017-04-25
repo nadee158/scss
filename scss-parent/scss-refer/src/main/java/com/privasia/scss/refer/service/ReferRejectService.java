@@ -1,6 +1,7 @@
 package com.privasia.scss.refer.service;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -36,6 +37,7 @@ import com.privasia.scss.core.exception.ResultsNotFoundException;
 import com.privasia.scss.core.model.BaseCommonGateInOutAttribute;
 import com.privasia.scss.core.model.Card;
 import com.privasia.scss.core.model.Client;
+import com.privasia.scss.core.model.Company;
 import com.privasia.scss.core.model.HPABBooking;
 import com.privasia.scss.core.model.PrintReject;
 import com.privasia.scss.core.model.ReferReason;
@@ -138,23 +140,81 @@ public class ReferRejectService {
 	public ModelMap getReferRejectList(ModelMap map, int page, int pageSize) {
 
 		Pageable pageRequest = new PageRequest(page, pageSize, Sort.Direction.DESC, "referDateTime");
-		Page<ReferReject> referRejectPages = referRejectRepository.findByStatusCode(HpatReferStatus.ACTIVE,
+		Optional<Page<ReferReject>> optReferRejectPages = referRejectRepository.findByStatusCode(HpatReferStatus.ACTIVE,
 				pageRequest);
+		
+		if(optReferRejectPages.isPresent()){
+			long totalcount = optReferRejectPages.get().getContent().stream().count();
+			List<ReferRejectListDTO> dtoList = optReferRejectPages.get().getContent().stream()
+					.map(referReject -> constructReferRejectListDTO(referReject))
+					.collect(Collectors.toList());
+			
+			map.put("totalcount", totalcount);
+			map.put("referList", dtoList);
+			
+			return map;
+		}else{
+			throw new ResultsNotFoundException("No Active refer rejects were found!");
+		}
 
-		long totalcount = referRejectPages.getTotalElements();
-
-		if (referRejectPages != null && !referRejectPages.getContent().isEmpty()) {
+		
+		/*if (referRejectPages != null && !referRejectPages.getContent().isEmpty()) {
 			List<ReferRejectListDTO> dtoList = new ArrayList<ReferRejectListDTO>();
 			referRejectPages.getContent().forEach(referReject -> {
 				dtoList.add(referReject.constructReferRejectListDTO());
 			});
-			map.put("totalcount", totalcount);
-			map.put("referList", dtoList);
+			
 			return map;
 		} else {
-			throw new ResultsNotFoundException("No refer rejects were found!");
-		}
+			
+		}*/
 	}
+	
+	private ReferRejectListDTO constructReferRejectListDTO(ReferReject referReject) {
+		ReferRejectListDTO listDTO = new ReferRejectListDTO();
+		listDTO.setReferId(referReject.getReferRejectID());
+		
+		if(referReject.getBaseCommonGateInOut().isPresent()){
+			
+			BaseCommonGateInOutAttribute baseCommonGateInOut = referReject.getBaseCommonGateInOut().get();
+			listDTO.setPmHeadNo(baseCommonGateInOut.getPmHeadNo());
+			
+			Client client = baseCommonGateInOut.getGateInClient();
+			if (client != null) {
+				listDTO.setBoothNo(client.getUnitNo());
+			}
+			
+			Card card = baseCommonGateInOut.getCard();
+			if (card != null) {
+				Company company = card.getCompany();
+				if (company != null) {
+					listDTO.setHaulierCompany(company.getCompanyName());
+				}
+
+				SmartCardUser smartCardUser = card.getSmartCardUser();
+				if (card != null) {
+					listDTO.setDriverName(smartCardUser.getPersonName()); 
+				}
+			}
+		}
+
+		if (referReject.getReferDateTime() != null) {
+			listDTO.setReferDateTime(referReject.getReferDateTime());
+		}
+		
+		referReject.getReferRejectDetails().get().forEach(referRejectDetail -> {
+			if (StringUtils.isBlank(listDTO.getContNo01())) {
+				listDTO.setContNo01(referRejectDetail.getContainerNo());
+			} else {
+				listDTO.setContNo02(referRejectDetail.getContainerNo());
+			}
+
+			listDTO.setDoubleBooking(referRejectDetail.getDoubleBooking());
+
+		});
+		return listDTO;
+	}
+
 
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
 	public ReferRejectDTO getReferRejectByReferId(long referId) {

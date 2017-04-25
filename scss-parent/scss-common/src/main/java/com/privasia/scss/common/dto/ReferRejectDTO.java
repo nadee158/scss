@@ -10,9 +10,6 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.privasia.scss.common.enums.HpatReferStatus;
 import com.privasia.scss.common.util.DateUtil;
 
@@ -189,18 +186,6 @@ public class ReferRejectDTO implements Serializable {
 		//this.referRejectDetails.get().add(new ReferRejectDetailDTO().initializeWithDefaultValues());
 		return this;
 
-	}
-	
-	public static void main(String args[]){
-		
-		ObjectMapper mapper = new ObjectMapper().registerModule(new Jdk8Module());
-		try {
-			String json = mapper.writeValueAsString(new ReferRejectDTO().initializeWithDefaultValues());
-			System.out.println(json);
-		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 
 }

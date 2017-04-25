@@ -11,7 +11,7 @@ import com.privasia.scss.core.model.ReferReject;
 
 public interface ReferRejectRepository extends Repository<ReferReject, Long> {
 
-	public Page<ReferReject> findByStatusCode(HpatReferStatus statusCode, Pageable pageRequest);
+	public Optional<Page<ReferReject>> findByStatusCode(HpatReferStatus statusCode, Pageable pageRequest);
 
 	public Optional<ReferReject> findOne(Long id);
 

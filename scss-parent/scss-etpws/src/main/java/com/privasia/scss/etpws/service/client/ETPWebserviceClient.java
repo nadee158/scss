@@ -51,7 +51,7 @@ public class ETPWebserviceClient extends WebServiceGatewaySupport {
 		return null;
 	}
 
-	public void updateHpatStatus(String bookingId) {
+	public void updateHpabStatus(String bookingId) {
 		try {
 			ObjectFactory objFac = new ObjectFactory();
 			UpdateHpatStatusRequestType reqObj = new UpdateHpatStatusRequestType();
