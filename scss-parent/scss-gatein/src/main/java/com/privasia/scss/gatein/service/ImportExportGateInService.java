@@ -241,7 +241,7 @@ public class ImportExportGateInService {
   }
   
   // take this to refer service
-  private void updateFromReferReject(ReferReject referReject, GateInReponse gateInReponse) {
+  private void updateFromReferReject(ReferReject referReject, GateInReponse gateInReponse) { 
 
     // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% CANT FIND FIELDS IN ExportContainer to set following fields
     // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

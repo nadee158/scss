@@ -52,8 +52,8 @@ import com.privasia.scss.core.repository.CardRepository;
 import com.privasia.scss.core.repository.CardUsageRepository;
 import com.privasia.scss.core.repository.ClientRepository;
 import com.privasia.scss.core.repository.GatePassRepository;
-import com.privasia.scss.core.repository.HPATBookingDetailRepository;
-import com.privasia.scss.core.repository.HPATBookingRepository;
+import com.privasia.scss.core.repository.HPABBookingDetailRepository;
+import com.privasia.scss.core.repository.HPABBookingRepository;
 import com.privasia.scss.core.repository.ISOCodeRepository;
 import com.privasia.scss.core.repository.PrintEirRepository;
 import com.privasia.scss.core.repository.SystemUserRepository;
@@ -78,7 +78,7 @@ public class GatePassService {
   private WDCGlobalSettingRepository wdcGlobalSettingRepository;
 
   @Autowired
-  private HPATBookingDetailRepository hpatBookingDetailRepository;
+  private HPABBookingDetailRepository hpatBookingDetailRepository;
 
   private CardRepository cardRepository;
 
@@ -101,7 +101,7 @@ public class GatePassService {
   private CardUsageRepository cardUsageRepository;
 
   @Autowired
-  private HPATBookingRepository hpatBookingRepository;
+  private HPABBookingRepository hpatBookingRepository;
 
   private CosmosImportRepository cosmosImportRepository;
 
@@ -882,11 +882,11 @@ public class GatePassService {
 
         gatePass.setSealAttribute(sealAttribute);
 
-        if (container.getBaseCommonGateInOutAttribute().getHpatBooking().isPresent()) {
+        if (container.getBaseCommonGateInOutAttribute().getHpabBooking().isPresent()) {
           Optional<HPABBooking> hpatBooking = hpatBookingRepository
-              .findOne(container.getBaseCommonGateInOutAttribute().getHpatBooking().get());
+              .findOne(container.getBaseCommonGateInOutAttribute().getHpabBooking().get());
           if (hpatBooking.isPresent()) {
-            baseCommonGateInOutAttribute.setHpatBooking(hpatBooking.get());
+            baseCommonGateInOutAttribute.setHpabBooking(Optional.of(hpatBooking.get()));
           }
         }
         commonGateInOut.setRejectReason(StringUtils.upperCase(container.getCommonGateInOut().getRejectReason()));

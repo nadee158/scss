@@ -274,7 +274,7 @@ public class ImportExportGateOutService {
 		
 		if (StringUtils.isEmpty(gateOutWriteRequest.getImpExpFlag()))
 			throw new BusinessException("Invalid GateOutWriteRequest Empty ImpExpFlag");
-		ImpExpFlagStatus impExpFlag = ImpExpFlagStatus.fromValue(gateOutWriteRequest.getImpExpFlag());
+		ImpExpFlagStatus impExpFlag = ImpExpFlagStatus.fromValue(gateOutWriteRequest.getImpExpFlag()); 
 		
 		importExportCommonGateOutBusinessService.isValidGateOutLane(client, gateOutWriteRequest);
 

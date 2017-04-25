@@ -23,7 +23,7 @@ public class ReferRejectDetailDTO implements Serializable {
 
 	private String containerIsoCode;
 
-	private CommonSealDTO seal;
+	private Optional<CommonSealDTO> seal;
 
 	private String remarks;
 
@@ -52,7 +52,7 @@ public class ReferRejectDetailDTO implements Serializable {
 
 	private CommonSolasDTO solas;
 
-	private Set<ReferRejectReasonDTO> referRejectReasons;
+	private Optional<Set<ReferRejectReasonDTO>> referRejectReasons;
 
 	private static final long serialVersionUID = 1L;
 
@@ -81,13 +81,21 @@ public class ReferRejectDetailDTO implements Serializable {
 	}
 
 	public Optional<CommonSealDTO> getSeal() {
-		return Optional.ofNullable(seal);
+		return seal;
 	}
 
-	public void setSeal(CommonSealDTO seal) {
+	public void setSeal(Optional<CommonSealDTO> seal) {
 		this.seal = seal;
 	}
+	
+	public Optional<Set<ReferRejectReasonDTO>> getReferRejectReasons() {
+		return referRejectReasons;
+	}
 
+	public void setReferRejectReasons(Optional<Set<ReferRejectReasonDTO>> referRejectReasons) {
+		this.referRejectReasons = referRejectReasons;
+	}
+	
 	public String getRemarks() {
 		return remarks;
 	}
@@ -192,14 +200,6 @@ public class ReferRejectDetailDTO implements Serializable {
 		this.measuredWeightBridge = measuredWeightBridge;
 	}
 
-	public Optional<Set<ReferRejectReasonDTO>> getReferRejectReasons() {
-		return Optional.ofNullable(referRejectReasons);
-	}
-
-	public void setReferRejectReasons(Set<ReferRejectReasonDTO> referRejectReasons) {
-		this.referRejectReasons = referRejectReasons;
-	}
-
 	public Long getReferRejectID() {
 		return referRejectID;
 	}
@@ -218,7 +218,7 @@ public class ReferRejectDetailDTO implements Serializable {
 		this.referRejectDetailID = 11l;
 		this.containerNo = StringUtils.EMPTY;
 		this.containerIsoCode = StringUtils.EMPTY;
-		this.seal = new CommonSealDTO().initializeWithDefaultValues();
+		this.seal = Optional.of(new CommonSealDTO().initializeWithDefaultValues());
 		this.remarks = StringUtils.EMPTY;
 		this.status = StringUtils.EMPTY;
 		this.supervisorRemarks = StringUtils.EMPTY;
@@ -232,9 +232,9 @@ public class ReferRejectDetailDTO implements Serializable {
 		this.position = StringUtils.EMPTY;
 		this.measuredWeightBridge = 450;
 		this.solas = new CommonSolasDTO().initializeWithDefaultValues();
-		this.referRejectReasons = new HashSet<ReferRejectReasonDTO>();
-		this.referRejectReasons.add(new ReferRejectReasonDTO().initializeWithDefaultValues());
-		this.referRejectReasons.add(new ReferRejectReasonDTO().initializeWithDefaultValues());
+		this.referRejectReasons = Optional.of(new HashSet<ReferRejectReasonDTO>());
+		this.referRejectReasons.get().add(new ReferRejectReasonDTO().initializeWithDefaultValues());
+		this.referRejectReasons.get().add(new ReferRejectReasonDTO().initializeWithDefaultValues());
 		return this;
 	}
 

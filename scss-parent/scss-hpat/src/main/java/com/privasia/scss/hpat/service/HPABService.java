@@ -29,7 +29,7 @@ import com.privasia.scss.core.model.Card;
 import com.privasia.scss.core.model.HPABBooking;
 import com.privasia.scss.core.predicate.HPABBookingPredicates;
 import com.privasia.scss.core.repository.CardRepository;
-import com.privasia.scss.core.repository.HPATBookingRepository;
+import com.privasia.scss.core.repository.HPABBookingRepository;
 import com.privasia.scss.core.repository.WDCGlobalSettingRepository;
 import com.privasia.scss.etpws.service.client.ETPWebserviceClient;
 import com.querydsl.core.types.ExpressionUtils;
@@ -43,7 +43,7 @@ import com.querydsl.core.types.Predicate;
 @Service("hpabService")
 public class HPABService {
 
-	private HPATBookingRepository hpatBookingRepository;
+	private HPABBookingRepository hpabBookingRepository;
 
 	private CardRepository cardRepository;
 
@@ -52,10 +52,10 @@ public class HPABService {
 	private WDCGlobalSettingRepository wdcGlobalSettingRepository;
 
 	@Autowired
-	public void setHpatBookingRepository(HPATBookingRepository hpatBookingRepository) {
-		this.hpatBookingRepository = hpatBookingRepository;
+	public void setHpabBookingRepository(HPABBookingRepository hpabBookingRepository) {
+		this.hpabBookingRepository = hpabBookingRepository;
 	}
-
+	
 	@Autowired
 	public void setCardRepository(CardRepository cardRepository) {
 		this.cardRepository = cardRepository;
@@ -79,14 +79,14 @@ public class HPABService {
 																// optional
 		if (card.isPresent()) {
 			Predicate byCardNo = HPABBookingPredicates.byCardNo(String.valueOf(card.get().getCardNo()));
-			Predicate byBookingStatus = HPABBookingPredicates.byBookingStatus(HpatReferStatus.ACTIVE.getValue());
+			Predicate byBookingStatus = HPABBookingPredicates.byBookingStatus(HpatReferStatus.ACTIVE.getValue()); 
 			Predicate byAppointmentEndDate = HPABBookingPredicates.byAppointmentEndDate(date);
 			Predicate byBookingTypes = HPABBookingPredicates.byBookingDetailTypes(bookingTypes);
 			Predicate condition = ExpressionUtils.allOf(byCardNo, byBookingStatus, byAppointmentEndDate,
 					byBookingTypes);
 			OrderSpecifier<LocalDateTime> sortSpec = HPABBookingPredicates.orderByAppointmentStartDateAsc();
 
-			Iterable<HPABBooking> bookingList = hpatBookingRepository.findAll(condition, sortSpec);
+			Iterable<HPABBooking> bookingList = hpabBookingRepository.findAll(condition, sortSpec);
 
 			bookingList.forEach((HPABBooking b) -> {
 				dtoList.add(b.constructHpatDto());
@@ -148,7 +148,7 @@ public class HPABService {
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
 	public TransactionDTO getEtpHpab4ImpAndExp(String bookingID) {
 
-		Optional<HPABBooking> hpatBooking = hpatBookingRepository.findByBookingIDAndStatus(bookingID,
+		Optional<HPABBooking> hpatBooking = hpabBookingRepository.findByBookingIDAndStatus(bookingID,
 				HpatReferStatus.ACTIVE);
 
 		if (hpatBooking.isPresent()) {
@@ -229,7 +229,7 @@ public class HPABService {
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
 	public GateInReponse populateHpabForImpExp(GateInReponse gateInReponse, String hpabSeqId) {
 
-		Optional<HPABBooking> hpatBookingOpt = hpatBookingRepository.findByBookingIDAndStatus(hpabSeqId,
+		Optional<HPABBooking> hpatBookingOpt = hpabBookingRepository.findByBookingIDAndStatus(hpabSeqId,
 				HpatReferStatus.ACTIVE);
 
 		HPABBooking booking = hpatBookingOpt
@@ -310,7 +310,7 @@ public class HPABService {
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRES_NEW, readOnly = false)
 	public void updateHPABAfterGateIn(String hpabID) {
 
-		Optional<HPABBooking> hpatBookingOpt = hpatBookingRepository.findByBookingIDAndStatus(hpabID,
+		Optional<HPABBooking> hpatBookingOpt = hpabBookingRepository.findByBookingIDAndStatus(hpabID,
 				HpatReferStatus.ACTIVE);
 
 		HPABBooking booking = hpatBookingOpt
@@ -318,9 +318,9 @@ public class HPABService {
 
 		booking.setStatus(HpatReferStatus.COMPLETE);
 
-		hpatBookingRepository.save(booking);
+		hpabBookingRepository.save(booking);
 
-		Optional<String> optGlobalString = wdcGlobalSettingRepository.fetchGlobalStringByGlobalCode("ETP_HPAT");
+		Optional<String> optGlobalString = wdcGlobalSettingRepository.fetchGlobalStringByGlobalCode("ETP_HPAT"); 
 
 		if (optGlobalString.isPresent()) {
 

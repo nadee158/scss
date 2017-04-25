@@ -161,8 +161,8 @@ public class ReferReject extends AuditEntity implements Serializable {
 		return Optional.ofNullable(baseCommonGateInOut);
 	}
 
-	public void setBaseCommonGateInOut(BaseCommonGateInOutAttribute baseCommonGateInOut) {
-		this.baseCommonGateInOut = baseCommonGateInOut;
+	public void setBaseCommonGateInOut(Optional<BaseCommonGateInOutAttribute> optBaseCommonGateInOut) {
+		this.baseCommonGateInOut = optBaseCommonGateInOut.orElse(null);
 	}
 
 	public LocalDateTime getReferDateTime() {
@@ -220,8 +220,8 @@ public class ReferReject extends AuditEntity implements Serializable {
 		return Optional.ofNullable(referRejectDetails);
 	}
 
-	public void setReferRejectDetails(Set<ReferRejectDetail> referRejectDetails) {
-		this.referRejectDetails = referRejectDetails;
+	public void setReferRejectDetails(Optional<Set<ReferRejectDetail>> optReferRejectDetails) {
+		this.referRejectDetails = optReferRejectDetails.orElse(null);
 	}
 
 	public ReferRejectListDTO constructReferRejectListDTO() {

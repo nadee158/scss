@@ -10,7 +10,9 @@ import org.modelmapper.spi.Mapping;
 import org.modelmapper.spi.MappingContext;
 import org.modelmapper.spi.PropertyInfo;
 import org.modelmapper.spi.PropertyMapping;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ModelMapOptionalConverter implements ConditionalConverter<Optional, Optional> {
 
   public MatchResult match(Class<?> sourceType, Class<?> destinationType) {

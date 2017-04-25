@@ -161,8 +161,8 @@ public class ReferRejectDetail extends AuditEntity implements Serializable {
 		return Optional.ofNullable(seal);
 	}
 
-	public void setSeal(CommonSealAttribute seal) {
-		this.seal = seal;
+	public void setSeal(Optional<CommonSealAttribute> optSeal) {
+		this.seal = optSeal.orElse(null);
 	}
 
 	public String getRemarks() {
@@ -270,20 +270,20 @@ public class ReferRejectDetail extends AuditEntity implements Serializable {
 		this.measuredWeightBridge = measuredWeightBridge;
 	}
 
-	public CommonSolasAttribute getSolas() {
-		return solas;
+	public Optional<CommonSolasAttribute> getSolas() {
+		return Optional.ofNullable(solas);
 	}
 
-	public void setSolas(CommonSolasAttribute solas) {
-		this.solas = solas;
+	public void setSolas(Optional<CommonSolasAttribute> optSolas) {
+		this.solas = optSolas.orElse(null);
 	}
 
 	public Optional<Set<ReferRejectReason>> getReferRejectReason() {
 		return Optional.ofNullable(referRejectReason);
 	}
 
-	public void setReferRejectReason(Set<ReferRejectReason> referRejectReason) {
-		this.referRejectReason = referRejectReason;
+	public void setReferRejectReason(Optional<Set<ReferRejectReason>> optReferRejectReason) {
+		this.referRejectReason = optReferRejectReason.orElse(null);
 	}
 
 }

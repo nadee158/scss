@@ -124,16 +124,16 @@ public class ExportGateOutService {
         }
 
         // changed gateout client to gatein client
-        if (export.getBaseCommonGateInOutAttribute().getGateInClient() != null) {
+        if (export.getBaseCommonGateInOutAttribute().getGateInClient() != null) { 
           ClientDTO gateInClient = new ClientDTO();
           modelMapper.map(export.getBaseCommonGateInOutAttribute().getGateInClient(), gateInClient);
           gateOutReponse.setGateInLaneNo(export.getBaseCommonGateInOutAttribute().getGateInClient().getLaneNo());
           exportContainer.getBaseCommonGateInOutAttribute().setGateInClient(gateInClient);
         }
 
-        if (export.getBaseCommonGateInOutAttribute().getHpatBooking().isPresent()) {
+        if (export.getBaseCommonGateInOutAttribute().getHpabBooking().isPresent()) {
           exportContainer.getBaseCommonGateInOutAttribute()
-              .setHpatBooking(export.getBaseCommonGateInOutAttribute().getHpatBooking().get().getBookingID());
+              .setHpabBooking(Optional.of(export.getBaseCommonGateInOutAttribute().getHpabBooking().get().getBookingID()));
         }
 
         exportContainer.getBaseCommonGateInOutAttribute()

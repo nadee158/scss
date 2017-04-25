@@ -36,104 +36,115 @@ import com.privasia.scss.hpat.service.HPABService;
 @Transactional()
 public class ExpressService {
 
-  private Logger log = Logger.getLogger(this.getClass());
+	private Logger log = Logger.getLogger(this.getClass());
 
-  @Autowired
-  private HPABService hpatService;
+	private HPABService hpabService;
 
-  @Autowired
-  private HDBSService hdbsService;
+	private HDBSService hdbsService;
 
-  @Autowired
-  private CommonCardService commonCardService;
+	private CommonCardService commonCardService;
+	
+	@Autowired
+	public void setHpabService(HPABService hpabService) {
+		this.hpabService = hpabService;
+	}
+	
+	@Autowired
+	public void setHdbsService(HDBSService hdbsService) {
+		this.hdbsService = hdbsService;
+	}
+	
+	@Autowired
+	public void setCommonCardService(CommonCardService commonCardService) {
+		this.commonCardService = commonCardService;
+	}
 
-  public BookingInfoDTO getBookingInfo(String cardNo) {
-    BookingInfoDTO dto = new BookingInfoDTO();
-    try {
-      Card card = commonCardService.getCardByCardNumber(Long.parseLong(cardNo));
-      boolean isCardValid = commonCardService.checkIfValidCard(card);
-      if (isCardValid) {
-        if (!(card.getCompany() == null || card.getCompany().getCompanyType() == null)) {
-          if (StringUtils.equals(card.getCompany().getCompanyType().getValue(), CompanyType.HAULAGE.getValue())) {
-        	InProgressTrxDTO inProgressTrxDTO = commonCardService.isTrxInProgress(card.getCardID());
-            if (!inProgressTrxDTO.isInProgress()) {
-              log.error("Seq:" + card.getCardID());
+	public BookingInfoDTO getBookingInfo(String cardNo) {
+		BookingInfoDTO dto = new BookingInfoDTO();
+		try {
+			Card card = commonCardService.getCardByCardNumber(Long.parseLong(cardNo));
+			boolean isCardValid = commonCardService.checkIfValidCard(card);
+			if (isCardValid) {
+				if (!(card.getCompany() == null || card.getCompany().getCompanyType() == null)) {
+					if (StringUtils.equals(card.getCompany().getCompanyType().getValue(),
+							CompanyType.HAULAGE.getValue())) {
+						InProgressTrxDTO inProgressTrxDTO = commonCardService.isTrxInProgress(card.getCardID());
+						if (!inProgressTrxDTO.isInProgress()) {
+							log.error("Seq:" + card.getCardID());
 
-              if (!(card.getSmartCardUser() == null || card.getCompany() == null)) {
+							if (!(card.getSmartCardUser() == null || card.getCompany() == null)) {
 
-                SmartCardUser smartCardUser = card.getSmartCardUser();
-                dto.setDriverName(smartCardUser.getPersonName());
-                dto.setDriverPhoto(smartCardUser.getPhoto());
-                dto.setCompanyName(card.getCompany().getCompanyName());
+								SmartCardUser smartCardUser = card.getSmartCardUser();
+								dto.setDriverName(smartCardUser.getPersonName());
+								dto.setDriverPhoto(smartCardUser.getPhoto());
+								dto.setCompanyName(card.getCompany().getCompanyName());
 
-                List<String> bookingTypes = new ArrayList<String>();
-                bookingTypes.add(BookingType.IMPORT.getValue());
-                bookingTypes.add(BookingType.IMPORT_ITT.getValue());
+								List<String> bookingTypes = new ArrayList<String>();
+								bookingTypes.add(BookingType.IMPORT.getValue());
+								bookingTypes.add(BookingType.IMPORT_ITT.getValue());
 
-                List<BookingDTO> bookingDTos = new ArrayList<BookingDTO>();
+								List<BookingDTO> bookingDTos = new ArrayList<BookingDTO>();
 
-                List<HpatDto> hpats =
-                    hpatService.findEtpHpab4ImpAndExp(card.getCardID(), LocalDateTime.now(), bookingTypes);
-                if (!(hpats == null || hpats.isEmpty())) {
-                  hpats.forEach(hpat -> {
-                    bookingDTos.add(new BookingDTO(hpat));
-                  });
-                }
+								List<HpatDto> hpats = hpabService.findEtpHpab4ImpAndExp(card.getCardID(),
+										LocalDateTime.now(), bookingTypes);
+								if (!(hpats == null || hpats.isEmpty())) {
+									hpats.forEach(hpat -> {
+										bookingDTos.add(new BookingDTO(hpat));
+									});
+								}
 
-                HDBSBkgGridDTO gridDto = hdbsService.createPredicatesAndFindHDBS(card.getCardNo());
-                if (!(gridDto == null || gridDto.getHdbsBkgDetailGridDTOList() == null
-                    || gridDto.getHdbsBkgDetailGridDTOList().isEmpty())) {
-                  gridDto.getHdbsBkgDetailGridDTOList().forEach(gridDtoItem -> {
-                    bookingDTos.add(new BookingDTO(gridDtoItem));
-                  });
-                }
+								HDBSBkgGridDTO gridDto = hdbsService.createPredicatesAndFindHDBS(card.getCardNo());
+								if (!(gridDto == null || gridDto.getHdbsBkgDetailGridDTOList() == null
+										|| gridDto.getHdbsBkgDetailGridDTOList().isEmpty())) {
+									gridDto.getHdbsBkgDetailGridDTOList().forEach(gridDtoItem -> {
+										bookingDTos.add(new BookingDTO(gridDtoItem));
+									});
+								}
 
-                if (!(bookingDTos.isEmpty())) {
+								if (!(bookingDTos.isEmpty())) {
 
-                  dto.setBookings(bookingDTos);
-                  dto.setMessageCode(BookingInfoDTO.OK);
-                  dto.setMessageDesc("");
+									dto.setBookings(bookingDTos);
+									dto.setMessageCode(BookingInfoDTO.OK);
+									dto.setMessageDesc("");
 
-                } else {
+								} else {
 
-                  dto.setMessageCode(BookingInfoDTO.NOK);
-                  dto.setMessageDesc(BookingInfoDTO.NO_BOOKING_MESSAGE);
-                }
+									dto.setMessageCode(BookingInfoDTO.NOK);
+									dto.setMessageDesc(BookingInfoDTO.NO_BOOKING_MESSAGE);
+								}
 
-              } else {
-                dto.setMessageCode(BookingInfoDTO.NOK);
-                dto.setMessageDesc("Smart card user or company is not available!");
-              }
-            } else {
-              dto.setMessageCode(BookingInfoDTO.NOK);
-              dto.setMessageDesc(BookingInfoDTO.IMPEXP_NOT_COMPLETED_MESSAGE);
-            }
-          } else {
-            dto.setMessageCode(BookingInfoDTO.NOK);
-            dto.setMessageDesc(CommonUtil.getMessageCode("ERR_MSG_066"));
-          }
-        } else {
-          dto.setMessageCode(BookingInfoDTO.NOK);
-          dto.setMessageDesc(CommonUtil.getMessageCode("ERR_MSG_066"));
-        }
-      } else {
-        if (StringUtils.equals(card.getCardStatus().getValue(), CardStatus.BLACKLIST.getValue())) {
-          dto.setMessageCode(BookingInfoDTO.NOK);
-          dto.setMessageDesc(BookingInfoDTO.BLACKLISTED_CARD_MESSAGE);
-        } else {
-          dto.setMessageCode(BookingInfoDTO.NOK);
-          dto.setMessageDesc(BookingInfoDTO.INVALID_CARD_MESSAGE);
-        }
-      }
-    } catch (ResultsNotFoundException e) {
-      dto.setMessageCode(BookingInfoDTO.NOK);
-      dto.setMessageDesc(BookingInfoDTO.CARD_NOT_FOUND_MESSAGE);
-    } catch (Exception e) {
-      throw new BusinessException(e.getMessage());
-    }
-    return dto;
-  }
-
-
+							} else {
+								dto.setMessageCode(BookingInfoDTO.NOK);
+								dto.setMessageDesc("Smart card user or company is not available!");
+							}
+						} else {
+							dto.setMessageCode(BookingInfoDTO.NOK);
+							dto.setMessageDesc(BookingInfoDTO.IMPEXP_NOT_COMPLETED_MESSAGE);
+						}
+					} else {
+						dto.setMessageCode(BookingInfoDTO.NOK);
+						dto.setMessageDesc(CommonUtil.getMessageCode("ERR_MSG_066"));
+					}
+				} else {
+					dto.setMessageCode(BookingInfoDTO.NOK);
+					dto.setMessageDesc(CommonUtil.getMessageCode("ERR_MSG_066"));
+				}
+			} else {
+				if (StringUtils.equals(card.getCardStatus().getValue(), CardStatus.BLACKLIST.getValue())) {
+					dto.setMessageCode(BookingInfoDTO.NOK);
+					dto.setMessageDesc(BookingInfoDTO.BLACKLISTED_CARD_MESSAGE);
+				} else {
+					dto.setMessageCode(BookingInfoDTO.NOK);
+					dto.setMessageDesc(BookingInfoDTO.INVALID_CARD_MESSAGE);
+				}
+			}
+		} catch (ResultsNotFoundException e) {
+			dto.setMessageCode(BookingInfoDTO.NOK);
+			dto.setMessageDesc(BookingInfoDTO.CARD_NOT_FOUND_MESSAGE);
+		} catch (Exception e) {
+			throw new BusinessException(e.getMessage());
+		}
+		return dto;
+	}
 
 }

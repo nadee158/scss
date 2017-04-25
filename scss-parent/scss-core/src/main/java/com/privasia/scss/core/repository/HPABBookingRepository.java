@@ -14,7 +14,7 @@ import com.privasia.scss.core.model.HPABBooking;
  * @author Janaka
  *
  */
-public interface HPATBookingRepository
+public interface HPABBookingRepository
     extends BaseRepository<HPABBooking, String>, QueryDslPredicateExecutor<HPABBooking> {
 
   Optional<HPABBooking> findByBookingIDAndStatus(String bookingID, HpatReferStatus active);

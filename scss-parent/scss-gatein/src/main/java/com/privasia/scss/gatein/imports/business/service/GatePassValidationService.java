@@ -75,7 +75,7 @@ public class GatePassValidationService {
 	}
 
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-	public void validateGatePass(Long cardIdSeq, Long gatePassNo, boolean checkPreArrival, String hpatSeqId,
+	public void validateGatePass(Long cardIdSeq, Long gatePassNo, boolean checkPreArrival, String hpabSeqId,
 			String truckHeadNo) {
 
 		TransactionStatus eirStatus = null;
@@ -84,7 +84,7 @@ public class GatePassValidationService {
 
 		log.info("------Gate Pass Validate Inputs ------" + " gatePassNo :" + gatePassNo + " truckHeadNo :"
 				+ truckHeadNo + " cardIdSeq :" + cardIdSeq + " checkPreArrival : " + checkPreArrival + " hpatSeqId :"
-				+ hpatSeqId);
+				+ hpabSeqId);
 		Optional<GatePass> scssGatePassOpt = gatePassRepository.findByGatePassNo(gatePassNo);
 
 		GatePass gatePass = scssGatePassOpt

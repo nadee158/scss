@@ -10,6 +10,9 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.privasia.scss.common.enums.HpatReferStatus;
 import com.privasia.scss.common.util.DateUtil;
 
@@ -27,7 +30,7 @@ public class ReferRejectDTO implements Serializable {
 
 	private String statusCode;
 
-	private BaseCommonGateInOutDTO baseCommonGateInOut;
+	private Optional<BaseCommonGateInOutDTO> baseCommonGateInOut;
 
 	private Boolean transactionSlipPrinted;
 
@@ -44,7 +47,7 @@ public class ReferRejectDTO implements Serializable {
 
 	private Boolean pmVerified;
 
-	private Set<ReferRejectDetailDTO> referRejectDetails;
+	private Optional<Set<ReferRejectDetailDTO>> referRejectDetails;
 
 	public ReferRejectDTO() {
 		super();
@@ -139,18 +142,18 @@ public class ReferRejectDTO implements Serializable {
 	}
 
 	public Optional<Set<ReferRejectDetailDTO>> getReferRejectDetails() {
-		return Optional.ofNullable(referRejectDetails);
+		return referRejectDetails;
 	}
 
-	public void setReferRejectDetails(Set<ReferRejectDetailDTO> referRejectDetails) {
+	public void setReferRejectDetails(Optional<Set<ReferRejectDetailDTO>> referRejectDetails) {
 		this.referRejectDetails = referRejectDetails;
 	}
 
 	public Optional<BaseCommonGateInOutDTO> getBaseCommonGateInOut() {
-		return Optional.ofNullable(baseCommonGateInOut);
+		return baseCommonGateInOut;
 	}
 
-	public void setBaseCommonGateInOut(BaseCommonGateInOutDTO baseCommonGateInOut) {
+	public void setBaseCommonGateInOut(Optional<BaseCommonGateInOutDTO> baseCommonGateInOut) {
 		this.baseCommonGateInOut = baseCommonGateInOut;
 	}
 
@@ -173,7 +176,7 @@ public class ReferRejectDTO implements Serializable {
 		this.expWeightBridge = 4500;
 		this.expNetWeight = 250;
 		this.statusCode = HpatReferStatus.ACTIVE.getValue();
-		this.baseCommonGateInOut = new BaseCommonGateInOutDTO().initializeWithDefaultValues();
+		//this.baseCommonGateInOut = new BaseCommonGateInOutDTO().initializeWithDefaultValues();
 		this.transactionSlipPrinted = false;
 		this.referDateTime = LocalDateTime.now();
 		this.pmWeight = 4500;
@@ -181,11 +184,23 @@ public class ReferRejectDTO implements Serializable {
 		this.trailerPlateNo = "";
 		this.axleVerified = true;
 		this.pmVerified = true;
-		this.referRejectDetails = new HashSet<ReferRejectDetailDTO>();
-		this.referRejectDetails.add(new ReferRejectDetailDTO().initializeWithDefaultValues());
-		this.referRejectDetails.add(new ReferRejectDetailDTO().initializeWithDefaultValues());
+		this.referRejectDetails = Optional.of(new HashSet<ReferRejectDetailDTO>());
+		this.referRejectDetails.get().add(new ReferRejectDetailDTO().initializeWithDefaultValues());
+		//this.referRejectDetails.get().add(new ReferRejectDetailDTO().initializeWithDefaultValues());
 		return this;
 
+	}
+	
+	public static void main(String args[]){
+		
+		ObjectMapper mapper = new ObjectMapper().registerModule(new Jdk8Module());
+		try {
+			String json = mapper.writeValueAsString(new ReferRejectDTO().initializeWithDefaultValues());
+			System.out.println(json);
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }

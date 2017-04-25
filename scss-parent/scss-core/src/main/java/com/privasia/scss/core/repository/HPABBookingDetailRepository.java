@@ -4,7 +4,7 @@ import com.privasia.scss.common.enums.BookingType;
 import com.privasia.scss.common.enums.HpatReferStatus;
 import com.privasia.scss.core.model.HPABBookingDetail;
 
-public interface HPATBookingDetailRepository extends BaseRepository<HPABBookingDetail, Long> {
+public interface HPABBookingDetailRepository extends BaseRepository<HPABBookingDetail, Long> {
 
   HPABBookingDetail findByContainerNumberAndBookingTypeAndHpatBooking_StatusAndHpatBooking_CardNo(String containerNo,
       BookingType import1, HpatReferStatus active, String cardNo);

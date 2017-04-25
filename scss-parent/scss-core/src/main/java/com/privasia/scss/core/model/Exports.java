@@ -5,6 +5,7 @@ package com.privasia.scss.core.model;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import javax.persistence.AssociationOverride;
 import javax.persistence.AssociationOverrides;
@@ -1155,7 +1156,7 @@ public class Exports extends AuditEntity implements Serializable {
 	}
 
 	public void prepareForInsertFromOpus(SystemUser gateInClerk, Card card, Client gateInClient, ShipSCN scn,
-			HPABBooking hpatBooking, DamageCodeRepository damageCodeRepository) {
+			HPABBooking hpabBooking, DamageCodeRepository damageCodeRepository) {
 		if (this.getBaseCommonGateInOutAttribute() == null) {
 			this.setBaseCommonGateInOutAttribute(new BaseCommonGateInOutAttribute());
 		}
@@ -1348,7 +1349,7 @@ public class Exports extends AuditEntity implements Serializable {
 		this.setDgDescription(CommonUtil.changeCase(this.dgDescription, CommonUtil.LOWER_CASE));
 		this.setHdlGoodsDescription(CommonUtil.changeCase(this.hdlGoodsDescription, CommonUtil.LOWER_CASE));
 		this.setCardUsage(cardUsage);
-		this.getBaseCommonGateInOutAttribute().setHpatBooking(hpatBooking);
+		this.getBaseCommonGateInOutAttribute().setHpabBooking(Optional.of(hpabBooking));
 		calculateWeightPercentages();
 		this.setHpabISOCode(CommonUtil.changeCase(this.hpabISOCode, CommonUtil.UPPER_CASE));
 		this.setCosmosISOCode(CommonUtil.changeCase(this.cosmosISOCode, CommonUtil.UPPER_CASE));

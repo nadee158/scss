@@ -35,7 +35,7 @@ import com.privasia.scss.core.repository.DamageCodeRepository;
 import com.privasia.scss.core.repository.DgDetailRepository;
 import com.privasia.scss.core.repository.ExportsQRepository;
 import com.privasia.scss.core.repository.ExportsRepository;
-import com.privasia.scss.core.repository.HPATBookingRepository;
+import com.privasia.scss.core.repository.HPABBookingRepository;
 import com.privasia.scss.core.repository.ShipCodeRepository;
 import com.privasia.scss.core.repository.ShipSCNRepository;
 import com.privasia.scss.core.repository.WDCGlobalSettingRepository;
@@ -61,7 +61,7 @@ public class ExportGateInService {
 
 	private ExportsQRepository exportsQRepository;
 
-	private HPATBookingRepository hpatBookingRepository;
+	private HPABBookingRepository hpabBookingRepository; 
 
 	private DamageCodeRepository damageCodeRepository;
 
@@ -114,8 +114,8 @@ public class ExportGateInService {
 	}
 
 	@Autowired
-	public void setHPATBookingRepository(HPATBookingRepository hpatBookingRepository) {
-		this.hpatBookingRepository = hpatBookingRepository;
+	public void setHpabBookingRepository(HPABBookingRepository hpabBookingRepository) {
+		this.hpabBookingRepository = hpabBookingRepository;
 	}
 
 	@Autowired
@@ -271,11 +271,11 @@ public class ExportGateInService {
 		if (exportContainerFirstOpt.isPresent()) { 
 			ExportContainer exportContainerFirst = exportContainerFirstOpt.get();
 			if (!(exportContainerFirst.getBaseCommonGateInOutAttribute() == null)) {
-				if (exportContainerFirst.getBaseCommonGateInOutAttribute().getHpatBooking().isPresent()) {
-					hpabBooking = hpatBookingRepository
-							.findOne(exportContainerFirst.getBaseCommonGateInOutAttribute().getHpatBooking().get()).
+				if (exportContainerFirst.getBaseCommonGateInOutAttribute().getHpabBooking().isPresent()) {
+					hpabBooking = hpabBookingRepository
+							.findOne(exportContainerFirst.getBaseCommonGateInOutAttribute().getHpabBooking().get()).
 							orElseThrow(() -> new ResultsNotFoundException("No HPAB Booking found ! : "+
-									exportContainerFirst.getBaseCommonGateInOutAttribute().getHpatBooking().get()));
+									exportContainerFirst.getBaseCommonGateInOutAttribute().getHpabBooking().get()));
 				}
 			}
 		}
@@ -291,7 +291,7 @@ public class ExportGateInService {
 
 			// assign values from header level to container level
 			exportContainer.getBaseCommonGateInOutAttribute().setEirStatus(TransactionStatus.INPROGRESS.getValue());
-			exportContainer.getBaseCommonGateInOutAttribute().setHpatBooking(gateInWriteRequest.getHpatBookingId());
+			exportContainer.getBaseCommonGateInOutAttribute().setHpabBooking(Optional.ofNullable(gateInWriteRequest.getHpatBookingId()));
 			exportContainer.getBaseCommonGateInOutAttribute().setPmHeadNo(gateInWriteRequest.getTruckHeadNo());
 			exportContainer.getBaseCommonGateInOutAttribute().setPmPlateNo(gateInWriteRequest.getTruckPlateNo());
 			exportContainer.getBaseCommonGateInOutAttribute().setTimeGateIn(gateInWriteRequest.getGateInDateTime());

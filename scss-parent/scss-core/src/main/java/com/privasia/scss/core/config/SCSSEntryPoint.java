@@ -58,4 +58,5 @@ public class SCSSEntryPoint {
   public RestTemplate restTemplate(RestTemplateBuilder builder) {
     return builder.build();
   }
+  
 }

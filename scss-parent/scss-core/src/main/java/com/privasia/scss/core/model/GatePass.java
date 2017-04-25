@@ -5,6 +5,7 @@ package com.privasia.scss.core.model;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import javax.persistence.AssociationOverride;
 import javax.persistence.AssociationOverrides;
@@ -40,7 +41,7 @@ import com.privasia.scss.common.util.CommonUtil;
     @AttributeOverride(name = "updateBy", column = @Column(name = "GTP_UPDATE_BY") ),
     @AttributeOverride(name = "dateTimeAdd", column = @Column(name = "GTP_DATECREATE") ),
     @AttributeOverride(name = "dateTimeUpdate", column = @Column(name = "GTP_DATEUPDATE") )})
-public class GatePass extends AuditEntity implements Serializable {
+public class GatePass extends AuditEntity implements Serializable { 
 
   /**
    * 
@@ -559,7 +560,7 @@ public class GatePass extends AuditEntity implements Serializable {
 	  return sealChange;
   }
 
-  public void prepareForInsertFromOpus(Card card, SystemUser gateInClerk, Client gateInClient, HPABBooking hpatBooking) {
+  public void prepareForInsertFromOpus(Card card, SystemUser gateInClerk, Client gateInClient, HPABBooking hpabBooking) {
     if (this.baseCommonGateInOutAttribute == null) {
       this.setBaseCommonGateInOutAttribute(new BaseCommonGateInOutAttribute());
     }
@@ -590,7 +591,7 @@ public class GatePass extends AuditEntity implements Serializable {
     this.setYardPosition(CommonUtil.changeCase(this.yardPosition, CommonUtil.UPPER_CASE));
     this.setBayCode(CommonUtil.changeCase(this.bayCode, CommonUtil.UPPER_CASE));
     this.setPrintEir(printEir);
-    this.getBaseCommonGateInOutAttribute().setHpatBooking(hpatBooking);
+    this.getBaseCommonGateInOutAttribute().setHpabBooking(Optional.of(hpabBooking));
     this.getCommonGateInOut()
         .setRejectReason(CommonUtil.changeCase(this.getCommonGateInOut().getRejectReason(), CommonUtil.UPPER_CASE));
 
