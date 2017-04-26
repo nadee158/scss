@@ -4,55 +4,66 @@ import javax.xml.bind.annotation.XmlElement;
 
 public class GOTTRCINF {
 
-  String MSGTSC;
-  String LANESC;
-  String VMIDSC;
-  String ATDDSC;
-  String ATDTSC;
+	String MSGTSC;
+	String LANESC;
+	String VMIDSC;
+	String ATDDSC;
+	String ATDTSC;
 
-  public String getMSGTSC() {
-    return MSGTSC;
-  }
+	String VMYKSC;
 
-  @XmlElement
-  public void setMSGTSC(String mSGTSC) {
-    MSGTSC = mSGTSC;
-  }
+	public String getMSGTSC() {
+		return MSGTSC;
+	}
 
-  public String getLANESC() {
-    return LANESC;
-  }
+	@XmlElement
+	public void setMSGTSC(String mSGTSC) {
+		MSGTSC = mSGTSC;
+	}
 
-  @XmlElement
-  public void setLANESC(String lANESC) {
-    LANESC = lANESC;
-  }
+	public String getLANESC() {
+		return LANESC;
+	}
 
-  public String getVMIDSC() {
-    return VMIDSC;
-  }
+	@XmlElement
+	public void setLANESC(String lANESC) {
+		LANESC = lANESC;
+	}
 
-  @XmlElement
-  public void setVMIDSC(String vMIDSC) {
-    VMIDSC = vMIDSC;
-  }
+	public String getVMIDSC() {
+		return VMIDSC;
+	}
 
-  public String getATDDSC() {
-    return ATDDSC;
-  }
+	@XmlElement
+	public void setVMIDSC(String vMIDSC) {
+		VMIDSC = vMIDSC;
+	}
 
-  @XmlElement
-  public void setATDDSC(String aTDDSC) {
-    ATDDSC = aTDDSC;
-  }
+	public String getATDDSC() {
+		return ATDDSC;
+	}
 
-  public String getATDTSC() {
-    return ATDTSC;
-  }
+	@XmlElement
+	public void setATDDSC(String aTDDSC) {
+		ATDDSC = aTDDSC;
+	}
 
-  @XmlElement
-  public void setATDTSC(String aTDTSC) {
-    ATDTSC = aTDTSC;
-  }
+	public String getATDTSC() {
+		return ATDTSC;
+	}
+
+	@XmlElement
+	public void setATDTSC(String aTDTSC) {
+		ATDTSC = aTDTSC;
+	}
+
+	public String getVMYKSC() {
+		return VMYKSC;
+	}
+
+	@XmlElement
+	public void setVMYKSC(String vMYKSC) {
+		VMYKSC = vMYKSC;
+	}
 
 }
