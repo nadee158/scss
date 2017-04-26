@@ -42,7 +42,7 @@ public class OpusService implements ExternalContainerInformationService {
   }
 
   @Override
-  public GateInReponse sendGateinRequest(GateInWriteRequest gateInWriteRequest) {
+  public GateInReponse sendGateInRequest(GateInWriteRequest gateInWriteRequest) {
     OpusGateInWriteRequest opusGateInWriteRequest =
         opusGateInWriteService.constructOpusGateInWriteRequest(gateInWriteRequest);
     System.out.println("opusGateInWriteRequest " + gson.toJson(opusGateInWriteRequest));
