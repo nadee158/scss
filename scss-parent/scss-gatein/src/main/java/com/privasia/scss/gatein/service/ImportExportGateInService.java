@@ -6,7 +6,6 @@ import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationServiceException;
@@ -19,9 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.gson.Gson;
 import com.privasia.scss.common.annotation.OpenGate;
 import com.privasia.scss.common.business.ExternalContainerInformationService;
-import com.privasia.scss.common.dto.BaseCommonGateInOutDTO;
-import com.privasia.scss.common.dto.CommonSealDTO;
-import com.privasia.scss.common.dto.CommonSolasDTO;
+import com.privasia.scss.common.dto.ExportContainer;
 import com.privasia.scss.common.dto.GateInReponse;
 import com.privasia.scss.common.dto.GateInRequest;
 import com.privasia.scss.common.dto.GateInWriteRequest;
@@ -32,11 +29,9 @@ import com.privasia.scss.core.exception.BusinessException;
 import com.privasia.scss.core.exception.ResultsNotFoundException;
 import com.privasia.scss.core.model.Card;
 import com.privasia.scss.core.model.Client;
-import com.privasia.scss.core.model.ReferReject;
 import com.privasia.scss.core.model.SystemUser;
 import com.privasia.scss.core.repository.CardRepository;
 import com.privasia.scss.core.repository.ClientRepository;
-import com.privasia.scss.core.repository.ReferRejectRepository;
 import com.privasia.scss.core.repository.SystemUserRepository;
 import com.privasia.scss.core.security.model.UserContext;
 import com.privasia.scss.core.security.util.SecurityHelper;
@@ -76,9 +71,7 @@ public class ImportExportGateInService {
 
   private SystemUserRepository systemUserRepository;
 
-  private ReferRejectRepository referRejectRepository;
-
-  private ModelMapper modelMapper;
+  private GateInReferService gateInReferService;
 
   private ExternalContainerInformationService externalContainerInformationService;
 
@@ -89,13 +82,8 @@ public class ImportExportGateInService {
   }
 
   @Autowired
-  public void setModelMapper(ModelMapper modelMapper) {
-    this.modelMapper = modelMapper;
-  }
-
-  @Autowired
-  public void setReferRejectRepository(ReferRejectRepository referRejectRepository) {
-    this.referRejectRepository = referRejectRepository;
+  public void setGateInReferService(GateInReferService gateInReferService) {
+    this.gateInReferService = gateInReferService;
   }
 
   @Autowired
@@ -170,11 +158,18 @@ public class ImportExportGateInService {
     System.out.println("userContext.getUsername() " + userContext.getUsername());
     gateInRequest.setUserName(userContext.getUsername());
 
+    GateInReponse gateInReponse = new GateInReponse();
+
+    List<ExportContainer> exportContainers = null;
     /*
      * if the refer id avaliable then fetch here. then pass export container list
      */
+    // refere reject details
+    if (gateInRequest.getReferID().isPresent()) {
+      exportContainers = gateInReferService.fetchReferDataForExport(gateInRequest.getReferID().get());
+    }
+    gateInReponse.setExportContainers(exportContainers);
 
-    GateInReponse gateInReponse = new GateInReponse();
     gateInReponse.setCheckPreArrival(gateInRequest.isCheckPreArrival());
 
     if ((gateInRequest.getGatePass1() != null && gateInRequest.getGatePass1() > 0)
@@ -226,70 +221,10 @@ public class ImportExportGateInService {
       gateInReponse = hpabService.populateHpabForImpExp(gateInReponse, gateInRequest.getHpabSeqId());
     }
 
-    // refere reject details
-    if (gateInRequest.getReferID().isPresent()) {
-      Optional<ReferReject> optReferReject = referRejectRepository.findOne(gateInRequest.getReferID().get());
-      if (optReferReject.isPresent()) {
-        ReferReject referReject = optReferReject.get();
-        updateFromReferReject(referReject, gateInReponse);
-      }
-    }
-
     return gateInReponse;
   }
 
-  // take this to refer service
-  private void updateFromReferReject(ReferReject referReject, GateInReponse gateInReponse) {
 
-    // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% CANT FIND FIELDS IN ExportContainer to
-    // set following fields
-    // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    // f.setCardIdSeq(rejectFrom.getCrdCardidSeq());
-    // f.setExpWeightBridge(rejectFrom.getExpWeightBridge());
-    // f.setCugIdSeq(rejectFrom.getCugIdSeq());
-    // f.setTimeIn(rejectFrom.getReferDateTime());
-    // f.setHpatSeqId(rejectFrom.getHpatSeqId());
-    // f.setPmVerified(StringUtils.isBlank(rejectFrom.getPmVerified()) ? "F"
-    // :
-    // rejectFrom.getPmVerified().toUpperCase());
-    // f.setTrailerVerified(StringUtils.isBlank(rejectFrom.getTrailerVerified())
-    // ? "F" :
-    // rejectFrom.getTrailerVerified().toUpperCase());
-
-    if (!(gateInReponse.getExportContainers() == null || gateInReponse.getExportContainers().isEmpty())
-        || referReject.getReferRejectDetails() == null || referReject.getReferRejectDetails().isEmpty()) {
-      gateInReponse.getExportContainers().forEach(exportContainer -> {
-        referReject.getReferRejectDetails().forEach(referRejectDetail -> {
-          if (StringUtils.equals(exportContainer.getContainer().getContainerNumber(),
-              referRejectDetail.getContainerNo())) {
-
-            if (!(referRejectDetail.getSolas() == null)) {
-              if (exportContainer.getSolas() == null) {
-                exportContainer.setSolas(new CommonSolasDTO());
-              }
-              modelMapper.map(referRejectDetail.getSolas(), exportContainer.getSolas());
-            }
-
-            if (!(referRejectDetail.getSeal() == null)) {
-              if (exportContainer.getSealAttribute() == null) {
-                exportContainer.setSealAttribute(new CommonSealDTO());
-              }
-              modelMapper.map(referRejectDetail.getSeal(), exportContainer.getSealAttribute());
-            }
-
-            if (!(referReject.getBaseCommonGateInOut() == null)) {
-              if (exportContainer.getBaseCommonGateInOutAttribute() == null) {
-                exportContainer.setBaseCommonGateInOutAttribute(new BaseCommonGateInOutDTO());
-              }
-              modelMapper.map(referReject.getBaseCommonGateInOut(), exportContainer.getBaseCommonGateInOutAttribute());
-            }
-          }
-        });
-      });
-
-    }
-
-  }
 
   @OpenGate
   @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
