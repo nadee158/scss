@@ -217,7 +217,7 @@ public class ImportExportGateInService {
     }
 
     // assign details from hpab booking
-    if (StringUtils.isNotEmpty(gateInRequest.getHpabSeqId())) {
+    if ((StringUtils.isNotEmpty(gateInRequest.getHpabSeqId())) && (!(gateInRequest.getReferID().isPresent()))) {
       gateInReponse = hpabService.populateHpabForImpExp(gateInReponse, gateInRequest.getHpabSeqId());
     }
 
