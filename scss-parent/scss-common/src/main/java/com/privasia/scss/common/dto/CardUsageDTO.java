@@ -11,7 +11,7 @@ public class CardUsageDTO implements Serializable {
 
   private Long cardUsageID;
 
-  // private CardDto card;
+  // private CardDTO card;
   //
   // private ClientDTO client;
   //
@@ -30,11 +30,11 @@ public class CardUsageDTO implements Serializable {
     return this;
   }
 
-  // public CardDto getCard() {
+  // public CardDTO getCard() {
   // return card;
   // }
   //
-  // public void setCard(CardDto card) {
+  // public void setCard(CardDTO card) {
   // this.card = card;
   // }
   //

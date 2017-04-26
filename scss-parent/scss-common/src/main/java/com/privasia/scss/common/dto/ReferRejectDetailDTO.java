@@ -2,7 +2,6 @@ package com.privasia.scss.common.dto;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
@@ -15,7 +14,7 @@ import com.privasia.scss.common.util.DateUtil;
 
 public class ReferRejectDetailDTO implements Serializable {
 
-	private Long referRejectID;
+	private ReferRejectDTO referReject;
 
 	private Long referRejectDetailID;
 
@@ -23,7 +22,7 @@ public class ReferRejectDetailDTO implements Serializable {
 
 	private String containerIsoCode;
 
-	private Optional<CommonSealDTO> seal;
+	private CommonSealDTO seal;
 
 	private String remarks;
 
@@ -39,7 +38,7 @@ public class ReferRejectDetailDTO implements Serializable {
 
 	private Integer expNetWeight;
 
-	private boolean doubleBooking = false;
+	private Boolean doubleBooking = false;
 
 	private String lineCode;
 
@@ -52,7 +51,7 @@ public class ReferRejectDetailDTO implements Serializable {
 
 	private CommonSolasDTO solas;
 
-	private Optional<Set<ReferRejectReasonDTO>> referRejectReasons;
+	private Set<ReferRejectReasonDTO> referRejectReasons;
 
 	private static final long serialVersionUID = 1L;
 
@@ -81,21 +80,21 @@ public class ReferRejectDetailDTO implements Serializable {
 	}
 
 	public Optional<CommonSealDTO> getSeal() {
-		return seal;
+		return Optional.ofNullable(seal);
 	}
 
 	public void setSeal(Optional<CommonSealDTO> seal) {
-		this.seal = seal;
+		this.seal = seal.orElse(null);
 	}
-	
+
 	public Optional<Set<ReferRejectReasonDTO>> getReferRejectReasons() {
-		return referRejectReasons;
+		return Optional.ofNullable(referRejectReasons);
 	}
 
 	public void setReferRejectReasons(Optional<Set<ReferRejectReasonDTO>> referRejectReasons) {
-		this.referRejectReasons = referRejectReasons;
+		this.referRejectReasons = referRejectReasons.orElse(null);
 	}
-	
+
 	public String getRemarks() {
 		return remarks;
 	}
@@ -152,12 +151,12 @@ public class ReferRejectDetailDTO implements Serializable {
 		this.expNetWeight = expNetWeight;
 	}
 
-	public boolean isDoubleBooking() {
-		return doubleBooking;
+	public Optional<Boolean> getDoubleBooking() {
+		return Optional.ofNullable(doubleBooking);
 	}
 
-	public void setDoubleBooking(boolean doubleBooking) {
-		this.doubleBooking = doubleBooking;
+	public void setDoubleBooking(Optional<Boolean> optDoubleBooking) {
+		this.doubleBooking = optDoubleBooking.orElse(false);
 	}
 
 	public String getLineCode() {
@@ -199,13 +198,13 @@ public class ReferRejectDetailDTO implements Serializable {
 	public void setMeasuredWeightBridge(Integer measuredWeightBridge) {
 		this.measuredWeightBridge = measuredWeightBridge;
 	}
-
-	public Long getReferRejectID() {
-		return referRejectID;
+	
+	public ReferRejectDTO getReferReject() {
+		return referReject;
 	}
 
-	public void setReferRejectID(Long referRejectID) {
-		this.referRejectID = referRejectID;
+	public void setReferReject(ReferRejectDTO referReject) {
+		this.referReject = referReject;
 	}
 
 	@Override
@@ -214,11 +213,12 @@ public class ReferRejectDetailDTO implements Serializable {
 	}
 
 	public ReferRejectDetailDTO initializeWithDefaultValues() {
-		this.referRejectID = 10l;
+		//this.referRejectID = 10l;
 		this.referRejectDetailID = 11l;
 		this.containerNo = StringUtils.EMPTY;
 		this.containerIsoCode = StringUtils.EMPTY;
-		this.seal = Optional.of(new CommonSealDTO().initializeWithDefaultValues());
+		// this.seal = Optional.of(new
+		// CommonSealDTO().initializeWithDefaultValues());
 		this.remarks = StringUtils.EMPTY;
 		this.status = StringUtils.EMPTY;
 		this.supervisorRemarks = StringUtils.EMPTY;
@@ -232,9 +232,12 @@ public class ReferRejectDetailDTO implements Serializable {
 		this.position = StringUtils.EMPTY;
 		this.measuredWeightBridge = 450;
 		this.solas = new CommonSolasDTO().initializeWithDefaultValues();
-		this.referRejectReasons = Optional.of(new HashSet<ReferRejectReasonDTO>());
-		this.referRejectReasons.get().add(new ReferRejectReasonDTO().initializeWithDefaultValues());
-		this.referRejectReasons.get().add(new ReferRejectReasonDTO().initializeWithDefaultValues());
+		/// this.referRejectReasons = Optional.of(new
+		/// HashSet<ReferRejectReasonDTO>());
+		// this.referRejectReasons.get().add(new
+		/// ReferRejectReasonDTO().initializeWithDefaultValues());
+		// this.referRejectReasons.get().add(new
+		/// ReferRejectReasonDTO().initializeWithDefaultValues());
 		return this;
 	}
 

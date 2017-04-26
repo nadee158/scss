@@ -99,7 +99,7 @@ public class ExportGateOutService {
         exportContainer.setBaseCommonGateInOutAttribute(new BaseCommonGateInOutDTO());
         if (export.getBaseCommonGateInOutAttribute().getCard() != null) {
           exportContainer.getBaseCommonGateInOutAttribute()
-              .setCard(export.getBaseCommonGateInOutAttribute().getCard().getCardID());
+              .getCard().setCardID(export.getBaseCommonGateInOutAttribute().getCard().getCardID());
         }
         if (export.getBaseCommonGateInOutAttribute().getEirStatus() != null) {
           exportContainer.getBaseCommonGateInOutAttribute()

@@ -19,11 +19,11 @@ import com.privasia.scss.common.dto.ApiResponseObject;
 import com.privasia.scss.common.dto.ClientDTO;
 import com.privasia.scss.common.dto.CustomResponseEntity;
 import com.privasia.scss.common.dto.DamageCodeDTO;
+import com.privasia.scss.common.dto.ReferReasonDTO;
 import com.privasia.scss.core.model.ODDExportReason;
 import com.privasia.scss.core.model.ODDImportReason;
 import com.privasia.scss.core.model.ODDLocation;
 import com.privasia.scss.core.util.service.CurrentDateTimeService;
-import com.privasia.scss.master.dto.ReferReasonDTO;
 import com.privasia.scss.master.dto.SolasWeightConfigDTO;
 import com.privasia.scss.master.service.ClientMasterDataService;
 import com.privasia.scss.master.service.DamageCodeService;
@@ -151,7 +151,7 @@ public class MasterDataController {
   public CustomResponseEntity<ApiResponseObject<?>> getDamageList() {
     List<DamageCodeDTO> damageCodeDTOList = damageCodeService.getDamageList();
     return new CustomResponseEntity<ApiResponseObject<?>>(
-        new ApiResponseObject<List<DamageCodeDTO>>(HttpStatus.OK, damageCodeDTOList), HttpStatus.OK);
+        new ApiResponseObject<List<DamageCodeDTO>>(HttpStatus.OK, damageCodeDTOList), HttpStatus.OK); 
 
   }
 

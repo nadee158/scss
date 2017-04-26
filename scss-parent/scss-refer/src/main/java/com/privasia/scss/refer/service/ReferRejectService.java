@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 
 import com.privasia.scss.common.dto.BaseCommonGateInOutDTO;
+import com.privasia.scss.common.dto.CardDTO;
 import com.privasia.scss.common.dto.ClientDTO;
 import com.privasia.scss.common.dto.GateInWriteRequest;
 import com.privasia.scss.common.dto.ReferRejectDTO;
@@ -154,18 +155,6 @@ public class ReferRejectService {
     } else {
       throw new ResultsNotFoundException("No Active refer rejects were found!");
     }
-
-
-    /*
-     * if (referRejectPages != null && !referRejectPages.getContent().isEmpty()) {
-     * List<ReferRejectListDTO> dtoList = new ArrayList<ReferRejectListDTO>();
-     * referRejectPages.getContent().forEach(referReject -> {
-     * dtoList.add(referReject.constructReferRejectListDTO()); });
-     * 
-     * return map; } else {
-     * 
-     * }
-     */
   }
 
   private ReferRejectListDTO constructReferRejectListDTO(ReferReject referReject) {
@@ -221,8 +210,18 @@ public class ReferRejectService {
   public ReferRejectDTO getReferRejectByReferId(long referId) {
     ReferReject referReject = referRejectRepository.findOne(referId)
         .orElseThrow(() -> new ResultsNotFoundException("Refer reject was not found for ID : " + referId));
+    
+    Set<ReferRejectDetailDTO> referRejectDetailDTOList =
+    		referReject.getReferRejectDetails().get().stream().map(referRejectDetail ->
+    	     	modelMapper.map(referRejectDetail, ReferRejectDetailDTO.class)).collect(Collectors.toSet());
+    System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  DATA SETTING OK FOR ReferRejectDetailDTO  @@@@@@@@@@@@@@@@@@@@@@@@@@@@ " +referRejectDetailDTOList.size());
     ReferRejectDTO referRejectDTO = new ReferRejectDTO();
     modelMapper.map(referReject, referRejectDTO);
+    referRejectDTO.setReferRejectDetails(Optional.ofNullable(referRejectDetailDTOList));
+    System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  DATA SETTING OK @@@@@@@@@@@@@@@@@@@@@@@@@@@@" );
+    
+    System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  referRejectDTO @@@@@@@@@@@@@@@@@@@@@@@@@@@@ " +referRejectDTO);
+    
     return referRejectDTO;
   }
 
@@ -248,14 +247,17 @@ public class ReferRejectService {
     }
 
     BaseCommonGateInOutDTO baseCommonGateInOut = referRejectDTO.getBaseCommonGateInOut().get();
-    baseCommonGateInOut.setCard(gateInWriteRequest.getCardId());
+    //baseCommonGateInOut.setCard(gateInWriteRequest.getCardId());
     baseCommonGateInOut.setTimeGateInOk(LocalDateTime.now());
     ClientDTO gateInClient = new ClientDTO();
     gateInClient.setClientID(gateInWriteRequest.getGateInClient());
     baseCommonGateInOut.setGateInClient(gateInClient);
+    CardDTO cardDTO = new CardDTO();
+    cardDTO.setCardID(gateInWriteRequest.getCardId());
+    baseCommonGateInOut.setCard(cardDTO);
     baseCommonGateInOut.setTimeGateIn(gateInWriteRequest.getGateInDateTime());
     baseCommonGateInOut.setEirStatus(TransactionStatus.REJECT.getValue());
-    baseCommonGateInOut.setHpabBooking(Optional.ofNullable(gateInWriteRequest.getHpatBookingId()));
+    baseCommonGateInOut.setHpabBooking(Optional.ofNullable(gateInWriteRequest.getHpatBookingId())); 
     baseCommonGateInOut.setPmHeadNo(gateInWriteRequest.getTruckHeadNo());
     baseCommonGateInOut.setPmPlateNo(gateInWriteRequest.getTruckPlateNo());
     baseCommonGateInOut.setTimeGateInOk(LocalDateTime.now());
@@ -273,14 +275,27 @@ public class ReferRejectService {
     referReject.setStatusCode(HpatReferStatus.ACTIVE);
     referReject.setReferDateTime(LocalDateTime.now());
 
-    /*
-     * Set<ReferRejectDetail> referRejectDetails =
-     * referRejectDetailsDTOs.stream().map(referRejectDetailDTO ->
-     * modelMapper.map(referRejectDetailDTO, ReferRejectDetail.class)).collect(Collectors.toSet());
-     */
+    
+     Set<ReferRejectDetail> referRejectDetails =
+     referRejectDetailsDTOs.stream().map(referRejectDetailDTO ->
+     	modelMapper.map(referRejectDetailDTO, ReferRejectDetail.class)).collect(Collectors.toSet());
+     
+     referReject.setReferRejectDetails(Optional.ofNullable(referRejectDetails));
+     
 
-    Set<ReferRejectDetail> referRejectDetails = referReject.getReferRejectDetails().get();
-    System.out.println("referRejectDetails " + referRejectDetails);
+    referRejectDetails = referReject.getReferRejectDetails().get();
+    System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  referRejectDetails @@@@@@@@@@@@@@@@@@@@@@@@@@@@" + referRejectDetails);
+    
+    System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  referRejectDetails SIZE : @@@@@@@@@@@@@@@@@@@@@@@@@@@@" + referRejectDetails.size());
+    
+    referRejectDetails.forEach(rd -> {
+    	if(rd instanceof ReferRejectDetail){
+    		System.out.println("rd instanceof ReferRejectDetail TRUE ");
+    	}else{
+    		System.out.println("rd instanceof ReferRejectDetail FALSE ");
+    	}
+    	
+    });
 
     boolean doubleBoooking = referReject.getReferRejectDetails().get().size() == 2 ? true : false;
 
@@ -292,20 +307,20 @@ public class ReferRejectService {
     }
 
     // bind details manually from dby
-    referReject = updateReferRejectReference(referRejectDTO, referReject, hpabBooking);
+    referReject = updateReferRejectReference(referRejectDTO, referReject, hpabBooking); 
 
     final ReferReject referRejectF = referReject;
 
-    referReject.getReferRejectDetails().get().forEach(referRejectDetail -> {
+    referRejectDTO.getReferRejectDetails().get().stream().forEach(detailDTO -> { 
 
-      ReferRejectDetailDTO referRejectDetailDTO = null;
-      referRejectDetailDTO = referRejectDTO.getReferRejectDetails().get().stream()
-          .filter(e -> (e.getContainerNo() != null)
-              && (StringUtils.equalsIgnoreCase(e.getContainerNo(), referRejectDetail.getContainerNo())))
-          .findFirst().get();
-      referRejectDetail.setDoubleBooking(doubleBoooking);
+      ReferRejectDetail referRejectDetail = null;
+      referRejectDetail = referRejectF.getReferRejectDetails().get().stream()
+          .filter(e -> (StringUtils.isNotEmpty(e.getContainerNo()))
+              && (StringUtils.equalsIgnoreCase(e.getContainerNo(), detailDTO.getContainerNo())))
+          .findFirst().orElse(referRejectDetail);
+      referRejectDetail.setDoubleBooking(Optional.of(doubleBoooking));
       referRejectDetail.setGateInTime(gateInWriteRequest.getGateInDateTime());
-      updateRejectDetailReference(referRejectDetailDTO, referRejectDetail, referRejectF,
+      updateRejectDetailReference(detailDTO, referRejectDetail, referRejectF,
           referRejectF.getBaseCommonGateInOut().get().getGateInClerk());
 
     });
@@ -320,7 +335,7 @@ public class ReferRejectService {
 
     // manual conversion
     BaseCommonGateInOutAttribute baseCommonGateInOut = referReject.getBaseCommonGateInOut().get();
-    BaseCommonGateInOutDTO baseCommonGateInOutDTO = referRejectDTO.getBaseCommonGateInOut().get();
+    BaseCommonGateInOutDTO baseCommonGateInOutDTO = referRejectDTO.getBaseCommonGateInOut().get(); 
 
     if (baseCommonGateInOut == null) {
       baseCommonGateInOut = new BaseCommonGateInOutAttribute();
@@ -331,7 +346,7 @@ public class ReferRejectService {
     baseCommonGateInOut.setGateInClerk(systemUser);
 
     Card card =
-        cardRepository.findOne(baseCommonGateInOutDTO.getCard()).orElseThrow(() -> new AuthenticationServiceException(
+        cardRepository.findOne(baseCommonGateInOutDTO.getCard().getCardID()).orElseThrow(() -> new AuthenticationServiceException(
             "Scan Card was Not Found : " + referRejectDTO.getBaseCommonGateInOut().get().getCard()));
     baseCommonGateInOut.setCard(card);
 
@@ -375,8 +390,8 @@ public class ReferRejectService {
       }
       rejectReasonDTOs.forEach(referReasonDTO -> {
         ReferRejectReason reason = new ReferRejectReason();
-        ReferReason referReason = referReasonRepository.findOne(referReasonDTO.getReferReasonID()).orElseThrow(
-            () -> new ResultsNotFoundException("Provided Refer Reson Not Found " + referReasonDTO.getReferReasonID()));
+        ReferReason referReason = referReasonRepository.findOne(referReasonDTO.getReferReason().getReferReasonID()).orElseThrow(
+            () -> new ResultsNotFoundException("Provided Refer Reson Not Found " + referReasonDTO.getReferReason().getReferReasonID()));
         reason.setReferReason(referReason);
         reason.setReferRejectDetail(referRejectDetail);
         referRejectDetail.getReferRejectReason().get().add(reason);
@@ -414,9 +429,9 @@ public class ReferRejectService {
           if (!(referRejectDetailDTO.getReferRejectReasons().isPresent()
               || referRejectDetailDTO.getReferRejectReasons().get().isEmpty())) {
             referRejectDetailDTO.getReferRejectReasons().get().forEach(referReasonDTO -> {
-              ReferReason referReason = referReasonRepository.findOne(referReasonDTO.getReferReasonID())
+              ReferReason referReason = referReasonRepository.findOne(referReasonDTO.getReferReason().getReferReasonID())
                   .orElseThrow(() -> new ResultsNotFoundException(
-                      "Refer reason was not found! " + referReasonDTO.getReferReasonID()));
+                      "Refer reason was not found! " + referReasonDTO.getReferReason().getReferReasonID()));
               SupervisorReferRejectReason reason = new SupervisorReferRejectReason();
               reason.setReferReason(referReason);
               reason.setReferRejectDetail(referRejectDetail);
@@ -456,14 +471,14 @@ public class ReferRejectService {
       throw new BusinessException("Refer reject details to update is not available!");
 
     ReferRejectDetail referRejectDetail = referRejectDetailRepository
-        .findByReferReject_ReferRejectIDAndContainerNo(dto.getReferRejectID(), dto.getContainerNo())
+        .findByReferReject_ReferRejectIDAndContainerNo(dto.getReferReject().getReferRejectID(), dto.getContainerNo())
         .orElseThrow(() -> new ResultsNotFoundException("Refer reject detail was not found!"));
 
     referRejectDetail.setLineCode(StringUtils.upperCase(dto.getLineCode()));
     referRejectDetail.setGateInTime(dto.getGateInTime());
     ReferRejectDetail persisted = referRejectDetailRepository.save(referRejectDetail);
     if (!(persisted == null || persisted.getReferRejectDetailID() <= 0)) {
-      if (persisted.getReferReject().getReferRejectID() == dto.getReferRejectID()) {
+      if (persisted.getReferReject().getReferRejectID() == dto.getReferReject().getReferRejectID()) {
         status = "SUCCESS";
       }
     }

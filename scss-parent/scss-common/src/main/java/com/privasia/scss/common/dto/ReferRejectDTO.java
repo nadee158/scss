@@ -27,7 +27,7 @@ public class ReferRejectDTO implements Serializable {
 
 	private String statusCode;
 
-	private Optional<BaseCommonGateInOutDTO> baseCommonGateInOut;
+	private BaseCommonGateInOutDTO baseCommonGateInOut;
 
 	private Boolean transactionSlipPrinted;
 
@@ -44,7 +44,7 @@ public class ReferRejectDTO implements Serializable {
 
 	private Boolean pmVerified;
 
-	private Optional<Set<ReferRejectDetailDTO>> referRejectDetails;
+	private Set<ReferRejectDetailDTO> referRejectDetails;
 
 	public ReferRejectDTO() {
 		super();
@@ -139,19 +139,19 @@ public class ReferRejectDTO implements Serializable {
 	}
 
 	public Optional<Set<ReferRejectDetailDTO>> getReferRejectDetails() {
-		return referRejectDetails;
+		return Optional.ofNullable(referRejectDetails);
 	}
 
 	public void setReferRejectDetails(Optional<Set<ReferRejectDetailDTO>> referRejectDetails) {
-		this.referRejectDetails = referRejectDetails;
+		this.referRejectDetails = referRejectDetails.orElse(null);
 	}
 
 	public Optional<BaseCommonGateInOutDTO> getBaseCommonGateInOut() {
-		return baseCommonGateInOut;
+		return Optional.ofNullable(baseCommonGateInOut);
 	}
 
 	public void setBaseCommonGateInOut(Optional<BaseCommonGateInOutDTO> baseCommonGateInOut) {
-		this.baseCommonGateInOut = baseCommonGateInOut;
+		this.baseCommonGateInOut = baseCommonGateInOut.orElse(null);
 	}
 
 	@Override
@@ -181,8 +181,8 @@ public class ReferRejectDTO implements Serializable {
 		this.trailerPlateNo = "";
 		this.axleVerified = true;
 		this.pmVerified = true;
-		this.referRejectDetails = Optional.of(new HashSet<ReferRejectDetailDTO>());
-		this.referRejectDetails.get().add(new ReferRejectDetailDTO().initializeWithDefaultValues());
+		//this.referRejectDetails = Optional.of(new HashSet<ReferRejectDetailDTO>());
+		//this.referRejectDetails.get().add(new ReferRejectDetailDTO().initializeWithDefaultValues());
 		//this.referRejectDetails.get().add(new ReferRejectDetailDTO().initializeWithDefaultValues());
 		return this;
 

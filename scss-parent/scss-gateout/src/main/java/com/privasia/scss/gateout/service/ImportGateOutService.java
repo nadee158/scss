@@ -110,7 +110,7 @@ public class ImportGateOutService {
         importContainer.setBaseCommonGateInOutAttribute(new BaseCommonGateInOutDTO());
         if (gatePass.getBaseCommonGateInOutAttribute().getCard() != null) {
           importContainer.getBaseCommonGateInOutAttribute()
-              .setCard(gatePass.getBaseCommonGateInOutAttribute().getCard().getCardID());
+              .getCard().setCardID(gatePass.getBaseCommonGateInOutAttribute().getCard().getCardID());
         }
         if (gatePass.getBaseCommonGateInOutAttribute().getEirStatus() != null) {
           importContainer.getBaseCommonGateInOutAttribute()

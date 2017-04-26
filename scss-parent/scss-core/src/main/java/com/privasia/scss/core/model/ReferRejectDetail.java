@@ -231,8 +231,8 @@ public class ReferRejectDetail extends AuditEntity implements Serializable {
     return Optional.ofNullable(doubleBooking);
   }
 
-  public void setDoubleBooking(Boolean doubleBooking) {
-    this.doubleBooking = doubleBooking;
+  public void setDoubleBooking(Optional<Boolean> optDoubleBooking) {
+    this.doubleBooking = optDoubleBooking.orElse(false);
   }
 
   public String getLineCode() {

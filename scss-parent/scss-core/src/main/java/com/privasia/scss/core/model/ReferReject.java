@@ -5,7 +5,6 @@ package com.privasia.scss.core.model;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 import java.util.Set;
 
@@ -30,7 +29,6 @@ import javax.persistence.Table;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.Type;
 
-import com.privasia.scss.common.dto.ReferRejectListDTO;
 import com.privasia.scss.common.enums.HpatReferStatus;
 
 /**
@@ -217,7 +215,7 @@ public class ReferReject extends AuditEntity implements Serializable {
 	}
 
 	public Optional<Set<ReferRejectDetail>> getReferRejectDetails() {
-		return Optional.ofNullable(referRejectDetails);
+		return Optional.ofNullable(this.referRejectDetails);
 	}
 
 	public void setReferRejectDetails(Optional<Set<ReferRejectDetail>> optReferRejectDetails) {

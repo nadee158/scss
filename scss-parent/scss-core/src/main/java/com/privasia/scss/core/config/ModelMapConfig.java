@@ -115,9 +115,9 @@ public class ModelMapConfig {
     modelMapper.addMappings(ModelMapPropertyMap.exportContainerToExports());
     modelMapper.addMappings(ModelMapPropertyMap.exportsToExportContainer());
     // modelMapper.addMappings(ModelMapPropertyMap.referRejectDTOToReferReject());
-    modelMapper.addMappings(ModelMapPropertyMap.referRejectDetailDTOToReferRejectDetail());
-    modelMapper.addMappings(ModelMapPropertyMap.referRejectReasonDTOToReferRejectReason());
-    modelMapper.addMappings(ModelMapPropertyMap.referRejectToReferRejectDTO());
+    //modelMapper.addMappings(ModelMapPropertyMap.referRejectDetailDTOToReferRejectDetail());
+    modelMapper.addMappings(ModelMapPropertyMap.referRejectDetailToReferRejectDetailDTO());
+    modelMapper.addMappings(ModelMapPropertyMap.referRejectToReferRejectDTO()); 
 
     return modelMapper;
   }

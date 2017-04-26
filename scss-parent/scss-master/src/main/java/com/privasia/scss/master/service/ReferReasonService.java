@@ -15,11 +15,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.privasia.scss.common.dto.ReferReasonDTO;
 import com.privasia.scss.common.enums.RecordStatus;
 import com.privasia.scss.core.exception.ResultsNotFoundException;
 import com.privasia.scss.core.model.ReferReason;
 import com.privasia.scss.core.repository.ReferReasonRepository;
-import com.privasia.scss.master.dto.ReferReasonDTO;
 
 /**
  * @author Janaka
@@ -51,7 +51,7 @@ public class ReferReasonService {
             .collect(Collectors.groupingBy(ReferReason::getReferReason));
 
 
-        if (!(map == null || map.isEmpty())) {
+        /*if (!(map == null || map.isEmpty())) {
           map.forEach((key, val) -> {
             dtoList.add(new ReferReasonDTO(key, val));
           });
@@ -64,7 +64,7 @@ public class ReferReasonService {
           aloneList.forEach(rfr -> {
             dtoList.add(new ReferReasonDTO(rfr, null));
           });
-        }
+        }*/
 
         return dtoList;
       } catch (Exception e) {

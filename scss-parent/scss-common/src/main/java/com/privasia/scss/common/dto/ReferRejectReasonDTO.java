@@ -9,7 +9,7 @@ public class ReferRejectReasonDTO implements Serializable {
 
 	private Long referRejectReasonID;
 
-	private Long referReasonID;
+	private ReferReasonDTO referReason;
 
 	private String reasonDescription;
 
@@ -26,12 +26,12 @@ public class ReferRejectReasonDTO implements Serializable {
 		this.referRejectReasonID = referRejectReasonID;
 	}
 
-	public Long getReferReasonID() {
-		return referReasonID;
+	public ReferReasonDTO getReferReason() {
+		return referReason;
 	}
 
-	public void setReferReasonID(Long referReasonID) {
-		this.referReasonID = referReasonID;
+	public void setReferReason(ReferReasonDTO referReason) {
+		this.referReason = referReason;
 	}
 
 	public String getReasonDescription() {
@@ -49,7 +49,7 @@ public class ReferRejectReasonDTO implements Serializable {
 
 	public ReferRejectReasonDTO initializeWithDefaultValues() {
 		this.referRejectReasonID = 50l;
-		this.referReasonID = 10l;
+		//this.referReasonID = 10l;
 		this.reasonDescription = "";
 		return this;
 	}
