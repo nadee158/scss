@@ -36,7 +36,7 @@ public class ModelMapConfig {
     configEnums(modelMapper);
     configLocalDateTime(modelMapper);
     configProperty(modelMapper);
-    configOptionalMapper(modelMapper);
+    //configOptionalMapper(modelMapper);
     return modelMapper;
   }
 

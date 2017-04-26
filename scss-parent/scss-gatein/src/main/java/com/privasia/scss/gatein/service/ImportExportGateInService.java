@@ -337,7 +337,7 @@ public class ImportExportGateInService {
 
     // NEED TO CALL BUSINESS FUNCTIONS
 
-    GateInReponse gateInReponse = externalContainerInformationService.sendGateinRequest(gateInWriteRequest);
+    GateInReponse gateInReponse = externalContainerInformationService.sendGateInRequest(gateInWriteRequest);  
     gateInWriteRequest.setImportContainers(gateInReponse.getImportContainers());
     gateInWriteRequest.setExportContainers(gateInReponse.getExportContainers());
 

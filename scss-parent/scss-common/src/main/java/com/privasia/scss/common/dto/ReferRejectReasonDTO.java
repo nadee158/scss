@@ -11,7 +11,7 @@ public class ReferRejectReasonDTO implements Serializable {
 
   private ReferReasonDTO referReason;
 
-  private String reasonDescription;
+  //private String reasonDescription;
 
   /**
    * 
@@ -34,13 +34,13 @@ public class ReferRejectReasonDTO implements Serializable {
     this.referReason = referReason;
   }
 
-  public String getReasonDescription() {
+  /*public String getReasonDescription() {
     return reasonDescription;
   }
 
   public void setReasonDescription(String reasonDescription) {
     this.reasonDescription = reasonDescription;
-  }
+  }*/
 
   @Override
   public String toString() {
@@ -50,7 +50,7 @@ public class ReferRejectReasonDTO implements Serializable {
   public ReferRejectReasonDTO initializeWithDefaultValues() {
     this.referRejectReasonID = 50l;
     // this.referReasonID = 10l;
-    this.reasonDescription = "";
+    //this.reasonDescription = "";
     return this;
   }
 
