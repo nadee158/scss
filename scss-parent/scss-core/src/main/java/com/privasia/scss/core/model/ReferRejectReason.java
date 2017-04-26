@@ -19,6 +19,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 
 /**
  * @author Janaka
@@ -39,7 +42,8 @@ public class ReferRejectReason extends AuditEntity implements Serializable {
 
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_SCSS_REFER_REJECT_REASON")
-  @SequenceGenerator(name = "SEQ_SCSS_REFER_REJECT_REASON", sequenceName = "SEQ_SCSS_REFER_REJECT_REASON", allocationSize=1)
+  @SequenceGenerator(name = "SEQ_SCSS_REFER_REJECT_REASON", sequenceName = "SEQ_SCSS_REFER_REJECT_REASON",
+      allocationSize = 1)
   @Column(name = "REFER_REJECT_REASON_ID")
   private Long referRejectReasonID;
 
@@ -47,7 +51,7 @@ public class ReferRejectReason extends AuditEntity implements Serializable {
   @JoinColumn(name = "REFER_REJECT_DET_ID", nullable = false)
   private ReferRejectDetail referRejectDetail;
 
-  @ManyToOne(fetch = FetchType.LAZY, cascade=CascadeType.MERGE)
+  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
   @JoinColumn(name = "REF_REASON_ID", nullable = false)
   private ReferReason referReason;
 
@@ -74,4 +78,11 @@ public class ReferRejectReason extends AuditEntity implements Serializable {
   public void setReferReason(ReferReason referReason) {
     this.referReason = referReason;
   }
+
+  @Override
+  public String toString() {
+    return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
+  }
+
+
 }

@@ -2,7 +2,6 @@ package com.privasia.scss.common.dto;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Optional;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
@@ -14,231 +13,236 @@ import com.privasia.scss.common.util.DateUtil;
 
 public class ReferRejectDetailDTO implements Serializable {
 
-	private ReferRejectDTO referReject;
+  private ReferRejectDTO referReject;
 
-	private Long referRejectDetailID;
+  private Long referRejectDetailID;
 
-	private String containerNo;
+  private String containerNo;
 
-	private String containerIsoCode;
+  private String containerIsoCode;
 
-	private CommonSealDTO seal;
+  private CommonSealDTO seal;
 
-	private String remarks;
+  private String remarks;
 
-	private String status;
+  private String status;
 
-	private String supervisorRemarks;
+  private String supervisorRemarks;
 
-	private Long rejectBy;
+  private Long rejectBy;
 
-	private Long referBy;
+  private Long referBy;
 
-	private Integer expPmBTM;
+  private Integer expPmBTM;
 
-	private Integer expNetWeight;
+  private Integer expNetWeight;
 
-	private Boolean doubleBooking = false;
+  private Boolean doubleBooking = false;
 
-	private String lineCode;
+  private String lineCode;
 
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateUtil.GLOBAL_DATE_TIME_PATTERN)
-	private LocalDateTime gateInTime;
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateUtil.GLOBAL_DATE_TIME_PATTERN)
+  private LocalDateTime gateInTime;
 
-	private String position;
+  private String position;
 
-	private Integer measuredWeightBridge;
+  private Integer measuredWeightBridge;
 
-	private CommonSolasDTO solas;
+  private CommonSolasDTO solas;
 
-	private Set<ReferRejectReasonDTO> referRejectReasons;
+  private Set<ReferRejectReasonDTO> referRejectReasons;
 
-	private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-	public Long getReferRejectDetailID() {
-		return referRejectDetailID;
-	}
+  public Long getReferRejectDetailID() {
+    return referRejectDetailID;
+  }
 
-	public void setReferRejectDetailID(Long referRejectDetailID) {
-		this.referRejectDetailID = referRejectDetailID;
-	}
+  public void setReferRejectDetailID(Long referRejectDetailID) {
+    this.referRejectDetailID = referRejectDetailID;
+  }
 
-	public String getContainerNo() {
-		return containerNo;
-	}
+  public String getContainerNo() {
+    return containerNo;
+  }
 
-	public void setContainerNo(String containerNo) {
-		this.containerNo = containerNo;
-	}
+  public void setContainerNo(String containerNo) {
+    this.containerNo = containerNo;
+  }
 
-	public String getContainerIsoCode() {
-		return containerIsoCode;
-	}
+  public String getContainerIsoCode() {
+    return containerIsoCode;
+  }
 
-	public void setContainerIsoCode(String containerIsoCode) {
-		this.containerIsoCode = containerIsoCode;
-	}
+  public void setContainerIsoCode(String containerIsoCode) {
+    this.containerIsoCode = containerIsoCode;
+  }
 
-	public Optional<CommonSealDTO> getSeal() {
-		return Optional.ofNullable(seal);
-	}
 
-	public void setSeal(Optional<CommonSealDTO> seal) {
-		this.seal = seal.orElse(null);
-	}
+  public String getRemarks() {
+    return remarks;
+  }
 
-	public Optional<Set<ReferRejectReasonDTO>> getReferRejectReasons() {
-		return Optional.ofNullable(referRejectReasons);
-	}
+  public void setRemarks(String remarks) {
+    this.remarks = remarks;
+  }
 
-	public void setReferRejectReasons(Optional<Set<ReferRejectReasonDTO>> referRejectReasons) {
-		this.referRejectReasons = referRejectReasons.orElse(null);
-	}
+  public String getStatus() {
+    return status;
+  }
 
-	public String getRemarks() {
-		return remarks;
-	}
+  public void setStatus(String status) {
+    this.status = status;
+  }
 
-	public void setRemarks(String remarks) {
-		this.remarks = remarks;
-	}
+  public String getSupervisorRemarks() {
+    return supervisorRemarks;
+  }
 
-	public String getStatus() {
-		return status;
-	}
+  public void setSupervisorRemarks(String supervisorRemarks) {
+    this.supervisorRemarks = supervisorRemarks;
+  }
 
-	public void setStatus(String status) {
-		this.status = status;
-	}
+  public Long getRejectBy() {
+    return rejectBy;
+  }
 
-	public String getSupervisorRemarks() {
-		return supervisorRemarks;
-	}
+  public void setRejectBy(Long rejectBy) {
+    this.rejectBy = rejectBy;
+  }
 
-	public void setSupervisorRemarks(String supervisorRemarks) {
-		this.supervisorRemarks = supervisorRemarks;
-	}
+  public Long getReferBy() {
+    return referBy;
+  }
 
-	public Long getRejectBy() {
-		return rejectBy;
-	}
+  public void setReferBy(Long referBy) {
+    this.referBy = referBy;
+  }
 
-	public void setRejectBy(Long rejectBy) {
-		this.rejectBy = rejectBy;
-	}
+  public Integer getExpPmBTM() {
+    return expPmBTM;
+  }
 
-	public Long getReferBy() {
-		return referBy;
-	}
+  public void setExpPmBTM(Integer expPmBTM) {
+    this.expPmBTM = expPmBTM;
+  }
 
-	public void setReferBy(Long referBy) {
-		this.referBy = referBy;
-	}
+  public Integer getExpNetWeight() {
+    return expNetWeight;
+  }
 
-	public Integer getExpPmBTM() {
-		return expPmBTM;
-	}
+  public void setExpNetWeight(Integer expNetWeight) {
+    this.expNetWeight = expNetWeight;
+  }
 
-	public void setExpPmBTM(Integer expPmBTM) {
-		this.expPmBTM = expPmBTM;
-	}
+  public String getLineCode() {
+    return lineCode;
+  }
 
-	public Integer getExpNetWeight() {
-		return expNetWeight;
-	}
+  public void setLineCode(String lineCode) {
+    this.lineCode = lineCode;
+  }
 
-	public void setExpNetWeight(Integer expNetWeight) {
-		this.expNetWeight = expNetWeight;
-	}
+  public LocalDateTime getGateInTime() {
+    return gateInTime;
+  }
 
-	public Optional<Boolean> getDoubleBooking() {
-		return Optional.ofNullable(doubleBooking);
-	}
+  public void setGateInTime(LocalDateTime gateInTime) {
+    this.gateInTime = gateInTime;
+  }
 
-	public void setDoubleBooking(Optional<Boolean> optDoubleBooking) {
-		this.doubleBooking = optDoubleBooking.orElse(false);
-	}
+  public String getPosition() {
+    return position;
+  }
 
-	public String getLineCode() {
-		return lineCode;
-	}
+  public void setPosition(String position) {
+    this.position = position;
+  }
 
-	public void setLineCode(String lineCode) {
-		this.lineCode = lineCode;
-	}
 
-	public LocalDateTime getGateInTime() {
-		return gateInTime;
-	}
+  public void setSolas(CommonSolasDTO solas) {
+    this.solas = solas;
+  }
 
-	public void setGateInTime(LocalDateTime gateInTime) {
-		this.gateInTime = gateInTime;
-	}
+  public Integer getMeasuredWeightBridge() {
+    return measuredWeightBridge;
+  }
 
-	public String getPosition() {
-		return position;
-	}
+  public void setMeasuredWeightBridge(Integer measuredWeightBridge) {
+    this.measuredWeightBridge = measuredWeightBridge;
+  }
 
-	public void setPosition(String position) {
-		this.position = position;
-	}
+  public ReferRejectDTO getReferReject() {
+    return referReject;
+  }
 
-	public Optional<CommonSolasDTO> getSolas() {
-		return Optional.ofNullable(solas);
-	}
+  public void setReferReject(ReferRejectDTO referReject) {
+    this.referReject = referReject;
+  }
 
-	public void setSolas(CommonSolasDTO solas) {
-		this.solas = solas;
-	}
 
-	public Integer getMeasuredWeightBridge() {
-		return measuredWeightBridge;
-	}
 
-	public void setMeasuredWeightBridge(Integer measuredWeightBridge) {
-		this.measuredWeightBridge = measuredWeightBridge;
-	}
-	
-	public ReferRejectDTO getReferReject() {
-		return referReject;
-	}
+  public CommonSealDTO getSeal() {
+    return seal;
+  }
 
-	public void setReferReject(ReferRejectDTO referReject) {
-		this.referReject = referReject;
-	}
+  public void setSeal(CommonSealDTO seal) {
+    this.seal = seal;
+  }
 
-	@Override
-	public String toString() {
-		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
-	}
+  public Boolean getDoubleBooking() {
+    return doubleBooking;
+  }
 
-	public ReferRejectDetailDTO initializeWithDefaultValues() {
-		//this.referRejectID = 10l;
-		this.referRejectDetailID = 11l;
-		this.containerNo = StringUtils.EMPTY;
-		this.containerIsoCode = StringUtils.EMPTY;
-		// this.seal = Optional.of(new
-		// CommonSealDTO().initializeWithDefaultValues());
-		this.remarks = StringUtils.EMPTY;
-		this.status = StringUtils.EMPTY;
-		this.supervisorRemarks = StringUtils.EMPTY;
-		this.rejectBy = 50l;
-		this.referBy = 20l;
-		this.expPmBTM = 250;
-		this.expNetWeight = 550;
-		this.doubleBooking = false;
-		this.lineCode = StringUtils.EMPTY;
-		this.gateInTime = LocalDateTime.now();
-		this.position = StringUtils.EMPTY;
-		this.measuredWeightBridge = 450;
-		this.solas = new CommonSolasDTO().initializeWithDefaultValues();
-		/// this.referRejectReasons = Optional.of(new
-		/// HashSet<ReferRejectReasonDTO>());
-		// this.referRejectReasons.get().add(new
-		/// ReferRejectReasonDTO().initializeWithDefaultValues());
-		// this.referRejectReasons.get().add(new
-		/// ReferRejectReasonDTO().initializeWithDefaultValues());
-		return this;
-	}
+  public void setDoubleBooking(Boolean doubleBooking) {
+    this.doubleBooking = doubleBooking;
+  }
+
+  public Set<ReferRejectReasonDTO> getReferRejectReasons() {
+    return referRejectReasons;
+  }
+
+  public void setReferRejectReasons(Set<ReferRejectReasonDTO> referRejectReasons) {
+    this.referRejectReasons = referRejectReasons;
+  }
+
+  public CommonSolasDTO getSolas() {
+    return solas;
+  }
+
+  @Override
+  public String toString() {
+    return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
+  }
+
+
+  public ReferRejectDetailDTO initializeWithDefaultValues() {
+    // this.referRejectID = 10l;
+    this.referRejectDetailID = 11l;
+    this.containerNo = StringUtils.EMPTY;
+    this.containerIsoCode = StringUtils.EMPTY;
+    // this.seal = Optional.of(new
+    // CommonSealDTO().initializeWithDefaultValues());
+    this.remarks = StringUtils.EMPTY;
+    this.status = StringUtils.EMPTY;
+    this.supervisorRemarks = StringUtils.EMPTY;
+    this.rejectBy = 50l;
+    this.referBy = 20l;
+    this.expPmBTM = 250;
+    this.expNetWeight = 550;
+    this.doubleBooking = false;
+    this.lineCode = StringUtils.EMPTY;
+    this.gateInTime = LocalDateTime.now();
+    this.position = StringUtils.EMPTY;
+    this.measuredWeightBridge = 450;
+    this.solas = new CommonSolasDTO().initializeWithDefaultValues();
+    /// this.referRejectReasons = Optional.of(new
+    /// HashSet<ReferRejectReasonDTO>());
+    // this.referRejectReasons.get().add(new
+    /// ReferRejectReasonDTO().initializeWithDefaultValues());
+    // this.referRejectReasons.get().add(new
+    /// ReferRejectReasonDTO().initializeWithDefaultValues());
+    return this;
+  }
 
 }

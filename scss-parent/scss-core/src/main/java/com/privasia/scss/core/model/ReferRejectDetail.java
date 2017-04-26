@@ -5,7 +5,6 @@ package com.privasia.scss.core.model;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Optional;
 import java.util.Set;
 
 import javax.persistence.AttributeOverride;
@@ -25,6 +24,8 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.hibernate.annotations.Type;
 
 import com.privasia.scss.common.enums.ContainerPosition;
@@ -37,10 +38,10 @@ import com.privasia.scss.common.enums.ReferStatus;
 
 @Entity
 @Table(name = "SCSS_REFER_REJECT_DET")
-@AttributeOverrides({@AttributeOverride(name = "addBy", column = @Column(name = "ADD_BY") ),
-    @AttributeOverride(name = "updateBy", column = @Column(name = "UPDATE_BY") ),
-    @AttributeOverride(name = "dateTimeAdd", column = @Column(name = "DATETIME_ADD") ),
-    @AttributeOverride(name = "dateTimeUpdate", column = @Column(name = "DATETIME_UPDATE") )})
+@AttributeOverrides({@AttributeOverride(name = "addBy", column = @Column(name = "ADD_BY")),
+    @AttributeOverride(name = "updateBy", column = @Column(name = "UPDATE_BY")),
+    @AttributeOverride(name = "dateTimeAdd", column = @Column(name = "DATETIME_ADD")),
+    @AttributeOverride(name = "dateTimeUpdate", column = @Column(name = "DATETIME_UPDATE"))})
 public class ReferRejectDetail extends AuditEntity implements Serializable {
 
   /**
@@ -64,12 +65,12 @@ public class ReferRejectDetail extends AuditEntity implements Serializable {
   private ReferReject referReject;
 
   @Embedded
-  @AttributeOverrides({@AttributeOverride(name = "seal01Origin", column = @Column(name = "EXP_SEAL_1_ORIGIN") ),
-      @AttributeOverride(name = "seal01Type", column = @Column(name = "EXP_SEAL_1_TYPE") ),
-      @AttributeOverride(name = "seal01Number", column = @Column(name = "EXP_SEAL_1_NUMBER") ),
-      @AttributeOverride(name = "seal02Origin", column = @Column(name = "EXP_SEAL_2_ORIGIN") ),
-      @AttributeOverride(name = "seal02Type", column = @Column(name = "EXP_SEAL_2_TYPE") ),
-      @AttributeOverride(name = "seal02Number", column = @Column(name = "EXP_SEAL_2_NUMBER") )})
+  @AttributeOverrides({@AttributeOverride(name = "seal01Origin", column = @Column(name = "EXP_SEAL_1_ORIGIN")),
+      @AttributeOverride(name = "seal01Type", column = @Column(name = "EXP_SEAL_1_TYPE")),
+      @AttributeOverride(name = "seal01Number", column = @Column(name = "EXP_SEAL_1_NUMBER")),
+      @AttributeOverride(name = "seal02Origin", column = @Column(name = "EXP_SEAL_2_ORIGIN")),
+      @AttributeOverride(name = "seal02Type", column = @Column(name = "EXP_SEAL_2_TYPE")),
+      @AttributeOverride(name = "seal02Number", column = @Column(name = "EXP_SEAL_2_NUMBER"))})
   private CommonSealAttribute seal;
 
   @Column(name = "REMARKS")
@@ -157,13 +158,6 @@ public class ReferRejectDetail extends AuditEntity implements Serializable {
     this.referReject = referReject;
   }
 
-  public Optional<CommonSealAttribute> getSeal() {
-    return Optional.ofNullable(seal);
-  }
-
-  public void setSeal(Optional<CommonSealAttribute> optSeal) {
-    this.seal = optSeal.orElse(null);
-  }
 
   public String getRemarks() {
     return remarks;
@@ -227,13 +221,6 @@ public class ReferRejectDetail extends AuditEntity implements Serializable {
     this.expNetWeight = expNetWeight;
   }
 
-  public Optional<Boolean> getDoubleBooking() {
-    return Optional.ofNullable(doubleBooking);
-  }
-
-  public void setDoubleBooking(Optional<Boolean> optDoubleBooking) {
-    this.doubleBooking = optDoubleBooking.orElse(false);
-  }
 
   public String getLineCode() {
     return lineCode;
@@ -270,20 +257,44 @@ public class ReferRejectDetail extends AuditEntity implements Serializable {
     this.measuredWeightBridge = measuredWeightBridge;
   }
 
-  public Optional<CommonSolasAttribute> getSolas() {
-    return Optional.ofNullable(solas);
+
+  @Override
+  public String toString() {
+    return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
   }
 
-  public void setSolas(Optional<CommonSolasAttribute> optSolas) {
-    this.solas = optSolas.orElse(null);
+  public CommonSealAttribute getSeal() {
+    return seal;
   }
 
-  public Optional<Set<ReferRejectReason>> getReferRejectReason() {
-    return Optional.ofNullable(referRejectReason);
+  public void setSeal(CommonSealAttribute seal) {
+    this.seal = seal;
   }
 
-  public void setReferRejectReason(Optional<Set<ReferRejectReason>> optReferRejectReason) {
-    this.referRejectReason = optReferRejectReason.orElse(null);
+  public Boolean getDoubleBooking() {
+    return doubleBooking;
   }
+
+  public void setDoubleBooking(Boolean doubleBooking) {
+    this.doubleBooking = doubleBooking;
+  }
+
+  public CommonSolasAttribute getSolas() {
+    return solas;
+  }
+
+  public void setSolas(CommonSolasAttribute solas) {
+    this.solas = solas;
+  }
+
+  public Set<ReferRejectReason> getReferRejectReason() {
+    return referRejectReason;
+  }
+
+  public void setReferRejectReason(Set<ReferRejectReason> referRejectReason) {
+    this.referRejectReason = referRejectReason;
+  }
+
+
 
 }

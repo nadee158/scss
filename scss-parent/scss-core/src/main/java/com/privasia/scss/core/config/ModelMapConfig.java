@@ -114,10 +114,8 @@ public class ModelMapConfig {
     modelMapper.addMappings(ModelMapPropertyMap.importContainerToGatePass());
     modelMapper.addMappings(ModelMapPropertyMap.exportContainerToExports());
     modelMapper.addMappings(ModelMapPropertyMap.exportsToExportContainer());
-    // modelMapper.addMappings(ModelMapPropertyMap.referRejectDTOToReferReject());
-    //modelMapper.addMappings(ModelMapPropertyMap.referRejectDetailDTOToReferRejectDetail());
+    modelMapper.addMappings(ModelMapPropertyMap.referRejectDetailDTOToReferRejectDetail());
     modelMapper.addMappings(ModelMapPropertyMap.referRejectDetailToReferRejectDetailDTO());
-    modelMapper.addMappings(ModelMapPropertyMap.referRejectToReferRejectDTO()); 
 
     return modelMapper;
   }
