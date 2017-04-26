@@ -43,7 +43,7 @@ import com.privasia.scss.opus.dto.OpusGateOutWriteResponse;
 import com.privasia.scss.opus.dto.OpusRequestResponseDTO;
 import com.privasia.scss.opus.service.OpusGateOutReadService;
 import com.privasia.scss.opus.service.OpusGateOutWriteService;
-import com.privasia.scss.opus.service.OpusService;
+import com.privasia.scss.opus.service.OpusDTOConstructService;
 
 @Service("importExportGateOutService")
 public class ImportExportGateOutService {
@@ -65,7 +65,7 @@ public class ImportExportGateOutService {
 
 	private ClientRepository clientRepository;
 
-	private OpusService opusService;
+	private OpusDTOConstructService opusDTOConstructService;
 
 	private CardRepository cardRepository;
 
@@ -113,8 +113,8 @@ public class ImportExportGateOutService {
 	}
 
 	@Autowired
-	public void setOpusService(OpusService opusService) {
-		this.opusService = opusService;
+	public void setOpusDTOConstructService(OpusDTOConstructService opusDTOConstructService) {
+		this.opusDTOConstructService = opusDTOConstructService;
 	}
 
 	@Autowired
@@ -199,7 +199,7 @@ public class ImportExportGateOutService {
 			OpusGateOutReadResponse gateOutReadResponse = opusGateOutReadService
 					.getGateOutReadResponse(gateOutReadRequest, opusRequestResponseDTO);
 			// check the errorlist of reponse
-			String errorMessage = opusService.hasErrorMessage(gateOutReadResponse.getErrorList());
+			String errorMessage = opusDTOConstructService.hasErrorMessage(gateOutReadResponse.getErrorList());
 			log.error("ERROR MESSAGE FROM OPUS SERVICE: " + errorMessage);
 			if (StringUtils.isNotEmpty(errorMessage)) {
 				// save it to the db - TO BE IMPLEMENTED
@@ -291,7 +291,7 @@ public class ImportExportGateOutService {
 		OpusGateOutWriteResponse opusGateOutWriteResponse = opusGateOutWriteService
 				.getGateOutWriteResponse(opusGateOutWriteRequest, opusRequestResponseDTO);
 
-		String errorMessage = opusService.hasErrorMessage(opusGateOutWriteResponse.getErrorList());
+		String errorMessage = opusDTOConstructService.hasErrorMessage(opusGateOutWriteResponse.getErrorList());
 		if (StringUtils.isNotEmpty(errorMessage)) {
 			// throw new business exception with constructed message - there is
 			// an error

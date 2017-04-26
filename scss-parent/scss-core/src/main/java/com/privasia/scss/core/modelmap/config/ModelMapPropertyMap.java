@@ -200,7 +200,7 @@ public final class ModelMapPropertyMap {
   public static PropertyMap<ReferRejectReasonDTO, ReferRejectReason> referRejectReasonDTOToReferRejectReason() {
     return new PropertyMap<ReferRejectReasonDTO, ReferRejectReason>() {
       protected void configure() {
-        skip().setReferReason(null);
+        //skip().setReferReason(null);
         skip().setReferRejectDetail(null);
       }
     };

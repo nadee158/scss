@@ -32,10 +32,10 @@ import com.privasia.scss.opus.dto.GOWriteRequestImportContainer;
 import com.privasia.scss.opus.dto.OpusErrorListItem;
 import com.privasia.scss.opus.dto.OpusGateInWriteResponse;
 
-@Service("opusService")
-public class OpusService {
+@Service("opusDTOConstructService")
+public class OpusDTOConstructService {
 
-	private static final Logger log = LoggerFactory.getLogger(OpusService.class);
+	private static final Logger log = LoggerFactory.getLogger(OpusDTOConstructService.class);
 
 	private static final String EMPTY_SPACE = " ";
 	private static final String SEPERATOR = ",";

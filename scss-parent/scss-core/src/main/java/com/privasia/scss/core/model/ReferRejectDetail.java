@@ -158,7 +158,6 @@ public class ReferRejectDetail extends AuditEntity implements Serializable {
     this.referReject = referReject;
   }
 
-
   public String getRemarks() {
     return remarks;
   }
@@ -257,12 +256,6 @@ public class ReferRejectDetail extends AuditEntity implements Serializable {
     this.measuredWeightBridge = measuredWeightBridge;
   }
 
-
-  @Override
-  public String toString() {
-    return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
-  }
-
   public CommonSealAttribute getSeal() {
     return seal;
   }
@@ -293,6 +286,11 @@ public class ReferRejectDetail extends AuditEntity implements Serializable {
 
   public void setReferRejectReason(Set<ReferRejectReason> referRejectReason) {
     this.referRejectReason = referRejectReason;
+  }
+  
+  @Override
+  public String toString() {
+    return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
   }
 
 

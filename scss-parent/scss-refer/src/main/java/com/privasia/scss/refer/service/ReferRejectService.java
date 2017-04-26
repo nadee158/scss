@@ -213,15 +213,15 @@ public class ReferRejectService {
 
     System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  referReject @@@@@@@@@@@@@@@@@@@@@@@@@@@@ " + referReject);
 
-    Set<ReferRejectDetailDTO> referRejectDetailDTOList = referReject.getReferRejectDetails().stream()
+    /*Set<ReferRejectDetailDTO> referRejectDetailDTOList = referReject.getReferRejectDetails().stream()
         .map(referRejectDetail -> modelMapper.map(referRejectDetail, ReferRejectDetailDTO.class))
         .collect(Collectors.toSet());
     System.out.println(
         "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  DATA SETTING OK FOR ReferRejectDetailDTO  @@@@@@@@@@@@@@@@@@@@@@@@@@@@ "
-            + referRejectDetailDTOList.size());
+            + referRejectDetailDTOList.size());*/
     ReferRejectDTO referRejectDTO = new ReferRejectDTO();
     modelMapper.map(referReject, referRejectDTO);
-    referRejectDTO.setReferRejectDetails(referRejectDetailDTOList);
+    //referRejectDTO.setReferRejectDetails(referRejectDetailDTOList);
     System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  DATA SETTING OK @@@@@@@@@@@@@@@@@@@@@@@@@@@@");
 
     System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  referRejectDTO @@@@@@@@@@@@@@@@@@@@@@@@@@@@ " + referRejectDTO);

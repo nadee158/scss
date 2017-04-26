@@ -180,8 +180,6 @@ public class ReferRejectDetailDTO implements Serializable {
     this.referReject = referReject;
   }
 
-
-
   public CommonSealDTO getSeal() {
     return seal;
   }

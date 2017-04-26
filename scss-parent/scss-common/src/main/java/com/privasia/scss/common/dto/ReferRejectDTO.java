@@ -152,21 +152,17 @@ public class ReferRejectDTO implements Serializable {
     this.referRejectDetails = referRejectDetails;
   }
 
-  public static long getSerialversionuid() {
-    return serialVersionUID;
-  }
-
-  @Override
-  public String toString() {
-    return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
-  }
-
   public CompanyDTO getCompany() {
     return company;
   }
 
   public void setCompany(CompanyDTO company) {
     this.company = company;
+  }
+  
+  @Override
+  public String toString() {
+    return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
   }
 
   public ReferRejectDTO initializeWithDefaultValues() {
