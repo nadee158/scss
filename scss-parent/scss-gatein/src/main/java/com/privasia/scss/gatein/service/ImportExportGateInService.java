@@ -337,12 +337,6 @@ public class ImportExportGateInService {
 
     // NEED TO CALL BUSINESS FUNCTIONS
 
-
-    GateInReponse gateInReponse = externalContainerInformationService.sendGateInRequest(gateInWriteRequest);  
-
-    gateInWriteRequest.setImportContainers(gateInReponse.getImportContainers());
-    gateInWriteRequest.setExportContainers(gateInReponse.getExportContainers());
-
     /*
      * Future<Boolean> impSave = null; Future<Boolean> expSave = null;
      */
@@ -351,20 +345,28 @@ public class ImportExportGateInService {
       throw new BusinessException("Invalid GateOutWriteRequest Empty ImpExpFlag");
     ImpExpFlagStatus impExpFlag = ImpExpFlagStatus.fromValue(gateInWriteRequest.getImpExpFlag());
 
+    GateInReponse gateInReponse = null;
+
     switch (impExpFlag) {
       case IMPORT:
+        gateInReponse = externalContainerInformationService.sendGateInRequest(gateInWriteRequest);
+        gateInWriteRequest.setImportContainers(gateInReponse.getImportContainers());
         importGateInService.saveGateInInfo(gateInWriteRequest, gateInClient, gateInClerk, card);
         // expSave = new AsyncResult<Boolean>(true);
         break;
       case EXPORT:
         // impSave = new AsyncResult<Boolean>(true);
         exportGateInService.validateExport(gateInWriteRequest.getExportContainers());
+        gateInReponse = externalContainerInformationService.sendGateInRequest(gateInWriteRequest);
+        gateInWriteRequest.setExportContainers(gateInReponse.getExportContainers());
         exportGateInService.saveGateInInfo(gateInWriteRequest, gateInClient, gateInClerk, card);
         break;
       case IMPORT_EXPORT:
-        importGateInService.saveGateInInfo(gateInWriteRequest, gateInClient, gateInClerk, card);
-
         exportGateInService.validateExport(gateInWriteRequest.getExportContainers());
+        gateInReponse = externalContainerInformationService.sendGateInRequest(gateInWriteRequest);
+        gateInWriteRequest.setImportContainers(gateInReponse.getImportContainers());
+        gateInWriteRequest.setExportContainers(gateInReponse.getExportContainers());
+        importGateInService.saveGateInInfo(gateInWriteRequest, gateInClient, gateInClerk, card);
         exportGateInService.saveGateInInfo(gateInWriteRequest, gateInClient, gateInClerk, card);
         break;
       default:
