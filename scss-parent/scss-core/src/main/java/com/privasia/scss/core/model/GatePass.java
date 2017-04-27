@@ -591,7 +591,7 @@ public class GatePass extends AuditEntity implements Serializable {
     this.setYardPosition(CommonUtil.changeCase(this.yardPosition, CommonUtil.UPPER_CASE));
     this.setBayCode(CommonUtil.changeCase(this.bayCode, CommonUtil.UPPER_CASE));
     this.setPrintEir(printEir);
-    this.getBaseCommonGateInOutAttribute().setHpabBooking(Optional.of(hpabBooking));
+    this.getBaseCommonGateInOutAttribute().setHpabBooking(hpabBooking);
     this.getCommonGateInOut()
         .setRejectReason(CommonUtil.changeCase(this.getCommonGateInOut().getRejectReason(), CommonUtil.UPPER_CASE));
 

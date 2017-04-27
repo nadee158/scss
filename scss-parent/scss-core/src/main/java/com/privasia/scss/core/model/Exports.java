@@ -44,7 +44,7 @@ import com.privasia.scss.core.repository.DamageCodeRepository;
 @Entity
 @Table(name = "SCSS_EXPORTS")
 @AttributeOverrides({ @AttributeOverride(name = "addBy", column = @Column(name = "EXP_ADD_BY")),
-		@AttributeOverride(name = "updateBy", column = @Column(name = "EXP_UPDATE_BY")),
+		@AttributeOverride(name = "updateBy", column = @Column(name = "EXP_UPDATE_BY")), 
 		@AttributeOverride(name = "dateTimeAdd", column = @Column(name = "EXP_DATECREATE")),
 		@AttributeOverride(name = "dateTimeUpdate", column = @Column(name = "EXP_DATEUPDATE")) })
 public class Exports extends AuditEntity implements Serializable {
@@ -1349,7 +1349,7 @@ public class Exports extends AuditEntity implements Serializable {
 		this.setDgDescription(CommonUtil.changeCase(this.dgDescription, CommonUtil.LOWER_CASE));
 		this.setHdlGoodsDescription(CommonUtil.changeCase(this.hdlGoodsDescription, CommonUtil.LOWER_CASE));
 		this.setCardUsage(cardUsage);
-		this.getBaseCommonGateInOutAttribute().setHpabBooking(Optional.of(hpabBooking));
+		this.getBaseCommonGateInOutAttribute().setHpabBooking(hpabBooking);
 		calculateWeightPercentages();
 		this.setHpabISOCode(CommonUtil.changeCase(this.hpabISOCode, CommonUtil.UPPER_CASE));
 		this.setCosmosISOCode(CommonUtil.changeCase(this.cosmosISOCode, CommonUtil.UPPER_CASE));

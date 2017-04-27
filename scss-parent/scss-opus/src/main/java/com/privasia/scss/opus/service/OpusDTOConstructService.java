@@ -706,7 +706,7 @@ public class OpusDTOConstructService {
 							.findFirst().get();
 				}
 				exportContainer = giReadResponseExporterContainerToExportContainer(opusExportContainer,
-						Optional.of(exportContainer));
+						Optional.ofNullable(exportContainer));
 
 				log.info("exportContainer.getGateInOut " + exportContainer.getGateInOut());
 				log.info("exportContainer.getShippingLine " + exportContainer.getShippingLine());

@@ -175,7 +175,7 @@ public class ImportGateInService {
 
 			// assign values from header level to container level
 			importContainer.getBaseCommonGateInOutAttribute().setEirStatus(TransactionStatus.INPROGRESS.getValue());
-			importContainer.getBaseCommonGateInOutAttribute().setHpabBooking(Optional.ofNullable(gateInWriteRequest.getHpatBookingId()));
+			importContainer.getBaseCommonGateInOutAttribute().setHpabBooking(gateInWriteRequest.getHpatBookingId());
 			importContainer.getBaseCommonGateInOutAttribute().setPmHeadNo(gateInWriteRequest.getTruckHeadNo());
 			importContainer.getBaseCommonGateInOutAttribute().setPmPlateNo(gateInWriteRequest.getTruckPlateNo());
 			importContainer.getBaseCommonGateInOutAttribute().setTimeGateInOk(LocalDateTime.now());
@@ -196,12 +196,12 @@ public class ImportGateInService {
 
 					HPABBooking hpabBooking = null;
 					if (!(importContainer.getBaseCommonGateInOutAttribute() == null)) {
-						if (importContainer.getBaseCommonGateInOutAttribute().getHpabBooking().isPresent()) {
+						if (StringUtils.isNotEmpty(importContainer.getBaseCommonGateInOutAttribute().getHpabBooking())) {
 							hpabBooking = hpabBookingRepository
-									.findOne(importContainer.getBaseCommonGateInOutAttribute().getHpabBooking().get())
+									.findOne(importContainer.getBaseCommonGateInOutAttribute().getHpabBooking())
 									.orElseThrow(() -> new ResultsNotFoundException(
 											"No HPAB Booking found ! : " + importContainer
-													.getBaseCommonGateInOutAttribute().getHpabBooking().get()));
+													.getBaseCommonGateInOutAttribute().getHpabBooking()));
 						}
 					}
 

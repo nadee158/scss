@@ -271,11 +271,11 @@ public class ExportGateInService {
 		if (exportContainerFirstOpt.isPresent()) { 
 			ExportContainer exportContainerFirst = exportContainerFirstOpt.get();
 			if (!(exportContainerFirst.getBaseCommonGateInOutAttribute() == null)) {
-				if (exportContainerFirst.getBaseCommonGateInOutAttribute().getHpabBooking().isPresent()) {
+				if (StringUtils.isNotEmpty(exportContainerFirst.getBaseCommonGateInOutAttribute().getHpabBooking())) {
 					hpabBooking = hpabBookingRepository
-							.findOne(exportContainerFirst.getBaseCommonGateInOutAttribute().getHpabBooking().get()).
+							.findOne(exportContainerFirst.getBaseCommonGateInOutAttribute().getHpabBooking()).
 							orElseThrow(() -> new ResultsNotFoundException("No HPAB Booking found ! : "+
-									exportContainerFirst.getBaseCommonGateInOutAttribute().getHpabBooking().get()));
+									exportContainerFirst.getBaseCommonGateInOutAttribute().getHpabBooking()));
 				}
 			}
 		}
@@ -291,7 +291,7 @@ public class ExportGateInService {
 
 			// assign values from header level to container level
 			exportContainer.getBaseCommonGateInOutAttribute().setEirStatus(TransactionStatus.INPROGRESS.getValue());
-			exportContainer.getBaseCommonGateInOutAttribute().setHpabBooking(Optional.ofNullable(gateInWriteRequest.getHpatBookingId()));
+			exportContainer.getBaseCommonGateInOutAttribute().setHpabBooking(gateInWriteRequest.getHpatBookingId());
 			exportContainer.getBaseCommonGateInOutAttribute().setPmHeadNo(gateInWriteRequest.getTruckHeadNo());
 			exportContainer.getBaseCommonGateInOutAttribute().setPmPlateNo(gateInWriteRequest.getTruckPlateNo());
 			exportContainer.getBaseCommonGateInOutAttribute().setTimeGateIn(gateInWriteRequest.getGateInDateTime());

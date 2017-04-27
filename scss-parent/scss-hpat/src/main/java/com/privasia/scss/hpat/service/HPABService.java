@@ -43,7 +43,7 @@ import com.querydsl.core.types.Predicate;
 @Service("hpabService")
 public class HPABService {
 
-	private HPABBookingRepository hpabBookingRepository;
+	private HPABBookingRepository hpabBookingRepository; 
 
 	private CardRepository cardRepository;
 

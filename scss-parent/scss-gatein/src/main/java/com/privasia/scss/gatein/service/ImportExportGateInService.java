@@ -137,7 +137,7 @@ public class ImportExportGateInService {
   }
 
   @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-  public GateInReponse populateGateIn(GateInRequest gateInRequest) {
+  public GateInReponse populateGateIn(GateInRequest gateInRequest) { 
 
     Optional<Card> cardOpt = cardRepository.findOne(gateInRequest.getCardID());
     Card card =

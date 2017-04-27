@@ -261,7 +261,7 @@ public class HPABBookingDetail extends AuditEntity implements Serializable {
 		if (exportContainer.getBaseCommonGateInOutAttribute() == null) {
 			exportContainer.setBaseCommonGateInOutAttribute(new BaseCommonGateInOutDTO());
 		}
-		exportContainer.getBaseCommonGateInOutAttribute().setHpabBooking(Optional.of(this.hpabBooking.getBookingID()));
+		exportContainer.getBaseCommonGateInOutAttribute().setHpabBooking(this.hpabBooking.getBookingID());
 
 		if (exportContainer.getContainer() == null) {
 			exportContainer.setContainer(new CommonContainerDTO());
@@ -298,7 +298,7 @@ public class HPABBookingDetail extends AuditEntity implements Serializable {
 		if (importContainer.getBaseCommonGateInOutAttribute() == null) {
 			importContainer.setBaseCommonGateInOutAttribute(new BaseCommonGateInOutDTO());
 		}
-		importContainer.getBaseCommonGateInOutAttribute().setHpabBooking(Optional.of(this.hpabBooking.getBookingID()));
+		importContainer.getBaseCommonGateInOutAttribute().setHpabBooking(this.hpabBooking.getBookingID());
 
 		if (importContainer.getContainer() == null) {
 			importContainer.setContainer(new CommonContainerDTO());

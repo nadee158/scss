@@ -37,7 +37,7 @@ import com.privasia.scss.common.util.DateUtil;
 		@AttributeOverride(name = "updateBy", column = @Column(name = "UPDATE_BY")),
 		@AttributeOverride(name = "dateTimeAdd", column = @Column(name = "DATETIME_ADD")),
 		@AttributeOverride(name = "dateTimeUpdate", column = @Column(name = "DATETIME_UPDATE")) })
-public class HPABBooking extends AuditEntity implements Serializable {
+public class HPABBooking extends AuditEntity implements Serializable { 
 
 	/**
 	 * 
@@ -108,7 +108,7 @@ public class HPABBooking extends AuditEntity implements Serializable {
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "hpabBooking")
 	private Set<HPABBookingDetail> hpabBookingDetails;
 
-	public HpatDto constructHpatDto() {
+	public HpatDto constructHpatDto() { 
 		HpatDto dto = new HpatDto();
 		dto.setBookingId(this.getBookingID());
 		dto.setDriverId(this.getDriverICNumber());

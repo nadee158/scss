@@ -33,10 +33,10 @@ public class ModelMapConfig {
   @Bean
   public ModelMapper configModelMapper() {
     ModelMapper modelMapper = new ModelMapper();
+    configOptionalMapper(modelMapper);
     configEnums(modelMapper);
     configLocalDateTime(modelMapper);
     configProperty(modelMapper);
-    //configOptionalMapper(modelMapper);
     return modelMapper;
   }
 
@@ -116,7 +116,9 @@ public class ModelMapConfig {
     modelMapper.addMappings(ModelMapPropertyMap.exportsToExportContainer());
     modelMapper.addMappings(ModelMapPropertyMap.referRejectDetailDTOToReferRejectDetail());
     modelMapper.addMappings(ModelMapPropertyMap.referRejectDetailToReferRejectDetailDTO());
-
+    modelMapper.addMappings(ModelMapPropertyMap.referRejectReasonToReferRejectReasonDTO());
+    modelMapper.addMappings(ModelMapPropertyMap.referRejectToReferRejectDTO());
+    modelMapper.addMappings(ModelMapPropertyMap.referRejectReasonDTOToReferRejectReason());
     return modelMapper;
   }
 

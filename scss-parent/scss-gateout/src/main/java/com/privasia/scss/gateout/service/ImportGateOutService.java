@@ -139,9 +139,9 @@ public class ImportGateOutService {
           importContainer.getBaseCommonGateInOutAttribute().setGateInClient(gateInClient);
         }
 
-        if (gatePass.getBaseCommonGateInOutAttribute().getHpabBooking().isPresent()) {
+        if (gatePass.getBaseCommonGateInOutAttribute().getHpabBooking()!=null) {
           importContainer.getBaseCommonGateInOutAttribute()
-              .setHpabBooking(Optional.of(gatePass.getBaseCommonGateInOutAttribute().getHpabBooking().get().getBookingID())); 
+              .setHpabBooking(gatePass.getBaseCommonGateInOutAttribute().getHpabBooking().getBookingID()); 
         }
 
         importContainer.getBaseCommonGateInOutAttribute()

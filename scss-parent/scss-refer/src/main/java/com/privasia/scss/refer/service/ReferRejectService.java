@@ -211,21 +211,23 @@ public class ReferRejectService {
     ReferReject referReject = referRejectRepository.findOne(referId)
         .orElseThrow(() -> new ResultsNotFoundException("Refer reject was not found for ID : " + referId));
 
-    System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  referReject @@@@@@@@@@@@@@@@@@@@@@@@@@@@ " + referReject);
-
-    /*Set<ReferRejectDetailDTO> referRejectDetailDTOList = referReject.getReferRejectDetails().stream()
-        .map(referRejectDetail -> modelMapper.map(referRejectDetail, ReferRejectDetailDTO.class))
-        .collect(Collectors.toSet());
-    System.out.println(
-        "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  DATA SETTING OK FOR ReferRejectDetailDTO  @@@@@@@@@@@@@@@@@@@@@@@@@@@@ "
-            + referRejectDetailDTOList.size());*/
     ReferRejectDTO referRejectDTO = new ReferRejectDTO();
     modelMapper.map(referReject, referRejectDTO);
-    //referRejectDTO.setReferRejectDetails(referRejectDetailDTOList);
-    System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  DATA SETTING OK @@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-
-    System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  referRejectDTO @@@@@@@@@@@@@@@@@@@@@@@@@@@@ " + referRejectDTO);
-
+    
+    Set<ReferRejectDetailDTO> referRejectDetailDTOList = new HashSet<ReferRejectDetailDTO>();
+	referReject.getReferRejectDetails().stream().forEach(referRejectDetail -> {
+		ReferRejectDetailDTO detailDTO = modelMapper.map(referRejectDetail, ReferRejectDetailDTO.class);
+		
+		Set<ReferRejectReasonDTO> referRejectReasonDTOList = referRejectDetail.getReferRejectReason().stream()
+				.map(referRejectReason -> modelMapper.map(referRejectReason, ReferRejectReasonDTO.class))
+				.collect(Collectors.toSet());
+		
+		detailDTO.setReferRejectReasons(referRejectReasonDTOList);
+		referRejectDetailDTOList.add(detailDTO);
+	});
+    
+	referRejectDTO.setReferRejectDetails(referRejectDetailDTOList);
+    
     return referRejectDTO;
   }
 
@@ -261,7 +263,7 @@ public class ReferRejectService {
     baseCommonGateInOut.setCard(cardDTO);
     baseCommonGateInOut.setTimeGateIn(gateInWriteRequest.getGateInDateTime());
     baseCommonGateInOut.setEirStatus(TransactionStatus.REJECT.getValue());
-    baseCommonGateInOut.setHpabBooking(Optional.ofNullable(gateInWriteRequest.getHpatBookingId()));
+    baseCommonGateInOut.setHpabBooking(gateInWriteRequest.getHpatBookingId());
     baseCommonGateInOut.setPmHeadNo(gateInWriteRequest.getTruckHeadNo());
     baseCommonGateInOut.setPmPlateNo(gateInWriteRequest.getTruckPlateNo());
     baseCommonGateInOut.setTimeGateInOk(LocalDateTime.now());
@@ -306,10 +308,10 @@ public class ReferRejectService {
     boolean doubleBoooking = referReject.getReferRejectDetails().size() == 2 ? true : false;
 
     HPABBooking hpabBooking = null;
-    if (baseCommonGateInOut.getHpabBooking().isPresent()) {
-      hpabBooking = hpabBookingRepository.findOne(baseCommonGateInOut.getHpabBooking().get())
+    if (StringUtils.isNotEmpty(baseCommonGateInOut.getHpabBooking())) {
+      hpabBooking = hpabBookingRepository.findOne(baseCommonGateInOut.getHpabBooking())
           .orElseThrow(() -> new ResultsNotFoundException(
-              "No HPAB Booking found ! : " + baseCommonGateInOut.getHpabBooking().get()));
+              "No HPAB Booking found ! : " + baseCommonGateInOut.getHpabBooking()));
     }
 
     // bind details manually from dby
@@ -363,7 +365,7 @@ public class ReferRejectService {
 
     baseCommonGateInOut.setGateInClient(client);
 
-    baseCommonGateInOut.setHpabBooking(Optional.of(hpabBooking));
+    baseCommonGateInOut.setHpabBooking(hpabBooking);
 
     referReject.setBaseCommonGateInOut(baseCommonGateInOut);
 

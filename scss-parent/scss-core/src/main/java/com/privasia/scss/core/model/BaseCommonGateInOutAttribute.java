@@ -174,12 +174,12 @@ public class BaseCommonGateInOutAttribute implements Serializable {
 		this.transactionSlipPrinted = transactionSlipPrinted;
 	}
 
-	public Optional<HPABBooking> getHpabBooking() {
-		return Optional.ofNullable(hpabBooking);
+	public HPABBooking getHpabBooking() {
+		return hpabBooking;
 	}
 
-	public void setHpabBooking(Optional<HPABBooking> optHpabBooking) {
-		this.hpabBooking = optHpabBooking.orElse(null);
+	public void setHpabBooking(HPABBooking hpabBooking) {
+		this.hpabBooking = hpabBooking;
 	}
 
 	public Card getCard() {

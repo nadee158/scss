@@ -5,7 +5,6 @@ package com.privasia.scss.common.dto;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -84,12 +83,12 @@ public class BaseCommonGateInOutDTO implements Serializable {
 		this.pmPlateNo = pmPlateNo;
 	}
 
-	public Optional<String> getHpabBooking() {
-		return Optional.ofNullable(hpabBooking);
+	public String getHpabBooking() {
+		return hpabBooking;
 	}
 
-	public void setHpabBooking(Optional<String> hpabBooking) {
-		this.hpabBooking = hpabBooking.orElse(null);
+	public void setHpabBooking(String hpabBooking) {
+		this.hpabBooking = hpabBooking;
 	}
 
 	public String getEirStatus() {

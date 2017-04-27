@@ -131,9 +131,9 @@ public class ExportGateOutService {
           exportContainer.getBaseCommonGateInOutAttribute().setGateInClient(gateInClient);
         }
 
-        if (export.getBaseCommonGateInOutAttribute().getHpabBooking().isPresent()) {
+        if (export.getBaseCommonGateInOutAttribute().getHpabBooking()!=null) {
           exportContainer.getBaseCommonGateInOutAttribute()
-              .setHpabBooking(Optional.of(export.getBaseCommonGateInOutAttribute().getHpabBooking().get().getBookingID()));
+              .setHpabBooking(export.getBaseCommonGateInOutAttribute().getHpabBooking().getBookingID());
         }
 
         exportContainer.getBaseCommonGateInOutAttribute()

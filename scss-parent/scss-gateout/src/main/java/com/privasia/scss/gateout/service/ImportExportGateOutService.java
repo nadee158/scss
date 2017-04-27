@@ -46,7 +46,7 @@ import com.privasia.scss.opus.service.OpusGateOutWriteService;
 import com.privasia.scss.opus.service.OpusDTOConstructService;
 
 @Service("importExportGateOutService")
-public class ImportExportGateOutService {
+public class ImportExportGateOutService { 
 
 	private static final Log log = LogFactory.getLog(ImportExportGateOutService.class);
 
