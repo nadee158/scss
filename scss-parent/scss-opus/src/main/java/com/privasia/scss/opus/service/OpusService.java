@@ -55,6 +55,7 @@ public class OpusService implements ExternalContainerInformationService {
         opusGateInWriteService.getGateInWriteResponse(opusGateInWriteRequest, opusRequestResponseDTO);
 
     System.out.println("opusGateInWriteResponse " + gson.toJson(opusGateInWriteResponse));
+
     String errorMessage = opusDTOConstructService.hasErrorMessage(opusGateInWriteResponse.getErrorList());
     log.error("ERROR MESSAGE FROM OPUS SERVICE: " + errorMessage);
     if (StringUtils.isNotEmpty(errorMessage)) {
