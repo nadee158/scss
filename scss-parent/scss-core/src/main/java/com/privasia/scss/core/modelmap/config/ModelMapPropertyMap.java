@@ -112,7 +112,7 @@ public final class ModelMapPropertyMap {
 	public static PropertyMap<Exports, ExportContainer> exportsToExportContainer() {
 		return new PropertyMap<Exports, ExportContainer>() {
 			protected void configure() {
-				skip().setBaseCommonGateInOutAttribute(null);
+				//skip().setBaseCommonGateInOutAttribute(null);
 			}
 		};
 	}

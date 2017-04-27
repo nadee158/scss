@@ -96,18 +96,19 @@ public class ExportGateOutService {
       modelMapper.map(export, exportContainer);
 
       if (export.getBaseCommonGateInOutAttribute() != null) {
-        exportContainer.setBaseCommonGateInOutAttribute(new BaseCommonGateInOutDTO());
-        if (export.getBaseCommonGateInOutAttribute().getCard() != null) {
+        //exportContainer.setBaseCommonGateInOutAttribute(new BaseCommonGateInOutDTO());
+        /*if (export.getBaseCommonGateInOutAttribute().getCard() != null) {
+        	System.out.println("################## exports : "+export.toString());
           exportContainer.getBaseCommonGateInOutAttribute()
               .getCard().setCardID(export.getBaseCommonGateInOutAttribute().getCard().getCardID());
-        }
-        if (export.getBaseCommonGateInOutAttribute().getEirStatus() != null) {
+        }*/
+        /*if (export.getBaseCommonGateInOutAttribute().getEirStatus() != null) {
           exportContainer.getBaseCommonGateInOutAttribute()
               .setEirStatus(export.getBaseCommonGateInOutAttribute().getEirStatus().getValue());
-        }
+        }*/
 
         // changed gateout cleark to gateout clierk
-        if (export.getBaseCommonGateInOutAttribute().getGateInClerk() != null) {
+        /*if (export.getBaseCommonGateInOutAttribute().getGateInClerk() != null) {
           SystemUserDTO gateInClerk = new SystemUserDTO();
           modelMapper.map(export.getBaseCommonGateInOutAttribute().getGateInClerk(), gateInClerk);
           if (!(export.getBaseCommonGateInOutAttribute().getGateInClerk().getCommonContactAttribute() == null)) {
@@ -115,7 +116,7 @@ public class ExportGateOutService {
                 export.getBaseCommonGateInOutAttribute().getGateInClerk().getCommonContactAttribute().getPersonName());
           }
           exportContainer.getBaseCommonGateInOutAttribute().setGateInClerk(gateInClerk);
-        }
+        }*/
 
         if (!(export.getBaseCommonGateInOutAttribute().getTimeGateIn() == null)) {
           LocalDateTime timeGateIn = export.getBaseCommonGateInOutAttribute().getTimeGateIn();
@@ -124,7 +125,7 @@ public class ExportGateOutService {
         }
 
         // changed gateout client to gatein client
-        if (export.getBaseCommonGateInOutAttribute().getGateInClient() != null) { 
+        /*if (export.getBaseCommonGateInOutAttribute().getGateInClient() != null) { 
           ClientDTO gateInClient = new ClientDTO();
           modelMapper.map(export.getBaseCommonGateInOutAttribute().getGateInClient(), gateInClient);
           gateOutReponse.setGateInLaneNo(export.getBaseCommonGateInOutAttribute().getGateInClient().getLaneNo());
@@ -139,7 +140,7 @@ public class ExportGateOutService {
         exportContainer.getBaseCommonGateInOutAttribute()
             .setPmHeadNo(export.getBaseCommonGateInOutAttribute().getPmHeadNo());
         exportContainer.getBaseCommonGateInOutAttribute()
-            .setPmPlateNo(export.getBaseCommonGateInOutAttribute().getPmHeadNo());
+            .setPmPlateNo(export.getBaseCommonGateInOutAttribute().getPmHeadNo());*/
 
       }
       // adding log info

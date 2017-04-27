@@ -14,6 +14,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.hibernate.annotations.Type;
 
 import com.privasia.scss.common.enums.TransactionStatus;
@@ -220,6 +222,11 @@ public class BaseCommonGateInOutAttribute implements Serializable {
 
 	public void setGateOutClient(Client gateOutClient) {
 		this.gateOutClient = gateOutClient;
+	}
+
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
 	}
 
 }
