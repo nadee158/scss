@@ -1,7 +1,6 @@
 package com.privasia.scss.common.dto;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -31,32 +30,6 @@ public class ReferReasonDTO implements Serializable {
   public ReferReasonDTO() {
     super();
   }
-
-  /*public ReferReasonDTO(ReferReason parent, List<ReferReason> childList) {
-    constructDto(this, parent);
-    if (!(childList == null || childList.isEmpty())) {
-      List<ReferReasonDTO> childrenList = new ArrayList<ReferReasonDTO>();
-      childList.forEach(child -> {
-        childrenList.add(constructDto(new ReferReasonDTO(), child));
-      });
-      this.childList = childrenList;
-    }
-  }
-
-  private ReferReasonDTO constructDto(ReferReasonDTO referReasonDTO, ReferReason parent) {
-
-    referReasonDTO.setReferReasonID(parent.getReferReasonID());
-
-    referReasonDTO.setReasonDescription(parent.getReasonDescription());
-
-    referReasonDTO.setSortSEQ(parent.getSortSEQ());
-
-    if (!(parent.getReferStatus() == null)) {
-      referReasonDTO.setReferStatus(parent.getReferStatus().toString());
-    }
-    referReasonDTO.setParent(parent.isParent());
-    return referReasonDTO;
-  }*/
 
   public Long getReferReasonID() {
     return referReasonID;
