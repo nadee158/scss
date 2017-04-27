@@ -24,7 +24,154 @@ import com.privasia.scss.gateout.mongo.repository.GridFSRepository;
 
 @Service("fileService")
 public class FileService {
+  
+//tomorrows tasks
+  //write a methods generateSoalsService(List<Export> list)
+  
+  //old app:-
+  //web-inf->solaspass.jrxml logo.png copy to this app
+  //implement following in this app
+  /*
+  public String generateSolasCertificateId(String gateInOK) throws ParseException{
+    
+    StringBuffer buffer = new StringBuffer();
+    buffer.append("WPT");
+    
+    SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+    Date d = sdf.parse(gateInOK);
+    sdf.applyPattern("yyyyMMddHHmmssSSS");
+    buffer.append(sdf.format(d));
+    return buffer.toString();
+    
+   }
+*/
+  
+//convert array of bytes into file (use this to check file)
+  /*FileOutputStream fileOuputStream = 
+               new FileOutputStream("C://pass.pdf"); 
+  fileOuputStream.write(pdfBytes);
+  fileOuputStream.close();*/
+  
+  
+/* 
+ * Only following data is required to generate the repprt
+ *  solasDTO.setIssueBy(SYSUser.getUserFullName(solasDTO.getIssuerId()));
+  solasDTO.setIssuerNRIC(SYSUser.getUserNricNo(solasDTO.getIssuerId()));
+  conn = SCSSDatabase.getInstance().getConnection();
+  String gateNO = Client.selectGateNo(conn, solasDTO.getWeighStation());
+  solasDTO.setWeighStation(gateNO);
+solasDTO.setCertificateNo(generateSolasCertificateId(solasDTO.getGateInOK()));*/
+  
+  //to generate the report - first hard code data and generate report
+  /*
+   * public SolasDTO generateSolasCertificate(SolasDTO solasDTO){
+  
+  List<SolasDTO> dataList = new ArrayList<SolasDTO>();
+  InputStream is = null;
+  Connection conn =  null;
+  GateInDAOImpl gateInDAOImpl = GateInDAOImpl.getInstance();
+  
+  try{
+   
+   if(!solasDTO.isC1WithInTolerance() || !solasDTO.isC2WithInTolerance()){
+    
+    solasDTO.setIssueBy(SYSUser.getUserFullName(solasDTO.getIssuerId()));
+    solasDTO.setIssuerNRIC(SYSUser.getUserNricNo(solasDTO.getIssuerId()));
+    conn = SCSSDatabase.getInstance().getConnection();
+    String gateNO = Client.selectGateNo(conn, solasDTO.getWeighStation());
+    solasDTO.setWeighStation(gateNO);
+    conn.commit(); 
+    
+    if(StringUtils.isBlank(solasDTO.getCertificateNo())){
+     solasDTO.setCertificateNo(generateSolasCertificateId(solasDTO.getGateInOK()));
+    }
+    dataList.add(solasDTO);
+    
+    HashMap<String, Object> params = new HashMap<String, Object>();
+    
+    
+    JRDataSource reportData = new JRBeanCollectionDataSource(dataList);        
+    // 1. Add report parameters
+    params.put("logoPath", ImageIO.read(getClass().getResource(SCSSConstant.E_SOLAS_PASS_LOGO)));
+    is = this.getClass().getResourceAsStream(SCSSConstant.E_SOLAS_PASS);
+    
+    // 3. Convert template to JasperDesign
+    JasperDesign jd = JRXmlLoader.load(is);
+    // 4. Compile design to JasperReport
+    JasperReport jr = JasperCompileManager.compileReport(jd);
+    // 5. Create the JasperPrint object
+    // Make sure to pass the JasperReport, report parameters, and data
+    // source
+    JasperPrint jp = JasperFillManager.fillReport(jr, params, reportData);
 
+    byte[] pdfBytes = JasperExportManager.exportReportToPdf(jp);
+    solasDTO.setCertificate(pdfBytes);
+    
+    MongoDBDAOImpl mongoDBDAOImpl = MongoDBDAOImpl.getInstance();
+    
+    if(StringUtils.isNotBlank(solasDTO.getExportSEQ01()) && !solasDTO.isC1WithInTolerance()){
+     FileInfo fileInfo = new FileInfo();
+     //fileInfo.setFileID(solasDTO.getCertificateNo());
+     fileInfo.setTransactionType(SCSSConstant.EXP_TRANSACTION);
+     fileInfo.setTrxId(Long.parseLong(solasDTO.getExportSEQ01()));
+     
+     fileInfo.setFileSize(pdfBytes.length);
+     fileInfo.setInputStream(new ByteArrayInputStream(pdfBytes));
+     mongoDBDAOImpl.saveFileToBucket(SCSSConstant.SOLAS_CERTIFICATE_COLLECTION, fileInfo);
+    }
+    
+    if(StringUtils.isNotBlank(solasDTO.getExportSEQ02()) && !solasDTO.isC2WithInTolerance()){
+     FileInfo fileInfo2 = new FileInfo();
+     //fileInfo.setFileID(solasDTO.getCertificateNo());
+     fileInfo2.setTransactionType(SCSSConstant.EXP_TRANSACTION);
+     fileInfo2.setTrxId(Long.parseLong(solasDTO.getExportSEQ02()));
+     fileInfo2.setFileSize(pdfBytes.length);
+     fileInfo2.setInputStream(new ByteArrayInputStream(pdfBytes));
+     mongoDBDAOImpl.saveFileToBucket(SCSSConstant.SOLAS_CERTIFICATE_COLLECTION, fileInfo2);
+     
+    }
+    
+    //convert array of bytes into file
+       /*FileOutputStream fileOuputStream = 
+                    new FileOutputStream("C://pass.pdf"); 
+       fileOuputStream.write(pdfBytes);
+       fileOuputStream.close();
+   }
+   
+   
+  }catch(Exception e){
+   String stackTrace = ExceptionUtil.getExceptionStacktrace(e);
+   log.error(stackTrace);
+    
+  }finally{
+   try {
+    if(is!=null){
+     is.close();
+    }
+    
+    if(conn!=null){
+     conn.close();
+    }
+    if(!solasDTO.isC1WithInTolerance() || !solasDTO.isC2WithInTolerance()){
+     gateInDAOImpl.updateSolasCertificateNumber(solasDTO);
+    }
+    
+   } catch (IOException e) {
+    String stackTrace = ExceptionUtil.getExceptionStacktrace(e);
+    log.error(stackTrace);
+   } catch (SQLException e) {
+    String stackTrace = ExceptionUtil.getExceptionStacktrace(e);
+    log.error(stackTrace);
+   } catch (Exception e) {
+    String stackTrace = ExceptionUtil.getExceptionStacktrace(e);
+    log.error(stackTrace);
+   }
+  }
+  
+  return solasDTO;
+  
+ }
+   * */
 	private GridFSRepository gridFSRepository;
 
 	private ODDRepository oddRepository;
