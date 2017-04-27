@@ -137,7 +137,7 @@ public class ImportExportGateInService {
   }
 
   @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-  public GateInReponse populateGateIn(GateInRequest gateInRequest) { 
+  public GateInReponse populateGateIn(GateInRequest gateInRequest) {
 
     Optional<Card> cardOpt = cardRepository.findOne(gateInRequest.getCardID());
     Card card =
@@ -165,7 +165,7 @@ public class ImportExportGateInService {
      * if the refer id avaliable then fetch here. then pass export container list
      */
     // refere reject details
-    if (gateInRequest.getReferID().isPresent()) {
+    if (gateInRequest.getReferID() != null && gateInRequest.getReferID().isPresent()) {
       exportContainers = gateInReferService.fetchReferDataForExport(gateInRequest.getReferID().get());
     }
     gateInReponse.setExportContainers(exportContainers);

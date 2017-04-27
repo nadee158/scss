@@ -13,8 +13,16 @@ import com.privasia.scss.gatein.lpkedi.repository.LPKEDIRepository;
 @Service("lpkediService")
 public class LPKEDIService {
 
-  @Autowired
+
   private LPKEDIRepository lpkediRepository;
+
+
+  @Autowired
+  public void setLpkediRepository(LPKEDIRepository lpkediRepository) {
+    this.lpkediRepository = lpkediRepository;
+  }
+
+
 
   public ExportContainer findLPKEDITDigiMessage(ExportContainer exportContainer) {
     try {

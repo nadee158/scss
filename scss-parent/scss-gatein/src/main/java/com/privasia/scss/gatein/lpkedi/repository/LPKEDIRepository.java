@@ -18,14 +18,15 @@ import com.privasia.scss.common.dto.ExportContainer;
 @Repository("lpkediRepository")
 public class LPKEDIRepository {
 
-  @Autowired
-  @Qualifier("lpkediJdbcTemplate")
   private JdbcTemplate lpkediJdbcTemplate;
 
   @Value("${export.findLPKEDITDigiMessage}")
   private String findLPKEDITDigiMessage;
 
-
+  @Autowired
+  public void setLpkediJdbcTemplate(@Qualifier("lpkediJdbcTemplate") final JdbcTemplate lpkediJdbcTemplate) {
+    this.lpkediJdbcTemplate = lpkediJdbcTemplate;
+  }
 
   @Transactional(value = "lpkediTransactionManager", propagation = Propagation.REQUIRED, readOnly = true)
   public ExportContainer findLPKEDITDigiMessage(ExportContainer exportContainer)
