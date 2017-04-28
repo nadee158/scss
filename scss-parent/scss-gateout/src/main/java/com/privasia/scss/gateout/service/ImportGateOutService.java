@@ -110,7 +110,7 @@ public class ImportGateOutService {
         importContainer.setBaseCommonGateInOutAttribute(new BaseCommonGateInOutDTO());
         if (gatePass.getBaseCommonGateInOutAttribute().getCard() != null) {
           importContainer.getBaseCommonGateInOutAttribute()
-              .setCard(gatePass.getBaseCommonGateInOutAttribute().getCard().getCardID());
+              .getCard().setCardID(gatePass.getBaseCommonGateInOutAttribute().getCard().getCardID());
         }
         if (gatePass.getBaseCommonGateInOutAttribute().getEirStatus() != null) {
           importContainer.getBaseCommonGateInOutAttribute()
@@ -139,9 +139,9 @@ public class ImportGateOutService {
           importContainer.getBaseCommonGateInOutAttribute().setGateInClient(gateInClient);
         }
 
-        if (gatePass.getBaseCommonGateInOutAttribute().getHpabBooking().isPresent()) {
+        if (gatePass.getBaseCommonGateInOutAttribute().getHpabBooking()!=null) {
           importContainer.getBaseCommonGateInOutAttribute()
-              .setHpabBooking(Optional.of(gatePass.getBaseCommonGateInOutAttribute().getHpabBooking().get().getBookingID())); 
+              .setHpabBooking(gatePass.getBaseCommonGateInOutAttribute().getHpabBooking().getBookingID()); 
         }
 
         importContainer.getBaseCommonGateInOutAttribute()

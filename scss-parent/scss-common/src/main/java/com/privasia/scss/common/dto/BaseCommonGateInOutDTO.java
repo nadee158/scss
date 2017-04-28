@@ -5,7 +5,6 @@ package com.privasia.scss.common.dto;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -56,7 +55,7 @@ public class BaseCommonGateInOutDTO implements Serializable {
 	@DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
 	private LocalDateTime timeGateOutBooth;
 
-	private Long card;
+	private CardDTO card;
 
 	private SystemUserDTO gateInClerk;
 
@@ -84,12 +83,12 @@ public class BaseCommonGateInOutDTO implements Serializable {
 		this.pmPlateNo = pmPlateNo;
 	}
 
-	public Optional<String> getHpabBooking() {
-		return Optional.ofNullable(hpabBooking);
+	public String getHpabBooking() {
+		return hpabBooking;
 	}
 
-	public void setHpabBooking(Optional<String> hpabBooking) {
-		this.hpabBooking = hpabBooking.orElse(null);
+	public void setHpabBooking(String hpabBooking) {
+		this.hpabBooking = hpabBooking;
 	}
 
 	public String getEirStatus() {
@@ -148,11 +147,11 @@ public class BaseCommonGateInOutDTO implements Serializable {
 		this.timeGateOutBooth = timeGateOutBooth;
 	}
 
-	public Long getCard() {
+	public CardDTO getCard() {
 		return card;
 	}
 
-	public void setCard(Long card) {
+	public void setCard(CardDTO card) {
 		this.card = card;
 	}
 
@@ -207,7 +206,6 @@ public class BaseCommonGateInOutDTO implements Serializable {
 		this.timeGateOut = LocalDateTime.now();
 		this.timeGateOutOk = LocalDateTime.now();
 		this.timeGateOutBooth = LocalDateTime.now();
-		this.card = 1998l;
 		this.gateInClerk = new SystemUserDTO().initializeWithDefaultValues();
 		this.gateOutClerk = new SystemUserDTO().initializeWithDefaultValues();
 		this.gateInClient = new ClientDTO().initializeWithIdOnly();

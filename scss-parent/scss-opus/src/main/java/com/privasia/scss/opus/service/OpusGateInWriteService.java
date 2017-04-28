@@ -45,7 +45,7 @@ public class OpusGateInWriteService {
   @Value("${gate_in.write.response.url}")
   private String gateInWriteResponseURL;
 
-  private OpusService opusService;
+  private OpusDTOConstructService opusDTOConstructService;
 
   private OpusRequestResponseService opusRequestResponseService;
 
@@ -62,8 +62,8 @@ public class OpusGateInWriteService {
   }
 
   @Autowired
-  public void setOpusService(OpusService opusService) {
-    this.opusService = opusService;
+  public void setOpusDTOConstructService(OpusDTOConstructService opusDTOConstructService) {
+    this.opusDTOConstructService = opusDTOConstructService;
   }
 
   public OpusGateInWriteResponse getGateInWriteResponse(OpusGateInWriteRequest opusGateInWriteRequest,
@@ -79,7 +79,7 @@ public class OpusGateInWriteService {
 
     // save in to db
     Future<Long> future = opusRequestResponseService.saveOpusRequest(opusRequestResponseDTO);
-    
+
     log.info("OpusGateInWriteResponse : -" + (new Gson()).toJson(opusGateInWriteRequest));
 
     ResponseEntity<OpusGateInWriteResponse> response =
@@ -126,9 +126,9 @@ public class OpusGateInWriteService {
     gateInReponse.setLaneNo(opusGateInWriteResponse.getLaneNo());
     gateInReponse.setTruckHeadNo(opusGateInWriteResponse.getTruckHeadNo());
     gateInReponse.setTruckPlateNo(opusGateInWriteResponse.getTruckPlateNo());
-    gateInReponse.setExportContainers(opusService.giWriteResponseExportContainerListToExportContainerList(
+    gateInReponse.setExportContainers(opusDTOConstructService.giWriteResponseExportContainerListToExportContainerList(
         opusGateInWriteResponse, gateInReponse.getExportContainers()));
-    gateInReponse.setImportContainers(opusService.giWriteResponseImportContainerListToImportContainerList(
+    gateInReponse.setImportContainers(opusDTOConstructService.giWriteResponseImportContainerListToImportContainerList(
         opusGateInWriteResponse, gateInReponse.getImportContainers()));
     gateInReponse.setCallCardNo(opusGateInWriteResponse.getCallCardNo());
     return gateInReponse;
@@ -138,9 +138,9 @@ public class OpusGateInWriteService {
     OpusGateInWriteRequest opusGateInWriteRequest = new OpusGateInWriteRequest();
 
     List<GIWriteRequestExportContainer> exportContainerListCY =
-        opusService.exportContainerListToGIWriteRequestExportContainerList(gateInWriteRequest);
+        opusDTOConstructService.exportContainerListToGIWriteRequestExportContainerList(gateInWriteRequest);
     List<GIWriteRequestImportContainer> importContainerListCY =
-        opusService.importContainerListToGIWriteRequestImportContainerList(gateInWriteRequest);
+        opusDTOConstructService.importContainerListToGIWriteRequestImportContainerList(gateInWriteRequest);
 
     opusGateInWriteRequest.setGateINDateTime(DateUtil.getJsonDateFromDate(gateInWriteRequest.getGateInDateTime()));
     opusGateInWriteRequest.setHaulageCode(gateInWriteRequest.getHaulageCode());

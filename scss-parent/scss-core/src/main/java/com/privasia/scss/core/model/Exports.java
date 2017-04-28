@@ -24,6 +24,8 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.hibernate.annotations.Type;
 
 import com.privasia.scss.common.enums.ContainerPosition;
@@ -1121,38 +1123,7 @@ public class Exports extends AuditEntity implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Exports [exportID=" + exportID + ", container=" + container + ", commonGateInOut=" + commonGateInOut
-				+ ", baseCommonGateInOutAttribute=" + baseCommonGateInOutAttribute + ", manualPlanIndicator="
-				+ manualPlanIndicator + ", bookingNo=" + bookingNo + ", shipSCN=" + shipSCN + ", gateInOut=" + gateInOut
-				+ ", shippingLine=" + shippingLine + ", expOut=" + expOut + ", expCar=" + expCar + ", expSpod="
-				+ expSpod + ", sealAttribute=" + sealAttribute + ", expWeightBridge=" + expWeightBridge
-				+ ", expNetWeight=" + expNetWeight + ", referFlag=" + referFlag + ", referTempType=" + referTempType
-				+ ", referTemp=" + referTemp + ", imdg=" + imdg + ", dgUNCode=" + dgUNCode + ", imdgLabelID="
-				+ imdgLabelID + ", oogOH=" + oogOH + ", oogOL=" + oogOL + ", oogOF=" + oogOF + ", oogOA=" + oogOA
-				+ ", containerPosition=" + containerPosition + ", preCheckDate=" + preCheckDate + ", yardPosition="
-				+ yardPosition + ", yardBayCode=" + yardBayCode + ", pmBTM=" + pmBTM + ", trBTM=" + trBTM + ", oogOR="
-				+ oogOR + ", callCard=" + callCard + ", vesselVisitID=" + vesselVisitID + ", vesselVoyageIN="
-				+ vesselVoyageIN + ", vesselCode=" + vesselCode + ", vesselName=" + vesselName + ", expAgent="
-				+ expAgent + ", vesselStatus=" + vesselStatus + ", shipCode=" + shipCode + ", vesselSCN=" + vesselSCN
-				+ ", vesselETADate=" + vesselETADate + ", vesselATADate=" + vesselATADate + ", shippingAgent="
-				+ shippingAgent + ", oogSSR=" + oogSSR + ", overClosingSSR=" + overClosingSSR + ", replanSSR="
-				+ replanSSR + ", ssrBlockStatus=" + ssrBlockStatus + ", ssrBlockStatusDate=" + ssrBlockStatusDate
-				+ ", gcsBlockStatus=" + gcsBlockStatus + ", gcsBlockStatusDate=" + gcsBlockStatusDate
-				+ ", gcsDeclareNo=" + gcsDeclareNo + ", gcsLastCheck=" + gcsLastCheck + ", printEir=" + printEir
-				+ ", userRemarks=" + userRemarks + ", kpaApproval=" + kpaApproval + ", hdlGoodsCode=" + hdlGoodsCode
-				+ ", dgDescription=" + dgDescription + ", hdlGoodsDescription=" + hdlGoodsDescription + ", tareWeight="
-				+ tareWeight + ", grossWeight=" + grossWeight + ", cosmosNetWeight=" + cosmosNetWeight + ", cardUsage=" + cardUsage
-				+ ", backToback=" + backToback + ", weightDiffPercentage=" + weightDiffPercentage
-				+ ", weightDifference=" + weightDifference + ", damageCode_01=" + damageCode_01 + ", damageCode_02="
-				+ damageCode_02 + ", damageCode_03=" + damageCode_03 + ", damageCode_04=" + damageCode_04
-				+ ", damageCode_05=" + damageCode_05 + ", damageCode_06=" + damageCode_06 + ", damageCode_07="
-				+ damageCode_07 + ", damageCode_08=" + damageCode_08 + ", damageCode_09=" + damageCode_09
-				+ ", dontValidateSeal=" + dontValidateSeal + ", wrongDoor=" + wrongDoor + ", hpabISOCode=" + hpabISOCode
-				+ ", cosmosISOCode=" + cosmosISOCode + ", pmWeight=" + pmWeight + ", trailerWeight=" + trailerWeight
-				+ ", trailerPlateNo=" + trailerPlateNo + ", fuelWeight=" + fuelWeight + ", tireWeight=" + tireWeight
-				+ ", variance=" + variance + ", subHandlingType=" + subHandlingType + ", withinTolerance="
-				+ withinTolerance + ", calculatedVariance=" + calculatedVariance + ", solasCertNo=" + solasCertNo
-				+ ", solas=" + solas + "]";
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
 	}
 
 	public void prepareForInsertFromOpus(SystemUser gateInClerk, Card card, Client gateInClient, ShipSCN scn,
@@ -1349,7 +1320,7 @@ public class Exports extends AuditEntity implements Serializable {
 		this.setDgDescription(CommonUtil.changeCase(this.dgDescription, CommonUtil.LOWER_CASE));
 		this.setHdlGoodsDescription(CommonUtil.changeCase(this.hdlGoodsDescription, CommonUtil.LOWER_CASE));
 		this.setCardUsage(cardUsage);
-		this.getBaseCommonGateInOutAttribute().setHpabBooking(Optional.of(hpabBooking));
+		this.getBaseCommonGateInOutAttribute().setHpabBooking(hpabBooking);
 		calculateWeightPercentages();
 		this.setHpabISOCode(CommonUtil.changeCase(this.hpabISOCode, CommonUtil.UPPER_CASE));
 		this.setCosmosISOCode(CommonUtil.changeCase(this.cosmosISOCode, CommonUtil.UPPER_CASE));

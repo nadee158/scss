@@ -882,11 +882,11 @@ public class GatePassService {
 
         gatePass.setSealAttribute(sealAttribute);
 
-        if (container.getBaseCommonGateInOutAttribute().getHpabBooking().isPresent()) {
+        if (StringUtils.isNotEmpty(container.getBaseCommonGateInOutAttribute().getHpabBooking())) {
           Optional<HPABBooking> hpabBooking = hpabBookingRepository
-              .findOne(container.getBaseCommonGateInOutAttribute().getHpabBooking().get());
+              .findOne(container.getBaseCommonGateInOutAttribute().getHpabBooking());
           if (hpabBooking.isPresent()) {
-            baseCommonGateInOutAttribute.setHpabBooking(Optional.of(hpabBooking.get()));
+            baseCommonGateInOutAttribute.setHpabBooking(hpabBooking.get());
           }
         }
         commonGateInOut.setRejectReason(StringUtils.upperCase(container.getCommonGateInOut().getRejectReason()));

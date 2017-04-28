@@ -6,7 +6,6 @@ package com.privasia.scss.master.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -15,11 +14,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.privasia.scss.common.dto.ReferReasonDTO;
 import com.privasia.scss.common.enums.RecordStatus;
 import com.privasia.scss.core.exception.ResultsNotFoundException;
 import com.privasia.scss.core.model.ReferReason;
 import com.privasia.scss.core.repository.ReferReasonRepository;
-import com.privasia.scss.master.dto.ReferReasonDTO;
 
 /**
  * @author Janaka
@@ -53,7 +52,7 @@ public class ReferReasonService {
 
         if (!(map == null || map.isEmpty())) {
           map.forEach((key, val) -> {
-            dtoList.add(new ReferReasonDTO(key, val));
+            dtoList.add(constructReferReasonDTO(key, val));
           });
         }
         Stream<ReferReason> aloneStream = referReasonList.stream();
@@ -62,7 +61,7 @@ public class ReferReasonService {
             aloneStream.filter(r -> r.getReferReason() == null && r.isParent() == false).collect(Collectors.toList());
         if (!(aloneList == null || aloneList.isEmpty())) {
           aloneList.forEach(rfr -> {
-            dtoList.add(new ReferReasonDTO(rfr, null));
+            dtoList.add(constructReferReasonDTO(rfr, null));
           });
         }
 
@@ -76,5 +75,34 @@ public class ReferReasonService {
     throw new ResultsNotFoundException("No ReferReason Records were found!");
 
   }
+
+  public ReferReasonDTO constructReferReasonDTO(ReferReason parent, List<ReferReason> childList) {
+    ReferReasonDTO referReasonDTO = new ReferReasonDTO();
+    referReasonDTO = constructDTO(referReasonDTO, parent);
+    if (!(childList == null || childList.isEmpty())) {
+      List<ReferReasonDTO> childrenList = new ArrayList<ReferReasonDTO>();
+      childList.forEach(child -> {
+        childrenList.add(constructDTO(new ReferReasonDTO(), child));
+      });
+      referReasonDTO.setChildList(childrenList);
+    }
+    return referReasonDTO;
+  }
+
+  private ReferReasonDTO constructDTO(ReferReasonDTO referReasonDTO, ReferReason parent) {
+
+    referReasonDTO.setReferReasonID(parent.getReferReasonID());
+
+    referReasonDTO.setReasonDescription(parent.getReasonDescription());
+
+    referReasonDTO.setSortSEQ(parent.getSortSEQ());
+
+    if (!(parent.getReferStatus() == null)) {
+      referReasonDTO.setReferStatus(parent.getReferStatus().toString());
+    }
+    referReasonDTO.setParent(parent.isParent());
+    return referReasonDTO;
+  }
+
 
 }

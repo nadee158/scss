@@ -19,12 +19,12 @@ import com.privasia.scss.common.dto.ApiResponseObject;
 import com.privasia.scss.common.dto.ClientDTO;
 import com.privasia.scss.common.dto.CustomResponseEntity;
 import com.privasia.scss.common.dto.DamageCodeDTO;
+import com.privasia.scss.common.dto.ReferReasonDTO;
+import com.privasia.scss.common.dto.SolasWeightConfigDTO;
 import com.privasia.scss.core.model.ODDExportReason;
 import com.privasia.scss.core.model.ODDImportReason;
 import com.privasia.scss.core.model.ODDLocation;
 import com.privasia.scss.core.util.service.CurrentDateTimeService;
-import com.privasia.scss.master.dto.ReferReasonDTO;
-import com.privasia.scss.master.dto.SolasWeightConfigDTO;
 import com.privasia.scss.master.service.ClientMasterDataService;
 import com.privasia.scss.master.service.DamageCodeService;
 import com.privasia.scss.master.service.GlobalSettingService;
@@ -146,8 +146,8 @@ public class MasterDataController {
 
   }
 
-  @RequestMapping(value = "/damagecodelist", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
-      consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+  @RequestMapping(value = "/damagecodelist", method = RequestMethod.GET,
+      produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public CustomResponseEntity<ApiResponseObject<?>> getDamageList() {
     List<DamageCodeDTO> damageCodeDTOList = damageCodeService.getDamageList();
     return new CustomResponseEntity<ApiResponseObject<?>>(

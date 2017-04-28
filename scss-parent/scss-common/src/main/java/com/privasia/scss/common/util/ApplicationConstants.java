@@ -115,4 +115,7 @@ public interface ApplicationConstants {
   public static final String SMTP_TO = "SMTP_TO";
   public static final String SMTP_CC = "SMTP_CC";
   public static final String SMTP_BCC = "SMTP_BCC";
+
+  public static final String E_SOLAS_PASS = "/solasPass.jrxml";
+  public static final String E_SOLAS_PASS_LOGO = "/logo.png";
 }

@@ -37,121 +37,122 @@ import com.privasia.scss.opus.dto.OpusRequestResponseDTO;
 @Service("opusGateOutWriteService")
 public class OpusGateOutWriteService {
 
-  private static final Logger log = LoggerFactory.getLogger(OpusGateOutWriteService.class);
+	private static final Logger log = LoggerFactory.getLogger(OpusGateOutWriteService.class);
 
-  @Value("${async.wait.time}")
-  private long asyncWaitTime;
+	@Value("${async.wait.time}")
+	private long asyncWaitTime;
 
-  @Value("${gate_out.write.response.url}")
-  private String gateOutWriteResponseURL;
+	@Value("${gate_out.write.response.url}")
+	private String gateOutWriteResponseURL;
 
-  private OpusRequestResponseService opusRequestResponseService;
+	private OpusRequestResponseService opusRequestResponseService;
 
-  private Gson gson;
+	private Gson gson;
 
-  private OpusService opusService;
+	private OpusDTOConstructService opusDTOConstructService;
 
-  @Autowired
-  public void setOpusService(OpusService opusService) {
-    this.opusService = opusService;
-  }
+	@Autowired
+	public void setOpusDTOConstructService(OpusDTOConstructService opusDTOConstructService) {
+		this.opusDTOConstructService = opusDTOConstructService;
+	}
 
-  @Autowired
-  public void setOpusRequestResponseService(OpusRequestResponseService opusRequestResponseService) {
-    this.opusRequestResponseService = opusRequestResponseService;
-  }
+	@Autowired
+	public void setOpusRequestResponseService(OpusRequestResponseService opusRequestResponseService) {
+		this.opusRequestResponseService = opusRequestResponseService;
+	}
 
-  @Autowired
-  public void setGson(Gson gson) {
-    this.gson = gson;
-  }
+	@Autowired
+	public void setGson(Gson gson) {
+		this.gson = gson;
+	}
 
-  public OpusGateOutWriteResponse getGateOutWriteResponse(OpusGateOutWriteRequest opusGateOutWriteRequest,
-      OpusRequestResponseDTO opusRequestResponseDTO) {
-    log.info("gateOutWriteResponseURL " + gateOutWriteResponseURL);
-    RestTemplate restTemplate = new RestTemplate();
-    HttpHeaders headers = new HttpHeaders();
+	public OpusGateOutWriteResponse getGateOutWriteResponse(OpusGateOutWriteRequest opusGateOutWriteRequest,
+			OpusRequestResponseDTO opusRequestResponseDTO) {
+		log.info("gateOutWriteResponseURL " + gateOutWriteResponseURL);
+		RestTemplate restTemplate = new RestTemplate();
+		HttpHeaders headers = new HttpHeaders();
 
-    headers.setContentType(MediaType.APPLICATION_JSON);
+		headers.setContentType(MediaType.APPLICATION_JSON);
 
-    log.info("OpusGateOutWriteResponse : -" + (new Gson()).toJson(opusGateOutWriteRequest));
+		log.info("OpusGateOutWriteResponse : -" + (new Gson()).toJson(opusGateOutWriteRequest));
 
-    HttpEntity<OpusGateOutWriteRequest> request =
-        new HttpEntity<OpusGateOutWriteRequest>(opusGateOutWriteRequest, headers);
+		HttpEntity<OpusGateOutWriteRequest> request = new HttpEntity<OpusGateOutWriteRequest>(opusGateOutWriteRequest,
+				headers);
 
-    // save in to db
-    Future<Long> future = opusRequestResponseService.saveOpusRequest(opusRequestResponseDTO);
+		// save in to db
+		Future<Long> future = opusRequestResponseService.saveOpusRequest(opusRequestResponseDTO);
 
-    ResponseEntity<OpusGateOutWriteResponse> response =
-        restTemplate.postForEntity(gateOutWriteResponseURL, request, OpusGateOutWriteResponse.class);
+		ResponseEntity<OpusGateOutWriteResponse> response = restTemplate.postForEntity(gateOutWriteResponseURL, request,
+				OpusGateOutWriteResponse.class);
 
-    System.out.println(response.toString());
-    log.info("RESPONSE FROM OPUS: " + response.toString());
+		System.out.println(response.toString());
+		log.info("RESPONSE FROM OPUS: " + response.toString());
 
-    opusRequestResponseDTO.setResponse(gson.toJson(response.getBody()));
+		opusRequestResponseDTO.setResponse(gson.toJson(response.getBody()));
 
+		// update to db
+		while (true) {
+			if (future.isDone()) {
+				try {
+					System.out.println("Result from asynchronous process getGateOutWriteResponse - " + future.get());
+					opusRequestResponseService.updateOpusResponse(opusRequestResponseDTO, future);
+				} catch (InterruptedException | ExecutionException e) {
+					log.error("Error Occured when update Opus Response getGateOutWriteResponse "
+							+ opusRequestResponseDTO.getGateinTime().toString());
+					log.error(e.getMessage());
+				}
+				System.out.println("WHILE LOOP BROKEN getGateOutWriteResponse!!!!. ");
+				break;
+			}
+			System.out.println("Continue doing something else getGateOutWriteResponse. ");
 
-    // update to db
-    while (true) {
-      if (future.isDone()) {
-        try {
-          System.out.println("Result from asynchronous process getGateOutWriteResponse - " + future.get());
-          opusRequestResponseService.updateOpusResponse(opusRequestResponseDTO, future);
-        } catch (InterruptedException | ExecutionException e) {
-          log.error("Error Occured when update Opus Response getGateOutWriteResponse "
-              + opusRequestResponseDTO.getGateinTime().toString());
-          log.error(e.getMessage());
-        }
-        System.out.println("WHILE LOOP BROKEN getGateOutWriteResponse!!!!. ");
-        break;
-      }
-      System.out.println("Continue doing something else getGateOutWriteResponse. ");
+			try {
+				Thread.sleep(asyncWaitTime);
+			} catch (InterruptedException e) {
+				log.error(e.getMessage());
+				System.out.println("WHILE LOOP BROKEN ON THREAD EXCEPTION getGateOutWriteResponse!!!!. ");
+				break;
+			}
+		}
 
-      try {
-        Thread.sleep(asyncWaitTime);
-      } catch (InterruptedException e) {
-        log.error(e.getMessage());
-        System.out.println("WHILE LOOP BROKEN ON THREAD EXCEPTION getGateOutWriteResponse!!!!. ");
-        break;
-      }
-    }
+		return response.getBody();
+	}
 
+	public GateOutReponse constructGateOutReponse(OpusGateOutWriteResponse opusGateOutWriteResponse,
+			GateOutReponse gateOutReponse) {
+		LocalDateTime localDateTime = DateUtil.getLocalDategFromString(opusGateOutWriteResponse.getGateINDateTime());
+		gateOutReponse.setGateOUTDateTime(DateUtil.getFormatteDateTime(localDateTime));
+		gateOutReponse.setHaulageCode(opusGateOutWriteResponse.getHaulageCode());
+		gateOutReponse.setLaneNo(opusGateOutWriteResponse.getLaneNo());
+		gateOutReponse.setTruckHeadNo(opusGateOutWriteResponse.getTruckHeadNo());
+		gateOutReponse.setTruckPlateNo(opusGateOutWriteResponse.getTruckPlateNo());
+		gateOutReponse
+				.setExportContainers(opusDTOConstructService.goWriteRequestExportContainerListToExportContainerList(
+						opusGateOutWriteResponse.getExportContainerListCY()));
+		gateOutReponse
+				.setImportContainers(opusDTOConstructService.goWriteRequestImportContainerListToImportContainerList(
+						opusGateOutWriteResponse.getImportContainerListCY()));
+		return gateOutReponse;
+	}
 
-    return response.getBody();
-  }
+	public OpusGateOutWriteRequest constructOpusGateOutWriteRequest(GateOutWriteRequest gateOutWriteRequest) {
+		OpusGateOutWriteRequest opusGateOutWriteRequest = new OpusGateOutWriteRequest();
 
-  public GateOutReponse constructGateOutReponse(OpusGateOutWriteResponse opusGateOutWriteResponse,
-      GateOutReponse gateOutReponse) {
-    LocalDateTime localDateTime = DateUtil.getLocalDategFromString(opusGateOutWriteResponse.getGateINDateTime());
-    gateOutReponse.setGateOUTDateTime(DateUtil.getFormatteDateTime(localDateTime));
-    gateOutReponse.setHaulageCode(opusGateOutWriteResponse.getHaulageCode());
-    gateOutReponse.setLaneNo(opusGateOutWriteResponse.getLaneNo());
-    gateOutReponse.setTruckHeadNo(opusGateOutWriteResponse.getTruckHeadNo());
-    gateOutReponse.setTruckPlateNo(opusGateOutWriteResponse.getTruckPlateNo());
-    gateOutReponse.setExportContainers(opusService
-        .goWriteRequestExportContainerListToExportContainerList(opusGateOutWriteResponse.getExportContainerListCY()));
-    gateOutReponse.setImportContainers(opusService
-        .goWriteRequestImportContainerListToImportContainerList(opusGateOutWriteResponse.getImportContainerListCY()));
-    return gateOutReponse;
-  }
+		List<GOWriteRequestExportContainer> exportContainerListCY = opusDTOConstructService
+				.exportContainerListToGOWriteRequestExportContainerList(gateOutWriteRequest.getExportContainers());
+		List<GOWriteRequestImportContainer> importContainerListCY = opusDTOConstructService
+				.importContainerListToGOWriteRequestImportContainerList(gateOutWriteRequest.getImportContainers());
 
-  public OpusGateOutWriteRequest constructOpusGateOutWriteRequest(GateOutWriteRequest gateOutWriteRequest) {
-    OpusGateOutWriteRequest opusGateOutWriteRequest = new OpusGateOutWriteRequest();
-
-    List<GOWriteRequestExportContainer> exportContainerListCY =
-        opusService.exportContainerListToGOWriteRequestExportContainerList(gateOutWriteRequest.getExportContainers());
-    List<GOWriteRequestImportContainer> importContainerListCY =
-        opusService.importContainerListToGOWriteRequestImportContainerList(gateOutWriteRequest.getImportContainers());
-
-    opusGateOutWriteRequest.setGateOUTDateTime(DateUtil.getJsonDateFromDate(gateOutWriteRequest.getGateOUTDateTime()));
-    opusGateOutWriteRequest.setHaulageCode(gateOutWriteRequest.getHaulageCode());
-    opusGateOutWriteRequest.setLaneNo(gateOutWriteRequest.getLaneNo());
-    opusGateOutWriteRequest.setTruckHeadNo(gateOutWriteRequest.getTruckHeadNo());
-    opusGateOutWriteRequest.setTruckPlateNo(gateOutWriteRequest.getTruckPlateNo());
-    opusGateOutWriteRequest.setUserID(gateOutWriteRequest.getUserName());
-    opusGateOutWriteRequest.setExportContainerListCY(exportContainerListCY);
-    opusGateOutWriteRequest.setImportContainerListCY(importContainerListCY);
-    return opusGateOutWriteRequest;
-  }
+		opusGateOutWriteRequest
+				.setGateOUTDateTime(DateUtil.getJsonDateFromDate(gateOutWriteRequest.getGateOUTDateTime()));
+		opusGateOutWriteRequest.setHaulageCode(gateOutWriteRequest.getHaulageCode());
+		opusGateOutWriteRequest.setLaneNo(gateOutWriteRequest.getLaneNo());
+		opusGateOutWriteRequest.setTruckHeadNo(gateOutWriteRequest.getTruckHeadNo());
+		opusGateOutWriteRequest.setTruckPlateNo(gateOutWriteRequest.getTruckPlateNo());
+		opusGateOutWriteRequest.setUserID(gateOutWriteRequest.getUserName());
+		opusGateOutWriteRequest.setExportContainerListCY(exportContainerListCY);
+		opusGateOutWriteRequest.setImportContainerListCY(importContainerListCY);
+		return opusGateOutWriteRequest;
+	}
 
 }

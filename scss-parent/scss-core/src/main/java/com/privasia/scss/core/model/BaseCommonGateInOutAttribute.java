@@ -14,6 +14,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.hibernate.annotations.Type;
 
 import com.privasia.scss.common.enums.TransactionStatus;
@@ -174,12 +176,12 @@ public class BaseCommonGateInOutAttribute implements Serializable {
 		this.transactionSlipPrinted = transactionSlipPrinted;
 	}
 
-	public Optional<HPABBooking> getHpabBooking() {
-		return Optional.ofNullable(hpabBooking);
+	public HPABBooking getHpabBooking() {
+		return hpabBooking;
 	}
 
-	public void setHpabBooking(Optional<HPABBooking> optHpabBooking) {
-		this.hpabBooking = optHpabBooking.orElse(null);
+	public void setHpabBooking(HPABBooking hpabBooking) {
+		this.hpabBooking = hpabBooking;
 	}
 
 	public Card getCard() {
@@ -220,6 +222,11 @@ public class BaseCommonGateInOutAttribute implements Serializable {
 
 	public void setGateOutClient(Client gateOutClient) {
 		this.gateOutClient = gateOutClient;
+	}
+
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
 	}
 
 }
