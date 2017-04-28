@@ -8,148 +8,177 @@ import com.privasia.scss.common.enums.SolasInstructionType;
 
 public class GateInReponse implements Serializable {
 
-  /**
-   * 
-   */
-  private static final long serialVersionUID = 1L;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
-  private String userId;
+	private String userId;
 
-  private String laneNo;// LNO01,
-  private String haulageCode;// HAUCD,
-  private String truckHeadNo;// TRUCK,
-  private String truckPlateNo;// null,
-  private String gateINDateTime;// 20161130112233,
-  private boolean checkPreArrival = false;// -boolean
+	private String laneNo;// LNO01,
+	private String haulageCode;// HAUCD,
+	private String truckHeadNo;// TRUCK,
+	private String truckPlateNo;// null,
+	private String gateINDateTime;// 20161130112233,
+	private boolean checkPreArrival = false;// -boolean
 
-  private List<ImportContainer> importContainers = new ArrayList<ImportContainer>();
+	private List<ImportContainer> importContainers = new ArrayList<ImportContainer>();
 
-  private List<ExportContainer> exportContainers = new ArrayList<ExportContainer>();
+	private List<ExportContainer> exportContainers = new ArrayList<ExportContainer>();
 
-  private List<WHODDDTO> whoddContainers;
+	private List<WHODDDTO> whoddContainers;
 
-  private Integer expWeightBridge;// -long
+	private Integer expWeightBridge;// -long
 
-  // for gate in write
-  private String callCardNo;// 20161130112233,
+	// for gate in write
+	private String callCardNo;// 20161130112233,
 
-  private GateOutMessage message;
+	private GateOutMessage message;
 
-  private String solasInstruction = SolasInstructionType.VGM_INSTRUCTION_NO_SOLAS.getValue();
+	private String solasInstruction = SolasInstructionType.VGM_INSTRUCTION_NO_SOLAS.getValue();
 
+	private String trailerPlate;
 
-  public String getLaneNo() {
-    return laneNo;
-  }
+	private Integer trailerWeight;
+	
+	private Integer truckWeight;
 
-  public void setLaneNo(String laneNo) {
-    this.laneNo = laneNo;
-  }
+	public String getLaneNo() {
+		return laneNo;
+	}
 
-  public String getHaulageCode() {
-    return haulageCode;
-  }
+	public void setLaneNo(String laneNo) {
+		this.laneNo = laneNo;
+	}
 
-  public void setHaulageCode(String haulageCode) {
-    this.haulageCode = haulageCode;
-  }
+	public String getHaulageCode() {
+		return haulageCode;
+	}
 
-  public String getTruckHeadNo() {
-    return truckHeadNo;
-  }
+	public void setHaulageCode(String haulageCode) {
+		this.haulageCode = haulageCode;
+	}
 
-  public void setTruckHeadNo(String truckHeadNo) {
-    this.truckHeadNo = truckHeadNo;
-  }
+	public String getTruckHeadNo() {
+		return truckHeadNo;
+	}
 
-  public String getTruckPlateNo() {
-    return truckPlateNo;
-  }
+	public void setTruckHeadNo(String truckHeadNo) {
+		this.truckHeadNo = truckHeadNo;
+	}
 
-  public void setTruckPlateNo(String truckPlateNo) {
-    this.truckPlateNo = truckPlateNo;
-  }
+	public String getTruckPlateNo() {
+		return truckPlateNo;
+	}
 
-  public String getGateINDateTime() {
-    return gateINDateTime;
-  }
+	public void setTruckPlateNo(String truckPlateNo) {
+		this.truckPlateNo = truckPlateNo;
+	}
 
-  public void setGateINDateTime(String gateINDateTime) {
-    this.gateINDateTime = gateINDateTime;
-  }
+	public String getGateINDateTime() {
+		return gateINDateTime;
+	}
 
-  public List<ImportContainer> getImportContainers() {
-    return importContainers;
-  }
+	public void setGateINDateTime(String gateINDateTime) {
+		this.gateINDateTime = gateINDateTime;
+	}
 
-  public void setImportContainers(List<ImportContainer> importContainers) {
-    this.importContainers = importContainers;
-  }
+	public List<ImportContainer> getImportContainers() {
+		return importContainers;
+	}
 
-  public List<ExportContainer> getExportContainers() {
-    return exportContainers;
-  }
+	public void setImportContainers(List<ImportContainer> importContainers) {
+		this.importContainers = importContainers;
+	}
 
-  public void setExportContainers(List<ExportContainer> exportContainers) {
-    this.exportContainers = exportContainers;
-  }
+	public List<ExportContainer> getExportContainers() {
+		return exportContainers;
+	}
 
-  public String getCallCardNo() {
-    return callCardNo;
-  }
+	public void setExportContainers(List<ExportContainer> exportContainers) {
+		this.exportContainers = exportContainers;
+	}
 
-  public void setCallCardNo(String callCardNo) {
-    this.callCardNo = callCardNo;
-  }
+	public String getCallCardNo() {
+		return callCardNo;
+	}
 
-  public boolean isCheckPreArrival() {
-    return checkPreArrival;
-  }
+	public void setCallCardNo(String callCardNo) {
+		this.callCardNo = callCardNo;
+	}
 
-  public void setCheckPreArrival(boolean checkPreArrival) {
-    this.checkPreArrival = checkPreArrival;
-  }
+	public boolean isCheckPreArrival() {
+		return checkPreArrival;
+	}
 
-  public String getUserId() {
-    return userId;
-  }
+	public void setCheckPreArrival(boolean checkPreArrival) {
+		this.checkPreArrival = checkPreArrival;
+	}
 
-  public void setUserId(String userId) {
-    this.userId = userId;
-  }
+	public String getUserId() {
+		return userId;
+	}
 
-  public GateOutMessage getMessage() {
-    return message;
-  }
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
 
-  public void setMessage(GateOutMessage message) {
-    this.message = message;
-  }
+	public GateOutMessage getMessage() {
+		return message;
+	}
 
-  public Integer getExpWeightBridge() {
-    return expWeightBridge;
-  }
+	public void setMessage(GateOutMessage message) {
+		this.message = message;
+	}
 
-  public void setExpWeightBridge(Integer expWeightBridge) {
-    this.expWeightBridge = expWeightBridge;
-  }
+	public Integer getExpWeightBridge() {
+		return expWeightBridge;
+	}
 
-  public String getSolasInstruction() {
-    return solasInstruction;
-  }
+	public void setExpWeightBridge(Integer expWeightBridge) {
+		this.expWeightBridge = expWeightBridge;
+	}
 
-  public void setSolasInstruction(String solasInstruction) {
-    this.solasInstruction = solasInstruction;
-  }
+	public String getSolasInstruction() {
+		return solasInstruction;
+	}
 
-  public List<WHODDDTO> getWhoddContainers() {
-    return whoddContainers;
-  }
+	public void setSolasInstruction(String solasInstruction) {
+		this.solasInstruction = solasInstruction;
+	}
 
-  public void setWhoddContainers(List<WHODDDTO> whoddContainers) {
-    this.whoddContainers = whoddContainers;
-  }
+	public List<WHODDDTO> getWhoddContainers() {
+		return whoddContainers;
+	}
 
+	public void setWhoddContainers(List<WHODDDTO> whoddContainers) {
+		this.whoddContainers = whoddContainers;
+	}
 
+	public String getTrailerPlate() {
+		return trailerPlate;
+	}
+
+	public void setTrailerPlate(String trailerPlate) {
+		this.trailerPlate = trailerPlate;
+	}
+
+	public Integer getTruckWeight() {
+		return truckWeight;
+	}
+
+	public void setTruckWeight(Integer truckWeight) {
+		this.truckWeight = truckWeight;
+	}
+
+	public Integer getTrailerWeight() {
+		return trailerWeight;
+	}
+
+	public void setTrailerWeight(Integer trailerWeight) {
+		this.trailerWeight = trailerWeight;
+	}
+
+	
 
 }

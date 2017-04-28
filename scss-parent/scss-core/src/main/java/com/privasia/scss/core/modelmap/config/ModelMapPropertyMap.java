@@ -85,8 +85,8 @@ public final class ModelMapPropertyMap {
 		return new PropertyMap<GatePass, ImportContainer>() {
 			protected void configure() {
 				map().setCompany(source.getCompany().getCompanyID());
-				map().getBaseCommonGateInOutAttribute().getCard()
-						.setCardID(source.getBaseCommonGateInOutAttribute().getCard().getCardID());
+				//map().getBaseCommonGateInOutAttribute().getCard()
+						//.setCardID(source.getBaseCommonGateInOutAttribute().getCard().getCardID());
 				skip().setContainerLength(0);
 
 			}
@@ -105,14 +105,6 @@ public final class ModelMapPropertyMap {
 				skip().getBaseCommonGateInOutAttribute().setGateOutClerk(null);
 				skip().getBaseCommonGateInOutAttribute().setGateOutClient(null);
 				skip().setPrintEir(null);
-			}
-		};
-	}
-
-	public static PropertyMap<Exports, ExportContainer> exportsToExportContainer() {
-		return new PropertyMap<Exports, ExportContainer>() {
-			protected void configure() {
-				//skip().setBaseCommonGateInOutAttribute(null);
 			}
 		};
 	}

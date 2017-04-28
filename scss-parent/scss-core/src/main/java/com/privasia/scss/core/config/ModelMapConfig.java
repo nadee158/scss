@@ -4,16 +4,14 @@
 package com.privasia.scss.core.config;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.privasia.scss.common.enums.ContainerSize;
 import com.privasia.scss.core.modelmap.config.ModelMapEnumConverter;
 import com.privasia.scss.core.modelmap.config.ModelMapLocalDateConverter;
-import com.privasia.scss.core.modelmap.config.ModelMapOptionalConverter;
 import com.privasia.scss.core.modelmap.config.ModelMapPropertyMap;
 
 /**
@@ -23,19 +21,13 @@ import com.privasia.scss.core.modelmap.config.ModelMapPropertyMap;
 @Configuration
 public class ModelMapConfig {
 
-  private ModelMapOptionalConverter modelMapOptionalConverter;
-
-  @Autowired
-  public void setModelMapOptionalConverter(ModelMapOptionalConverter modelMapOptionalConverter) {
-    this.modelMapOptionalConverter = modelMapOptionalConverter;
-  }
 
   @Bean
   public ModelMapper configModelMapper() {
     ModelMapper modelMapper = new ModelMapper();
-    configOptionalMapper(modelMapper);
-    configEnums(modelMapper);
     configLocalDateTime(modelMapper);
+    configEnums(modelMapper);
+    
     configProperty(modelMapper);
     return modelMapper;
   }
@@ -113,12 +105,11 @@ public class ModelMapConfig {
     modelMapper.addMappings(ModelMapPropertyMap.exportsToExportsQ());
     modelMapper.addMappings(ModelMapPropertyMap.importContainerToGatePass());
     modelMapper.addMappings(ModelMapPropertyMap.exportContainerToExports());
-    modelMapper.addMappings(ModelMapPropertyMap.exportsToExportContainer());
     modelMapper.addMappings(ModelMapPropertyMap.referRejectDetailDTOToReferRejectDetail());
     modelMapper.addMappings(ModelMapPropertyMap.referRejectDetailToReferRejectDetailDTO());
     modelMapper.addMappings(ModelMapPropertyMap.referRejectReasonToReferRejectReasonDTO());
     modelMapper.addMappings(ModelMapPropertyMap.referRejectToReferRejectDTO());
-    modelMapper.addMappings(ModelMapPropertyMap.referRejectReasonDTOToReferRejectReason());
+    modelMapper.addMappings(ModelMapPropertyMap.referRejectReasonDTOToReferRejectReason()); 
     return modelMapper;
   }
 
@@ -131,9 +122,4 @@ public class ModelMapConfig {
     return modelMapper;
   }
 
-  public ModelMapper configOptionalMapper(ModelMapper modelMapper) {
-    modelMapper.createTypeMap(Optional.class, Optional.class).setConverter(modelMapOptionalConverter);
-    // modelMapper.addConverter(new ModelMapOptionalConverter());
-    return modelMapper;
-  }
 }

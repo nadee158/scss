@@ -239,7 +239,19 @@ public class HPABService {
 		List<ExportContainer> updatedExportContainers = new ArrayList<ExportContainer>();
 
 		if (!(booking.getHpabBookingDetails() == null || booking.getHpabBookingDetails().isEmpty())) {
-
+			
+			gateInReponse.setTrailerPlate(booking.getTrailerNo());
+			if(StringUtils.isNotEmpty(booking.getAxleWeight())){
+				gateInReponse.setTrailerWeight(Integer.parseInt(booking.getAxleWeight()));
+			}
+			
+			if(StringUtils.isNotEmpty(booking.getPmWeight())){
+				gateInReponse.setTruckWeight(Integer.parseInt(booking.getPmWeight()));
+			}
+			gateInReponse.setTruckHeadNo(booking.getPmNumber());
+			gateInReponse.setTruckPlateNo(booking.getTrailerPlate());
+			
+			
 			// construct DTO from domain
 			booking.getHpabBookingDetails().forEach(bookingDetail -> {
 

@@ -239,7 +239,7 @@ public class ReferRejectService {
 
     if ((referRejectDTO.getReferRejectDetails() == null || referRejectDTO.getReferRejectDetails().isEmpty()))
       throw new BusinessException("No Refer Reject detail Data given to be updated!");
-
+    
     if (gateInWriteRequest.getGateInDateTime() == null)
       throw new BusinessException("Gate In Time Required !");
 
@@ -273,7 +273,6 @@ public class ReferRejectService {
     referRejectDTO.setExpWeightBridge(gateInWriteRequest.getWeightBridge());
 
     Set<ReferRejectDetailDTO> referRejectDetailsDTOs = referRejectDTO.getReferRejectDetails();
-    System.out.println("referRejectDetailsDTOs " + referRejectDetailsDTOs);
 
     // bind details via modal map
     ReferReject referReject = modelMapper.map(referRejectDTO, ReferReject.class);
@@ -288,24 +287,7 @@ public class ReferRejectService {
 
     referReject.setReferRejectDetails(referRejectDetails);
 
-
-    referRejectDetails = referReject.getReferRejectDetails();
-    System.out
-        .println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  referRejectDetails @@@@@@@@@@@@@@@@@@@@@@@@@@@@" + referRejectDetails);
-
-    System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  referRejectDetails SIZE : @@@@@@@@@@@@@@@@@@@@@@@@@@@@"
-        + referRejectDetails.size());
-
-    referRejectDetails.forEach(rd -> {
-      if (rd instanceof ReferRejectDetail) {
-        System.out.println("rd instanceof ReferRejectDetail TRUE ");
-      } else {
-        System.out.println("rd instanceof ReferRejectDetail FALSE ");
-      }
-
-    });
-
-    boolean doubleBoooking = referReject.getReferRejectDetails().size() == 2 ? true : false;
+    boolean doubleBoooking = referRejectDetails.size() == 2 ? true : false;
 
     HPABBooking hpabBooking = null;
     if (StringUtils.isNotEmpty(baseCommonGateInOut.getHpabBooking())) {
@@ -414,9 +396,9 @@ public class ReferRejectService {
   public String updateReferReject(ReferRejectDTO dto) {
     String status = "ERROR";
     ReferReject persisted = null;
-    List<SupervisorReferRejectReason> supervisorReferRejectReasonList = new ArrayList<SupervisorReferRejectReason>();
+    
     if ((dto == null || dto.getReferRejectDetails() == null || dto.getReferRejectDetails().isEmpty()))
-      throw new BusinessException("No data is available to update!");
+      throw new BusinessException("No Refer data is available to update!");
 
     SystemUser systemUser = systemUserRepository.findOne(SecurityHelper.getCurrentUserId()).orElseThrow(
         () -> new ResultsNotFoundException("System User was not found! " + SecurityHelper.getCurrentUserId()));
@@ -430,6 +412,7 @@ public class ReferRejectService {
     referReject.getReferRejectDetails().forEach(referRejectDetail -> {
       dto.getReferRejectDetails().forEach(referRejectDetailDTO -> {
         if (referRejectDetail.getReferRejectDetailID() == referRejectDetailDTO.getReferRejectDetailID()) {
+        	Set<SupervisorReferRejectReason> supervisorReferRejectReasons = new HashSet<SupervisorReferRejectReason>();
           // update detail
           referRejectDetail.setStatus(ReferStatus.fromValue(referRejectDetailDTO.getStatus()));
           referRejectDetail.setSupervisorRemarks(StringUtils.upperCase(referRejectDetailDTO.getSupervisorRemarks()));
@@ -443,14 +426,16 @@ public class ReferRejectService {
                   referReasonRepository.findOne(referReasonDTO.getReferReason().getReferReasonID())
                       .orElseThrow(() -> new ResultsNotFoundException(
                           "Refer reason was not found! " + referReasonDTO.getReferReason().getReferReasonID()));
-              SupervisorReferRejectReason reason = new SupervisorReferRejectReason();
-              reason.setReferReason(referReason);
-              reason.setReferRejectDetail(referRejectDetail);
-              supervisorReferRejectReasonList.add(reason);
+              SupervisorReferRejectReason supervisorreason = new SupervisorReferRejectReason();
+              supervisorreason.setReferReason(referReason);
+              supervisorreason.setReferRejectDetail(referRejectDetail);
+              //supervisorReferRejectReasonList.add(reason);
             });
           }
+          referRejectDetail.setSupervisorReferRejectReason(supervisorReferRejectReasons);
         }
       });
+      
     });
 
     // ReferReject -> update as completed
@@ -464,13 +449,13 @@ public class ReferRejectService {
     }
 
     // String sqlIns = "INSERT INTO SCSS_REJECT_SUP_REASON (" //
-    if (StringUtils.equals(status, "SUCCESS")) {
+    /*if (StringUtils.equals(status, "SUCCESS")) {
       if (!(supervisorReferRejectReasonList == null || supervisorReferRejectReasonList.isEmpty())) {
         for (SupervisorReferRejectReason reason : supervisorReferRejectReasonList) {
           supervisorReferRejectReasonRepository.save(reason);
         }
       }
-    }
+    }*/
 
     return status;
   }

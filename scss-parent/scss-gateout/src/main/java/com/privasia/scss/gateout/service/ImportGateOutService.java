@@ -18,16 +18,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.privasia.scss.common.dto.BaseCommonGateInOutDTO;
+
 import com.privasia.scss.common.dto.CancelPickUpDTO;
-import com.privasia.scss.common.dto.ClientDTO;
 import com.privasia.scss.common.dto.CommonSealDTO;
 import com.privasia.scss.common.dto.ConfirmedKioskDTO;
 import com.privasia.scss.common.dto.GateOutReponse;
 import com.privasia.scss.common.dto.GateOutRequest;
 import com.privasia.scss.common.dto.GateOutWriteRequest;
 import com.privasia.scss.common.dto.ImportContainer;
-import com.privasia.scss.common.dto.SystemUserDTO;
 import com.privasia.scss.common.dto.UpdateSealDTO;
 import com.privasia.scss.common.enums.ContainerFullEmptyType;
 import com.privasia.scss.common.enums.TransactionStatus;
@@ -107,7 +105,7 @@ public class ImportGateOutService {
       modelMapper.map(gatePass, importContainer);
 
       if (gatePass.getBaseCommonGateInOutAttribute() != null) {
-        importContainer.setBaseCommonGateInOutAttribute(new BaseCommonGateInOutDTO());
+        /*importContainer.setBaseCommonGateInOutAttribute(new BaseCommonGateInOutDTO());
         if (gatePass.getBaseCommonGateInOutAttribute().getCard() != null) {
           importContainer.getBaseCommonGateInOutAttribute()
               .getCard().setCardID(gatePass.getBaseCommonGateInOutAttribute().getCard().getCardID());
@@ -124,7 +122,7 @@ public class ImportGateOutService {
                 .getCommonContactAttribute().getPersonName());
           }
           importContainer.getBaseCommonGateInOutAttribute().setGateInClerk(gateInClerk);
-        }
+        }*/
 
         if (!(gatePass.getBaseCommonGateInOutAttribute().getTimeGateIn() == null)) {
           LocalDateTime timeGateIn = gatePass.getBaseCommonGateInOutAttribute().getTimeGateIn();
@@ -132,7 +130,7 @@ public class ImportGateOutService {
           gateOutReponse.setGateInDateTime(timeGateIn.format(formatter));
         }
 
-        if (gatePass.getBaseCommonGateInOutAttribute().getGateInClient() != null) {
+        /*if (gatePass.getBaseCommonGateInOutAttribute().getGateInClient() != null) {
           ClientDTO gateInClient = new ClientDTO();
           modelMapper.map(gatePass.getBaseCommonGateInOutAttribute().getGateInClient(), gateInClient);
           gateOutReponse.setGateInLaneNo(gatePass.getBaseCommonGateInOutAttribute().getGateInClient().getLaneNo());
@@ -147,15 +145,18 @@ public class ImportGateOutService {
         importContainer.getBaseCommonGateInOutAttribute()
             .setPmHeadNo(gatePass.getBaseCommonGateInOutAttribute().getPmHeadNo());
         importContainer.getBaseCommonGateInOutAttribute()
-            .setPmPlateNo(gatePass.getBaseCommonGateInOutAttribute().getPmHeadNo());
+            .setPmPlateNo(gatePass.getBaseCommonGateInOutAttribute().getPmHeadNo());*/
 
       }
       // adding log info
-      if (!(gatePass.getContainerLength() == null)) {
+      if (gatePass.getContainerLength() != null) {
         importContainer.setContainerLength(Integer.parseInt(gatePass.getContainerLength().getValue()));
       }
+      
+      
       importContainer = getGCSDeclarationInfo(importContainer);
       importContainerList.add(importContainer);
+      System.out.println("################# importContainer ######### "+importContainer);
       if (StringUtils.isEmpty(gateOutRequest.getImpContainer1())) {
         gateOutRequest.setImpContainer1(gatePass.getContainer().getContainerNumber());
       } else {

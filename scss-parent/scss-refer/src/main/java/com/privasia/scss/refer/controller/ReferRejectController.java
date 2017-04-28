@@ -39,8 +39,6 @@ public class ReferRejectController {
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public CustomResponseEntity<ApiResponseObject<?>> getReferRejectList(ModelMap map, @PathVariable int page,
       @PathVariable int pageSize) {
-    System.out.println("page " + page);
-    System.out.println("pageSize " + pageSize);
     map = referRejectService.getReferRejectList(map, page, pageSize);
     return new CustomResponseEntity<ApiResponseObject<?>>(new ApiResponseObject<ModelMap>(HttpStatus.OK, map),
         HttpStatus.OK);
@@ -49,7 +47,6 @@ public class ReferRejectController {
   @RequestMapping(value = "/get/{referId}", method = RequestMethod.GET,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public CustomResponseEntity<ApiResponseObject<?>> getReferRejectById(@PathVariable long referId) {
-    System.out.println("referId " + referId);
     ReferRejectDTO referReject = referRejectService.getReferRejectByReferId(referId);
 
     return new CustomResponseEntity<ApiResponseObject<?>>(
@@ -61,10 +58,6 @@ public class ReferRejectController {
   public CustomResponseEntity<ApiResponseObject<?>> saveReferReject(
       @RequestBody GateInWriteRequest gateInWriteRequest) {
 
-    System.out.println("gateInWriteRequest " + gateInWriteRequest);
-    System.out.println("gateInWriteRequest.getReferRejectDTO() " + gateInWriteRequest.getReferRejectDTO());
-    System.out.println("gateInWriteRequest.getReferRejectDTO().getReferRejectDetails() "
-        + gateInWriteRequest.getReferRejectDTO().get().getReferRejectDetails());
     Long referId = referRejectService.saveReferReject(gateInWriteRequest).getReferRejectID();
 
     return new CustomResponseEntity<ApiResponseObject<?>>(new ApiResponseObject<Long>(HttpStatus.CREATED, referId),
@@ -74,7 +67,6 @@ public class ReferRejectController {
   @RequestMapping(value = "/update", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
       consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public CustomResponseEntity<ApiResponseObject<?>> updateReferReject(@RequestBody ReferRejectDTO referRejectDTO) {
-    System.out.println("referRejectDTO " + referRejectDTO);
     String status = referRejectService.updateReferReject(referRejectDTO);
 
     return new CustomResponseEntity<ApiResponseObject<?>>(new ApiResponseObject<String>(HttpStatus.OK, status),
