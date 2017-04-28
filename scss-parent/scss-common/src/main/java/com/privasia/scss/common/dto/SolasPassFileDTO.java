@@ -31,6 +31,12 @@ public class SolasPassFileDTO implements Serializable {
 
   private String exportSEQ02;
 
+  private String container01No;
+  private int terminalVGMC1;
+
+  private String container02No;
+  private int terminalVGMC2;
+
 
   public Long getIssuerId() {
     return issuerId;
@@ -123,6 +129,38 @@ public class SolasPassFileDTO implements Serializable {
 
   public void setIssuerNRIC(String issuerNRIC) {
     this.issuerNRIC = issuerNRIC;
+  }
+
+  public String getContainer01No() {
+    return container01No;
+  }
+
+  public void setContainer01No(String container01No) {
+    this.container01No = container01No;
+  }
+
+  public int getTerminalVGMC1() {
+    return terminalVGMC1;
+  }
+
+  public void setTerminalVGMC1(int terminalVGMC1) {
+    this.terminalVGMC1 = terminalVGMC1;
+  }
+
+  public String getContainer02No() {
+    return container02No;
+  }
+
+  public void setContainer02No(String container02No) {
+    this.container02No = container02No;
+  }
+
+  public int getTerminalVGMC2() {
+    return terminalVGMC2;
+  }
+
+  public void setTerminalVGMC2(int terminalVGMC2) {
+    this.terminalVGMC2 = terminalVGMC2;
   }
 
 

@@ -68,18 +68,29 @@ public class SolasGateOutService {
   }
 
 
+  // public static void main(String[] args) {
+  // SolasPassFileDTO solasPassFileDTO = new SolasPassFileDTO();
+  // solasPassFileDTO.setC1WithInTolerance(false);
+  // solasPassFileDTO.setC2WithInTolerance(false);
+  // solasPassFileDTO.setExportSEQ01("1500");
+  // solasPassFileDTO.setExportSEQ02("1250");
+  // solasPassFileDTO.setGateInOK("01-04-2017 14:05:25");
+  // solasPassFileDTO.setContainer01No("CONT001");
+  // solasPassFileDTO.setTerminalVGMC1(5822);
+  // solasPassFileDTO.setContainer02No("CONT002");
+  // solasPassFileDTO.setTerminalVGMC2(5825);
+  // SolasGateOutService gateOutService = new SolasGateOutService();
+  // gateOutService.generateSolasCertificate(solasPassFileDTO);
+  // }
+
   public String generateSolasCertificateId(String gateInOK) {
-    System.out.println("gateInOK " + gateInOK);
     StringBuffer buffer = new StringBuffer();
     buffer.append("WPT");
     DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
     LocalDateTime localDateTime = LocalDateTime.parse(gateInOK, dateTimeFormatter);
-    System.out.println("localDateTime: " + localDateTime);
     dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS");
     String timeString = localDateTime.format(dateTimeFormatter);
-    System.out.println("timeString: " + timeString);
     buffer.append(timeString);
-    System.out.println("buffer.toString(): " + buffer.toString());
     return buffer.toString();
 
   }
@@ -96,6 +107,13 @@ public class SolasGateOutService {
 
       if (!solasPassFileDTO.isC1WithInTolerance() || !solasPassFileDTO.isC2WithInTolerance()) {
 
+        // FOR TESTING
+        // SystemUser systemUser = new SystemUser();
+        // systemUser.setCommonContactAttribute(new CommonContactAttribute());
+        // systemUser.getCommonContactAttribute().setNewNRICNO("NewNRICNO");
+        // systemUser.getCommonContactAttribute().setNewNRICNO("OldNRICNO");
+        // systemUser.getCommonContactAttribute().setPersonName("Person Name");
+
         SystemUser systemUser = systemUserRepository.findOne(solasPassFileDTO.getIssuerId())
             .orElseThrow(() -> new ResultsNotFoundException("Issuer Not Found! " + solasPassFileDTO.getIssuerId()));
 
@@ -104,6 +122,10 @@ public class SolasGateOutService {
             ? systemUser.getCommonContactAttribute().getNewNRICNO()
             : systemUser.getCommonContactAttribute().getOldNRICNO();
         solasPassFileDTO.setIssuerNRIC(nicNo);
+
+        // FOR TESTING
+        // Client client = new Client();
+        // client.setUnitNo("Unit No");
 
         Client client = clientRepository.findOne(Long.parseLong(solasPassFileDTO.getWeighStation()))
             .orElseThrow(() -> new ResultsNotFoundException("Client Not Found! " + solasPassFileDTO.getWeighStation()));
@@ -156,7 +178,7 @@ public class SolasGateOutService {
         }
 
         // convert array of bytes into file /
-        FileOutputStream fileOuputStream = new FileOutputStream("C://pass.pdf");
+        FileOutputStream fileOuputStream = new FileOutputStream("D://pass.pdf");
         fileOuputStream.write(pdfBytes);
         fileOuputStream.close();
       }
