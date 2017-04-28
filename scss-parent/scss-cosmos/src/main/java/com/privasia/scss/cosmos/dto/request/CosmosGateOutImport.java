@@ -1,49 +1,60 @@
 package com.privasia.scss.cosmos.dto.request;
 
+import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 
-public class CosmosGateOutImport {
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
-	CSMCTL CSMCTL;
-	GOTTRCINF GOTTRCINF;
-	GOTCNTINF GOTCNTINF;
-	int Index;
+public class CosmosGateOutImport implements Serializable {
 
-	public CSMCTL getCSMCTL() {
-		return CSMCTL;
-	}
+  private static final long serialVersionUID = 1L;
+  CSMCTL CSMCTL;
+  GOTTRCINF GOTTRCINF;
+  GOTCNTINF GOTCNTINF;
+  int Index;
 
-	@XmlElement
-	public void setCSMCTL(CSMCTL cSMCTL) {
-		CSMCTL = cSMCTL;
-	}
+  public CSMCTL getCSMCTL() {
+    return CSMCTL;
+  }
 
-	public GOTTRCINF getGOTTRCINF() {
-		return GOTTRCINF;
-	}
+  @XmlElement
+  public void setCSMCTL(CSMCTL cSMCTL) {
+    CSMCTL = cSMCTL;
+  }
 
-	@XmlElement
-	public void setGOTTRCINF(GOTTRCINF gOTTRCINF) {
-		GOTTRCINF = gOTTRCINF;
-	}
+  public GOTTRCINF getGOTTRCINF() {
+    return GOTTRCINF;
+  }
 
-	public GOTCNTINF getGOTCNTINF() {
-		return GOTCNTINF;
-	}
+  @XmlElement
+  public void setGOTTRCINF(GOTTRCINF gOTTRCINF) {
+    GOTTRCINF = gOTTRCINF;
+  }
 
-	@XmlElement
-	public void setGOTCNTINF(GOTCNTINF gOTCNTINF) {
-		GOTCNTINF = gOTCNTINF;
-	}
+  public GOTCNTINF getGOTCNTINF() {
+    return GOTCNTINF;
+  }
 
-	public int getIndex() {
-		return Index;
-	}
+  @XmlElement
+  public void setGOTCNTINF(GOTCNTINF gOTCNTINF) {
+    GOTCNTINF = gOTCNTINF;
+  }
 
-	@XmlAttribute
-	public void setIndex(int index) {
-		Index = index;
-	}
+  public int getIndex() {
+    return Index;
+  }
+
+  @XmlAttribute
+  public void setIndex(int index) {
+    Index = index;
+  }
+
+  @Override
+  public String toString() {
+    return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
+  }
 
 }

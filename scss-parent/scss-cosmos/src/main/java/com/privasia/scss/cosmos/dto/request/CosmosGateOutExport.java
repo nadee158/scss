@@ -1,42 +1,49 @@
 package com.privasia.scss.cosmos.dto.request;
 
+import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 
-import com.privasia.scss.cosmos.dto.request.CSMCTL;
-import com.privasia.scss.cosmos.dto.request.GOTTRCINF;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
-public class CosmosGateOutExport {
+public class CosmosGateOutExport implements Serializable {
 
-	CSMCTL CSMCTL;
-	GOTTRCINF GOTTRCINF;
-	int Index;
+  private static final long serialVersionUID = 1L;
+  CSMCTL CSMCTL;
+  GOTTRCINF GOTTRCINF;
+  int Index;
 
-	public CSMCTL getCSMCTL() {
-		return CSMCTL;
-	}
+  public CSMCTL getCSMCTL() {
+    return CSMCTL;
+  }
 
-	@XmlElement
-	public void setCSMCTL(CSMCTL cSMCTL) {
-		CSMCTL = cSMCTL;
-	}
+  @XmlElement
+  public void setCSMCTL(CSMCTL cSMCTL) {
+    CSMCTL = cSMCTL;
+  }
 
-	public GOTTRCINF getGOTTRCINF() {
-		return GOTTRCINF;
-	}
+  public GOTTRCINF getGOTTRCINF() {
+    return GOTTRCINF;
+  }
 
-	@XmlElement
-	public void setGOTTRCINF(GOTTRCINF gOTTRCINF) {
-		GOTTRCINF = gOTTRCINF;
-	}
+  @XmlElement
+  public void setGOTTRCINF(GOTTRCINF gOTTRCINF) {
+    GOTTRCINF = gOTTRCINF;
+  }
 
-	public int getIndex() {
-		return Index;
-	}
+  public int getIndex() {
+    return Index;
+  }
 
-	@XmlAttribute
-	public void setIndex(int index) {
-		Index = index;
-	}
+  @XmlAttribute
+  public void setIndex(int index) {
+    Index = index;
+  }
 
+  @Override
+  public String toString() {
+    return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
+  }
 }

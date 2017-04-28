@@ -1,79 +1,82 @@
 package com.privasia.scss.cosmos.dto.response;
 
+import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 
-import com.privasia.scss.cosmos.dto.response.XMLERRINF;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
-public class Message {
+public class Message implements Serializable {
 
-	CSMCTL CSMCTL;
-	XMLERRINF XMLERRINF;
-	GINTRCINFR GINTRCINFR;
-	GINCNTDRPR GINCNTDRPR;
-	GINCNTPUPR GINCNTPUPR;
-	int Index;
+  private static final long serialVersionUID = 1L;
+  CSMCTL CSMCTL;
+  XMLERRINF XMLERRINF;
+  GINTRCINFR GINTRCINFR;
+  GINCNTDRPR GINCNTDRPR;
+  GINCNTPUPR GINCNTPUPR;
+  int Index;
 
-	public CSMCTL getCSMCTL() {
-		return CSMCTL;
-	}
+  public CSMCTL getCSMCTL() {
+    return CSMCTL;
+  }
 
-	@XmlElement
-	public void setCSMCTL(CSMCTL cSMCTL) {
-		CSMCTL = cSMCTL;
-	}
-	
-	public XMLERRINF getXMLERRINF() {
-		return XMLERRINF;
-	}
+  @XmlElement
+  public void setCSMCTL(CSMCTL cSMCTL) {
+    CSMCTL = cSMCTL;
+  }
 
-	@XmlElement
-	public void setXMLERRINF(XMLERRINF xMLERRINF) {
-		XMLERRINF = xMLERRINF;
-	}
+  public XMLERRINF getXMLERRINF() {
+    return XMLERRINF;
+  }
 
-	public GINTRCINFR getGINTRCINFR() {
-		return GINTRCINFR;
-	}
+  @XmlElement
+  public void setXMLERRINF(XMLERRINF xMLERRINF) {
+    XMLERRINF = xMLERRINF;
+  }
 
-	@XmlElement
-	public void setGINTRCINFR(GINTRCINFR gINTRCINFR) {
-		GINTRCINFR = gINTRCINFR;
-	}
+  public GINTRCINFR getGINTRCINFR() {
+    return GINTRCINFR;
+  }
 
-	public int getIndex() {
-		return Index;
-	}
+  @XmlElement
+  public void setGINTRCINFR(GINTRCINFR gINTRCINFR) {
+    GINTRCINFR = gINTRCINFR;
+  }
 
-	@XmlAttribute
-	public void setIndex(int index) {
-		Index = index;
-	}
+  public int getIndex() {
+    return Index;
+  }
 
-	public GINCNTDRPR getGINCNTDRPR() {
-		return GINCNTDRPR;
-	}
+  @XmlAttribute
+  public void setIndex(int index) {
+    Index = index;
+  }
 
-	@XmlElement
-	public void setGINCNTDRPR(GINCNTDRPR gINCNTDRPR) {
-		GINCNTDRPR = gINCNTDRPR;
-	}
+  public GINCNTDRPR getGINCNTDRPR() {
+    return GINCNTDRPR;
+  }
 
-	public GINCNTPUPR getGINCNTPUPR() {
-		return GINCNTPUPR;
-	}
+  @XmlElement
+  public void setGINCNTDRPR(GINCNTDRPR gINCNTDRPR) {
+    GINCNTDRPR = gINCNTDRPR;
+  }
 
-	@XmlElement
-	public void setGINCNTPUPR(GINCNTPUPR gINCNTPUPR) {
-		GINCNTPUPR = gINCNTPUPR;
-	}
+  public GINCNTPUPR getGINCNTPUPR() {
+    return GINCNTPUPR;
+  }
 
-	@Override
-	public String toString() {
-		return "Message [CSMCTL=" + CSMCTL + ", XMLERRINF=" + XMLERRINF + ", GINTRCINFR=" + GINTRCINFR + ", GINCNTDRPR="
-				+ GINCNTDRPR + ", GINCNTPUPR=" + GINCNTPUPR + ", Index=" + Index + "]";
-	}
-	
-	
+  @XmlElement
+  public void setGINCNTPUPR(GINCNTPUPR gINCNTPUPR) {
+    GINCNTPUPR = gINCNTPUPR;
+  }
+
+  @Override
+  public String toString() {
+    return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
+  }
+
+
 
 }

@@ -1,9 +1,15 @@
 package com.privasia.scss.cosmos.dto.request;
 
+import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlElement;
 
-public class CSMCTL {
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
+public class CSMCTL implements Serializable {
+
+  private static final long serialVersionUID = 1L;
   String RQST;
   String ACTN;
   String RTNC;
@@ -95,6 +101,9 @@ public class CSMCTL {
     ERRI = eRRI;
   }
 
-
+  @Override
+  public String toString() {
+    return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
+  }
 
 }
