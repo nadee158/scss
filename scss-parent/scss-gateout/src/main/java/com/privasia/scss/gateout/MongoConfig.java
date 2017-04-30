@@ -9,6 +9,7 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 
 import com.mongodb.Mongo;
 import com.mongodb.MongoClient;
+import com.privasia.scss.common.enums.CollectionType;
 
 @Configuration
 @EnableMongoRepositories(basePackages = "com.privasia.scss.gateout.mongo.repository")
@@ -36,7 +37,23 @@ public class MongoConfig extends AbstractMongoConfiguration {
   }
 
 
-  @Bean
+  @Bean(name = "pdfFileGridFsTemplate")
+  public GridFsTemplate pdfFileGridFsTemplate() throws Exception {
+    return new GridFsTemplate(mongoDbFactory(), mappingMongoConverter(), CollectionType.PDF_FILE_COLLECTION.getValue());
+  }
+
+  @Bean(name = "zipFileGridFsTemplate")
+  public GridFsTemplate zipFileGridFsTemplate() throws Exception {
+    return new GridFsTemplate(mongoDbFactory(), mappingMongoConverter(), CollectionType.ZIP_FILE_COLLECTION.getValue());
+  }
+
+  @Bean(name = "solasCertificateGridFsTemplate")
+  public GridFsTemplate solasCertificateGridFsTemplate() throws Exception {
+    return new GridFsTemplate(mongoDbFactory(), mappingMongoConverter(),
+        CollectionType.SOLAS_CERTIFICATE_COLLECTION.getValue());
+  }
+
+  @Bean(name = "gridFsTemplate")
   public GridFsTemplate gridFsTemplate() throws Exception {
     return new GridFsTemplate(mongoDbFactory(), mappingMongoConverter());
   }
