@@ -35,14 +35,11 @@ public class SolasETPDTO implements Serializable {
 	private String solasDetail;
 	private String issuerNRIC;
 	private String issuerId;
-	private boolean c1WithInTolerance = true;
-	private boolean c2WithInTolerance = true;
-	private String etpC1ResponseCode;
-	private String etpC1ResponseMessage;
+	private boolean withInTolerance = true;
+	private String etpResponseCode;
+	private String etpResponseMessage;
 	private String requestSendTime;
 	private String responseReceivedTime;
-	private String etpC2ResponseCode;
-	private String etpC2ResponseMessage;
 	private String solasRefNumber;
 	public String getContainerNo() {
 		return containerNo;
@@ -146,30 +143,6 @@ public class SolasETPDTO implements Serializable {
 	public void setIssuerId(String issuerId) {
 		this.issuerId = issuerId;
 	}
-	public boolean isC1WithInTolerance() {
-		return c1WithInTolerance;
-	}
-	public void setC1WithInTolerance(boolean c1WithInTolerance) {
-		this.c1WithInTolerance = c1WithInTolerance;
-	}
-	public boolean isC2WithInTolerance() {
-		return c2WithInTolerance;
-	}
-	public void setC2WithInTolerance(boolean c2WithInTolerance) {
-		this.c2WithInTolerance = c2WithInTolerance;
-	}
-	public String getEtpC1ResponseCode() {
-		return etpC1ResponseCode;
-	}
-	public void setEtpC1ResponseCode(String etpC1ResponseCode) {
-		this.etpC1ResponseCode = etpC1ResponseCode;
-	}
-	public String getEtpC1ResponseMessage() {
-		return etpC1ResponseMessage;
-	}
-	public void setEtpC1ResponseMessage(String etpC1ResponseMessage) {
-		this.etpC1ResponseMessage = etpC1ResponseMessage;
-	}
 	public String getRequestSendTime() {
 		return requestSendTime;
 	}
@@ -182,23 +155,29 @@ public class SolasETPDTO implements Serializable {
 	public void setResponseReceivedTime(String responseReceivedTime) {
 		this.responseReceivedTime = responseReceivedTime;
 	}
-	public String getEtpC2ResponseCode() {
-		return etpC2ResponseCode;
-	}
-	public void setEtpC2ResponseCode(String etpC2ResponseCode) {
-		this.etpC2ResponseCode = etpC2ResponseCode;
-	}
-	public String getEtpC2ResponseMessage() {
-		return etpC2ResponseMessage;
-	}
-	public void setEtpC2ResponseMessage(String etpC2ResponseMessage) {
-		this.etpC2ResponseMessage = etpC2ResponseMessage;
-	}
 	public String getSolasRefNumber() {
 		return solasRefNumber;
 	}
 	public void setSolasRefNumber(String solasRefNumber) {
 		this.solasRefNumber = solasRefNumber;
+	}
+	public boolean isWithInTolerance() {
+		return withInTolerance;
+	}
+	public void setWithInTolerance(boolean withInTolerance) {
+		this.withInTolerance = withInTolerance;
+	}
+	public String getEtpResponseCode() {
+		return etpResponseCode;
+	}
+	public void setEtpResponseCode(String etpResponseCode) {
+		this.etpResponseCode = etpResponseCode;
+	}
+	public String getEtpResponseMessage() {
+		return etpResponseMessage;
+	}
+	public void setEtpResponseMessage(String etpResponseMessage) {
+		this.etpResponseMessage = etpResponseMessage;
 	}
 	
 	
