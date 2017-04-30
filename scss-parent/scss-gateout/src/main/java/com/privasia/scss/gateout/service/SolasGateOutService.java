@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ import javax.imageio.ImageIO;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -45,6 +47,9 @@ import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
 @Service("solasGateOutService")
 public class SolasGateOutService {
+	
+	@Value("${solas.cert.name}")
+	private String solasCertName;
 
 	private FileService fileService;
 
@@ -91,7 +96,7 @@ public class SolasGateOutService {
 	}
 
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
-	public boolean isSolasApplicable(List<Exports> exportsList) throws JRException, IOException {
+	public boolean isSolasApplicable(List<Exports> exportsList) throws JRException, IOException, ParseException {
 		boolean isSolasApplicable = false;
 		// check if at least one export container is solas container
 		// at least one should be within tolerance = false stream and select
@@ -140,17 +145,12 @@ public class SolasGateOutService {
 			// save to file references
 			saveReference(fileInfoDTO);
 
-			try {
-				// assign values from solasPassFileDTO
-				updateSolasETPDTOList(solasETPDTOs, solasPassFileDTO);
-				// send solas info to etp
-				etpWebserviceClient.updateSolasToEtp(solasETPDTOs);
+			// assign values from solasPassFileDTO
+			updateSolasETPDTOList(solasETPDTOs, solasPassFileDTO);
+			// send solas info to etp
+			etpWebserviceClient.updateSolasToEtp(solasETPDTOs);
 				
-				//save to scss data base
-			} catch (Exception e) {
-				throw new BusinessException("Error from web service : " + e.getMessage());
-			}
-
+			//save to scss data base
 		}
 
 		return isSolasApplicable;
@@ -210,18 +210,18 @@ public class SolasGateOutService {
 			throw new BusinessException("Container Details not found To Generate Solas Cert! ");
 		}
 		if ((exports.getSolas() == null)) {
-			throw new BusinessException("Solas not found To Generate Solas Cert! ");
+			throw new BusinessException("Solas not found to Generate Solas Cert! ");
 		}
 		if (solasPassFileDTO == null) {
 
 			solasPassFileDTO = new SolasPassFileDTO();
 
 			if ((exports.getBaseCommonGateInOutAttribute() == null)) {
-				throw new BusinessException("Required Gate In Out Details not found To Generate Solas Cert! ");
+				throw new BusinessException("Required Gate In Out Details not found to Generate Solas Cert! ");
 			}
 
 			if ((exports.getBaseCommonGateInOutAttribute().getTimeGateInOk() == null)) {
-				throw new BusinessException("Gate in time not Found To Generate Solas Cert! ");
+				throw new BusinessException("Gate in time not Found to Generate Solas Cert! ");
 			}
 
 			solasPassFileDTO
@@ -230,7 +230,7 @@ public class SolasGateOutService {
 			solasPassFileDTO.setCertificateNo(generateSolasCertificateId(solasPassFileDTO.getGateInOK()));
 
 			if ((exports.getBaseCommonGateInOutAttribute().getGateInClerk() == null)) {
-				throw new BusinessException("Issuer Not Found To Generate Solas Cert! ");
+				throw new BusinessException("Issuer Not Found to Generate Solas Cert! ");
 			}
 
 			SystemUser systemUser = exports.getBaseCommonGateInOutAttribute().getGateInClerk();
@@ -242,7 +242,7 @@ public class SolasGateOutService {
 			solasPassFileDTO.setIssuerNRIC(nicNo);
 
 			if ((exports.getBaseCommonGateInOutAttribute().getGateInClient() == null)) {
-				throw new BusinessException("Client Not Found To Generate Solas Cert ! ");
+				throw new BusinessException("Client Not Found to Generate Solas Cert ! ");
 			}
 			Client client = exports.getBaseCommonGateInOutAttribute().getGateInClient();
 			solasPassFileDTO.setWeighStation(client.getUnitNo());
@@ -263,7 +263,7 @@ public class SolasGateOutService {
 
 	public String generateSolasCertificateId(String gateInOK) {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append("WPT");
+		buffer.append(solasCertName);
 		LocalDateTime localDateTime = LocalDateTime.parse(gateInOK, dateTimeFormatter);
 		DateTimeFormatter localdateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS");
 		String timeString = localDateTime.format(localdateTimeFormatter);
