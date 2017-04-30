@@ -1,18 +1,29 @@
 package com.privasia.scss.cosmos.dto.response;
 
+import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlElement;
 
-public class XMLERRINF {
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
-	String TAGCSG;
+public class XMLERRINF implements Serializable {
 
-	public String getTAGCSG() {
-		return TAGCSG;
-	}
+  private static final long serialVersionUID = 1L;
+  String TAGCSG;
 
-	@XmlElement
-	public void setTAGCSG(String tAGCSG) {
-		TAGCSG = tAGCSG;
-	}
-	
+  public String getTAGCSG() {
+    return TAGCSG;
+  }
+
+  @XmlElement
+  public void setTAGCSG(String tAGCSG) {
+    TAGCSG = tAGCSG;
+  }
+
+  @Override
+  public String toString() {
+    return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
+  }
+
 }

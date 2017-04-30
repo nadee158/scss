@@ -1,128 +1,139 @@
 package com.privasia.scss.cosmos.dto.request;
 
+import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlElement;
 
-public class GINCNTPUP {
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
-	String MSGTSE;
-	String UNITSE;
-	String UNBTSE;
-	String CNPVSE;
-	String UPLKSE;
-	String UPPKSE;
-	String UPOMSE;
-	String CYOISE;
-	String CYCISE;
-	String ACHISE;
-	String PCHISE;
-	String CRORSE;
+public class GINCNTPUP implements Serializable {
 
-	public String getMSGTSE() {
-		return MSGTSE;
-	}
+  private static final long serialVersionUID = 1L;
+  String MSGTSE;
+  String UNITSE;
+  String UNBTSE;
+  String CNPVSE;
+  String UPLKSE;
+  String UPPKSE;
+  String UPOMSE;
+  String CYOISE;
+  String CYCISE;
+  String ACHISE;
+  String PCHISE;
+  String CRORSE;
 
-	@XmlElement
-	public void setMSGTSE(String mSGTSE) {
-		MSGTSE = mSGTSE;
-	}
+  public String getMSGTSE() {
+    return MSGTSE;
+  }
 
-	public String getUNITSE() {
-		return UNITSE;
-	}
+  @XmlElement
+  public void setMSGTSE(String mSGTSE) {
+    MSGTSE = mSGTSE;
+  }
 
-	@XmlElement
-	public void setUNITSE(String uNITSE) {
-		UNITSE = uNITSE;
-	}
+  public String getUNITSE() {
+    return UNITSE;
+  }
 
-	public String getUNBTSE() {
-		return UNBTSE;
-	}
+  @XmlElement
+  public void setUNITSE(String uNITSE) {
+    UNITSE = uNITSE;
+  }
 
-	@XmlElement
-	public void setUNBTSE(String uNBTSE) {
-		UNBTSE = uNBTSE;
-	}
+  public String getUNBTSE() {
+    return UNBTSE;
+  }
 
-	public String getCNPVSE() {
-		return CNPVSE;
-	}
+  @XmlElement
+  public void setUNBTSE(String uNBTSE) {
+    UNBTSE = uNBTSE;
+  }
 
-	@XmlElement
-	public void setCNPVSE(String cNPVSE) {
-		CNPVSE = cNPVSE;
-	}
+  public String getCNPVSE() {
+    return CNPVSE;
+  }
 
-	public String getUPLKSE() {
-		return UPLKSE;
-	}
+  @XmlElement
+  public void setCNPVSE(String cNPVSE) {
+    CNPVSE = cNPVSE;
+  }
 
-	@XmlElement
-	public void setUPLKSE(String uPLKSE) {
-		UPLKSE = uPLKSE;
-	}
+  public String getUPLKSE() {
+    return UPLKSE;
+  }
 
-	public String getUPPKSE() {
-		return UPPKSE;
-	}
+  @XmlElement
+  public void setUPLKSE(String uPLKSE) {
+    UPLKSE = uPLKSE;
+  }
 
-	@XmlElement
-	public void setUPPKSE(String uPPKSE) {
-		UPPKSE = uPPKSE;
-	}
+  public String getUPPKSE() {
+    return UPPKSE;
+  }
 
-	public String getUPOMSE() {
-		return UPOMSE;
-	}
+  @XmlElement
+  public void setUPPKSE(String uPPKSE) {
+    UPPKSE = uPPKSE;
+  }
 
-	@XmlElement
-	public void setUPOMSE(String uPOMSE) {
-		UPOMSE = uPOMSE;
-	}
+  public String getUPOMSE() {
+    return UPOMSE;
+  }
 
-	public String getCYOISE() {
-		return CYOISE;
-	}
+  @XmlElement
+  public void setUPOMSE(String uPOMSE) {
+    UPOMSE = uPOMSE;
+  }
 
-	@XmlElement
-	public void setCYOISE(String cYOISE) {
-		CYOISE = cYOISE;
-	}
+  public String getCYOISE() {
+    return CYOISE;
+  }
 
-	public String getCYCISE() {
-		return CYCISE;
-	}
+  @XmlElement
+  public void setCYOISE(String cYOISE) {
+    CYOISE = cYOISE;
+  }
 
-	@XmlElement
-	public void setCYCISE(String cYCISE) {
-		CYCISE = cYCISE;
-	}
+  public String getCYCISE() {
+    return CYCISE;
+  }
 
-	public String getACHISE() {
-		return ACHISE;
-	}
+  @XmlElement
+  public void setCYCISE(String cYCISE) {
+    CYCISE = cYCISE;
+  }
 
-	@XmlElement
-	public void setACHISE(String aCHISE) {
-		ACHISE = aCHISE;
-	}
+  public String getACHISE() {
+    return ACHISE;
+  }
 
-	public String getPCHISE() {
-		return PCHISE;
-	}
+  @XmlElement
+  public void setACHISE(String aCHISE) {
+    ACHISE = aCHISE;
+  }
 
-	@XmlElement
-	public void setPCHISE(String pCHISE) {
-		PCHISE = pCHISE;
-	}
+  public String getPCHISE() {
+    return PCHISE;
+  }
 
-	public String getCRORSE() {
-		return CRORSE;
-	}
+  @XmlElement
+  public void setPCHISE(String pCHISE) {
+    PCHISE = pCHISE;
+  }
 
-	@XmlElement
-	public void setCRORSE(String cRORSE) {
-		CRORSE = cRORSE;
-	}
+  public String getCRORSE() {
+    return CRORSE;
+  }
+
+  @XmlElement
+  public void setCRORSE(String cRORSE) {
+    CRORSE = cRORSE;
+  }
+
+  @Override
+  public String toString() {
+    return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
+  }
 
 }

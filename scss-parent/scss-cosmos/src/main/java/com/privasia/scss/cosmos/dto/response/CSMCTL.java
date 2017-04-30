@@ -1,26 +1,31 @@
 package com.privasia.scss.cosmos.dto.response;
 
+import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlElement;
 
-public class CSMCTL {
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
-	String ERRI;
+public class CSMCTL implements Serializable {
 
-	public String getERRI() {
-		return ERRI;
-	}
+  private static final long serialVersionUID = 1L;
+  String ERRI;
 
-	@XmlElement
-	public void setERRI(String eRRI) {
-		ERRI = eRRI;
-	}
+  public String getERRI() {
+    return ERRI;
+  }
 
-	@Override
-	public String toString() {
-		return "CSMCTL [ERRI=" + ERRI + "]";
-	}
-	
-	
+  @XmlElement
+  public void setERRI(String eRRI) {
+    ERRI = eRRI;
+  }
+
+  @Override
+  public String toString() {
+    return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
+  }
+
 
 
 }
