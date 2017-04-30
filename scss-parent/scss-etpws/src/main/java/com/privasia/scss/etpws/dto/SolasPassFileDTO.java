@@ -1,6 +1,7 @@
-package com.privasia.scss.common.dto;
+package com.privasia.scss.etpws.dto;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -40,6 +41,19 @@ public class SolasPassFileDTO implements Serializable {
   private int terminalVGMC2;
 
 
+  private String solasDetailC1;
+
+  private String solasDetailC2;
+
+  private int shipperVGMC1;
+
+  private int shipperVGMC2;
+
+  private BigDecimal calculatedVarianceC1;
+
+  private BigDecimal calculatedVarianceC2;
+
+
   public Long getIssuerId() {
     return issuerId;
   }
@@ -55,6 +69,8 @@ public class SolasPassFileDTO implements Serializable {
   public void setWeighStation(String weighStation) {
     this.weighStation = weighStation;
   }
+
+
 
   public String getGateInOK() {
     return gateInOK;
@@ -171,6 +187,38 @@ public class SolasPassFileDTO implements Serializable {
 
   public void setWeighingMethod(int weighingMethod) {
     this.weighingMethod = weighingMethod;
+  }
+
+  public String getSolasDetailC1() {
+    return solasDetailC1;
+  }
+
+  public void setSolasDetailC1(String solasDetailC1) {
+    this.solasDetailC1 = solasDetailC1;
+  }
+
+  public String getSolasDetailC2() {
+    return solasDetailC2;
+  }
+
+  public void setSolasDetailC2(String solasDetailC2) {
+    this.solasDetailC2 = solasDetailC2;
+  }
+
+  public int getShipperVGMC1() {
+    return shipperVGMC1;
+  }
+
+  public void setShipperVGMC1(int shipperVGMC1) {
+    this.shipperVGMC1 = shipperVGMC1;
+  }
+
+  public int getShipperVGMC2() {
+    return shipperVGMC2;
+  }
+
+  public void setShipperVGMC2(int shipperVGMC2) {
+    this.shipperVGMC2 = shipperVGMC2;
   }
 
 
