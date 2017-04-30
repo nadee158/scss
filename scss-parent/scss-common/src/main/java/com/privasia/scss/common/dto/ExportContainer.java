@@ -226,7 +226,7 @@ public class ExportContainer {
 	private String internalBlockDesc; // for CosmosExportRepository -
 										// extractInternalBlock method
 
-	private String lpkEdiEnabled; // for GateInExpNormalController -
+	private Boolean lpkEdiEnabled; // for GateInExpNormalController -
 									// checkIfDGContainer method
 
 	private boolean bypassDg; // for GateInExpNormalController -
@@ -1017,11 +1017,11 @@ public class ExportContainer {
 		this.ogaBlock = ogaBlock;
 	}
 
-	public String getLpkEdiEnabled() {
+	public Boolean getLpkEdiEnabled() {
 		return lpkEdiEnabled;
 	}
 
-	public void setLpkEdiEnabled(String lpkEdiEnabled) {
+	public void setLpkEdiEnabled(Boolean lpkEdiEnabled) {
 		this.lpkEdiEnabled = lpkEdiEnabled;
 	}
 
