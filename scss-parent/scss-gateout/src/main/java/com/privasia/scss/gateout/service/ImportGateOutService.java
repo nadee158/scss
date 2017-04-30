@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-
 import com.privasia.scss.common.dto.CancelPickUpDTO;
 import com.privasia.scss.common.dto.CommonSealDTO;
 import com.privasia.scss.common.dto.ConfirmedKioskDTO;
@@ -42,6 +41,7 @@ import com.privasia.scss.core.repository.SystemUserRepository;
 import com.privasia.scss.core.repository.WDCGatePassRepository;
 import com.privasia.scss.core.security.util.SecurityHelper;
 import com.privasia.scss.cosmos.repository.CosmosImportRepository;
+import com.privasia.scss.gateout.dto.FileDTO;
 
 @Service("importGateOutService")
 public class ImportGateOutService {
@@ -105,24 +105,24 @@ public class ImportGateOutService {
       modelMapper.map(gatePass, importContainer);
 
       if (gatePass.getBaseCommonGateInOutAttribute() != null) {
-        /*importContainer.setBaseCommonGateInOutAttribute(new BaseCommonGateInOutDTO());
-        if (gatePass.getBaseCommonGateInOutAttribute().getCard() != null) {
-          importContainer.getBaseCommonGateInOutAttribute()
-              .getCard().setCardID(gatePass.getBaseCommonGateInOutAttribute().getCard().getCardID());
-        }
-        if (gatePass.getBaseCommonGateInOutAttribute().getEirStatus() != null) {
-          importContainer.getBaseCommonGateInOutAttribute()
-              .setEirStatus(gatePass.getBaseCommonGateInOutAttribute().getEirStatus().getValue());
-        }
-        if (gatePass.getBaseCommonGateInOutAttribute().getGateInClerk() != null) {
-          SystemUserDTO gateInClerk = new SystemUserDTO();
-          modelMapper.map(gatePass.getBaseCommonGateInOutAttribute().getGateInClerk(), gateInClerk);
-          if (!(gatePass.getBaseCommonGateInOutAttribute().getGateInClerk().getCommonContactAttribute() == null)) {
-            gateOutReponse.setClerkName(gatePass.getBaseCommonGateInOutAttribute().getGateInClerk()
-                .getCommonContactAttribute().getPersonName());
-          }
-          importContainer.getBaseCommonGateInOutAttribute().setGateInClerk(gateInClerk);
-        }*/
+        /*
+         * importContainer.setBaseCommonGateInOutAttribute(new BaseCommonGateInOutDTO()); if
+         * (gatePass.getBaseCommonGateInOutAttribute().getCard() != null) {
+         * importContainer.getBaseCommonGateInOutAttribute()
+         * .getCard().setCardID(gatePass.getBaseCommonGateInOutAttribute().getCard().getCardID()); }
+         * if (gatePass.getBaseCommonGateInOutAttribute().getEirStatus() != null) {
+         * importContainer.getBaseCommonGateInOutAttribute()
+         * .setEirStatus(gatePass.getBaseCommonGateInOutAttribute().getEirStatus().getValue()); } if
+         * (gatePass.getBaseCommonGateInOutAttribute().getGateInClerk() != null) { SystemUserDTO
+         * gateInClerk = new SystemUserDTO();
+         * modelMapper.map(gatePass.getBaseCommonGateInOutAttribute().getGateInClerk(),
+         * gateInClerk); if
+         * (!(gatePass.getBaseCommonGateInOutAttribute().getGateInClerk().getCommonContactAttribute(
+         * ) == null)) {
+         * gateOutReponse.setClerkName(gatePass.getBaseCommonGateInOutAttribute().getGateInClerk()
+         * .getCommonContactAttribute().getPersonName()); }
+         * importContainer.getBaseCommonGateInOutAttribute().setGateInClerk(gateInClerk); }
+         */
 
         if (!(gatePass.getBaseCommonGateInOutAttribute().getTimeGateIn() == null)) {
           LocalDateTime timeGateIn = gatePass.getBaseCommonGateInOutAttribute().getTimeGateIn();
@@ -130,33 +130,36 @@ public class ImportGateOutService {
           gateOutReponse.setGateInDateTime(timeGateIn.format(formatter));
         }
 
-        /*if (gatePass.getBaseCommonGateInOutAttribute().getGateInClient() != null) {
-          ClientDTO gateInClient = new ClientDTO();
-          modelMapper.map(gatePass.getBaseCommonGateInOutAttribute().getGateInClient(), gateInClient);
-          gateOutReponse.setGateInLaneNo(gatePass.getBaseCommonGateInOutAttribute().getGateInClient().getLaneNo());
-          importContainer.getBaseCommonGateInOutAttribute().setGateInClient(gateInClient);
-        }
-
-        if (gatePass.getBaseCommonGateInOutAttribute().getHpabBooking()!=null) {
-          importContainer.getBaseCommonGateInOutAttribute()
-              .setHpabBooking(gatePass.getBaseCommonGateInOutAttribute().getHpabBooking().getBookingID()); 
-        }
-
-        importContainer.getBaseCommonGateInOutAttribute()
-            .setPmHeadNo(gatePass.getBaseCommonGateInOutAttribute().getPmHeadNo());
-        importContainer.getBaseCommonGateInOutAttribute()
-            .setPmPlateNo(gatePass.getBaseCommonGateInOutAttribute().getPmHeadNo());*/
+        /*
+         * if (gatePass.getBaseCommonGateInOutAttribute().getGateInClient() != null) { ClientDTO
+         * gateInClient = new ClientDTO();
+         * modelMapper.map(gatePass.getBaseCommonGateInOutAttribute().getGateInClient(),
+         * gateInClient);
+         * gateOutReponse.setGateInLaneNo(gatePass.getBaseCommonGateInOutAttribute().getGateInClient
+         * ().getLaneNo());
+         * importContainer.getBaseCommonGateInOutAttribute().setGateInClient(gateInClient); }
+         * 
+         * if (gatePass.getBaseCommonGateInOutAttribute().getHpabBooking()!=null) {
+         * importContainer.getBaseCommonGateInOutAttribute()
+         * .setHpabBooking(gatePass.getBaseCommonGateInOutAttribute().getHpabBooking().getBookingID(
+         * )); }
+         * 
+         * importContainer.getBaseCommonGateInOutAttribute()
+         * .setPmHeadNo(gatePass.getBaseCommonGateInOutAttribute().getPmHeadNo());
+         * importContainer.getBaseCommonGateInOutAttribute()
+         * .setPmPlateNo(gatePass.getBaseCommonGateInOutAttribute().getPmHeadNo());
+         */
 
       }
       // adding log info
       if (gatePass.getContainerLength() != null) {
         importContainer.setContainerLength(Integer.parseInt(gatePass.getContainerLength().getValue()));
       }
-      
-      
+
+
       importContainer = getGCSDeclarationInfo(importContainer);
       importContainerList.add(importContainer);
-      System.out.println("################# importContainer ######### "+importContainer);
+      System.out.println("################# importContainer ######### " + importContainer);
       if (StringUtils.isEmpty(gateOutRequest.getImpContainer1())) {
         gateOutRequest.setImpContainer1(gatePass.getContainer().getContainerNumber());
       } else {
@@ -352,6 +355,37 @@ public class ImportGateOutService {
     });
 
     // return new AsyncResult<Boolean>(true);
+  }
+
+
+  public void updateGatePassReference(FileDTO fileDTO) {
+
+    Optional<List<GatePass>> gatePassOptList = gatePassRepository
+        .findByGatePassNoIn(Arrays.asList(fileDTO.getGatePassNo1().orElse(0l), fileDTO.getGatePassNo2().orElse(0l)));
+
+    if (!(gatePassOptList.orElse(null) == null || gatePassOptList.get().isEmpty())) {
+      gatePassOptList.get().forEach(gatePass -> {
+        assignUpdatedValuesGatePass(gatePass, fileDTO);
+        gatePassRepository.save(gatePass);
+      });
+    } else {
+      throw new BusinessException("Invalid GatePass ID to update file reference : "
+          + fileDTO.getGatePassNo1().orElse(null) + " / " + fileDTO.getGatePassNo2().orElse(null));
+    }
+  }
+
+  private GatePass assignUpdatedValuesGatePass(GatePass gatePass, FileDTO fileDTO) {
+    switch (fileDTO.getCollectionType()) {
+      case PDF_FILE_COLLECTION:
+        gatePass.getCommonGateInOut().setTrxSlipNo(fileDTO.getFileName().get());
+        break;
+      case ZIP_FILE_COLLECTION:
+        gatePass.getCommonGateInOut().setZipFileNo(fileDTO.getFileName().get());
+        break;
+      default:
+        break;
+    }
+    return gatePass;
   }
 
 }

@@ -1,7 +1,5 @@
 package com.privasia.scss.gateout.service;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
@@ -14,10 +12,6 @@ import com.mongodb.DBObject;
 import com.mongodb.gridfs.GridFSFile;
 import com.privasia.scss.common.enums.CollectionType;
 import com.privasia.scss.common.enums.TransactionType;
-import com.privasia.scss.core.exception.BusinessException;
-import com.privasia.scss.core.model.Exports;
-import com.privasia.scss.core.model.GatePass;
-import com.privasia.scss.core.model.WHODD;
 import com.privasia.scss.core.repository.ExportsRepository;
 import com.privasia.scss.core.repository.GatePassRepository;
 import com.privasia.scss.core.repository.ODDRepository;
@@ -26,13 +20,6 @@ import com.privasia.scss.gateout.mongo.repository.GridFSRepository;
 
 @Service("fileService")
 public class FileService {
-
-	// tomorrows tasks
-	// write a methods generateSoalsService(List<Export> list)
-
-	// old app:-
-	// web-inf->solaspass.jrxml logo.png copy to this app
-	// implement following in this app
 
 	private GridFSRepository gridFSRepository;
 
@@ -91,8 +78,8 @@ public class FileService {
 
 	public FileDTO createFileId(FileDTO fileDTO) { 
 		
-		if(StringUtils.equals(fileDTO.getCollectionType().getValue(),
-							CollectionType.SOLAS_CERTIFICATE_COLLECTION.getValue())){
+		if(!(StringUtils.equals(fileDTO.getCollectionType().getValue(),
+							CollectionType.SOLAS_CERTIFICATE_COLLECTION.getValue()))){
 			StringBuilder uniqueId = new StringBuilder("");
 
 			TransactionType trxType = fileDTO.getTrxType();
@@ -186,122 +173,6 @@ public class FileService {
 		
 	}
 
-	public void saveReference(FileDTO fileDTO) {
-		TransactionType trxType = fileDTO.getTrxType();
-		switch (trxType) {
-		case ODD_EXPORT:
-		case ODD_IMPORT:
-		case ODD_IMPORT_EXPORT:
-			updateODDReference(fileDTO);
-			break;
-		case IMPORT:
-			updateGatePassReference(fileDTO);
-			break;
-		case EXPORT:
-			updateExportReference(fileDTO);
-			break;
-		case IMPORT_EXPORT:
-			updateGatePassReference(fileDTO);
-			updateExportReference(fileDTO);
-			break;
-		default:
-			break;
-		}
-	}
 
-	public void updateExportReference(FileDTO fileDTO) {
-
-		Optional<List<Exports>> exportsOptList = exportsRepository.findByExportIDIn(
-				Arrays.asList(fileDTO.getExportNoSeq1().orElse(0l), fileDTO.getExportNoSeq2().orElse(0l)));
-
-		if (!(exportsOptList.orElse(null) == null || exportsOptList.get().isEmpty())) {
-			exportsOptList.get().forEach(exports -> {
-				assignUpdatedValuesExports(exports, fileDTO);
-				exportsRepository.save(exports);
-			});
-		} else {
-			throw new BusinessException("Invalid Exports ID to update file reference : "
-					+ fileDTO.getExportNoSeq1().orElse(null) + " / " + fileDTO.getExportNoSeq2().orElse(null));
-		}
-	}
-
-	private Exports assignUpdatedValuesExports(Exports exports, FileDTO fileDTO) {
-		switch (fileDTO.getCollectionType()) {
-		case PDF_FILE_COLLECTION:
-			exports.getCommonGateInOut().setTrxSlipNo(fileDTO.getFileName().get());
-			break;
-		case ZIP_FILE_COLLECTION:
-			exports.getCommonGateInOut().setZipFileNo(fileDTO.getFileName().get());
-			break;
-		case SOLAS_CERTIFICATE_COLLECTION:
-			exports.setSolasCertNo(fileDTO.getFileName().get());
-			break;
-		default:
-			break;
-		}
-		return exports;
-	}
-
-	public void updateGatePassReference(FileDTO fileDTO) {
-
-		Optional<List<GatePass>> gatePassOptList = gatePassRepository.findByGatePassNoIn(
-				Arrays.asList(fileDTO.getGatePassNo1().orElse(0l), fileDTO.getGatePassNo2().orElse(0l)));
-
-		if (!(gatePassOptList.orElse(null) == null || gatePassOptList.get().isEmpty())) {
-			gatePassOptList.get().forEach(gatePass -> {
-				assignUpdatedValuesGatePass(gatePass, fileDTO);
-				gatePassRepository.save(gatePass);
-			});
-		} else {
-			throw new BusinessException("Invalid GatePass ID to update file reference : "
-					+ fileDTO.getGatePassNo1().orElse(null) + " / " + fileDTO.getGatePassNo2().orElse(null));
-		}
-	}
-
-	private GatePass assignUpdatedValuesGatePass(GatePass gatePass, FileDTO fileDTO) {
-		switch (fileDTO.getCollectionType()) {
-		case PDF_FILE_COLLECTION:
-			gatePass.getCommonGateInOut().setTrxSlipNo(fileDTO.getFileName().get());
-			break;
-		case ZIP_FILE_COLLECTION:
-			gatePass.getCommonGateInOut().setZipFileNo(fileDTO.getFileName().get());
-			break;
-		default:
-			break;
-		}
-		return gatePass;
-	}
-
-	public void updateODDReference(FileDTO fileDTO) {
-
-		Optional<List<WHODD>> oddOptList = oddRepository
-				.findByOddIdSeqIn(Arrays.asList(fileDTO.getOddImpSeq1().orElse(0l), fileDTO.getOddImpSeq2().orElse(0l),
-						fileDTO.getOddExpSeq1().orElse(0l), fileDTO.getOddExpSeq2().orElse(0l)));
-
-		if (!(oddOptList.orElse(null) == null || oddOptList.get().isEmpty())) {
-			oddOptList.get().forEach(whODD -> {
-				assignUpdatedValuedWHODDobj(whODD, fileDTO);
-				oddRepository.save(whODD);
-			});
-		} else {
-			throw new BusinessException("Invalid WhODD ID to update file reference : "
-					+ fileDTO.getOddImpSeq1().orElse(null) + " / " + fileDTO.getOddImpSeq2().orElse(null) + " / "
-					+ fileDTO.getOddExpSeq1().orElse(null) + " / " + fileDTO.getOddExpSeq2().orElse(null));
-		}
-	}
-
-	private WHODD assignUpdatedValuedWHODDobj(WHODD whoDDobj, FileDTO fileDTO) {
-		switch (fileDTO.getCollectionType()) {
-		case PDF_FILE_COLLECTION:
-			whoDDobj.setTrxSlipNo(fileDTO.getFileName().get());
-			break;
-		case ZIP_FILE_COLLECTION:
-			whoDDobj.setZipFileNo(fileDTO.getFileName().get());
-			break;
-		default:
-			break;
-		}
-		return whoDDobj;
-	}
 
 }

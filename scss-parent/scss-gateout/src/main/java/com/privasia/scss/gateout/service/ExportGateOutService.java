@@ -3,6 +3,7 @@ package com.privasia.scss.gateout.service;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -14,13 +15,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.privasia.scss.common.dto.BaseCommonGateInOutDTO;
-import com.privasia.scss.common.dto.ClientDTO;
 import com.privasia.scss.common.dto.ExportContainer;
 import com.privasia.scss.common.dto.GateOutReponse;
 import com.privasia.scss.common.dto.GateOutRequest;
 import com.privasia.scss.common.dto.GateOutWriteRequest;
-import com.privasia.scss.common.dto.SystemUserDTO;
 import com.privasia.scss.common.enums.ShipStatus;
 import com.privasia.scss.common.enums.TransactionStatus;
 import com.privasia.scss.core.exception.BusinessException;
@@ -35,6 +33,7 @@ import com.privasia.scss.core.repository.ExportsQRepository;
 import com.privasia.scss.core.repository.ExportsRepository;
 import com.privasia.scss.core.repository.ShipCodeRepository;
 import com.privasia.scss.core.repository.ShipSCNRepository;
+import com.privasia.scss.gateout.dto.FileDTO;
 
 @Service("exportGateOutService")
 public class ExportGateOutService {
@@ -96,27 +95,31 @@ public class ExportGateOutService {
       modelMapper.map(export, exportContainer);
 
       if (export.getBaseCommonGateInOutAttribute() != null) {
-        //exportContainer.setBaseCommonGateInOutAttribute(new BaseCommonGateInOutDTO());
-        /*if (export.getBaseCommonGateInOutAttribute().getCard() != null) {
-        	System.out.println("################## exports : "+export.toString());
-          exportContainer.getBaseCommonGateInOutAttribute()
-              .getCard().setCardID(export.getBaseCommonGateInOutAttribute().getCard().getCardID());
-        }*/
-        /*if (export.getBaseCommonGateInOutAttribute().getEirStatus() != null) {
-          exportContainer.getBaseCommonGateInOutAttribute()
-              .setEirStatus(export.getBaseCommonGateInOutAttribute().getEirStatus().getValue());
-        }*/
+        // exportContainer.setBaseCommonGateInOutAttribute(new BaseCommonGateInOutDTO());
+        /*
+         * if (export.getBaseCommonGateInOutAttribute().getCard() != null) {
+         * System.out.println("################## exports : "+export.toString());
+         * exportContainer.getBaseCommonGateInOutAttribute()
+         * .getCard().setCardID(export.getBaseCommonGateInOutAttribute().getCard().getCardID()); }
+         */
+        /*
+         * if (export.getBaseCommonGateInOutAttribute().getEirStatus() != null) {
+         * exportContainer.getBaseCommonGateInOutAttribute()
+         * .setEirStatus(export.getBaseCommonGateInOutAttribute().getEirStatus().getValue()); }
+         */
 
         // changed gateout cleark to gateout clierk
-        /*if (export.getBaseCommonGateInOutAttribute().getGateInClerk() != null) {
-          SystemUserDTO gateInClerk = new SystemUserDTO();
-          modelMapper.map(export.getBaseCommonGateInOutAttribute().getGateInClerk(), gateInClerk);
-          if (!(export.getBaseCommonGateInOutAttribute().getGateInClerk().getCommonContactAttribute() == null)) {
-            gateOutReponse.setClerkName(
-                export.getBaseCommonGateInOutAttribute().getGateInClerk().getCommonContactAttribute().getPersonName());
-          }
-          exportContainer.getBaseCommonGateInOutAttribute().setGateInClerk(gateInClerk);
-        }*/
+        /*
+         * if (export.getBaseCommonGateInOutAttribute().getGateInClerk() != null) { SystemUserDTO
+         * gateInClerk = new SystemUserDTO();
+         * modelMapper.map(export.getBaseCommonGateInOutAttribute().getGateInClerk(), gateInClerk);
+         * if
+         * (!(export.getBaseCommonGateInOutAttribute().getGateInClerk().getCommonContactAttribute()
+         * == null)) { gateOutReponse.setClerkName(
+         * export.getBaseCommonGateInOutAttribute().getGateInClerk().getCommonContactAttribute().
+         * getPersonName()); }
+         * exportContainer.getBaseCommonGateInOutAttribute().setGateInClerk(gateInClerk); }
+         */
 
         if (!(export.getBaseCommonGateInOutAttribute().getTimeGateIn() == null)) {
           LocalDateTime timeGateIn = export.getBaseCommonGateInOutAttribute().getTimeGateIn();
@@ -125,22 +128,25 @@ public class ExportGateOutService {
         }
 
         // changed gateout client to gatein client
-        /*if (export.getBaseCommonGateInOutAttribute().getGateInClient() != null) { 
-          ClientDTO gateInClient = new ClientDTO();
-          modelMapper.map(export.getBaseCommonGateInOutAttribute().getGateInClient(), gateInClient);
-          gateOutReponse.setGateInLaneNo(export.getBaseCommonGateInOutAttribute().getGateInClient().getLaneNo());
-          exportContainer.getBaseCommonGateInOutAttribute().setGateInClient(gateInClient);
-        }
-
-        if (export.getBaseCommonGateInOutAttribute().getHpabBooking()!=null) {
-          exportContainer.getBaseCommonGateInOutAttribute()
-              .setHpabBooking(export.getBaseCommonGateInOutAttribute().getHpabBooking().getBookingID());
-        }
-
-        exportContainer.getBaseCommonGateInOutAttribute()
-            .setPmHeadNo(export.getBaseCommonGateInOutAttribute().getPmHeadNo());
-        exportContainer.getBaseCommonGateInOutAttribute()
-            .setPmPlateNo(export.getBaseCommonGateInOutAttribute().getPmHeadNo());*/
+        /*
+         * if (export.getBaseCommonGateInOutAttribute().getGateInClient() != null) { ClientDTO
+         * gateInClient = new ClientDTO();
+         * modelMapper.map(export.getBaseCommonGateInOutAttribute().getGateInClient(),
+         * gateInClient);
+         * gateOutReponse.setGateInLaneNo(export.getBaseCommonGateInOutAttribute().getGateInClient()
+         * .getLaneNo());
+         * exportContainer.getBaseCommonGateInOutAttribute().setGateInClient(gateInClient); }
+         * 
+         * if (export.getBaseCommonGateInOutAttribute().getHpabBooking()!=null) {
+         * exportContainer.getBaseCommonGateInOutAttribute()
+         * .setHpabBooking(export.getBaseCommonGateInOutAttribute().getHpabBooking().getBookingID())
+         * ; }
+         * 
+         * exportContainer.getBaseCommonGateInOutAttribute()
+         * .setPmHeadNo(export.getBaseCommonGateInOutAttribute().getPmHeadNo());
+         * exportContainer.getBaseCommonGateInOutAttribute()
+         * .setPmPlateNo(export.getBaseCommonGateInOutAttribute().getPmHeadNo());
+         */
 
       }
       // adding log info
@@ -220,6 +226,39 @@ public class ExportGateOutService {
       exportsQRepository.save(exportq);
     });
     // return new AsyncResult<Boolean>(true);
+  }
+
+  public void updateExportReference(FileDTO fileDTO) {
+
+    Optional<List<Exports>> exportsOptList = exportsRepository
+        .findByExportIDIn(Arrays.asList(fileDTO.getExportNoSeq1().orElse(0l), fileDTO.getExportNoSeq2().orElse(0l)));
+
+    if (!(exportsOptList.orElse(null) == null || exportsOptList.get().isEmpty())) {
+      exportsOptList.get().forEach(exports -> {
+        assignUpdatedValuesExports(exports, fileDTO);
+        exportsRepository.save(exports);
+      });
+    } else {
+      throw new BusinessException("Invalid Exports ID to update file reference : "
+          + fileDTO.getExportNoSeq1().orElse(null) + " / " + fileDTO.getExportNoSeq2().orElse(null));
+    }
+  }
+
+  private Exports assignUpdatedValuesExports(Exports exports, FileDTO fileDTO) {
+    switch (fileDTO.getCollectionType()) {
+      case PDF_FILE_COLLECTION:
+        exports.getCommonGateInOut().setTrxSlipNo(fileDTO.getFileName().get());
+        break;
+      case ZIP_FILE_COLLECTION:
+        exports.getCommonGateInOut().setZipFileNo(fileDTO.getFileName().get());
+        break;
+      case SOLAS_CERTIFICATE_COLLECTION:
+        exports.setSolasCertNo(fileDTO.getFileName().get());
+        break;
+      default:
+        break;
+    }
+    return exports;
   }
 
 
