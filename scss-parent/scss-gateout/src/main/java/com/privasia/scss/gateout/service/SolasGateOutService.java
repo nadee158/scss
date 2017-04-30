@@ -3,6 +3,8 @@ package com.privasia.scss.gateout.service;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
+import java.math.MathContext;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -16,6 +18,8 @@ import javax.imageio.ImageIO;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.privasia.scss.common.dto.SolasPassFileDTO;
 import com.privasia.scss.common.enums.TransactionType;
@@ -81,13 +85,14 @@ public class SolasGateOutService {
   }
 
 
-
+  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
   public boolean isSolasApplicable(List<Exports> exportsList) {
     boolean isSolasApplicable = false;
     // check if at least one export container is solas container
     // at least one should be within tolerance = false stream and select
     List<Exports> solasApplicableExportsList =
         exportsList.stream().filter(exp -> (exp.isWithinTolerance() == false)).collect(Collectors.toList());
+
     if (!(solasApplicableExportsList == null || solasApplicableExportsList.isEmpty())) {
       List<SolasETPDTO> solasETPDTOs = new ArrayList<SolasETPDTO>();
       isSolasApplicable = true;
@@ -96,88 +101,146 @@ public class SolasGateOutService {
         // generate solas certification - add data to SolasPassFileDTO and pass
         solasPassFileDTO = constructSolasPassFileDTO(exports, solasPassFileDTO);
         // issue by - gate in cleark - name - sys_name set data here
-        // generate certificate
-        // save to mongodb
-        // save to file references
-        solasPassFileDTO = generateSolasCertificate(solasPassFileDTO);
+        solasETPDTOs.add(constructSolasETPDTO(exports));
+
+      }
+      // generate certificate
+      solasPassFileDTO = generateSolasCertificate(solasPassFileDTO);
+
+      byte[] pdfBytes = solasPassFileDTO.getCertificate();
+      if ((pdfBytes == null || pdfBytes.length <= 0)) {
+        throw new BusinessException("Failed to generate the certificate : ");
       }
 
+
+      FileDTO fileInfoDTO = new FileDTO();
+      fileInfoDTO.setFileName(Optional.ofNullable(solasPassFileDTO.getCertificateNo()));
+      fileInfoDTO.setTrxType(TransactionType.EXPORT);
+      fileInfoDTO.setExportNoSeq1(Optional.ofNullable(Long.parseLong(solasPassFileDTO.getExportSEQ01())));
+      fileInfoDTO.setFileSize(pdfBytes.length);
+      fileInfoDTO.setFileStream(new ByteArrayInputStream(pdfBytes));
+
+      // save to mongodb
+      Optional<String> file1Id = fileService.saveFileToMongoDB(fileInfoDTO);
+      if (!(file1Id.isPresent())) {
+        throw new BusinessException("Failed to save in MongoDB : ");
+      }
+      // save to file references
+      saveReference(fileInfoDTO);
+
       try {
+        // assign values from solasPassFileDTO
+        solasETPDTOs = updateSolasETPDTOList(solasETPDTOs, solasPassFileDTO);
         // send solas info to etp
         solasETPDTOs = etpWebserviceClient.updateSolasToEtp(solasETPDTOs);
       } catch (Exception e) {
         throw new BusinessException("Error from web service : " + e.getMessage());
       }
     }
+
     return isSolasApplicable;
+
   }
 
 
 
-  private SolasPassFileDTO constructSolasPassFileDTO(Exports exports, SolasPassFileDTO solasPassFileDTO) {
+  public SolasETPDTO constructSolasETPDTO(Exports exports) {
+    SolasETPDTO solasETPDTO = new SolasETPDTO();
+    solasETPDTO.setCalculatedVariance(new BigDecimal(exports.getCalculatedVariance(), MathContext.DECIMAL64));
+    solasETPDTO.setGrossWeight(exports.getGrossWeight());
+
+    if ((exports.getBaseCommonGateInOutAttribute() == null)) {
+      throw new BusinessException("Required Common Gate In Out Details not found! ");
+    }
+    solasETPDTO.setGateInOK(exports.getBaseCommonGateInOutAttribute().getTimeGateInOk());
+
+    solasETPDTO.setWithInTolerance(exports.isWithinTolerance());
+    solasETPDTO.setExportSEQ(Long.toString(exports.getExportID()));
+
+    if (exports.getSolas() == null) {
+      throw new BusinessException("Solas not found! ");
+    }
+    solasETPDTO.setMgw(exports.getSolas().getMgw());
+    solasETPDTO.setShipperVGM(Integer.parseInt(exports.getSolas().getShipperVGM()));
+    solasETPDTO.setSolasDetail(exports.getSolas().getSolasDetailID());
+    solasETPDTO.setSolasRefNumber(exports.getSolas().getSolasRefNumber());
+    solasETPDTO.setTerminalVGM(exports.getSolas().getMgw());
+
+    solasETPDTO.setTolerance(Integer.parseInt(exports.getCalculatedVariance()));
+
+    return solasETPDTO;
+  }
+
+  public List<SolasETPDTO> updateSolasETPDTOList(List<SolasETPDTO> solasETPDTOs, SolasPassFileDTO solasPassFileDTO) {
+    if (!(solasETPDTOs == null || solasETPDTOs.isEmpty())) {
+      solasETPDTOs.forEach(solasETPDTO -> {
+        solasETPDTO.setCertificateNo(solasPassFileDTO.getCertificateNo());
+        solasETPDTO.setIssueBy(solasPassFileDTO.getIssueBy());
+        solasETPDTO.setIssuerId(Long.toString(solasPassFileDTO.getIssuerId()));
+        solasETPDTO.setIssuerNRIC(solasPassFileDTO.getIssuerNRIC());
+        solasETPDTO.setWeighingMethod(solasPassFileDTO.getWeighingMethod());
+        solasETPDTO.setWeighStation(solasPassFileDTO.getWeighStation());
+        solasETPDTO.setCertificate(solasPassFileDTO.getCertificate());
+      });
+    }
+    return solasETPDTOs;
+  }
+
+  public SolasPassFileDTO constructSolasPassFileDTO(Exports exports, SolasPassFileDTO solasPassFileDTO) {
+    if ((exports.getContainer() == null)) {
+      throw new BusinessException("Container Details not found! ");
+    }
+    if ((exports.getSolas() == null)) {
+      throw new BusinessException("Solas not found! ");
+    }
     if (solasPassFileDTO == null) {
 
       solasPassFileDTO = new SolasPassFileDTO();
-      if (!(exports.getBaseCommonGateInOutAttribute() == null)) {
 
-        if (!(exports.getBaseCommonGateInOutAttribute().getTimeGateInOk() == null)) {
-          solasPassFileDTO
-              .setGateInOK(exports.getBaseCommonGateInOutAttribute().getTimeGateInOk().format(dateTimeFormatter));
-        } else {
-          throw new BusinessException("Gate in time not Found! ");
-        }
-
-        solasPassFileDTO.setCertificateNo(generateSolasCertificateId(solasPassFileDTO.getGateInOK()));
-
-        if (!(exports.getBaseCommonGateInOutAttribute().getGateInClerk() == null)) {
-
-          SystemUser systemUser = exports.getBaseCommonGateInOutAttribute().getGateInClerk();
-          solasPassFileDTO.setIssuerId(systemUser.getSystemUserID());
-          solasPassFileDTO.setIssueBy(systemUser.getCommonContactAttribute().getPersonName());
-          String nicNo = StringUtils.isNotEmpty(systemUser.getCommonContactAttribute().getNewNRICNO()) == true
-              ? systemUser.getCommonContactAttribute().getNewNRICNO()
-              : systemUser.getCommonContactAttribute().getOldNRICNO();
-          solasPassFileDTO.setIssuerNRIC(nicNo);
-
-        } else {
-          throw new BusinessException("Issuer Not Found! ");
-        }
-
-        if (!(exports.getBaseCommonGateInOutAttribute().getGateInClient() == null)) {
-          Client client = exports.getBaseCommonGateInOutAttribute().getGateInClient();
-          solasPassFileDTO.setWeighStation(client.getUnitNo());
-        } else {
-          throw new BusinessException("Client Not Found! ");
-        }
-      } else {
+      if ((exports.getBaseCommonGateInOutAttribute() == null)) {
         throw new BusinessException("Required Common Gate In Out Details not found! ");
       }
 
+      if ((exports.getBaseCommonGateInOutAttribute().getTimeGateInOk() == null)) {
+        throw new BusinessException("Gate in time not Found! ");
+      }
+
+      solasPassFileDTO
+          .setGateInOK(exports.getBaseCommonGateInOutAttribute().getTimeGateInOk().format(dateTimeFormatter));
+
+
+      solasPassFileDTO.setCertificateNo(generateSolasCertificateId(solasPassFileDTO.getGateInOK()));
+
+      if ((exports.getBaseCommonGateInOutAttribute().getGateInClerk() == null)) {
+        throw new BusinessException("Issuer Not Found! ");
+      }
+
+      SystemUser systemUser = exports.getBaseCommonGateInOutAttribute().getGateInClerk();
+      solasPassFileDTO.setIssuerId(systemUser.getSystemUserID());
+      solasPassFileDTO.setIssueBy(systemUser.getCommonContactAttribute().getPersonName());
+      String nicNo = StringUtils.isNotEmpty(systemUser.getCommonContactAttribute().getNewNRICNO()) == true
+          ? systemUser.getCommonContactAttribute().getNewNRICNO()
+          : systemUser.getCommonContactAttribute().getOldNRICNO();
+      solasPassFileDTO.setIssuerNRIC(nicNo);
+
+
+
+      if ((exports.getBaseCommonGateInOutAttribute().getGateInClient() == null)) {
+        throw new BusinessException("Client Not Found! ");
+      }
+      Client client = exports.getBaseCommonGateInOutAttribute().getGateInClient();
+      solasPassFileDTO.setWeighStation(client.getUnitNo());
+
+
       solasPassFileDTO.setC1WithInTolerance(exports.isWithinTolerance());
-      if (!(exports.getContainer() == null)) {
-        solasPassFileDTO.setContainer01No(exports.getContainer().getContainerNumber());
-      } else {
-        throw new BusinessException("Container Details not found! ");
-      }
-      if (!(exports.getSolas() == null)) {
-        solasPassFileDTO.setTerminalVGMC1(exports.getSolas().getMgw());
-      } else {
-        throw new BusinessException("VGM not found! ");
-      }
+      solasPassFileDTO.setContainer01No(exports.getContainer().getContainerNumber());
+      solasPassFileDTO.setTerminalVGMC1(exports.getSolas().getMgw());
       solasPassFileDTO.setExportSEQ01(Long.toString(exports.getExportID()));
 
     } else {
       solasPassFileDTO.setC2WithInTolerance(exports.isWithinTolerance());
-      if (!(exports.getContainer() == null)) {
-        solasPassFileDTO.setContainer02No(exports.getContainer().getContainerNumber());
-      } else {
-        throw new BusinessException("Container Details not found! ");
-      }
-      if (!(exports.getSolas() == null)) {
-        solasPassFileDTO.setTerminalVGMC2(exports.getSolas().getMgw());
-      } else {
-        throw new BusinessException("VGM not found! ");
-      }
+      solasPassFileDTO.setContainer02No(exports.getContainer().getContainerNumber());
+      solasPassFileDTO.setTerminalVGMC2(exports.getSolas().getMgw());
       solasPassFileDTO.setExportSEQ02(Long.toString(exports.getExportID()));
     }
     return solasPassFileDTO;
@@ -226,31 +289,6 @@ public class SolasGateOutService {
         byte[] pdfBytes = JasperExportManager.exportReportToPdf(jp);
 
         solasPassFileDTO.setCertificate(pdfBytes);
-
-
-        if (StringUtils.isNotBlank(solasPassFileDTO.getExportSEQ01()) && !solasPassFileDTO.isC1WithInTolerance()) {
-          FileDTO fileInfoDTO = new FileDTO(); // fileInfoDTO.setFileID(solasPassFileDTO.getCertificateNo());
-          fileInfoDTO.setTrxType(TransactionType.EXPORT);
-          fileInfoDTO.setExportNoSeq1(Optional.ofNullable(Long.parseLong(solasPassFileDTO.getExportSEQ01())));
-          fileInfoDTO.setFileSize(pdfBytes.length);
-          fileInfoDTO.setFileStream(new ByteArrayInputStream(pdfBytes));
-          Optional<String> file1Id = fileService.saveFileToMongoDB(fileInfoDTO);
-          if (file1Id.isPresent()) {
-            saveReference(fileInfoDTO);
-          }
-        }
-
-        if (StringUtils.isNotBlank(solasPassFileDTO.getExportSEQ02()) && !solasPassFileDTO.isC2WithInTolerance()) {
-          FileDTO fileInfoDTO2 = new FileDTO(); // fileInfoDTO.setFileID(solasPassFileDTO.getCertificateNo());
-          fileInfoDTO2.setTrxType(TransactionType.EXPORT);
-          fileInfoDTO2.setExportNoSeq2(Optional.ofNullable(Long.parseLong(solasPassFileDTO.getExportSEQ02())));
-          fileInfoDTO2.setFileSize(pdfBytes.length);
-          fileInfoDTO2.setFileStream(new ByteArrayInputStream(pdfBytes));
-          Optional<String> file1Id = fileService.saveFileToMongoDB(fileInfoDTO2);
-          if (file1Id.isPresent()) {
-            saveReference(fileInfoDTO2);
-          }
-        }
 
         // convert array of bytes into file /
         // FileOutputStream fileOuputStream = new FileOutputStream("D://pass.pdf");
