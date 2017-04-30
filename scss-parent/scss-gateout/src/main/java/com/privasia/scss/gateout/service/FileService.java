@@ -89,7 +89,7 @@ public class FileService {
 		return Optional.of(null);
 	}
 
-public FileDTO createFileId(FileDTO fileDTO) { 
+	public FileDTO createFileId(FileDTO fileDTO) { 
 		
 		if(StringUtils.equals(fileDTO.getCollectionType().getValue(),
 							CollectionType.SOLAS_CERTIFICATE_COLLECTION.getValue())){
