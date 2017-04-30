@@ -7,10 +7,11 @@ import java.util.Optional;
 import com.privasia.scss.common.enums.CollectionType;
 import com.privasia.scss.common.enums.TransactionType;
 
+
 public class FileDTO implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-
+	
 	private Optional<Long> oddImpSeq1;
 
 	private Optional<Long> oddImpSeq2;
@@ -26,61 +27,21 @@ public class FileDTO implements Serializable {
 	private Optional<Long> exportNoSeq1;
 
 	private Optional<Long> exportNoSeq2;
-
+	
 	private TransactionType trxType;
 
-	private String fileName;
+	private Optional<String> fileName;
 
 	private byte[] file;
 
 	private CollectionType collectionType;
 
-	private InputStream cameraImage;
+	private InputStream fileStream;
 
 	private long folderSize;
 
 	private long fileSize;
-
-	public byte[] getFile() {
-		return file;
-	}
-
-	public void setFile(byte[] file) {
-		this.file = file;
-	}
-
-	public InputStream getCameraImage() {
-		return cameraImage;
-	}
-
-	public void setCameraImage(InputStream cameraImage) {
-		this.cameraImage = cameraImage;
-	}
-
-	public long getFolderSize() {
-		return folderSize;
-	}
-
-	public void setFolderSize(long folderSize) {
-		this.folderSize = folderSize;
-	}
-
-	public String getFileName() {
-		return fileName;
-	}
-
-	public void setFileName(String fileName) {
-		this.fileName = fileName;
-	}
-
-	public long getFileSize() {
-		return fileSize;
-	}
-
-	public void setFileSize(long fileSize) {
-		this.fileSize = fileSize;
-	}
-
+	
 	public Optional<Long> getOddImpSeq1() {
 		return oddImpSeq1;
 	}
@@ -143,6 +104,46 @@ public class FileDTO implements Serializable {
 
 	public void setExportNoSeq2(Optional<Long> exportNoSeq2) {
 		this.exportNoSeq2 = exportNoSeq2;
+	}
+
+	public byte[] getFile() {
+		return file;
+	}
+
+	public void setFile(byte[] file) {
+		this.file = file;
+	}
+
+	public InputStream getFileStream() {
+		return fileStream;
+	}
+
+	public void setFileStream(InputStream fileStream) {
+		this.fileStream = fileStream;
+	}
+
+	public long getFolderSize() {
+		return folderSize;
+	}
+
+	public void setFolderSize(long folderSize) {
+		this.folderSize = folderSize;
+	}
+
+	public Optional<String> getFileName() {
+		return fileName;
+	}
+
+	public void setFileName(Optional<String> fileName) {
+		this.fileName = fileName;
+	}
+
+	public long getFileSize() {
+		return fileSize;
+	}
+
+	public void setFileSize(long fileSize) {
+		this.fileSize = fileSize;
 	}
 
 	public TransactionType getTrxType() {
