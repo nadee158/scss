@@ -59,12 +59,6 @@ public class SolasService {
 						expCon.getContainer().getContainerFullOrEmpty()))
 				.findFirst();
 
-		System.out.println("optFirstContainer.isPresent() " + optFirstContainer.isPresent());
-		if (optFirstContainer.isPresent()) {
-			System.out.println("optFirstContainer.get().getContainer().getContainerNumber() "
-					+ optFirstContainer.get().getContainer().getContainerNumber());
-
-		}
 		Optional<ExportContainer> optLastContainer = null;
 
 		if (optFirstContainer.isPresent()) {
