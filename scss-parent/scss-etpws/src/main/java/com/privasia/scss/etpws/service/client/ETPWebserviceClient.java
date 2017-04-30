@@ -33,6 +33,8 @@ public class ETPWebserviceClient extends WebServiceGatewaySupport {
 
   private static final Logger log = Logger.getLogger(ETPWebserviceClient.class);
 
+  public static final String WEB_SERVICE_DATE_PATTERN = "dd-MM-yyyy HH:mm";
+
   @Value("${ws.server.uri}")
   private String wsServerUri;
 
@@ -87,7 +89,7 @@ public class ETPWebserviceClient extends WebServiceGatewaySupport {
   public List<SolasETPDTO> updateSolasToEtp(List<SolasETPDTO> solasETPDTOs) throws ParseException {
     if (!(solasETPDTOs == null || solasETPDTOs.isEmpty())) {
 
-      SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+      SimpleDateFormat formatter = new SimpleDateFormat(WEB_SERVICE_DATE_PATTERN);
       UpdateSolasForScssGateInRequestType parameters = new UpdateSolasForScssGateInRequestType();
 
       solasETPDTOs.forEach(solasETPDTO -> {

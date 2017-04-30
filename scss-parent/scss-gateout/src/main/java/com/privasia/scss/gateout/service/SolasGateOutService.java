@@ -103,7 +103,6 @@ public class SolasGateOutService {
     this.resourceLoader = resourceLoader;
   }
 
-  int i = 0;
 
   @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
   public boolean isSolasApplicable(List<Exports> exportsList) throws JRException, IOException, ParseException {
@@ -126,10 +125,9 @@ public class SolasGateOutService {
       solasApplicableExportsList.forEach(exports -> {
         // generate solas certification - add data to SolasPassFileDTO
         // and pass
-        constructSolasPassFileDTO(exports, solasPassFileDTO, i);
+        constructSolasPassFileDTO(exports, solasPassFileDTO);
         // issue by - gate in cleark - name - sys_name set data here
         constructSolasETPDTO(exports, solasETPDTOs);
-        i++;
       });
 
       // generate certificate
@@ -216,7 +214,7 @@ public class SolasGateOutService {
     return solasETPDTOs;
   }
 
-  public SolasPassFileDTO constructSolasPassFileDTO(Exports exports, SolasPassFileDTO solasPassFileDTO, int iteration) {
+  public SolasPassFileDTO constructSolasPassFileDTO(Exports exports, SolasPassFileDTO solasPassFileDTO) {
     if ((exports.getContainer() == null)) {
       throw new BusinessException("Container Details not found To Generate Solas Cert! ");
     }
@@ -224,7 +222,7 @@ public class SolasGateOutService {
       throw new BusinessException("Solas not found to Generate Solas Cert! ");
     }
     // to check if this is first time
-    if (iteration == 0) {
+    if (StringUtils.isEmpty(solasPassFileDTO.getExportSEQ01())) {
 
       solasPassFileDTO = new SolasPassFileDTO();
 
