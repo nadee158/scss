@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.privasia.scss.common.dto;
+package com.privasia.scss.etpws.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;

@@ -2,8 +2,11 @@ package com.privasia.scss.etpws.service.client;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.ZoneId;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 import javax.xml.bind.JAXBElement;
 
@@ -14,7 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.ws.client.core.support.WebServiceGatewaySupport;
 import org.springframework.ws.soap.client.core.SoapActionCallback;
 
-import com.privasia.scss.etpws.dto.SolasPassFileDTO;
+import com.privasia.scss.etpws.dto.SolasETPDTO;
 import com.privasia.scss.etpws.service.BookingStatusType;
 import com.privasia.scss.etpws.service.EdoExpiryForLineRequestType;
 import com.privasia.scss.etpws.service.EdoExpiryForLineResponseType;
@@ -22,6 +25,7 @@ import com.privasia.scss.etpws.service.ObjectFactory;
 import com.privasia.scss.etpws.service.UpdateHpatStatusRequestType;
 import com.privasia.scss.etpws.service.UpdateHpatStatusResponseType;
 import com.privasia.scss.etpws.service.UpdateSolasForScssGateInRequestType;
+import com.privasia.scss.etpws.service.UpdateSolasForScssGateInResponseType;
 import com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl;
 
 @Service(value = "etpWebserviceClient")
@@ -80,73 +84,99 @@ public class ETPWebserviceClient extends WebServiceGatewaySupport {
 
   }
 
-  public void updateSolasToEtp(SolasPassFileDTO solasPassFileDTO) throws ParseException {
+  public List<SolasETPDTO> updateSolasToEtp(List<SolasETPDTO> solasETPDTOs) throws ParseException {
+    if (!(solasETPDTOs == null || solasETPDTOs.isEmpty())) {
 
-    UpdateSolasForScssGateInRequestType parameters = new UpdateSolasForScssGateInRequestType();
-    parameters.setWeighingMethod(solasPassFileDTO.getWeighingMethod());
-    parameters.setWeighingStation(solasPassFileDTO.getWeighStation());
+      SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+      UpdateSolasForScssGateInRequestType parameters = new UpdateSolasForScssGateInRequestType();
 
-    GregorianCalendar c = new GregorianCalendar();
-    SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
-    Date date = formatter.parse(solasPassFileDTO.getGateInOK());
-    c.setTime(date);
-    XMLGregorianCalendarImpl xmlGrogerianCalendar = new XMLGregorianCalendarImpl(c);
-    log.info(xmlGrogerianCalendar.toString());
-    System.out
-        .println("******************* solasDTO.getGateInOK() *******************  " + solasPassFileDTO.getGateInOK());
-    parameters.setVgmDate(xmlGrogerianCalendar);
+      solasETPDTOs.forEach(solasETPDTO -> {
 
-    parameters.setVgmFileName(solasPassFileDTO.getCertificateNo());
-    parameters.setVgmFileDate(solasPassFileDTO.getCertificate());
-    parameters.setWithnessName(solasPassFileDTO.getIssueBy());
-    parameters.setWithnessNric(solasPassFileDTO.getIssuerNRIC());
+        UpdateSolasForScssGateInResponseType response = null;
+        int retry = 0;
 
-    log.info("******************* Update ETP Solas Web Service Start *******************  ");
-    System.out.println("******************* Update ETP Solas Web Service Start *******************  ");
+        // set header values and container 01 values
+        parameters.setWeighingMethod(solasETPDTO.getWeighingMethod());
+        parameters.setWeighingStation(solasETPDTO.getWeighStation());
 
-    if (StringUtils.isNotBlank(solasPassFileDTO.getSolasDetailC1())) {
-      log.info("******************* Update ETP Solas Web Service Start *******************  ");
-      System.out.println("******************* Update ETP Solas Web Service Start *******************  ");
-      parameters.setSolasDetId(solasPassFileDTO.getSolasDetailC1().toLowerCase());
-      parameters.setTerminalVgm(solasPassFileDTO.getTerminalVGMC1());
-      parameters.setVgmReferenceNo(solasPassFileDTO.getExportSEQ01());
-      if (solasPassFileDTO.getShipperVGMC1() > 0 && !solasPassFileDTO.isC1WithInTolerance()) {
-        parameters.setVariance(
-            solasPassFileDTO.getCalculatedVarianceC1() == null ? null : solasPassFileDTO.getCalculatedVarianceC1());
-      }
-      parameters.setIsTolerance(solasPassFileDTO.isC1WithInTolerance());
-      parameters.setTerminalMgw(solasPassFileDTO.getMgwC1());
-      parameters.setGrossWeight(solasPassFileDTO.getGrossWeightC1());
+        System.out
+            .println("******************* solasDTO.getGateInOK() *******************  " + solasETPDTO.getGateInOK());
+        GregorianCalendar c = new GregorianCalendar();
+        Date date = Date.from(solasETPDTO.getGateInOK().atZone(ZoneId.systemDefault()).toInstant());
+        c.setTime(date);
+        System.out.println("******************* GregorianCalendar *******************  " + c.getTime());
+        XMLGregorianCalendarImpl xmlGrogerianCalendar = new XMLGregorianCalendarImpl(c);
+        log.info(xmlGrogerianCalendar.toString());
+        System.out
+            .println("******************* solasDTO.getGateInOK() *******************  " + solasETPDTO.getGateInOK());
+        parameters.setVgmDate(xmlGrogerianCalendar);
 
-      today = Calendar.getInstance().getTime();
-      solasDTO.setRequestSendTimeC1(formatter.format(today));
-      response = etpIntegrationService.getEtpServicePortTypePort().updateSolasForScssGateIn(parameters);
+        parameters.setVgmFileName(solasETPDTO.getCertificateNo());
+        parameters.setVgmFileDate(solasETPDTO.getCertificate());
+        parameters.setWithnessName(solasETPDTO.getIssueBy());
+        parameters.setWithnessNric(solasETPDTO.getIssuerNRIC());
+
+        if (StringUtils.isNotBlank(solasETPDTO.getSolasDetail())) {
+          log.info("******************* Update ETP Solas Web Service Start *******************  ");
+          System.out.println("******************* Update ETP Solas Web Service Start *******************  ");
+          parameters.setSolasDetId(solasETPDTO.getSolasDetail().toLowerCase());
+          parameters.setTerminalVgm(solasETPDTO.getTerminalVGM());
+          parameters.setVgmReferenceNo(solasETPDTO.getExportSEQ());
+          if (solasETPDTO.getShipperVGM() > 0 && !solasETPDTO.isWithInTolerance()) {
+            parameters
+                .setVariance(solasETPDTO.getCalculatedVariance() == null ? null : solasETPDTO.getCalculatedVariance());
+          }
+          parameters.setIsTolerance(solasETPDTO.isWithInTolerance());
+          parameters.setTerminalMgw(solasETPDTO.getMgw());
+          parameters.setGrossWeight(solasETPDTO.getGrossWeight());
 
 
+          log.info("******************* Update ETP Solas Web Service Start *******************  ");
+          System.out.println("******************* Update ETP Solas Web Service Start *******************  ");
 
-      if ("FAIL".equals(response.getResponseCode())) {
-        while (retry <= 1) {
-          response = etpIntegrationService.getEtpServicePortTypePort().updateSolasForScssGateIn(parameters);
-          retry++;
+          Date today = Calendar.getInstance().getTime();
+          solasETPDTO.setRequestSendTime(formatter.format(today));
+
+          JAXBElement<UpdateSolasForScssGateInResponseType> jaxBRresponse =
+              (JAXBElement<UpdateSolasForScssGateInResponseType>) getWebServiceTemplate().marshalSendAndReceive(
+                  wsServerUri, parameters, new SoapActionCallback(clientDefaultUri + "/updateSolasForScssGateIn"));
+
+          response = jaxBRresponse.getValue();
+
+          if ("FAIL".equals(response.getResponseCode())) {
+            while (retry <= 1) {
+              // response =
+              // etpIntegrationService.getEtpServicePortTypePort().updateSolasForScssGateIn(parameters);
+
+              jaxBRresponse =
+                  (JAXBElement<UpdateSolasForScssGateInResponseType>) getWebServiceTemplate().marshalSendAndReceive(
+                      wsServerUri, parameters, new SoapActionCallback(clientDefaultUri + "/updateSolasForScssGateIn"));
+
+              response = jaxBRresponse.getValue();
+
+              retry++;
+            }
+            log.info("updateSolasETPStatus response code : " + response.getResponseCode() + " for container 01 : "
+                + solasETPDTO.getContainerNo() + " and error message : " + response.getErrorMessage());
+            System.out
+                .println("updateSolasETPStatus response code : " + response.getResponseCode() + " for container 01 : "
+                    + solasETPDTO.getContainerNo() + " and error message : " + response.getErrorMessage());
+          } else {
+            log.info("updateSolasETPStatus response code : " + response.getResponseCode() + " for container 01 : "
+                + solasETPDTO.getContainerNo());
+            System.out.println("updateSolasETPStatus response code : " + response.getResponseCode()
+                + " for container 01 : " + solasETPDTO.getContainerNo());
+          }
+
+          today = Calendar.getInstance().getTime();
+          solasETPDTO.setResponseReceivedTime(formatter.format(today));
+          solasETPDTO.setEtpResponseCode(response.getResponseCode());
+          solasETPDTO.setEtpResponseMessage(response.getErrorMessage());
         }
-        log.info("updateSolasETPStatus response code : " + response.getResponseCode() + " for container 01 : "
-            + solasDTO.getContainer01No() + " and error message : " + response.getErrorMessage());
-        System.out.println("updateSolasETPStatus response code : " + response.getResponseCode() + " for container 01 : "
-            + solasDTO.getContainer01No() + " and error message : " + response.getErrorMessage());
-      } else {
-        log.info("updateSolasETPStatus response code : " + response.getResponseCode() + " for container 01 : "
-            + solasDTO.getContainer01No());
-        System.out.println("updateSolasETPStatus response code : " + response.getResponseCode() + " for container 01 : "
-            + solasDTO.getContainer01No());
-      }
 
-      today = Calendar.getInstance().getTime();
-      solasDTO.setResponseReceivedTimeC1(formatter.format(today));
-      solasDTO.setEtpC1ResponseCode(response.getResponseCode());
-      solasDTO.setEtpC1ResponseMessage(response.getErrorMessage());
-
+      });
     }
-
+    return solasETPDTOs;
   }
 
 }
