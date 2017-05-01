@@ -9,15 +9,25 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
+import com.google.gson.Gson;
+import com.privasia.scss.common.dto.ApiResponseObject;
 import com.privasia.scss.common.dto.BaseCommonGateInOutDTO;
 import com.privasia.scss.common.dto.CommonGateInOutDTO;
 import com.privasia.scss.common.dto.ExportContainer;
 import com.privasia.scss.common.dto.GateInReponse;
 import com.privasia.scss.common.dto.GateInWriteRequest;
+import com.privasia.scss.common.dto.ReferRejectDTO;
+import com.privasia.scss.common.dto.ReferRejectDetailDTO;
 import com.privasia.scss.common.enums.ContainerFullEmptyType;
 import com.privasia.scss.common.enums.ShipStatus;
 import com.privasia.scss.common.enums.TransactionStatus;
@@ -50,6 +60,9 @@ import com.privasia.scss.gatein.exports.business.service.VesselOmitService;
 public class ExportGateInService {
 
   private static final Log log = LogFactory.getLog(ExportGateInService.class);
+
+  @Value("${refer.update.refer.detail.url}")
+  private String updateReferDetailURL;// updatereferdetail
 
   private ModelMapper modelMapper;
 
@@ -302,6 +315,10 @@ public class ExportGateInService {
       exportContainer.setVariance(gateInWriteRequest.getVariance());
       exportContainer.setBackToback(backToback);
 
+      exportContainer.setTrailerPlateNo(gateInWriteRequest.getTrailerNo());
+      exportContainer.setTrailerWeight(Integer.toString(gateInWriteRequest.getTrailerWeight()));
+      exportContainer.setPmWeight(Integer.toString(gateInWriteRequest.getTruckWeight()));
+
 
       if (exportContainer.getCommonGateInOut() == null) {
         exportContainer.setCommonGateInOut(new CommonGateInOutDTO());
@@ -336,9 +353,46 @@ public class ExportGateInService {
       System.out.println("exportsQ.getExportID() " + exportsQ.getExportID());
       exportsQ = exportsQRepository.save(exportsQ);
       System.out.println("exportsQ.getExportID() after save " + exportsQ.getExportID());
+      // referee reject service update
+      if (gateInWriteRequest.getReferRejectDTO().isPresent()) {
+        updateReferReject(gateInWriteRequest, exportContainer);
+      }
+
     });
 
     // return new AsyncResult<Boolean>(true);
+  }
+
+  private void updateReferReject(GateInWriteRequest gateInWriteRequest, ExportContainer exportContainer) {
+    ReferRejectDetailDTO detailDTO = constructReferRejectDetailDTO(gateInWriteRequest, exportContainer);
+
+    RestTemplate restTemplate = new RestTemplate();
+    HttpHeaders headers = new HttpHeaders();
+
+    headers.setContentType(MediaType.APPLICATION_JSON);
+
+    HttpEntity<ReferRejectDetailDTO> request = new HttpEntity<ReferRejectDetailDTO>(detailDTO, headers);
+
+    log.info("OpusGateInReadRequest : -" + (new Gson()).toJson(detailDTO));
+
+
+    ResponseEntity<ApiResponseObject> response =
+        restTemplate.postForEntity(updateReferDetailURL, request, ApiResponseObject.class);
+
+    log.info("RESPONSE FROM REFER REJECT: " + response.toString());
+
+  }
+
+  private ReferRejectDetailDTO constructReferRejectDetailDTO(GateInWriteRequest gateInWriteRequest,
+      ExportContainer exportContainer) {
+    ReferRejectDetailDTO referRejectDetailDTO = new ReferRejectDetailDTO();
+    referRejectDetailDTO.setContainerNo(exportContainer.getContainer().getContainerNumber());
+    referRejectDetailDTO.setLineCode(exportContainer.getShippingLine());
+    referRejectDetailDTO.setReferReject(new ReferRejectDTO());
+    referRejectDetailDTO.getReferReject()
+        .setReferRejectID(gateInWriteRequest.getReferRejectDTO().get().getReferRejectID());
+
+    return referRejectDetailDTO;
   }
 
   @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)

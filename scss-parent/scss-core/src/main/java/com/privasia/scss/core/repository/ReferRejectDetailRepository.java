@@ -15,7 +15,8 @@ public interface ReferRejectDetailRepository extends BaseRepository<ReferRejectD
 
   public ReferRejectDetail findByReferRejectReferRejectID(Long referId);
 
-  Optional<ReferRejectDetail> findByReferReject_ReferRejectIDAndContainerNo(Long referRejectID, String containerNo);
+  Optional<ReferRejectDetail> findByReferReject_ReferRejectIDAndContainerNoAndReferReject_StatusCode(Long referRejectID,
+      String containerNo, HpatReferStatus statusCode);
 
 
 }
