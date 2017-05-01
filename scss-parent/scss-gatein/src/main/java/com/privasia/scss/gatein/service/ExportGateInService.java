@@ -3,6 +3,7 @@ package com.privasia.scss.gatein.service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
@@ -41,6 +42,7 @@ import com.privasia.scss.core.model.HPABBooking;
 import com.privasia.scss.core.model.ShipCode;
 import com.privasia.scss.core.model.ShipSCN;
 import com.privasia.scss.core.model.SystemUser;
+import com.privasia.scss.core.predicate.ExportsPredicates;
 import com.privasia.scss.core.repository.DamageCodeRepository;
 import com.privasia.scss.core.repository.DgDetailRepository;
 import com.privasia.scss.core.repository.ExportsQRepository;
@@ -55,6 +57,8 @@ import com.privasia.scss.gatein.exports.business.service.SSRService;
 import com.privasia.scss.gatein.exports.business.service.SealValidationService;
 import com.privasia.scss.gatein.exports.business.service.SolasService;
 import com.privasia.scss.gatein.exports.business.service.VesselOmitService;
+import com.querydsl.core.types.ExpressionUtils;
+import com.querydsl.core.types.Predicate;
 
 @Service("exportGateInService")
 public class ExportGateInService {
@@ -408,5 +412,45 @@ public class ExportGateInService {
       });
     }
   }
+
+  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+  public boolean isPlateNoHeadNoUsed(GateInWriteRequest gateInWriteRequest) {
+
+    Predicate byHeadNo = ExportsPredicates.byPMHeadNo(gateInWriteRequest.getTruckHeadNo());
+    Predicate byPlateNo = ExportsPredicates.byPMPlateNo(gateInWriteRequest.getTruckPlateNo());
+    Predicate byTransactionStatus = ExportsPredicates.byTransactionStatus(TransactionStatus.INPROGRESS);
+
+
+    Predicate condition =
+        ExpressionUtils.allOf(ExpressionUtils.and(ExpressionUtils.or(byHeadNo, byPlateNo), byTransactionStatus));
+
+    Iterable<Exports> exportsList = exportsRepository.findAll(condition);
+
+    if (exportsList == null || Stream.of(exportsList).count() == 0)
+      return false;
+
+    if (exportsList.iterator().hasNext()) {
+      Exports dbExports = exportsList.iterator().next();
+      if (StringUtils.equalsIgnoreCase(dbExports.getBaseCommonGateInOutAttribute().getPmHeadNo(),
+          gateInWriteRequest.getTruckHeadNo())
+          && StringUtils.equalsIgnoreCase(dbExports.getBaseCommonGateInOutAttribute().getPmPlateNo(),
+              gateInWriteRequest.getTruckPlateNo())) {
+        throw new BusinessException("PM Head No " + dbExports.getBaseCommonGateInOutAttribute().getPmHeadNo()
+            + "and PM plate No " + dbExports.getBaseCommonGateInOutAttribute().getPmPlateNo() + " already in use.");
+      } else if (StringUtils.equalsIgnoreCase(dbExports.getBaseCommonGateInOutAttribute().getPmHeadNo(),
+          gateInWriteRequest.getTruckHeadNo())) {
+        throw new BusinessException(
+            "PM Head No " + dbExports.getBaseCommonGateInOutAttribute().getPmHeadNo() + " already in use");
+      } else if (StringUtils.equalsIgnoreCase(dbExports.getBaseCommonGateInOutAttribute().getPmPlateNo(),
+          gateInWriteRequest.getTruckPlateNo())) {
+        throw new BusinessException(
+            "PM plate No " + dbExports.getBaseCommonGateInOutAttribute().getPmPlateNo() + " already in use");
+      }
+    }
+
+    return false;
+
+  }
+
 
 }
