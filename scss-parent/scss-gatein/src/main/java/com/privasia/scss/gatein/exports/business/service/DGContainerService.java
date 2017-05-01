@@ -70,5 +70,8 @@ public class DGContainerService {
 		
 		return false;
 	}
+	
+	//exportContainer.getImdg() not empty
+	//then dgWithinWindowEntry  == false
 
 }

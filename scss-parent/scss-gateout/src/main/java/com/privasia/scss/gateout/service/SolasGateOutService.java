@@ -333,5 +333,5 @@ public class SolasGateOutService {
 			break;
 		}
 	}
-
+	
 }
