@@ -182,7 +182,7 @@ public class SolasGateOutService {
     solasETPDTO.setExportSEQ(Long.toString(exports.getExportID()));
 
     if (exports.getSolas() == null) {
-      throw new BusinessException("Solas not found! ");
+      throw new BusinessException("SolasApplicable not found! ");
     }
     solasETPDTO.setMgw(exports.getSolas().getMgw());
     if (StringUtils.isNotBlank(exports.getSolas().getShipperVGM())) {
@@ -218,10 +218,10 @@ public class SolasGateOutService {
 
   public SolasPassFileDTO constructSolasPassFileDTO(Exports exports, SolasPassFileDTO solasPassFileDTO) {
     if ((exports.getContainer() == null)) {
-      throw new BusinessException("Container Details not found To Generate Solas Cert! ");
+      throw new BusinessException("Container Details not found To Generate SolasApplicable Cert! ");
     }
     if ((exports.getSolas() == null)) {
-      throw new BusinessException("Solas not found to Generate Solas Cert! ");
+      throw new BusinessException("SolasApplicable not found to Generate SolasApplicable Cert! ");
     }
     // to check if this is first time
     if (StringUtils.isEmpty(solasPassFileDTO.getExportSEQ01())) {
@@ -229,11 +229,11 @@ public class SolasGateOutService {
       solasPassFileDTO = new SolasPassFileDTO();
 
       if ((exports.getBaseCommonGateInOutAttribute() == null)) {
-        throw new BusinessException("Required Gate In Out Details not found to Generate Solas Cert! ");
+        throw new BusinessException("Required Gate In Out Details not found to Generate SolasApplicable Cert! ");
       }
 
       if ((exports.getBaseCommonGateInOutAttribute().getTimeGateInOk() == null)) {
-        throw new BusinessException("Gate in time not Found to Generate Solas Cert! ");
+        throw new BusinessException("Gate in time not Found to Generate SolasApplicable Cert! ");
       }
 
       solasPassFileDTO
@@ -242,7 +242,7 @@ public class SolasGateOutService {
       solasPassFileDTO.setCertificateNo(generateSolasCertificateId(solasPassFileDTO.getGateInOK()));
 
       if ((exports.getBaseCommonGateInOutAttribute().getGateInClerk() == null)) {
-        throw new BusinessException("Issuer Not Found to Generate Solas Cert! ");
+        throw new BusinessException("Issuer Not Found to Generate SolasApplicable Cert! ");
       }
 
       SystemUser systemUser = exports.getBaseCommonGateInOutAttribute().getGateInClerk();
@@ -254,7 +254,7 @@ public class SolasGateOutService {
       solasPassFileDTO.setIssuerNRIC(nicNo);
 
       if ((exports.getBaseCommonGateInOutAttribute().getGateInClient() == null)) {
-        throw new BusinessException("Client Not Found to Generate Solas Cert ! ");
+        throw new BusinessException("Client Not Found to Generate SolasApplicable Cert ! ");
       }
       Client client = exports.getBaseCommonGateInOutAttribute().getGateInClient();
       solasPassFileDTO.setWeighStation(client.getUnitNo());

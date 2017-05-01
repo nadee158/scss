@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.privasia.scss.common.annotation.SolasApplicable;
 import com.privasia.scss.common.dto.ExportContainer;
 import com.privasia.scss.common.dto.GateOutReponse;
 import com.privasia.scss.common.dto.GateOutRequest;
@@ -95,58 +96,13 @@ public class ExportGateOutService {
       modelMapper.map(export, exportContainer);
 
       if (export.getBaseCommonGateInOutAttribute() != null) {
-        // exportContainer.setBaseCommonGateInOutAttribute(new BaseCommonGateInOutDTO());
-        /*
-         * if (export.getBaseCommonGateInOutAttribute().getCard() != null) {
-         * System.out.println("################## exports : "+export.toString());
-         * exportContainer.getBaseCommonGateInOutAttribute()
-         * .getCard().setCardID(export.getBaseCommonGateInOutAttribute().getCard().getCardID()); }
-         */
-        /*
-         * if (export.getBaseCommonGateInOutAttribute().getEirStatus() != null) {
-         * exportContainer.getBaseCommonGateInOutAttribute()
-         * .setEirStatus(export.getBaseCommonGateInOutAttribute().getEirStatus().getValue()); }
-         */
-
-        // changed gateout cleark to gateout clierk
-        /*
-         * if (export.getBaseCommonGateInOutAttribute().getGateInClerk() != null) { SystemUserDTO
-         * gateInClerk = new SystemUserDTO();
-         * modelMapper.map(export.getBaseCommonGateInOutAttribute().getGateInClerk(), gateInClerk);
-         * if
-         * (!(export.getBaseCommonGateInOutAttribute().getGateInClerk().getCommonContactAttribute()
-         * == null)) { gateOutReponse.setClerkName(
-         * export.getBaseCommonGateInOutAttribute().getGateInClerk().getCommonContactAttribute().
-         * getPersonName()); }
-         * exportContainer.getBaseCommonGateInOutAttribute().setGateInClerk(gateInClerk); }
-         */
+        
 
         if (!(export.getBaseCommonGateInOutAttribute().getTimeGateIn() == null)) {
           LocalDateTime timeGateIn = export.getBaseCommonGateInOutAttribute().getTimeGateIn();
           DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy HH:mm");
           gateOutReponse.setGateInDateTime(timeGateIn.format(formatter));
         }
-
-        // changed gateout client to gatein client
-        /*
-         * if (export.getBaseCommonGateInOutAttribute().getGateInClient() != null) { ClientDTO
-         * gateInClient = new ClientDTO();
-         * modelMapper.map(export.getBaseCommonGateInOutAttribute().getGateInClient(),
-         * gateInClient);
-         * gateOutReponse.setGateInLaneNo(export.getBaseCommonGateInOutAttribute().getGateInClient()
-         * .getLaneNo());
-         * exportContainer.getBaseCommonGateInOutAttribute().setGateInClient(gateInClient); }
-         * 
-         * if (export.getBaseCommonGateInOutAttribute().getHpabBooking()!=null) {
-         * exportContainer.getBaseCommonGateInOutAttribute()
-         * .setHpabBooking(export.getBaseCommonGateInOutAttribute().getHpabBooking().getBookingID())
-         * ; }
-         * 
-         * exportContainer.getBaseCommonGateInOutAttribute()
-         * .setPmHeadNo(export.getBaseCommonGateInOutAttribute().getPmHeadNo());
-         * exportContainer.getBaseCommonGateInOutAttribute()
-         * .setPmPlateNo(export.getBaseCommonGateInOutAttribute().getPmHeadNo());
-         */
 
       }
       // adding log info
@@ -227,11 +183,12 @@ public class ExportGateOutService {
     });
     // return new AsyncResult<Boolean>(true);
   }
-
+  
+  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
   public void updateExportReference(FileDTO fileDTO) {
 
     Optional<List<Exports>> exportsOptList = exportsRepository
-        .findByExportIDIn(Arrays.asList(fileDTO.getExportNoSeq1().orElse(0l), fileDTO.getExportNoSeq2().orElse(0l)));
+        .findByExportIDIn(Arrays.asList(fileDTO.getExportNoSeq1().orElse(null), fileDTO.getExportNoSeq2().orElse(null)));
 
     if (!(exportsOptList.orElse(null) == null || exportsOptList.get().isEmpty())) {
       exportsOptList.get().forEach(exports -> {
@@ -259,6 +216,27 @@ public class ExportGateOutService {
         break;
     }
     return exports;
+  }
+  
+  @SolasApplicable
+  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+  public List<Exports> testSolas(List<ExportContainer> exportsList){
+	  
+	  List<Long> expIDList = new ArrayList<Long>();
+	  
+	  for (Long long1 : expIDList) {
+		  expIDList.add(long1);
+	  }
+	  
+	  Optional<List<Exports>> exportsOptList = exportsRepository
+		        .findByExportIDIn(expIDList);
+	  
+	  if(exportsOptList.isPresent()){
+		  
+		  return exportsOptList.get();
+	  }
+	  
+	  throw new ResultsNotFoundException("no result found");
   }
 
 

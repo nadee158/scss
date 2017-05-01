@@ -75,14 +75,14 @@ public class SolasService {
 					Arrays.asList(SolasWeightType.FUEL, SolasWeightType.TYRE, SolasWeightType.VARIANCE, SolasWeightType.PM, SolasWeightType.TRAILER));
 
 			List<SolasWeightConfig> solasMasterData = optSolasMasterData.orElseThrow(
-					() -> new ResultsNotFoundException("Solas Master data for Fuel, Type, Tolerance not Found ! "));
+					() -> new ResultsNotFoundException("SolasApplicable Master data for Fuel, Type, Tolerance not Found ! "));
 
 			Optional<SolasWeightConfig> optFuelWeight = solasMasterData.stream().filter(solasConfig -> StringUtils
 					.equalsIgnoreCase(SolasWeightType.FUEL.getValue(), solasConfig.getWeightType().getValue()))
 					.findFirst();
 
 			int fuelWeight = optFuelWeight
-					.orElseThrow(() -> new ResultsNotFoundException("Solas data for Fuel not Found ! "))
+					.orElseThrow(() -> new ResultsNotFoundException("SolasApplicable data for Fuel not Found ! "))
 					.getDefaultValue();
 
 			Optional<SolasWeightConfig> optTyreWeight = solasMasterData.stream().filter(solasConfig -> StringUtils
@@ -90,7 +90,7 @@ public class SolasService {
 					.findFirst();
 
 			int tireWeight = optTyreWeight
-					.orElseThrow(() -> new ResultsNotFoundException("Solas data for Tyre not Found ! "))
+					.orElseThrow(() -> new ResultsNotFoundException("SolasApplicable data for Tyre not Found ! "))
 					.getDefaultValue();
 
 			Optional<SolasWeightConfig> optTolerance = solasMasterData.stream().filter(solasConfig -> StringUtils
@@ -98,7 +98,7 @@ public class SolasService {
 					.findFirst();
 
 			int tolerance = optTolerance
-					.orElseThrow(() -> new ResultsNotFoundException("Solas data for Tolerance not Found ! "))
+					.orElseThrow(() -> new ResultsNotFoundException("SolasApplicable data for Tolerance not Found ! "))
 					.getDefaultValue();
 			
 			int pmWeight = 0;
@@ -111,7 +111,7 @@ public class SolasService {
 						.equalsIgnoreCase(SolasWeightType.PM.getValue(), solasConfig.getWeightType().getValue()))
 						.findFirst();
 				pmWeight = optPM
-						.orElseThrow(() -> new ResultsNotFoundException("Solas data for PM not Found ! "))
+						.orElseThrow(() -> new ResultsNotFoundException("SolasApplicable data for PM not Found ! "))
 						.getDefaultValue();
 			}
 			
@@ -122,7 +122,7 @@ public class SolasService {
 						.equalsIgnoreCase(SolasWeightType.TRAILER.getValue(), solasConfig.getWeightType().getValue()))
 						.findFirst();
 				axelWeight = optAxel
-						.orElseThrow(() -> new ResultsNotFoundException("Solas data for Trailer not Found ! "))
+						.orElseThrow(() -> new ResultsNotFoundException("SolasApplicable data for Trailer not Found ! "))
 						.getDefaultValue();
 			}
 
@@ -173,7 +173,7 @@ public class SolasService {
 				calculateTolerance(exportContainers, tolerance);
 			}
 		} else {
-			throw new BusinessException("Solas Applicable only for Full Containers !");
+			throw new BusinessException("SolasApplicable Applicable only for Full Containers !");
 		}
 
 		return exportContainers;
