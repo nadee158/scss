@@ -89,6 +89,8 @@ public class ETPWebserviceClient extends WebServiceGatewaySupport {
   public List<SolasETPDTO> updateSolasToEtp(List<SolasETPDTO> solasETPDTOs) throws ParseException {
     if (!(solasETPDTOs == null || solasETPDTOs.isEmpty())) {
 
+
+
       SimpleDateFormat formatter = new SimpleDateFormat(WEB_SERVICE_DATE_PATTERN);
       UpdateSolasForScssGateInRequestType parameters = new UpdateSolasForScssGateInRequestType();
 
@@ -131,6 +133,11 @@ public class ETPWebserviceClient extends WebServiceGatewaySupport {
           parameters.setGrossWeight(solasETPDTO.getGrossWeight());
 
 
+          ObjectFactory objFac = new ObjectFactory();
+          JAXBElement<UpdateSolasForScssGateInRequestType> request =
+              objFac.createUpdateSolasForScssGateInRequest(parameters);
+
+
           log.info("******************* Update ETP Solas Web Service Start *******************  ");
           System.out.println("******************* Update ETP Solas Web Service Start *******************  ");
 
@@ -139,7 +146,7 @@ public class ETPWebserviceClient extends WebServiceGatewaySupport {
 
           JAXBElement<UpdateSolasForScssGateInResponseType> jaxBRresponse =
               (JAXBElement<UpdateSolasForScssGateInResponseType>) getWebServiceTemplate().marshalSendAndReceive(
-                  wsServerUri, parameters, new SoapActionCallback(clientDefaultUri + "/updateSolasForScssGateIn"));
+                  wsServerUri, request, new SoapActionCallback(clientDefaultUri + "/updateSolasForScssGateIn"));
 
           response = jaxBRresponse.getValue();
 

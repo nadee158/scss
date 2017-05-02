@@ -14,88 +14,86 @@ import com.privasia.scss.common.enums.CollectionType;
 @Component
 public class GridFSRepository {
 
+  private GridFsTemplate pdfFileGridFsTemplate;
 
-	@Qualifier("pdfFileGridFsTemplate")
-	private GridFsTemplate pdfFileGridFsTemplate;
+  private GridFsTemplate zipFileGridFsTemplate;
 
-	@Qualifier("zipFileGridFsTemplate")
-	private GridFsTemplate zipFileGridFsTemplate;
+  private GridFsTemplate solasCertificateGridFsTemplate;
 
-	@Qualifier("solasCertificateGridFsTemplate")
-	private GridFsTemplate solasCertificateGridFsTemplate;
+  private GridFsTemplate gridFsTemplate;
 
-	@Qualifier("gridFsTemplate")
-	private GridFsTemplate gridFsTemplate;
-	
-	@Autowired
-	public void setPdfFileGridFsTemplate(GridFsTemplate pdfFileGridFsTemplate) {
-		this.pdfFileGridFsTemplate = pdfFileGridFsTemplate;
-	}
-	
-	@Autowired
-	public void setZipFileGridFsTemplate(GridFsTemplate zipFileGridFsTemplate) {
-		this.zipFileGridFsTemplate = zipFileGridFsTemplate;
-	}
-	
-	@Autowired
-	public void setSolasCertificateGridFsTemplate(GridFsTemplate solasCertificateGridFsTemplate) {
-		this.solasCertificateGridFsTemplate = solasCertificateGridFsTemplate;
-	}
-	
-	@Autowired
-	public void setGridFsTemplate(GridFsTemplate gridFsTemplate) {
-		this.gridFsTemplate = gridFsTemplate;
-	}
+  @Autowired
+  public void setPdfFileGridFsTemplate(@Qualifier("pdfFileGridFsTemplate") GridFsTemplate pdfFileGridFsTemplate) {
+    this.pdfFileGridFsTemplate = pdfFileGridFsTemplate;
+  }
 
-	public GridFSFile storeFile(InputStream content, DBObject metadata, CollectionType collectionType) {
-		if (collectionType == null) {
-			return gridFsTemplate.store(content, metadata);
-		}
-		switch (collectionType) {
-		case PDF_FILE_COLLECTION:
-			return pdfFileGridFsTemplate.store(content, metadata);
-		case SOLAS_CERTIFICATE_COLLECTION:
-			System.out.println("solasCertificateGridFsTemplate **********************************************");
-			return solasCertificateGridFsTemplate.store(content, metadata);
-		case ZIP_FILE_COLLECTION:
-			return zipFileGridFsTemplate.store(content, metadata);
-		default:
-			return gridFsTemplate.store(content, metadata);
-		}
-	}
+  @Autowired
+  public void setZipFileGridFsTemplate(@Qualifier("zipFileGridFsTemplate") GridFsTemplate zipFileGridFsTemplate) {
+    this.zipFileGridFsTemplate = zipFileGridFsTemplate;
+  }
 
-	public GridFSFile storeFile(InputStream content, String filename, DBObject metadata,
-			CollectionType collectionType) {
-		if (collectionType == null) {
-			return gridFsTemplate.store(content, filename, metadata);
-		}
-		switch (collectionType) {
-		case PDF_FILE_COLLECTION:
-			return pdfFileGridFsTemplate.store(content, filename, metadata);
-		case SOLAS_CERTIFICATE_COLLECTION:
-			return solasCertificateGridFsTemplate.store(content, filename, metadata);
-		case ZIP_FILE_COLLECTION:
-			return zipFileGridFsTemplate.store(content, filename, metadata);
-		default:
-			return gridFsTemplate.store(content, filename, metadata);
-		}
-	}
+  @Autowired
+  public void setSolasCertificateGridFsTemplate(
+      @Qualifier("solasCertificateGridFsTemplate") GridFsTemplate solasCertificateGridFsTemplate) {
+    this.solasCertificateGridFsTemplate = solasCertificateGridFsTemplate;
+  }
 
-	public GridFSFile storeFile(InputStream content, String filename, String contentType, DBObject metadata,
-			CollectionType collectionType) {
-		if (collectionType == null) {
-			return gridFsTemplate.store(content, filename, contentType, metadata);
-		}
-		switch (collectionType) {
-		case PDF_FILE_COLLECTION:
-			return pdfFileGridFsTemplate.store(content, filename, contentType, metadata);
-		case SOLAS_CERTIFICATE_COLLECTION:
-			return solasCertificateGridFsTemplate.store(content, filename, contentType, metadata);
-		case ZIP_FILE_COLLECTION:
-			return zipFileGridFsTemplate.store(content, filename, contentType, metadata);
-		default:
-			return gridFsTemplate.store(content, filename, contentType, metadata);
-		}
-	}
+  @Autowired
+  public void setGridFsTemplate(@Qualifier("gridFsTemplate") GridFsTemplate gridFsTemplate) {
+    this.gridFsTemplate = gridFsTemplate;
+  }
+
+  public GridFSFile storeFile(InputStream content, DBObject metadata, CollectionType collectionType) {
+    System.out.println("collectionType " + collectionType);
+    if (collectionType == null) {
+      return gridFsTemplate.store(content, metadata);
+    }
+    switch (collectionType) {
+      case PDF_FILE_COLLECTION:
+        return pdfFileGridFsTemplate.store(content, metadata);
+      case SOLAS_CERTIFICATE_COLLECTION:
+        System.out.println("solasCertificateGridFsTemplate **********************************************");
+        return solasCertificateGridFsTemplate.store(content, metadata);
+      case ZIP_FILE_COLLECTION:
+        return zipFileGridFsTemplate.store(content, metadata);
+      default:
+        return gridFsTemplate.store(content, metadata);
+    }
+  }
+
+  public GridFSFile storeFile(InputStream content, String filename, DBObject metadata, CollectionType collectionType) {
+    System.out.println("collectionType " + collectionType);
+    if (collectionType == null) {
+      return gridFsTemplate.store(content, filename, metadata);
+    }
+    switch (collectionType) {
+      case PDF_FILE_COLLECTION:
+        return pdfFileGridFsTemplate.store(content, filename, metadata);
+      case SOLAS_CERTIFICATE_COLLECTION:
+        return solasCertificateGridFsTemplate.store(content, filename, metadata);
+      case ZIP_FILE_COLLECTION:
+        return zipFileGridFsTemplate.store(content, filename, metadata);
+      default:
+        return gridFsTemplate.store(content, filename, metadata);
+    }
+  }
+
+  public GridFSFile storeFile(InputStream content, String filename, String contentType, DBObject metadata,
+      CollectionType collectionType) {
+    System.out.println("collectionType " + collectionType);
+    if (collectionType == null) {
+      return gridFsTemplate.store(content, filename, contentType, metadata);
+    }
+    switch (collectionType) {
+      case PDF_FILE_COLLECTION:
+        return pdfFileGridFsTemplate.store(content, filename, contentType, metadata);
+      case SOLAS_CERTIFICATE_COLLECTION:
+        return solasCertificateGridFsTemplate.store(content, filename, contentType, metadata);
+      case ZIP_FILE_COLLECTION:
+        return zipFileGridFsTemplate.store(content, filename, contentType, metadata);
+      default:
+        return gridFsTemplate.store(content, filename, contentType, metadata);
+    }
+  }
 
 }
