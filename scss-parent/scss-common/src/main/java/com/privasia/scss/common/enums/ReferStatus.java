@@ -13,7 +13,7 @@ import java.util.Map;
  */
 public enum ReferStatus implements Enumable {
 
-  REJECT("R"), NONE("");
+  REJECT("R"), NONE(""), REJECT_EXE("RE");
 
   private final String referStatus;
 

@@ -1,7 +1,6 @@
 package com.privasia.scss.refer.service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -213,21 +212,21 @@ public class ReferRejectService {
 
     ReferRejectDTO referRejectDTO = new ReferRejectDTO();
     modelMapper.map(referReject, referRejectDTO);
-    
+
     Set<ReferRejectDetailDTO> referRejectDetailDTOList = new HashSet<ReferRejectDetailDTO>();
-	referReject.getReferRejectDetails().stream().forEach(referRejectDetail -> {
-		ReferRejectDetailDTO detailDTO = modelMapper.map(referRejectDetail, ReferRejectDetailDTO.class);
-		
-		Set<ReferRejectReasonDTO> referRejectReasonDTOList = referRejectDetail.getReferRejectReason().stream()
-				.map(referRejectReason -> modelMapper.map(referRejectReason, ReferRejectReasonDTO.class))
-				.collect(Collectors.toSet());
-		
-		detailDTO.setReferRejectReasons(referRejectReasonDTOList);
-		referRejectDetailDTOList.add(detailDTO);
-	});
-    
-	referRejectDTO.setReferRejectDetails(referRejectDetailDTOList);
-    
+    referReject.getReferRejectDetails().stream().forEach(referRejectDetail -> {
+      ReferRejectDetailDTO detailDTO = modelMapper.map(referRejectDetail, ReferRejectDetailDTO.class);
+
+      Set<ReferRejectReasonDTO> referRejectReasonDTOList = referRejectDetail.getReferRejectReason().stream()
+          .map(referRejectReason -> modelMapper.map(referRejectReason, ReferRejectReasonDTO.class))
+          .collect(Collectors.toSet());
+
+      detailDTO.setReferRejectReasons(referRejectReasonDTOList);
+      referRejectDetailDTOList.add(detailDTO);
+    });
+
+    referRejectDTO.setReferRejectDetails(referRejectDetailDTOList);
+
     return referRejectDTO;
   }
 
@@ -239,7 +238,7 @@ public class ReferRejectService {
 
     if ((referRejectDTO.getReferRejectDetails() == null || referRejectDTO.getReferRejectDetails().isEmpty()))
       throw new BusinessException("No Refer Reject detail Data given to be updated!");
-    
+
     if (gateInWriteRequest.getGateInDateTime() == null)
       throw new BusinessException("Gate In Time Required !");
 
@@ -291,9 +290,8 @@ public class ReferRejectService {
 
     HPABBooking hpabBooking = null;
     if (StringUtils.isNotEmpty(baseCommonGateInOut.getHpabBooking())) {
-      hpabBooking = hpabBookingRepository.findOne(baseCommonGateInOut.getHpabBooking())
-          .orElseThrow(() -> new ResultsNotFoundException(
-              "No HPAB Booking found ! : " + baseCommonGateInOut.getHpabBooking()));
+      hpabBooking = hpabBookingRepository.findOne(baseCommonGateInOut.getHpabBooking()).orElseThrow(
+          () -> new ResultsNotFoundException("No HPAB Booking found ! : " + baseCommonGateInOut.getHpabBooking()));
     }
 
     // bind details manually from dby
@@ -396,7 +394,7 @@ public class ReferRejectService {
   public String updateReferReject(ReferRejectDTO dto) {
     String status = "ERROR";
     ReferReject persisted = null;
-    
+
     if ((dto == null || dto.getReferRejectDetails() == null || dto.getReferRejectDetails().isEmpty()))
       throw new BusinessException("No Refer data is available to update!");
 
@@ -412,7 +410,7 @@ public class ReferRejectService {
     referReject.getReferRejectDetails().forEach(referRejectDetail -> {
       dto.getReferRejectDetails().forEach(referRejectDetailDTO -> {
         if (referRejectDetail.getReferRejectDetailID() == referRejectDetailDTO.getReferRejectDetailID()) {
-        	Set<SupervisorReferRejectReason> supervisorReferRejectReasons = new HashSet<SupervisorReferRejectReason>();
+          Set<SupervisorReferRejectReason> supervisorReferRejectReasons = new HashSet<SupervisorReferRejectReason>();
           // update detail
           referRejectDetail.setStatus(ReferStatus.fromValue(referRejectDetailDTO.getStatus()));
           referRejectDetail.setSupervisorRemarks(StringUtils.upperCase(referRejectDetailDTO.getSupervisorRemarks()));
@@ -429,13 +427,13 @@ public class ReferRejectService {
               SupervisorReferRejectReason supervisorreason = new SupervisorReferRejectReason();
               supervisorreason.setReferReason(referReason);
               supervisorreason.setReferRejectDetail(referRejectDetail);
-              //supervisorReferRejectReasonList.add(reason);
+              // supervisorReferRejectReasonList.add(reason);
             });
           }
           referRejectDetail.setSupervisorReferRejectReason(supervisorReferRejectReasons);
         }
       });
-      
+
     });
 
     // ReferReject -> update as completed
@@ -449,13 +447,11 @@ public class ReferRejectService {
     }
 
     // String sqlIns = "INSERT INTO SCSS_REJECT_SUP_REASON (" //
-    /*if (StringUtils.equals(status, "SUCCESS")) {
-      if (!(supervisorReferRejectReasonList == null || supervisorReferRejectReasonList.isEmpty())) {
-        for (SupervisorReferRejectReason reason : supervisorReferRejectReasonList) {
-          supervisorReferRejectReasonRepository.save(reason);
-        }
-      }
-    }*/
+    /*
+     * if (StringUtils.equals(status, "SUCCESS")) { if (!(supervisorReferRejectReasonList == null ||
+     * supervisorReferRejectReasonList.isEmpty())) { for (SupervisorReferRejectReason reason :
+     * supervisorReferRejectReasonList) { supervisorReferRejectReasonRepository.save(reason); } } }
+     */
 
     return status;
   }
@@ -467,11 +463,14 @@ public class ReferRejectService {
       throw new BusinessException("Refer reject details to update is not available!");
 
     ReferRejectDetail referRejectDetail = referRejectDetailRepository
-        .findByReferReject_ReferRejectIDAndContainerNo(dto.getReferReject().getReferRejectID(), dto.getContainerNo())
+        .findByReferReject_ReferRejectIDAndContainerNoAndReferReject_StatusCode(dto.getReferReject().getReferRejectID(),
+            dto.getContainerNo(), HpatReferStatus.ACTIVE)
         .orElseThrow(() -> new ResultsNotFoundException("Refer reject detail was not found!"));
 
     referRejectDetail.setLineCode(StringUtils.upperCase(dto.getLineCode()));
     referRejectDetail.setGateInTime(dto.getGateInTime());
+    referRejectDetail.setStatus(ReferStatus.REJECT_EXE);
+    referRejectDetail.getReferReject().setStatusCode(HpatReferStatus.COMPLETE);
     ReferRejectDetail persisted = referRejectDetailRepository.save(referRejectDetail);
     if (!(persisted == null || persisted.getReferRejectDetailID() <= 0)) {
       if (persisted.getReferReject().getReferRejectID() == dto.getReferReject().getReferRejectID()) {

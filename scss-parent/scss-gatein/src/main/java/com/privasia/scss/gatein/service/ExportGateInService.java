@@ -3,21 +3,32 @@ package com.privasia.scss.gatein.service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
+import com.google.gson.Gson;
+import com.privasia.scss.common.dto.ApiResponseObject;
 import com.privasia.scss.common.dto.BaseCommonGateInOutDTO;
 import com.privasia.scss.common.dto.CommonGateInOutDTO;
 import com.privasia.scss.common.dto.ExportContainer;
 import com.privasia.scss.common.dto.GateInReponse;
 import com.privasia.scss.common.dto.GateInWriteRequest;
+import com.privasia.scss.common.dto.ReferRejectDTO;
+import com.privasia.scss.common.dto.ReferRejectDetailDTO;
 import com.privasia.scss.common.enums.ContainerFullEmptyType;
 import com.privasia.scss.common.enums.ShipStatus;
 import com.privasia.scss.common.enums.TransactionStatus;
@@ -31,6 +42,7 @@ import com.privasia.scss.core.model.HPABBooking;
 import com.privasia.scss.core.model.ShipCode;
 import com.privasia.scss.core.model.ShipSCN;
 import com.privasia.scss.core.model.SystemUser;
+import com.privasia.scss.core.predicate.ExportsPredicates;
 import com.privasia.scss.core.repository.DamageCodeRepository;
 import com.privasia.scss.core.repository.DgDetailRepository;
 import com.privasia.scss.core.repository.ExportsQRepository;
@@ -45,11 +57,16 @@ import com.privasia.scss.gatein.exports.business.service.SSRService;
 import com.privasia.scss.gatein.exports.business.service.SealValidationService;
 import com.privasia.scss.gatein.exports.business.service.SolasService;
 import com.privasia.scss.gatein.exports.business.service.VesselOmitService;
+import com.querydsl.core.types.ExpressionUtils;
+import com.querydsl.core.types.Predicate;
 
 @Service("exportGateInService")
 public class ExportGateInService {
 
   private static final Log log = LogFactory.getLog(ExportGateInService.class);
+
+  @Value("${refer.update.refer.detail.url}")
+  private String updateReferDetailURL;// updatereferdetail
 
   private ModelMapper modelMapper;
 
@@ -302,6 +319,10 @@ public class ExportGateInService {
       exportContainer.setVariance(gateInWriteRequest.getVariance());
       exportContainer.setBackToback(backToback);
 
+      exportContainer.setTrailerPlateNo(gateInWriteRequest.getTrailerNo());
+      exportContainer.setTrailerWeight(Integer.toString(gateInWriteRequest.getTrailerWeight()));
+      exportContainer.setPmWeight(Integer.toString(gateInWriteRequest.getTruckWeight()));
+
 
       if (exportContainer.getCommonGateInOut() == null) {
         exportContainer.setCommonGateInOut(new CommonGateInOutDTO());
@@ -336,9 +357,46 @@ public class ExportGateInService {
       System.out.println("exportsQ.getExportID() " + exportsQ.getExportID());
       exportsQ = exportsQRepository.save(exportsQ);
       System.out.println("exportsQ.getExportID() after save " + exportsQ.getExportID());
+      // referee reject service update
+      if (gateInWriteRequest.getReferRejectDTO().isPresent()) {
+        updateReferReject(gateInWriteRequest, exportContainer);
+      }
+
     });
 
     // return new AsyncResult<Boolean>(true);
+  }
+
+  private void updateReferReject(GateInWriteRequest gateInWriteRequest, ExportContainer exportContainer) {
+    ReferRejectDetailDTO detailDTO = constructReferRejectDetailDTO(gateInWriteRequest, exportContainer);
+
+    RestTemplate restTemplate = new RestTemplate();
+    HttpHeaders headers = new HttpHeaders();
+
+    headers.setContentType(MediaType.APPLICATION_JSON);
+
+    HttpEntity<ReferRejectDetailDTO> request = new HttpEntity<ReferRejectDetailDTO>(detailDTO, headers);
+
+    log.info("OpusGateInReadRequest : -" + (new Gson()).toJson(detailDTO));
+
+
+    ResponseEntity<ApiResponseObject> response =
+        restTemplate.postForEntity(updateReferDetailURL, request, ApiResponseObject.class);
+
+    log.info("RESPONSE FROM REFER REJECT: " + response.toString());
+
+  }
+
+  private ReferRejectDetailDTO constructReferRejectDetailDTO(GateInWriteRequest gateInWriteRequest,
+      ExportContainer exportContainer) {
+    ReferRejectDetailDTO referRejectDetailDTO = new ReferRejectDetailDTO();
+    referRejectDetailDTO.setContainerNo(exportContainer.getContainer().getContainerNumber());
+    referRejectDetailDTO.setLineCode(exportContainer.getShippingLine());
+    referRejectDetailDTO.setReferReject(new ReferRejectDTO());
+    referRejectDetailDTO.getReferReject()
+        .setReferRejectID(gateInWriteRequest.getReferRejectDTO().get().getReferRejectID());
+
+    return referRejectDetailDTO;
   }
 
   @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
@@ -354,5 +412,45 @@ public class ExportGateInService {
       });
     }
   }
+
+  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+  public boolean isPlateNoHeadNoUsed(GateInWriteRequest gateInWriteRequest) {
+
+    Predicate byHeadNo = ExportsPredicates.byPMHeadNo(gateInWriteRequest.getTruckHeadNo());
+    Predicate byPlateNo = ExportsPredicates.byPMPlateNo(gateInWriteRequest.getTruckPlateNo());
+    Predicate byTransactionStatus = ExportsPredicates.byTransactionStatus(TransactionStatus.INPROGRESS);
+
+
+    Predicate condition =
+        ExpressionUtils.allOf(ExpressionUtils.and(ExpressionUtils.or(byHeadNo, byPlateNo), byTransactionStatus));
+
+    Iterable<Exports> exportsList = exportsRepository.findAll(condition);
+
+    if (exportsList == null || Stream.of(exportsList).count() == 0)
+      return false;
+
+    if (exportsList.iterator().hasNext()) {
+      Exports dbExports = exportsList.iterator().next();
+      if (StringUtils.equalsIgnoreCase(dbExports.getBaseCommonGateInOutAttribute().getPmHeadNo(),
+          gateInWriteRequest.getTruckHeadNo())
+          && StringUtils.equalsIgnoreCase(dbExports.getBaseCommonGateInOutAttribute().getPmPlateNo(),
+              gateInWriteRequest.getTruckPlateNo())) {
+        throw new BusinessException("PM Head No " + dbExports.getBaseCommonGateInOutAttribute().getPmHeadNo()
+            + "and PM plate No " + dbExports.getBaseCommonGateInOutAttribute().getPmPlateNo() + " already in use.");
+      } else if (StringUtils.equalsIgnoreCase(dbExports.getBaseCommonGateInOutAttribute().getPmHeadNo(),
+          gateInWriteRequest.getTruckHeadNo())) {
+        throw new BusinessException(
+            "PM Head No " + dbExports.getBaseCommonGateInOutAttribute().getPmHeadNo() + " already in use");
+      } else if (StringUtils.equalsIgnoreCase(dbExports.getBaseCommonGateInOutAttribute().getPmPlateNo(),
+          gateInWriteRequest.getTruckPlateNo())) {
+        throw new BusinessException(
+            "PM plate No " + dbExports.getBaseCommonGateInOutAttribute().getPmPlateNo() + " already in use");
+      }
+    }
+
+    return false;
+
+  }
+
 
 }

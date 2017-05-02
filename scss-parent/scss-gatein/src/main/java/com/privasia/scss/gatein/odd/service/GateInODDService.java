@@ -34,145 +34,146 @@ import com.querydsl.core.types.Predicate;
 @Service("gateInODDService")
 public class GateInODDService {
 
-	private ModelMapper modelMapper;
+  private ModelMapper modelMapper;
 
-	private ODDRepository oddRepository;
+  private ODDRepository oddRepository;
 
-	private HDBSBookingDetailRepository hdbsBookingDetailRepository;
+  private HDBSBookingDetailRepository hdbsBookingDetailRepository;
 
-	@Autowired
-	public void setModelMapper(ModelMapper modelMapper) {
-		this.modelMapper = modelMapper;
-	}
+  @Autowired
+  public void setModelMapper(ModelMapper modelMapper) {
+    this.modelMapper = modelMapper;
+  }
 
-	@Autowired
-	public void setHdbsBookingDetailRepository(HDBSBookingDetailRepository hdbsBookingDetailRepository) {
-		this.hdbsBookingDetailRepository = hdbsBookingDetailRepository;
-	}
+  @Autowired
+  public void setHdbsBookingDetailRepository(HDBSBookingDetailRepository hdbsBookingDetailRepository) {
+    this.hdbsBookingDetailRepository = hdbsBookingDetailRepository;
+  }
 
-	@Autowired
-	public void setOddRepository(ODDRepository oddRepository) {
-		this.oddRepository = oddRepository;
-	}
+  @Autowired
+  public void setOddRepository(ODDRepository oddRepository) {
+    this.oddRepository = oddRepository;
+  }
 
-	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
-	public List<WHODD> saveODDGateInInFo(GateInWriteRequest gateInWriteRequest, Card card, Client gateInClient,
-			SystemUser gateInClerk, ImpExpFlagStatus impExpFlag) { 
+  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
+  public List<WHODD> saveODDGateInInFo(GateInWriteRequest gateInWriteRequest, Card card, Client gateInClient,
+      SystemUser gateInClerk, ImpExpFlagStatus impExpFlag) {
 
-		if (gateInWriteRequest.getWhoddContainers() == null || gateInWriteRequest.getWhoddContainers().isEmpty())
-			throw new BusinessException("Invalid GateInWriteRequest to save ODD ! ");
-		List<WHODD> oddSavedList = new ArrayList<WHODD>();
-		gateInWriteRequest.getWhoddContainers().forEach(whODDdto -> {
+    if (gateInWriteRequest.getWhoddContainers() == null || gateInWriteRequest.getWhoddContainers().isEmpty())
+      throw new BusinessException("Invalid GateInWriteRequest to save ODD ! ");
+    List<WHODD> oddSavedList = new ArrayList<WHODD>();
+    gateInWriteRequest.getWhoddContainers().forEach(whODDdto -> {
 
-			if (gateInWriteRequest.isOddReject()) {
-				whODDdto.setGateInStatus(TransactionStatus.REJECT.getValue());
-				
-				if(StringUtils.isEmpty(whODDdto.getContainer01().getRemarks()))
-					throw new BusinessException("Rejection Remarks is need for container  : "+whODDdto.getContainer01().getContainerNo());
-				if(StringUtils.isEmpty(whODDdto.getContainer01().getRejectionReason()))
-					throw new BusinessException("Rejection Reason is need for container  : "+whODDdto.getContainer01().getContainerNo());
-				
-				if (whODDdto.getContainer02().isPresent()) {
-					if(StringUtils.isEmpty(whODDdto.getContainer02().get().getRemarks()))
-						throw new BusinessException("Rejection Remarks is need for container  : "+whODDdto.getContainer02().get().getContainerNo());
-					if(StringUtils.isEmpty(whODDdto.getContainer02().get().getRejectionReason()))
-						throw new BusinessException("Rejection Reason is need for container  : "+whODDdto.getContainer02().get().getContainerNo());
-				}
-				
-			} else {
-				whODDdto.setGateInStatus(TransactionStatus.APPROVED.getValue());
-			}
+      if (gateInWriteRequest.isOddReject()) {
+        whODDdto.setGateInStatus(TransactionStatus.REJECT.getValue());
 
-			whODDdto.setPmPlateNo(gateInWriteRequest.getTruckPlateNo());
-			whODDdto.setPmHeadNo(gateInWriteRequest.getTruckHeadNo());
-			whODDdto.setTimeGateIn(gateInWriteRequest.getGateInDateTime());
-			whODDdto.setTimeGateInOk(LocalDateTime.now());
-			whODDdto.setInOutFlag(GateInOutStatus.IN.getValue());
+        if (StringUtils.isEmpty(whODDdto.getContainer01().getRemarks()))
+          throw new BusinessException(
+              "Rejection Remarks is need for container  : " + whODDdto.getContainer01().getContainerNo());
+        if (StringUtils.isEmpty(whODDdto.getContainer01().getRejectionReason()))
+          throw new BusinessException(
+              "Rejection Reason is need for container  : " + whODDdto.getContainer01().getContainerNo());
 
-			WHODD whODD = modelMapper.map(whODDdto, WHODD.class);
+        if (whODDdto.getContainer02().isPresent()) {
+          if (StringUtils.isEmpty(whODDdto.getContainer02().get().getRemarks()))
+            throw new BusinessException(
+                "Rejection Remarks is need for container  : " + whODDdto.getContainer02().get().getContainerNo());
+          if (StringUtils.isEmpty(whODDdto.getContainer02().get().getRejectionReason()))
+            throw new BusinessException(
+                "Rejection Reason is need for container  : " + whODDdto.getContainer02().get().getContainerNo());
+        }
 
-			if (whODDdto.getContainer01() != null) {
-				whODD.getContainer01().setOddStatus(TransactionStatus.INPROGRESS);
-				if (whODDdto.getContainer01().getHdbsBkgDetailNoId() != null) {
-					Optional<HDBSBkgDetail> optHDBSBookingDetail = hdbsBookingDetailRepository
-							.findOne(whODDdto.getContainer01().getHdbsBkgDetailNoId());
-					HDBSBkgDetail hdbsBookingDetail = optHDBSBookingDetail
-							.orElseThrow(() -> new ResultsNotFoundException("Invalid HDBS Booking Detail ID :"
-									+ whODDdto.getContainer01().getHdbsBkgDetailNoId()));
-					whODD.getContainer01().setHdbsBkgDetailNo(hdbsBookingDetail);
-					whODD.getContainer01().setHdbsStatus(hdbsBookingDetail.getStatusCode());
-					hdbsBookingDetail.setScssStatusCode(SCSSHDBSStatus.IN_PROGRESS);
-					hdbsBookingDetail.setOddTimeGateInOk(whODD.getTimeGateInOk());
-					hdbsBookingDetail.setOddIdSeq(whODD);
-				}
-			}
-			if (whODDdto.getContainer02().isPresent()) {
-				whODD.getContainer02().setOddStatus(TransactionStatus.INPROGRESS);
-				if (whODDdto.getContainer02().get().getHdbsBkgDetailNoId() != null) {
+      } else {
+        whODDdto.setGateInStatus(TransactionStatus.APPROVED.getValue());
+      }
 
-					Optional<HDBSBkgDetail> optHDBSBookingDetail = hdbsBookingDetailRepository
-							.findOne(whODDdto.getContainer02().get().getHdbsBkgDetailNoId());
-					HDBSBkgDetail hdbsBookingDetail = optHDBSBookingDetail
-							.orElseThrow(() -> new ResultsNotFoundException("Invalid HDBS Booking Detail ID :"
-									+ whODDdto.getContainer02().get().getHdbsBkgDetailNoId()));
+      whODDdto.setPmPlateNo(gateInWriteRequest.getTruckPlateNo());
+      whODDdto.setPmHeadNo(gateInWriteRequest.getTruckHeadNo());
+      whODDdto.setTimeGateIn(gateInWriteRequest.getGateInDateTime());
+      whODDdto.setTimeGateInOk(LocalDateTime.now());
+      whODDdto.setInOutFlag(GateInOutStatus.IN.getValue());
 
-					whODD.getContainer02().setHdbsBkgDetailNo(hdbsBookingDetail);
-					whODD.getContainer02().setHdbsStatus(hdbsBookingDetail.getStatusCode());
-					hdbsBookingDetail.setScssStatusCode(SCSSHDBSStatus.IN_PROGRESS);
-					hdbsBookingDetail.setOddTimeGateInOk(whODD.getTimeGateInOk());
-					hdbsBookingDetail.setOddIdSeq(whODD);
-				}
-			}
+      WHODD whODD = modelMapper.map(whODDdto, WHODD.class);
 
-			whODD.setCard(card);
-			whODD.setGateInClerk(gateInClerk);
-			whODD.setGateInClient(gateInClient);
+      if (whODDdto.getContainer01() != null) {
+        whODD.getContainer01().setOddStatus(TransactionStatus.INPROGRESS);
+        if (whODDdto.getContainer01().getHdbsBkgDetailNoId() != null) {
+          Optional<HDBSBkgDetail> optHDBSBookingDetail =
+              hdbsBookingDetailRepository.findOne(whODDdto.getContainer01().getHdbsBkgDetailNoId());
+          HDBSBkgDetail hdbsBookingDetail = optHDBSBookingDetail.orElseThrow(() -> new ResultsNotFoundException(
+              "Invalid HDBS Booking Detail ID :" + whODDdto.getContainer01().getHdbsBkgDetailNoId()));
+          whODD.getContainer01().setHdbsBkgDetailNo(hdbsBookingDetail);
+          whODD.getContainer01().setHdbsStatus(hdbsBookingDetail.getStatusCode());
+          hdbsBookingDetail.setScssStatusCode(SCSSHDBSStatus.IN_PROGRESS);
+          hdbsBookingDetail.setOddTimeGateInOk(whODD.getTimeGateInOk());
+          hdbsBookingDetail.setOddIdSeq(whODD);
+        }
+      }
+      if (whODDdto.getContainer02().isPresent()) {
+        whODD.getContainer02().setOddStatus(TransactionStatus.INPROGRESS);
+        if (whODDdto.getContainer02().get().getHdbsBkgDetailNoId() != null) {
 
-			// before save check the pm plate in used
-			if (!isPlateNoHeadNoUsed(whODD)) {
-				oddRepository.save(whODD);
-				oddSavedList.add(whODD);
-			}
+          Optional<HDBSBkgDetail> optHDBSBookingDetail =
+              hdbsBookingDetailRepository.findOne(whODDdto.getContainer02().get().getHdbsBkgDetailNoId());
+          HDBSBkgDetail hdbsBookingDetail = optHDBSBookingDetail.orElseThrow(() -> new ResultsNotFoundException(
+              "Invalid HDBS Booking Detail ID :" + whODDdto.getContainer02().get().getHdbsBkgDetailNoId()));
 
-		});
+          whODD.getContainer02().setHdbsBkgDetailNo(hdbsBookingDetail);
+          whODD.getContainer02().setHdbsStatus(hdbsBookingDetail.getStatusCode());
+          hdbsBookingDetail.setScssStatusCode(SCSSHDBSStatus.IN_PROGRESS);
+          hdbsBookingDetail.setOddTimeGateInOk(whODD.getTimeGateInOk());
+          hdbsBookingDetail.setOddIdSeq(whODD);
+        }
+      }
 
-		return oddSavedList;
-	}
+      whODD.setCard(card);
+      whODD.setGateInClerk(gateInClerk);
+      whODD.setGateInClient(gateInClient);
 
-	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-	public boolean isPlateNoHeadNoUsed(WHODD whodd) {
+      // before save check the pm plate in used
+      if (!isPlateNoHeadNoUsed(whODD)) {
+        oddRepository.save(whODD);
+        oddSavedList.add(whODD);
+      }
 
-		Predicate byHeadNo = ODDPredicates.byPMHeadNo(whodd.getPmHeadNo());
-		Predicate byPlateNo = ODDPredicates.byPMPlateNo(whodd.getPmPlateNo());
-		Predicate bycon01ODDStatus = ODDPredicates.byContainer01Status(whodd.getContainer01().getOddStatus());
-		Predicate bycon02ODDStatus = ODDPredicates.byContainer02Status(whodd.getContainer02().getOddStatus());
-		Predicate byTransactionType = ODDPredicates.byTransactionType(whodd.getImpExpFlag());
+    });
 
-		Predicate condition = ExpressionUtils.allOf(
-				ExpressionUtils.or(ExpressionUtils.and(ExpressionUtils.or(byHeadNo, byPlateNo), bycon01ODDStatus),
-						ExpressionUtils.and(ExpressionUtils.or(byHeadNo, byPlateNo), bycon02ODDStatus)),
-				byTransactionType);
+    return oddSavedList;
+  }
 
-		Iterable<WHODD> oddList = oddRepository.findAll(condition);
+  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+  public boolean isPlateNoHeadNoUsed(WHODD whodd) {
 
-		if (oddList == null || Stream.of(oddList).count() == 0)
-			return false;
+    Predicate byHeadNo = ODDPredicates.byPMHeadNo(whodd.getPmHeadNo());
+    Predicate byPlateNo = ODDPredicates.byPMPlateNo(whodd.getPmPlateNo());
+    Predicate bycon01ODDStatus = ODDPredicates.byContainer01Status(whodd.getContainer01().getOddStatus());
+    Predicate bycon02ODDStatus = ODDPredicates.byContainer02Status(whodd.getContainer02().getOddStatus());
+    Predicate byTransactionType = ODDPredicates.byTransactionType(whodd.getImpExpFlag());
 
-		if (oddList.iterator().hasNext()) {
-			WHODD dbODD = oddList.iterator().next();
-			if (StringUtils.equalsIgnoreCase(dbODD.getPmHeadNo(), whodd.getPmHeadNo())
-					&& StringUtils.equalsIgnoreCase(dbODD.getPmPlateNo(), whodd.getPmPlateNo())) {
-				throw new BusinessException("PM Head No " + dbODD.getPmHeadNo() + "and PM plate No "
-						+ dbODD.getPmPlateNo() + " already in use.");
-			} else if (StringUtils.equalsIgnoreCase(dbODD.getPmHeadNo(), whodd.getPmHeadNo())) {
-				throw new BusinessException("PM Head No " + dbODD.getPmHeadNo() + " already in use");
-			} else if (StringUtils.equalsIgnoreCase(dbODD.getPmPlateNo(), whodd.getPmPlateNo())) {
-				throw new BusinessException("PM plate No " + dbODD.getPmPlateNo() + " already in use");
-			}
-		}
+    Predicate condition = ExpressionUtils
+        .allOf(ExpressionUtils.or(ExpressionUtils.and(ExpressionUtils.or(byHeadNo, byPlateNo), bycon01ODDStatus),
+            ExpressionUtils.and(ExpressionUtils.or(byHeadNo, byPlateNo), bycon02ODDStatus)), byTransactionType);
 
-		return false;
+    Iterable<WHODD> oddList = oddRepository.findAll(condition);
 
-	}
+    if (oddList == null || Stream.of(oddList).count() == 0)
+      return false;
+
+    if (oddList.iterator().hasNext()) {
+      WHODD dbODD = oddList.iterator().next();
+      if (StringUtils.equalsIgnoreCase(dbODD.getPmHeadNo(), whodd.getPmHeadNo())
+          && StringUtils.equalsIgnoreCase(dbODD.getPmPlateNo(), whodd.getPmPlateNo())) {
+        throw new BusinessException(
+            "PM Head No " + dbODD.getPmHeadNo() + "and PM plate No " + dbODD.getPmPlateNo() + " already in use.");
+      } else if (StringUtils.equalsIgnoreCase(dbODD.getPmHeadNo(), whodd.getPmHeadNo())) {
+        throw new BusinessException("PM Head No " + dbODD.getPmHeadNo() + " already in use");
+      } else if (StringUtils.equalsIgnoreCase(dbODD.getPmPlateNo(), whodd.getPmPlateNo())) {
+        throw new BusinessException("PM plate No " + dbODD.getPmPlateNo() + " already in use");
+      }
+    }
+
+    return false;
+
+  }
 
 }
