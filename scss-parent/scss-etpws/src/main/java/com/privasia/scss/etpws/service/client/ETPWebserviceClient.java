@@ -157,7 +157,7 @@ public class ETPWebserviceClient extends WebServiceGatewaySupport {
 
               jaxBRresponse =
                   (JAXBElement<UpdateSolasForScssGateInResponseType>) getWebServiceTemplate().marshalSendAndReceive(
-                      wsServerUri, parameters, new SoapActionCallback(clientDefaultUri + "/updateSolasForScssGateIn"));
+                      wsServerUri, request, new SoapActionCallback(clientDefaultUri + "/updateSolasForScssGateIn"));
 
               response = jaxBRresponse.getValue();
 
