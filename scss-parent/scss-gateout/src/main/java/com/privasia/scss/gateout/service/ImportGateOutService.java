@@ -105,51 +105,12 @@ public class ImportGateOutService {
       modelMapper.map(gatePass, importContainer);
 
       if (gatePass.getBaseCommonGateInOutAttribute() != null) {
-        /*
-         * importContainer.setBaseCommonGateInOutAttribute(new BaseCommonGateInOutDTO()); if
-         * (gatePass.getBaseCommonGateInOutAttribute().getCard() != null) {
-         * importContainer.getBaseCommonGateInOutAttribute()
-         * .getCard().setCardID(gatePass.getBaseCommonGateInOutAttribute().getCard().getCardID()); }
-         * if (gatePass.getBaseCommonGateInOutAttribute().getEirStatus() != null) {
-         * importContainer.getBaseCommonGateInOutAttribute()
-         * .setEirStatus(gatePass.getBaseCommonGateInOutAttribute().getEirStatus().getValue()); } if
-         * (gatePass.getBaseCommonGateInOutAttribute().getGateInClerk() != null) { SystemUserDTO
-         * gateInClerk = new SystemUserDTO();
-         * modelMapper.map(gatePass.getBaseCommonGateInOutAttribute().getGateInClerk(),
-         * gateInClerk); if
-         * (!(gatePass.getBaseCommonGateInOutAttribute().getGateInClerk().getCommonContactAttribute(
-         * ) == null)) {
-         * gateOutReponse.setClerkName(gatePass.getBaseCommonGateInOutAttribute().getGateInClerk()
-         * .getCommonContactAttribute().getPersonName()); }
-         * importContainer.getBaseCommonGateInOutAttribute().setGateInClerk(gateInClerk); }
-         */
-
+       
         if (!(gatePass.getBaseCommonGateInOutAttribute().getTimeGateIn() == null)) {
           LocalDateTime timeGateIn = gatePass.getBaseCommonGateInOutAttribute().getTimeGateIn();
           DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy HH:mm");
           gateOutReponse.setGateInDateTime(timeGateIn.format(formatter));
         }
-
-        /*
-         * if (gatePass.getBaseCommonGateInOutAttribute().getGateInClient() != null) { ClientDTO
-         * gateInClient = new ClientDTO();
-         * modelMapper.map(gatePass.getBaseCommonGateInOutAttribute().getGateInClient(),
-         * gateInClient);
-         * gateOutReponse.setGateInLaneNo(gatePass.getBaseCommonGateInOutAttribute().getGateInClient
-         * ().getLaneNo());
-         * importContainer.getBaseCommonGateInOutAttribute().setGateInClient(gateInClient); }
-         * 
-         * if (gatePass.getBaseCommonGateInOutAttribute().getHpabBooking()!=null) {
-         * importContainer.getBaseCommonGateInOutAttribute()
-         * .setHpabBooking(gatePass.getBaseCommonGateInOutAttribute().getHpabBooking().getBookingID(
-         * )); }
-         * 
-         * importContainer.getBaseCommonGateInOutAttribute()
-         * .setPmHeadNo(gatePass.getBaseCommonGateInOutAttribute().getPmHeadNo());
-         * importContainer.getBaseCommonGateInOutAttribute()
-         * .setPmPlateNo(gatePass.getBaseCommonGateInOutAttribute().getPmHeadNo());
-         */
-
       }
       // adding log info
       if (gatePass.getContainerLength() != null) {
@@ -357,13 +318,13 @@ public class ImportGateOutService {
     // return new AsyncResult<Boolean>(true);
   }
 
-
+  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRES_NEW, readOnly = false)
   public void updateGatePassReference(FileDTO fileDTO) {
 
     Optional<List<GatePass>> gatePassOptList = gatePassRepository
-        .findByGatePassNoIn(Arrays.asList(fileDTO.getGatePassNo1().orElse(0l), fileDTO.getGatePassNo2().orElse(0l)));
+        .findByGatePassNoIn(Arrays.asList(fileDTO.getGatePassNo1().orElse(null), fileDTO.getGatePassNo2().orElse(null)));
 
-    if (!(gatePassOptList.orElse(null) == null || gatePassOptList.get().isEmpty())) {
+    if (gatePassOptList.isPresent() && ! gatePassOptList.get().isEmpty()) {
       gatePassOptList.get().forEach(gatePass -> {
         assignUpdatedValuesGatePass(gatePass, fileDTO);
         gatePassRepository.save(gatePass);

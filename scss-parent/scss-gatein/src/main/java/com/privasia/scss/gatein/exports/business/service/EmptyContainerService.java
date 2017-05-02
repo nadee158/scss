@@ -3,6 +3,9 @@
  */
 package com.privasia.scss.gatein.exports.business.service;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +14,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.privasia.scss.common.dto.ExportContainer;
-import com.privasia.scss.common.dto.GateInWriteRequest;
 import com.privasia.scss.common.enums.ContainerFullEmptyType;
 import com.privasia.scss.core.exception.BusinessException;
 import com.privasia.scss.core.model.ISOCode;
@@ -33,69 +35,83 @@ public class EmptyContainerService {
 	}
 
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-	public GateInWriteRequest refreshEmptyWeightByISO(GateInWriteRequest gateInWriteRequest) {
-		
-		gateInWriteRequest.getExportContainers().forEach(exportContainer -> {
-			if (StringUtils.equalsIgnoreCase(ContainerFullEmptyType.EMPTY.getValue(),
-					exportContainer.getContainer().getContainerFullOrEmpty())) {
+	public void setEmptyContainerWeight(ExportContainer emptyContainer, boolean validateKeyInISO) {
 
-				if (exportContainer.getContainer().getContainerISOCode() == null)
-					throw new BusinessException(
-							"ISO Code not provided for the container : " + exportContainer.getContainer());
-				ISOCode isoCodeDto = isoCodeService
-						.getIsoCodeTarWeight(exportContainer.getContainer().getContainerISOCode());
+		if (validateKeyInISO && StringUtils.isEmpty(emptyContainer.getContainer().getContainerISOCode()))
+			throw new BusinessException("ISO Code need to be provided");
 
-				exportContainer.setExpNetWeight(isoCodeDto.getTareWeight());
-				exportContainer.setEmptyWeight(isoCodeDto.getTareWeight());
-				int emptyTotalWeightBridge = gateInWriteRequest.getTotalEmptyWeightBridge();
-				emptyTotalWeightBridge =+ isoCodeDto.getTareWeight();
-				gateInWriteRequest.setTotalEmptyWeightBridge(emptyTotalWeightBridge);
-			}
-		});
+		if (StringUtils.isNotEmpty(emptyContainer.getContainer().getContainerISOCode())) {
+			ISOCode isoCode = isoCodeService.getIsoCodeTarWeight(emptyContainer.getContainer().getContainerISOCode());
 
-		return gateInWriteRequest;
+			emptyContainer.setExpNetWeight(isoCode.getTareWeight());
+			emptyContainer.setEmptyWeight(isoCode.getTareWeight());
+		}
 
 	}
 
 	/**
 	 * Calculate the WeightBridge For Empty ExportContainer
 	 */
-	public void calculateWeightBridgeAndNetWeightForEmptyContainer(GateInWriteRequest gateInWriteRequest) {
+	public void calculateWeightBridgeAndNetWeightForEmpty(List<ExportContainer> exports, boolean validateKeyInISO,
+			int weightBridge) {
 
-		if (checkForEmptyContainer(gateInWriteRequest)) {
-			gateInWriteRequest = refreshEmptyWeightByISO(gateInWriteRequest);
+		List<ExportContainer> emptyContainerList = exports.stream()
+				.filter(exportContainer -> StringUtils.equalsIgnoreCase(ContainerFullEmptyType.EMPTY.getValue(),
+						exportContainer.getContainer().getContainerFullOrEmpty()))
+				.collect(Collectors.toList());
 
-			ExportContainer fullContainer = gateInWriteRequest.getExportContainers().stream()
-					.filter(expCon -> StringUtils.equalsIgnoreCase(ContainerFullEmptyType.FULL.getValue(),
-							expCon.getContainer().getContainerFullOrEmpty()))
-					.findFirst().get();
+		if (emptyContainerList != null && !emptyContainerList.isEmpty()) {
+			// 1empty 0r both
 
-			if (fullContainer != null) { // one empty and and full
-				ExportContainer emptyContainer = gateInWriteRequest.getExportContainers().stream()
+			emptyContainerList.forEach(exp -> {
+				setEmptyContainerWeight(exp, validateKeyInISO);
+			});
+
+			if (emptyContainerList.size() == 1) {
+				// one empty and can have one full
+
+				ExportContainer fullContainer = exports.stream()
+						.filter(expCon -> StringUtils.equalsIgnoreCase(ContainerFullEmptyType.FULL.getValue(),
+								expCon.getContainer().getContainerFullOrEmpty()))
+						.findFirst().orElse(null);
+
+				calculateWeightBridge(emptyContainerList.get(0), Optional.ofNullable(fullContainer), weightBridge);
+
+			} else { // all empty
+
+				ExportContainer emptyContainer02 = exports.stream()
 						.filter(expCon -> StringUtils.equalsIgnoreCase(ContainerFullEmptyType.EMPTY.getValue(),
-								expCon.getContainer().getContainerFullOrEmpty())).findFirst().get();
-				emptyContainer.setExpWeightBridge(emptyContainer.getEmptyWeight());
-				fullContainer.setExpWeightBridge(gateInWriteRequest.getWeightBridge() - emptyContainer.getEmptyWeight());
-			} else { // containers are empty
-				
-				final int totalEmptyWeightBridge = gateInWriteRequest.getTotalEmptyWeightBridge();
-				gateInWriteRequest.getExportContainers().stream()
-					.filter(expCon -> StringUtils.equalsIgnoreCase(ContainerFullEmptyType.EMPTY.getValue(),
-							expCon.getContainer().getContainerFullOrEmpty())).forEach(emptyContainer ->{
-								emptyContainer.setExpWeightBridge(totalEmptyWeightBridge);
-				});
-				
+								expCon.getContainer().getContainerFullOrEmpty()))
+						.findFirst().orElse(null);
+
+				calculateWeightBridge(emptyContainerList.get(0), Optional.ofNullable(emptyContainer02), weightBridge);
 			}
 		}
 
 	}
 
-	public boolean checkForEmptyContainer(GateInWriteRequest gateInWriteRequest) {
+	private void calculateWeightBridge(ExportContainer emptyContainer, Optional<ExportContainer> fullEmptyContainer,
+			int weightBridge) {
 
-		return gateInWriteRequest.getExportContainers().stream()
-				.filter(expCon -> StringUtils.equalsIgnoreCase(ContainerFullEmptyType.EMPTY.getValue(),
-						expCon.getContainer().getContainerFullOrEmpty()))
-				.findFirst().isPresent();
+		if (fullEmptyContainer.isPresent()) {
+
+			if (StringUtils.equalsIgnoreCase(ContainerFullEmptyType.EMPTY.getValue(),
+					fullEmptyContainer.get().getContainer().getContainerFullOrEmpty())) { // both
+																							// empty
+
+				Double totalWeightBridge = new Double(emptyContainer.getEmptyWeight())
+						+ new Double(fullEmptyContainer.get().getEmptyWeight());
+				emptyContainer.setExpWeightBridge(totalWeightBridge.intValue());
+				fullEmptyContainer.get().setExpWeightBridge(totalWeightBridge.intValue());
+
+			} else { // optContainer is a FUll
+				emptyContainer.setExpWeightBridge(emptyContainer.getEmptyWeight());
+				fullEmptyContainer.get().setExpWeightBridge(weightBridge - emptyContainer.getEmptyWeight());
+			}
+
+		} else {// single empty
+			emptyContainer.setExpWeightBridge(emptyContainer.getEmptyWeight());
+		}
 
 	}
 

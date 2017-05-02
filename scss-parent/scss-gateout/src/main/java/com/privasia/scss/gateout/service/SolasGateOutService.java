@@ -1,7 +1,6 @@
 package com.privasia.scss.gateout.service;
 
 import java.io.ByteArrayInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -109,7 +108,7 @@ public class SolasGateOutService {
   }
 
   
-  @Async
+  //@Async
   @Transactional(value = "transactionManager", propagation = Propagation.REQUIRES_NEW, readOnly = false)
   public Future<Boolean> isSolasApplicable(List<Exports> exportsList) throws JRException, IOException, ParseException {
 
@@ -148,8 +147,14 @@ public class SolasGateOutService {
       FileDTO fileInfoDTO = new FileDTO();
       fileInfoDTO.setFileName(Optional.ofNullable(solasPassFileDTO.getCertificateNo()));
       fileInfoDTO.setTrxType(TransactionType.EXPORT);
-      fileInfoDTO.setExportNoSeq1(Optional.ofNullable(Long.parseLong(solasPassFileDTO.getExportSEQ01())));
-      fileInfoDTO.setExportNoSeq2(Optional.ofNullable(Long.parseLong(solasPassFileDTO.getExportSEQ02())));
+      
+      if(StringUtils.isNotEmpty(solasPassFileDTO.getExportSEQ01())){
+    	  fileInfoDTO.setExportNoSeq1(Optional.ofNullable(Long.parseLong(solasPassFileDTO.getExportSEQ01())));
+      }
+      if(StringUtils.isNotEmpty(solasPassFileDTO.getExportSEQ02())){
+    	  fileInfoDTO.setExportNoSeq2(Optional.ofNullable(Long.parseLong(solasPassFileDTO.getExportSEQ02())));
+      }
+      
       fileInfoDTO.setFileSize(pdfBytes.length);
       fileInfoDTO.setFileStream(new ByteArrayInputStream(pdfBytes));
       fileInfoDTO.setCollectionType(CollectionType.SOLAS_CERTIFICATE_COLLECTION);

@@ -249,13 +249,14 @@ public class GateOutODDService {
 
     return null;
   }
-
+  
+  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRES_NEW, readOnly = false)
   public void updateODDReference(FileDTO fileDTO) {
 
     Optional<List<WHODD>> oddOptList = oddRepository.findByOddIdSeqIn(Arrays.asList(fileDTO.getOddImpSeq1().orElse(0l),
-        fileDTO.getOddImpSeq2().orElse(0l), fileDTO.getOddExpSeq1().orElse(0l), fileDTO.getOddExpSeq2().orElse(0l)));
+        fileDTO.getOddImpSeq2().orElse(0l), fileDTO.getOddExpSeq1().orElse(null), fileDTO.getOddExpSeq2().orElse(null)));
 
-    if (!(oddOptList.orElse(null) == null || oddOptList.get().isEmpty())) {
+    if (oddOptList.isPresent() && !oddOptList.get().isEmpty()) {
       oddOptList.get().forEach(whODD -> {
         assignUpdatedValuedWHODDobj(whODD, fileDTO);
         oddRepository.save(whODD);

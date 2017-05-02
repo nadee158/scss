@@ -9,11 +9,19 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 
 import com.mongodb.Mongo;
 import com.mongodb.MongoClient;
-import com.privasia.scss.common.enums.CollectionType;
 
 @Configuration
 @EnableMongoRepositories(basePackages = "com.privasia.scss.gateout.mongo.repository")
 public class MongoConfig extends AbstractMongoConfiguration {
+	
+  @Value("${collection.solas}")
+  private String solasCollection;
+  
+  @Value("${collection.pdf}")
+  private String pdfCollection;
+  
+  @Value("${collection.zip}")
+  private String zipCollection;
 
   @Value("${spring.data.mongodb.database}")
   private String databaseName;
@@ -39,18 +47,19 @@ public class MongoConfig extends AbstractMongoConfiguration {
 
   @Bean(name = "pdfFileGridFsTemplate")
   public GridFsTemplate pdfFileGridFsTemplate() throws Exception {
-    return new GridFsTemplate(mongoDbFactory(), mappingMongoConverter(), CollectionType.PDF_FILE_COLLECTION.getValue());
+    return new GridFsTemplate(mongoDbFactory(), mappingMongoConverter(), pdfCollection);
   }
 
   @Bean(name = "zipFileGridFsTemplate")
   public GridFsTemplate zipFileGridFsTemplate() throws Exception {
-    return new GridFsTemplate(mongoDbFactory(), mappingMongoConverter(), CollectionType.ZIP_FILE_COLLECTION.getValue());
+    return new GridFsTemplate(mongoDbFactory(), mappingMongoConverter(), zipCollection);
   }
 
   @Bean(name = "solasCertificateGridFsTemplate")
   public GridFsTemplate solasCertificateGridFsTemplate() throws Exception {
-    return new GridFsTemplate(mongoDbFactory(), mappingMongoConverter(),
-        CollectionType.SOLAS_CERTIFICATE_COLLECTION.getValue());
+	  System.out.println("mongoDbFactory().getDb().getCollection(solasCertificate).getFullName() : "+mongoDbFactory().getDb().getCollection("solasCertificate").getFullName());
+	  System.out.println("mongoDbFactory().getDb().getCollection(solasCertificate).getName() : "+mongoDbFactory().getDb().getCollection("solasCertificate").getName());
+    return new GridFsTemplate(mongoDbFactory(), mappingMongoConverter(), mongoDbFactory().getDb().getCollection("solasCertificate").getFullName());
   }
 
   @Bean(name = "gridFsTemplate")

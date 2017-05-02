@@ -268,9 +268,6 @@ public class ImportExportGateInService {
 
     SystemUser gateInClerk = systemUserRepository.findOne(SecurityHelper.getCurrentUserId()).orElseThrow(
         () -> new AuthenticationServiceException("Log in User Not Found : " + SecurityHelper.getCurrentUserId()));
-    System.out.println("gateInClerk " + gateInClerk);
-
-    // NEED TO CALL BUSINESS FUNCTIONS
 
     /*
      * Future<Boolean> impSave = null; Future<Boolean> expSave = null;
@@ -291,13 +288,13 @@ public class ImportExportGateInService {
         break;
       case EXPORT:
         // impSave = new AsyncResult<Boolean>(true);
-        exportGateInService.validateExport(gateInWriteRequest.getExportContainers());
+        exportGateInService.validateExport(gateInWriteRequest);
         gateInReponse = externalContainerInformationService.sendGateInRequest(gateInWriteRequest);
         gateInWriteRequest.setExportContainers(gateInReponse.getExportContainers());
         exportGateInService.saveGateInInfo(gateInWriteRequest, gateInClient, gateInClerk, card);
         break;
       case IMPORT_EXPORT:
-        exportGateInService.validateExport(gateInWriteRequest.getExportContainers());
+        exportGateInService.validateExport(gateInWriteRequest);
         gateInReponse = externalContainerInformationService.sendGateInRequest(gateInWriteRequest);
         gateInWriteRequest.setImportContainers(gateInReponse.getImportContainers());
         gateInWriteRequest.setExportContainers(gateInReponse.getExportContainers());

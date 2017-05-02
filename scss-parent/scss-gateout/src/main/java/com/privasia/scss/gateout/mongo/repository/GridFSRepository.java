@@ -55,6 +55,7 @@ public class GridFSRepository {
 		case PDF_FILE_COLLECTION:
 			return pdfFileGridFsTemplate.store(content, metadata);
 		case SOLAS_CERTIFICATE_COLLECTION:
+			System.out.println("solasCertificateGridFsTemplate **********************************************");
 			return solasCertificateGridFsTemplate.store(content, metadata);
 		case ZIP_FILE_COLLECTION:
 			return zipFileGridFsTemplate.store(content, metadata);

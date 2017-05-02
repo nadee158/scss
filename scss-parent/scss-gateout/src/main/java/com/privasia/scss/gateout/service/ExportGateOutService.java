@@ -184,15 +184,16 @@ public class ExportGateOutService {
     // return new AsyncResult<Boolean>(true);
   }
   
-  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
+  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRES_NEW, readOnly = false)
   public void updateExportReference(FileDTO fileDTO) {
 
     Optional<List<Exports>> exportsOptList = exportsRepository
         .findByExportIDIn(Arrays.asList(fileDTO.getExportNoSeq1().orElse(null), fileDTO.getExportNoSeq2().orElse(null)));
-
-    if (!(exportsOptList.orElse(null) == null || exportsOptList.get().isEmpty())) {
+    System.out.println("exportsOptList size : "+exportsOptList.get().size());
+    if (exportsOptList.isPresent() && ! exportsOptList.get().isEmpty()) {
       exportsOptList.get().forEach(exports -> {
         assignUpdatedValuesExports(exports, fileDTO);
+        System.out.println("exports.getSolasCertNo : "+exports.getSolasCertNo());
         exportsRepository.save(exports);
       });
     } else {
