@@ -12,9 +12,6 @@ import com.mongodb.DBObject;
 import com.mongodb.gridfs.GridFSFile;
 import com.privasia.scss.common.enums.CollectionType;
 import com.privasia.scss.common.enums.TransactionType;
-import com.privasia.scss.core.repository.ExportsRepository;
-import com.privasia.scss.core.repository.GatePassRepository;
-import com.privasia.scss.core.repository.ODDRepository;
 import com.privasia.scss.gateout.dto.FileDTO;
 import com.privasia.scss.gateout.mongo.repository.GridFSRepository;
 
@@ -23,30 +20,9 @@ public class FileService {
 
   private GridFSRepository gridFSRepository;
 
-  private ODDRepository oddRepository;
-
-  private GatePassRepository gatePassRepository;
-
-  private ExportsRepository exportsRepository;
-
   @Autowired
   public void setGridFSRepository(GridFSRepository gridFSRepository) {
     this.gridFSRepository = gridFSRepository;
-  }
-
-  @Autowired
-  public void setOddRepository(ODDRepository oddRepository) {
-    this.oddRepository = oddRepository;
-  }
-
-  @Autowired
-  public void setGatePassRepository(GatePassRepository gatePassRepository) {
-    this.gatePassRepository = gatePassRepository;
-  }
-
-  @Autowired
-  public void setExportsRepository(ExportsRepository exportsRepository) {
-    this.exportsRepository = exportsRepository;
   }
 
   public Optional<String> saveFileToMongoDB(FileDTO fileDTO) {

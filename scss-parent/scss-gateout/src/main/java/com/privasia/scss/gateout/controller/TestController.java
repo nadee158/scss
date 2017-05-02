@@ -38,10 +38,6 @@ public class TestController {
 	@RequestMapping(value = "/checksolas", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResponseEntity<Void> checkSolas(@RequestBody List<ExportContainer> exportList) {
 		
-		for (ExportContainer exportContainer : exportList) {
-			System.out.println("exportContainer.getExportID :" + exportContainer.getExportID());
-		}
-		
 		exportGateOutService.testSolas(exportList);
 		return new ResponseEntity<Void>(HttpStatus.OK);
 	}

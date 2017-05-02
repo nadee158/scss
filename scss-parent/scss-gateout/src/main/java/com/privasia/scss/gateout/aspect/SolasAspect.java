@@ -3,65 +3,87 @@
  */
 package com.privasia.scss.gateout.aspect;
 
+import java.io.IOException;
+import java.text.ParseException;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
-import org.springframework.scheduling.annotation.Async;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.privasia.scss.common.annotation.SolasApplicable;
 import com.privasia.scss.core.model.Exports;
+import com.privasia.scss.gateout.service.SolasGateOutService;
+
+import net.sf.jasperreports.engine.JRException;
 
 /**
  * @author Janaka
  *
  */
-@Component
 @Aspect
+@Component
 public class SolasAspect {
 
 	private static final Log log = LogFactory.getLog(SolasAspect.class);
 	
-	@AfterReturning(pointcut="@annotation(solasApplicable)", returning="exportsList2")
-	@Async
-	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRES_NEW, readOnly = false)
-	public void solasApplicable(JoinPoint joinPoint, SolasApplicable solasApplicable, List<Exports> exportsList2) {
-		
-		
-		for (Exports exports : exportsList2) {
-			System.out.println("****** "+exports.getExportID());
-		}
+	private SolasGateOutService solasGateOutService;
+	
+	@Autowired
+	public void setSolasGateOutService(SolasGateOutService solasGateOutService) {
+		this.solasGateOutService = solasGateOutService;
+	}
 
-		System.out.println("*****************   solasApplicable *************************");
-		System.out.println("hijacked : " + joinPoint.getSignature().getName());
-		System.out.println("Method returned value is : " + joinPoint.getArgs()[0]);
-		System.out.println("******");
-
-		if (joinPoint.getArgs()[0] instanceof List) {
-			@SuppressWarnings("unchecked")
-			List<Exports> exportsList = (List<Exports>) joinPoint.getArgs()[0];
-			exportsList.forEach(exp ->{
-				
-				System.out.println("****** "+exp.getExportID());
-				
-			});
-			
-		} 
+	@AfterReturning(pointcut="@annotation(solasApplicable)", returning="returnValue")
+	public void solasApplicable(SolasApplicable solasApplicable, List<Exports> returnValue) {
 		
-		for(Object obj : joinPoint.getArgs()){
-			log.info("Method returned value is : " + obj);
-		}
-
 		log.info("*****************   solasApplicable called *************************");
-		log.info("hijacked : " + joinPoint.getSignature().getName());
-		log.info("Method returned value is : " + joinPoint.getArgs()[0]);
-		log.info("******");
+		System.out.println("*****************   solasApplicable *************************");
+		
+		System.out.println("****** RETURN VALUES EMPTY  "+returnValue.isEmpty());
+		
+		try {
+			Future<Boolean> isSolasApplicable = solasGateOutService.isSolasApplicable(returnValue);
+			
+			System.out.println("*****************  &&&&&&&&&&&&&&& *************************");
+			System.out.println("*****************  &&&&&&&&&&&&&&& *************************");
+			System.out.println("*****************  &&&&&&&&&&&&&&& *************************");
+			System.out.println("*****************  &&&&&&&&&&&&&&& *************************");
+			System.out.println("*****************  &&&&&&&&&&&&&&& *************************");
+			System.out.println("*****************  &&&&&&&&&&&&&&& *************************");
+			System.out.println("*****************  &&&&&&&&&&&&&&& *************************");
+			System.out.println("*****************  &&&&&&&&&&&&&&& *************************");
+			System.out.println("*****************  &&&&&&&&&&&&&&& *************************");
+			System.out.println("*****************  &&&&&&&&&&&&&&& *************************");
+			
+			System.out.println("*****************  &&&&&&&&&&&&&&& *************************");
+			System.out.println("*****************  &&&&&&&&&&&&&&& *************************");
+			System.out.println("*****************  &&&&&&&&&&&&&&& *************************");
+			System.out.println("*****************  &&&&&&&&&&&&&&& *************************");
+			System.out.println("*****************  &&&&&&&&&&&&&&& *************************");
+			System.out.println("*****************  &&&&&&&&&&&&&&& *************************");
+			System.out.println("*****************  &&&&&&&&&&&&&&& *************************");
+			
+			
+			boolean results = isSolasApplicable.get();
+			System.out.println("*****************  &&&&&&&&&&&&&&& ************************* "+results);
+		} catch (JRException | IOException | ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 	}
 

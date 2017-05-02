@@ -116,6 +116,6 @@ public interface ApplicationConstants {
   public static final String SMTP_CC = "SMTP_CC";
   public static final String SMTP_BCC = "SMTP_BCC";
 
-  public static final String E_SOLAS_PASS = "/solasPass.jrxml";
-  public static final String E_SOLAS_PASS_LOGO = "/logo.png";
+  public static final String E_SOLAS_PASS = "classpath:solasPass.jrxml";
+  public static final String E_SOLAS_PASS_LOGO = "classpath:logo.png";
 }

@@ -224,15 +224,14 @@ public class ExportGateOutService {
 	  
 	  List<Long> expIDList = new ArrayList<Long>();
 	  
-	  for (Long long1 : expIDList) {
-		  expIDList.add(long1);
+	  for (ExportContainer container : exportsList) {
+		  expIDList.add(container.getExportID());
 	  }
 	  
 	  Optional<List<Exports>> exportsOptList = exportsRepository
 		        .findByExportIDIn(expIDList);
 	  
-	  if(exportsOptList.isPresent()){
-		  
+	  if(exportsOptList.isPresent() && !exportsOptList.get().isEmpty()){
 		  return exportsOptList.get();
 	  }
 	  

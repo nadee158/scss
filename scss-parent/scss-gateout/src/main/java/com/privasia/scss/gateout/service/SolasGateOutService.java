@@ -1,6 +1,7 @@
 package com.privasia.scss.gateout.service;
 
 import java.io.ByteArrayInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -11,6 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
@@ -19,11 +21,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.privasia.scss.common.dto.SolasPassFileDTO;
+import com.privasia.scss.common.enums.CollectionType;
 import com.privasia.scss.common.enums.TransactionType;
 import com.privasia.scss.common.util.ApplicationConstants;
 import com.privasia.scss.core.exception.BusinessException;
@@ -103,9 +108,10 @@ public class SolasGateOutService {
     this.resourceLoader = resourceLoader;
   }
 
-
-  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
-  public boolean isSolasApplicable(List<Exports> exportsList) throws JRException, IOException, ParseException {
+  
+  @Async
+  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRES_NEW, readOnly = false)
+  public Future<Boolean> isSolasApplicable(List<Exports> exportsList) throws JRException, IOException, ParseException {
 
     boolean isSolasApplicable = false;
     // check if at least one export container is solas container
@@ -123,6 +129,7 @@ public class SolasGateOutService {
       final SolasPassFileDTO solasPassFileDTO = new SolasPassFileDTO();
 
       solasApplicableExportsList.forEach(exports -> {
+    	
         // generate solas certification - add data to SolasPassFileDTO
         // and pass
         constructSolasPassFileDTO(exports, solasPassFileDTO);
@@ -142,8 +149,10 @@ public class SolasGateOutService {
       fileInfoDTO.setFileName(Optional.ofNullable(solasPassFileDTO.getCertificateNo()));
       fileInfoDTO.setTrxType(TransactionType.EXPORT);
       fileInfoDTO.setExportNoSeq1(Optional.ofNullable(Long.parseLong(solasPassFileDTO.getExportSEQ01())));
+      fileInfoDTO.setExportNoSeq2(Optional.ofNullable(Long.parseLong(solasPassFileDTO.getExportSEQ02())));
       fileInfoDTO.setFileSize(pdfBytes.length);
       fileInfoDTO.setFileStream(new ByteArrayInputStream(pdfBytes));
+      fileInfoDTO.setCollectionType(CollectionType.SOLAS_CERTIFICATE_COLLECTION);
 
       // save to mongodb
       Optional<String> file1Id = fileService.saveFileToMongoDB(fileInfoDTO);
@@ -164,13 +173,17 @@ public class SolasGateOutService {
       isSolasApplicable = true;
     }
 
-    return isSolasApplicable;
+    return new AsyncResult<Boolean>(isSolasApplicable);
 
   }
 
   public List<SolasETPDTO> constructSolasETPDTO(Exports exports, List<SolasETPDTO> solasETPDTOs) {
     SolasETPDTO solasETPDTO = new SolasETPDTO();
-    solasETPDTO.setCalculatedVariance(new BigDecimal(exports.getCalculatedVariance(), MathContext.DECIMAL64));
+    
+    if(StringUtils.isNotEmpty(exports.getCalculatedVariance())){
+    	solasETPDTO.setCalculatedVariance(new BigDecimal(exports.getCalculatedVariance(), MathContext.DECIMAL64));
+    }
+    
     solasETPDTO.setGrossWeight(exports.getGrossWeight());
 
     if ((exports.getBaseCommonGateInOutAttribute() == null)) {
@@ -225,8 +238,6 @@ public class SolasGateOutService {
     }
     // to check if this is first time
     if (StringUtils.isEmpty(solasPassFileDTO.getExportSEQ01())) {
-
-      solasPassFileDTO = new SolasPassFileDTO();
 
       if ((exports.getBaseCommonGateInOutAttribute() == null)) {
         throw new BusinessException("Required Gate In Out Details not found to Generate SolasApplicable Cert! ");
@@ -287,6 +298,7 @@ public class SolasGateOutService {
   public SolasPassFileDTO generateSolasCertificate(SolasPassFileDTO solasPassFileDTO) throws JRException, IOException {
 
     List<SolasPassFileDTO> dataList = new ArrayList<SolasPassFileDTO>();
+    
     if (!solasPassFileDTO.isC1WithInTolerance() || !solasPassFileDTO.isC2WithInTolerance()) {
 
       dataList.add(solasPassFileDTO);
@@ -310,14 +322,15 @@ public class SolasGateOutService {
       JasperPrint jp = JasperFillManager.fillReport(jr, params, reportData);
 
       byte[] pdfBytes = JasperExportManager.exportReportToPdf(jp);
+      
+      System.out.println("************** pdfBytes.length *************** "+ pdfBytes.length);
 
       solasPassFileDTO.setCertificate(pdfBytes);
 
       // convert array of bytes into file /
-      // FileOutputStream fileOuputStream = new
-      // FileOutputStream("D://pass.pdf");
-      // fileOuputStream.write(pdfBytes);
-      // fileOuputStream.close();
+      /*FileOutputStream fileOuputStream = new FileOutputStream("C://scss-opus//pass.pdf");
+      fileOuputStream.write(pdfBytes);
+      fileOuputStream.close();*/
     }
 
 
