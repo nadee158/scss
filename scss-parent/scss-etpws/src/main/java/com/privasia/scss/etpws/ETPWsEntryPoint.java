@@ -1,5 +1,6 @@
 package com.privasia.scss.etpws;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -38,7 +39,7 @@ public class ETPWsEntryPoint extends SpringBootServletInitializer {
 
   private static Class<ETPWsEntryPoint> applicationClass = ETPWsEntryPoint.class;
 
-  @Bean
+  @Bean(name = "marshaller")
   public Jaxb2Marshaller marshaller() throws Exception {
     Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
     System.out.println("wsContextPath :" + wsContextPath);
@@ -48,8 +49,8 @@ public class ETPWsEntryPoint extends SpringBootServletInitializer {
     return marshaller;
   }
 
-  @Bean
-  public ETPWebserviceClient etpWebserviceClient(Jaxb2Marshaller marshaller) throws Exception {
+  @Bean(name = "etpWebserviceClient")
+  public ETPWebserviceClient etpWebserviceClient(@Qualifier("marshaller") Jaxb2Marshaller marshaller) throws Exception {
     System.out.println("clientDefaultUri :" + clientDefaultUri);
     ETPWebserviceClient client = new ETPWebserviceClient();
     client.setDefaultUri(clientDefaultUri);

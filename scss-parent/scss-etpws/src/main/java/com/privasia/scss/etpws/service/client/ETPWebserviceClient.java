@@ -13,7 +13,6 @@ import javax.xml.bind.JAXBElement;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
 import org.springframework.ws.client.core.support.WebServiceGatewaySupport;
 import org.springframework.ws.soap.client.core.SoapActionCallback;
 
@@ -28,7 +27,6 @@ import com.privasia.scss.etpws.service.UpdateSolasForScssGateInRequestType;
 import com.privasia.scss.etpws.service.UpdateSolasForScssGateInResponseType;
 import com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl;
 
-@Service(value = "etpWebserviceClient")
 public class ETPWebserviceClient extends WebServiceGatewaySupport {
 
   private static final Logger log = Logger.getLogger(ETPWebserviceClient.class);

@@ -16,6 +16,7 @@ import javax.imageio.ImageIO;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.scheduling.annotation.Async;
@@ -83,7 +84,7 @@ public class SolasGateOutService {
   }
 
   @Autowired
-  public void setEtpWebserviceClient(ETPWebserviceClient etpWebserviceClient) {
+  public void setEtpWebserviceClient(@Qualifier("etpWebserviceClient") ETPWebserviceClient etpWebserviceClient) {
     this.etpWebserviceClient = etpWebserviceClient;
   }
 
