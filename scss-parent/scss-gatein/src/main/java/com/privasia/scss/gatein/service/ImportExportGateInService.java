@@ -160,15 +160,13 @@ public class ImportExportGateInService {
 
     GateInReponse gateInReponse = new GateInReponse();
 
-    List<ExportContainer> exportContainers = null;
     /*
      * if the refer id avaliable then fetch here. then pass export container list
      */
     // refere reject details
-    if (gateInRequest.getReferID() != null && gateInRequest.getReferID().isPresent()) {
-      exportContainers = gateInReferService.fetchReferDataForExport(gateInRequest.getReferID().get());
+    if (gateInRequest.getReferID().isPresent()) {
+    	gateInReponse = gateInReferService.fetchReferDataForExport(gateInRequest.getReferID().get());
     }
-    gateInReponse.setExportContainers(exportContainers);
 
     gateInReponse.setCheckPreArrival(gateInRequest.isCheckPreArrival());
 

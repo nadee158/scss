@@ -39,7 +39,7 @@ public class SolasETPDTO implements Serializable {
 	private String etpResponseCode;
 	private String etpResponseMessage;
 	private String requestSendTime;
-	private String responseReceivedTime;
+	private LocalDateTime responseReceivedTime;
 	private String solasRefNumber;
 	public String getContainerNo() {
 		return containerNo;
@@ -149,10 +149,11 @@ public class SolasETPDTO implements Serializable {
 	public void setRequestSendTime(String requestSendTime) {
 		this.requestSendTime = requestSendTime;
 	}
-	public String getResponseReceivedTime() {
+	
+	public LocalDateTime getResponseReceivedTime() {
 		return responseReceivedTime;
 	}
-	public void setResponseReceivedTime(String responseReceivedTime) {
+	public void setResponseReceivedTime(LocalDateTime responseReceivedTime) {
 		this.responseReceivedTime = responseReceivedTime;
 	}
 	public String getSolasRefNumber() {

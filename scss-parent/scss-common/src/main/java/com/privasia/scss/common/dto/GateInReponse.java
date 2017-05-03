@@ -1,10 +1,13 @@
 package com.privasia.scss.common.dto;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.privasia.scss.common.enums.SolasInstructionType;
+import com.privasia.scss.common.util.DateUtil;
 
 public class GateInReponse implements Serializable {
 
@@ -19,7 +22,8 @@ public class GateInReponse implements Serializable {
 	private String haulageCode;// HAUCD,
 	private String truckHeadNo;// TRUCK,
 	private String truckPlateNo;// null,
-	private String gateINDateTime;// 20161130112233,
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateUtil.GLOBAL_DATE_TIME_PATTERN)
+	private LocalDateTime gateINDateTime;// 20161130112233,
 	private boolean checkPreArrival = false;// -boolean
 
 	private List<ImportContainer> importContainers = new ArrayList<ImportContainer>();
@@ -42,6 +46,12 @@ public class GateInReponse implements Serializable {
 	private Integer trailerWeight;
 	
 	private Integer truckWeight;
+	
+	private Boolean axleVerified;
+	
+	private Boolean pmVerified;
+	
+	private String hpabBookingId;
 
 	public String getLaneNo() {
 		return laneNo;
@@ -75,11 +85,11 @@ public class GateInReponse implements Serializable {
 		this.truckPlateNo = truckPlateNo;
 	}
 
-	public String getGateINDateTime() {
+	public LocalDateTime getGateINDateTime() {
 		return gateINDateTime;
 	}
 
-	public void setGateINDateTime(String gateINDateTime) {
+	public void setGateINDateTime(LocalDateTime gateINDateTime) {
 		this.gateINDateTime = gateINDateTime;
 	}
 
@@ -178,7 +188,30 @@ public class GateInReponse implements Serializable {
 	public void setTrailerWeight(Integer trailerWeight) {
 		this.trailerWeight = trailerWeight;
 	}
+	
+	public Boolean getAxleVerified() {
+		return axleVerified;
+	}
 
+	public void setAxleVerified(Boolean axleVerified) {
+		this.axleVerified = axleVerified;
+	}
+
+	public Boolean getPmVerified() {
+		return pmVerified;
+	}
+
+	public void setPmVerified(Boolean pmVerified) {
+		this.pmVerified = pmVerified;
+	}
+
+	public String getHpabBookingId() {
+		return hpabBookingId;
+	}
+
+	public void setHpabBookingId(String hpabBookingId) {
+		this.hpabBookingId = hpabBookingId;
+	}
 	
 
 }

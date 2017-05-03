@@ -29,215 +29,194 @@ import com.privasia.scss.core.model.Exports;
 import com.privasia.scss.core.model.ExportsQ;
 import com.privasia.scss.core.model.ShipCode;
 import com.privasia.scss.core.model.SystemUser;
-import com.privasia.scss.core.repository.ClientRepository;
 import com.privasia.scss.core.repository.ExportsQRepository;
 import com.privasia.scss.core.repository.ExportsRepository;
 import com.privasia.scss.core.repository.ShipCodeRepository;
-import com.privasia.scss.core.repository.ShipSCNRepository;
 import com.privasia.scss.gateout.dto.FileDTO;
 
 @Service("exportGateOutService")
 public class ExportGateOutService {
 
-  private ModelMapper modelMapper;
+	private ModelMapper modelMapper;
 
-  private ClientRepository clientRepository;
+	private ShipCodeRepository shipCodeRepository;
 
-  private ShipCodeRepository shipCodeRepository;
+	private ExportsRepository exportsRepository;
 
-  private ShipSCNRepository shipSCNRepository;
+	private ExportsQRepository exportsQRepository;
 
-  private ExportsRepository exportsRepository;
+	@Autowired
+	public void setModelMapper(ModelMapper modelMapper) {
+		this.modelMapper = modelMapper;
+	}
 
-  private ExportsQRepository exportsQRepository;
+	@Autowired
+	public void setShipCodeRepository(ShipCodeRepository shipCodeRepository) {
+		this.shipCodeRepository = shipCodeRepository;
+	}
 
-  @Autowired
-  public void setModelMapper(ModelMapper modelMapper) {
-    this.modelMapper = modelMapper;
-  }
+	@Autowired
+	public void setExportsRepository(ExportsRepository exportsRepository) {
+		this.exportsRepository = exportsRepository;
+	}
 
-  @Autowired
-  public void setShipCodeRepository(ShipCodeRepository shipCodeRepository) {
-    this.shipCodeRepository = shipCodeRepository;
-  }
+	@Autowired
+	public void setExportsQRepository(ExportsQRepository exportsQRepository) {
+		this.exportsQRepository = exportsQRepository;
+	}
 
-  @Autowired
-  public void setShipSCNRepository(ShipSCNRepository shipSCNRepository) {
-    this.shipSCNRepository = shipSCNRepository;
-  }
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+	public List<ExportContainer> populateGateOut(GateOutRequest gateOutRequest, GateOutReponse gateOutReponse) {
 
-  @Autowired
-  public void setClientRepository(ClientRepository clientRepository) {
-    this.clientRepository = clientRepository;
-  }
+		Optional<List<Exports>> optExpList = exportsRepository.fetchInProgressTransaction(gateOutRequest.getCardID(),
+				TransactionStatus.INPROGRESS);
+		List<Exports> inprogressExpList = optExpList.orElseThrow(() -> new BusinessException(
+				"No InProgress Export Transaction for the scan card ! " + gateOutRequest.getCardID()));
 
-  @Autowired
-  public void setExportsRepository(ExportsRepository exportsRepository) {
-    this.exportsRepository = exportsRepository;
-  }
+		List<ExportContainer> exportContainerList = new ArrayList<ExportContainer>();
 
-  @Autowired
-  public void setExportsQRepository(ExportsQRepository exportsQRepository) {
-    this.exportsQRepository = exportsQRepository;
-  }
+		inprogressExpList.forEach(export -> {
+			ExportContainer exportContainer = new ExportContainer();
+			modelMapper.map(export, exportContainer);
 
-  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-  public List<ExportContainer> populateGateOut(GateOutRequest gateOutRequest, GateOutReponse gateOutReponse) {
+			if (export.getBaseCommonGateInOutAttribute() != null) {
 
-    Optional<List<Exports>> optExpList =
-        exportsRepository.fetchInProgressTransaction(gateOutRequest.getCardID(), TransactionStatus.INPROGRESS);
-    List<Exports> inprogressExpList = optExpList.orElseThrow(() -> new BusinessException(
-        "No InProgress Export Transaction for the scan card ! " + gateOutRequest.getCardID()));
+				if (!(export.getBaseCommonGateInOutAttribute().getTimeGateIn() == null)) {
+					LocalDateTime timeGateIn = export.getBaseCommonGateInOutAttribute().getTimeGateIn();
+					DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy HH:mm");
+					gateOutReponse.setGateInDateTime(timeGateIn.format(formatter));
+				}
 
-    List<ExportContainer> exportContainerList = new ArrayList<ExportContainer>();
+			}
+			// adding log info
+			exportContainerList.add(exportContainer);
+			if (StringUtils.isEmpty(gateOutRequest.getExpContainer1())) {
+				gateOutRequest.setExpContainer1(export.getContainer().getContainerNumber());
+			} else {
+				gateOutRequest.setExpContainer2(export.getContainer().getContainerNumber());
+			}
+			gateOutRequest.setTruckHeadNo(export.getBaseCommonGateInOutAttribute().getPmHeadNo());
+		});
 
-    inprogressExpList.forEach(export -> {
-      ExportContainer exportContainer = new ExportContainer();
-      modelMapper.map(export, exportContainer);
+		return exportContainerList;
 
-      if (export.getBaseCommonGateInOutAttribute() != null) {
-        
+	}
 
-        if (!(export.getBaseCommonGateInOutAttribute().getTimeGateIn() == null)) {
-          LocalDateTime timeGateIn = export.getBaseCommonGateInOutAttribute().getTimeGateIn();
-          DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy HH:mm");
-          gateOutReponse.setGateInDateTime(timeGateIn.format(formatter));
-        }
+	public List<ShipCode> checkContainer(List<ExportContainer> exportContainers) {
+		if (!(exportContainers == null || exportContainers.isEmpty())) {
+			List<String> shippingCodes = exportContainers.stream().map(ExportContainer::getShipCode)
+					.collect(Collectors.toList());
 
-      }
-      // adding log info
-      exportContainerList.add(exportContainer);
-      if (StringUtils.isEmpty(gateOutRequest.getExpContainer1())) {
-        gateOutRequest.setExpContainer1(export.getContainer().getContainerNumber());
-      } else {
-        gateOutRequest.setExpContainer2(export.getContainer().getContainerNumber());
-      }
-      gateOutRequest.setTruckHeadNo(export.getBaseCommonGateInOutAttribute().getPmHeadNo());
-    });
+			Optional<List<ShipCode>> list = shipCodeRepository.findByShipStatusAndShippingCodeIn(ShipStatus.ACTIVE,
+					shippingCodes);
+			if (list.isPresent()) {
+				List<ShipCode> codes = list.orElse(null);
+				for (ShipCode shipCode : codes) {
+					for (ExportContainer item : exportContainers) {
+						if (StringUtils.equals(shipCode.getShippingCode(), item.getShipCode())) {
+							item.setStoragePeriod(shipCode.getStoragePeriod());
+						}
+					}
+				}
 
-    return exportContainerList;
+				return codes;
+			}
+		}
+		return null;
+	}
 
-  }
+	// @Async
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
+	public void saveGateOutInfo(GateOutWriteRequest gateOutWriteRequest, Client gateOutClient, SystemUser gateOutClerk,
+			Client booth) {
 
+		if (gateOutWriteRequest.getExportContainers() == null || gateOutWriteRequest.getExportContainers().isEmpty())
+			throw new BusinessException("Invalid Request to Update Export !");
 
+		List<ExportContainer> exportContainers = gateOutWriteRequest.getExportContainers();
 
-  public List<ShipCode> checkContainer(List<ExportContainer> exportContainers) {
-    if (!(exportContainers == null || exportContainers.isEmpty())) {
-      List<String> shippingCodes =
-          exportContainers.stream().map(ExportContainer::getShipCode).collect(Collectors.toList());
+		exportContainers.forEach(exportContainer -> {
+			Optional<Exports> optExport = exportsRepository.findOne(exportContainer.getExportID());
+			Exports exports = optExport.orElseThrow(() -> new BusinessException(
+					"Invalid Exports Information to Update ! " + exportContainer.getExportID()));
 
-      Optional<List<ShipCode>> list =
-          shipCodeRepository.findByShipStatusAndShippingCodeIn(ShipStatus.ACTIVE, shippingCodes);
-      if (list.isPresent()) {
-        List<ShipCode> codes = list.orElse(null);
-        for (ShipCode shipCode : codes) {
-          for (ExportContainer item : exportContainers) {
-            if (StringUtils.equals(shipCode.getShippingCode(), item.getShipCode())) {
-              item.setStoragePeriod(shipCode.getStoragePeriod());
-            }
-          }
-        }
+			if (StringUtils.isEmpty(exportContainer.getBaseCommonGateInOutAttribute().getEirStatus()))
+				throw new BusinessException("Invalid EIR Status for Exports : " + exportContainer.getExportID());
 
-        return codes;
-      }
-    }
-    return null;
-  }
+			exports.getBaseCommonGateInOutAttribute().setEirStatus(
+					TransactionStatus.fromCode(exportContainer.getBaseCommonGateInOutAttribute().getEirStatus()));
+			exports.getBaseCommonGateInOutAttribute().setTimeGateOut(gateOutWriteRequest.getGateOUTDateTime());
+			exports.getBaseCommonGateInOutAttribute().setTimeGateOutOk(LocalDateTime.now());
+			exports.getBaseCommonGateInOutAttribute().setGateOutBoothClerk(gateOutClerk);
+			exports.getBaseCommonGateInOutAttribute().setGateOutBoothNo(String.valueOf(booth.getClientID()));
+			exports.getBaseCommonGateInOutAttribute().setGateOutClerk(gateOutClerk);
+			exports.getBaseCommonGateInOutAttribute().setGateOutClient(gateOutClient);
+			exports.getCommonGateInOut().setRejectReason(exportContainer.getGateOutRemarks());
 
-  // @Async
-  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
-  public void saveGateOutInfo(GateOutWriteRequest gateOutWriteRequest, Client gateOutClient, SystemUser gateOutClerk,
-      Client booth) {
+			exportsRepository.save(exports);
 
-    if (gateOutWriteRequest.getExportContainers() == null || gateOutWriteRequest.getExportContainers().isEmpty())
-      throw new BusinessException("Invalid Request to Update Export !");
+			Optional<ExportsQ> exportQOpt = exportsQRepository.findOne(exports.getExportID());
+			ExportsQ exportq = exportQOpt.orElseThrow(() -> new ResultsNotFoundException(
+					"Not valid Gate In ExportQ Process found ! " + exports.getExportID()));
 
-    List<ExportContainer> exportContainers = gateOutWriteRequest.getExportContainers();
+			modelMapper.map(exports, exportq);
+			exportsQRepository.save(exportq);
+		});
+		// return new AsyncResult<Boolean>(true);
+	}
 
-    exportContainers.forEach(exportContainer -> {
-      Optional<Exports> optExport = exportsRepository.findOne(exportContainer.getExportID());
-      Exports exports = optExport.orElseThrow(
-          () -> new BusinessException("Invalid Exports Information to Update ! " + exportContainer.getExportID()));
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRES_NEW, readOnly = false)
+	public void updateExportReference(FileDTO fileDTO) {
 
-      if (StringUtils.isEmpty(exportContainer.getBaseCommonGateInOutAttribute().getEirStatus()))
-        throw new BusinessException("Invalid EIR Status for Exports : " + exportContainer.getExportID());
+		Optional<List<Exports>> exportsOptList = exportsRepository.findByExportIDIn(
+				Arrays.asList(fileDTO.getExportNoSeq1().orElse(null), fileDTO.getExportNoSeq2().orElse(null)));
+		System.out.println("exportsOptList size : " + exportsOptList.get().size());
+		if (exportsOptList.isPresent() && !exportsOptList.get().isEmpty()) {
+			exportsOptList.get().forEach(exports -> {
+				assignUpdatedValuesExports(exports, fileDTO);
+				System.out.println("exports.getSolasCertNo : " + exports.getSolasCertNo());
+				exportsRepository.save(exports);
+			});
+		} else {
+			throw new BusinessException("Invalid Exports ID to update file reference : "
+					+ fileDTO.getExportNoSeq1().orElse(null) + " / " + fileDTO.getExportNoSeq2().orElse(null));
+		}
+	}
 
-      exports.getBaseCommonGateInOutAttribute()
-          .setEirStatus(TransactionStatus.fromCode(exportContainer.getBaseCommonGateInOutAttribute().getEirStatus()));
-      exports.getBaseCommonGateInOutAttribute().setTimeGateOut(gateOutWriteRequest.getGateOUTDateTime());
-      exports.getBaseCommonGateInOutAttribute().setTimeGateOutOk(LocalDateTime.now());
-      exports.getBaseCommonGateInOutAttribute().setGateOutBoothClerk(gateOutClerk);
-      exports.getBaseCommonGateInOutAttribute().setGateOutBoothNo(String.valueOf(booth.getClientID()));
-      exports.getBaseCommonGateInOutAttribute().setGateOutClerk(gateOutClerk);
-      exports.getBaseCommonGateInOutAttribute().setGateOutClient(gateOutClient);
-      exports.getCommonGateInOut().setRejectReason(exportContainer.getGateOutRemarks());
+	private Exports assignUpdatedValuesExports(Exports exports, FileDTO fileDTO) {
+		switch (fileDTO.getCollectionType()) {
+		case PDF_FILE_COLLECTION:
+			exports.getCommonGateInOut().setTrxSlipNo(fileDTO.getFileName().get());
+			break;
+		case ZIP_FILE_COLLECTION:
+			exports.getCommonGateInOut().setZipFileNo(fileDTO.getFileName().get());
+			break;
+		case SOLAS_CERTIFICATE_COLLECTION:
+			exports.setSolasCertNo(fileDTO.getFileName().get());
+			break;
+		default:
+			break;
+		}
+		return exports;
+	}
 
-      exportsRepository.save(exports);
+	@SolasApplicable
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+	public List<Exports> testSolas(List<ExportContainer> exportsList) {
 
-      Optional<ExportsQ> exportQOpt = exportsQRepository.findOne(exports.getExportID());
-      ExportsQ exportq = exportQOpt.orElseThrow(
-          () -> new ResultsNotFoundException("Not valid Gate In ExportQ Process found ! " + exports.getExportID()));
+		List<Long> expIDList = new ArrayList<Long>();
 
-      modelMapper.map(exports, exportq);
-      exportsQRepository.save(exportq);
-    });
-    // return new AsyncResult<Boolean>(true);
-  }
-  
-  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRES_NEW, readOnly = false)
-  public void updateExportReference(FileDTO fileDTO) {
+		for (ExportContainer container : exportsList) {
+			expIDList.add(container.getExportID());
+		}
 
-    Optional<List<Exports>> exportsOptList = exportsRepository
-        .findByExportIDIn(Arrays.asList(fileDTO.getExportNoSeq1().orElse(null), fileDTO.getExportNoSeq2().orElse(null)));
-    System.out.println("exportsOptList size : "+exportsOptList.get().size());
-    if (exportsOptList.isPresent() && ! exportsOptList.get().isEmpty()) {
-      exportsOptList.get().forEach(exports -> {
-        assignUpdatedValuesExports(exports, fileDTO);
-        System.out.println("exports.getSolasCertNo : "+exports.getSolasCertNo());
-        exportsRepository.save(exports);
-      });
-    } else {
-      throw new BusinessException("Invalid Exports ID to update file reference : "
-          + fileDTO.getExportNoSeq1().orElse(null) + " / " + fileDTO.getExportNoSeq2().orElse(null));
-    }
-  }
+		Optional<List<Exports>> exportsOptList = exportsRepository.findByExportIDIn(expIDList);
 
-  private Exports assignUpdatedValuesExports(Exports exports, FileDTO fileDTO) {
-    switch (fileDTO.getCollectionType()) {
-      case PDF_FILE_COLLECTION:
-        exports.getCommonGateInOut().setTrxSlipNo(fileDTO.getFileName().get());
-        break;
-      case ZIP_FILE_COLLECTION:
-        exports.getCommonGateInOut().setZipFileNo(fileDTO.getFileName().get());
-        break;
-      case SOLAS_CERTIFICATE_COLLECTION:
-        exports.setSolasCertNo(fileDTO.getFileName().get());
-        break;
-      default:
-        break;
-    }
-    return exports;
-  }
-  
-  @SolasApplicable
-  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-  public List<Exports> testSolas(List<ExportContainer> exportsList){
-	  
-	  List<Long> expIDList = new ArrayList<Long>();
-	  
-	  for (ExportContainer container : exportsList) {
-		  expIDList.add(container.getExportID());
-	  }
-	  
-	  Optional<List<Exports>> exportsOptList = exportsRepository
-		        .findByExportIDIn(expIDList);
-	  
-	  if(exportsOptList.isPresent() && !exportsOptList.get().isEmpty()){
-		  return exportsOptList.get();
-	  }
-	  
-	  throw new ResultsNotFoundException("no result found");
-  }
+		if (exportsOptList.isPresent() && !exportsOptList.get().isEmpty()) {
+			return exportsOptList.get();
+		}
 
+		throw new ResultsNotFoundException("no result found");
+	}
 
 }

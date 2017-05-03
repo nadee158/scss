@@ -121,7 +121,7 @@ public class OpusGateInWriteService {
       GateInReponse gateInReponse) {
 
     LocalDateTime localDateTime = DateUtil.getLocalDategFromString(opusGateInWriteResponse.getGateINDateTime());
-    gateInReponse.setGateINDateTime(DateUtil.getFormatteDateTime(localDateTime));
+    gateInReponse.setGateINDateTime(localDateTime);
     gateInReponse.setHaulageCode(opusGateInWriteResponse.getHaulageCode());
     gateInReponse.setLaneNo(opusGateInWriteResponse.getLaneNo());
     gateInReponse.setTruckHeadNo(opusGateInWriteResponse.getTruckHeadNo());

@@ -251,6 +251,9 @@ public class HPABService {
 			gateInReponse.setTruckHeadNo(booking.getPmNumber());
 			gateInReponse.setTruckPlateNo(booking.getTrailerPlate());
 			
+			gateInReponse.setPmVerified(booking.getPmVerified());
+			gateInReponse.setAxleVerified(booking.getAxleVerified());
+			gateInReponse.setHpabBookingId(booking.getBookingID());
 			
 			// construct DTO from domain
 			booking.getHpabBookingDetails().forEach(bookingDetail -> {

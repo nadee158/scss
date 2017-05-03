@@ -2,6 +2,7 @@ package com.privasia.scss.etpws.service.client;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
@@ -31,157 +32,157 @@ import com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl
 @Service(value = "etpWebserviceClient")
 public class ETPWebserviceClient extends WebServiceGatewaySupport {
 
-  private static final Logger log = Logger.getLogger(ETPWebserviceClient.class);
+	private static final Logger log = Logger.getLogger(ETPWebserviceClient.class);
 
-  public static final String WEB_SERVICE_DATE_PATTERN = "dd-MM-yyyy HH:mm";
+	public static final String WEB_SERVICE_DATE_PATTERN = "dd-MM-yyyy HH:mm";
 
-  @Value("${ws.server.uri}")
-  private String wsServerUri;
+	@Value("${ws.server.uri}")
+	private String wsServerUri;
 
-  @Value("${ws.client.default.uri}")
-  private String clientDefaultUri;
+	@Value("${ws.client.default.uri}")
+	private String clientDefaultUri;
 
-  public EdoExpiryForLineResponseType getEdoExpiryForLine(String lineNo) {
-    try {
-      ObjectFactory objFac = new ObjectFactory();
-      EdoExpiryForLineRequestType reqObj = new EdoExpiryForLineRequestType();
-      reqObj.setLine(lineNo);
-      JAXBElement<EdoExpiryForLineRequestType> request = objFac.createEdoExpiryForLineRequest(reqObj);
+	public EdoExpiryForLineResponseType getEdoExpiryForLine(String lineNo) {
+		try {
+			ObjectFactory objFac = new ObjectFactory();
+			EdoExpiryForLineRequestType reqObj = new EdoExpiryForLineRequestType();
+			reqObj.setLine(lineNo);
+			JAXBElement<EdoExpiryForLineRequestType> request = objFac.createEdoExpiryForLineRequest(reqObj);
 
-      log.error("Requesting web service for " + lineNo);
-      log.error("clientDefaultUri " + clientDefaultUri);
-      log.error("wsServerUri " + wsServerUri);
+			log.error("Requesting web service for " + lineNo);
+			log.error("clientDefaultUri " + clientDefaultUri);
+			log.error("wsServerUri " + wsServerUri);
 
-      JAXBElement<EdoExpiryForLineResponseType> response =
-          (JAXBElement<EdoExpiryForLineResponseType>) getWebServiceTemplate().marshalSendAndReceive(wsServerUri,
-              request, new SoapActionCallback(clientDefaultUri + "/getEdoExpiryForLine"));
+			JAXBElement<EdoExpiryForLineResponseType> response = (JAXBElement<EdoExpiryForLineResponseType>) getWebServiceTemplate()
+					.marshalSendAndReceive(wsServerUri, request,
+							new SoapActionCallback(clientDefaultUri + "/getEdoExpiryForLine"));
 
-      return response.getValue();
-    } catch (Exception ex) {
-      log.error(ex.getMessage());
-    }
-    return null;
-  }
+			return response.getValue();
+		} catch (Exception ex) {
+			log.error(ex.getMessage());
+		}
+		return null;
+	}
 
-  public void updateHpabStatus(String bookingId) {
-    try {
-      ObjectFactory objFac = new ObjectFactory();
-      UpdateHpatStatusRequestType reqObj = new UpdateHpatStatusRequestType();
-      reqObj.setBookingId(bookingId);
-      reqObj.setStatus(BookingStatusType.EXE);
-      JAXBElement<UpdateHpatStatusRequestType> request = objFac.createUpdateHpatStatusRequest(reqObj);
+	public void updateHpabStatus(String bookingId) {
+		try {
+			ObjectFactory objFac = new ObjectFactory();
+			UpdateHpatStatusRequestType reqObj = new UpdateHpatStatusRequestType();
+			reqObj.setBookingId(bookingId);
+			reqObj.setStatus(BookingStatusType.EXE);
+			JAXBElement<UpdateHpatStatusRequestType> request = objFac.createUpdateHpatStatusRequest(reqObj);
 
-      log.error("Requesting web service for " + bookingId);
-      log.error("clientDefaultUri " + clientDefaultUri);
-      log.error("wsServerUri " + wsServerUri);
+			log.error("Requesting web service for " + bookingId);
+			log.error("clientDefaultUri " + clientDefaultUri);
+			log.error("wsServerUri " + wsServerUri);
 
-      JAXBElement<UpdateHpatStatusResponseType> response =
-          (JAXBElement<UpdateHpatStatusResponseType>) getWebServiceTemplate().marshalSendAndReceive(wsServerUri,
-              request, new SoapActionCallback(clientDefaultUri + "/updateHpatStatus"));
-      log.error("Requesting web service for " + response.getValue().getCode());
+			JAXBElement<UpdateHpatStatusResponseType> response = (JAXBElement<UpdateHpatStatusResponseType>) getWebServiceTemplate()
+					.marshalSendAndReceive(wsServerUri, request,
+							new SoapActionCallback(clientDefaultUri + "/updateHpatStatus"));
+			log.error("Requesting web service for " + response.getValue().getCode());
 
-    } catch (Exception ex) {
-      log.error(ex.getMessage());
-    }
+		} catch (Exception ex) {
+			log.error(ex.getMessage());
+		}
 
-  }
+	}
 
-  
-public List<SolasETPDTO> updateSolasToEtp(List<SolasETPDTO> solasETPDTOs) throws ParseException {
-    if (!(solasETPDTOs == null || solasETPDTOs.isEmpty())) {
+	public List<SolasETPDTO> updateSolasToEtp(List<SolasETPDTO> solasETPDTOs) {
 
-      ObjectFactory objFac = new ObjectFactory();
-     
-      SimpleDateFormat formatter = new SimpleDateFormat(WEB_SERVICE_DATE_PATTERN);
-    
-      solasETPDTOs.forEach(solasETPDTO -> {
+		if (!(solasETPDTOs == null || solasETPDTOs.isEmpty())) {
 
-        UpdateSolasForScssGateInResponseType response = null;
-        UpdateSolasForScssGateInRequestType parameters = new UpdateSolasForScssGateInRequestType();
-        int retry = 0;
+			ObjectFactory objFac = new ObjectFactory();
 
-        // set header values and container 01 values
-        parameters.setWeighingMethod(solasETPDTO.getWeighingMethod());
-        parameters.setWeighingStation(solasETPDTO.getWeighStation());
+			SimpleDateFormat formatter = new SimpleDateFormat(WEB_SERVICE_DATE_PATTERN);
 
-        GregorianCalendar c = new GregorianCalendar();
-        Date date = Date.from(solasETPDTO.getGateInOK().atZone(ZoneId.systemDefault()).toInstant());
-        c.setTime(date);
-        System.out.println("******************* GregorianCalendar *******************  " + c.getTime());
-        XMLGregorianCalendarImpl xmlGrogerianCalendar = new XMLGregorianCalendarImpl(c);
-        log.info(xmlGrogerianCalendar.toString());
-        System.out
-            .println("******************* solasDTO.getGateInOK() *******************  " + solasETPDTO.getGateInOK());
-        parameters.setVgmDate(xmlGrogerianCalendar);
+			solasETPDTOs.forEach(solasETPDTO -> {
 
-        parameters.setVgmFileName(solasETPDTO.getCertificateNo());
-        parameters.setVgmFileDate(solasETPDTO.getCertificate());
-        parameters.setWithnessName(solasETPDTO.getIssueBy());
-        parameters.setWithnessNric(solasETPDTO.getIssuerNRIC());
+				UpdateSolasForScssGateInResponseType response = null;
+				UpdateSolasForScssGateInRequestType parameters = new UpdateSolasForScssGateInRequestType();
+				int retry = 0;
 
-        if (StringUtils.isNotBlank(solasETPDTO.getSolasDetail())) {
-          log.info("******************* Update ETP Solas Web Service Start *******************  ");
-          System.out.println("******************* Update ETP Solas Web Service Start *******************  ");
-          parameters.setSolasDetId(solasETPDTO.getSolasDetail().toLowerCase());
-          parameters.setTerminalVgm(solasETPDTO.getTerminalVGM());
-          parameters.setVgmReferenceNo(solasETPDTO.getExportSEQ());
-          if (solasETPDTO.getShipperVGM() > 0 && !solasETPDTO.isWithInTolerance()) {
-            parameters
-                .setVariance(solasETPDTO.getCalculatedVariance() == null ? null : solasETPDTO.getCalculatedVariance());
-          }
-          parameters.setIsTolerance(solasETPDTO.isWithInTolerance());
-          parameters.setTerminalMgw(solasETPDTO.getMgw());
-          parameters.setGrossWeight(solasETPDTO.getGrossWeight());
+				// set header values and container 01 values
+				parameters.setWeighingMethod(solasETPDTO.getWeighingMethod());
+				parameters.setWeighingStation(solasETPDTO.getWeighStation());
 
-          log.info("******************* Update ETP Solas Web Service Start *******************  ");
-          System.out.println("******************* Update ETP Solas Web Service Start *******************  ");
+				GregorianCalendar c = new GregorianCalendar();
+				Date date = Date.from(solasETPDTO.getGateInOK().atZone(ZoneId.systemDefault()).toInstant());
+				c.setTime(date);
+				System.out.println("******************* GregorianCalendar *******************  " + c.getTime());
+				XMLGregorianCalendarImpl xmlGrogerianCalendar = new XMLGregorianCalendarImpl(c);
+				log.info(xmlGrogerianCalendar.toString());
+				System.out.println(
+						"******************* solasDTO.getGateInOK() *******************  " + solasETPDTO.getGateInOK());
+				parameters.setVgmDate(xmlGrogerianCalendar);
 
-          Date today = Calendar.getInstance().getTime();
-          solasETPDTO.setRequestSendTime(formatter.format(today));
-          
-          JAXBElement<UpdateSolasForScssGateInRequestType> request =
-                  objFac.createUpdateSolasForScssGateInRequest(parameters);
-          
-          JAXBElement<UpdateSolasForScssGateInResponseType> jaxBRresponse =
-              (JAXBElement<UpdateSolasForScssGateInResponseType>) getWebServiceTemplate().marshalSendAndReceive(
-                  wsServerUri, request, new SoapActionCallback(clientDefaultUri + "/updateSolasForScssGateIn"));
+				parameters.setVgmFileName(solasETPDTO.getCertificateNo());
+				parameters.setVgmFileDate(solasETPDTO.getCertificate());
+				parameters.setWithnessName(solasETPDTO.getIssueBy());
+				parameters.setWithnessNric(solasETPDTO.getIssuerNRIC());
 
-          response = jaxBRresponse.getValue();
+				if (StringUtils.isNotBlank(solasETPDTO.getSolasDetail())) {
+					log.info("******************* Update ETP Solas Web Service Start *******************  ");
+					System.out.println("******************* Update ETP Solas Web Service Start *******************  ");
+					parameters.setSolasDetId(solasETPDTO.getSolasDetail().toLowerCase());
+					parameters.setTerminalVgm(solasETPDTO.getTerminalVGM());
+					parameters.setVgmReferenceNo(solasETPDTO.getExportSEQ());
+					if (solasETPDTO.getShipperVGM() > 0 && !solasETPDTO.isWithInTolerance()) {
+						parameters.setVariance(solasETPDTO.getCalculatedVariance() == null ? null
+								: solasETPDTO.getCalculatedVariance());
+					}
+					parameters.setIsTolerance(solasETPDTO.isWithInTolerance());
+					parameters.setTerminalMgw(solasETPDTO.getMgw());
+					parameters.setGrossWeight(solasETPDTO.getGrossWeight());
 
-          if ("FAIL".equals(response.getResponseCode())) {
-            while (retry <= 1) {
-              // response =
-              // etpIntegrationService.getEtpServicePortTypePort().updateSolasForScssGateIn(parameters);
+					log.info("******************* Update ETP Solas Web Service Start *******************  ");
+					System.out.println("******************* Update ETP Solas Web Service Start *******************  ");
 
-              jaxBRresponse =
-                  (JAXBElement<UpdateSolasForScssGateInResponseType>) getWebServiceTemplate().marshalSendAndReceive(
-                      wsServerUri, request, new SoapActionCallback(clientDefaultUri + "/updateSolasForScssGateIn"));
+					Date today = Calendar.getInstance().getTime();
+					solasETPDTO.setRequestSendTime(formatter.format(today));
 
-              response = jaxBRresponse.getValue();
+					JAXBElement<UpdateSolasForScssGateInRequestType> request = objFac
+							.createUpdateSolasForScssGateInRequest(parameters);
 
-              retry++;
-            }
-            log.info("updateSolasETPStatus response code : " + response.getResponseCode() + " for container 01 : "
-                + solasETPDTO.getContainerNo() + " and error message : " + response.getErrorMessage());
-            System.out
-                .println("updateSolasETPStatus response code : " + response.getResponseCode() + " for container 01 : "
-                    + solasETPDTO.getContainerNo() + " and error message : " + response.getErrorMessage());
-          } else {
-            log.info("updateSolasETPStatus response code : " + response.getResponseCode() + " for container 01 : "
-                + solasETPDTO.getContainerNo());
-            System.out.println("updateSolasETPStatus response code : " + response.getResponseCode()
-                + " for container 01 : " + solasETPDTO.getContainerNo());
-          }
+					JAXBElement<UpdateSolasForScssGateInResponseType> jaxBRresponse = (JAXBElement<UpdateSolasForScssGateInResponseType>) getWebServiceTemplate()
+							.marshalSendAndReceive(wsServerUri, request,
+									new SoapActionCallback(clientDefaultUri + "/updateSolasForScssGateIn"));
 
-          today = Calendar.getInstance().getTime();
-          solasETPDTO.setResponseReceivedTime(formatter.format(today));
-          solasETPDTO.setEtpResponseCode(response.getResponseCode());
-          solasETPDTO.setEtpResponseMessage(response.getErrorMessage());
-        }
+					response = jaxBRresponse.getValue();
+					LocalDateTime now = LocalDateTime.now();
+					if (StringUtils.equals("FAIL", response.getResponseCode())) {
+						while (retry <= 1) {
+							// response =
+							// etpIntegrationService.getEtpServicePortTypePort().updateSolasForScssGateIn(parameters);
 
-      });
-    }
-    return solasETPDTOs;
-  }
+							jaxBRresponse = (JAXBElement<UpdateSolasForScssGateInResponseType>) getWebServiceTemplate()
+									.marshalSendAndReceive(wsServerUri, request,
+											new SoapActionCallback(clientDefaultUri + "/updateSolasForScssGateIn"));
+
+							response = jaxBRresponse.getValue();
+							now = LocalDateTime.now();
+							retry++;
+						}
+						log.info("updateSolasETPStatus response code : " + response.getResponseCode()
+								+ " for container 01 : " + solasETPDTO.getContainerNo() + " and error message : "
+								+ response.getErrorMessage());
+						System.out.println("updateSolasETPStatus response code : " + response.getResponseCode()
+								+ " for container 01 : " + solasETPDTO.getContainerNo() + " and error message : "
+								+ response.getErrorMessage());
+					} else {
+						log.info("updateSolasETPStatus response code : " + response.getResponseCode()
+								+ " for container 01 : " + solasETPDTO.getContainerNo());
+						System.out.println("updateSolasETPStatus response code : " + response.getResponseCode()
+								+ " for container 01 : " + solasETPDTO.getContainerNo());
+					}
+					solasETPDTO.setResponseReceivedTime(now);
+					solasETPDTO.setEtpResponseCode(response.getResponseCode());
+					solasETPDTO.setEtpResponseMessage(response.getErrorMessage());
+				}
+
+			});
+
+		}
+		return solasETPDTOs;
+	}
 
 }

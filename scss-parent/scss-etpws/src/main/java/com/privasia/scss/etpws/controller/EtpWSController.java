@@ -1,6 +1,5 @@
 package com.privasia.scss.etpws.controller;
 
-import java.text.ParseException;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -36,13 +35,10 @@ public class EtpWSController {
   @RequestMapping(value = "/updatesolastoetp", method = RequestMethod.PUT,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public ResponseEntity<List<SolasETPDTO>> updateSolasToEtp(@Valid @RequestBody List<SolasETPDTO> solasETPDTOs,
-      BindingResult bindingResult) throws BindException {
-    try {
-      solasETPDTOs = etpWebserviceClient.updateSolasToEtp(solasETPDTOs);
-    } catch (ParseException e) {
-      e.printStackTrace();
-      return new ResponseEntity<List<SolasETPDTO>>(solasETPDTOs, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+      BindingResult bindingResult) throws BindException { 
+ 
+    solasETPDTOs = etpWebserviceClient.updateSolasToEtp(solasETPDTOs);
+    
     return new ResponseEntity<List<SolasETPDTO>>(solasETPDTOs, HttpStatus.OK);
   }
 

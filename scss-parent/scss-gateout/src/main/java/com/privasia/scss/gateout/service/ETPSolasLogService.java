@@ -39,7 +39,7 @@ public class ETPSolasLogService {
   private DateTimeFormatter dateTimeFormatter =
       DateTimeFormatter.ofPattern(ETPWebserviceClient.WEB_SERVICE_DATE_PATTERN);
 
-  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
+  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRES_NEW, readOnly = false)
   public void saveETPSolasLog(List<SolasETPDTO> solasETPDTOs) {
     if (solasETPDTOs == null || solasETPDTOs.isEmpty()) {
       throw new BusinessException("No data is available to save!");
@@ -85,7 +85,7 @@ public class ETPSolasLogService {
     etpSolasLogDetail.setRequestSendTime(LocalDateTime.parse(etpDTO.getRequestSendTime(), dateTimeFormatter));
     etpSolasLogDetail.setResponseCode(etpDTO.getEtpResponseCode());
     etpSolasLogDetail.setResponseMessage(etpDTO.getEtpResponseMessage());
-    etpSolasLogDetail.setResponseReceivedTime(LocalDateTime.parse(etpDTO.getResponseReceivedTime(), dateTimeFormatter));
+    etpSolasLogDetail.setResponseReceivedTime(etpDTO.getResponseReceivedTime());
     etpSolasLogDetail.setShipperVGM(etpDTO.getShipperVGM());
     etpSolasLogDetail.setSolasDetail(etpDTO.getSolasDetail());
     etpSolasLogDetail.setTerminalVGM(etpDTO.getTerminalVGM());

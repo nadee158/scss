@@ -265,7 +265,7 @@ public class ReferRejectService {
     baseCommonGateInOut.setHpabBooking(gateInWriteRequest.getHpatBookingId());
     baseCommonGateInOut.setPmHeadNo(gateInWriteRequest.getTruckHeadNo());
     baseCommonGateInOut.setPmPlateNo(gateInWriteRequest.getTruckPlateNo());
-    baseCommonGateInOut.setTimeGateInOk(LocalDateTime.now());
+    
     referRejectDTO.setTrailerWeight(gateInWriteRequest.getTrailerWeight());
     referRejectDTO.setPmWeight(gateInWriteRequest.getTruckWeight());
     referRejectDTO.setTrailerPlateNo(gateInWriteRequest.getTrailerNo());
@@ -277,7 +277,7 @@ public class ReferRejectService {
     ReferReject referReject = modelMapper.map(referRejectDTO, ReferReject.class);
 
     referReject.setStatusCode(HpatReferStatus.ACTIVE);
-    referReject.setReferDateTime(LocalDateTime.now());
+    referReject.setReferDateTime(gateInWriteRequest.getGateInDateTime());
 
 
     Set<ReferRejectDetail> referRejectDetails = referRejectDetailsDTOs.stream()
