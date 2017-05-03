@@ -17,8 +17,6 @@ import java.util.stream.Collectors;
 import javax.imageio.ImageIO;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ResourceLoader;
@@ -53,8 +51,6 @@ import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
 @Service("solasGateOutService")
 public class SolasGateOutService {
-	
-	private static final Log log = LogFactory.getLog(SolasGateOutService.class);
 
 	@Value("${solas.cert.name}")
 	private String solasCertName;
@@ -112,7 +108,11 @@ public class SolasGateOutService {
 
 	
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
-	public void updateSolasInfo(List<Exports> exportsList) {
+	public void isSolasApplicable(List<Exports> exportsList) {
+
+		boolean isSolasApplicable = false;
+		// check if at least one export container is solas container
+		// at least one should be within tolerance = false stream and select
 
 		Optional<List<Exports>> solasApplicableExportsListOpt = Optional.ofNullable(
 				exportsList.stream().filter(exp -> (!exp.isWithinTolerance())).collect(Collectors.toList()));
@@ -122,6 +122,7 @@ public class SolasGateOutService {
 			List<Exports> solasApplicableExportsList = solasApplicableExportsListOpt.get();
 
 			final List<SolasETPDTO> solasETPDTOs = new ArrayList<SolasETPDTO>();
+			isSolasApplicable = true;
 			final SolasPassFileDTO solasPassFileDTO = new SolasPassFileDTO();
 
 			try {
@@ -175,12 +176,17 @@ public class SolasGateOutService {
 				// save to scss data base
 				etpSolasLogService.saveETPSolasLog(solasETPDTOs);
 
+				isSolasApplicable = true;
+
 			} catch (Exception e) {
+				System.out.println("Message ####################################: ");
+				System.out.println("Message : " + e.getMessage());
 				e.printStackTrace();
-				log.info("ERROR Message : " + e.getMessage());
-				
 			}
 		}
+
+		// return new AsyncResult<Boolean>(isSolasApplicable);
+
 	}
 
 	public List<SolasETPDTO> constructSolasETPDTO(Exports exports, List<SolasETPDTO> solasETPDTOs) {
