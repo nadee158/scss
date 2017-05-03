@@ -39,21 +39,23 @@ public class ETPWsEntryPoint extends SpringBootServletInitializer {
   private static Class<ETPWsEntryPoint> applicationClass = ETPWsEntryPoint.class;
 
   @Bean
-  public Jaxb2Marshaller marshaller() {
+  public Jaxb2Marshaller marshaller() throws Exception {
     Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
     System.out.println("wsContextPath :" + wsContextPath);
     marshaller.setCheckForXmlRootElement(false);
     marshaller.setContextPath(wsContextPath);
+    marshaller.afterPropertiesSet();
     return marshaller;
   }
 
   @Bean
-  public ETPWebserviceClient etpWebserviceClient(Jaxb2Marshaller marshaller) {
+  public ETPWebserviceClient etpWebserviceClient(Jaxb2Marshaller marshaller) throws Exception {
     System.out.println("clientDefaultUri :" + clientDefaultUri);
     ETPWebserviceClient client = new ETPWebserviceClient();
     client.setDefaultUri(clientDefaultUri);
     client.setMarshaller(marshaller);
     client.setUnmarshaller(marshaller);
+    client.afterPropertiesSet();
     return client;
   }
 

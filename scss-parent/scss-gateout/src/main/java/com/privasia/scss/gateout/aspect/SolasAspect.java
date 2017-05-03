@@ -44,26 +44,9 @@ public class SolasAspect {
 	public void solasApplicable(SolasApplicable solasApplicable, List<Exports> returnValue) {
 
 		log.info("*****************   solasApplicable called *************************");
-		System.out.println("*****************   solasApplicable *************************");
+		
+		solasGateOutService.updateSolasInfo(returnValue);
 
-		System.out.println("****** RETURN VALUES EMPTY  " + returnValue.isEmpty());
-
-		solasGateOutService.isSolasApplicable(returnValue);
-
-		System.out.println("*****************  &&&&&&&&&&&&&&& *************************");
-		System.out.println("*****************  &&&&&&&&&&&&&&& *************************");
-		System.out.println("*****************  &&&&&&&&&&&&&&& *************************");
-		System.out.println("*****************  &&&&&&&&&&&&&&& *************************");
-		System.out.println("*****************  &&&&&&&&&&&&&&& *************************");
-		System.out.println("*****************  &&&&&&&&&&&&&&& *************************");
-
-		System.out.println("*****************  &&&&&&&&&&&&&&& *************************");
-		System.out.println("*****************  &&&&&&&&&&&&&&& *************************");
-		System.out.println("*****************  &&&&&&&&&&&&&&& *************************");
-		System.out.println("*****************  &&&&&&&&&&&&&&& *************************");
-		System.out.println("*****************  &&&&&&&&&&&&&&& *************************");
-		System.out.println("*****************  &&&&&&&&&&&&&&& *************************");
-		System.out.println("*****************  &&&&&&&&&&&&&&& *************************");
 		
 	}
 
