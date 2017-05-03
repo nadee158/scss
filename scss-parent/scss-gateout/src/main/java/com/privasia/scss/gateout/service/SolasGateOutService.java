@@ -108,7 +108,7 @@ public class SolasGateOutService {
 
 	
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
-	public void isSolasApplicable(List<Exports> exportsList) {
+	public void updateSolasInfo(List<Exports> exportsList) {
 
 		boolean isSolasApplicable = false;
 		// check if at least one export container is solas container
@@ -344,7 +344,7 @@ public class SolasGateOutService {
 			// convert array of bytes into file /
 			/*
 			 * FileOutputStream fileOuputStream = new
-			 * FileOutputStream("C://scss-opus//pass.pdf");
+			 * FileOutputStream("C://scss-opus//pass.pdf"); 
 			 * fileOuputStream.write(pdfBytes); fileOuputStream.close();
 			 */
 		}
