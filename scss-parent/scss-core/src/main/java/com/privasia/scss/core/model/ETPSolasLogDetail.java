@@ -29,10 +29,10 @@ import org.hibernate.annotations.Type;
  */
 @Entity
 @Table(name = "SCSS_ETP_SOLAS_LOG_DETAIL")
-@AttributeOverrides({@AttributeOverride(name = "addBy", column = @Column(name = "CREATED_BY")),
-    @AttributeOverride(name = "updateBy", column = @Column(name = "UPDATED_BY")),
-    @AttributeOverride(name = "dateTimeAdd", column = @Column(name = "DATE_TIME_CREATED")),
-    @AttributeOverride(name = "dateTimeUpdate", column = @Column(name = "DATE_TIME_UPDATE"))})
+@AttributeOverrides({@AttributeOverride(name = "addBy", column = @Column(name = "CREATED_BY") ),
+    @AttributeOverride(name = "updateBy", column = @Column(name = "UPDATED_BY") ),
+    @AttributeOverride(name = "dateTimeAdd", column = @Column(name = "DATE_TIME_CREATED") ),
+    @AttributeOverride(name = "dateTimeUpdate", column = @Column(name = "DATE_TIME_UPDATE") )})
 public class ETPSolasLogDetail extends AuditEntity implements Serializable {
 
   /**
@@ -49,7 +49,7 @@ public class ETPSolasLogDetail extends AuditEntity implements Serializable {
   @Column(name = "SOLAS_DETAIL")
   private String solasDetail;
 
-  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
   @JoinColumn(name = "EXP_SEQ", nullable = false, referencedColumnName = "EXP_EXPORTNO_SEQ")
   private Exports export;
 

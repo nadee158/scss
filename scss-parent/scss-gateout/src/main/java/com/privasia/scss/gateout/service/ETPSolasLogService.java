@@ -40,20 +40,24 @@ public class ETPSolasLogService {
       DateTimeFormatter.ofPattern(ETPWebserviceClient.WEB_SERVICE_DATE_PATTERN);
 
   @Transactional(value = "transactionManager", propagation = Propagation.REQUIRES_NEW, readOnly = false)
-  public void saveETPSolasLog(List<SolasETPDTO> solasETPDTOs) {
+  public void saveETPSolasLog(List<SolasETPDTO> solasETPDTOs, List<Exports> exportsList) {
     if (solasETPDTOs == null || solasETPDTOs.isEmpty()) {
       throw new BusinessException("No data is available to save!");
     }
     final ETPSolasLog etpSolasLog = new ETPSolasLog();
     solasETPDTOs.forEach(etpDTO -> {
-      constructETPSolasLog(etpDTO, etpSolasLog);
+
+      Exports exports = exportsList.stream().filter(exp -> (exp.getExportID() == Long.parseLong(etpDTO.getExportSEQ())))
+          .findAny().get();
+
+      constructETPSolasLog(etpDTO, etpSolasLog, exports);
     });
     etpSolasLogRepository.save(etpSolasLog);
   }
 
 
 
-  public void constructETPSolasLog(SolasETPDTO etpDTO, ETPSolasLog etpSolasLog) {
+  public void constructETPSolasLog(SolasETPDTO etpDTO, ETPSolasLog etpSolasLog, Exports exports) {
     if (etpSolasLog.getEtpSolasLogDetails() == null) {
       etpSolasLog.setEtpSolasLogDetails(new HashSet<ETPSolasLogDetail>());
       etpSolasLog.setCertificateNumber(etpDTO.getCertificateNo());
@@ -66,19 +70,20 @@ public class ETPSolasLogService {
       etpSolasLog.setWeighingStation(etpDTO.getWeighStation());
       etpSolasLog.setWithnessName(etpDTO.getIssueBy());
       etpSolasLog.setWithnessNRIC(etpDTO.getIssuerNRIC());
-      etpSolasLog.getEtpSolasLogDetails().add(constructEtpSolasLogDetails(etpDTO, etpSolasLog));
+      etpSolasLog.getEtpSolasLogDetails().add(constructEtpSolasLogDetails(etpDTO, etpSolasLog, exports));
     } else {
-      etpSolasLog.getEtpSolasLogDetails().add(constructEtpSolasLogDetails(etpDTO, etpSolasLog));
+      etpSolasLog.getEtpSolasLogDetails().add(constructEtpSolasLogDetails(etpDTO, etpSolasLog, exports));
     }
   }
 
 
 
-  public ETPSolasLogDetail constructEtpSolasLogDetails(SolasETPDTO etpDTO, ETPSolasLog etpSolasLog) {
+  public ETPSolasLogDetail constructEtpSolasLogDetails(SolasETPDTO etpDTO, ETPSolasLog etpSolasLog, Exports export) {
     ETPSolasLogDetail etpSolasLogDetail = new ETPSolasLogDetail();
     etpSolasLogDetail.setCalculatedVariance(etpDTO.getCalculatedVariance());
     etpSolasLogDetail.setEtpSolasLog(etpSolasLog);
-    Exports export = exportsRepository.findOne(Long.parseLong(etpDTO.getExportSEQ())).orElse(null);
+    // Exports export =
+    // exportsRepository.findOne(Long.parseLong(etpDTO.getExportSEQ())).orElse(null);
     etpSolasLogDetail.setExport(export);
     etpSolasLogDetail.setGrossWeight(etpDTO.getGrossWeight());
     etpSolasLogDetail.setMgw(etpDTO.getMgw());
