@@ -1,5 +1,6 @@
 package com.privasia.scss.gateout.service;
 
+import java.io.IOException;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
@@ -9,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
-import com.mongodb.gridfs.GridFSFile;
+import com.mongodb.gridfs.GridFSInputFile;
 import com.privasia.scss.common.enums.CollectionType;
 import com.privasia.scss.common.enums.TransactionType;
 import com.privasia.scss.gateout.dto.FileDTO;
@@ -25,7 +26,7 @@ public class FileService {
 		this.gridFSRepository = gridFSRepository;
 	}
 
-	public Optional<String> saveFileToMongoDB(FileDTO fileDTO) {
+	public Optional<String> saveFileToMongoDB(FileDTO fileDTO) throws IOException {
 
 		fileDTO = createFileId(fileDTO);
 
@@ -38,8 +39,7 @@ public class FileService {
 
 			metaData.put(fileDTO.getFileName().get() + "_Info", doc);
 			
-			GridFSFile gridFSFile = gridFSRepository.storeFile(fileDTO.getFileStream(), metaData,
-					fileDTO.getCollectionType());
+			GridFSInputFile gridFSFile = gridFSRepository.storeFile(fileDTO, metaData);
 			System.out.println("gridFSFile.getId() : "+gridFSFile.getId());
 			System.out.println("fileDTO.getFileName() : "+fileDTO.getFileName());
 			if (gridFSFile != null) {

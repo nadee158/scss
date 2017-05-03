@@ -86,17 +86,18 @@ public class ETPWebserviceClient extends WebServiceGatewaySupport {
 
   }
 
-  public List<SolasETPDTO> updateSolasToEtp(List<SolasETPDTO> solasETPDTOs) throws ParseException {
+  
+public List<SolasETPDTO> updateSolasToEtp(List<SolasETPDTO> solasETPDTOs) throws ParseException {
     if (!(solasETPDTOs == null || solasETPDTOs.isEmpty())) {
 
-
-
+      ObjectFactory objFac = new ObjectFactory();
+     
       SimpleDateFormat formatter = new SimpleDateFormat(WEB_SERVICE_DATE_PATTERN);
-      UpdateSolasForScssGateInRequestType parameters = new UpdateSolasForScssGateInRequestType();
-
+    
       solasETPDTOs.forEach(solasETPDTO -> {
 
         UpdateSolasForScssGateInResponseType response = null;
+        UpdateSolasForScssGateInRequestType parameters = new UpdateSolasForScssGateInRequestType();
         int retry = 0;
 
         // set header values and container 01 values
@@ -132,18 +133,15 @@ public class ETPWebserviceClient extends WebServiceGatewaySupport {
           parameters.setTerminalMgw(solasETPDTO.getMgw());
           parameters.setGrossWeight(solasETPDTO.getGrossWeight());
 
-
-          ObjectFactory objFac = new ObjectFactory();
-          JAXBElement<UpdateSolasForScssGateInRequestType> request =
-              objFac.createUpdateSolasForScssGateInRequest(parameters);
-
-
           log.info("******************* Update ETP Solas Web Service Start *******************  ");
           System.out.println("******************* Update ETP Solas Web Service Start *******************  ");
 
           Date today = Calendar.getInstance().getTime();
           solasETPDTO.setRequestSendTime(formatter.format(today));
-
+          
+          JAXBElement<UpdateSolasForScssGateInRequestType> request =
+                  objFac.createUpdateSolasForScssGateInRequest(parameters);
+          
           JAXBElement<UpdateSolasForScssGateInResponseType> jaxBRresponse =
               (JAXBElement<UpdateSolasForScssGateInResponseType>) getWebServiceTemplate().marshalSendAndReceive(
                   wsServerUri, request, new SoapActionCallback(clientDefaultUri + "/updateSolasForScssGateIn"));

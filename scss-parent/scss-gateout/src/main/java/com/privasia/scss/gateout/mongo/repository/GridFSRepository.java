@@ -1,99 +1,44 @@
 package com.privasia.scss.gateout.mongo.repository;
 
-import java.io.InputStream;
+import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.data.mongodb.gridfs.GridFsTemplate;
+import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.stereotype.Component;
 
 import com.mongodb.DBObject;
-import com.mongodb.gridfs.GridFSFile;
-import com.privasia.scss.common.enums.CollectionType;
+import com.mongodb.gridfs.GridFS;
+import com.mongodb.gridfs.GridFSInputFile;
+import com.privasia.scss.gateout.dto.FileDTO;
 
 @Component
 public class GridFSRepository {
 
-  private GridFsTemplate pdfFileGridFsTemplate;
+	private MongoDbFactory dbFactory;
 
-  private GridFsTemplate zipFileGridFsTemplate;
+	@Autowired
+	public void setDbFactory(MongoDbFactory dbFactory) {
+		this.dbFactory = dbFactory;
+	}
+	
 
-  private GridFsTemplate solasCertificateGridFsTemplate;
-
-  private GridFsTemplate gridFsTemplate;
-
-  @Autowired
-  public void setPdfFileGridFsTemplate(@Qualifier("pdfFileGridFsTemplate") GridFsTemplate pdfFileGridFsTemplate) {
-    this.pdfFileGridFsTemplate = pdfFileGridFsTemplate;
-  }
-
-  @Autowired
-  public void setZipFileGridFsTemplate(@Qualifier("zipFileGridFsTemplate") GridFsTemplate zipFileGridFsTemplate) {
-    this.zipFileGridFsTemplate = zipFileGridFsTemplate;
-  }
-
-  @Autowired
-  public void setSolasCertificateGridFsTemplate(
-      @Qualifier("solasCertificateGridFsTemplate") GridFsTemplate solasCertificateGridFsTemplate) {
-    this.solasCertificateGridFsTemplate = solasCertificateGridFsTemplate;
-  }
-
-  @Autowired
-  public void setGridFsTemplate(@Qualifier("gridFsTemplate") GridFsTemplate gridFsTemplate) {
-    this.gridFsTemplate = gridFsTemplate;
-  }
-
-  public GridFSFile storeFile(InputStream content, DBObject metadata, CollectionType collectionType) {
-    System.out.println("collectionType " + collectionType);
-    if (collectionType == null) {
-      return gridFsTemplate.store(content, metadata);
-    }
-    switch (collectionType) {
-      case PDF_FILE_COLLECTION:
-        return pdfFileGridFsTemplate.store(content, metadata);
-      case SOLAS_CERTIFICATE_COLLECTION:
-        System.out.println("solasCertificateGridFsTemplate **********************************************");
-        return solasCertificateGridFsTemplate.store(content, metadata);
-      case ZIP_FILE_COLLECTION:
-        return zipFileGridFsTemplate.store(content, metadata);
-      default:
-        return gridFsTemplate.store(content, metadata);
-    }
-  }
-
-  public GridFSFile storeFile(InputStream content, String filename, DBObject metadata, CollectionType collectionType) {
-    System.out.println("collectionType " + collectionType);
-    if (collectionType == null) {
-      return gridFsTemplate.store(content, filename, metadata);
-    }
-    switch (collectionType) {
-      case PDF_FILE_COLLECTION:
-        return pdfFileGridFsTemplate.store(content, filename, metadata);
-      case SOLAS_CERTIFICATE_COLLECTION:
-        return solasCertificateGridFsTemplate.store(content, filename, metadata);
-      case ZIP_FILE_COLLECTION:
-        return zipFileGridFsTemplate.store(content, filename, metadata);
-      default:
-        return gridFsTemplate.store(content, filename, metadata);
-    }
-  }
-
-  public GridFSFile storeFile(InputStream content, String filename, String contentType, DBObject metadata,
-      CollectionType collectionType) {
-    System.out.println("collectionType " + collectionType);
-    if (collectionType == null) {
-      return gridFsTemplate.store(content, filename, contentType, metadata);
-    }
-    switch (collectionType) {
-      case PDF_FILE_COLLECTION:
-        return pdfFileGridFsTemplate.store(content, filename, contentType, metadata);
-      case SOLAS_CERTIFICATE_COLLECTION:
-        return solasCertificateGridFsTemplate.store(content, filename, contentType, metadata);
-      case ZIP_FILE_COLLECTION:
-        return zipFileGridFsTemplate.store(content, filename, contentType, metadata);
-      default:
-        return gridFsTemplate.store(content, filename, contentType, metadata);
-    }
-  }
+	public GridFSInputFile storeFile(FileDTO fileDTO, DBObject metadata) throws IOException {
+		
+		GridFS gridFS = null;
+		
+		if (fileDTO.getCollectionType() == null) {
+			return null;
+		}
+		
+		gridFS = new GridFS(dbFactory.getDb(), fileDTO.getCollectionType().getValue());
+		GridFSInputFile file = gridFS.createFile(fileDTO.getFileStream(), fileDTO.getFileName().get(), true);
+		file.setChunkSize(1024l);
+		file.setMetaData(metadata);
+		file.saveChunks();
+		file.save();
+		
+		
+		return file;
+	}
 
 }

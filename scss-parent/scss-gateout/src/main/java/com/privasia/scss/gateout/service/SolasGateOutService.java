@@ -216,7 +216,7 @@ public class SolasGateOutService {
     }
     solasETPDTOs.add(solasETPDTO);
 
-    return solasETPDTOs;
+    return solasETPDTOs; 
   }
 
   public List<SolasETPDTO> updateSolasETPDTOList(List<SolasETPDTO> solasETPDTOs, SolasPassFileDTO solasPassFileDTO) {

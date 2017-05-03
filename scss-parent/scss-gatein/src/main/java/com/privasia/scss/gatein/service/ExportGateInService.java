@@ -15,6 +15,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +31,8 @@ import com.privasia.scss.common.dto.GateInWriteRequest;
 import com.privasia.scss.common.dto.ReferRejectDTO;
 import com.privasia.scss.common.dto.ReferRejectDetailDTO;
 import com.privasia.scss.common.enums.ContainerFullEmptyType;
+import com.privasia.scss.common.enums.HpatReferStatus;
+import com.privasia.scss.common.enums.ReferStatus;
 import com.privasia.scss.common.enums.ShipStatus;
 import com.privasia.scss.common.enums.TransactionStatus;
 import com.privasia.scss.core.exception.BusinessException;
@@ -39,6 +42,7 @@ import com.privasia.scss.core.model.Client;
 import com.privasia.scss.core.model.Exports;
 import com.privasia.scss.core.model.ExportsQ;
 import com.privasia.scss.core.model.HPABBooking;
+import com.privasia.scss.core.model.ReferRejectDetail;
 import com.privasia.scss.core.model.ShipCode;
 import com.privasia.scss.core.model.ShipSCN;
 import com.privasia.scss.core.model.SystemUser;
@@ -48,6 +52,8 @@ import com.privasia.scss.core.repository.DgDetailRepository;
 import com.privasia.scss.core.repository.ExportsQRepository;
 import com.privasia.scss.core.repository.ExportsRepository;
 import com.privasia.scss.core.repository.HPABBookingRepository;
+import com.privasia.scss.core.repository.ReferRejectDetailRepository;
+import com.privasia.scss.core.repository.ReferRejectRepository;
 import com.privasia.scss.core.repository.ShipCodeRepository;
 import com.privasia.scss.core.repository.ShipSCNRepository;
 import com.privasia.scss.core.repository.WDCGlobalSettingRepository;
@@ -102,6 +108,10 @@ public class ExportGateInService {
 	private VesselOmitService vesselOmitService;
 
 	private EmptyContainerService emptyContainerService;
+	
+	private ReferRejectDetailRepository referRejectDetailRepository;
+
+	private ReferRejectRepository referRejectRepository;
 
 	@Autowired
 	public void setSealValidationService(SealValidationService sealValidationService) {
@@ -186,6 +196,16 @@ public class ExportGateInService {
 	@Autowired
 	public void setEmptyContainerService(EmptyContainerService emptyContainerService) {
 		this.emptyContainerService = emptyContainerService;
+	}
+
+	@Autowired
+	public void setReferRejectDetailRepository(ReferRejectDetailRepository referRejectDetailRepository) {
+		this.referRejectDetailRepository = referRejectDetailRepository;
+	}
+	
+	@Autowired
+	public void setReferRejectRepository(ReferRejectRepository referRejectRepository) {
+		this.referRejectRepository = referRejectRepository;
 	}
 
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
@@ -378,11 +398,14 @@ public class ExportGateInService {
 
 		// return new AsyncResult<Boolean>(true);
 	}
-
-	private void updateReferReject(GateInWriteRequest gateInWriteRequest, ExportContainer exportContainer) {
+	
+	@Async
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRES_NEW, readOnly = false)
+	public void updateReferReject(GateInWriteRequest gateInWriteRequest, ExportContainer exportContainer) {
+		
 		ReferRejectDetailDTO detailDTO = constructReferRejectDetailDTO(gateInWriteRequest, exportContainer);
 
-		RestTemplate restTemplate = new RestTemplate();
+		/*RestTemplate restTemplate = new RestTemplate();
 		HttpHeaders headers = new HttpHeaders();
 
 		headers.setContentType(MediaType.APPLICATION_JSON);
@@ -394,8 +417,22 @@ public class ExportGateInService {
 		ResponseEntity<ApiResponseObject> response = restTemplate.postForEntity(updateReferDetailURL, request,
 				ApiResponseObject.class);
 
-		log.info("RESPONSE FROM REFER REJECT: " + response.toString());
+		log.info("RESPONSE FROM REFER REJECT: " + response.toString());*/
+		
+	    if (detailDTO == null)
+	      throw new BusinessException("Refer reject details to update is not available!");
 
+	    ReferRejectDetail referRejectDetail = referRejectDetailRepository
+	        .findByReferReject_ReferRejectIDAndContainerNoAndReferReject_StatusCode(detailDTO.getReferReject().getReferRejectID(),
+	        		detailDTO.getContainerNo(), HpatReferStatus.ACTIVE)
+	        .orElseThrow(() -> new ResultsNotFoundException("Refer reject detail was not found!"));
+
+	    referRejectDetail.setLineCode(StringUtils.upperCase(detailDTO.getLineCode()));
+	    referRejectDetail.setGateInTime(detailDTO.getGateInTime());
+	    referRejectDetail.setStatus(ReferStatus.REJECT_EXE);
+	    referRejectDetail.getReferReject().setStatusCode(HpatReferStatus.COMPLETE);
+	    referRejectRepository.save(referRejectDetail.getReferReject());
+	   
 	}
 
 	private ReferRejectDetailDTO constructReferRejectDetailDTO(GateInWriteRequest gateInWriteRequest,
@@ -403,6 +440,7 @@ public class ExportGateInService {
 		ReferRejectDetailDTO referRejectDetailDTO = new ReferRejectDetailDTO();
 		referRejectDetailDTO.setContainerNo(exportContainer.getContainer().getContainerNumber());
 		referRejectDetailDTO.setLineCode(exportContainer.getShippingLine());
+		referRejectDetailDTO.setGateInTime(gateInWriteRequest.getGateInDateTime());
 		referRejectDetailDTO.setReferReject(new ReferRejectDTO());
 		referRejectDetailDTO.getReferReject()
 				.setReferRejectID(gateInWriteRequest.getReferRejectDTO().get().getReferRejectID());

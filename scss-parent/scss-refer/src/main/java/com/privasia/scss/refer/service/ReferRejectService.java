@@ -458,7 +458,7 @@ public class ReferRejectService {
 
   @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
   public String updateLineCodeAndGateInDateForReferRejectDetail(ReferRejectDetailDTO dto) {
-    String status = "ERROR";
+   
     if (dto == null)
       throw new BusinessException("Refer reject details to update is not available!");
 
@@ -471,14 +471,9 @@ public class ReferRejectService {
     referRejectDetail.setGateInTime(dto.getGateInTime());
     referRejectDetail.setStatus(ReferStatus.REJECT_EXE);
     referRejectDetail.getReferReject().setStatusCode(HpatReferStatus.COMPLETE);
-    ReferRejectDetail persisted = referRejectDetailRepository.save(referRejectDetail);
-    if (!(persisted == null || persisted.getReferRejectDetailID() <= 0)) {
-      if (persisted.getReferReject().getReferRejectID() == dto.getReferReject().getReferRejectID()) {
-        status = "SUCCESS";
-      }
-    }
-
-    return status;
+    referRejectRepository.save(referRejectDetail.getReferReject());
+   
+    return "SUCCESS";
   }
 
   @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
