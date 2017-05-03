@@ -89,7 +89,7 @@ public class OpusGateInReadService {
 		return opusGateInRequest;
 	}
 
-	@LogOpusData
+	//@LogOpusData
 	public OpusGateInReadResponse getGateInReadResponse(OpusGateInReadRequest opusGateInReadRequest,
 			OpusRequestResponseDTO opusRequestResponseDTO) {
 		System.out.println("gateInReadResponseURL " + gateInReadResponseURL);

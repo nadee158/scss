@@ -4,14 +4,12 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.MathContext;
-import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
@@ -21,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -106,13 +103,9 @@ public class SolasGateOutService {
 		this.resourceLoader = resourceLoader;
 	}
 
-	
-	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
+	//@Async
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRES_NEW, readOnly = false)
 	public void updateSolasInfo(List<Exports> exportsList) {
-
-		boolean isSolasApplicable = false;
-		// check if at least one export container is solas container
-		// at least one should be within tolerance = false stream and select
 
 		Optional<List<Exports>> solasApplicableExportsListOpt = Optional.ofNullable(
 				exportsList.stream().filter(exp -> (!exp.isWithinTolerance())).collect(Collectors.toList()));
@@ -122,7 +115,7 @@ public class SolasGateOutService {
 			List<Exports> solasApplicableExportsList = solasApplicableExportsListOpt.get();
 
 			final List<SolasETPDTO> solasETPDTOs = new ArrayList<SolasETPDTO>();
-			isSolasApplicable = true;
+		
 			final SolasPassFileDTO solasPassFileDTO = new SolasPassFileDTO();
 
 			try {
@@ -176,8 +169,6 @@ public class SolasGateOutService {
 				// save to scss data base
 				etpSolasLogService.saveETPSolasLog(solasETPDTOs);
 
-				isSolasApplicable = true;
-
 			} catch (Exception e) {
 				System.out.println("Message ####################################: ");
 				System.out.println("Message : " + e.getMessage());
@@ -188,7 +179,8 @@ public class SolasGateOutService {
 		// return new AsyncResult<Boolean>(isSolasApplicable);
 
 	}
-
+	
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
 	public List<SolasETPDTO> constructSolasETPDTO(Exports exports, List<SolasETPDTO> solasETPDTOs) {
 		SolasETPDTO solasETPDTO = new SolasETPDTO();
 
@@ -240,7 +232,8 @@ public class SolasGateOutService {
 		}
 		return solasETPDTOs;
 	}
-
+	
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
 	public SolasPassFileDTO constructSolasPassFileDTO(Exports exports, SolasPassFileDTO solasPassFileDTO) {
 		if ((exports.getContainer() == null)) {
 			throw new BusinessException("Container Details not found To Generate SolasApplicable Cert! ");

@@ -3,22 +3,9 @@
  */
 package com.privasia.scss.gateout.aspect;
 
-import java.util.List;
-import java.util.concurrent.Future;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
-import com.privasia.scss.common.annotation.SolasApplicable;
-import com.privasia.scss.core.model.Exports;
-import com.privasia.scss.gateout.service.SolasGateOutService;
 
 
 /**
@@ -29,7 +16,7 @@ import com.privasia.scss.gateout.service.SolasGateOutService;
 @Component
 public class SolasAspect {
 
-	private static final Log log = LogFactory.getLog(SolasAspect.class);
+	/*private static final Log log = LogFactory.getLog(SolasAspect.class);
 
 	private SolasGateOutService solasGateOutService;
 
@@ -48,6 +35,6 @@ public class SolasAspect {
 		solasGateOutService.updateSolasInfo(returnValue);
 
 		
-	}
+	}*/
 
 }

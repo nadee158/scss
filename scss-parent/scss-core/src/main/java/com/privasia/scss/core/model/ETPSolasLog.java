@@ -5,7 +5,6 @@ package com.privasia.scss.core.model;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
 import java.util.Set;
 
 import javax.persistence.AttributeOverride;
