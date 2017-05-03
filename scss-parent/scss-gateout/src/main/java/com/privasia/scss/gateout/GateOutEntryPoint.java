@@ -16,6 +16,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 
 import com.privasia.scss.core.config.SCSSEntryPoint;
 import com.privasia.scss.cosmos.AS400DBConfig;
+import com.privasia.scss.etpws.ETPWsEntryPoint;
 
 /**
  * Janaka Wanigatunga
@@ -28,7 +29,7 @@ import com.privasia.scss.cosmos.AS400DBConfig;
 @EntityScan(basePackages = {"com.privasia.scss.core.model"})
 @PropertySource(value = {"classpath:mongodb.properties", "classpath:cosmos_application.properties",
     "classpath:cosmos_sql-dev.properties", "classpath:opus_application.properties", "classpath:ws.properties"})
-@Import({AS400DBConfig.class, SCSSEntryPoint.class})
+@Import({AS400DBConfig.class, SCSSEntryPoint.class, ETPWsEntryPoint.class})
 @EnableJpaRepositories(basePackages = {"com.privasia.scss.core.repository"})
 @EnableAsync
 public class GateOutEntryPoint extends SpringBootServletInitializer {

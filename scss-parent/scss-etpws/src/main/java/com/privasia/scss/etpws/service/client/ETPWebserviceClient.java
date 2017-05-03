@@ -12,7 +12,6 @@ import javax.xml.bind.JAXBElement;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.ws.client.core.support.WebServiceGatewaySupport;
 import org.springframework.ws.soap.client.core.SoapActionCallback;
 
@@ -33,11 +32,14 @@ public class ETPWebserviceClient extends WebServiceGatewaySupport {
 
   public static final String WEB_SERVICE_DATE_PATTERN = "dd-MM-yyyy HH:mm";
 
-  @Value("${ws.server.uri}")
   private String wsServerUri;
 
-  @Value("${ws.client.default.uri}")
   private String clientDefaultUri;
+
+  public ETPWebserviceClient(String clientDefaultUri, String wsServerUri) {
+    this.clientDefaultUri = clientDefaultUri;
+    this.wsServerUri = wsServerUri;
+  }
 
   public EdoExpiryForLineResponseType getEdoExpiryForLine(String lineNo) {
     try {
@@ -85,6 +87,9 @@ public class ETPWebserviceClient extends WebServiceGatewaySupport {
   }
 
   public List<SolasETPDTO> updateSolasToEtp(List<SolasETPDTO> solasETPDTOs) {
+
+    System.out.println("******************* clientDefaultUri *******************  " + clientDefaultUri);
+    System.out.println("******************* wsServerUri *******************  " + wsServerUri);
 
     if (!(solasETPDTOs == null || solasETPDTOs.isEmpty())) {
 
