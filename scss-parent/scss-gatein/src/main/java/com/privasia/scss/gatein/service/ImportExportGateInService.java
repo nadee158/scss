@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.gson.Gson;
 import com.privasia.scss.common.annotation.OpenGate;
-import com.privasia.scss.common.business.ExternalContainerInformationService;
+import com.privasia.scss.common.business.ContainerExternalDataService;
 import com.privasia.scss.common.dto.GateInReponse;
 import com.privasia.scss.common.dto.GateInRequest;
 import com.privasia.scss.common.dto.GateInWriteRequest;
@@ -72,12 +72,12 @@ public class ImportExportGateInService {
 
   private GateInReferService gateInReferService;
 
-  private ExternalContainerInformationService externalContainerInformationService;
+  private ContainerExternalDataService containerExternalDataService;
 
   @Autowired
   public void setExternalContainerInformationService(
-      ExternalContainerInformationService externalContainerInformationService) {
-    this.externalContainerInformationService = externalContainerInformationService;
+      ContainerExternalDataService containerExternalDataService) {
+    this.containerExternalDataService = containerExternalDataService;
   }
 
   @Autowired
@@ -278,7 +278,7 @@ public class ImportExportGateInService {
 
     switch (impExpFlag) {
       case IMPORT:
-        gateInReponse = externalContainerInformationService.sendGateInRequest(gateInWriteRequest);
+        gateInReponse = containerExternalDataService.sendGateInRequest(gateInWriteRequest);
         gateInWriteRequest.setImportContainers(gateInReponse.getImportContainers());
         importGateInService.saveGateInInfo(gateInWriteRequest, gateInClient, gateInClerk, card);
         // expSave = new AsyncResult<Boolean>(true);
@@ -286,13 +286,13 @@ public class ImportExportGateInService {
       case EXPORT:
         // impSave = new AsyncResult<Boolean>(true);
         exportGateInService.validateExport(gateInWriteRequest);
-        gateInReponse = externalContainerInformationService.sendGateInRequest(gateInWriteRequest);
+        gateInReponse = containerExternalDataService.sendGateInRequest(gateInWriteRequest);
         gateInWriteRequest.setExportContainers(gateInReponse.getExportContainers());
         exportGateInService.saveGateInInfo(gateInWriteRequest, gateInClient, gateInClerk, card);
         break;
       case IMPORT_EXPORT:
         exportGateInService.validateExport(gateInWriteRequest);
-        gateInReponse = externalContainerInformationService.sendGateInRequest(gateInWriteRequest);
+        gateInReponse = containerExternalDataService.sendGateInRequest(gateInWriteRequest);
         gateInWriteRequest.setImportContainers(gateInReponse.getImportContainers());
         gateInWriteRequest.setExportContainers(gateInReponse.getExportContainers());
         importGateInService.saveGateInInfo(gateInWriteRequest, gateInClient, gateInClerk, card);
