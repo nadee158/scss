@@ -10,9 +10,13 @@ import com.google.gson.Gson;
 import com.privasia.scss.common.business.ContainerExternalDataService;
 import com.privasia.scss.common.dto.GateInReponse;
 import com.privasia.scss.common.dto.GateInWriteRequest;
+import com.privasia.scss.common.dto.GateOutReponse;
+import com.privasia.scss.common.dto.GateOutRequest;
 import com.privasia.scss.core.exception.BusinessException;
 import com.privasia.scss.opus.dto.OpusGateInWriteRequest;
 import com.privasia.scss.opus.dto.OpusGateInWriteResponse;
+import com.privasia.scss.opus.dto.OpusGateOutReadRequest;
+import com.privasia.scss.opus.dto.OpusGateOutReadResponse;
 import com.privasia.scss.opus.dto.OpusRequestResponseDTO;
 
 @Service("opusService")
@@ -24,7 +28,14 @@ public class OpusService implements ContainerExternalDataService {
 
   private OpusDTOConstructService opusDTOConstructService;
 
+  private OpusGateOutReadService opusGateOutReadService;
+
   private Gson gson;
+
+  @Autowired
+  public void setOpusGateOutReadService(OpusGateOutReadService opusGateOutReadService) {
+    this.opusGateOutReadService = opusGateOutReadService;
+  }
 
   @Autowired
   public void setOpusGateInWriteService(OpusGateInWriteService opusGateInWriteService) {
@@ -70,6 +81,30 @@ public class OpusService implements ContainerExternalDataService {
     gateInReponse.setExportContainers(gateInWriteRequest.getExportContainers());
     gateInReponse = opusGateInWriteService.constructGateInReponse(opusGateInWriteResponse, gateInReponse);
     return gateInReponse;
+  }
+
+  @Override
+  public GateOutReponse sendGateOutReadRequest(GateOutRequest gateOutRequest, GateOutReponse gateOutReponse) {
+    OpusGateOutReadRequest gateOutReadRequest = opusGateOutReadService.constructOpenGateOutRequest(gateOutRequest);
+
+    OpusRequestResponseDTO opusRequestResponseDTO =
+        new OpusRequestResponseDTO(gateOutReadRequest, gson, gateOutRequest.getCardID());
+    System.out.println("populateGateOut :: opusRequestResponseDTO " + opusRequestResponseDTO);
+
+    OpusGateOutReadResponse gateOutReadResponse =
+        opusGateOutReadService.getGateOutReadResponse(gateOutReadRequest, opusRequestResponseDTO);
+    // check the errorlist of reponse
+    String errorMessage = opusDTOConstructService.hasErrorMessage(gateOutReadResponse.getErrorList());
+    log.error("ERROR MESSAGE FROM OPUS SERVICE: " + errorMessage);
+    if (StringUtils.isNotEmpty(errorMessage)) {
+      // save it to the db - TO BE IMPLEMENTED
+      // throw new business exception with constructed message - there
+      // is
+      // an error
+      System.err.println(errorMessage);
+      throw new BusinessException(errorMessage);
+    }
+    return opusGateOutReadService.constructGateOutReponse(gateOutReadResponse, gateOutReponse);
   }
 
 }
