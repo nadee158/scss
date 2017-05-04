@@ -29,8 +29,6 @@ public class CosmosImportRepository {
 
 	private static final Log log = LogFactory.getLog(CosmosImportRepository.class);
 
-	@Autowired
-	@Qualifier("as400JdbcTemplate")
 	private JdbcTemplate jdbcTemplate;
 
 	@Value("${import.getContainerInfo}")
@@ -50,6 +48,11 @@ public class CosmosImportRepository {
 
 	@Value("${import.dsoSealNo}")
 	private String queryDsoSealNo;
+	
+	@Autowired
+	public void setJdbcTemplate(@Qualifier("as400JdbcTemplate") JdbcTemplate jdbcTemplate) {
+		this.jdbcTemplate = jdbcTemplate;
+	}
 
 	@Transactional(value = "as400TransactionManager", propagation = Propagation.REQUIRED, readOnly = true)
 	public ImportContainer getContainerInfo(ImportContainer importContainer, String containerNo) {

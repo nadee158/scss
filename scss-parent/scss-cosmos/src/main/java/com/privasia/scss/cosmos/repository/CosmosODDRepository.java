@@ -16,12 +16,15 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 public class CosmosODDRepository {
 
-	@Autowired
-	@Qualifier("as400JdbcTemplate")
 	private JdbcTemplate jdbcTemplate;
 
 	@Value("${odd.validateODDContainer}")
 	private String queryValidateODDContainer;
+	
+	@Autowired
+	public void setJdbcTemplate(@Qualifier("as400JdbcTemplate") JdbcTemplate jdbcTemplate) {
+		this.jdbcTemplate = jdbcTemplate;
+	}
 
 	@Transactional(value = "as400TransactionManager", propagation = Propagation.REQUIRED, readOnly = true)
 	public boolean validateODDContainer(String containerNo) {

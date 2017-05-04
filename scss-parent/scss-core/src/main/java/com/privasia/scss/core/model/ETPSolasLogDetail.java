@@ -49,7 +49,7 @@ public class ETPSolasLogDetail extends AuditEntity implements Serializable {
   @Column(name = "SOLAS_DETAIL")
   private String solasDetail;
 
-  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
+  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
   @JoinColumn(name = "EXP_SEQ", nullable = false, referencedColumnName = "EXP_EXPORTNO_SEQ")
   private Exports export;
 

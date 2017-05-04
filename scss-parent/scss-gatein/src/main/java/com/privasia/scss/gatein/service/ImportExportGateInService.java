@@ -18,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.gson.Gson;
 import com.privasia.scss.common.annotation.OpenGate;
 import com.privasia.scss.common.business.ExternalContainerInformationService;
-import com.privasia.scss.common.dto.ExportContainer;
 import com.privasia.scss.common.dto.GateInReponse;
 import com.privasia.scss.common.dto.GateInRequest;
 import com.privasia.scss.common.dto.GateInWriteRequest;
@@ -50,7 +49,7 @@ public class ImportExportGateInService {
   private long asyncWaitTime;
 
   private static final Log log = LogFactory.getLog(ImportExportGateInService.class);
-
+ 
   private ImportGateInService importGateInService;
 
   private ExportGateInService exportGateInService;

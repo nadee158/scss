@@ -19,6 +19,7 @@ import com.privasia.scss.common.dto.ImportContainer;
 import com.privasia.scss.common.enums.ContainerStatus;
 import com.privasia.scss.common.service.export.ExportUtilService;
 import com.privasia.scss.common.util.DateUtil;
+import com.privasia.scss.core.exception.BusinessException;
 import com.privasia.scss.opus.dto.GIReadResponseExporterContainer;
 import com.privasia.scss.opus.dto.GIReadResponseImportContainer;
 import com.privasia.scss.opus.dto.GIWriteRequestExportContainer;
@@ -248,6 +249,9 @@ public class OpusDTOConstructService {
     exportContainer.getContainer().setContainerNumber(gIReadResponseExporterContainer.getContainerNo());
     // private String exportBookingNo;// BOOK20001,
     exportContainer.setBookingNo(gIReadResponseExporterContainer.getExportOrderNo());
+    if(StringUtils.isNotEmpty(gIReadResponseExporterContainer.getExportOrderNo())){
+    	exportContainer.setBookingNoExist(true);
+    }
     exportContainer.setExportOrderStatus(gIReadResponseExporterContainer.getExportOrderStatus());
     exportContainer.setExportOrderType(gIReadResponseExporterContainer.getExportOrderType());
     // private String containerInOrOut;// IN,
@@ -708,7 +712,7 @@ public class OpusDTOConstructService {
       });
       return updatedExportContainers;
     }
-    return null;
+    throw new BusinessException("Data Not Received For Exports from Opus");
   }
 
   public List<ImportContainer> giReadResponseImportContainerListToImportContainerList(
@@ -748,7 +752,7 @@ public class OpusDTOConstructService {
       });
       return updatedImportContainers;
     }
-    return null;
+    throw new BusinessException("Data Not Received For Import from Opus");
   }
 
 }

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.privasia.scss.common.dto.ExportContainer;
+import com.privasia.scss.common.dto.GateOutWriteRequest;
 import com.privasia.scss.common.dto.ImportContainer;
 import com.privasia.scss.cosmos.repository.CosmosImportRepository;
 import com.privasia.scss.gateout.service.ExportGateOutService;
@@ -38,7 +39,11 @@ public class TestController {
 	@RequestMapping(value = "/checksolas", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResponseEntity<List<ExportContainer>> checkSolas(@RequestBody List<ExportContainer> exportList) {
 		
-		exportGateOutService.testSolas(exportList);
+		
+		GateOutWriteRequest gateOutWriteRequest = new GateOutWriteRequest();
+		gateOutWriteRequest.setExportContainers(exportList);
+		
+		exportGateOutService.testSolas(gateOutWriteRequest);
 		System.out.println("METHOD RETURN SUCCESS");
 		return new ResponseEntity<List<ExportContainer>>(exportList, HttpStatus.OK);
 	}

@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.privasia.scss.common.dto.BaseCommonGateInOutDTO;
+import com.privasia.scss.common.dto.CommonContainerDTO;
 import com.privasia.scss.common.dto.CommonSealDTO;
 import com.privasia.scss.common.dto.CommonSolasDTO;
 import com.privasia.scss.common.dto.ExportContainer;
@@ -52,8 +53,12 @@ public class GateInReferService {
 				gateInReponse.setPmVerified(referReject.getPmVerified());
 				gateInReponse.setAxleVerified(referReject.getAxleVerified());
 				if (referReject.getBaseCommonGateInOut() != null) {
-					gateInReponse
-							.setHpabBookingId(referReject.getBaseCommonGateInOut().getHpabBooking().getBookingID());
+					
+					if(referReject.getBaseCommonGateInOut().getHpabBooking()!=null){
+						gateInReponse
+						.setHpabBookingId(referReject.getBaseCommonGateInOut().getHpabBooking().getBookingID());
+					}
+					
 					gateInReponse.setTruckHeadNo(referReject.getBaseCommonGateInOut().getPmHeadNo());
 					gateInReponse.setTruckPlateNo(referReject.getBaseCommonGateInOut().getPmPlateNo());
 				}
@@ -87,10 +92,17 @@ public class GateInReferService {
 								exportContainer.getBaseCommonGateInOutAttribute());
 
 					}
-
+					
+					if(exportContainer.getContainer()==null)
+						exportContainer.setContainer(new CommonContainerDTO());
+					exportContainer.getContainer().setContainerNumber(referRejectDetail.getContainerNo());
+					exportContainer.getContainer().setContainerISOCode(referRejectDetail.getContainerIsoCode());
+					exportContainer.setShippingLine(referRejectDetail.getLineCode());
 					exportContainers.add(exportContainer);
 
 				});
+				
+				
 
 				gateInReponse.setExportContainers(exportContainers);
 				return gateInReponse;

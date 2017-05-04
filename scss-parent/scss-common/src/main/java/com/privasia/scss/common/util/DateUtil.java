@@ -131,7 +131,7 @@ public class DateUtil {
 
   public static LocalDateTime getLocalDategFromString(String gateINDateTime) {
     try {
-      if (StringUtils.isNotEmpty(gateINDateTime)) {
+      if (StringUtils.isNotEmpty(gateINDateTime) || !StringUtils.equals("0", gateINDateTime)) {
         DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
         return LocalDateTime.parse(gateINDateTime, dateFormat);
       }

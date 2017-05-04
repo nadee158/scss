@@ -113,7 +113,9 @@ public class SolasGateOutService {
     this.resourceLoader = resourceLoader;
   }
 
-
+  
+  @Async
+  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRES_NEW, readOnly = false)
   public List<Exports> updateSolasInfo(List<Long> expIDList) {
 
     if (expIDList == null || expIDList.isEmpty()) {
@@ -124,7 +126,7 @@ public class SolasGateOutService {
     if (exportsOptList.isPresent() && !exportsOptList.get().isEmpty()) {
 
       Optional<List<Exports>> solasApplicableExportsListOpt = Optional.ofNullable(
-          exportsOptList.get().stream().filter(exp -> (!exp.isWithinTolerance())).collect(Collectors.toList()));
+    		  exportsOptList.get().stream().filter(exp -> (!exp.isWithinTolerance())).collect(Collectors.toList()));
 
       if (solasApplicableExportsListOpt.isPresent()) {
 
@@ -146,7 +148,43 @@ public class SolasGateOutService {
           });
 
           // generate certificate
-          methodsAfterCertificate(solasPassFileDTO, solasETPDTOs, exportsOptList.get());
+          generateSolasCertificate(solasPassFileDTO);
+
+          byte[] pdfBytes = solasPassFileDTO.getCertificate();
+          if ((pdfBytes == null || pdfBytes.length <= 0)) {
+            throw new BusinessException("Failed to generate the certificate : ");
+          }
+
+          FileDTO fileInfoDTO = new FileDTO();
+          fileInfoDTO.setFileName(Optional.ofNullable(solasPassFileDTO.getCertificateNo()));
+          fileInfoDTO.setTrxType(TransactionType.EXPORT);
+
+          if (StringUtils.isNotEmpty(solasPassFileDTO.getExportSEQ01())) {
+            fileInfoDTO.setExportNoSeq1(Optional.ofNullable(Long.parseLong(solasPassFileDTO.getExportSEQ01())));
+          }
+          if (StringUtils.isNotEmpty(solasPassFileDTO.getExportSEQ02())) {
+            fileInfoDTO.setExportNoSeq2(Optional.ofNullable(Long.parseLong(solasPassFileDTO.getExportSEQ02())));
+          }
+
+          fileInfoDTO.setFileSize(pdfBytes.length);
+          fileInfoDTO.setFileStream(new ByteArrayInputStream(pdfBytes));
+          fileInfoDTO.setCollectionType(CollectionType.SOLAS_CERTIFICATE_COLLECTION);
+
+          // save to mongodb
+          Optional<String> file1Id = fileService.saveFileToMongoDB(fileInfoDTO);
+          if (!(file1Id.isPresent())) {
+            throw new BusinessException("Failed to save in MongoDB : ");
+          }
+          // save to file references
+          saveReference(fileInfoDTO);
+
+          // assign values from solasPassFileDTO
+          updateSolasETPDTOList(solasETPDTOs, solasPassFileDTO);
+          // send solas info to etp
+          etpWebserviceClient.updateSolasToEtp(solasETPDTOs);
+
+          // save to scss data base
+          etpSolasLogService.saveETPSolasLog(solasETPDTOs);
 
         } catch (Exception e) {
           System.out.println("Message ####################################: ");
@@ -160,49 +198,6 @@ public class SolasGateOutService {
     return null;
   }
 
-  @Async
-  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRES_NEW, readOnly = false)
-  private void methodsAfterCertificate(SolasPassFileDTO solasPassFileDTO, List<SolasETPDTO> solasETPDTOs,
-      List<Exports> expList) throws IOException, JRException {
-    generateSolasCertificate(solasPassFileDTO);
-
-    byte[] pdfBytes = solasPassFileDTO.getCertificate();
-    if ((pdfBytes == null || pdfBytes.length <= 0)) {
-      throw new BusinessException("Failed to generate the certificate : ");
-    }
-
-    FileDTO fileInfoDTO = new FileDTO();
-    fileInfoDTO.setFileName(Optional.ofNullable(solasPassFileDTO.getCertificateNo()));
-    fileInfoDTO.setTrxType(TransactionType.EXPORT);
-
-    if (StringUtils.isNotEmpty(solasPassFileDTO.getExportSEQ01())) {
-      fileInfoDTO.setExportNoSeq1(Optional.ofNullable(Long.parseLong(solasPassFileDTO.getExportSEQ01())));
-    }
-    if (StringUtils.isNotEmpty(solasPassFileDTO.getExportSEQ02())) {
-      fileInfoDTO.setExportNoSeq2(Optional.ofNullable(Long.parseLong(solasPassFileDTO.getExportSEQ02())));
-    }
-
-    fileInfoDTO.setFileSize(pdfBytes.length);
-    fileInfoDTO.setFileStream(new ByteArrayInputStream(pdfBytes));
-    fileInfoDTO.setCollectionType(CollectionType.SOLAS_CERTIFICATE_COLLECTION);
-
-    // save to mongodb
-    Optional<String> file1Id = fileService.saveFileToMongoDB(fileInfoDTO);
-    if (!(file1Id.isPresent())) {
-      throw new BusinessException("Failed to save in MongoDB : ");
-    }
-    // save to file references
-    saveReference(fileInfoDTO);
-
-    // assign values from solasPassFileDTO
-    updateSolasETPDTOList(solasETPDTOs, solasPassFileDTO);
-    // send solas info to etp
-    etpWebserviceClient.updateSolasToEtp(solasETPDTOs);
-
-    // save to scss data base
-    etpSolasLogService.saveETPSolasLog(solasETPDTOs, expList);
-
-  }
 
   @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
   public List<SolasETPDTO> constructSolasETPDTO(Exports exports, List<SolasETPDTO> solasETPDTOs) {

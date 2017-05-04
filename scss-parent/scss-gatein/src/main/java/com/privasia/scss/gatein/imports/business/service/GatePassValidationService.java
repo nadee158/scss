@@ -10,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -65,7 +66,7 @@ public class GatePassValidationService {
 	}
 
 	@Autowired
-	public void setEtpWebserviceClient(ETPWebserviceClient etpWebserviceClient) {
+	public void setEtpWebserviceClient(@Qualifier("etpWebserviceClient") ETPWebserviceClient etpWebserviceClient) {
 		this.etpWebserviceClient = etpWebserviceClient;
 	}
 

@@ -259,7 +259,7 @@ public class ExportContainer {
 	private int totalBooking;// for GateInExpNormalController -
 								// validateContainer method
 
-	private boolean bookingNoExist;// for GateInExpNormalController -
+	private boolean bookingNoExist = false;// for GateInExpNormalController -
 									// validateContainer method
 
 	private boolean earlyEntry = false;// for GateInExpNormalController -

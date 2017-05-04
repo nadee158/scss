@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.privasia.scss.common.annotation.SolasApplicable;
 import com.privasia.scss.common.dto.ExportContainer;
 import com.privasia.scss.common.dto.GateOutReponse;
 import com.privasia.scss.common.dto.GateOutRequest;
@@ -44,8 +45,6 @@ public class ExportGateOutService {
 
   private ExportsQRepository exportsQRepository;
 
-  private SolasGateOutService solasGateOutService;
-
   @Autowired
   public void setModelMapper(ModelMapper modelMapper) {
     this.modelMapper = modelMapper;
@@ -64,11 +63,6 @@ public class ExportGateOutService {
   @Autowired
   public void setExportsQRepository(ExportsQRepository exportsQRepository) {
     this.exportsQRepository = exportsQRepository;
-  }
-
-  @Autowired
-  public void setSolasGateOutService(SolasGateOutService solasGateOutService) {
-    this.solasGateOutService = solasGateOutService;
   }
 
   @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
@@ -132,6 +126,7 @@ public class ExportGateOutService {
   }
 
   // @Async
+  @SolasApplicable
   @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
   public void saveGateOutInfo(GateOutWriteRequest gateOutWriteRequest, Client gateOutClient, SystemUser gateOutClerk,
       Client booth) {
@@ -140,7 +135,7 @@ public class ExportGateOutService {
       throw new BusinessException("Invalid Request to Update Export !");
 
     List<ExportContainer> exportContainers = gateOutWriteRequest.getExportContainers();
-
+    
     exportContainers.forEach(exportContainer -> {
       Optional<Exports> optExport = exportsRepository.findOne(exportContainer.getExportID());
       Exports exports = optExport.orElseThrow(
@@ -167,20 +162,19 @@ public class ExportGateOutService {
 
       modelMapper.map(exports, exportq);
       exportsQRepository.save(exportq);
+      
     });
     // return new AsyncResult<Boolean>(true);
   }
 
-  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRES_NEW, readOnly = false)
+  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
   public void updateExportReference(FileDTO fileDTO) {
 
     Optional<List<Exports>> exportsOptList = exportsRepository.findByExportIDIn(
         Arrays.asList(fileDTO.getExportNoSeq1().orElse(null), fileDTO.getExportNoSeq2().orElse(null)));
-    System.out.println("exportsOptList size : " + exportsOptList.get().size());
     if (exportsOptList.isPresent() && !exportsOptList.get().isEmpty()) {
       exportsOptList.get().forEach(exports -> {
         assignUpdatedValuesExports(exports, fileDTO);
-        System.out.println("exports.getSolasCertNo : " + exports.getSolasCertNo());
         exportsRepository.save(exports);
       });
     } else {
@@ -206,20 +200,22 @@ public class ExportGateOutService {
     return exports;
   }
 
-  // @SolasApplicable
+  @SolasApplicable
   @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-  public List<Exports> testSolas(List<ExportContainer> exportsList) {
+  public List<Exports> testSolas(GateOutWriteRequest gateOutWriteRequest) {
 
     List<Long> expIDList = new ArrayList<Long>();
 
-    for (ExportContainer container : exportsList) {
+    for (ExportContainer container : gateOutWriteRequest.getExportContainers()) {
       expIDList.add(container.getExportID());
     }
 
-    if (!(expIDList == null || expIDList.isEmpty())) {
-      return solasGateOutService.updateSolasInfo(expIDList);
+    Optional<List<Exports>> exportsOptList = exportsRepository.findByExportIDIn(expIDList);
+    
+    if(exportsOptList.isPresent()){
+    	return exportsOptList.get();
     }
-
+    	
     throw new ResultsNotFoundException("no result found");
   }
 

@@ -79,7 +79,7 @@ public class ETPWebserviceClient extends WebServiceGatewaySupport {
           (JAXBElement<UpdateHpatStatusResponseType>) getWebServiceTemplate().marshalSendAndReceive(wsServerUri,
               request, new SoapActionCallback(clientDefaultUri + "/updateHpatStatus"));
       log.error("Requesting web service for " + response.getValue().getCode());
-
+      
     } catch (Exception ex) {
       log.error(ex.getMessage());
     }
@@ -87,9 +87,6 @@ public class ETPWebserviceClient extends WebServiceGatewaySupport {
   }
 
   public List<SolasETPDTO> updateSolasToEtp(List<SolasETPDTO> solasETPDTOs) {
-
-    System.out.println("******************* clientDefaultUri *******************  " + clientDefaultUri);
-    System.out.println("******************* wsServerUri *******************  " + wsServerUri);
 
     if (!(solasETPDTOs == null || solasETPDTOs.isEmpty())) {
 
@@ -110,11 +107,8 @@ public class ETPWebserviceClient extends WebServiceGatewaySupport {
         GregorianCalendar c = new GregorianCalendar();
         Date date = Date.from(solasETPDTO.getGateInOK().atZone(ZoneId.systemDefault()).toInstant());
         c.setTime(date);
-        System.out.println("******************* GregorianCalendar *******************  " + c.getTime());
         XMLGregorianCalendarImpl xmlGrogerianCalendar = new XMLGregorianCalendarImpl(c);
         log.info(xmlGrogerianCalendar.toString());
-        System.out
-            .println("******************* solasDTO.getGateInOK() *******************  " + solasETPDTO.getGateInOK());
         parameters.setVgmDate(xmlGrogerianCalendar);
 
         parameters.setVgmFileName(solasETPDTO.getCertificateNo());
@@ -124,7 +118,6 @@ public class ETPWebserviceClient extends WebServiceGatewaySupport {
 
         if (StringUtils.isNotBlank(solasETPDTO.getSolasDetail())) {
           log.info("******************* Update ETP Solas Web Service Start *******************  ");
-          System.out.println("******************* Update ETP Solas Web Service Start *******************  ");
           parameters.setSolasDetId(solasETPDTO.getSolasDetail().toLowerCase());
           parameters.setTerminalVgm(solasETPDTO.getTerminalVGM());
           parameters.setVgmReferenceNo(solasETPDTO.getExportSEQ());
@@ -137,7 +130,6 @@ public class ETPWebserviceClient extends WebServiceGatewaySupport {
           parameters.setGrossWeight(solasETPDTO.getGrossWeight());
 
           log.info("******************* Update ETP Solas Web Service Start *******************  ");
-          System.out.println("******************* Update ETP Solas Web Service Start *******************  ");
 
           Date today = Calendar.getInstance().getTime();
           solasETPDTO.setRequestSendTime(formatter.format(today));
@@ -152,10 +144,7 @@ public class ETPWebserviceClient extends WebServiceGatewaySupport {
           response = jaxBRresponse.getValue();
           LocalDateTime now = LocalDateTime.now();
 
-          System.out.println("***response " + response);
-          System.out.println("***response.getResponseCode() " + response.getResponseCode());
-
-          if (StringUtils.equals("FAIL", response.getResponseCode())) {
+          if (StringUtils.equalsIgnoreCase("FAIL", response.getResponseCode())) {
             while (retry <= 1) {
               // response =
               // etpIntegrationService.getEtpServicePortTypePort().updateSolasForScssGateIn(parameters);
@@ -167,20 +156,12 @@ public class ETPWebserviceClient extends WebServiceGatewaySupport {
               response = jaxBRresponse.getValue();
               now = LocalDateTime.now();
               retry++;
-              System.out.println("***retrying no of times:-  " + retry);
-              System.out.println("***response " + response);
-              System.out.println("***response.getResponseCode() " + response.getResponseCode());
             }
             log.info("updateSolasETPStatus response code : " + response.getResponseCode() + " for container 01 : "
                 + solasETPDTO.getContainerNo() + " and error message : " + response.getErrorMessage());
-            System.out
-                .println("updateSolasETPStatus response code : " + response.getResponseCode() + " for container 01 : "
-                    + solasETPDTO.getContainerNo() + " and error message : " + response.getErrorMessage());
           } else {
             log.info("updateSolasETPStatus response code : " + response.getResponseCode() + " for container 01 : "
                 + solasETPDTO.getContainerNo());
-            System.out.println("updateSolasETPStatus response code : " + response.getResponseCode()
-                + " for container 01 : " + solasETPDTO.getContainerNo());
           }
           solasETPDTO.setResponseReceivedTime(now);
           solasETPDTO.setEtpResponseCode(response.getResponseCode());
