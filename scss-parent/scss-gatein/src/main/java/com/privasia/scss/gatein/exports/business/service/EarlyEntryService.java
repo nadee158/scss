@@ -16,8 +16,8 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.privasia.scss.common.dto.ExportContainer;
-import com.privasia.scss.core.exception.BusinessException;
-import com.privasia.scss.core.exception.ResultsNotFoundException;
+import com.privasia.scss.common.exception.BusinessException;
+import com.privasia.scss.common.exception.ResultsNotFoundException;
 import com.privasia.scss.core.model.WDCGlobalSetting;
 import com.privasia.scss.core.repository.WDCGlobalSettingRepository;
 

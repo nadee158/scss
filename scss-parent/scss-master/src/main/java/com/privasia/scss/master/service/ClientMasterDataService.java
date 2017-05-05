@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.privasia.scss.common.dto.ClientDTO;
 import com.privasia.scss.common.dto.KioskBoothRightsDTO;
-import com.privasia.scss.core.exception.ResultsNotFoundException;
+import com.privasia.scss.common.exception.ResultsNotFoundException;
 import com.privasia.scss.core.model.Client;
 import com.privasia.scss.core.model.KioskBoothRights;
 import com.privasia.scss.core.repository.ClientRepository;

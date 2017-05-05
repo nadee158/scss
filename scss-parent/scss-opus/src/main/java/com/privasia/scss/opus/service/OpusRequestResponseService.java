@@ -18,8 +18,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.privasia.scss.common.exception.ResultsNotFoundException;
 import com.privasia.scss.common.util.CommonUtil;
-import com.privasia.scss.core.exception.ResultsNotFoundException;
 import com.privasia.scss.core.model.Card;
 import com.privasia.scss.core.model.OpusRequestResponse;
 import com.privasia.scss.core.repository.CardRepository;

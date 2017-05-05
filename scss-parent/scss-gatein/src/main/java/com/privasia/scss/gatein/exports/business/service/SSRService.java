@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.privasia.scss.common.dto.ExportContainer;
 import com.privasia.scss.common.enums.SSRBlockType;
-import com.privasia.scss.core.exception.BusinessException;
+import com.privasia.scss.common.exception.BusinessException;
 
 /**
  * @author Janaka

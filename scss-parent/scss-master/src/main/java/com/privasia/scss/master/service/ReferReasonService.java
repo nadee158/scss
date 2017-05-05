@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.privasia.scss.common.dto.ReferReasonDTO;
 import com.privasia.scss.common.enums.RecordStatus;
-import com.privasia.scss.core.exception.ResultsNotFoundException;
+import com.privasia.scss.common.exception.ResultsNotFoundException;
 import com.privasia.scss.core.model.ReferReason;
 import com.privasia.scss.core.repository.ReferReasonRepository;
 

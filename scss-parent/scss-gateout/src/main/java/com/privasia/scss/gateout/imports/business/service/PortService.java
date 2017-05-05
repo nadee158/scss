@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.privasia.scss.common.dto.ImportContainer;
 import com.privasia.scss.common.enums.ClientGateType;
-import com.privasia.scss.core.exception.BusinessException;
+import com.privasia.scss.common.exception.BusinessException;
 import com.privasia.scss.core.model.Client;
 import com.privasia.scss.core.repository.ClientGateTypeRepository;
 
