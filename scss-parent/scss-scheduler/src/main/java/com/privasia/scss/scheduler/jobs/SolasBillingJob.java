@@ -1,9 +1,8 @@
 package com.privasia.scss.scheduler.jobs;
 
 import java.time.LocalDateTime;
+import java.util.concurrent.Future;
 import java.util.stream.Stream;
-
-import org.apache.commons.lang3.StringUtils;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.Job;
 import org.quartz.JobDetail;
@@ -13,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.scheduling.quartz.CronTriggerFactoryBean;
 import org.springframework.scheduling.quartz.JobDetailFactoryBean;
 import org.springframework.stereotype.Component;
@@ -29,6 +30,7 @@ import com.privasia.scss.core.model.SystemUser;
 import com.privasia.scss.core.model.WDCTermWeighingDetail;
 import com.privasia.scss.core.predicate.ExportsPredicates;
 import com.privasia.scss.core.repository.ExportsRepository;
+import com.privasia.scss.core.repository.WDCTermWeighingDetailRepository;
 import com.privasia.scss.scheduler.config.ConfigureQuartz;
 import com.privasia.scss.scheduler.util.AppLogger;
 import com.querydsl.core.types.ExpressionUtils;
@@ -45,10 +47,17 @@ public class SolasBillingJob implements Job {
 	private String frequency;
 
 	private ExportsRepository exportsRepository;
+	
+	private WDCTermWeighingDetailRepository wdcTermWeighingDetailRepository;
 
 	@Autowired
 	public void setExportsRepository(ExportsRepository exportsRepository) {
 		this.exportsRepository = exportsRepository;
+	}
+	
+	@Autowired
+	public void setWdcTermWeighingDetailRepository(WDCTermWeighingDetailRepository wdcTermWeighingDetailRepository) {
+		this.wdcTermWeighingDetailRepository = wdcTermWeighingDetailRepository;
 	}
 
 	@Override
@@ -72,103 +81,84 @@ public class SolasBillingJob implements Job {
 		Predicate byContainerFullOrEmpty = ExportsPredicates.byContainerFullOrEmpty(ContainerFullEmptyType.FULL);
 		OrderSpecifier<Long> orderByPrintEirAsc = ExportsPredicates.orderByPrintEirAsc();
 
-		// @formatter:off
 		Predicate condition = ExpressionUtils.allOf(timeGateInBetween, byTransactionStatus,
 				ExpressionUtils.or(bySolasInstructionTerminal, bySolasInstructionShipper), byWithinTolerance,
 				byHpabBooking, byContainerFullOrEmpty);
-		// @formatter:on
 
 		Iterable<Exports> exportsList = exportsRepository.findAll(condition, orderByPrintEirAsc);
-		
-		populateTermWeighingDetail(exportsList);
-		
-	}
-	
-	
-	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-	public void populateTermWeighingDetail(Iterable<Exports> exportsList) {
-		
-		
-		
+
 		if (!(exportsList == null || Stream.of(exportsList).count() == 0)) {
 			while (exportsList.iterator().hasNext()) {
-				Exports exports = exportsList.iterator().next();
-				
-				WDCTermWeighingDetail weighingDetail = new WDCTermWeighingDetail();
-				weighingDetail.setBookingNo(exports.getBookingNo());
-				
-				if(exports.getBaseCommonGateInOutAttribute()!= null){
-					weighingDetail.setTimeGateIn(exports.getBaseCommonGateInOutAttribute().getTimeGateIn());
-					weighingDetail.setHpabBooking(exports.getBaseCommonGateInOutAttribute().getHpabBooking());
-					
-					/*if(exports.getBaseCommonGateInOutAttribute().getGateInClerk()!=null){
-						
-						String gateNO = Client.selectGateNo(conn, solasDTO.getWeighStation());
-						solasDTO.setWeighStation(gateNO);
-						
-						
-						SystemUser systemUser = exports.getBaseCommonGateInOutAttribute().getGateInClerk();
-					      solasPassFileDTO.setIssuerId(systemUser.getSystemUserID());
-					      solasPassFileDTO.setIssueBy(systemUser.getCommonContactAttribute().getPersonName());
-					      String nicNo = StringUtils.isNotEmpty(systemUser.getCommonContactAttribute().getNewNRICNO()) == true
-					          ? systemUser.getCommonContactAttribute().getNewNRICNO()
-					          : systemUser.getCommonContactAttribute().getOldNRICNO();
-					      solasPassFileDTO.setIssuerNRIC(nicNo);
-						
-					}*/
-					
-					if(exports.getBaseCommonGateInOutAttribute().getGateInClient()!=null){
-						
-						weighingDetail.setLocation(exports.getBaseCommonGateInOutAttribute().getGateInClient().getUnitNo());
-						
-					}
-				}
-				
-				if(exports.getContainer()!= null){
-					weighingDetail.setContainerNumber(exports.getContainer().getContainerNumber());
-					weighingDetail.setContainerISOCode(exports.getContainer().getContainerISOCode());
-				}
-				
-				weighingDetail.setStatus(BillingStatus.ACTIVE);
-				weighingDetail.setInvoiceStatus(BillingStatus.ACTIVE);
-				weighingDetail.setHpabBookingDate(null);
-				
-				if(exports.getSolas()!=null){
-					CommonSolasAttribute solas = exports.getSolas();
-					weighingDetail.setShipperVGM(solas.getShipperVGM());
-					weighingDetail.setFaLedgerCode(solas.getFaLedgerCode());
-					weighingDetail.setSolasRefNumber(solas.getSolasRefNumber());
-					weighingDetail.setTerminalVGM(exports.getExpNetWeight() == null ? null : String.valueOf(exports.getExpNetWeight()));
-					weighingDetail.setCalculatedVariance(exports.getCalculatedVariance());
-					weighingDetail.setSolasCertNo(exports.getSolasCertNo());
-					
-				}
-				
+				Exports export = exportsList.iterator().next();
+				populateTermWeighingDetail(export);
 			}
 		}
+
 	}
 
-	// @formatter:off
-	/*
-	 * String sql =
-	 * "SELECT exp.EXP_EXPORTNO_SEQ, exp.EXP_CONTAINERNO, exp.EXP_GATEINCLERKID, TO_CHAR(exp.EXP_TIMEGATEIN, 'DD-MM-YYYY HH24:MI:ss') AS EXP_TIMEGATEIN "
-	 * +
-	 * " , TO_CHAR(exp.EXP_TIMEGATEINOK, 'DD-MM-YYYY HH24:MI:ss') AS EXP_TIMEGATEINOK, exp.CLI_CLIENTID_GATEIN "
-	 * +
-	 * " , exp.CAL_VARIANCE, exp.SOLAS_DETAIL_NO, exp.WITHIN_TOLERANCE, exp.MGW, exp.SHIPPER_VGM, exp.EXP_NET_WEIGHT, exp.BACK_TO_BACK  "
-	 * +
-	 * " , exp.BOOKING_ID, exp.EXP_HCTDID, exp.EXP_BOOKINGNO, exp.FA_LEDGER_CODE, exp.EXP_LINE, exp.EXP_CONT_ISO_CODE, exp.SOLAS_REF_NO, exp.COSMOS_GROSS_WEIGHT "
-	 * +
-	 * " , exp.VGM_TYPE, exp.EXP_TRUCK_POS, exp.VESSEL_SCN, exp.SOLAS_CERT, exp.EXP_PRINT_EIR "
-	 * + " FROM SCSS_EXPORTS exp " +
-	 * " WHERE exp.EXP_TIMEGATEIN BETWEEN to_date("+ SQL.format(startDate) +
-	 * ", 'dd/MM/YYYY') and to_date("+ SQL.format(endDate) +", 'dd/MM/YYYY')" +
-	 * " AND exp.EXP_EIRSTATUS = 'A' " + " AND ( exp.VGM_TYPE  = " +
-	 * SQL.format(SCSSConstant.VGM_INSTRUCTION_TERMINAL) + " OR (exp.VGM_TYPE =
-	 * " + SQL.format(SCSSConstant.VGM_INSTRUCTION_SHIPPER) + " AND
-	 * exp.WITHIN_TOLERANCE = 'F')) " + " AND exp.BOOKING_ID is not null " +
-	 * " AND exp.EXP_FULL_EMPTY_FLAG = 'F' " + " ORDER BY exp.EXP_PRINT_EIR ";
-	 */
+	@Async
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRES_NEW, readOnly = true)
+	public void populateTermWeighingDetail(Exports export) {
+
+		WDCTermWeighingDetail weighingDetail = new WDCTermWeighingDetail();
+		weighingDetail.setBookingNo(export.getBookingNo());
+
+		if (export.getBaseCommonGateInOutAttribute() != null) {
+			weighingDetail.setTimeGateIn(export.getBaseCommonGateInOutAttribute().getTimeGateIn());
+			weighingDetail.setHpabBooking(export.getBaseCommonGateInOutAttribute().getHpabBooking());
+
+			if (export.getBaseCommonGateInOutAttribute().getGateInClerk() != null) {
+
+				SystemUser systemUser = export.getBaseCommonGateInOutAttribute().getGateInClerk();
+				weighingDetail.setAddBy(systemUser.getSystemUserID());
+
+			}
+
+			if (export.getBaseCommonGateInOutAttribute().getGateInClient() != null) {
+				weighingDetail.setLocation(export.getBaseCommonGateInOutAttribute().getGateInClient().getUnitNo());
+			}
+		}
+
+		if (export.getContainer() != null) {
+			weighingDetail.setContainerNumber(export.getContainer().getContainerNumber());
+			weighingDetail.setContainerISOCode(export.getContainer().getContainerISOCode());
+		}
+
+		weighingDetail.setStatus(BillingStatus.ACTIVE);
+		weighingDetail.setInvoiceStatus(BillingStatus.ACTIVE);
+		weighingDetail.setHpabBookingDate(null);
+
+		if (export.getSolas() != null) {
+			CommonSolasAttribute solas = export.getSolas();
+			weighingDetail.setShipperVGM(solas.getShipperVGM());
+			weighingDetail.setFaLedgerCode(solas.getFaLedgerCode());
+			weighingDetail.setSolasRefNumber(solas.getSolasRefNumber());
+			weighingDetail.setTerminalVGM(
+					export.getExpNetWeight() == null ? null : String.valueOf(export.getExpNetWeight()));
+			weighingDetail.setCalculatedVariance(export.getCalculatedVariance());
+			weighingDetail.setSolasCertNo(export.getSolasCertNo());
+
+		}
+
+		weighingDetail.setUserRemarks(null);
+		weighingDetail.setBackToback(export.getBackToback());
+		weighingDetail.setShippingLine(export.getShippingLine());
+		weighingDetail.setContainerPosition(export.getContainerPosition());
+		weighingDetail.setVesselSCN(export.getVesselSCN());
+		weighingDetail.setPrintEir(export.getPrintEir());
+
+		saveBillingInfo(weighingDetail);
+	}
+
+	@Async
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRES_NEW, readOnly = false)
+	public Future<Long> saveBillingInfo(WDCTermWeighingDetail weighingDetail) {
+		
+		WDCTermWeighingDetail persist = wdcTermWeighingDetailRepository.save(weighingDetail);
+		System.out.println("SAVED BILLING INFO ID : "+persist.getTermWeighingDetailID());
+		
+		return new AsyncResult<Long>(persist.getTermWeighingDetailID());
+	}
 
 	@Bean(name = "solasBillingJobTrigger")
 	public JobDetailFactoryBean sampleJob() {

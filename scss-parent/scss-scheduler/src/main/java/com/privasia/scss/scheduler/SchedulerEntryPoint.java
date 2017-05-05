@@ -9,15 +9,17 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 /**
- * Hello world!
+ * Janaka Wanigatunga
  *
  */
 @Configuration
 @ComponentScan(basePackages = {"com.privasia.scss.*"})
 @EnableAutoConfiguration
 @PropertySource(value = {"classpath:scheduler_application.properties", "classpath:quartz.properties"})
+@EnableAsync
 public class SchedulerEntryPoint extends SpringBootServletInitializer {
 
   public static void main(String[] args) {
