@@ -1,4 +1,4 @@
-package com.privasia.scss.core.exception;
+package com.privasia.scss.common.exception;
 
 import javax.persistence.NoResultException;
 

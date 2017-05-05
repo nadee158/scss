@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.privasia.scss.common.enums.RecordStatus;
-import com.privasia.scss.core.exception.ResultsNotFoundException;
+import com.privasia.scss.common.exception.ResultsNotFoundException;
 import com.privasia.scss.core.model.ODDExportReason;
 import com.privasia.scss.core.model.ODDImportReason;
 import com.privasia.scss.core.model.ODDLocation;

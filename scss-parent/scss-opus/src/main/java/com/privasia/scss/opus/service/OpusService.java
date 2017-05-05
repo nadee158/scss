@@ -12,7 +12,7 @@ import com.privasia.scss.common.dto.GateInReponse;
 import com.privasia.scss.common.dto.GateInWriteRequest;
 import com.privasia.scss.common.dto.GateOutReponse;
 import com.privasia.scss.common.dto.GateOutRequest;
-import com.privasia.scss.core.exception.BusinessException;
+import com.privasia.scss.common.exception.BusinessException;
 import com.privasia.scss.opus.dto.OpusGateInWriteRequest;
 import com.privasia.scss.opus.dto.OpusGateInWriteResponse;
 import com.privasia.scss.opus.dto.OpusGateOutReadRequest;

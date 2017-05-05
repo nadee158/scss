@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.privasia.scss.common.dto.ExportContainer;
 import com.privasia.scss.common.enums.ContainerFullEmptyType;
-import com.privasia.scss.core.exception.BusinessException;
+import com.privasia.scss.common.exception.BusinessException;
 import com.privasia.scss.core.model.ISOCode;
 import com.privasia.scss.gatein.service.IsoCodeService;
 

@@ -33,10 +33,10 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.privasia.scss.common.dto.ApiError;
 import com.privasia.scss.common.dto.ApiResponseObject;
 import com.privasia.scss.common.dto.CustomResponseEntity;
-import com.privasia.scss.core.exception.BusinessException;
+import com.privasia.scss.common.exception.BusinessException;
+import com.privasia.scss.common.exception.ResultsNotFoundException;
 import com.privasia.scss.core.exception.InvalidJwtTokenException;
 import com.privasia.scss.core.exception.JwtExpiredTokenException;
-import com.privasia.scss.core.exception.ResultsNotFoundException;
 
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.RequiredTypeException;

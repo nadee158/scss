@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 import com.privasia.scss.common.annotation.SolasApplicable;
 import com.privasia.scss.common.dto.ExportContainer;
 import com.privasia.scss.common.dto.GateOutWriteRequest;
-import com.privasia.scss.core.exception.BusinessException;
+import com.privasia.scss.common.exception.BusinessException;
 import com.privasia.scss.gateout.service.SolasGateOutService;
 
 

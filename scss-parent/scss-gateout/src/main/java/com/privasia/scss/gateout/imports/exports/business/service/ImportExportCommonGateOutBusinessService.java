@@ -14,7 +14,7 @@ import com.privasia.scss.common.dto.ImportContainer;
 import com.privasia.scss.common.enums.ClientType;
 import com.privasia.scss.common.enums.ImpExpFlagStatus;
 import com.privasia.scss.common.enums.TransactionStatus;
-import com.privasia.scss.core.exception.BusinessException;
+import com.privasia.scss.common.exception.BusinessException;
 import com.privasia.scss.core.model.Client;
 
 /**

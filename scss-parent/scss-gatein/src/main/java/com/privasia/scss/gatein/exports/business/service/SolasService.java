@@ -20,8 +20,8 @@ import com.privasia.scss.common.dto.ExportContainer;
 import com.privasia.scss.common.enums.ContainerFullEmptyType;
 import com.privasia.scss.common.enums.SolasInstructionType;
 import com.privasia.scss.common.enums.SolasWeightType;
-import com.privasia.scss.core.exception.BusinessException;
-import com.privasia.scss.core.exception.ResultsNotFoundException;
+import com.privasia.scss.common.exception.BusinessException;
+import com.privasia.scss.common.exception.ResultsNotFoundException;
 import com.privasia.scss.core.model.SolasWeightConfig;
 import com.privasia.scss.core.repository.SolasWeightConfigRepository;
 

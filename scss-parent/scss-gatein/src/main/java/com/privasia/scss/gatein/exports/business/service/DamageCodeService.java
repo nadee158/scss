@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 
 import com.privasia.scss.common.dto.DamageCodeDTO;
 import com.privasia.scss.common.dto.ExportContainer;
-import com.privasia.scss.core.exception.BusinessException;
+import com.privasia.scss.common.exception.BusinessException;
 
 /**
  * @author Janaka

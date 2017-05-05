@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.privasia.scss.common.enums.LaneOpenFlag;
-import com.privasia.scss.core.exception.ResultsNotFoundException;
+import com.privasia.scss.common.exception.ResultsNotFoundException;
 import com.privasia.scss.core.model.LaneOpen;
 import com.privasia.scss.core.repository.LaneOpenRepository;
 

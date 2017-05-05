@@ -1,4 +1,4 @@
-package com.privasia.scss.core.exception;
+package com.privasia.scss.common.exception;
 
 public class BusinessException extends RuntimeException {
 

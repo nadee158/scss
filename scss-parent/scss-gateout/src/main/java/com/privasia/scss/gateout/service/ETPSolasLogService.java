@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.privasia.scss.core.exception.BusinessException;
+import com.privasia.scss.common.exception.BusinessException;
 import com.privasia.scss.core.model.ETPSolasLog;
 import com.privasia.scss.core.model.ETPSolasLogDetail;
 import com.privasia.scss.core.model.Exports;
