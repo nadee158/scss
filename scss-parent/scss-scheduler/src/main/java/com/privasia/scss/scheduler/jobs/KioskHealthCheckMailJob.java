@@ -34,8 +34,8 @@ public class KioskHealthCheckMailJob implements Job {
     // NotificationSender notificationSender = NotificationSender.getInstance();
     // notificationSender.sendToQueue(SCSSConstant.SCHEDULER_HEALTH_CHECK_NOTIFICATION,
     // SCSSConstant.QUEUE_EMAIL);
-    notificationService.sendKioskHealthCheckMails();
-    logger.info("Running KioskHealthCheckMailJob | frequency {}", frequency);
+    // notificationService.sendKioskHealthCheckMails();
+    // logger.info("Running KioskHealthCheckMailJob | frequency {}", frequency);
   }
 
   @Bean(name = "kioskHealthCheckMailJobTrigger")
