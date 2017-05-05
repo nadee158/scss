@@ -96,7 +96,7 @@ public class Customs  extends AuditEntity implements Serializable {
 	      @AttributeOverride(name = "gatePassDate", column = @Column(name = "GATE_PASS_DATEC1")),
 	      @AttributeOverride(name = "portPoliceDate", column = @Column(name = "PORT_POLICE_DATEC1")),
 	      @AttributeOverride(name = "exportNoSeq", column = @Column(name = "EXP_EXPORTNO_SEQ1"))*/})
-	  private CustomeContainerDetail container01;
+	  private CustomContainer container01;
 	  
 	  @Embedded
 	  @AttributeOverrides({@AttributeOverride(name = "containerNumber", column = @Column(name = "CSM_CONTAINERNO2")),
@@ -110,7 +110,7 @@ public class Customs  extends AuditEntity implements Serializable {
 	      @AttributeOverride(name = "gatePassDate", column = @Column(name = "GATE_PASS_DATEC1")),
 	      @AttributeOverride(name = "portPoliceDate", column = @Column(name = "PORT_POLICE_DATEC1")),
 	      @AttributeOverride(name = "exportNoSeq", column = @Column(name = "EXP_EXPORTNO_SEQ1"))*/})
-	  private CustomeContainerDetail container02; 
+	  private CustomContainer container02; 
 
 
 	public boolean isCheck() {

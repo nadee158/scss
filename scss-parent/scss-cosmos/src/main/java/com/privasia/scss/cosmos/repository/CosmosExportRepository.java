@@ -89,7 +89,6 @@ public class CosmosExportRepository {
 		if (rs != null && rs.next()) {
 			return rs.getString("hdfs03");
 		} else {
-
 			return ContainerStatus.NON_EXECUTE.getValue();
 		}
 
@@ -109,6 +108,7 @@ public class CosmosExportRepository {
 		optExportContainer.get().getContainer().setContainerNumber(exportContainerNo);
 		isInternalBlock(exportContainer, exportContainerNo);
 		isOGABlock(exportContainer, exportContainerNo);
+		
 		return exportContainer;
 
 	}

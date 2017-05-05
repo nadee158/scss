@@ -3,7 +3,6 @@
  */
 package com.privasia.scss.hdbs.controller;
 
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -18,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.privasia.scss.common.dto.ApiResponseObject;
 import com.privasia.scss.common.dto.CustomResponseEntity;
-import com.privasia.scss.common.dto.HDBSBkgDetailGridDTO;
 import com.privasia.scss.common.dto.HDBSBkgGridDTO;
 import com.privasia.scss.hdbs.service.HDBSService;
 
@@ -31,30 +29,33 @@ import com.privasia.scss.hdbs.service.HDBSService;
 @RequestMapping("**/hdbs")
 public class HDBSController {
 
-  @Autowired
-  private HDBSService hdbsService;
+	private HDBSService hdbsService;
 
-  @RequestMapping(value = "/findbooking/{cardID}", method = RequestMethod.GET,
-      produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-  public CustomResponseEntity<ApiResponseObject<?>> getHDBSBooking(@PathVariable Long cardID,
-      HttpServletRequest request) {
+	@Autowired
+	public void setHdbsService(HDBSService hdbsService) {
+		this.hdbsService = hdbsService;
+	}
 
-    System.out.println("cardID : " + cardID);
+	@RequestMapping(value = "/findbooking/{cardID}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public CustomResponseEntity<ApiResponseObject<?>> getHDBSBooking(@PathVariable Long cardID,
+			HttpServletRequest request) {
 
-    HDBSBkgGridDTO hdbsBkgGridDTO = hdbsService.findHDBSBookingDetailByCard(cardID);
+		System.out.println("cardID : " + cardID);
 
-    return new CustomResponseEntity<ApiResponseObject<?>>(new ApiResponseObject<HDBSBkgGridDTO>(HttpStatus.OK, hdbsBkgGridDTO), HttpStatus.OK);
-  }
+		HDBSBkgGridDTO hdbsBkgGridDTO = hdbsService.findHDBSBookingDetailByCard(cardID);
 
-  @RequestMapping(value = "/validateselection", method = RequestMethod.PUT,
-      produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-  public CustomResponseEntity<ApiResponseObject<?>> validateBookingSelection(@RequestBody HDBSBkgGridDTO bkgDetailGridDTO,
-      HttpServletRequest request) {
+		return new CustomResponseEntity<ApiResponseObject<?>>(
+				new ApiResponseObject<HDBSBkgGridDTO>(HttpStatus.OK, hdbsBkgGridDTO), HttpStatus.OK);
+	}
 
-    String validateMessage = hdbsService.validateSelectedHDBSBookingDetails(bkgDetailGridDTO);
+	@RequestMapping(value = "/validateselection", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public CustomResponseEntity<ApiResponseObject<?>> validateBookingSelection(
+			@RequestBody HDBSBkgGridDTO bkgDetailGridDTO, HttpServletRequest request) {
 
-    return new CustomResponseEntity<ApiResponseObject<?>>(new ApiResponseObject<String>(HttpStatus.OK, validateMessage),
-        HttpStatus.OK);
-  }
+		String validateMessage = hdbsService.validateSelectedHDBSBookingDetails(bkgDetailGridDTO);
+
+		return new CustomResponseEntity<ApiResponseObject<?>>(
+				new ApiResponseObject<String>(HttpStatus.OK, validateMessage), HttpStatus.OK);
+	}
 
 }

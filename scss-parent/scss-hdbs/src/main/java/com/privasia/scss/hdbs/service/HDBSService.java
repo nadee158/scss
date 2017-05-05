@@ -7,10 +7,8 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -36,7 +34,6 @@ import com.privasia.scss.core.exception.BusinessException;
 import com.privasia.scss.core.model.Card;
 import com.privasia.scss.core.model.HDBSBkgDetail;
 import com.privasia.scss.core.model.HDBSBkgMaster;
-import com.privasia.scss.core.model.WHODD;
 import com.privasia.scss.core.predicate.HDBSBookingMasterPredicates;
 import com.privasia.scss.core.repository.CardRepository;
 import com.privasia.scss.core.repository.HDBSBookingDetailRepository;
@@ -53,20 +50,40 @@ import com.querydsl.core.types.Predicate;
 @Service("hdbsService")
 public class HDBSService {
 
-	@Autowired
 	private HDBSBookingDetailRepository hdbsBookingDetailRepository;
 
-	@Autowired
 	private HDBSBookingMasterRepository hdbsBookingMasterRepository;
 
-	@Autowired
 	private CardRepository cardRepository;
 
-	@Autowired
 	private WDCGlobalSettingRepository wdcGlobalSettingRepository;
 
-	@Autowired
 	private ModelMapper modelMapper;
+	
+	@Autowired
+	public void setHdbsBookingDetailRepository(HDBSBookingDetailRepository hdbsBookingDetailRepository) {
+		this.hdbsBookingDetailRepository = hdbsBookingDetailRepository;
+	}
+	
+	@Autowired
+	public void setHdbsBookingMasterRepository(HDBSBookingMasterRepository hdbsBookingMasterRepository) {
+		this.hdbsBookingMasterRepository = hdbsBookingMasterRepository;
+	}
+	
+	@Autowired
+	public void setCardRepository(CardRepository cardRepository) {
+		this.cardRepository = cardRepository;
+	}
+	
+	@Autowired
+	public void setWdcGlobalSettingRepository(WDCGlobalSettingRepository wdcGlobalSettingRepository) {
+		this.wdcGlobalSettingRepository = wdcGlobalSettingRepository;
+	}
+	
+	@Autowired
+	public void setModelMapper(ModelMapper modelMapper) {
+		this.modelMapper = modelMapper;
+	}
 
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
 	public List<HDBSBkgDetail> findHDBSBookingDetailByIDList(List<String> bkgDetailIDList) {

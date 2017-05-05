@@ -5,7 +5,6 @@ package com.privasia.scss.core.model;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 import javax.persistence.AssociationOverride;
 import javax.persistence.AssociationOverrides;
