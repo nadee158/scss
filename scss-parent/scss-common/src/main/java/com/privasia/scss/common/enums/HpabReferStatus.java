@@ -11,14 +11,14 @@ import java.util.Map;
  * @author Janaka
  *
  */
-public enum HpatReferStatus implements Enumable {
+public enum HpabReferStatus implements Enumable {
 
   ACTIVE("ACTV"), CANCEL("CAN"), COMPLETE("COMP"), EXPIRED("EXPIRED");
 
 
   private final String hpatStatus;
 
-  private HpatReferStatus(String hpatStatus) {
+  private HpabReferStatus(String hpatStatus) {
     this.hpatStatus = hpatStatus;
   }
 
@@ -34,16 +34,16 @@ public enum HpatReferStatus implements Enumable {
   }
 
 
-  public static HpatReferStatus fromCode(String hpatStatus) {
+  public static HpabReferStatus fromCode(String hpatStatus) {
     return LOOKUP.get(hpatStatus);
   }
 
 
-  private static final Map<String, HpatReferStatus> LOOKUP = new HashMap<String, HpatReferStatus>();
+  private static final Map<String, HpabReferStatus> LOOKUP = new HashMap<String, HpabReferStatus>();
 
   static {
-    for (HpatReferStatus hpatReferStatus : EnumSet.allOf(HpatReferStatus.class)) {
-      LOOKUP.put(hpatReferStatus.getValue(), hpatReferStatus);
+    for (HpabReferStatus hpabReferStatus : EnumSet.allOf(HpabReferStatus.class)) {
+      LOOKUP.put(hpabReferStatus.getValue(), hpabReferStatus);
     }
   }
 

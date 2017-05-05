@@ -28,7 +28,7 @@ import com.privasia.scss.common.dto.ReferRejectDTO;
 import com.privasia.scss.common.dto.ReferRejectDetailDTO;
 import com.privasia.scss.common.dto.ReferRejectListDTO;
 import com.privasia.scss.common.dto.ReferRejectReasonDTO;
-import com.privasia.scss.common.enums.HpatReferStatus;
+import com.privasia.scss.common.enums.HpabReferStatus;
 import com.privasia.scss.common.enums.ReferStatus;
 import com.privasia.scss.common.enums.TransactionStatus;
 import com.privasia.scss.common.exception.BusinessException;
@@ -140,7 +140,7 @@ public class ReferRejectService {
 
     Pageable pageRequest = new PageRequest(page, pageSize, Sort.Direction.DESC, "referDateTime");
     Optional<Page<ReferReject>> optReferRejectPages =
-        referRejectRepository.findByStatusCode(HpatReferStatus.ACTIVE, pageRequest);
+        referRejectRepository.findByStatusCode(HpabReferStatus.ACTIVE, pageRequest);
 
     if (optReferRejectPages.isPresent()) {
       long totalcount = optReferRejectPages.get().getContent().stream().count();
@@ -276,7 +276,7 @@ public class ReferRejectService {
     // bind details via modal map
     ReferReject referReject = modelMapper.map(referRejectDTO, ReferReject.class);
 
-    referReject.setStatusCode(HpatReferStatus.ACTIVE);
+    referReject.setStatusCode(HpabReferStatus.ACTIVE);
     referReject.setReferDateTime(gateInWriteRequest.getGateInDateTime());
 
 
@@ -350,7 +350,7 @@ public class ReferRejectService {
     referReject.setBaseCommonGateInOut(baseCommonGateInOut);
 
     // Need to set to ACTV
-    referReject.setStatusCode(HpatReferStatus.ACTIVE);
+    referReject.setStatusCode(HpabReferStatus.ACTIVE);
 
     // from card take the company
     referReject.setCompany(card.getCompany());
@@ -437,7 +437,7 @@ public class ReferRejectService {
     });
 
     // ReferReject -> update as completed
-    referReject.setStatusCode(HpatReferStatus.fromCode(dto.getStatusCode()));
+    referReject.setStatusCode(HpabReferStatus.fromCode(dto.getStatusCode()));
 
     persisted = referRejectRepository.save(referReject);
     if (!(persisted == null || persisted.getReferRejectID() <= 0)) {
@@ -464,13 +464,13 @@ public class ReferRejectService {
 
     ReferRejectDetail referRejectDetail = referRejectDetailRepository
         .findByReferReject_ReferRejectIDAndContainerNoAndReferReject_StatusCode(dto.getReferReject().getReferRejectID(),
-            dto.getContainerNo(), HpatReferStatus.ACTIVE)
+            dto.getContainerNo(), HpabReferStatus.ACTIVE)
         .orElseThrow(() -> new ResultsNotFoundException("Refer reject detail was not found!"));
 
     referRejectDetail.setLineCode(StringUtils.upperCase(dto.getLineCode()));
     referRejectDetail.setGateInTime(dto.getGateInTime());
     referRejectDetail.setStatus(ReferStatus.REJECT_EXE);
-    referRejectDetail.getReferReject().setStatusCode(HpatReferStatus.COMPLETE);
+    referRejectDetail.getReferReject().setStatusCode(HpabReferStatus.COMPLETE);
     referRejectRepository.save(referRejectDetail.getReferReject());
    
     return "SUCCESS";

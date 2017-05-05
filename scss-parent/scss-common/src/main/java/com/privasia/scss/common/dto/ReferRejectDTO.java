@@ -8,7 +8,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.privasia.scss.common.enums.HpatReferStatus;
+import com.privasia.scss.common.enums.HpabReferStatus;
 import com.privasia.scss.common.util.DateUtil;
 
 public class ReferRejectDTO implements Serializable {
@@ -170,7 +170,7 @@ public class ReferRejectDTO implements Serializable {
     this.company = new CompanyDTO().initializeWithDefaultValues();
     this.expWeightBridge = 4500;
     this.expNetWeight = 250;
-    this.statusCode = HpatReferStatus.ACTIVE.getValue();
+    this.statusCode = HpabReferStatus.ACTIVE.getValue();
     // this.baseCommonGateInOut = new BaseCommonGateInOutDTO().initializeWithDefaultValues();
     this.transactionSlipPrinted = false;
     this.referDateTime = LocalDateTime.now();

@@ -10,7 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import com.privasia.scss.common.enums.BookingType;
-import com.privasia.scss.common.enums.HpatReferStatus;
+import com.privasia.scss.common.enums.HpabReferStatus;
 import com.privasia.scss.core.model.QHPABBooking;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Predicate;
@@ -33,7 +33,7 @@ public final class HPABBookingPredicates {
     if (StringUtils.isEmpty(status)) {
       return QHPABBooking.hPABBooking.isNull();
     } else {
-      return QHPABBooking.hPABBooking.status.eq(HpatReferStatus.fromCode(status));
+      return QHPABBooking.hPABBooking.status.eq(HpabReferStatus.fromCode(status));
     }
   }
 

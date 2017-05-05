@@ -18,7 +18,7 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
 
-import com.privasia.scss.common.enums.HpatReferStatus;
+import com.privasia.scss.common.enums.HpabReferStatus;
 
 /**
  * @author Janaka
@@ -63,7 +63,7 @@ public class PrintEir extends AuditEntity implements Serializable {
 
 	@Column(name = "STATUS")
 	@Type(type = "com.privasia.scss.common.enumusertype.HPATReferStatusEnumUserType")
-	private HpatReferStatus status;
+	private HpabReferStatus status;
 
 	@Column(name = "SCUNAME")
 	private String scuName;
@@ -204,11 +204,11 @@ public class PrintEir extends AuditEntity implements Serializable {
 		this.companyName = companyName;
 	}
 
-	public HpatReferStatus getStatus() {
+	public HpabReferStatus getStatus() {
 		return status;
 	}
 
-	public void setStatus(HpatReferStatus status) {
+	public void setStatus(HpabReferStatus status) {
 		this.status = status;
 	}
 

@@ -24,7 +24,7 @@ import com.privasia.scss.common.enums.ContainerFullEmptyType;
 import com.privasia.scss.common.enums.ContainerPosition;
 import com.privasia.scss.common.enums.GateInOutStatus;
 import com.privasia.scss.common.enums.GatePassStatus;
-import com.privasia.scss.common.enums.HpatReferStatus;
+import com.privasia.scss.common.enums.HpabReferStatus;
 import com.privasia.scss.common.enums.ImpExpFlagStatus;
 import com.privasia.scss.common.enums.TransactionStatus;
 import com.privasia.scss.common.exception.BusinessException;
@@ -489,7 +489,7 @@ public class GatePassService {
       String cardNo = Long.toString((card.getCardNo()));
       containerNo = StringUtils.upperCase(containerNo);
       BookingType type = BookingType.IMPORT;
-      HpatReferStatus hpatReferStatus = HpatReferStatus.ACTIVE;
+      HpabReferStatus hpabReferStatus = HpabReferStatus.ACTIVE;
 
       HPABBookingDetail hpabBookingDetail = null;
 
@@ -499,11 +499,11 @@ public class GatePassService {
 
         hpabBookingDetail = hpabBookingDetailRepository
             .findByContainerNumberAndBookingTypeAndHpabBooking_StatusAndHpabBooking_CardNoAndHpabBooking_PmNumber(
-                containerNo, type, hpatReferStatus, cardNo, truckHeadNo);
+                containerNo, type, hpabReferStatus, cardNo, truckHeadNo);
       } else {
     	  hpabBookingDetail =
         		hpabBookingDetailRepository.findByContainerNumberAndBookingTypeAndHpabBooking_StatusAndHpabBooking_CardNo(
-                containerNo, type, hpatReferStatus, cardNo);
+                containerNo, type, hpabReferStatus, cardNo);
       }
 
       if (!(hpabBookingDetail == null)) {

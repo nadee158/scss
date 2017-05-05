@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.privasia.scss.common.enums.HpatReferStatus;
+import com.privasia.scss.common.enums.HpabReferStatus;
 import com.privasia.scss.common.util.DateUtil;
 
 public class BookingDTO implements Serializable {
@@ -58,7 +58,7 @@ public class BookingDTO implements Serializable {
       this.setGatePass2("");
     }
 
-    if (StringUtils.equals(HpatReferStatus.ACTIVE.getValue(), hpat.getStatus())) {
+    if (StringUtils.equals(HpabReferStatus.ACTIVE.getValue(), hpat.getStatus())) {
       this.setBookingStatus("ON TIME");
     } else {
       this.setBookingStatus(hpat.getStatus());
@@ -92,7 +92,7 @@ public class BookingDTO implements Serializable {
       this.setContainer1("");
     }
 
-    if (StringUtils.equals(HpatReferStatus.ACTIVE.getValue(), gridDtoItem.getStatus())) {
+    if (StringUtils.equals(HpabReferStatus.ACTIVE.getValue(), gridDtoItem.getStatus())) {
       this.setBookingStatus("ON TIME");
     } else {
       this.setBookingStatus(gridDtoItem.getStatus());

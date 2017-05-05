@@ -30,7 +30,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.hibernate.annotations.Type;
 
-import com.privasia.scss.common.enums.HpatReferStatus;
+import com.privasia.scss.common.enums.HpabReferStatus;
 
 /**
  * @author Janaka
@@ -67,7 +67,7 @@ public class ReferReject extends AuditEntity implements Serializable {
 
   @Column(name = "STATUS_CODE", nullable = true)
   @Type(type = "com.privasia.scss.common.enumusertype.HPATReferStatusEnumUserType")
-  private HpatReferStatus statusCode;
+  private HpabReferStatus statusCode;
 
   @Embedded
   @AttributeOverrides({@AttributeOverride(name = "timeGateIn", column = @Column(name = "REF_GATEIN_TIME")),
@@ -82,7 +82,7 @@ public class ReferReject extends AuditEntity implements Serializable {
       @AttributeOverride(name = "gateOutBoothNo", column = @Column(name = "REF_GATE_OUT_BOOTH_NO")),
       @AttributeOverride(name = "gateOutBoothClerk", column = @Column(name = "REF_GATEOUT_BOOTH_CLERKID")),
       @AttributeOverride(name = "timeGateOutBooth", column = @Column(name = "REF_TIMEGATEOUT_BOOTH")),
-      @AttributeOverride(name = "hpatBooking", column = @Column(name = "BOOKING_ID"))
+      @AttributeOverride(name = "hpabBooking", column = @Column(name = "BOOKING_ID"))
 
   })
   @AssociationOverrides({
@@ -157,11 +157,11 @@ public class ReferReject extends AuditEntity implements Serializable {
     this.expNetWeight = expNetWeight;
   }
 
-  public HpatReferStatus getStatusCode() {
+  public HpabReferStatus getStatusCode() {
     return statusCode;
   }
 
-  public void setStatusCode(HpatReferStatus statusCode) {
+  public void setStatusCode(HpabReferStatus statusCode) {
     this.statusCode = statusCode;
   }
 

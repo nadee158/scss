@@ -81,7 +81,7 @@ public class Exports extends AuditEntity implements Serializable {
 	@Embedded
 	@AttributeOverrides({ @AttributeOverride(name = "pmHeadNo", column = @Column(name = "EXP_TRUCK_HEAD_NO")),
 			@AttributeOverride(name = "pmPlateNo", column = @Column(name = "EXP_TRUCK_PLATE_NO")),
-			@AttributeOverride(name = "hpatBooking", column = @Column(name = "BOOKING_ID")),
+			@AttributeOverride(name = "hpabBooking", column = @Column(name = "BOOKING_ID")),
 			@AttributeOverride(name = "eirStatus", column = @Column(name = "EXP_EIRSTATUS", nullable = true)),
 			@AttributeOverride(name = "transactionSlipPrinted", column = @Column(name = "TRANSACTION_SLIP_PRINTED")),
 			@AttributeOverride(name = "gateOutBoothNo", column = @Column(name = "EXP_GATE_OUT_BOOTH_NO")),

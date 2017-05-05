@@ -12,7 +12,7 @@ import com.privasia.scss.common.dto.TransactionDTO;
 import com.privasia.scss.common.enums.ContainerFullEmptyType;
 import com.privasia.scss.common.enums.ContainerSize;
 import com.privasia.scss.common.enums.GateInOutStatus;
-import com.privasia.scss.common.enums.HpatReferStatus;
+import com.privasia.scss.common.enums.HpabReferStatus;
 import com.privasia.scss.common.enums.Nationality;
 import com.privasia.scss.core.model.PrintEIRContainerInfo;
 import com.privasia.scss.core.model.PrintEir;
@@ -88,7 +88,7 @@ public class PrintEirService {
     printEir.setScuName(transactionDTO.getScuName());
     printEir.setTruckNo(transactionDTO.getPmPlateNo());
     printEir.setGateInNo(transactionDTO.getGateInNo());
-    printEir.setStatus(HpatReferStatus.ACTIVE);
+    printEir.setStatus(HpabReferStatus.ACTIVE);
     printEir.setClientIp(customerIpAddress);
 
     printEirRepository.save(printEir);

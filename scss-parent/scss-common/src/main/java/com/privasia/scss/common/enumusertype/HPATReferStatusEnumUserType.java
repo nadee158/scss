@@ -5,13 +5,13 @@ package com.privasia.scss.common.enumusertype;
 
 import java.io.Serializable;
 
-import com.privasia.scss.common.enums.HpatReferStatus;
+import com.privasia.scss.common.enums.HpabReferStatus;
 
 /**
  * @author Janaka
  *
  */
-public class HPATReferStatusEnumUserType extends GeneralEnumMapUserType<HpatReferStatus> implements Serializable {
+public class HPATReferStatusEnumUserType extends GeneralEnumMapUserType<HpabReferStatus> implements Serializable {
 	
 	/**
 	 * 
@@ -23,7 +23,7 @@ public class HPATReferStatusEnumUserType extends GeneralEnumMapUserType<HpatRefe
      *
      */
 	public HPATReferStatusEnumUserType() {
-        super(HpatReferStatus.class);
+        super(HpabReferStatus.class);
     }
 
 }

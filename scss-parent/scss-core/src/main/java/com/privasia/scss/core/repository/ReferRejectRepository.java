@@ -6,12 +6,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.Repository;
 
-import com.privasia.scss.common.enums.HpatReferStatus;
+import com.privasia.scss.common.enums.HpabReferStatus;
 import com.privasia.scss.core.model.ReferReject;
 
 public interface ReferRejectRepository extends Repository<ReferReject, Long> {
 
-	public Optional<Page<ReferReject>> findByStatusCode(HpatReferStatus statusCode, Pageable pageRequest);
+	public Optional<Page<ReferReject>> findByStatusCode(HpabReferStatus statusCode, Pageable pageRequest);
 
 	public Optional<ReferReject> findOne(Long id);
 

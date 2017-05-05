@@ -23,7 +23,7 @@ import com.privasia.scss.common.dto.HpatDto;
 import com.privasia.scss.common.dto.ImportContainer;
 import com.privasia.scss.common.dto.TransactionDTO;
 import com.privasia.scss.common.enums.BookingType;
-import com.privasia.scss.common.enums.HpatReferStatus;
+import com.privasia.scss.common.enums.HpabReferStatus;
 import com.privasia.scss.common.exception.BusinessException;
 import com.privasia.scss.common.exception.ResultsNotFoundException;
 import com.privasia.scss.core.model.Card;
@@ -80,7 +80,7 @@ public class HPABService {
 																// optional
 		if (card.isPresent()) {
 			Predicate byCardNo = HPABBookingPredicates.byCardNo(String.valueOf(card.get().getCardNo()));
-			Predicate byBookingStatus = HPABBookingPredicates.byBookingStatus(HpatReferStatus.ACTIVE.getValue()); 
+			Predicate byBookingStatus = HPABBookingPredicates.byBookingStatus(HpabReferStatus.ACTIVE.getValue()); 
 			Predicate byAppointmentEndDate = HPABBookingPredicates.byAppointmentEndDate(date);
 			Predicate byBookingTypes = HPABBookingPredicates.byBookingDetailTypes(bookingTypes);
 			Predicate condition = ExpressionUtils.allOf(byCardNo, byBookingStatus, byAppointmentEndDate,
@@ -150,7 +150,7 @@ public class HPABService {
 	public TransactionDTO getEtpHpab4ImpAndExp(String bookingID) {
 
 		Optional<HPABBooking> hpatBooking = hpabBookingRepository.findByBookingIDAndStatus(bookingID,
-				HpatReferStatus.ACTIVE);
+				HpabReferStatus.ACTIVE);
 
 		if (hpatBooking.isPresent()) {
 
@@ -231,7 +231,7 @@ public class HPABService {
 	public GateInReponse populateHpabForImpExp(GateInReponse gateInReponse, String hpabSeqId) {
 
 		Optional<HPABBooking> hpatBookingOpt = hpabBookingRepository.findByBookingIDAndStatus(hpabSeqId,
-				HpatReferStatus.ACTIVE);
+				HpabReferStatus.ACTIVE);
 
 		HPABBooking booking = hpatBookingOpt
 				.orElseThrow(() -> new ResultsNotFoundException("Invalid HPAB Bookibg ID ! " + hpabSeqId));
@@ -327,12 +327,12 @@ public class HPABService {
 	public void updateHPABAfterGateIn(String hpabID) {
 
 		Optional<HPABBooking> hpabBookingOpt = hpabBookingRepository.findByBookingIDAndStatus(hpabID, 
-				HpatReferStatus.ACTIVE);
+				HpabReferStatus.ACTIVE);
 
 		HPABBooking booking = hpabBookingOpt
 				.orElseThrow(() -> new ResultsNotFoundException("Invalid HPAB Bookibg ID Provided ! " + hpabID));
 
-		booking.setStatus(HpatReferStatus.COMPLETE);
+		booking.setStatus(HpabReferStatus.COMPLETE);
 
 		hpabBookingRepository.save(booking);
 

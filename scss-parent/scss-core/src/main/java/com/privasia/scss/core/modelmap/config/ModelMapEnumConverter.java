@@ -22,7 +22,7 @@ import com.privasia.scss.common.enums.GatePassStatus;
 import com.privasia.scss.common.enums.HDBSArrivalStatus;
 import com.privasia.scss.common.enums.HDBSBookingType;
 import com.privasia.scss.common.enums.HDBSStatus;
-import com.privasia.scss.common.enums.HpatReferStatus;
+import com.privasia.scss.common.enums.HpabReferStatus;
 import com.privasia.scss.common.enums.ImpExpFlagStatus;
 import com.privasia.scss.common.enums.KioskHLTCheckStatus;
 import com.privasia.scss.common.enums.KioskLockStatus;
@@ -804,20 +804,20 @@ public class ModelMapEnumConverter {
     };
   }
 
-  public static Converter<String, HpatReferStatus> convertStringToHpatReferStatus() {
-    return new Converter<String, HpatReferStatus>() {
+  public static Converter<String, HpabReferStatus> convertStringToHpatReferStatus() {
+    return new Converter<String, HpabReferStatus>() {
       @Override
-      public HpatReferStatus convert(MappingContext<String, HpatReferStatus> context) {
+      public HpabReferStatus convert(MappingContext<String, HpabReferStatus> context) {
         if (StringUtils.isNotBlank(context.getSource())) {
           switch (context.getSource()) {
             case "COMP":
-              return HpatReferStatus.COMPLETE;
+              return HpabReferStatus.COMPLETE;
             case "CAN":
-              return HpatReferStatus.CANCEL;
+              return HpabReferStatus.CANCEL;
             case "ACTV":
-              return HpatReferStatus.ACTIVE;
+              return HpabReferStatus.ACTIVE;
             case "EXPIRED":
-              return HpatReferStatus.EXPIRED;
+              return HpabReferStatus.EXPIRED;
             default:
               return null;
           }
@@ -828,20 +828,20 @@ public class ModelMapEnumConverter {
     };
   }
 
-  public static Converter<HpatReferStatus, String> convertHpatReferStatusToString() {
-    return new Converter<HpatReferStatus, String>() {
+  public static Converter<HpabReferStatus, String> convertHpatReferStatusToString() {
+    return new Converter<HpabReferStatus, String>() {
       @Override
-      public String convert(MappingContext<HpatReferStatus, String> context) {
+      public String convert(MappingContext<HpabReferStatus, String> context) {
         if (context.getSource() != null) {
           switch (context.getSource()) {
             case ACTIVE:
-              return HpatReferStatus.ACTIVE.getValue();
+              return HpabReferStatus.ACTIVE.getValue();
             case CANCEL:
-              return HpatReferStatus.CANCEL.getValue();
+              return HpabReferStatus.CANCEL.getValue();
             case COMPLETE:
-              return HpatReferStatus.COMPLETE.getValue();
+              return HpabReferStatus.COMPLETE.getValue();
             case EXPIRED:
-              return HpatReferStatus.EXPIRED.getValue();
+              return HpabReferStatus.EXPIRED.getValue();
             default:
               return null;
           }

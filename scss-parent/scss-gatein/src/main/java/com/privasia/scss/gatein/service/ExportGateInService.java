@@ -22,7 +22,7 @@ import com.privasia.scss.common.dto.GateInWriteRequest;
 import com.privasia.scss.common.dto.ReferRejectDTO;
 import com.privasia.scss.common.dto.ReferRejectDetailDTO;
 import com.privasia.scss.common.enums.ContainerFullEmptyType;
-import com.privasia.scss.common.enums.HpatReferStatus;
+import com.privasia.scss.common.enums.HpabReferStatus;
 import com.privasia.scss.common.enums.ReferStatus;
 import com.privasia.scss.common.enums.ShipStatus;
 import com.privasia.scss.common.enums.TransactionStatus;
@@ -415,13 +415,13 @@ public class ExportGateInService {
 
 	    ReferRejectDetail referRejectDetail = referRejectDetailRepository
 	        .findByReferReject_ReferRejectIDAndContainerNoAndReferReject_StatusCode(detailDTO.getReferReject().getReferRejectID(),
-	        		detailDTO.getContainerNo(), HpatReferStatus.ACTIVE)
+	        		detailDTO.getContainerNo(), HpabReferStatus.ACTIVE)
 	        .orElseThrow(() -> new ResultsNotFoundException("Refer reject detail was not found!"));
 
 	    referRejectDetail.setLineCode(StringUtils.upperCase(detailDTO.getLineCode()));
 	    referRejectDetail.setGateInTime(detailDTO.getGateInTime());
 	    referRejectDetail.setStatus(ReferStatus.REJECT_EXE);
-	    referRejectDetail.getReferReject().setStatusCode(HpatReferStatus.COMPLETE);
+	    referRejectDetail.getReferReject().setStatusCode(HpabReferStatus.COMPLETE);
 	    referRejectRepository.save(referRejectDetail.getReferReject());
 	   
 	}

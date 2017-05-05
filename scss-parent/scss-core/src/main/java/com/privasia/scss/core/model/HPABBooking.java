@@ -24,7 +24,7 @@ import com.privasia.scss.common.dto.GateOutReponse;
 import com.privasia.scss.common.dto.HpatDto;
 import com.privasia.scss.common.dto.TransactionDTO;
 import com.privasia.scss.common.enums.BookingType;
-import com.privasia.scss.common.enums.HpatReferStatus;
+import com.privasia.scss.common.enums.HpabReferStatus;
 import com.privasia.scss.common.util.DateUtil;
 
 /**
@@ -74,7 +74,7 @@ public class HPABBooking extends AuditEntity implements Serializable {
 
 	@Column(name = "STATUS_CODE", nullable = true)
 	@Type(type = "com.privasia.scss.common.enumusertype.HPATReferStatusEnumUserType")
-	private HpatReferStatus status;
+	private HpabReferStatus status;
 
 	@Column(name = "TRAILER_NO")
 	private String trailerNo;
@@ -243,11 +243,11 @@ public class HPABBooking extends AuditEntity implements Serializable {
 		this.pmNumber = pmNumber;
 	}
 
-	public HpatReferStatus getStatus() {
+	public HpabReferStatus getStatus() {
 		return status;
 	}
 
-	public void setStatus(HpatReferStatus status) {
+	public void setStatus(HpabReferStatus status) {
 		this.status = status;
 	}
 
