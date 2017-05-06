@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.privasia.scss.common.dto.ApiResponseObject;
 import com.privasia.scss.common.dto.CustomResponseEntity;
 import com.privasia.scss.common.dto.HDBSBkgGridDTO;
+import com.privasia.scss.common.dto.HDBSBookingResponse;
 import com.privasia.scss.hdbs.service.HDBSService;
 
 /**
@@ -39,13 +40,11 @@ public class HDBSController {
 	@RequestMapping(value = "/findbooking/{cardID}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public CustomResponseEntity<ApiResponseObject<?>> getHDBSBooking(@PathVariable Long cardID,
 			HttpServletRequest request) {
-
-		System.out.println("cardID : " + cardID);
-
-		HDBSBkgGridDTO hdbsBkgGridDTO = hdbsService.findHDBSBookingDetailByCard(cardID);
+		
+		HDBSBookingResponse bookingResponse = hdbsService.findHDBSBookingDetailByCard(cardID);
 
 		return new CustomResponseEntity<ApiResponseObject<?>>(
-				new ApiResponseObject<HDBSBkgGridDTO>(HttpStatus.OK, hdbsBkgGridDTO), HttpStatus.OK);
+				new ApiResponseObject<HDBSBookingResponse>(HttpStatus.OK, bookingResponse), HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/validateselection", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)

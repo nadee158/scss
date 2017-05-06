@@ -52,6 +52,8 @@ public class GateInReponse implements Serializable {
 	private Boolean pmVerified;
 	
 	private String hpabBookingId;
+	
+	private String impExpFlagStatus;
 
 	public String getLaneNo() {
 		return laneNo;
@@ -212,6 +214,13 @@ public class GateInReponse implements Serializable {
 	public void setHpabBookingId(String hpabBookingId) {
 		this.hpabBookingId = hpabBookingId;
 	}
-	
 
+	public String getImpExpFlagStatus() {
+		return impExpFlagStatus;
+	}
+
+	public void setImpExpFlagStatus(String impExpFlagStatus) {
+		this.impExpFlagStatus = impExpFlagStatus;
+	}
+	
 }

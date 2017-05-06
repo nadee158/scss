@@ -74,13 +74,13 @@ public class GateInODDService {
           throw new BusinessException(
               "Rejection Reason is need for container  : " + whODDdto.getContainer01().getContainerNo());
 
-        if (whODDdto.getContainer02().isPresent()) {
-          if (StringUtils.isEmpty(whODDdto.getContainer02().get().getRemarks()))
+        if (whODDdto.getContainer02()!=null) {
+          if (StringUtils.isEmpty(whODDdto.getContainer02().getRemarks()))
             throw new BusinessException(
-                "Rejection Remarks is need for container  : " + whODDdto.getContainer02().get().getContainerNo());
-          if (StringUtils.isEmpty(whODDdto.getContainer02().get().getRejectionReason()))
+                "Rejection Remarks is need for container  : " + whODDdto.getContainer02().getContainerNo());
+          if (StringUtils.isEmpty(whODDdto.getContainer02().getRejectionReason()))
             throw new BusinessException(
-                "Rejection Reason is need for container  : " + whODDdto.getContainer02().get().getContainerNo());
+                "Rejection Reason is need for container  : " + whODDdto.getContainer02().getContainerNo());
         }
 
       } else {
@@ -109,14 +109,14 @@ public class GateInODDService {
           hdbsBookingDetail.setOddIdSeq(whODD);
         }
       }
-      if (whODDdto.getContainer02().isPresent()) {
+      if (whODDdto.getContainer02()!=null) {
         whODD.getContainer02().setOddStatus(TransactionStatus.INPROGRESS);
-        if (whODDdto.getContainer02().get().getHdbsBkgDetailNoId() != null) {
+        if (whODDdto.getContainer02().getHdbsBkgDetailNoId() != null) {
 
           Optional<HDBSBkgDetail> optHDBSBookingDetail =
-              hdbsBookingDetailRepository.findOne(whODDdto.getContainer02().get().getHdbsBkgDetailNoId());
+              hdbsBookingDetailRepository.findOne(whODDdto.getContainer02().getHdbsBkgDetailNoId());
           HDBSBkgDetail hdbsBookingDetail = optHDBSBookingDetail.orElseThrow(() -> new ResultsNotFoundException(
-              "Invalid HDBS Booking Detail ID :" + whODDdto.getContainer02().get().getHdbsBkgDetailNoId()));
+              "Invalid HDBS Booking Detail ID :" + whODDdto.getContainer02().getHdbsBkgDetailNoId()));
 
           whODD.getContainer02().setHdbsBkgDetailNo(hdbsBookingDetail);
           whODD.getContainer02().setHdbsStatus(hdbsBookingDetail.getStatusCode());

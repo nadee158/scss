@@ -95,7 +95,7 @@ public class PrintEir extends AuditEntity implements Serializable {
 	@AttributeOverrides({ @AttributeOverride(name = "containerNumber", column = @Column(name = "CONTAINERNO_C2")),
 			@AttributeOverride(name = "containerISOCode", column = @Column(name = "ISO_C2")),
 			@AttributeOverride(name = "containerLength", column = @Column(name = "SIZE_C2")),
-			@AttributeOverride(name = "containerFullOrEmpty", column = @Column(name = "FULL_OR_EMPTY_C2")),
+			@AttributeOverride(name = "containerFullOrEmpty", column = @Column(name = "FULLOREMPTY_C2")),
 			@AttributeOverride(name = "containerBayCode", column = @Column(name = "BAYCODE_C2")),
 			@AttributeOverride(name = "containerInOrOut", column = @Column(name = "INOROUT_C2")),
 			@AttributeOverride(name = "containerPositionOnTruck", column = @Column(name = "POSITIONONTRUCK_C2")),

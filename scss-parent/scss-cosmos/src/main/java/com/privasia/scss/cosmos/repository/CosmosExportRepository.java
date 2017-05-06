@@ -33,7 +33,7 @@ public class CosmosExportRepository {
 	@Value("${export.containerStatus}")
 	private String queryContainerStatus;
 
-	@Value("${export.containerInfo}")
+	@Value("${export.containerPrimaryInfo}")
 	private String queryContainerInfo;
 
 	@Autowired
@@ -70,7 +70,7 @@ public class CosmosExportRepository {
 
 		if (rs.next()) {
 			exportContainer.setInternalBlock(true);
-			exportContainer.setInternalBlockDesc(rs.getString("inop30"));
+			exportContainer.setInternalBlockDesc(rs.getString("INOP30"));
 		}
 		return exportContainer;
 	}
@@ -87,7 +87,7 @@ public class CosmosExportRepository {
 	private String extractContainerStatus(ResultSet rs) throws SQLException {
 
 		if (rs != null && rs.next()) {
-			return rs.getString("hdfs03");
+			return rs.getString("HDFS03");
 		} else {
 			return ContainerStatus.NON_EXECUTE.getValue();
 		}
@@ -130,21 +130,21 @@ public class CosmosExportRepository {
 			exportContainer.setTotalBooking(rowcount);
 
 			exportContainer.setBookingNoExist(true);
-			exportContainer.setBookingNo(rs.getString("orrf05"));
-			exportContainer.getContainer().setContainerFullOrEmpty(rs.getString("cnbt03"));
+			exportContainer.setBookingNo(rs.getString("ORRF05"));
+			exportContainer.getContainer().setContainerFullOrEmpty(rs.getString("CNBT03"));
 			exportContainer.setShippingLine(rs.getString("LYND05"));
-			exportContainer.setShippingAgent(rs.getString("orgv05"));
+			exportContainer.setShippingAgent(rs.getString("ORGV05"));
 
-			exportContainer.setVesselCode(rs.getString("vmid01"));
-			exportContainer.setVesselVoyageIN(rs.getString("rsin01"));
-			exportContainer.setVesselVoyageOUT(rs.getString("rsut01"));
-			exportContainer.setVesselVisitID(rs.getString("bzid01"));
-			exportContainer.setVesselSCN(StringUtils.trim(rs.getString("regn01")));
+			exportContainer.setVesselCode(rs.getString("VMID01"));
+			exportContainer.setVesselVoyageIN(rs.getString("RSIN01"));
+			exportContainer.setVesselVoyageOUT(rs.getString("RSUT01"));
+			exportContainer.setVesselVisitID(rs.getString("BZID01"));
+			exportContainer.setVesselSCN(StringUtils.trim(rs.getString("REGN01")));
 			exportContainer.setVesselName(StringUtils.trim(rs.getString("MVVA47")));
-			exportContainer.setVesselStatus(rs.getString("bzfs01"));
+			exportContainer.setVesselStatus(rs.getString("BZFS01"));
 
 			exportContainer.setVesselETADate(DateUtil.getLocalDategFromString(
-					rs.getString("etad01") + TextString.padding(rs.getString("etat01"), 6, '0', true)));
+					rs.getString("ETAD01") + TextString.padding(rs.getString("ETAT01"), 6, '0', true)));
 			
 		}
 		

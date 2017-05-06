@@ -1,5 +1,6 @@
 package com.privasia.scss.gatein;
 
+import org.springframework.beans.factory.config.ServiceLocatorFactoryBean;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -15,6 +16,7 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.scheduling.annotation.EnableAsync;
 
+import com.privasia.scss.common.interfaces.ContainerExternalDataService;
 import com.privasia.scss.core.config.SCSSEntryPoint;
 import com.privasia.scss.cosmos.AS400DBConfig;
 import com.privasia.scss.etpws.ETPWsEntryPoint;
@@ -44,6 +46,14 @@ public class GateInEntryPoint extends SpringBootServletInitializer {
   @Bean
   public static PropertySourcesPlaceholderConfigurer propertyConfig() {
     return new PropertySourcesPlaceholderConfigurer();
+  }
+  
+  @Bean
+  public ServiceLocatorFactoryBean containerExternalDataServiceServiceLocatorFactoryBean(){
+	  
+	  ServiceLocatorFactoryBean  serviceLocatorFactoryBean = new ServiceLocatorFactoryBean();
+	  serviceLocatorFactoryBean.setServiceLocatorInterface(ContainerExternalDataService.class);
+	  return serviceLocatorFactoryBean;
   }
 
   @Override

@@ -2,14 +2,14 @@ package com.privasia.scss.cosmos.service;
 
 import org.springframework.stereotype.Service;
 
-import com.privasia.scss.common.business.ContainerExternalDataService;
 import com.privasia.scss.common.dto.GateInReponse;
 import com.privasia.scss.common.dto.GateInWriteRequest;
 import com.privasia.scss.common.dto.GateOutReponse;
 import com.privasia.scss.common.dto.GateOutRequest;
+import com.privasia.scss.common.interfaces.OpusCosmosBusinessService;
 
 @Service("cosmosService")
-public class CosmosService implements ContainerExternalDataService {
+public class CosmosService implements OpusCosmosBusinessService {
 
   @Override
   public GateInReponse sendGateInRequest(GateInWriteRequest gateInWriteRequest) {

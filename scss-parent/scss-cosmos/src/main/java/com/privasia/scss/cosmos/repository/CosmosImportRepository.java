@@ -34,8 +34,8 @@ public class CosmosImportRepository {
 	@Value("${import.getContainerInfo}")
 	private String queryGetContainerInfo;
 
-	@Value("${import.getSealInfo}")
-	private String queryGetSealInfo;
+	/*@Value("${import.getSealInfo}")
+	private String queryGetSealInfo;*/
 
 	@Value("${import.checkLaden}")
 	private String queryCheckLaden;
@@ -83,7 +83,7 @@ public class CosmosImportRepository {
 		return importContainer;
 	}
 
-	@Transactional(value = "as400TransactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+	/*@Transactional(value = "as400TransactionManager", propagation = Propagation.REQUIRED, readOnly = true)
 	public Optional<List<SealInfo>> getSealInfo(String handingID) {
 
 		handingID = StringUtils.upperCase(handingID);
@@ -108,9 +108,9 @@ public class CosmosImportRepository {
 
 		return Optional.of(sealInfoList);
 
-	}
+	}*/
 
-	@Transactional(value = "as400TransactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+	/*@Transactional(value = "as400TransactionManager", propagation = Propagation.REQUIRED, readOnly = true)
 	public boolean checkLaden(String containerNo) {
 
 		containerNo = StringUtils.upperCase(containerNo);
@@ -128,7 +128,7 @@ public class CosmosImportRepository {
 		}
 		// return GatePassErrMsg.GATE_PASS_NO_PREARRIVAL;
 		return false;
-	}
+	}*/
 
 	@Transactional(value = "as400TransactionManager", propagation = Propagation.REQUIRED, readOnly = true)
 	public boolean isOGABlock(String containerNo) {

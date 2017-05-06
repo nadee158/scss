@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.gson.Gson;
 import com.privasia.scss.common.annotation.OpenGate;
-import com.privasia.scss.common.business.ContainerExternalDataService;
 import com.privasia.scss.common.dto.GateInReponse;
 import com.privasia.scss.common.dto.GateInRequest;
 import com.privasia.scss.common.dto.GateInWriteRequest;
@@ -26,6 +25,8 @@ import com.privasia.scss.common.dto.ImportContainer;
 import com.privasia.scss.common.enums.ImpExpFlagStatus;
 import com.privasia.scss.common.exception.BusinessException;
 import com.privasia.scss.common.exception.ResultsNotFoundException;
+import com.privasia.scss.common.interfaces.ContainerExternalDataService;
+import com.privasia.scss.common.interfaces.OpusCosmosBusinessService;
 import com.privasia.scss.core.model.Card;
 import com.privasia.scss.core.model.Client;
 import com.privasia.scss.core.model.SystemUser;
@@ -47,6 +48,9 @@ public class ImportExportGateInService {
 
   @Value("${async.wait.time}")
   private long asyncWaitTime;
+  
+  @Value("${service.implementor}")
+  private String implementor;
 
   private static final Log log = LogFactory.getLog(ImportExportGateInService.class);
  
@@ -275,10 +279,12 @@ public class ImportExportGateInService {
     ImpExpFlagStatus impExpFlag = ImpExpFlagStatus.fromValue(gateInWriteRequest.getImpExpFlag());
 
     GateInReponse gateInReponse = null;
+    
+    OpusCosmosBusinessService businessService = containerExternalDataService.getImplementationService(implementor);
 
     switch (impExpFlag) {
       case IMPORT:
-        gateInReponse = containerExternalDataService.sendGateInRequest(gateInWriteRequest);
+        gateInReponse = businessService.sendGateInRequest(gateInWriteRequest);
         gateInWriteRequest.setImportContainers(gateInReponse.getImportContainers());
         importGateInService.saveGateInInfo(gateInWriteRequest, gateInClient, gateInClerk, card);
         // expSave = new AsyncResult<Boolean>(true);
@@ -286,13 +292,13 @@ public class ImportExportGateInService {
       case EXPORT:
         // impSave = new AsyncResult<Boolean>(true);
         exportGateInService.validateExport(gateInWriteRequest);
-        gateInReponse = containerExternalDataService.sendGateInRequest(gateInWriteRequest);
+        gateInReponse = businessService.sendGateInRequest(gateInWriteRequest);
         gateInWriteRequest.setExportContainers(gateInReponse.getExportContainers());
         exportGateInService.saveGateInInfo(gateInWriteRequest, gateInClient, gateInClerk, card);
         break;
       case IMPORT_EXPORT:
         exportGateInService.validateExport(gateInWriteRequest);
-        gateInReponse = containerExternalDataService.sendGateInRequest(gateInWriteRequest);
+        gateInReponse = businessService.sendGateInRequest(gateInWriteRequest);
         gateInWriteRequest.setImportContainers(gateInReponse.getImportContainers());
         gateInWriteRequest.setExportContainers(gateInReponse.getExportContainers());
         importGateInService.saveGateInInfo(gateInWriteRequest, gateInClient, gateInClerk, card);

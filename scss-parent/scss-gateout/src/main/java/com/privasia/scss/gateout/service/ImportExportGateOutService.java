@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.gson.Gson;
 import com.privasia.scss.common.annotation.OpenGate;
-import com.privasia.scss.common.business.ContainerExternalDataService;
 import com.privasia.scss.common.dto.ExportContainer;
 import com.privasia.scss.common.dto.GateOutMessage;
 import com.privasia.scss.common.dto.GateOutReponse;
@@ -27,6 +26,8 @@ import com.privasia.scss.common.dto.InProgressTrxDTO;
 import com.privasia.scss.common.enums.ImpExpFlagStatus;
 import com.privasia.scss.common.exception.BusinessException;
 import com.privasia.scss.common.exception.ResultsNotFoundException;
+import com.privasia.scss.common.interfaces.ContainerExternalDataService;
+import com.privasia.scss.common.interfaces.OpusCosmosBusinessService;
 import com.privasia.scss.core.model.Card;
 import com.privasia.scss.core.model.Client;
 import com.privasia.scss.core.model.SystemUser;
@@ -50,6 +51,9 @@ public class ImportExportGateOutService {
 
   @Value("${async.wait.time}")
   private long asyncWaitTime;
+  
+  @Value("${service.implementor}")
+  private String implementor;
 
   private ImportGateOutService importGateOutService;
 
@@ -163,6 +167,8 @@ public class ImportExportGateOutService {
       List<ExportContainer> exportContainers = null;
 
       List<ImportContainer> importContainers = null;
+      
+      OpusCosmosBusinessService businessService = containerExternalDataService.getImplementationService(implementor);
 
       switch (trxDTO.getTrxType()) {
         case EXPORT:
@@ -191,8 +197,8 @@ public class ImportExportGateOutService {
       gateOutReponse.setExportContainers(exportContainers);
       gateOutReponse.setTransactionType(trxDTO.getTrxType().name());
 
-      // call opus -
-      gateOutReponse = containerExternalDataService.sendGateOutReadRequest(gateOutRequest, gateOutReponse);
+      // call opus or cosmos-
+      gateOutReponse = businessService.sendGateOutReadRequest(gateOutRequest, gateOutReponse);
 
       return gateOutReponse;
     } else {

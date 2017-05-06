@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.privasia.scss.common.dto.ApiResponseObject;
 import com.privasia.scss.common.dto.CustomResponseEntity;
+import com.privasia.scss.common.dto.GateInReponse;
+import com.privasia.scss.common.dto.GateInRequest;
 import com.privasia.scss.common.dto.GateInWriteRequest;
 import com.privasia.scss.core.model.HDBSBkgDetail;
 import com.privasia.scss.gatein.service.ImportExportGateInService;
@@ -57,11 +59,11 @@ public class GateInODDController {
 				new ApiResponseObject<Long>(HttpStatus.CREATED, generatedId), HttpStatus.CREATED);
 	}
 
-	@RequestMapping(value = "/hdbs/bkgdetails/ids", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<HDBSBkgDetail>> gateInImpNormal(@RequestBody List<String> bkgDetailIDList,
+	@RequestMapping(value = "/populate/bybkgdetails", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<GateInReponse> populateODD(@RequestBody GateInRequest gateInRequest,
 			HttpServletRequest request) {
-		List<HDBSBkgDetail> hdbsDetails = hdbsService.findHDBSBookingDetailByIDList(bkgDetailIDList);
-		return new ResponseEntity<List<HDBSBkgDetail>>(hdbsDetails, HttpStatus.OK);
+		GateInReponse gateInResponse = hdbsService.populateODDInfo(gateInRequest);
+		return new ResponseEntity<GateInReponse>(gateInResponse, HttpStatus.OK);
 	}
 
 }

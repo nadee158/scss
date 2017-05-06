@@ -7,12 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.google.gson.Gson;
-import com.privasia.scss.common.business.ContainerExternalDataService;
 import com.privasia.scss.common.dto.GateInReponse;
 import com.privasia.scss.common.dto.GateInWriteRequest;
 import com.privasia.scss.common.dto.GateOutReponse;
 import com.privasia.scss.common.dto.GateOutRequest;
 import com.privasia.scss.common.exception.BusinessException;
+import com.privasia.scss.common.interfaces.OpusCosmosBusinessService;
 import com.privasia.scss.opus.dto.OpusGateInWriteRequest;
 import com.privasia.scss.opus.dto.OpusGateInWriteResponse;
 import com.privasia.scss.opus.dto.OpusGateOutReadRequest;
@@ -20,7 +20,7 @@ import com.privasia.scss.opus.dto.OpusGateOutReadResponse;
 import com.privasia.scss.opus.dto.OpusRequestResponseDTO;
 
 @Service("opusService")
-public class OpusService implements ContainerExternalDataService {
+public class OpusService implements OpusCosmosBusinessService {
 
   private static final Log log = LogFactory.getLog(OpusService.class);
 

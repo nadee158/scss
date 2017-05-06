@@ -2,7 +2,6 @@ package com.privasia.scss.common.dto;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -77,7 +76,7 @@ public class WHODDDTO implements Serializable {
 
 	private ODDContainerDetailsDTO container01;
 
-	private Optional<ODDContainerDetailsDTO> container02;
+	private ODDContainerDetailsDTO container02;
 
 	public Long getOddIdSeq() {
 		return oddIdSeq;
@@ -295,11 +294,11 @@ public class WHODDDTO implements Serializable {
 		this.container01 = container01;
 	}
 
-	public Optional<ODDContainerDetailsDTO> getContainer02() {
+	public ODDContainerDetailsDTO getContainer02() {
 		return container02;
 	}
 
-	public void setContainer02(Optional<ODDContainerDetailsDTO> container02) {
+	public void setContainer02(ODDContainerDetailsDTO container02) {
 		this.container02 = container02;
 	}
 

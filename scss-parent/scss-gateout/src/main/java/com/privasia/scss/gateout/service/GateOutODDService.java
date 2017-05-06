@@ -186,36 +186,36 @@ public class GateOutODDService {
             optHDBSBookingDetail.orElseThrow(() -> new ResultsNotFoundException("Invalid HDBS Booking Detail ID :"
                 + whODD.getContainer01().getHdbsBkgDetailNo().get().getHdbsBKGDetailID()));
 
-        hdbsBookingDetail.setScssStatusCode(SCSSHDBSStatus.fromValue(whODDdto.getContainer02().get().getOddStatus()));
+        hdbsBookingDetail.setScssStatusCode(SCSSHDBSStatus.fromValue(whODDdto.getContainer02().getOddStatus()));
         hdbsBookingDetail.setOddTimeGateOutOk(whODD.getTimeGateInOk());
         hdbsBookingDetail.setContainerNo(whODD.getContainer01().getContainerNo());
       }
 
-      if (whODDdto.getContainer02().isPresent()) {
+      if (whODDdto.getContainer02()!=null) {
 
         if (StringUtils.equalsIgnoreCase(ImpExpFlagStatus.IMPORT.getValue(), whODDdto.getImpExpFlag())) {
           ODDContainerDetails oddContainerDetails = new ODDContainerDetails();
-          oddContainerDetails.setContainerNo(whODDdto.getContainer02().get().getContainerNo());
+          oddContainerDetails.setContainerNo(whODDdto.getContainer02().getContainerNo());
           whODD.setContainer02(oddContainerDetails);
         }
         whODD.getContainer02()
-            .setFullOrEmpty(ContainerFullEmptyType.fromValue(whODDdto.getContainer02().get().getFullOrEmpty()));
+            .setFullOrEmpty(ContainerFullEmptyType.fromValue(whODDdto.getContainer02().getFullOrEmpty()));
 
-        if (StringUtils.equalsIgnoreCase(whODDdto.getContainer02().get().getOddStatus(),
+        if (StringUtils.equalsIgnoreCase(whODDdto.getContainer02().getOddStatus(),
             TransactionStatus.REJECT.getValue())) {
 
-          if (StringUtils.isEmpty(whODDdto.getContainer02().get().getRemarks()))
+          if (StringUtils.isEmpty(whODDdto.getContainer02().getRemarks()))
             throw new BusinessException(
-                "Rejection Remarks is need for container  : " + whODDdto.getContainer02().get().getContainerNo());
-          if (StringUtils.isEmpty(whODDdto.getContainer02().get().getRejectionReason()))
+                "Rejection Remarks is need for container  : " + whODDdto.getContainer02().getContainerNo());
+          if (StringUtils.isEmpty(whODDdto.getContainer02().getRejectionReason()))
             throw new BusinessException(
-                "Rejection Reason is need for container  : " + whODDdto.getContainer02().get().getContainerNo());
+                "Rejection Reason is need for container  : " + whODDdto.getContainer02().getContainerNo());
 
-          whODD.getContainer02().setRemarks(whODDdto.getContainer02().get().getRemarks());
-          whODD.getContainer02().setRejectionReason(whODDdto.getContainer02().get().getRejectionReason());
+          whODD.getContainer02().setRemarks(whODDdto.getContainer02().getRemarks());
+          whODD.getContainer02().setRejectionReason(whODDdto.getContainer02().getRejectionReason());
         }
 
-        whODD.getContainer02().setOddStatus(TransactionStatus.fromCode(whODDdto.getContainer02().get().getOddStatus()));
+        whODD.getContainer02().setOddStatus(TransactionStatus.fromCode(whODDdto.getContainer02().getOddStatus()));
 
         if (whODD.getContainer02().getHdbsBkgDetailNo().isPresent()) {
 
@@ -225,7 +225,7 @@ public class GateOutODDService {
               optHDBSBookingDetail.orElseThrow(() -> new ResultsNotFoundException("Invalid HDBS Booking Detail ID :"
                   + whODD.getContainer02().getHdbsBkgDetailNo().get().getHdbsBKGDetailID()));
 
-          hdbsBookingDetail.setScssStatusCode(SCSSHDBSStatus.fromValue(whODDdto.getContainer02().get().getOddStatus()));
+          hdbsBookingDetail.setScssStatusCode(SCSSHDBSStatus.fromValue(whODDdto.getContainer02().getOddStatus()));
           hdbsBookingDetail.setOddTimeGateOutOk(whODD.getTimeGateInOk());
           hdbsBookingDetail.setContainerNo(whODD.getContainer02().getContainerNo());
         }

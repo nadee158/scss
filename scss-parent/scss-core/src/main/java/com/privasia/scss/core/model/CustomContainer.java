@@ -55,10 +55,6 @@ public class CustomContainer implements Serializable {
 	@JoinColumn(name = "EXP_EXPORTNO_SEQ", nullable = true, referencedColumnName = "EXP_EXPORTNO_SEQ")
 	private Exports exportID;
 	
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
-	@JoinColumn(name = "ODD_ID_SEQ", nullable = true, referencedColumnName = "ODD_ID_SEQ")
-	private WHODD oddID;
-	
 	private String oddLocation;
 
 	public String getContainerNumber() {
@@ -139,14 +135,6 @@ public class CustomContainer implements Serializable {
 
 	public void setExportID(Exports exportID) {
 		this.exportID = exportID;
-	}
-
-	public WHODD getOddID() {
-		return oddID;
-	}
-
-	public void setOddID(WHODD oddID) {
-		this.oddID = oddID;
 	}
 
 	public String getOddLocation() {

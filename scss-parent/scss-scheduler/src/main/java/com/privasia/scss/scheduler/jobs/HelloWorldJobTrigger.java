@@ -23,8 +23,8 @@ public class HelloWorldJobTrigger implements Job {
 
   @Override
   public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
-    System.out.println("HELLO WORLD!");
-    logger.info("HELLO WORLD | frequency {}", frequency);
+    //System.out.println("HELLO WORLD!");
+    //logger.info("HELLO WORLD | frequency {}", frequency);
   }
 
   @Bean(name = "helloWorldJobTriggerBean")

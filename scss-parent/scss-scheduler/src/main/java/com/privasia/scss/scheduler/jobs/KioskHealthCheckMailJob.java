@@ -17,7 +17,7 @@ import com.privasia.scss.core.service.NotificationService;
 import com.privasia.scss.scheduler.config.ConfigureQuartz;
 import com.privasia.scss.scheduler.util.AppLogger;
 
-@Component
+//@Component
 @DisallowConcurrentExecution
 public class KioskHealthCheckMailJob implements Job {
 
