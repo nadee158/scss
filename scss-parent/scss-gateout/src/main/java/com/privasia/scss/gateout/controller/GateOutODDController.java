@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.privasia.scss.common.dto.ApiResponseObject;
 import com.privasia.scss.common.dto.ContainerValidationInfo;
 import com.privasia.scss.common.dto.CustomResponseEntity;
-import com.privasia.scss.gateout.service.GateOutODDService;
+import com.privasia.scss.gateout.whodd.service.ODDGateOutService;
 
 /**
  * @author Janaka
@@ -25,17 +25,17 @@ import com.privasia.scss.gateout.service.GateOutODDService;
 @RequestMapping("**/odd")
 public class GateOutODDController {
 
-	private GateOutODDService gateOutODDService;
+	private ODDGateOutService oDDGateOutService;
 
 	@Autowired
-	public void setGateOutODDService(GateOutODDService gateOutODDService) {
-		this.gateOutODDService = gateOutODDService;
+	public void setGateOutODDService(ODDGateOutService oDDGateOutService) {
+		this.oDDGateOutService = oDDGateOutService;
 	}
 
 	@RequestMapping(value = "/validatecontainer", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, 
 															consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public CustomResponseEntity<ApiResponseObject<?>> validateContainers(@RequestBody ContainerValidationInfo validationInfo) {
-		validationInfo = gateOutODDService.validateODDContainers(validationInfo);
+		validationInfo = oDDGateOutService.validateODDContainers(validationInfo);
 		return new CustomResponseEntity<ApiResponseObject<?>>(
 				new ApiResponseObject<ContainerValidationInfo>(HttpStatus.OK, validationInfo), HttpStatus.OK);
 	}

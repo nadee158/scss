@@ -51,10 +51,10 @@ public class HDBSController {
 	public CustomResponseEntity<ApiResponseObject<?>> validateBookingSelection(
 			@RequestBody HDBSBkgGridDTO bkgDetailGridDTO, HttpServletRequest request) {
 
-		String validateMessage = hdbsService.validateSelectedHDBSBookingDetails(bkgDetailGridDTO);
+		boolean validate = hdbsService.validateSelectedHDBSBookingDetails(bkgDetailGridDTO);
 
 		return new CustomResponseEntity<ApiResponseObject<?>>(
-				new ApiResponseObject<String>(HttpStatus.OK, validateMessage), HttpStatus.OK);
+				new ApiResponseObject<Boolean>(HttpStatus.OK, validate), HttpStatus.OK);
 	}
 
 }

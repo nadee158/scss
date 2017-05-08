@@ -1,4 +1,4 @@
-package com.privasia.scss.cosmos.dto.request;
+package com.privasia.scss.cosmos.xml.element;
 
 import java.io.Serializable;
 
@@ -10,15 +10,15 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 public class CSMCTL implements Serializable {
 
   private static final long serialVersionUID = 1L;
-  String RQST;
-  String ACTN;
-  String RTNC;
-  String ERRI;
-  String RQDS;
-  String RTNM;
-  String USID;
-  String RQUI;
-  String TRMC;
+  private String RQST;
+  private String ACTN;
+  private String RTNC;
+  private String ERRI;
+  private String RQDS;
+  private String RTNM;
+  private String USID;
+  private String RQUI;
+  private String TRMC;
 
   public String getRQST() {
     return RQST;

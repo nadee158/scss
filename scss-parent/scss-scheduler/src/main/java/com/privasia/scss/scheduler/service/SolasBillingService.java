@@ -62,12 +62,12 @@ public class SolasBillingService {
 		Predicate bySolasInstructionShipper = ExportsPredicates
 				.bySolasInstructionType(SolasInstructionType.VGM_INSTRUCTION_SHIPPER);
 		Predicate byWithinTolerance = ExportsPredicates.byWithinTolerance(false);
-		Predicate byHpabBooking = ExportsPredicates.byHpabBooking(null);
+		Predicate byHpabBooking = ExportsPredicates.byHpabNotNull();
 		Predicate byContainerFullOrEmpty = ExportsPredicates.byContainerFullOrEmpty(ContainerFullEmptyType.FULL);
 		OrderSpecifier<Long> orderByPrintEirAsc = ExportsPredicates.orderByPrintEirAsc();
 
 		Predicate condition = ExpressionUtils.allOf(timeGateInBetween, byTransactionStatus,
-				ExpressionUtils.or(bySolasInstructionTerminal, bySolasInstructionShipper), byWithinTolerance,
+				ExpressionUtils.or(bySolasInstructionTerminal, ExpressionUtils.and(bySolasInstructionShipper, byWithinTolerance)),
 				byHpabBooking, byContainerFullOrEmpty);
 
 		Iterable<Exports> exportsList = exportsRepository.findAll(condition, orderByPrintEirAsc);

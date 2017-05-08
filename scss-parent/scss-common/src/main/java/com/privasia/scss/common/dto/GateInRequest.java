@@ -41,6 +41,8 @@ public class GateInRequest implements Serializable {
 	private Optional<Long> referID;
 
 	private Optional<List<String>> bkgDetailIDList;
+	
+	private boolean oddReject = false;
 
 	public Long getUserId() {
 		return userId;
@@ -193,5 +195,15 @@ public class GateInRequest implements Serializable {
 	public void setBkgDetailIDList(Optional<List<String>> bkgDetailIDList) {
 		this.bkgDetailIDList = bkgDetailIDList;
 	}
+
+	public boolean isOddReject() {
+		return oddReject;
+	}
+
+	public void setOddReject(boolean oddReject) {
+		this.oddReject = oddReject;
+	}
+	
+	
 
 }

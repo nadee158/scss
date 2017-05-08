@@ -1,162 +1,164 @@
 package com.privasia.scss.common.dto;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 public class GateOutReponse implements Serializable {
 
-  /**
-   * 
-   */
-  private static final long serialVersionUID = 1L;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
-  private String userID;
-  private String laneNo;// LNO01,
-  private String haulageCode;// HAUCD,
-  private String truckHeadNo;// TRUCK,
-  private String truckPlateNo;// null,
-  private String gateOUTDateTime;// 20161130112233,
+	private String userID;
+	private String laneNo;// LNO01,
+	private String haulageCode;// HAUCD,
+	private String truckHeadNo;// TRUCK,
+	private String truckPlateNo;// null,
+	private LocalDateTime gateOUTDateTime;// 20161130112233,
 
-  private List<ImportContainer> importContainers = new ArrayList<ImportContainer>();
+	private List<ImportContainer> importContainers = new ArrayList<ImportContainer>();
 
-  private List<ExportContainer> exportContainers = new ArrayList<ExportContainer>();
+	private List<ExportContainer> exportContainers = new ArrayList<ExportContainer>();
 
-  private List<WHODDDTO> whODDContainers = new ArrayList<WHODDDTO>();
+	private List<WHoddDTO> whODDContainers = new ArrayList<WHoddDTO>();
 
-  // for gate in write
-  private String callCardNo;// 20161130112233,
+	// for gate in write
+	private String callCardNo;// 20161130112233,
 
-  private String transactionType;
+	private String transactionType;
 
-  private GateOutMessage message;
+	private GateOutMessage message;
 
-  private String clerkName;// - string
+	private String clerkName;// - string
 
-  private String gateInLaneNo;// -string
+	private String gateInLaneNo;// -string
 
-  // MM-dd-yyyy HH:mm
-  private String gateInDateTime;// -string
+	// MM-dd-yyyy HH:mm
+	private LocalDateTime gateInDateTime;// -string
 
-  public String getUserID() {
-    return userID;
-  }
+	public String getUserID() {
+		return userID;
+	}
 
-  public void setUserID(String userID) {
-    this.userID = userID;
-  }
+	public void setUserID(String userID) {
+		this.userID = userID;
+	}
 
-  public String getLaneNo() {
-    return laneNo;
-  }
+	public String getLaneNo() {
+		return laneNo;
+	}
 
-  public void setLaneNo(String laneNo) {
-    this.laneNo = laneNo;
-  }
+	public void setLaneNo(String laneNo) {
+		this.laneNo = laneNo;
+	}
 
-  public String getHaulageCode() {
-    return haulageCode;
-  }
+	public String getHaulageCode() {
+		return haulageCode;
+	}
 
-  public void setHaulageCode(String haulageCode) {
-    this.haulageCode = haulageCode;
-  }
+	public void setHaulageCode(String haulageCode) {
+		this.haulageCode = haulageCode;
+	}
 
-  public String getTruckHeadNo() {
-    return truckHeadNo;
-  }
+	public String getTruckHeadNo() {
+		return truckHeadNo;
+	}
 
-  public void setTruckHeadNo(String truckHeadNo) {
-    this.truckHeadNo = truckHeadNo;
-  }
+	public void setTruckHeadNo(String truckHeadNo) {
+		this.truckHeadNo = truckHeadNo;
+	}
 
-  public String getTruckPlateNo() {
-    return truckPlateNo;
-  }
+	public String getTruckPlateNo() {
+		return truckPlateNo;
+	}
 
-  public void setTruckPlateNo(String truckPlateNo) {
-    this.truckPlateNo = truckPlateNo;
-  }
+	public void setTruckPlateNo(String truckPlateNo) {
+		this.truckPlateNo = truckPlateNo;
+	}
 
-  public String getGateOUTDateTime() {
-    return gateOUTDateTime;
-  }
+	public LocalDateTime getGateOUTDateTime() {
+		return gateOUTDateTime;
+	}
 
-  public void setGateOUTDateTime(String gateOUTDateTime) {
-    this.gateOUTDateTime = gateOUTDateTime;
-  }
+	public void setGateOUTDateTime(LocalDateTime gateOUTDateTime) {
+		this.gateOUTDateTime = gateOUTDateTime;
+	}
 
-  public List<ImportContainer> getImportContainers() {
-    return importContainers;
-  }
+	public List<ImportContainer> getImportContainers() {
+		return importContainers;
+	}
 
-  public void setImportContainers(List<ImportContainer> importContainers) {
-    this.importContainers = importContainers;
-  }
+	public void setImportContainers(List<ImportContainer> importContainers) {
+		this.importContainers = importContainers;
+	}
 
-  public List<ExportContainer> getExportContainers() {
-    return exportContainers;
-  }
+	public List<ExportContainer> getExportContainers() {
+		return exportContainers;
+	}
 
-  public void setExportContainers(List<ExportContainer> exportContainers) {
-    this.exportContainers = exportContainers;
-  }
+	public void setExportContainers(List<ExportContainer> exportContainers) {
+		this.exportContainers = exportContainers;
+	}
 
-  public String getCallCardNo() {
-    return callCardNo;
-  }
+	public String getCallCardNo() {
+		return callCardNo;
+	}
 
-  public void setCallCardNo(String callCardNo) {
-    this.callCardNo = callCardNo;
-  }
+	public void setCallCardNo(String callCardNo) {
+		this.callCardNo = callCardNo;
+	}
 
-  public List<WHODDDTO> getWhODDContainers() {
-    return whODDContainers;
-  }
+	public List<WHoddDTO> getWhODDContainers() {
+		return whODDContainers;
+	}
 
-  public void setWhODDContainers(List<WHODDDTO> whODDContainers) {
-    this.whODDContainers = whODDContainers;
-  }
+	public void setWhODDContainers(List<WHoddDTO> whODDContainers) {
+		this.whODDContainers = whODDContainers;
+	}
 
-  public String getTransactionType() {
-    return transactionType;
-  }
+	public String getTransactionType() {
+		return transactionType;
+	}
 
-  public void setTransactionType(String transactionType) {
-    this.transactionType = transactionType;
-  }
+	public void setTransactionType(String transactionType) {
+		this.transactionType = transactionType;
+	}
 
-  public GateOutMessage getMessage() {
-    return message;
-  }
+	public GateOutMessage getMessage() {
+		return message;
+	}
 
-  public void setMessage(GateOutMessage message) {
-    this.message = message;
-  }
+	public void setMessage(GateOutMessage message) {
+		this.message = message;
+	}
 
-  public String getClerkName() {
-    return clerkName;
-  }
+	public String getClerkName() {
+		return clerkName;
+	}
 
-  public void setClerkName(String clerkName) {
-    this.clerkName = clerkName;
-  }
+	public void setClerkName(String clerkName) {
+		this.clerkName = clerkName;
+	}
 
-  public String getGateInLaneNo() {
-    return gateInLaneNo;
-  }
+	public String getGateInLaneNo() {
+		return gateInLaneNo;
+	}
 
-  public void setGateInLaneNo(String gateInLaneNo) {
-    this.gateInLaneNo = gateInLaneNo;
-  }
+	public void setGateInLaneNo(String gateInLaneNo) {
+		this.gateInLaneNo = gateInLaneNo;
+	}
 
-  public String getGateInDateTime() {
-    return gateInDateTime;
-  }
+	public LocalDateTime getGateInDateTime() {
+		return gateInDateTime;
+	}
 
-  public void setGateInDateTime(String gateInDateTime) {
-    this.gateInDateTime = gateInDateTime;
-  }
-
+	public void setGateInDateTime(LocalDateTime gateInDateTime) {
+		this.gateInDateTime = gateInDateTime;
+	}
+	
+	
 
 }

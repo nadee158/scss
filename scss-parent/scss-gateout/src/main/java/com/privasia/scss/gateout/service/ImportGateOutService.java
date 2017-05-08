@@ -108,8 +108,7 @@ public class ImportGateOutService {
        
         if (!(gatePass.getBaseCommonGateInOutAttribute().getTimeGateIn() == null)) {
           LocalDateTime timeGateIn = gatePass.getBaseCommonGateInOutAttribute().getTimeGateIn();
-          DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy HH:mm");
-          gateOutReponse.setGateInDateTime(timeGateIn.format(formatter));
+          gateOutReponse.setGateInDateTime(timeGateIn);
         }
       }
       // adding log info

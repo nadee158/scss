@@ -74,9 +74,9 @@ public class TestClass {
   // // GateOutWriteRequest obj = GateOutWriteRequest.emptyGateOutWriteRequest();
   //
   // GateInOutODDDTO obj = GateInOutODDDTO.emptyGateInOutODDRequest();
-  // List<WHODDDTO> whoddds = new ArrayList<WHODDDTO>();
-  // whoddds.add(new WHODDDTO());
-  // whoddds.add(new WHODDDTO());
+  // List<WHoddDTO> whoddds = new ArrayList<WHoddDTO>();
+  // whoddds.add(new WHoddDTO());
+  // whoddds.add(new WHoddDTO());
   // obj.setWhoddds(whoddds);
   // // 1. Java object to JSON, and save into a file
   // gson.toJson(obj, new FileWriter("D:\\GateInOutODDDTO.json"));

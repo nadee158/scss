@@ -42,7 +42,7 @@ public class GateOutXMLRequestService {
 		String date = yyyymmdd.format(new java.util.Date());
 		String time = hhmmss.format(new java.util.Date());
 		
-		com.privasia.scss.cosmos.dto.request.CSMCTL csmctl = new com.privasia.scss.cosmos.dto.request.CSMCTL();
+		com.privasia.scss.cosmos.xml.element.CSMCTL csmctl = new com.privasia.scss.cosmos.xml.element.CSMCTL();
 		csmctl.setRQST("GSRQS");
 		csmctl.setACTN("CRT");
 		csmctl.setRTNC("0");
@@ -53,7 +53,7 @@ public class GateOutXMLRequestService {
 		csmctl.setRQUI(String.valueOf(System.currentTimeMillis()));
 		csmctl.setTRMC("WPT1");
 		
-		com.privasia.scss.cosmos.dto.request.GOTTRCINF gottrcinf = new com.privasia.scss.cosmos.dto.request.GOTTRCINF();
+		com.privasia.scss.cosmos.xml.element.GOTTRCINF gottrcinf = new com.privasia.scss.cosmos.xml.element.GOTTRCINF();
 		gottrcinf.setMSGTSC("GOTTRCINF");
 		gottrcinf.setLANESC(toUpperCase("gate08"));
 		gottrcinf.setVMIDSC(toUpperCase("truck123"));
@@ -185,7 +185,7 @@ public class GateOutXMLRequestService {
 		String date = yyyymmdd.format(new java.util.Date());
 		String time = hhmmss.format(new java.util.Date());
 
-		com.privasia.scss.cosmos.dto.request.CSMCTL csmctl = new com.privasia.scss.cosmos.dto.request.CSMCTL();
+		com.privasia.scss.cosmos.xml.element.CSMCTL csmctl = new com.privasia.scss.cosmos.xml.element.CSMCTL();
 		csmctl.setRQST("GSRQS");
 		csmctl.setACTN("CRT");
 		csmctl.setRTNC("0");
@@ -196,7 +196,7 @@ public class GateOutXMLRequestService {
 		csmctl.setRQUI(String.valueOf(System.currentTimeMillis()));
 		csmctl.setTRMC("WPT1");
 
-		com.privasia.scss.cosmos.dto.request.GOTTRCINF gottrcinf = new com.privasia.scss.cosmos.dto.request.GOTTRCINF();
+		com.privasia.scss.cosmos.xml.element.GOTTRCINF gottrcinf = new com.privasia.scss.cosmos.xml.element.GOTTRCINF();
 		gottrcinf.setMSGTSC("GOTTRCINF");
 		gottrcinf.setLANESC(toUpperCase("gate08"));
 		gottrcinf.setVMIDSC(toUpperCase("truck123"));
@@ -222,19 +222,15 @@ public class GateOutXMLRequestService {
 
 		CosmosGateOutWriteRequest cosmos = new CosmosGateOutWriteRequest();
 		if (type.equals("exp")) {
-			List<CosmosGateOutExport> exportList = new ArrayList<>();
-			exportList.add(export);
-			cosmos.setExportList(exportList);
+			cosmos.setExport(export);
 			cosmos.setImportList(null);
 		} else if(type.equals("imp")){
 			List<CosmosGateOutImport> importList = new ArrayList<>();
 			importList.add(import1);
 			cosmos.setImportList(importList);
-			cosmos.setExportList(null);
+			cosmos.setExport(null);
 		} else {
-			List<CosmosGateOutExport> exportList = new ArrayList<>();
-			exportList.add(export);
-			cosmos.setExportList(exportList);
+			cosmos.setExport(export);
 			List<CosmosGateOutImport> importList = new ArrayList<>();
 			importList.add(import1);
 			cosmos.setImportList(importList);

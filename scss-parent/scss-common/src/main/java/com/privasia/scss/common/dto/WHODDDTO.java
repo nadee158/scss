@@ -10,7 +10,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.privasia.scss.common.util.DateUtil;
 
-public class WHODDDTO implements Serializable {
+public class WHoddDTO implements Serializable {
 
 	/**
 	 * 

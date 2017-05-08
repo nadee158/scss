@@ -61,7 +61,7 @@ public class GateInWriteRequest implements Serializable {
   private List<ExportContainer> exportContainers;
   private List<ImportContainer> importContainers;
 
-  private List<WHODDDTO> whoddContainers;
+  private List<WHoddDTO> whoddContainers;
 
   private Optional<ReferRejectDTO> referRejectDTO;
 
@@ -188,11 +188,11 @@ public class GateInWriteRequest implements Serializable {
     this.cardId = cardId;
   }
 
-  public List<WHODDDTO> getWhoddContainers() {
+  public List<WHoddDTO> getWhoddContainers() {
     return whoddContainers;
   }
 
-  public void setWhoddContainers(List<WHODDDTO> whoddContainers) {
+  public void setWhoddContainers(List<WHoddDTO> whoddContainers) {
     this.whoddContainers = whoddContainers;
   }
 

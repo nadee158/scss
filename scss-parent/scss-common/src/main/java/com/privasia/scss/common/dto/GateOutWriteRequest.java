@@ -45,7 +45,7 @@ public class GateOutWriteRequest implements Serializable {
 
 	private byte[] transactionZipFile;
 
-	private List<WHODDDTO> whoddContainers;
+	private List<WHoddDTO> whoddContainers;
 
 	public String getLaneNo() {
 		return laneNo;
@@ -163,11 +163,11 @@ public class GateOutWriteRequest implements Serializable {
 		this.transactionZipFile = transactionZipFile;
 	}
 
-	public List<WHODDDTO> getWhoddContainers() {
+	public List<WHoddDTO> getWhoddContainers() {
 		return whoddContainers;
 	}
 
-	public void setWhoddContainers(List<WHODDDTO> whoddContainers) {
+	public void setWhoddContainers(List<WHoddDTO> whoddContainers) {
 		this.whoddContainers = whoddContainers;
 	}
 

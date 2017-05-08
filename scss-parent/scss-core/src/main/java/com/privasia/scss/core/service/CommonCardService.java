@@ -38,7 +38,7 @@ public class CommonCardService {
   @Autowired
   private ODDRepository oddRepository;
 
-  @Transactional(readOnly = false)
+  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
   public boolean checkIfValidCard(Card card) {
     if (!(card.getCardStatus() == null)) {
       if (StringUtils.equals(card.getCardStatus().getValue(), CardStatus.ACTIVE.getValue())) {

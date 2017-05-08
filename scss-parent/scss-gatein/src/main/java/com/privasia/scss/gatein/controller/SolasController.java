@@ -20,7 +20,7 @@ import com.privasia.scss.gatein.exports.business.service.SolasService;
 
 
 @RestController
-@RequestMapping("**/gatein")
+@RequestMapping("**/gatein/solas")
 public class SolasController {
 
   private static Logger logger = Logger.getLogger(SolasController.class.getName());

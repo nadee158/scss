@@ -12,33 +12,33 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 @XmlRootElement(name = "SGS2Cosmos")
 public class CosmosGateOutWriteRequest implements Serializable {
 
-  private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-  private List<CosmosGateOutExport> exportList;
+	private CosmosGateOutExport export;
 
-  private List<CosmosGateOutImport> importList;
+	private List<CosmosGateOutImport> importList;
 
-  public List<CosmosGateOutExport> getExportList() {
-    return exportList;
-  }
+	public CosmosGateOutExport getExport() { 
+		return export;
+	}
+	
+	@XmlElement(name = "Message")
+	public void setExport(CosmosGateOutExport export) {
+		this.export = export;
+	}
 
-  @XmlElement(name = "Message")
-  public void setExportList(List<CosmosGateOutExport> exportList) {
-    this.exportList = exportList;
-  }
+	public List<CosmosGateOutImport> getImportList() {
+		return importList;
+	}
 
-  public List<CosmosGateOutImport> getImportList() {
-    return importList;
-  }
+	@XmlElement(name = "Message")
+	public void setImportList(List<CosmosGateOutImport> importList) {
+		this.importList = importList;
+	}
 
-  @XmlElement(name = "Message")
-  public void setImportList(List<CosmosGateOutImport> importList) {
-    this.importList = importList;
-  }
-
-  @Override
-  public String toString() {
-    return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
-  }
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
+	}
 
 }

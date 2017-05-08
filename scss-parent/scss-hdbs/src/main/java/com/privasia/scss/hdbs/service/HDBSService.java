@@ -28,11 +28,12 @@ import com.privasia.scss.common.dto.HDBSBkgDetailGridDTO;
 import com.privasia.scss.common.dto.HDBSBkgGridDTO;
 import com.privasia.scss.common.dto.HDBSBookingResponse;
 import com.privasia.scss.common.dto.ODDContainerDetailsDTO;
-import com.privasia.scss.common.dto.WHODDDTO;
+import com.privasia.scss.common.dto.WHoddDTO;
 import com.privasia.scss.common.enums.ContainerSize;
 import com.privasia.scss.common.enums.HDBSBookingType;
 import com.privasia.scss.common.enums.HDBSStatus;
 import com.privasia.scss.common.enums.ImpExpFlagStatus;
+import com.privasia.scss.common.enums.TransactionStatus;
 import com.privasia.scss.common.exception.BusinessException;
 import com.privasia.scss.common.exception.ResultsNotFoundException;
 import com.privasia.scss.common.util.ApplicationConstants;
@@ -40,10 +41,12 @@ import com.privasia.scss.common.util.DateUtil;
 import com.privasia.scss.core.model.Card;
 import com.privasia.scss.core.model.HDBSBkgDetail;
 import com.privasia.scss.core.model.HDBSBkgMaster;
+import com.privasia.scss.core.model.ODDLocation;
 import com.privasia.scss.core.predicate.HDBSBookingMasterPredicates;
 import com.privasia.scss.core.repository.CardRepository;
 import com.privasia.scss.core.repository.HDBSBookingDetailRepository;
 import com.privasia.scss.core.repository.HDBSBookingMasterRepository;
+import com.privasia.scss.core.repository.ODDLocationRepository;
 import com.privasia.scss.core.repository.WDCGlobalSettingRepository;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.OrderSpecifier;
@@ -65,6 +68,8 @@ public class HDBSService {
 	private WDCGlobalSettingRepository wdcGlobalSettingRepository;
 
 	private ModelMapper modelMapper;
+	
+	private ODDLocationRepository oddLocationRepository;
 
 	@Autowired
 	public void setHdbsBookingDetailRepository(HDBSBookingDetailRepository hdbsBookingDetailRepository) {
@@ -91,6 +96,11 @@ public class HDBSService {
 		this.modelMapper = modelMapper;
 	}
 
+	@Autowired
+	public void setOddLocationRepository(ODDLocationRepository oddLocationRepository) {
+		this.oddLocationRepository = oddLocationRepository;
+	}
+
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
 	public List<HDBSBkgDetail> findHDBSBookingDetailByIDList(List<String> bkgDetailIDList) {
 
@@ -100,7 +110,7 @@ public class HDBSService {
 	}
 
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-	public String validateSelectedHDBSBookingDetails(HDBSBkgGridDTO bkgDetailGridDTO) {
+	public boolean validateSelectedHDBSBookingDetails(HDBSBkgGridDTO bkgDetailGridDTO) {
 
 		List<String> bkgDetailIDList = new ArrayList<>();
 
@@ -154,7 +164,7 @@ public class HDBSService {
 			if (export40Count == 1 && export20Count == 1)
 				throw new BusinessException("Invalid transaction with two container sizes exceeding 40ft");
 
-			return "validation success";
+			return true;
 
 		} else {
 			throw new ResultsNotFoundException("Provided Bookings Incorrect. Results Not found !");
@@ -309,7 +319,9 @@ public class HDBSService {
 	}
 
 	private HDBSBkgDetailGridDTO constructDetailGridDetailDTO(HDBSBkgDetail detail) {
-		return modelMapper.map(detail, HDBSBkgDetailGridDTO.class);
+		HDBSBkgDetailGridDTO detailGridDTO = modelMapper.map(detail, HDBSBkgDetailGridDTO.class);
+		detailGridDTO.setContainerSize(detail.getContainerSize().getValue());
+		return detailGridDTO;
 	}
 
 	private void setAcceptBookingStatus(HDBSBkgGridDTO gridDTo, LocalDateTime acceptDateFrom, LocalDateTime dateTo) {
@@ -364,7 +376,7 @@ public class HDBSService {
 	}
 
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-	public GateInReponse populateODDInfo(GateInRequest gateInRequest) {
+	public GateInReponse populateGateInODD(GateInRequest gateInRequest) {
 
 		GateInReponse gateInReponse = new GateInReponse();
 		gateInReponse.setGateINDateTime(gateInRequest.getGateInDateTime());
@@ -379,12 +391,10 @@ public class HDBSService {
 
 			Predicate byCardNo = HDBSBookingMasterPredicates.byCardNo(String.valueOf(optionalCard.get().getCardNo()));
 			Predicate byDrayageBooking = HDBSBookingMasterPredicates.byDrayageBooking(0);
-			Predicate byHDBSStatus = HDBSBookingMasterPredicates.byHDBSStatusTypes(Arrays.asList(HDBSStatus.ACCEPTED));
 			Predicate byNullableSCSS = HDBSBookingMasterPredicates.byNullableSCSSStatusCode();
 			Predicate byBookingIDList = HDBSBookingMasterPredicates.byHDBSBookingDetailByIDList(bkgDetailIDList);
 
-			Predicate condition = ExpressionUtils.allOf(byCardNo, byBookingIDList, byDrayageBooking, byHDBSStatus,
-					byNullableSCSS);
+			Predicate condition = ExpressionUtils.allOf(byCardNo, byDrayageBooking, byNullableSCSS, byBookingIDList);
 
 			OrderSpecifier<LocalDateTime> orderByAPPStartDate = HDBSBookingMasterPredicates
 					.orderByAppointmentStartDateAsc();
@@ -393,53 +403,65 @@ public class HDBSService {
 
 			Iterator<HDBSBkgMaster> bookingIterator = bookingList.iterator();
 
+			List<WHoddDTO> oddInfoList = new ArrayList<WHoddDTO>();
+
 			if (bookingIterator.hasNext()) {
+				while (bookingIterator.hasNext()) {
 
-				List<WHODDDTO> oddInfoList = new ArrayList<WHODDDTO>();
+					HDBSBkgMaster bkgMaster = bookingIterator.next();
 
-				HDBSBkgMaster bkgMaster = bookingIterator.next();
+					boolean pickup = bkgMaster.getHdbsBookingDetails().stream().filter(bkgDetail -> StringUtils
+							.equalsIgnoreCase(bkgDetail.getHdbsBkgType().getValue(), HDBSBookingType.PICKUP.getValue()))
+							.findAny().isPresent();
 
-				boolean pickup = bkgMaster.getHdbsBookingDetails().stream().filter(bkgDetail -> StringUtils
-						.equalsIgnoreCase(bkgDetail.getHdbsBkgType().getValue(), HDBSBookingType.PICKUP.getValue()))
-						.findAny().isPresent();
+					if (pickup) {
+						WHoddDTO importODDDTO = new WHoddDTO();
+						if(gateInRequest.isOddReject()){
+							importODDDTO.setGateInStatus(TransactionStatus.REJECT.getValue());
+						}
+						
+						bkgMaster.getHdbsBookingDetails().stream().filter(bkgDetail -> {
+							return bkgDetail.getHdbsBkgType().equals(HDBSBookingType.PICKUP);
+						}).forEach(bkgDetail -> {
+							setODDContainerInfo(importODDDTO, bkgDetail, ImpExpFlagStatus.IMPORT);
+							oddInfoList.add(importODDDTO);
 
-				if (pickup) {
-					WHODDDTO importODDDTO = new WHODDDTO();
-					bkgMaster.getHdbsBookingDetails().stream().filter(bkgDetail -> {
-						return bkgDetail.getHdbsBkgType().equals(HDBSBookingType.PICKUP);
-					}).forEach(bkgDetail -> {
-						setODDContainerInfo(importODDDTO, bkgDetail, ImpExpFlagStatus.IMPORT);
-						oddInfoList.add(importODDDTO);
+						});
 
-					});
+						gateInReponse.setImpExpFlagStatus(ImpExpFlagStatus.IMPORT.getValue());
+					}
 
-					gateInReponse.setImpExpFlagStatus(ImpExpFlagStatus.IMPORT.getValue());
+					boolean drop = bkgMaster.getHdbsBookingDetails().stream().filter(bkgDetail -> StringUtils
+							.equalsIgnoreCase(bkgDetail.getHdbsBkgType().getValue(), HDBSBookingType.DROP.getValue()))
+							.findAny().isPresent();
+
+					if (drop) {
+						WHoddDTO exportODDDTO = new WHoddDTO();
+						if(gateInRequest.isOddReject()){
+							exportODDDTO.setGateInStatus(TransactionStatus.REJECT.getValue());
+						}
+						bkgMaster.getHdbsBookingDetails().stream().filter(bkgDetail -> {
+							return bkgDetail.getHdbsBkgType().equals(HDBSBookingType.DROP);
+						}).forEach(bkgDetail -> {
+							setODDContainerInfo(exportODDDTO, bkgDetail, ImpExpFlagStatus.EXPORT);
+							oddInfoList.add(exportODDDTO);
+						});
+
+						gateInReponse.setImpExpFlagStatus(ImpExpFlagStatus.EXPORT.getValue());
+					}
+
+					gateInReponse.setTruckPlateNo(bkgMaster.getPlateNo());
+					gateInReponse.setTruckHeadNo(bkgMaster.getPmHeadNo());
+					gateInReponse.setWhoddContainers(oddInfoList);
+
+					if (drop && pickup) {
+						gateInReponse.setImpExpFlagStatus(ImpExpFlagStatus.IMPORT_EXPORT.getValue());
+					}
 				}
-
-				boolean drop = bkgMaster.getHdbsBookingDetails().stream().filter(bkgDetail -> StringUtils
-						.equalsIgnoreCase(bkgDetail.getHdbsBkgType().getValue(), HDBSBookingType.DROP.getValue()))
-						.findAny().isPresent();
-
-				if (drop) {
-					WHODDDTO exportODDDTO = new WHODDDTO();
-					bkgMaster.getHdbsBookingDetails().stream().filter(bkgDetail -> {
-						return bkgDetail.getHdbsBkgType().equals(HDBSBookingType.DROP);
-					}).forEach(bkgDetail -> {
-						setODDContainerInfo(exportODDDTO, bkgDetail, ImpExpFlagStatus.EXPORT);
-						oddInfoList.add(exportODDDTO);
-					});
-
-					gateInReponse.setImpExpFlagStatus(ImpExpFlagStatus.EXPORT.getValue());
-				}
-
-				gateInReponse.setTruckPlateNo(bkgMaster.getPlateNo());
-				gateInReponse.setTruckHeadNo(bkgMaster.getPmHeadNo());
-				gateInReponse.setWhoddContainers(oddInfoList);
-
-				if (drop && pickup) {
-					gateInReponse.setImpExpFlagStatus(ImpExpFlagStatus.IMPORT_EXPORT.getValue());
-				}
+			} else {
+				throw new ResultsNotFoundException("Provided Bookings Incorrect. Results Not found !");
 			}
+
 		}
 
 		return gateInReponse;
@@ -447,7 +469,7 @@ public class HDBSService {
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-	public WHODDDTO setODDContainerInfo(WHODDDTO oddDTO, HDBSBkgDetail bkgDetails, ImpExpFlagStatus impExpFlag) {
+	public WHoddDTO setODDContainerInfo(WHoddDTO oddDTO, HDBSBkgDetail bkgDetails, ImpExpFlagStatus impExpFlag) {
 
 		ODDContainerDetailsDTO containerDetailsDTO = new ODDContainerDetailsDTO();
 		containerDetailsDTO.setContainerNo(bkgDetails.getContainerNo());
@@ -456,13 +478,22 @@ public class HDBSService {
 		containerDetailsDTO.setHdbsStatus(bkgDetails.getStatusCode().getValue());
 		containerDetailsDTO.setContainerSize(
 				bkgDetails.getContainerSize() == null ? "" : bkgDetails.getContainerSize().getValue());
-
-		if (oddDTO.getTimeGateIn().isAfter(bkgDetails.getApptDateTimeToActual())) {
+		
+		if(StringUtils.isNotEmpty(bkgDetails.gethDBSBkgMaster().getDepotCode())){
+			Optional<ODDLocation> optLocation = oddLocationRepository.findOne(bkgDetails.gethDBSBkgMaster().getDepotCode());
+			if(optLocation.isPresent()){
+				containerDetailsDTO.setLocation(optLocation.get().getOddDesc());
+			}else{
+				containerDetailsDTO.setLocation(optLocation.get().getOddDesc());
+			}
+		}
+		
+		if (LocalDateTime.now().isAfter(bkgDetails.getApptDateTimeToActual())) {
 			containerDetailsDTO.setHdbsArrivalStatus(ApplicationConstants.LATE);
-		} else if (oddDTO.getTimeGateIn().isAfter(bkgDetails.getApptDateTimeFrom())
-				&& oddDTO.getTimeGateIn().isBefore(bkgDetails.getApptDateTimeToActual())) {
+		} else if (LocalDateTime.now().isAfter(bkgDetails.getApptDateTimeFrom())
+				&& LocalDateTime.now().isBefore(bkgDetails.getApptDateTimeToActual())) {
 			containerDetailsDTO.setHdbsArrivalStatus(ApplicationConstants.ACTIVE);
-		} else if (oddDTO.getTimeGateIn().isBefore(bkgDetails.getApptDateTimeFrom())) {
+		} else if (LocalDateTime.now().isBefore(bkgDetails.getApptDateTimeFrom())) {
 			containerDetailsDTO.setHdbsArrivalStatus(ApplicationConstants.EARLY);
 		}
 

@@ -83,8 +83,7 @@ public class ExportGateOutService {
 
         if (!(export.getBaseCommonGateInOutAttribute().getTimeGateIn() == null)) {
           LocalDateTime timeGateIn = export.getBaseCommonGateInOutAttribute().getTimeGateIn();
-          DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy HH:mm");
-          gateOutReponse.setGateInDateTime(timeGateIn.format(formatter));
+          gateOutReponse.setGateInDateTime(timeGateIn);
         }
 
       }
@@ -113,7 +112,7 @@ public class ExportGateOutService {
         List<ShipCode> codes = list.orElse(null);
         for (ShipCode shipCode : codes) {
           for (ExportContainer item : exportContainers) {
-            if (StringUtils.equals(shipCode.getShippingCode(), item.getShipCode())) {
+            if (StringUtils.equals(shipCode.getShippingCode(), item.getShipCode())) { 
               item.setStoragePeriod(shipCode.getStoragePeriod());
             }
           }

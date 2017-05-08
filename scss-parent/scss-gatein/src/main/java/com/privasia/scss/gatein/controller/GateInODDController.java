@@ -21,7 +21,6 @@ import com.privasia.scss.common.dto.CustomResponseEntity;
 import com.privasia.scss.common.dto.GateInReponse;
 import com.privasia.scss.common.dto.GateInRequest;
 import com.privasia.scss.common.dto.GateInWriteRequest;
-import com.privasia.scss.core.model.HDBSBkgDetail;
 import com.privasia.scss.gatein.service.ImportExportGateInService;
 import com.privasia.scss.hdbs.service.HDBSService;
 
@@ -60,9 +59,9 @@ public class GateInODDController {
 	}
 
 	@RequestMapping(value = "/populate/bybkgdetails", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<GateInReponse> populateODD(@RequestBody GateInRequest gateInRequest,
+	public ResponseEntity<GateInReponse> populateODD(@RequestBody GateInRequest gateInRequest, 
 			HttpServletRequest request) {
-		GateInReponse gateInResponse = hdbsService.populateODDInfo(gateInRequest);
+		GateInReponse gateInResponse = hdbsService.populateGateInODD(gateInRequest);
 		return new ResponseEntity<GateInReponse>(gateInResponse, HttpStatus.OK);
 	}
 
