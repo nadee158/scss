@@ -12,12 +12,9 @@ import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -27,12 +24,12 @@ import org.hibernate.annotations.Type;
 import com.privasia.scss.common.enums.TransactionType;
 
 @Entity
-@Table(name = "SCSS_CUSTOMS")
+@Table(name = "SCSS_CUSTOMS_REPORT")
 @AttributeOverrides({@AttributeOverride(name = "addBy", column = @Column(name = "CREATED_BY") ),
     @AttributeOverride(name = "updateBy", column = @Column(name = "UPDATED_BY") ),
     @AttributeOverride(name = "dateTimeAdd", column = @Column(name = "DATE_TIME_CREATED") ),
     @AttributeOverride(name = "dateTimeUpdate", column = @Column(name = "DATE_TIME_UPDATE") )})
-public class Customs extends AuditEntity implements Serializable {
+public class CustomsReport extends AuditEntity implements Serializable {
 
   /**
    * 
@@ -40,10 +37,8 @@ public class Customs extends AuditEntity implements Serializable {
   private static final long serialVersionUID = 1L;
 
   @Id
-  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_SCSS_CUSTOMS")
-  @SequenceGenerator(name = "SEQ_SCSS_CUSTOMS", sequenceName = "SEQ_CSM_SEQ_ID")
   @Column(name = "CSM_SEQ_ID")
-  private Long customsID;
+  private Long customsReportID;
 
   @Column(name = "CSM_FLAG", nullable = false)
   @Type(type = "com.privasia.scss.common.enumusertype.TransactionTypeEnumUserType")
@@ -94,12 +89,13 @@ public class Customs extends AuditEntity implements Serializable {
           referencedColumnName = "EXP_EXPORTNO_SEQ", nullable = true) )})
   private CustomContainer container02;
 
-  public Long getCustomsID() {
-    return customsID;
+
+  public Long getCustomsReportID() {
+    return customsReportID;
   }
 
-  public void setCustomsID(Long customsID) {
-    this.customsID = customsID;
+  public void setCustomsReportID(Long customsReportID) {
+    this.customsReportID = customsReportID;
   }
 
   public TransactionType getCsmFlag() {
@@ -154,4 +150,5 @@ public class Customs extends AuditEntity implements Serializable {
   public String toString() {
     return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
   }
+
 }
