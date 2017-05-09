@@ -63,6 +63,8 @@ public class GateInController {
     if (bindingResult.hasErrors()) {
       throw new BindException(bindingResult);
     }
+    
+    System.out.println("GateInRequest gateInRequest ################ "+gateInRequest.toString());
     GateInReponse gateInReponse = importExportGateInService.populateGateIn(gateInRequest);
 
     return new CustomResponseEntity<ApiResponseObject<?>>(

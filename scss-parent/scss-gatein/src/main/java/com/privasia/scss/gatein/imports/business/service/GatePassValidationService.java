@@ -176,7 +176,7 @@ public class GatePassValidationService {
 		log.debug("------START check gatepass is valid ---- GatePassNo: " + gatePass.getGatePassNo() + " / Today "
 				+ today + " / WDCValidateDate " + wdcValidateDate);
 
-		if (wdcValidateDate == null || today.isAfter(wdcValidateDate)) {
+		if (wdcValidateDate != null && today.isAfter(wdcValidateDate)) {
 
 			log.debug("------END check gatepass is valid ---- GatePassNo: " + gatePass.getGatePassNo() + " / Today "
 					+ today + " / WDCValidateDate " + wdcValidateDate);
@@ -196,7 +196,7 @@ public class GatePassValidationService {
 		log.debug("------START check gatepass is valid ---- GatePassNo: " + gatePass.getGatePassNo() + " / Today "
 				+ today + " / ValidateDate " + validateDate);
 
-		if (validateDate == null || today.isAfter(validateDate)) {
+		if (validateDate != null && today.isAfter(validateDate)) {
 
 			log.debug("------END check gatepass is valid ---- GatePassNo: " + gatePass.getGatePassNo() + " / Today "
 					+ today + " / ValidateDate " + validateDate);

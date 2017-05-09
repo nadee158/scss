@@ -3,7 +3,6 @@
  */
 package com.privasia.scss.opus.service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -20,13 +19,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import com.google.gson.Gson;
-import com.privasia.scss.common.annotation.LogOpusData;
 import com.privasia.scss.common.dto.ExportContainer;
 import com.privasia.scss.common.dto.GateInReponse;
 import com.privasia.scss.common.dto.GateInRequest;
 import com.privasia.scss.common.dto.ImportContainer;
 import com.privasia.scss.common.util.DateUtil;
-// import com.privasia.scss.core.exception.ResultsNotFoundException;
 import com.privasia.scss.opus.dto.OpusGateInReadRequest;
 import com.privasia.scss.opus.dto.OpusGateInReadResponse;
 import com.privasia.scss.opus.dto.OpusRequestResponseDTO;
@@ -145,9 +142,10 @@ public class OpusGateInReadService {
 			GateInReponse gateInReponse) {
 
 		gateInReponse.setUserId(opusGateInReadResponse.getUserID());
-		LocalDateTime localDateTime = DateUtil.getLocalDategFromString(opusGateInReadResponse.getGateInDateTime());
+		//System.out.println("opusGateInReadResponse.getGateInDateTime : "+ opusGateInReadResponse.getGateInDateTime());
+		//LocalDateTime localDateTime = DateUtil.getLocalDategFromString(opusGateInReadResponse.getGateInDateTime());
 
-		gateInReponse.setGateINDateTime(localDateTime);
+		//gateInReponse.setGateINDateTime(localDateTime);
 		gateInReponse.setHaulageCode(opusGateInReadResponse.getHaulageCode());
 		gateInReponse.setLaneNo(opusGateInReadResponse.getLaneNo());
 		gateInReponse.setTruckHeadNo(opusGateInReadResponse.getTruckHeadNo());

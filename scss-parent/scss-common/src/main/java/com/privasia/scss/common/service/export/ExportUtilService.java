@@ -79,7 +79,6 @@ public class ExportUtilService {
     return 0;
   }
   
-  
 
   public static Boolean getBooleanFromString(String string) {
     if (StringUtils.isNotEmpty(string)) {
@@ -100,7 +99,7 @@ public class ExportUtilService {
     }
   }
 
-  public static double getDoubleValueFromString(String strValue) {
+  public static Double getDoubleValueFromString(String strValue) {
     if (StringUtils.isNotEmpty(strValue)) {
       try {
         return Double.parseDouble(strValue);
@@ -108,7 +107,7 @@ public class ExportUtilService {
         e.printStackTrace();
       }
     }
-    return 0;
+    return 0d;
   }
 
 }

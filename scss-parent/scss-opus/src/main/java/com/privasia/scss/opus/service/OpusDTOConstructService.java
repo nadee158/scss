@@ -17,7 +17,6 @@ import com.privasia.scss.common.dto.ExportContainer;
 import com.privasia.scss.common.dto.GateInWriteRequest;
 import com.privasia.scss.common.dto.ImportContainer;
 import com.privasia.scss.common.enums.ContainerStatus;
-import com.privasia.scss.common.exception.BusinessException;
 import com.privasia.scss.common.service.export.ExportUtilService;
 import com.privasia.scss.common.util.DateUtil;
 import com.privasia.scss.opus.dto.GIReadResponseExporterContainer;
@@ -231,7 +230,11 @@ public class OpusDTOConstructService {
     importContainer.setVesselName(gIReadResponseImportContainer.getVesselName());
     // private String vesselETA;// 20160907080000,
     importContainer.setVesselETADate(DateUtil.getLocalDategFromString(gIReadResponseImportContainer.getVesselETA()));
-    importContainer.setVesselATADate(DateUtil.getLocalDategFromString(gIReadResponseImportContainer.getVesselATA()));
+    
+    if(StringUtils.isNotEmpty(gIReadResponseImportContainer.getVesselATA())){
+    	importContainer.setVesselATADate(DateUtil.getLocalDategFromString(gIReadResponseImportContainer.getVesselATA()));
+    }
+    
     importContainer.setVesselStatus(gIReadResponseImportContainer.getVesselStatus());
 
     return importContainer;
@@ -274,7 +277,11 @@ public class OpusDTOConstructService {
     exportContainer.setVesselName(gIReadResponseExporterContainer.getVesselName());
     // private String vesselETA;// 20160907080000,
     exportContainer.setVesselETADate(DateUtil.getLocalDategFromString(gIReadResponseExporterContainer.getVesselETA()));
-    exportContainer.setVesselATADate(DateUtil.getLocalDategFromString(gIReadResponseExporterContainer.getVesselATA()));
+    
+    if(StringUtils.isNotEmpty(gIReadResponseExporterContainer.getVesselATA())){
+    	exportContainer.setVesselATADate(DateUtil.getLocalDategFromString(gIReadResponseExporterContainer.getVesselATA()));
+    }
+    
     exportContainer.setVesselStatus(gIReadResponseExporterContainer.getVesselStatus());
     // private String yardOpeningDateTime;// 20160902080000,
     exportContainer.setYardOpeningDateTime(
@@ -335,19 +342,19 @@ public class OpusDTOConstructService {
 
     // private double containerOOG_OH;// 5.0,
     exportContainer
-        .setOogOH(ExportUtilService.getIntegerValueFromString(gIReadResponseExporterContainer.getContainerOOG_OH()));
+        .setOogOH(ExportUtilService.getDoubleValueFromString(gIReadResponseExporterContainer.getContainerOOG_OH()).intValue());
     // private double containerOOG_OL;// 3.0,
     exportContainer
-        .setOogOL(ExportUtilService.getIntegerValueFromString(gIReadResponseExporterContainer.getContainerOOG_OL()));
+        .setOogOL(ExportUtilService.getDoubleValueFromString(gIReadResponseExporterContainer.getContainerOOG_OL()).intValue());
     // private double containerOOG_OF;// 1.0,
     exportContainer
-        .setOogOF(ExportUtilService.getIntegerValueFromString(gIReadResponseExporterContainer.getContainerOOG_OF()));
+        .setOogOF(ExportUtilService.getDoubleValueFromString(gIReadResponseExporterContainer.getContainerOOG_OF()).intValue());
     // private double containerOOG_OA;// 2.0,
     exportContainer
-        .setOogOA(ExportUtilService.getIntegerValueFromString(gIReadResponseExporterContainer.getContainerOOG_OA()));
+        .setOogOA(ExportUtilService.getDoubleValueFromString(gIReadResponseExporterContainer.getContainerOOG_OA()).intValue());
     // private double containerOOG_OR;// 4.0
     exportContainer
-        .setOogOR(ExportUtilService.getIntegerValueFromString(gIReadResponseExporterContainer.getContainerOOG_OR()));
+        .setOogOR(ExportUtilService.getDoubleValueFromString(gIReadResponseExporterContainer.getContainerOOG_OR()).intValue());
     // private String containerDamageCode1;//
     exportContainer.setDamageCode_01(constructDamageCode(gIReadResponseExporterContainer.getContainerDamageCode1()));
     // private String containerDamageCode2;//
@@ -712,7 +719,7 @@ public class OpusDTOConstructService {
       });
       return updatedExportContainers;
     }
-    throw new BusinessException("Data Not Received For Exports from Opus");
+    return null;
   }
 
   public List<ImportContainer> giReadResponseImportContainerListToImportContainerList(
@@ -752,7 +759,7 @@ public class OpusDTOConstructService {
       });
       return updatedImportContainers;
     }
-    throw new BusinessException("Data Not Received For Import from Opus");
+    return null;
   }
 
 }

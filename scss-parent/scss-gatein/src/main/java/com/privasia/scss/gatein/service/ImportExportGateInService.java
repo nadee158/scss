@@ -162,6 +162,7 @@ public class ImportExportGateInService {
     gateInRequest.setUserName(userContext.getUsername());
 
     GateInReponse gateInReponse = new GateInReponse();
+    gateInReponse.setGateINDateTime(gateInRequest.getGateInDateTime());
 
     /*
      * if the refer id avaliable then fetch here. then pass export container list
@@ -331,7 +332,7 @@ public class ImportExportGateInService {
      * log.error(e.getMessage()); System.out.println( "WHILE LOOP BROKEN ON THREAD EXCEPTION!!!!. "
      * ); break; } }
      */
-
+    gateInReponse.setGateINDateTime(gateInWriteRequest.getGateInDateTime());
     gateInReponse.setMessage(gateOutMessage);
 
     return gateInReponse;

@@ -134,8 +134,8 @@ public class OpusGateOutReadService {
 			GateOutReponse gateOutReponse) {
 
 		gateOutReponse.setUserID(opusGateOutReadResponse.getUserID());
-		LocalDateTime localDateTime = DateUtil.getLocalDategFromString(opusGateOutReadResponse.getGateOUTDateTime());
-		gateOutReponse.setGateOUTDateTime(localDateTime);
+		//LocalDateTime localDateTime = DateUtil.getLocalDategFromString(opusGateOutReadResponse.getGateOUTDateTime());
+		//gateOutReponse.setGateOUTDateTime(localDateTime);
 		gateOutReponse.setHaulageCode(opusGateOutReadResponse.getHaulageCode());
 		gateOutReponse.setLaneNo(opusGateOutReadResponse.getLaneNo());
 		gateOutReponse.setTruckHeadNo(opusGateOutReadResponse.getTruckHeadNo());

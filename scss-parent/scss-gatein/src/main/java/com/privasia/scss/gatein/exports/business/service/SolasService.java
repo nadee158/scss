@@ -188,10 +188,14 @@ public class SolasService {
 				expCon.getContainer().getContainerFullOrEmpty())).forEach(container -> {
 					BigDecimal shipperVGM = new BigDecimal(container.getSolas().getShipperVGM()).setScale(2,
 							BigDecimal.ROUND_UP);
+					if(shipperVGM == null || shipperVGM.intValue() == 0 )
+						throw new BusinessException("Provided Shipper VGM : "+shipperVGM.intValue()+" cannot calculate variance");
 					BigDecimal terminalVGM = new BigDecimal(container.getExpNetWeight()).setScale(2, BigDecimal.ROUND_UP);
 					BigDecimal variance = ((shipperVGM.subtract(terminalVGM)).divide(shipperVGM, 4,
 							BigDecimal.ROUND_HALF_UP)).multiply(new BigDecimal(100));
-					container.setVariance(String.valueOf(variance));
+					container.setCalculatedVariance(String.valueOf(variance));
+					
+					System.out.println("variance : "+String.valueOf(variance));
 
 					// checking if in range
 					if (variance.compareTo(tolerancePercentage) <= 0

@@ -125,6 +125,7 @@ public class ImportExportGateOutService {
 	public GateOutReponse populateGateOut(GateOutRequest gateOutRequest) {
 
 		GateOutReponse gateOutReponse = new GateOutReponse();
+		gateOutReponse.setGateOUTDateTime(gateOutRequest.getGateOUTDateTime());
 
 		Optional<Card> cardOpt = cardRepository.findOne(gateOutRequest.getCardID());
 		Card card = cardOpt.orElseThrow(
@@ -232,6 +233,7 @@ public class ImportExportGateOutService {
 				.getImplementationService(implementor);
 		
 		GateOutReponse gateOutReponse = new GateOutReponse();
+		gateOutReponse.setGateOUTDateTime(gateOutWriteRequest.getGateOUTDateTime());
 		gateOutReponse.setImportContainers(importContainers);
 		gateOutReponse.setExportContainers(exportContainers);
 		

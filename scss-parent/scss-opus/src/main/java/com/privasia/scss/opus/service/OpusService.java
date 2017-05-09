@@ -22,7 +22,7 @@ import com.privasia.scss.opus.dto.OpusGateOutWriteRequest;
 import com.privasia.scss.opus.dto.OpusGateOutWriteResponse;
 import com.privasia.scss.opus.dto.OpusRequestResponseDTO;
 
-@Service("opusService")
+@Service("opus")
 public class OpusService implements OpusCosmosBusinessService {
 
 	private static final Log log = LogFactory.getLog(OpusService.class);

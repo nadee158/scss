@@ -392,9 +392,9 @@ public class ExportGateInService {
 			exportsQ = exportsQRepository.save(exportsQ);
 			System.out.println("exportsQ.getExportID() after save " + exportsQ.getExportID());
 			// referee reject service update
-			if (gateInWriteRequest.getReferRejectDTO().isPresent()) {
+			/*if (gateInWriteRequest.getReferRejectDTO().isPresent()) {
 				updateReferReject(gateInWriteRequest, exportContainer);
-			}
+			}*/
 
 		});
 
