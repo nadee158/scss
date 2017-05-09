@@ -35,7 +35,7 @@ public class EarlyEntryService {
 		this.wdcGlobalSettingRepository = wdcGlobalSettingRepository;
 	}
 
-	public boolean isContainerHasOpening(ExportContainer container) {// !c1.isAllowIn()
+	public boolean isContainerHasAOpening(ExportContainer container) {// !c1.isAllowIn() 
 
 		final LocalDateTime now = LocalDateTime.now();
 

@@ -329,8 +329,7 @@ public class GateInXMLRequestService {
 
     if (!(exportContainer02 == null)) {
 
-      if (StringUtils.isNotEmpty(exportContainer02.getContainer().getContainerNumber())
-          && StringUtils.isEmpty(exportContainer02.getContRefer())) {
+      if (StringUtils.isNotEmpty(exportContainer02.getContainer().getContainerNumber())) {
 
         StringBuilder errXMLMsg3 = new StringBuilder("");
         StringBuilder damageC2 = new StringBuilder("");
@@ -356,8 +355,7 @@ public class GateInXMLRequestService {
 
         // getContRefer -- >getReferFlag
         if (isImpExp) {
-          if (StringUtils.isNotBlank(exportContainer02.getContainer().getContainerNumber())
-              && StringUtils.isNotBlank(exportContainer02.getContRefer())) {
+          if (StringUtils.isNotBlank(exportContainer02.getContainer().getContainerNumber())) {
             requestXMLC2.append("<Message Index=\"").append(cont1Index).append("\">\n");
           } else {
             requestXMLC2.append("<Message Index=\"").append(cont2Index).append("\">\n");
@@ -379,8 +377,7 @@ public class GateInXMLRequestService {
 
     StringBuilder requestXML = new StringBuilder("");
 
-    if (StringUtils.isBlank(exportContainer01.getContRefer())
-        && StringUtils.isNotBlank(exportContainer01.getContainer().getContainerNumber())) {
+    if (StringUtils.isNotBlank(exportContainer01.getContainer().getContainerNumber())) {
       if (isImpExp) {
         requestXML.append("<Message Index=\"").append(cont1Index).append("\">\n");
       } else {

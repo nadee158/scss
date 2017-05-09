@@ -226,7 +226,7 @@ public class ExportContainer {
 	private String internalBlockDesc; // for CosmosExportRepository -
 										// extractInternalBlock method
 
-	private Boolean lpkEdiEnabled; // for GateInExpNormalController -
+	private Boolean lpkEdiEnabled = false; // for GateInExpNormalController -
 									// checkIfDGContainer method
 
 	private boolean bypassDg; // for GateInExpNormalController -
@@ -234,6 +234,14 @@ public class ExportContainer {
 
 	private boolean dgWithinWindowEntry; // for GateInExpNormalController -
 											// checkIfDGContainer method
+	
+	private boolean accessToByPassDg; 
+	
+	private String dgMessage;
+	
+	private String dgBypassRemark;
+	
+	private boolean dontValidateDg = false;
 
 	private String kpaClass; // for GateInExpNormalController -
 								// checkIfDGContainer method
@@ -273,7 +281,7 @@ public class ExportContainer {
 								// constructExportContainerRequestXML
 								// method
 
-	private String contRefer;// for GateInXMLRequestService -
+	//private String contRefer;// for GateInXMLRequestService -
 								// constructExportContainerRequestXML
 	// method
 
@@ -322,6 +330,7 @@ public class ExportContainer {
 	private boolean ogaBlock = false;
 	
 	private Optional<Long> shipSCNID;
+
 
 	public Long getExportID() {
 		return exportID;
@@ -1129,13 +1138,13 @@ public class ExportContainer {
 		this.errXMLMsg = errXMLMsg;
 	}
 
-	public String getContRefer() {
+	/*public String getContRefer() {
 		return contRefer;
 	}
 
 	public void setContRefer(String contRefer) {
 		this.contRefer = contRefer;
-	}
+	}*/
 
 	public int getShipperVGM() {
 		return shipperVGM;
@@ -1321,6 +1330,38 @@ public class ExportContainer {
 
 	public void setEndFullEarlyEntryTime(String endFullEarlyEntryTime) {
 		this.endFullEarlyEntryTime = endFullEarlyEntryTime;
+	}
+	
+	public String getDgMessage() {
+		return dgMessage;
+	}
+
+	public void setDgMessage(String dgMessage) {
+		this.dgMessage = dgMessage;
+	}
+	
+	public boolean isAccessToByPassDg() {
+		return accessToByPassDg;
+	}
+
+	public void setAccessToByPassDg(boolean accessToByPassDg) {
+		this.accessToByPassDg = accessToByPassDg;
+	}
+	
+	public boolean isDontValidateDg() {
+		return dontValidateDg;
+	}
+
+	public void setDontValidateDg(boolean dontValidateDg) {
+		this.dontValidateDg = dontValidateDg;
+	}
+	
+	public String getDgBypassRemark() {
+		return dgBypassRemark;
+	}
+
+	public void setDgBypassRemark(String dgBypassRemark) {
+		this.dgBypassRemark = dgBypassRemark;
 	}
 
 	@Override

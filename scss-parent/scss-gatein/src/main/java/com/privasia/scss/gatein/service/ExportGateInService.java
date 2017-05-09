@@ -48,6 +48,7 @@ import com.privasia.scss.core.repository.ReferRejectRepository;
 import com.privasia.scss.core.repository.ShipCodeRepository;
 import com.privasia.scss.core.repository.ShipSCNRepository;
 import com.privasia.scss.core.repository.WDCGlobalSettingRepository;
+import com.privasia.scss.gatein.exports.business.service.DGContainerService;
 import com.privasia.scss.gatein.exports.business.service.DamageCodeService;
 import com.privasia.scss.gatein.exports.business.service.EarlyEntryService;
 import com.privasia.scss.gatein.exports.business.service.EmptyContainerService;
@@ -99,6 +100,8 @@ public class ExportGateInService {
 	private VesselOmitService vesselOmitService;
 
 	private EmptyContainerService emptyContainerService;
+	
+	private DGContainerService dgContainerService;
 	
 	private ReferRejectDetailRepository referRejectDetailRepository;
 
@@ -198,6 +201,12 @@ public class ExportGateInService {
 	public void setReferRejectRepository(ReferRejectRepository referRejectRepository) {
 		this.referRejectRepository = referRejectRepository;
 	}
+	
+	@Autowired
+	public void setDgContainerService(DGContainerService dgContainerService) {
+		this.dgContainerService = dgContainerService;
+	}
+	
 
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
 	public GateInReponse validateGateInExports(GateInReponse gateInReponse, LocalDateTime timegateIn) {
@@ -211,8 +220,10 @@ public class ExportGateInService {
 			checkDg(container);
 			findLpkEdiMsg(container, globalSetting);
 			vesselOmitService.isValidVesselOmit(container);
-			earlyEntryService.isContainerHasOpening(container);
+			earlyEntryService.isContainerHasAOpening(container);
 			ssrService.checkExportSSR(timegateIn, container);
+			dgContainerService.validateDGContainer(container);
+			dgContainerService.userAccessToByPassDG(container);
 
 		});
 		
@@ -448,6 +459,7 @@ public class ExportGateInService {
 				// 2. Shipping Line Seal Validation -1578
 				// (SealValidationServicve)
 				sealValidationService.validateSeal(exportContainer);
+				dgContainerService.validateUserByPassDG(exportContainer);
 
 			});
 			
