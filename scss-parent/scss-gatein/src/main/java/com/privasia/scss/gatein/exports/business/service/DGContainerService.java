@@ -19,6 +19,7 @@ import com.privasia.scss.common.dto.ExportContainer;
 import com.privasia.scss.common.exception.BusinessException;
 import com.privasia.scss.common.exception.ResultsNotFoundException;
 import com.privasia.scss.common.util.ApplicationConstants;
+import com.privasia.scss.core.repository.DgDetailRepository;
 import com.privasia.scss.core.repository.WDCGlobalSettingRepository;
 import com.privasia.scss.core.security.model.UserContext;
 
@@ -47,6 +48,8 @@ public class DGContainerService {
 	private WDCGlobalSettingRepository wdcGlobalSettingRepository;
 	
 	private EarlyEntryService earlyEntryService;
+	
+	private DgDetailRepository dgDetailRepository;
 
 	@Autowired
 	public void setWdcGlobalSettingRepository(WDCGlobalSettingRepository wdcGlobalSettingRepository) {
@@ -58,6 +61,10 @@ public class DGContainerService {
 		this.earlyEntryService = earlyEntryService;
 	}
 
+	@Autowired
+	public void setDgDetailRepository(DgDetailRepository dgDetailRepository) {
+		this.dgDetailRepository = dgDetailRepository;
+	}
 
 
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
@@ -267,6 +274,21 @@ public class DGContainerService {
 				}
 			}
 	    }
+	}
+	
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+	public void checkDg(ExportContainer exportContainer) {
+		if (!(exportContainer == null || exportContainer.getContainer() == null
+				|| exportContainer.getVesselSCN() == null)) {
+			if (!(StringUtils.isEmpty(exportContainer.getContainer().getContainerNumber())
+					|| StringUtils.isEmpty(exportContainer.getVesselSCN()))) {
+				Long count = dgDetailRepository.countByScnAndContainerNo(exportContainer.getVesselSCN(),
+						exportContainer.getContainer().getContainerNumber());
+				if (!(count == null || count <= 0)) {
+					exportContainer.setBypassDg(true);
+				}
+			}
+		}
 	}
 
 }

@@ -81,8 +81,6 @@ public class ExportGateInService {
 
 	private DamageCodeRepository damageCodeRepository;
 
-	private DgDetailRepository dgDetailRepository;
-
 	private WDCGlobalSettingRepository globalSettingRepository;
 
 	private LPKEDIService lpkediService;
@@ -106,6 +104,7 @@ public class ExportGateInService {
 	private ReferRejectDetailRepository referRejectDetailRepository;
 
 	private ReferRejectRepository referRejectRepository;
+	
 
 	@Autowired
 	public void setSealValidationService(SealValidationService sealValidationService) {
@@ -125,11 +124,6 @@ public class ExportGateInService {
 	@Autowired
 	public void setGlobalSettingRepository(WDCGlobalSettingRepository globalSettingRepository) {
 		this.globalSettingRepository = globalSettingRepository;
-	}
-
-	@Autowired
-	public void setDgDetailRepository(DgDetailRepository dgDetailRepository) {
-		this.dgDetailRepository = dgDetailRepository;
 	}
 
 	@Autowired
@@ -217,7 +211,7 @@ public class ExportGateInService {
 			container.setExpWeightBridge(gateInReponse.getExpWeightBridge());
 			setStoragePeriod(container);
 			setSCN(container);
-			checkDg(container);
+			dgContainerService.checkDg(container);
 			findLpkEdiMsg(container, globalSetting);
 			vesselOmitService.isValidVesselOmit(container);
 			earlyEntryService.isContainerHasAOpening(container);
@@ -253,20 +247,7 @@ public class ExportGateInService {
 		}
 	}
 
-	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-	public void checkDg(ExportContainer exportContainer) {
-		if (!(exportContainer == null || exportContainer.getContainer() == null
-				|| exportContainer.getVesselSCN() == null)) {
-			if (!(StringUtils.isEmpty(exportContainer.getContainer().getContainerNumber())
-					|| StringUtils.isEmpty(exportContainer.getVesselSCN()))) {
-				Long count = dgDetailRepository.countByScnAndContainerNo(exportContainer.getVesselSCN(),
-						exportContainer.getContainer().getContainerNumber());
-				if (!(count == null || count <= 0)) {
-					exportContainer.setBypassDg(true);
-				}
-			}
-		}
-	}
+	
 
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
 	public void setStoragePeriod(ExportContainer exportContainer) {
