@@ -6,7 +6,6 @@ package com.privasia.scss.cosmos;
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,7 +23,6 @@ import com.zaxxer.hikari.HikariDataSource;
  *
  */
 @Configuration
-@EnableAutoConfiguration
 @PropertySource(value = {"classpath:cosmos_application.properties", "classpath:cosmos_sql-dev.properties"})
 public class AS400DBConfig {
 

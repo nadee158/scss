@@ -16,7 +16,6 @@
  
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <start-class>com.privasia.scss.hdbs.HDBSEntryPoint</start-class>
   </properties>
   <dependencies>
 		
