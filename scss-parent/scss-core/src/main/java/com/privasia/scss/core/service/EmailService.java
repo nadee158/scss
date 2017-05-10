@@ -9,12 +9,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.MimeMessagePreparator;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import com.privasia.scss.common.enums.EmailTemplate;
 import com.privasia.scss.common.util.ApplicationConstants;
+import com.privasia.scss.core.model.SendMailQueue;
+import com.privasia.scss.core.repository.SendMailQueueRepository;
 
 @Service("emailService")
 public class EmailService {
@@ -22,9 +24,18 @@ public class EmailService {
   @Value("${mail.sender}")
   private String senderEmail;
 
+  private String emailContent = null;
+
   private JavaMailSender javaMailSender;
   private TemplateEngine emailTemplateEngine;
   private WDCGlobalSettingService wdcGlobalSettingService;
+  private SendMailQueueRepository sendMailQueueRepository;
+
+
+  @Autowired
+  public void setSendMailQueueRepository(SendMailQueueRepository sendMailQueueRepository) {
+    this.sendMailQueueRepository = sendMailQueueRepository;
+  }
 
   @Autowired
   public void setJavaMailSender(@Qualifier("javaMailSender") JavaMailSender javaMailSender) {
@@ -41,22 +52,34 @@ public class EmailService {
     this.wdcGlobalSettingService = wdcGlobalSettingService;
   }
 
-  @Async
-  public void prepareAndSendEmail(String recipient, String subject, Context context, String templateName) {
+
+
+  public String prepareAndSendEmail(String recipient, String subject, Context context, String templateName) {
+    emailContent = null;
     MimeMessagePreparator messagePreparator = mimeMessage -> {
       MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, true, "UTF-8"); // true =
       String senderEmailFromDB = wdcGlobalSettingService.getWDCGlobalSetting(ApplicationConstants.SMTP_FROM);
       if (StringUtils.isEmpty(senderEmailFromDB)) {
         senderEmailFromDB = senderEmail;
       }
+      if (!(context == null || context.getVariables() == null)) {
+        if (context.getVariables().get(ApplicationConstants.EMAIL_BCC) != null) {
+          messageHelper
+              .setBcc(new InternetAddress((String) context.getVariables().get(ApplicationConstants.EMAIL_BCC)));
+        }
+        if (context.getVariables().get(ApplicationConstants.EMAIL_CC) != null) {
+          messageHelper.setCc(new InternetAddress((String) context.getVariables().get(ApplicationConstants.EMAIL_CC)));
+        }
+      }
       messageHelper.setFrom(new InternetAddress(senderEmailFromDB));
       messageHelper.setTo(new InternetAddress(recipient));
       messageHelper.setSubject(subject);
-      String content = build(context, templateName);
-      System.out.println("EMAIL CONTENT :" + content);
-      messageHelper.setText(content, true);
+      emailContent = build(context, templateName);
+      System.out.println("EMAIL CONTENT :" + emailContent);
+      messageHelper.setText(emailContent, true);
     };
     javaMailSender.send(messagePreparator);
+    return emailContent;
   }
 
   public void sendEmail(String recipient, String subject, String message) {
@@ -77,6 +100,32 @@ public class EmailService {
 
   public String build(Context context, String templateName) {
     return emailTemplateEngine.process(templateName, context);
+  }
+
+
+  public String prepareAndSaveEmail(String emailTo, String subject, Context context, String value) {
+    emailContent = build(context, EmailTemplate.WEIGHT_TEMPLATE.getValue());
+    String senderEmailFromDB = wdcGlobalSettingService.getWDCGlobalSetting(ApplicationConstants.SMTP_FROM);
+    if (StringUtils.isEmpty(senderEmailFromDB)) {
+      senderEmailFromDB = senderEmail;
+    }
+
+    SendMailQueue sendMailQueue = new SendMailQueue();
+    sendMailQueue.setTimeStampId(Long.toString(System.currentTimeMillis()));
+    sendMailQueue.setEmailTo(emailTo);
+    if (!(context == null || context.getVariables() == null)) {
+      if (context.getVariables().get(ApplicationConstants.EMAIL_BCC) != null) {
+        sendMailQueue.setEmailBCC(((String) context.getVariables().get(ApplicationConstants.EMAIL_BCC)));
+      }
+      if (context.getVariables().get(ApplicationConstants.EMAIL_CC) != null) {
+        sendMailQueue.setEmailCC((String) context.getVariables().get(ApplicationConstants.EMAIL_CC));
+      }
+    }
+    sendMailQueue.setEmailFrom(senderEmail);
+    sendMailQueue.setEmailSubject(subject);
+    sendMailQueue.setEmailMsgClob(emailContent);
+    sendMailQueueRepository.save(sendMailQueue);
+    return emailContent;
   }
 
 }

@@ -118,6 +118,8 @@ public interface ApplicationConstants {
 
   public static final String E_SOLAS_PASS = "classpath:solasPass.jrxml";
   public static final String E_SOLAS_PASS_LOGO = "classpath:logo.png";
-  
+
   public static final int GATE_BYPASS_DG_VALIDATION = 434;
+  public static final String EMAIL_BCC = "EMAIL_BCC";
+  public static final String EMAIL_CC = "EMAIL_CC";
 }

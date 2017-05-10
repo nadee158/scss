@@ -1,5 +1,7 @@
 package com.privasia.scss.core.service;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -17,14 +19,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.context.Context;
 
+import com.privasia.scss.common.dto.ExportContainer;
 import com.privasia.scss.common.dto.NotificationDTO;
 import com.privasia.scss.common.enums.EmailTemplate;
 import com.privasia.scss.common.enums.KioskHLTCheckStatus;
+import com.privasia.scss.common.enums.ShippingLineReportType;
+import com.privasia.scss.common.exception.BusinessException;
+import com.privasia.scss.common.util.ApplicationConstants;
+import com.privasia.scss.common.util.DateUtil;
 import com.privasia.scss.core.model.KioskHLTCheck;
+import com.privasia.scss.core.model.ShipEmail;
 import com.privasia.scss.core.repository.KioskHLTCheckRepository;
+import com.privasia.scss.core.repository.ShipEmailRepository;
 
 @Service("notificationService")
 public class NotificationService {
@@ -40,6 +52,14 @@ public class NotificationService {
 
   private EmailService emailService;
 
+  private ShipEmailRepository shipEmailRepository;
+
+
+  @Autowired
+  public void setShipEmailRepository(ShipEmailRepository shipEmailRepository) {
+    this.shipEmailRepository = shipEmailRepository;
+  }
+
   @Autowired
   public void setEmailService(EmailService emailService) {
     this.emailService = emailService;
@@ -50,6 +70,73 @@ public class NotificationService {
     this.kioskHLTCheckRepository = kioskHLTCheckRepository;
   }
 
+  @Async
+  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRES_NEW, readOnly = false)
+  public void sendWeightEmail(List<ExportContainer> fullContainers) {
+    fullContainers.forEach(exportContainer -> {
+      if ((exportContainer.getContainer() == null)) {
+        throw new BusinessException("Container is null !");
+      }
+      Optional<ShipEmail> shipEmailOpt = shipEmailRepository
+          .findBylineCodeAndTypeCode(exportContainer.getShippingLine(), ShippingLineReportType.WEIGHT);
+      if (shipEmailOpt.isPresent()) {
+        ShipEmail shipEmail = shipEmailOpt.get();
+        double weightDiffPercentage = exportContainer.getWeightDiffPercentage();
+        if (weightDiffPercentage < 0) {
+          weightDiffPercentage = weightDiffPercentage * -1;
+        }
+        BigDecimal contWeightDiffPercentage = new BigDecimal(weightDiffPercentage, MathContext.DECIMAL64);
+
+        if (contWeightDiffPercentage.compareTo(shipEmail.getPercentage()) >= 0) {
+          String emailContent = null;
+          Context context = new Context();
+
+          String subject =
+              "WEIGHT DISCREPANCY - " + StringUtils.trim(exportContainer.getContainer().getContainerNumber()) + " - "
+                  + StringUtils.trim(exportContainer.getContainer().getContainerISOCode());
+
+          try {
+
+            context.setVariable(ApplicationConstants.EMAIL_BCC, shipEmail.getEmailBCC());
+            context.setVariable(ApplicationConstants.EMAIL_CC, shipEmail.getEmailCC());
+
+            if (!(exportContainer.getBaseCommonGateInOutAttribute() == null)) {
+              context.setVariable("gateInTime",
+                  DateUtil.getFormatteDate(exportContainer.getBaseCommonGateInOutAttribute().getTimeGateIn()));
+            }
+
+            context.setVariable("bookingNo", exportContainer.getBookingNo());
+
+            context.setVariable("contNo", exportContainer.getContainer().getContainerNumber());
+            context.setVariable("isoCode", exportContainer.getContainer().getContainerISOCode());
+            context.setVariable("fullEmptyFlag", exportContainer.getContainer().getContainerFullOrEmpty());
+
+            context.setVariable("lineCode", exportContainer.getShippingLine());
+            context.setVariable("netWeight", exportContainer.getExpNetWeight());
+            context.setVariable("cosmosWeight", exportContainer.getCosmosNetWeight());
+            context.setVariable("weightDifferent", exportContainer.getWeightDifference());
+            context.setVariable("signPercentage", weightDiffPercentage);
+            context.setVariable("vesselScn", exportContainer.getVesselSCN());
+            context.setVariable("vesselName", exportContainer.getVesselName());
+
+            // try and send email
+            emailContent = emailService.prepareAndSendEmail(shipEmail.getEmailTo(), subject, context,
+                EmailTemplate.WEIGHT_TEMPLATE.getValue());
+
+          } catch (Exception e) {
+            // if fails, save to db
+            emailContent = emailService.prepareAndSaveEmail(shipEmail.getEmailTo(), subject, context,
+                EmailTemplate.WEIGHT_TEMPLATE.getValue());
+          }
+
+          System.out.println("EMAIL_CONTENT " + emailContent);
+
+        }
+      }
+    });
+  }
+
+  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
   public void sendKioskHealthCheckMails() {
     Boolean notificationStatus = false;
     long totalPendingNotificationCount =
