@@ -29,7 +29,6 @@ import com.privasia.scss.common.util.ApplicationConstants;
 import com.privasia.scss.core.service.WDCGlobalSettingService;
 
 @Configuration
-// @ComponentScan(basePackages = {"com.privasia.scss.*"})
 public class EmailConfig {
 
   @Value("${mail.host}")

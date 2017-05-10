@@ -27,7 +27,7 @@ import com.privasia.scss.etpws.ETPWsEntryPoint;
 @Configuration
 @EnableAutoConfiguration
 @ComponentScan(basePackages = {"com.privasia.scss.cosmos.*", "com.privasia.scss.gateout.*", "com.privasia.scss.core.*",
-    "com.privasia.scss.opus.*", "com.privasia.scss.etpws.*"})
+    "com.privasia.scss.opus.*", "com.privasia.scss.etpws.*", "com.privasia.scss.common.*",})
 @EntityScan(basePackages = {"com.privasia.scss.core.model"})
 @PropertySource(value = {"classpath:mongodb.properties", "classpath:cosmos_application.properties",
     "classpath:cosmos_sql-dev.properties", "classpath:opus_application.properties", "classpath:ws.properties"})
@@ -44,13 +44,13 @@ public class GateOutEntryPoint extends SpringBootServletInitializer {
   public static PropertySourcesPlaceholderConfigurer propertyConfig() {
     return new PropertySourcesPlaceholderConfigurer();
   }
-  
+
   @Bean
-  public ServiceLocatorFactoryBean containerExternalDataServiceServiceLocatorFactoryBean(){
-	  
-	  ServiceLocatorFactoryBean  serviceLocatorFactoryBean = new ServiceLocatorFactoryBean();
-	  serviceLocatorFactoryBean.setServiceLocatorInterface(ContainerExternalDataService.class);
-	  return serviceLocatorFactoryBean;
+  public ServiceLocatorFactoryBean containerExternalDataServiceServiceLocatorFactoryBean() {
+
+    ServiceLocatorFactoryBean serviceLocatorFactoryBean = new ServiceLocatorFactoryBean();
+    serviceLocatorFactoryBean.setServiceLocatorInterface(ContainerExternalDataService.class);
+    return serviceLocatorFactoryBean;
   }
 
   @Override
