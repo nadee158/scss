@@ -119,8 +119,5 @@ public interface ApplicationConstants {
   public static final String E_SOLAS_PASS = "classpath:solasPass.jrxml";
   public static final String E_SOLAS_PASS_LOGO = "classpath:logo.png";
   
-  public static final String KPA_CLASS_01 = "1";
-  public static final String KPA_CLASS_02 = "2";
-  public static final String KPA_CLASS_03 = "3";
   public static final int GATE_BYPASS_DG_VALIDATION = 434;
 }

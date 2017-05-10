@@ -54,12 +54,12 @@ public class LPKEDIRepository {
       throws SQLException, SQLTimeoutException {
 
     if (rs.next()) {
-      exportContainer.setKpaApproval(rs.getString("KPA_APPROVAL"));
+      exportContainer.setLpkApproval(rs.getString("KPA_APPROVAL"));
       exportContainer.setHdlGoodsCode(rs.getString("GOODS_HDL_CODE"));
       // f.setGoodsHdlDescC1(rs.getString("GOODS_HDL_DESC"));
       exportContainer.setHdlGoodsDescription(rs.getString("HANDLING_DESC"));
       exportContainer.setDgDescription(rs.getString("DG_DESC"));
-      exportContainer.setKpaClass(rs.getString("KPA_CLASS"));
+      exportContainer.setLpkClass(rs.getString("KPA_CLASS"));
     }
     return exportContainer;
   }

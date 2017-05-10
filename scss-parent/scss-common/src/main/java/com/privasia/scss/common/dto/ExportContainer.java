@@ -9,12 +9,6 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.privasia.scss.common.enums.ContainerPosition;
-import com.privasia.scss.common.enums.ExportOPTFlagType;
-import com.privasia.scss.common.enums.SSRBlockType;
-import com.privasia.scss.common.enums.GateInOutStatus;
-import com.privasia.scss.common.enums.ReferTempType;
-import com.privasia.scss.common.enums.VesselStatus;
 import com.privasia.scss.common.util.DateUtil;
 
 /**
@@ -153,7 +147,7 @@ public class ExportContainer {
 
 	private String userRemarks;
 
-	private String kpaApproval;
+	private String lpkApproval;
 
 	private String hdlGoodsCode;
 
@@ -243,7 +237,7 @@ public class ExportContainer {
 	
 	private boolean dontValidateDg = false;
 
-	private String kpaClass; // for GateInExpNormalController -
+	private String lpkClass; // for GateInExpNormalController -
 								// checkIfDGContainer method
 
 	private boolean isRegisteredInEarlyEntry; // for GateInExpNormalController -
@@ -738,12 +732,12 @@ public class ExportContainer {
 		this.userRemarks = userRemarks;
 	}
 
-	public String getKpaApproval() {
-		return kpaApproval;
+	public String getLpkApproval() {
+		return lpkApproval;
 	}
 
-	public void setKpaApproval(String kpaApproval) {
-		this.kpaApproval = kpaApproval;
+	public void setLpkApproval(String lpkApproval) {
+		this.lpkApproval = lpkApproval;
 	}
 
 	public String getHdlGoodsCode() {
@@ -1050,12 +1044,12 @@ public class ExportContainer {
 		this.dgWithinWindowEntry = dgWithinWindowEntry;
 	}
 
-	public String getKpaClass() {
-		return kpaClass;
+	public String getLpkClass() {
+		return lpkClass;
 	}
 
-	public void setKpaClass(String kpaClass) {
-		this.kpaClass = kpaClass;
+	public void setLpkClass(String lpkClass) {
+		this.lpkClass = lpkClass;
 	}
 
 	public boolean isRegisteredInEarlyEntry() {
@@ -1368,104 +1362,4 @@ public class ExportContainer {
 	public String toString(){
 	    return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
 	}
-
-	public ExportContainer initializeWithDefaultValues(String containerNumber) {
-		this.setContainer(new CommonContainerDTO().initializeWithDefaultValues(containerNumber));
-		this.setCommonGateInOut(new CommonGateInOutDTO().initializeWithDefaultValues());
-		this.setBaseCommonGateInOutAttribute(new BaseCommonGateInOutDTO().initializeWithDefaultValues());
-		this.manualPlanIndicator = ExportOPTFlagType.OPTFLAG_MANUAL.getValue();
-		this.setBookingNo("BKG193");
-		this.exportOrderType = "OT";
-		this.exportOrderStatus = "OS";
-		// this.setShipSCN(new ShipSCNDTO().initializeWithDefaultValues());
-		this.setGateInOut(GateInOutStatus.IN.getValue());
-		this.expOut = "expOut";
-		this.expCar = "expCar";
-		this.expSpod = "expSpod";
-		this.setSealAttribute(new CommonSealDTO().initializeWithDefaultValues());
-		this.expWeightBridge = 34;
-		this.expNetWeight = 23;
-		this.referFlag = false;
-		this.referTempType = ReferTempType.C.getValue();
-		this.referTemp = 15.5d;
-		this.imdg = "3";
-		this.dgUNCode = "1170";
-		this.imdgLabelID = "4";
-		this.oogOH = 1;
-		this.oogOL = 2;
-		this.oogOF = 3;
-		this.oogOA = 4;
-		this.containerPosition = ContainerPosition.MIDDLE.getValue();
-		this.preCheckDate = LocalDateTime.now();
-		this.yardPosition = "4";
-		this.yardBayCode = "4";
-		this.pmBTM = 35;
-		this.trBTM = 35;
-		this.oogOR = 32;
-		this.callCard = 55;
-		this.vesselVisitID = "4";
-		this.vesselVoyageIN = "velVoyIN";
-		this.vesselVoyageOUT = "velVoOUT";
-		this.vesselCode = "25";
-		this.vesselName = "100";
-		this.expAgent = "100";
-		this.vesselStatus = VesselStatus.ACTIVE.getValue();
-		this.shipCode = "59";
-		this.vesselSCN = "45";
-		this.vesselETADate = LocalDateTime.now();
-		this.vesselATADate = LocalDateTime.now();
-		;
-		this.shippingAgent = "shp001";
-		this.oogSSR = true;
-		this.overClosingSSR = true;
-		this.replanSSR = true;
-		this.ssrBlockStatus = SSRBlockType.RLS.getValue();
-		this.ssrBlockStatusDate = LocalDateTime.now();
-		;
-		this.gcsBlockStatus = SSRBlockType.BLK.getValue();
-		this.gcsBlockStatusDate = LocalDateTime.now();
-		;
-		this.gcsDeclareNo = "45";
-		this.gcsLastCheck = LocalDateTime.now();
-		this.setPrintEir(new PrintEirDTO().initializeWithIdOnly());
-		this.userRemarks = "userRemarks";
-		this.kpaApproval = "AP";
-		this.hdlGoodsCode = "12";
-		this.dgDescription = "dgDescription";
-		this.hdlGoodsDescription = "hdlGoodsDescription";
-		this.tareWeight = 15;
-		this.grossWeight = 18;
-		this.cosmosNetWeight = 30;
-		this.backToback = true;
-		this.weightDiffPercentage = 45d;
-		this.weightDifference = 456d;
-		this.dontValidateSeal = true;
-		this.wrongDoor = false;
-		this.hpabISOCode = "";
-		this.cosmosISOCode = "";
-		this.pmWeight = "454";
-		this.trailerWeight = "5454";
-		this.trailerPlateNo = "JK-4521";
-		this.fuelWeight = "45";
-		this.tireWeight = "45";
-		this.variance = "56";
-		this.withinTolerance = false;
-		this.calculatedVariance = "465";
-		this.solasCertNo = "s0455";
-		this.setSolas(new CommonSolasDTO().initializeWithDefaultValues());
-		this.setSubHandlingType("1");
-		this.setRtgExecustionDateTime(LocalDateTime.now());
-		this.setRtgExecustionStatus("RGS");
-		this.setDamageCode_01(new DamageCodeDTO().initializeWithDefaultValues("30"));
-		this.setDamageCode_02(new DamageCodeDTO().initializeWithDefaultValues("31"));
-		this.setDamageCode_03(new DamageCodeDTO().initializeWithDefaultValues("32"));
-		this.setDamageCode_04(new DamageCodeDTO().initializeWithDefaultValues("33"));
-		this.setDamageCode_05(new DamageCodeDTO().initializeWithDefaultValues("34"));
-		this.setDamageCode_06(new DamageCodeDTO().initializeWithDefaultValues("40"));
-		this.setDamageCode_07(new DamageCodeDTO().initializeWithDefaultValues("41"));
-		this.setDamageCode_08(new DamageCodeDTO().initializeWithDefaultValues("50"));
-		this.setDamageCode_09(new DamageCodeDTO().initializeWithDefaultValues("51"));
-		return this;
-	}
-
 }

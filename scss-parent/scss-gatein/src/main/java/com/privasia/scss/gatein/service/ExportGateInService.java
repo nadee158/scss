@@ -349,17 +349,8 @@ public class ExportGateInService {
 			}
 			exportContainer.getCommonGateInOut().setGateInStatus(gateInWriteRequest.getGateInStatus());
 
-			System.out.println("BEFORE MODEL MAP exportContainer.getContainer().getContainerFullOrEmpty() "
-					+ exportContainer.getContainer().getContainerFullOrEmpty());
-
 			Exports exports = new Exports();
-			System.out.println("exportContainer " + exportContainer);
 			modelMapper.map(exportContainer, exports);
-
-			System.out.println("exportContainer.getContainer().getContainerFullOrEmpty() "
-					+ exportContainer.getContainer().getContainerFullOrEmpty());
-			System.out.println("exports.getContainer().getContainerFullOrEmpty() "
-					+ exports.getContainer().getContainerFullOrEmpty());
 
 			ShipSCN scn = null;
 			if (!(exportContainer.getVesselSCN() == null)) { // scn = VesselSCN
@@ -373,14 +364,13 @@ public class ExportGateInService {
 			log.info("########## Save Exports ###############");
 			ExportsQ exportsQ = new ExportsQ();
 			modelMapper.map(exports, exportsQ);
-			System.out.println("exports.getExportID() " + exports.getExportID());
-			System.out.println("exportsQ.getExportID() " + exportsQ.getExportID());
 			exportsQ = exportsQRepository.save(exportsQ);
 			System.out.println("exportsQ.getExportID() after save " + exportsQ.getExportID());
+			exportContainer.setExportID(exports.getExportID());
 			// referee reject service update
-			/*if (gateInWriteRequest.getReferRejectDTO().isPresent()) {
+			if (gateInWriteRequest.getReferRejectDTO().isPresent()) {
 				updateReferReject(gateInWriteRequest, exportContainer);
-			}*/
+			}
 
 		});
 

@@ -5,10 +5,13 @@ package com.privasia.scss.gatein.exports.business.service;
 
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -16,12 +19,20 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.privasia.scss.common.dto.ExportContainer;
+import com.privasia.scss.common.enums.LpkClassType;
 import com.privasia.scss.common.exception.BusinessException;
 import com.privasia.scss.common.exception.ResultsNotFoundException;
 import com.privasia.scss.common.util.ApplicationConstants;
+import com.privasia.scss.core.model.DGValidateLog;
+import com.privasia.scss.core.model.Exports;
+import com.privasia.scss.core.model.SystemUser;
+import com.privasia.scss.core.repository.DGValidationLogRepository;
 import com.privasia.scss.core.repository.DgDetailRepository;
+import com.privasia.scss.core.repository.ExportsRepository;
+import com.privasia.scss.core.repository.SystemUserRepository;
 import com.privasia.scss.core.repository.WDCGlobalSettingRepository;
 import com.privasia.scss.core.security.model.UserContext;
+import com.privasia.scss.core.security.util.SecurityHelper;
 
 /**
  * @author Janaka
@@ -50,6 +61,12 @@ public class DGContainerService {
 	private EarlyEntryService earlyEntryService;
 	
 	private DgDetailRepository dgDetailRepository;
+	
+	private SystemUserRepository systemUserRepository;
+	
+	private ExportsRepository exportsRepository;
+	
+	private DGValidationLogRepository dgValidationLogRepository;
 
 	@Autowired
 	public void setWdcGlobalSettingRepository(WDCGlobalSettingRepository wdcGlobalSettingRepository) {
@@ -65,7 +82,21 @@ public class DGContainerService {
 	public void setDgDetailRepository(DgDetailRepository dgDetailRepository) {
 		this.dgDetailRepository = dgDetailRepository;
 	}
-
+	
+	@Autowired
+	public void setSystemUserRepository(SystemUserRepository systemUserRepository) {
+		this.systemUserRepository = systemUserRepository;
+	}
+	
+	@Autowired
+	public void setExportsRepository(ExportsRepository exportsRepository) {
+		this.exportsRepository = exportsRepository;
+	} 
+	
+	@Autowired
+	public DgDetailRepository getDgDetailRepository() {
+		return dgDetailRepository;
+	}
 
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
 	public boolean allowDGToBeValidate() {
@@ -133,7 +164,7 @@ public class DGContainerService {
 
 	private boolean hasAKpaApproval(ExportContainer exportContainer) {
 
-		if (StringUtils.isBlank(exportContainer.getKpaApproval())) {
+		if (StringUtils.isBlank(exportContainer.getLpkApproval())) {
 			/**
 			 * No approval from LPK
 			 */
@@ -148,7 +179,7 @@ public class DGContainerService {
 
 	private boolean isKpaClass1(ExportContainer exportContainer) {
 
-		if (StringUtils.equals(ApplicationConstants.KPA_CLASS_01, exportContainer.getKpaClass())) {
+		if (StringUtils.equals(LpkClassType.LPK_CLASS1.getValue(), exportContainer.getLpkClass())) {
 			/**
 			 * No approval from LPK
 			 */
@@ -164,7 +195,7 @@ public class DGContainerService {
 
 	private boolean isKpaClass2(ExportContainer exportContainer) {
 
-		if (StringUtils.equals(ApplicationConstants.KPA_CLASS_02, exportContainer.getKpaClass())) {
+		if (StringUtils.equals(LpkClassType.LPK_CLASS2.getValue(), exportContainer.getLpkClass())) {
 			int hours = dgHours.get(exportContainer.getHdlGoodsCode()).orElse(72);
 			LocalDateTime vesselETADate = exportContainer.getVesselETADate().plusHours(2);
 			LocalDateTime allowGateInDate = vesselETADate.minusHours(hours);
@@ -189,7 +220,7 @@ public class DGContainerService {
 
 	private boolean isKpaClass3(ExportContainer exportContainer) {
 
-		if (StringUtils.equals(ApplicationConstants.KPA_CLASS_03, exportContainer.getKpaClass())) {
+		if (StringUtils.equals(LpkClassType.LPK_CLASS3.getValue(), exportContainer.getLpkClass())) {
 			
 			LocalDateTime vesselETADate = exportContainer.getVesselETADate().plusHours(2);
 			LocalDateTime allowGateInDate = vesselETADate.minusHours(72);
@@ -289,6 +320,34 @@ public class DGContainerService {
 				}
 			}
 		}
+	}
+	
+	@Async
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRES_NEW, readOnly = false)
+	public void saveDGValidationLog(List<ExportContainer> dgContainerList){
+		
+		SystemUser gateInClerk = systemUserRepository.findOne(SecurityHelper.getCurrentUserId()).orElseThrow(
+		        () -> new AuthenticationServiceException("Log in User Not Found : " + SecurityHelper.getCurrentUserId()));
+		
+		dgContainerList.forEach(dgContainer->{
+			
+			DGValidateLog dgValidationLog = new DGValidateLog();
+			dgValidationLog.setLpkApproval(dgContainer.getLpkApproval()); 
+			dgValidationLog.setLpkClass(LpkClassType.valueOf(dgContainer.getLpkClass()));
+			dgValidationLog.setGateInTime(dgContainer.getBaseCommonGateInOutAttribute().getTimeGateIn());
+			dgValidationLog.setContNo(dgContainer.getContainer().getContainerNumber());
+			dgValidationLog.setGateInClerk(gateInClerk);
+			dgValidationLog.setGateInDuringWindow(dgContainer.isDgWithinWindowEntry() ? 1 :0);
+			dgValidationLog.setDgByPassRemark(dgContainer.getDgBypassRemark());
+			Optional<Exports> optExports = exportsRepository.findOne(dgContainer.getExportID());
+			Exports exports = optExports.orElseThrow(() -> new ResultsNotFoundException
+								("Exports Reference cannot be found to save DG validation Log !"));
+			
+			dgValidationLog.setExports(exports);
+			dgValidationLogRepository.save(dgValidationLog);
+			
+		});
+		
 	}
 
 }
