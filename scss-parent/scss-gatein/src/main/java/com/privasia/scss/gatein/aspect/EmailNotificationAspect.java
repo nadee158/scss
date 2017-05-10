@@ -56,7 +56,31 @@ public class EmailNotificationAspect {
       }
       return;
     } else {
-      throw new BusinessException("Invalid agruments for update DG Validation Log");
+      throw new BusinessException("Invalid agruments for send Weight Email");
+    }
+
+  }
+
+
+  @AfterReturning(pointcut = "@annotation(wrongDoorNotification)")
+  public void sendWrongDoorEmail(JoinPoint joinPoint, ISaDG isaDG) {
+    log.info("*****************   sendWrongDoorEmail called *************************");
+    if (joinPoint.getArgs()[0] instanceof GateInWriteRequest) {
+      GateInWriteRequest gateInWriteRequest = (GateInWriteRequest) joinPoint.getArgs()[0];
+
+      List<ExportContainer> wrongDoorContainers = gateInWriteRequest.getExportContainers().stream()
+          .filter(exports -> exports.getContainer() != null
+              && StringUtils.isNotEmpty(exports.getContainer().getContainerFullOrEmpty())
+              && StringUtils.equals(exports.getContainer().getContainerFullOrEmpty(), "F")
+              && exports.getWrongDoor() == true)
+          .collect(Collectors.toList());
+
+      if (!(wrongDoorContainers == null || wrongDoorContainers.isEmpty())) {
+        notificationService.sendWrongDoorEmail(wrongDoorContainers);
+      }
+      return;
+    } else {
+      throw new BusinessException("Invalid agruments for send send Wrong Door Email");
     }
 
   }
