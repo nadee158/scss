@@ -209,13 +209,13 @@ public class ImportExportGateInService {
     gateInReponse = opusGateInReadService.constructGateInReponse(gateInReadResponse, gateInReponse);
 
     if (gateInRequest.getExpWeightBridge() <= 0) {
-      throw new BusinessException("Invalid Exp Weight Bridge" + gateInRequest.getExpWeightBridge());
+      throw new BusinessException("Invalid Exp Weight Bridge" + gateInRequest.getExpWeightBridge()); 
     }
 
     gateInReponse.setExpWeightBridge(gateInRequest.getExpWeightBridge());
 
     if (!(gateInReponse.getExportContainers() == null || gateInReponse.getExportContainers().isEmpty())) {
-      gateInReponse = exportGateInService.validateGateInExports(gateInReponse, gateInRequest.getGateInDateTime());
+      gateInReponse = exportGateInService.validateExportsGateInRead(gateInReponse, gateInRequest.getGateInDateTime());
     }
 
     // assign details from hpab booking
@@ -292,13 +292,13 @@ public class ImportExportGateInService {
         break;
       case EXPORT:
         // impSave = new AsyncResult<Boolean>(true);
-        exportGateInService.validateExport(gateInWriteRequest);
+        exportGateInService.validateExportsGateInWrite(gateInWriteRequest);
         gateInReponse = businessService.sendGateInRequest(gateInWriteRequest);
         gateInWriteRequest.setExportContainers(gateInReponse.getExportContainers());
         exportGateInService.saveGateInInfo(gateInWriteRequest, gateInClient, gateInClerk, card);
         break;
       case IMPORT_EXPORT:
-        exportGateInService.validateExport(gateInWriteRequest);
+        exportGateInService.validateExportsGateInWrite(gateInWriteRequest);
         gateInReponse = businessService.sendGateInRequest(gateInWriteRequest);
         gateInWriteRequest.setImportContainers(gateInReponse.getImportContainers());
         gateInWriteRequest.setExportContainers(gateInReponse.getExportContainers());

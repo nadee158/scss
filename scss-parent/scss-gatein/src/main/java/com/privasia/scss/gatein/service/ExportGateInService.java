@@ -209,7 +209,7 @@ public class ExportGateInService {
 	
 
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-	public GateInReponse validateGateInExports(GateInReponse gateInReponse, LocalDateTime timegateIn) {
+	public GateInReponse validateExportsGateInRead(GateInReponse gateInReponse, LocalDateTime timegateIn) {
 
 		Optional<String> globalSetting = globalSettingRepository.fetchGlobalStringByGlobalCode("LPK_EDI");
 
@@ -224,10 +224,15 @@ public class ExportGateInService {
 			ssrService.checkExportSSR(timegateIn, container);
 			dgContainerService.validateDGContainer(container);
 			dgContainerService.userAccessToByPassDG(container);
+			
+			if(container.getContainer().getContainerFullOrEmpty() == ContainerFullEmptyType.EMPTY.getValue()){
+				emptyContainerService.setEmptyContainerWeight(container, container.getCosmosISOCode());
+			}
+			
 
 		});
 		
-		emptyContainerService.calculateWeightBridgeAndNetWeightForEmpty(gateInReponse.getExportContainers(), false, gateInReponse.getExpWeightBridge());
+		emptyContainerService.calculateWeightBridgeForEmpty(gateInReponse.getExportContainers(), gateInReponse.getExpWeightBridge());
 		
 		boolean fullExist = gateInReponse.getExportContainers().stream()
 				.filter(expCon -> (StringUtils.equalsIgnoreCase(ContainerFullEmptyType.FULL.getValue(),
@@ -309,7 +314,7 @@ public class ExportGateInService {
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
 	public void saveGateInInfo(GateInWriteRequest gateInWriteRequest, Client gateInClient, SystemUser gateInClerk,
 			Card card) {
-		// construct a new export entity for each exportcontainer and save
+		// construct a new export entity for each exportcontainer and save 
 
 		System.out.println("gateInWriteRequest.getExportContainers() " + gateInWriteRequest.getExportContainers());
 
@@ -451,7 +456,7 @@ public class ExportGateInService {
 	}
 
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-	public void validateExport(GateInWriteRequest gateInWriteRequest) {
+	public void validateExportsGateInWrite(GateInWriteRequest gateInWriteRequest) {
 		if (!(gateInWriteRequest.getExportContainers() == null || gateInWriteRequest.getExportContainers().isEmpty())) {
 			gateInWriteRequest.getExportContainers().forEach(exportContainer -> {
 				// 1. DAMAGE CONTAINER CHECK - 1313 (DamageCodeService )
@@ -460,10 +465,14 @@ public class ExportGateInService {
 				// (SealValidationServicve)
 				sealValidationService.validateSeal(exportContainer);
 				dgContainerService.validateUserByPassDG(exportContainer);
+				
+				if(exportContainer.getContainer().getContainerFullOrEmpty() == ContainerFullEmptyType.EMPTY.getValue()){
+					emptyContainerService.setEmptyContainerWeight(exportContainer, exportContainer.getContainer().getContainerISOCode());
+				}
 
 			});
 			
-			emptyContainerService.calculateWeightBridgeAndNetWeightForEmpty(gateInWriteRequest.getExportContainers(), true, gateInWriteRequest.getWeightBridge());
+			emptyContainerService.calculateWeightBridgeForEmpty(gateInWriteRequest.getExportContainers(), gateInWriteRequest.getWeightBridge());
 		}
 	}
 

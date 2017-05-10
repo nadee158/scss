@@ -35,13 +35,13 @@ public class EmptyContainerService {
 	}
 
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-	public void setEmptyContainerWeight(ExportContainer emptyContainer, boolean validateKeyInISO) {
-
-		if (validateKeyInISO && StringUtils.isEmpty(emptyContainer.getContainer().getContainerISOCode()))
-			throw new BusinessException("ISO Code need to be provided");
+	public void setEmptyContainerWeight(ExportContainer emptyContainer, String iso) {
+		
+		if (StringUtils.isEmpty(iso))
+			throw new BusinessException("ISO Code mandatory. Please enter the code");
 
 		if (StringUtils.isNotEmpty(emptyContainer.getContainer().getContainerISOCode())) {
-			ISOCode isoCode = isoCodeService.getIsoCodeTarWeight(emptyContainer.getContainer().getContainerISOCode());
+			ISOCode isoCode = isoCodeService.getIsoCodeTarWeight(iso);
 
 			emptyContainer.setExpNetWeight(isoCode.getTareWeight());
 			emptyContainer.setEmptyWeight(isoCode.getTareWeight());
@@ -52,8 +52,7 @@ public class EmptyContainerService {
 	/**
 	 * Calculate the WeightBridge For Empty ExportContainer
 	 */
-	public void calculateWeightBridgeAndNetWeightForEmpty(List<ExportContainer> exports, boolean validateKeyInISO,
-			int weightBridge) {
+	public void calculateWeightBridgeForEmpty(List<ExportContainer> exports, int weightBridge) {
 
 		List<ExportContainer> emptyContainerList = exports.stream()
 				.filter(exportContainer -> StringUtils.equalsIgnoreCase(ContainerFullEmptyType.EMPTY.getValue(),
@@ -62,10 +61,6 @@ public class EmptyContainerService {
 
 		if (emptyContainerList != null && !emptyContainerList.isEmpty()) {
 			// 1empty 0r both
-
-			emptyContainerList.forEach(exp -> {
-				setEmptyContainerWeight(exp, validateKeyInISO);
-			});
 
 			if (emptyContainerList.size() == 1) {
 				// one empty and can have one full

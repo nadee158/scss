@@ -289,6 +289,7 @@ public class OpusDTOConstructService {
     // private String containerSpod;// USSVN,
     exportContainer.setExpSpod(gIReadResponseExporterContainer.getContainerSpod());
     // private String containerIso;// 22G0,
+    exportContainer.setCosmosISOCode(gIReadResponseExporterContainer.getContainerIso());
     exportContainer.getContainer().setContainerISOCode(gIReadResponseExporterContainer.getContainerIso());
     // private double containerHeight;// 8.6,
     exportContainer.getContainer().setContainerHeight(

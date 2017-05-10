@@ -25,7 +25,7 @@ public class IsoCodeService {
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
 	public ISOCode getIsoCodeTarWeight(String isoCodeString) {
 		Optional<ISOCode> isoCode = isoCodeRepository.findByIsoCode(isoCodeString);
-		return isoCode.orElseThrow(() -> new ResultsNotFoundException("ISO not found for code : " + isoCodeString));
+		return isoCode.orElseThrow(() -> new ResultsNotFoundException("ISO not found In SCSS : " + isoCodeString));
 	}
 
 }

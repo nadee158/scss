@@ -16,7 +16,7 @@ import com.privasia.scss.common.enums.ImpExpFlagStatus;
 import com.privasia.scss.common.enums.TransactionType;
 import com.privasia.scss.common.interfaces.OpusCosmosBusinessService;
 
-@Service("cosmosService")
+@Service("cosmos")
 public class CosmosService implements OpusCosmosBusinessService {
 
 	private CosmosGateOutImportService cosmosGateOutImportService;

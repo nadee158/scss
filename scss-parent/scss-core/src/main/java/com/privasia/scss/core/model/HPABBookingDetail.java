@@ -284,7 +284,7 @@ public class HPABBookingDetail extends AuditEntity implements Serializable {
 		exportContainer.setSealAttribute(new CommonSealDTO());
 		exportContainer.getSealAttribute().setSeal01Number(expSealNo01);
 		exportContainer.getSealAttribute().setSeal02Number(expSealNo02);
-		//exportContainer.getContainer().setContainerISOCode(containerISO);
+		exportContainer.setHpabISOCode(containerISO);
 		exportContainer.setBookingNo(expBookingNo);
 		return exportContainer;
 	}
