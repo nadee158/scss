@@ -18,8 +18,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.context.Context;
 
 import com.privasia.scss.common.dto.NotificationDTO;
+import com.privasia.scss.common.enums.EmailTemplate;
 import com.privasia.scss.common.enums.KioskHLTCheckStatus;
 import com.privasia.scss.core.model.KioskHLTCheck;
 import com.privasia.scss.core.repository.KioskHLTCheckRepository;
@@ -27,18 +29,29 @@ import com.privasia.scss.core.repository.KioskHLTCheckRepository;
 @Service("notificationService")
 public class NotificationService {
 
-  @Autowired
-  private KioskHLTCheckRepository kioskHLTCheckRepository;
 
   @Value("${kioskhealthcheckmails.pagesize}")
   private int pageSize;
 
-  //@Autowired
-  //private MailUtil mailUtil;
+  @Value("${mail.to}")
+  private String recieverEmail;
+
+  private KioskHLTCheckRepository kioskHLTCheckRepository;
+
+  private EmailService emailService;
+
+  @Autowired
+  public void setEmailService(EmailService emailService) {
+    this.emailService = emailService;
+  }
+
+  @Autowired
+  public void setKioskHLTCheckRepository(KioskHLTCheckRepository kioskHLTCheckRepository) {
+    this.kioskHLTCheckRepository = kioskHLTCheckRepository;
+  }
 
   public void sendKioskHealthCheckMails() {
     Boolean notificationStatus = false;
-
     long totalPendingNotificationCount =
         kioskHLTCheckRepository.getCountHealthCheckInfoForNofitication(notificationStatus);
     System.out.println("totalPendingNotificationCount :" + totalPendingNotificationCount);
@@ -50,15 +63,16 @@ public class NotificationService {
         System.out.println("fetchedCount AFTER :" + fetchedCount);
         Map<String, List<NotificationDTO>> notifications = getNotifications(notificationStatus);
         if (!(notifications == null || notifications.isEmpty())) {
-          //NotificationSentStatus status = mailUtil.sendEmail(notifications);
-          //System.out.println("NotificationSentStatus :" + status);
+          Context context = new Context();
+          context.setVariable("resultMap", notifications);
+          String mailSubject = "Notification From Kiosk Health Check";
+          emailService.prepareAndSendEmail(recieverEmail, mailSubject, context,
+              EmailTemplate.KIOSK_HEALTH_CHECK_MAIL_TEMPLATE.getValue());
         }
       }
-
-
     }
-
   }
+
 
   public Map<String, List<NotificationDTO>> getNotifications(Boolean notificationStatus) {
 

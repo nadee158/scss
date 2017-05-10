@@ -1,4 +1,6 @@
-<html>
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
 <head>
 <style>
 
@@ -36,41 +38,24 @@
 <h2><u>Health Kiosk Notification</u></h2>
 <h3>Please be alert that the following's kiosk's health level were low. </h3>
 
-<#assign count = 1> 
+
 <table>
   <tr>
     <th>KIOSK NO.</th>
 	<th>ISSUE</th>
     <th>DESCRIPTION</th>    
   </tr>
-  
-  
+   <tr th:each="element : ${resultMap}">
+       <td th:text="${element.key}">keyvalue</td>
+       <table>
+           <tr th:each="issue : ${element.value}">
+               <td th:text="${issue.root}">root</td>
+               <td th:text="${issue.description}">description</td>
+           </tr>
+       </table>
+   </tr>
+ </table> 
 
-<#list resultMap?keys as key> 
-
-    <#assign rowspan = resultMap[key]?size>
-    <#assign count = resultMap[key]?size>
-    
-    <tr>
-  	<td rowspan=${rowspan}>${key}</td>
-    
-    <#list resultMap[key] as issue>
-    	  <td>${issue.root}</td>
-		  <td>${issue.description}</td>
-		  </tr>
-		 
-		  <#assign count = (count-1)>
-     		<#if count > 1>
-  				<tr>
-			</#if>
-	</#list>
-   
-    
-    
-</#list> 
-
-  
-</table>
 
 <h3>Kindly attend the mentioned kiosk immediately to avoid hiccups during operation.</h3>
 	<b>Thank you</b>,<br/>
