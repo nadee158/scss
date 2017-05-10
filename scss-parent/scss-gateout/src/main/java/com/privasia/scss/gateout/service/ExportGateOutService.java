@@ -1,7 +1,6 @@
 package com.privasia.scss.gateout.service;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -199,23 +198,5 @@ public class ExportGateOutService {
     return exports;
   }
 
-  @SolasApplicable
-  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-  public List<Exports> testSolas(GateOutWriteRequest gateOutWriteRequest) {
-
-    List<Long> expIDList = new ArrayList<Long>();
-
-    for (ExportContainer container : gateOutWriteRequest.getExportContainers()) {
-      expIDList.add(container.getExportID());
-    }
-
-    Optional<List<Exports>> exportsOptList = exportsRepository.findByExportIDIn(expIDList);
-    
-    if(exportsOptList.isPresent()){
-    	return exportsOptList.get();
-    }
-    	
-    throw new ResultsNotFoundException("no result found");
-  }
 
 }

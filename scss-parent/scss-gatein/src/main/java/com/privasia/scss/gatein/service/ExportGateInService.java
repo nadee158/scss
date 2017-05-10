@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.privasia.scss.common.annotation.ISaDG;
 import com.privasia.scss.common.dto.BaseCommonGateInOutDTO;
 import com.privasia.scss.common.dto.CommonGateInOutDTO;
 import com.privasia.scss.common.dto.ExportContainer;
@@ -485,5 +486,27 @@ public class ExportGateInService {
 		return false;
 
 	}
+	
+	@ISaDG
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
+	public void testDGValidationLog(GateInWriteRequest gateInWriteRequest) {
+		// construct a new export entity for each exportcontainer and save 
+
+		System.out.println("gateInWriteRequest.getExportContainers() " + gateInWriteRequest.getExportContainers());
+
+
+		gateInWriteRequest.getExportContainers().forEach(exportContainer -> {
+			exportContainer.getBaseCommonGateInOutAttribute().setTimeGateIn(gateInWriteRequest.getGateInDateTime());
+			exportContainer.setImdg("2.2");
+			exportContainer.setExportID(6292684l);
+			exportContainer.getContainer().setContainerNumber("SGPU1180138");
+			exportContainer.setLpkClass("2");
+			exportContainer.setLpkApproval("test approval");
+			exportContainer.setDgBypassRemark("test by pass");
+			
+		});
+
+	}
+	
 
 }
