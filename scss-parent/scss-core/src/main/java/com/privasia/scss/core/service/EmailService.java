@@ -26,10 +26,12 @@ public class EmailService {
   private TemplateEngine emailTemplateEngine;
   private WDCGlobalSettingService wdcGlobalSettingService;
 
+  @Autowired
   public void setJavaMailSender(@Qualifier("javaMailSender") JavaMailSender javaMailSender) {
     this.javaMailSender = javaMailSender;
   }
 
+  @Autowired
   public void setEmailTemplateEngine(@Qualifier("emailTemplateEngine") TemplateEngine emailTemplateEngine) {
     this.emailTemplateEngine = emailTemplateEngine;
   }
