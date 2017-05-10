@@ -6,11 +6,15 @@ import java.util.Map;
 
 public enum EmailTemplate implements Enumable {
 
-  CONTAINER_SIZE_TEMPLATE("containerSizeTemplate"), DSO_SEAL_TEMPLATE(
-      "dsosealTemplate"), KIOSK_HEALTH_CHECK_MAIL_TEMPLATE("kioskHealthCheckMailTemplate"), MAIL_TEMPLATE(
-          "mailTemplate"), NON_STANDARD_SEAL_LINE_CODE_TEMPLATE("nonsStandardSealLineCodeTemplate"), WEIGHT_TEMPLATE(
-              "weightTemplate"), WRONG_DOOR_TEMPLATE("wrongdoorTemplate");
-
+//@formatter:off
+  CONTAINER_SIZE_TEMPLATE("containerSizeTemplate"), 
+  DSO_SEAL_TEMPLATE("dsosealTemplate"), 
+  KIOSK_HEALTH_CHECK_MAIL_TEMPLATE("kioskHealthCheckMailTemplate"), 
+  MAIL_TEMPLATE("mailTemplate"), 
+  NON_STANDARD_SEAL_LINE_CODE_TEMPLATE("nonsStandardSealLineCodeTemplate"), 
+  WEIGHT_TEMPLATE("weightTemplate"), 
+  WRONG_DOOR_TEMPLATE("wrongdoorTemplate");
+//@formatter:on
   private final String emailTemplate;
 
   private EmailTemplate(String emailTemplate) {
