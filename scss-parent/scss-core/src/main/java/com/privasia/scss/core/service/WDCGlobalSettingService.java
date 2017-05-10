@@ -9,13 +9,12 @@ import org.springframework.transaction.annotation.Transactional;
 import com.privasia.scss.core.repository.WDCGlobalSettingRepository;
 
 @Service("wdcGlobalSettingService")
-
 public class WDCGlobalSettingService {
 
   @Autowired
   private WDCGlobalSettingRepository wdcGlobalSettingRepository;
-  
-  @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
+
+  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
   public String getWDCGlobalSetting(String globalCode) {
     return wdcGlobalSettingRepository.fetchGlobalStringByGlobalCode(globalCode).orElse(null);
   }
