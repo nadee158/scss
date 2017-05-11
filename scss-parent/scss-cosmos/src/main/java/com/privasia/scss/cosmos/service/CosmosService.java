@@ -104,9 +104,7 @@ public class CosmosService implements OpusCosmosBusinessService {
     commonValuesDTO.setErrorMessage(null);
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     UserContext userContext = (UserContext) authentication.getPrincipal();
-    System.out.println("userContext.getUsername() " + userContext.getUsername());
     commonValuesDTO.setLoginUser(userContext.getUsername());
-    System.out.println("commonValuesDTO " + commonValuesDTO);
 
     CosmosGateOutWriteRequest cosmosGateOutWriteRequest = new CosmosGateOutWriteRequest();
 

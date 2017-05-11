@@ -267,7 +267,6 @@ public class GateOutXMLRequestService {
 			Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
 			com.privasia.scss.cosmos.dto.response.SGS2Cosmos response = (com.privasia.scss.cosmos.dto.response.SGS2Cosmos) jaxbUnmarshaller
 					.unmarshal(file);
-			System.out.println(response);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

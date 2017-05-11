@@ -332,12 +332,9 @@ public class DGContainerService {
 			Optional<Exports> optExports = exportsRepository.findOne(dgContainer.getExportID());
 			Exports exports = optExports.orElseThrow(() -> new ResultsNotFoundException
 								("Exports Reference cannot be found to save DG validation Log !"));
-			System.out.println("exports : "+exports.getExportID());
 			dgValidationLog.setExports(exports);
 			dgValidationLog.setGateInClerk(exports.getBaseCommonGateInOutAttribute().getGateInClerk());
 			dgValidationLogRepository.save(dgValidationLog);
-			
-			System.out.println("dgValidationLog : "+dgValidationLog.getDgValidateLogId());
 			
 		});
 	}

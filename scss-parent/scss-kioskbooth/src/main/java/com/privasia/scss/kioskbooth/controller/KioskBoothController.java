@@ -75,7 +75,6 @@ public class KioskBoothController {
   @RequestMapping(value = "/kiosklistbybooth/{boothID}", method = RequestMethod.GET,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public ResponseEntity<ApiResponseObject<?>> getKioskListByBooth(@PathVariable long boothID) {
-    System.out.println("boothID :" + boothID);
     List<ClientDTO> clientDTO = kioskBoothService.getKioskListByBooth(boothID);
     return new CustomResponseEntity<ApiResponseObject<?>>(
         new ApiResponseObject<List<ClientDTO>>(HttpStatus.OK, clientDTO), HttpStatus.OK);

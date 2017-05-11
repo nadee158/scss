@@ -107,8 +107,6 @@ public class SealValidationService {
 			sealValidationLog.setGateInClerk(exports.getBaseCommonGateInOutAttribute().getGateInClerk());
 			sealValidationLogRepository.save(sealValidationLog);
 			
-			System.out.println("sealValidationLog : "+sealValidationLog.getSealValidateLogId());
-			
 		});
 	}
 
