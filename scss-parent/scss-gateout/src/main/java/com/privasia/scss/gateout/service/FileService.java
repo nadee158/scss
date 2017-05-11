@@ -40,8 +40,6 @@ public class FileService {
 			metaData.put(fileDTO.getFileName().get() + "_Info", doc);
 			
 			GridFSInputFile gridFSFile = gridFSRepository.storeFile(fileDTO, metaData);
-			System.out.println("gridFSFile.getId() : "+gridFSFile.getId());
-			System.out.println("fileDTO.getFileName() : "+fileDTO.getFileName());
 			if (gridFSFile != null) {
 				
 				return fileDTO.getFileName();

@@ -68,7 +68,6 @@ public class OpusGateInWriteService {
 
   public OpusGateInWriteResponse getGateInWriteResponse(OpusGateInWriteRequest opusGateInWriteRequest,
       OpusRequestResponseDTO opusRequestResponseDTO) {
-    System.out.println("gateInWriteResponseURL " + gateInWriteResponseURL);
     RestTemplate restTemplate = new RestTemplate();
     HttpHeaders headers = new HttpHeaders();
 
@@ -93,23 +92,19 @@ public class OpusGateInWriteService {
     while (true) {
       if (future.isDone()) {
         try {
-          System.out.println("Result from asynchronous process getGateInWriteResponse - " + future.get());
           opusRequestResponseService.updateOpusResponse(opusRequestResponseDTO, future);
         } catch (InterruptedException | ExecutionException e) {
           log.error("Error Occured when update Opus Response getGateInWriteResponse "
               + opusRequestResponseDTO.getGateinTime().toString());
           log.error(e.getMessage());
         }
-        System.out.println("WHILE LOOP BROKEN getGateInWriteResponse!!!!. ");
         break;
       }
-      System.out.println("Continue doing something else. getGateInWriteResponse ");
 
       try {
         Thread.sleep(asyncWaitTime);
       } catch (InterruptedException e) {
         log.error(e.getMessage());
-        System.out.println("WHILE LOOP BROKEN ON THREAD EXCEPTION getGateInWriteResponse!!!!. ");
         break;
       }
     }

@@ -378,7 +378,6 @@ public class ReferRejectService {
       }
       rejectReasonDTOs.forEach(referReasonDTO -> {
         ReferRejectReason reason = new ReferRejectReason();
-        System.out.println("referReasonDTO.getReferReason() " + referReasonDTO.getReferReason());
         ReferReason referReason = referReasonRepository.findOne(referReasonDTO.getReferReason().getReferReasonID())
             .orElseThrow(() -> new ResultsNotFoundException(
                 "Provided Refer Reson Not Found " + referReasonDTO.getReferReason().getReferReasonID()));
@@ -478,7 +477,6 @@ public class ReferRejectService {
 
   @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
   public String savePrintReject(long referId, String ipAddress) {
-    System.out.println("referId :" + referId);
     String status = "ERROR";
     ReferReject referReject = referRejectRepository.findOne(referId).orElse(null);
     if (!(referReject == null)) {

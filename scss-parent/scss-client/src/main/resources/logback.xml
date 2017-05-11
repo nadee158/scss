@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
-	<property name="FILE_NAME" value="scss-hdbs" />
+	<property name="FILE_NAME" value="scss-client" />
 	<property name="LOG_HOME" value="/opt/tomcat/scss_logs/${FILE_NAME}" />
 
 	<appender name="FILE-AUDIT"	class="ch.qos.logback.core.rolling.RollingFileAppender">

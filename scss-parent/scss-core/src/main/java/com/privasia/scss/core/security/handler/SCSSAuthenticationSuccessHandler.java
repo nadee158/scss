@@ -59,7 +59,6 @@ public class SCSSAuthenticationSuccessHandler implements AuthenticationSuccessHa
     tokenMap.put("token", accessToken.getToken());
     tokenMap.put("refreshToken", refreshToken.getToken());
 
-    System.out.println("TRYING TO ADD TO CACHE : tokenMap " + tokenMap);
     cachedTokenValidatorService.addTokenDetailsToCache(accessToken.getToken(), refreshToken.getToken(), userContext);
 
     response.setStatus(HttpStatus.OK.value());

@@ -77,7 +77,6 @@ public class ReferRejectController {
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public CustomResponseEntity<ApiResponseObject<?>> updateLineCodeANdGateInDateForReferRejectDetail(
       @RequestBody ReferRejectDetailDTO referRejectDetailDTO) {
-    System.out.println("referRejectDetailDTO " + referRejectDetailDTO);
     String status = referRejectService.updateLineCodeAndGateInDateForReferRejectDetail(referRejectDetailDTO);
     return new CustomResponseEntity<ApiResponseObject<?>>(new ApiResponseObject<String>(HttpStatus.OK, status),
         HttpStatus.OK);
@@ -87,7 +86,6 @@ public class ReferRejectController {
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public CustomResponseEntity<ApiResponseObject<?>> savePrintReject(HttpServletRequest request,
       @PathVariable("referId") long referId) {
-    System.out.println("referId " + referId);
     String ipAddress = UserIpAddressUtil.getUserIp(request);
     String status = referRejectService.savePrintReject(referId, ipAddress);
     return new CustomResponseEntity<ApiResponseObject<?>>(new ApiResponseObject<String>(HttpStatus.OK, status),

@@ -119,7 +119,6 @@ public class ImportGateOutService {
 
       importContainer = getGCSDeclarationInfo(importContainer);
       importContainerList.add(importContainer);
-      System.out.println("################# importContainer ######### " + importContainer);
       if (StringUtils.isEmpty(gateOutRequest.getImpContainer1())) {
         gateOutRequest.setImpContainer1(gatePass.getContainer().getContainerNumber());
       } else {

@@ -39,9 +39,6 @@ public class HPATController {
   public CustomResponseEntity<ApiResponseObject<?>> findEtpHpat4ImpAndExp(@PathVariable Long cardID,
       @PathVariable List<String> bookingTypes) {
 
-    System.out.println(cardID + "cardID");
-    System.out.println(bookingTypes + "bookingTypes");
-
     List<HpatDto> dtos = hpatService.findEtpHpab4ImpAndExp(cardID, LocalDateTime.now(), bookingTypes);
 
     if (dtos == null) {
@@ -56,8 +53,6 @@ public class HPATController {
   @RequestMapping(value = "/{bookingID}/details", method = RequestMethod.GET,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public CustomResponseEntity<ApiResponseObject<?>> getEtpHpat4ImpAndExp(@PathVariable String bookingID) {
-
-    System.out.println(bookingID + "bookingID");
 
     TransactionDTO dto = hpatService.getEtpHpab4ImpAndExp(bookingID);
 

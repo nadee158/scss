@@ -42,10 +42,6 @@ public class CosmosODDRepository {
 
 		boolean status = false;
 
-		System.out.println("ORDER_TYPE : " + rs.getString("ORDER_TYPE"));
-		System.out.println("ORDER_STATUS : " + rs.getString("ORDER_STATUS"));
-		System.out.println("CONTAINER_HANDLING_STATUS : " + rs.getString("CONTAINER_HANDLING_STATUS"));
-
 		if (StringUtils.equals(rs.getString("CONTAINER_HANDLING_STATUS"), "EXE")) {
 			status = true;
 		} else if (StringUtils.equals(rs.getString("CONTAINER_HANDLING_STATUS"), "ACT")) {

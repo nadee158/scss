@@ -43,7 +43,6 @@ public class ETPWsEntryPoint {
   @Bean(name = "marshaller")
   public Jaxb2Marshaller marshaller() throws Exception {
     Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
-    System.out.println("wsContextPath :" + wsContextPath);
     marshaller.setCheckForXmlRootElement(false);
     marshaller.setContextPath(wsContextPath);
     marshaller.afterPropertiesSet();
@@ -52,7 +51,6 @@ public class ETPWsEntryPoint {
 
   @Bean(name = "etpWebserviceClient")
   public ETPWebserviceClient etpWebserviceClient(@Qualifier("marshaller") Jaxb2Marshaller marshaller) throws Exception {
-    System.out.println("clientDefaultUri :" + clientDefaultUri);
     ETPWebserviceClient client = new ETPWebserviceClient(clientDefaultUri, wsServerUri);
     client.setDefaultUri(clientDefaultUri);
     client.setMarshaller(marshaller);

@@ -71,17 +71,6 @@ public class HealthCheckService {
     kioskHLTCheck.setBooth(clientRepository.findOne(healthCheckInfo.getBoothClientID()).orElseGet(null));
     kioskHLTCheck.setKiosk(clientRepository.findOne(healthCheckInfo.getKioskClientID()).orElseGet(null));
     
-    System.out.println("getCardReaderStatus : " + kioskHLTCheck.getCardReaderStatus());
-    System.out.println("getKiosk().getClientID() : " + kioskHLTCheck.getKiosk().getClientID());
-    System.out.println("getBooth().getClientID() : " + kioskHLTCheck.getBooth().getClientID());
-    System.out.println("getPcStatus : " + kioskHLTCheck.getPcStatus());
-    System.out.println("getIntercomStatus : " + kioskHLTCheck.getIntercomStatus());
-    System.out.println("getPaperStatus : " + kioskHLTCheck.getPaperStatus());
-    System.out.println("getLcdStatus : " + kioskHLTCheck.getLcdStatus());
-    System.out.println("getCameraStatus : " + kioskHLTCheck.getCameraStatus());
-    System.out.println("getWebServiceStatus : " + kioskHLTCheck.getWebServiceStatus());
-    System.out.println("getLaneNumber : " + kioskHLTCheck.getLaneNumber());
-    
     kioskHLTCheck = kioskHLTCheckRepository.save(kioskHLTCheck);
 
     if(kioskHLTCheck.getHealthCheckSeq() == null)

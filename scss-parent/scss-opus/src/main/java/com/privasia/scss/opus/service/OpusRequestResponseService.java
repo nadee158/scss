@@ -68,11 +68,9 @@ public class OpusRequestResponseService {
       opusRequestResponse = modelMapper.map(opusRequestResponseDTO, OpusRequestResponse.class);
       opusRequestResponse.setCard(card);
       opusRequestResponse.setSendTime(LocalDateTime.now());
-      System.out.println("BEFORE SAVED opusRequestResponse " + opusRequestResponse);
       // set id upon save dfdf
       opusRequestResponse.setOpusReqResID(CommonUtil.getUniqueID());
       opusRequestResponse = opusRepository.save(opusRequestResponse);
-      System.out.println("SAVED opusRequestResponse " + opusRequestResponse);
     } catch (Exception e) {
       log.error("Error Occured when update Opus Response " + opusRequestResponse);
       log.error(e.getMessage());

@@ -19,10 +19,6 @@ public class UserIpAddressUtil {
   }
 
   public static String getBaseUrl(HttpServletRequest request) throws MalformedURLException  {
-    System.out.println("request.getRequestURL() " + request.getRequestURL());
-    System.out.println("request.getLocalPort() " + request.getLocalPort());
-    System.out.println("request.getremPort() " + request.getRemotePort());
-    System.out.println("request.getserPort() " + request.getServerPort());
     URL requestURL = new URL(request.getRequestURL().toString());
 	String port = requestURL.getPort() == -1 ? "" : ":" + requestURL.getPort();
 	return requestURL.getProtocol() + "://" + requestURL.getHost() + port;

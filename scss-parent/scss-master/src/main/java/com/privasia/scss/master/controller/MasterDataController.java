@@ -68,8 +68,6 @@ public class MasterDataController {
 
     String date = currentDateTimeService.getFormattedCurrentDateAndTime();
 
-    System.out.println("date : " + date);
-
     return new CustomResponseEntity<ApiResponseObject<?>>(new ApiResponseObject<String>(HttpStatus.OK, date),
         HttpStatus.OK);
   }
@@ -80,8 +78,6 @@ public class MasterDataController {
 
     boolean check = globalSettingService.isCustomCheckBeforeTransaction();
 
-    System.out.println("check : " + check);
-
     return new CustomResponseEntity<ApiResponseObject<?>>(new ApiResponseObject<Boolean>(HttpStatus.OK, check),
         HttpStatus.OK);
   }
@@ -89,9 +85,7 @@ public class MasterDataController {
   @RequestMapping(value = "/referreason", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
       consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public CustomResponseEntity<ApiResponseObject<?>> getReferReasonList() {
-    System.out.println("dtoList before:");
     List<ReferReasonDTO> dtoList = referReasonService.findAllReferReason();
-    System.out.println("dtoList :" + dtoList);
     return new CustomResponseEntity<ApiResponseObject<?>>(
         new ApiResponseObject<List<ReferReasonDTO>>(HttpStatus.OK, dtoList), HttpStatus.OK);
   }
@@ -129,7 +123,6 @@ public class MasterDataController {
   @RequestMapping(value = "client/bywebip", method = RequestMethod.PUT,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public CustomResponseEntity<ApiResponseObject<?>> getClientInfoByWebIP(@RequestBody Map<String, String> json) {
-    System.out.println("ipAddress :" + json.get("ipAddress"));
     ClientDTO clientDTO = clientMasterDataService.getClientByWebIP(json.get("ipAddress"));
     return new CustomResponseEntity<ApiResponseObject<?>>(new ApiResponseObject<ClientDTO>(HttpStatus.OK, clientDTO),
         HttpStatus.OK);
@@ -139,7 +132,6 @@ public class MasterDataController {
   @RequestMapping(value = "client/byid/{clientID}", method = RequestMethod.GET,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public CustomResponseEntity<ApiResponseObject<?>> getClientInfoByID(@PathVariable Long clientID) {
-    System.out.println("clientID :" + clientID);
     ClientDTO clientDTO = clientMasterDataService.getClientByID(clientID);
     return new CustomResponseEntity<ApiResponseObject<?>>(new ApiResponseObject<ClientDTO>(HttpStatus.OK, clientDTO),
         HttpStatus.OK);

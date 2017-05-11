@@ -1,8 +1,13 @@
 package com.privasia.scss.cosmos.service;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.privasia.scss.common.dto.ExportContainer;
@@ -15,6 +20,11 @@ import com.privasia.scss.common.dto.ImportContainer;
 import com.privasia.scss.common.enums.ImpExpFlagStatus;
 import com.privasia.scss.common.enums.TransactionType;
 import com.privasia.scss.common.interfaces.OpusCosmosBusinessService;
+import com.privasia.scss.common.util.DateUtil;
+import com.privasia.scss.cosmos.dto.common.CosmosCommonValuesDTO;
+import com.privasia.scss.cosmos.dto.common.UserContext;
+import com.privasia.scss.cosmos.dto.request.CosmosGateOutImport;
+import com.privasia.scss.cosmos.dto.request.CosmosGateOutWriteRequest;
 
 @Service("cosmos")
 public class CosmosService implements OpusCosmosBusinessService {
@@ -82,69 +92,67 @@ public class CosmosService implements OpusCosmosBusinessService {
     return gateOutReponse;
   }
 
+
+
   @Override
   public GateOutReponse sendGateOutWriteRequest(GateOutWriteRequest gateOutWriteRequest,
       GateOutReponse gateOutReponse) {
     ImpExpFlagStatus impExpFlag = ImpExpFlagStatus.fromValue(gateOutWriteRequest.getImpExpFlag());
 
+    CosmosCommonValuesDTO commonValuesDTO = getCommonValues(gateOutWriteRequest);
+    commonValuesDTO.setMessageIndex(1);
+    commonValuesDTO.setErrorMessage(null);
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    UserContext userContext = (UserContext) authentication.getPrincipal();
+    commonValuesDTO.setLoginUser(userContext.getUsername());
+
+    CosmosGateOutWriteRequest cosmosGateOutWriteRequest = new CosmosGateOutWriteRequest();
 
     switch (impExpFlag) {
       case IMPORT:
-//getImpRequestXML
-//        requestXML2 = "<Message Index=\"3\">\n"
-//            + "<CSMCTL>\n"
-//            + "<RQST>GSRQS</RQST>\n" //Request Code : To hard code
-//            + "<ACTN>CRT</ACTN>\n" //Action Code : To hard code
-//            + "<RTNC>0</RTNC>\n" //Return Code : To hard code
-//            + errXMLMsg3
-//            + "<RQDS>CTEDSE</RQDS>\n" //Requestor Data Structure : To hard code
-//            + "<RTNM>AS</RTNM>\n" //Return Mode : To hard code
-//            + "<USID>" + username + "</USID>\n" //User ID : To capture SCSS user id
-//            + "<RQUI>" + msgUniqueId + "</RQUI>\n" //To input msg unique id
-//            + "<TRMC>WPT1</TRMC>\n" //Terminal : To hard code
-//            + "</CSMCTL>\n"
-//            + "<GOTCNTINF>\n"
-//            + "<UNITSE>" + containerNoC2 + "</UNITSE>\n"
-//            + sealC2
-//            + "</GOTCNTINF>\n"
-//            + "</Message>\n";
+        // getImpRequestXML
+        if (!(gateOutReponse.getImportContainers() == null || gateOutReponse.getImportContainers().isEmpty())) {
+          cosmosGateOutWriteRequest.setImportList(new ArrayList<CosmosGateOutImport>());
+          gateOutReponse.getImportContainers().forEach(importContainer -> {
+            cosmosGateOutWriteRequest.getImportList()
+                .add(cosmosGateOutImportService.constructCosmosGateOutImport(commonValuesDTO, importContainer));
+          });
+        }
         break;
       case EXPORT:
         // getExpRequestXML - CosmosGateOutExport
-//        String requestXML = "<?xml version=\"1.0\" encoding=\'ASCII\'?>\n"
-//            + "<SGS2Cosmos>\n"
-//            + "<Message Index=\"1\">\n"
-//            + "<CSMCTL>\n"
-//            + "<RQST>GSRQS</RQST>\n" //Request Code : To hard code
-//            + "<ACTN>CRT</ACTN>\n" //Action Code : To hard code
-//            + "<RTNC>0</RTNC>\n" //Return Code : To hard code
-//            + errXMLMsg1
-//            + "<RQDS>CTEDSC</RQDS>\n" //Requestor Data Structure : To hard code
-//            + "<RTNM>AS</RTNM>\n" //Return Mode : To hard code
-//            + "<USID>" + toUpperCase(username) + "</USID>\n" //User ID : To capture SCSS user id
-//            + "<RQUI>" + msgUniqueId + "</RQUI>\n" //To input msg unique id
-//            + "<TRMC>WPT1</TRMC>\n" //Terminal : To hard code
-//            + "</CSMCTL>\n"
-//            + "<GOTTRCINF>\n" // For Gate In Truck Information
-//            + "<MSGTSC>GOTTRCINF</MSGTSC>\n" //Message Type : To hard code
-//            + "<LANESC>" + toUpperCase(laneNo) + "</LANESC>\n" // Lane : To capture gate lane no
-//            + "<VMIDSC>" + toUpperCase(truckNo) + "</VMIDSC>\n" // Truck License Plate : To capture truck no
-//            + "<ATDDSC>" + date + "</ATDDSC>\n" // Date of Arrival : To capture current date??
-//            + "<ATDTSC>" + time + "</ATDTSC>\n" // Time of Arrival : To capture current time??
-//            + "</GOTTRCINF>\n"
-//            + "</Message>\n"
-//            + "</SGS2Cosmos>\n";
-
+        cosmosGateOutWriteRequest.setExport(cosmosGateOutExportService.constructCosmosGateOutExport(commonValuesDTO));
         break;
       case IMPORT_EXPORT:
-        //gateoutxmlrequest
+        cosmosGateOutWriteRequest.setExport(cosmosGateOutExportService.constructCosmosGateOutExport(commonValuesDTO));
+        // gateoutxmlrequest
         // getImpExpRequestXML
+        if (!(gateOutReponse.getImportContainers() == null || gateOutReponse.getImportContainers().isEmpty())) {
+          cosmosGateOutWriteRequest.setImportList(new ArrayList<CosmosGateOutImport>());
+          gateOutReponse.getImportContainers().forEach(importContainer -> {
+            cosmosGateOutWriteRequest.getImportList()
+                .add(cosmosGateOutImportService.constructCosmosGateOutImport(commonValuesDTO, importContainer));
+          });
+        }
         break;
       default:
         break;
     }
 
     return null;
+  }
+
+
+  public CosmosCommonValuesDTO getCommonValues(GateOutWriteRequest gateOutWriteRequest) {
+    CosmosCommonValuesDTO cosmosCommonValuesDTO = new CosmosCommonValuesDTO();
+    cosmosCommonValuesDTO.setMsgUniqueId(System.currentTimeMillis() + "");
+    cosmosCommonValuesDTO.setDate(DateUtil.getFormatteDate(LocalDate.now(), "yyyyMMdd"));
+    cosmosCommonValuesDTO.setTime(DateUtil.getFormatteTime(LocalTime.now(), "HHmmss"));
+    cosmosCommonValuesDTO.setExpMsgInx("3");
+    cosmosCommonValuesDTO.setLaneNo(gateOutWriteRequest.getLaneNo());
+    cosmosCommonValuesDTO.setTruckNo(gateOutWriteRequest.getTruckHeadNo());
+    cosmosCommonValuesDTO.setCompCode(gateOutWriteRequest.getHaulageCode());
+    return cosmosCommonValuesDTO;
   }
 
 }

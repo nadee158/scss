@@ -51,7 +51,6 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
     // is a valid key - check in cache now
 
     boolean isActiveToken = cachedTokenValidatorService.checkIfValidToken(rawAccessToken.getToken());
-    System.out.println("isActiveToken :" + isActiveToken);
     if (!(isActiveToken)) {
       throw new JwtExpiredTokenException("JWT Token not available in cache!");
     }

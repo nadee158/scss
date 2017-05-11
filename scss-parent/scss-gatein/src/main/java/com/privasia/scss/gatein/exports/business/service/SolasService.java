@@ -195,8 +195,6 @@ public class SolasService {
 							BigDecimal.ROUND_HALF_UP)).multiply(new BigDecimal(100));
 					container.setCalculatedVariance(String.valueOf(variance));
 					
-					System.out.println("variance : "+String.valueOf(variance));
-
 					// checking if in range
 					if (variance.compareTo(tolerancePercentage) <= 0
 							&& variance.compareTo(tolerancePercentage.negate()) >= 0) {
