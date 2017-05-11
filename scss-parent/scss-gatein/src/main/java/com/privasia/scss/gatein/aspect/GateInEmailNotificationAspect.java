@@ -14,7 +14,10 @@ import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.privasia.scss.common.annotation.ISaDG;
+import com.privasia.scss.common.annotation.ContainerSizeNotification;
+import com.privasia.scss.common.annotation.SealLineNotification;
+import com.privasia.scss.common.annotation.WeightNotification;
+import com.privasia.scss.common.annotation.WrongDoorNotification;
 import com.privasia.scss.common.dto.ExportContainer;
 import com.privasia.scss.common.dto.GateInWriteRequest;
 import com.privasia.scss.common.exception.BusinessException;
@@ -25,9 +28,9 @@ import com.privasia.scss.core.service.NotificationService;
  *
  */
 @Aspect
-public class EmailNotificationAspect {
+public class GateInEmailNotificationAspect {
 
-  private static final Log log = LogFactory.getLog(EmailNotificationAspect.class);
+  private static final Log log = LogFactory.getLog(GateInEmailNotificationAspect.class);
 
   private NotificationService notificationService;
 
@@ -40,7 +43,7 @@ public class EmailNotificationAspect {
 
 
   @AfterReturning(pointcut = "@annotation(weightNotification)")
-  public void sendWeightEmail(JoinPoint joinPoint, ISaDG isaDG) {
+  public void sendWeightEmail(JoinPoint joinPoint, WeightNotification weightNotification) {
     log.info("*****************   sendWeightEmail called *************************");
     if (joinPoint.getArgs()[0] instanceof GateInWriteRequest) {
       GateInWriteRequest gateInWriteRequest = (GateInWriteRequest) joinPoint.getArgs()[0];
@@ -63,7 +66,7 @@ public class EmailNotificationAspect {
 
 
   @AfterReturning(pointcut = "@annotation(wrongDoorNotification)")
-  public void sendWrongDoorEmail(JoinPoint joinPoint, ISaDG isaDG) {
+  public void sendWrongDoorEmail(JoinPoint joinPoint, WrongDoorNotification wrongDoorNotification) {
     log.info("*****************   sendWrongDoorEmail called *************************");
     if (joinPoint.getArgs()[0] instanceof GateInWriteRequest) {
       GateInWriteRequest gateInWriteRequest = (GateInWriteRequest) joinPoint.getArgs()[0];
@@ -86,7 +89,7 @@ public class EmailNotificationAspect {
   }
 
   @AfterReturning(pointcut = "@annotation(sealLineNotification)")
-  public void sendNonStandardSealLineCodeEmail(JoinPoint joinPoint, ISaDG isaDG) {
+  public void sendNonStandardSealLineCodeEmail(JoinPoint joinPoint, SealLineNotification sealLineNotification) {
     log.info("*****************   sendNonsStandardSealLineCodeEmail called *************************");
     if (joinPoint.getArgs()[0] instanceof GateInWriteRequest) {
       GateInWriteRequest gateInWriteRequest = (GateInWriteRequest) joinPoint.getArgs()[0];
@@ -103,9 +106,31 @@ public class EmailNotificationAspect {
       }
       return;
     } else {
-      throw new BusinessException("Invalid agruments for send send Wrong Door Email");
+      throw new BusinessException("Invalid agruments for send Non Standard Seal Line Code Email");
     }
+  }
 
+  @AfterReturning(pointcut = "@annotation(containerSizeNotification)")
+  public void sendContainerSizeDiscrepancyEmail(JoinPoint joinPoint,
+      ContainerSizeNotification containerSizeNotification) {
+    log.info("*****************   sendContainerSizeDiscrepancyEmail called *************************");
+    if (joinPoint.getArgs()[0] instanceof GateInWriteRequest) {
+      GateInWriteRequest gateInWriteRequest = (GateInWriteRequest) joinPoint.getArgs()[0];
+
+      List<ExportContainer> sizeDiscrepancyContainers = gateInWriteRequest.getExportContainers().stream()
+          .filter(exports -> exports.getContainer() != null
+              && StringUtils.isNotEmpty(exports.getContainer().getContainerFullOrEmpty())
+              && StringUtils.equals(exports.getContainer().getContainerFullOrEmpty(), "F")
+              && !(StringUtils.equals(exports.getContainer().getContainerISOCode(), exports.getCosmosISOCode())))
+          .collect(Collectors.toList());
+
+      if (!(sizeDiscrepancyContainers == null || sizeDiscrepancyContainers.isEmpty())) {
+        notificationService.sendContainerSizeDiscrepancyEmail(sizeDiscrepancyContainers);
+      }
+      return;
+    } else {
+      throw new BusinessException("Invalid agruments for send Container Size Discrepancy Email");
+    }
   }
 
 

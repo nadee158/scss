@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-import com.privasia.scss.common.enums.EmailTemplate;
 import com.privasia.scss.common.util.ApplicationConstants;
 import com.privasia.scss.core.model.SendMailQueue;
 import com.privasia.scss.core.repository.SendMailQueueRepository;
@@ -103,8 +102,8 @@ public class EmailService {
   }
 
 
-  public String prepareAndSaveEmail(String emailTo, String subject, Context context, String value) {
-    emailContent = build(context, EmailTemplate.WEIGHT_TEMPLATE.getValue());
+  public String prepareAndSaveEmail(String emailTo, String subject, Context context, String templateName) {
+    emailContent = build(context, templateName);
     String senderEmailFromDB = wdcGlobalSettingService.getWDCGlobalSetting(ApplicationConstants.SMTP_FROM);
     if (StringUtils.isEmpty(senderEmailFromDB)) {
       senderEmailFromDB = senderEmail;

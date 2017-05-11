@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.context.Context;
 
 import com.privasia.scss.common.dto.ExportContainer;
+import com.privasia.scss.common.dto.ImportContainer;
 import com.privasia.scss.common.dto.NotificationDTO;
 import com.privasia.scss.common.enums.EmailTemplate;
 import com.privasia.scss.common.enums.KioskHLTCheckStatus;
@@ -72,6 +73,99 @@ public class NotificationService {
 
   @Async
   @Transactional(value = "transactionManager", propagation = Propagation.REQUIRES_NEW, readOnly = false)
+  public void sendDsoSealDifferentEmail(List<ImportContainer> changeSealContainers) {
+    changeSealContainers.forEach(importContainer -> {
+      if ((importContainer.getContainer() == null)) {
+        throw new BusinessException("Container is null !");
+      }
+      Optional<ShipEmail> shipEmailOpt = shipEmailRepository
+          .findBylineCodeAndTypeCode(importContainer.getShippingLine(), ShippingLineReportType.DSO_SEAL_DIFFERENT);
+      if (shipEmailOpt.isPresent()) {
+        ShipEmail shipEmail = shipEmailOpt.get();
+        String emailContent = null;
+        Context context = new Context();
+        String subject =
+            "DSO SEAL Different - " + StringUtils.trim(importContainer.getContainer().getContainerNumber());
+        try {
+          context.setVariable(ApplicationConstants.EMAIL_BCC, shipEmail.getEmailBCC());
+          context.setVariable(ApplicationConstants.EMAIL_CC, shipEmail.getEmailCC());
+
+          if (!(importContainer.getBaseCommonGateInOutAttribute() == null)) {
+            context.setVariable("gateOutDateTime",
+                DateUtil.getFormatteDate(importContainer.getBaseCommonGateInOutAttribute().getTimeGateOut()));
+          }
+          context.setVariable("contNo", importContainer.getContainer().getContainerNumber());
+          context.setVariable("isoCode", importContainer.getContainer().getContainerISOCode());
+          context.setVariable("fullEmptyFlag", importContainer.getContainer().getContainerFullOrEmpty());
+          context.setVariable("lineCode", importContainer.getShippingLine());
+          context.setVariable("vesselScn", importContainer.getVesselScn());
+          context.setVariable("vesselName", importContainer.getVesselName());
+          context.setVariable("dsoSealNo1", importContainer.getCosmosSeal01Number());
+          context.setVariable("dsoSealNo2", importContainer.getCosmosSeal02Number());
+          if (!(importContainer.getSealAttribute() == null)) {
+            context.setVariable("scssSealNo1", importContainer.getSealAttribute().getSeal01Number());
+            context.setVariable("scssSealNo2", importContainer.getSealAttribute().getSeal02Number());
+          }
+          // try and send email
+          emailContent = emailService.prepareAndSendEmail(shipEmail.getEmailTo(), subject, context,
+              EmailTemplate.DSO_SEAL_TEMPLATE.getValue());
+        } catch (Exception e) {
+          // if fails, save to db
+          emailContent = emailService.prepareAndSaveEmail(shipEmail.getEmailTo(), subject, context,
+              EmailTemplate.DSO_SEAL_TEMPLATE.getValue());
+        }
+        System.out.println("DSO_SEAL_CONTENT " + emailContent);
+      }
+    });
+  }
+
+  @Async
+  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRES_NEW, readOnly = false)
+  public void sendContainerSizeDiscrepancyEmail(List<ExportContainer> sizeDiscrepancyContainers) {
+    sizeDiscrepancyContainers.forEach(exportContainer -> {
+      if ((exportContainer.getContainer() == null)) {
+        throw new BusinessException("Container is null !");
+      }
+      Optional<ShipEmail> shipEmailOpt = shipEmailRepository.findBylineCodeAndTypeCode(
+          exportContainer.getShippingLine(), ShippingLineReportType.CONTAINER_SIZE_DISCREPANCY);
+      if (shipEmailOpt.isPresent()) {
+        ShipEmail shipEmail = shipEmailOpt.get();
+        String emailContent = null;
+        Context context = new Context();
+        String subject =
+            "CONTAINER SIZE DISCREPANCY - " + StringUtils.trim(exportContainer.getContainer().getContainerNumber());
+        try {
+          context.setVariable(ApplicationConstants.EMAIL_BCC, shipEmail.getEmailBCC());
+          context.setVariable(ApplicationConstants.EMAIL_CC, shipEmail.getEmailCC());
+
+          if (!(exportContainer.getBaseCommonGateInOutAttribute() == null)) {
+            context.setVariable("gateInTime",
+                DateUtil.getFormatteDate(exportContainer.getBaseCommonGateInOutAttribute().getTimeGateIn()));
+          }
+          context.setVariable("bookingNo", exportContainer.getBookingNo());
+          context.setVariable("contNo", exportContainer.getContainer().getContainerNumber());
+          context.setVariable("isoCode", exportContainer.getContainer().getContainerISOCode());
+          context.setVariable("fullEmptyFlag", exportContainer.getContainer().getContainerFullOrEmpty());
+          context.setVariable("lineCode", exportContainer.getShippingLine());
+
+          context.setVariable("haulageCompany", exportContainer.getShipCode());
+          context.setVariable("cosmosIsoCode", exportContainer.getCosmosISOCode());
+          context.setVariable("hpabIsoCode", exportContainer.getHpabISOCode());
+          // try and send email
+          emailContent = emailService.prepareAndSendEmail(shipEmail.getEmailTo(), subject, context,
+              EmailTemplate.CONTAINER_SIZE_TEMPLATE.getValue());
+        } catch (Exception e) {
+          // if fails, save to db
+          emailContent = emailService.prepareAndSaveEmail(shipEmail.getEmailTo(), subject, context,
+              EmailTemplate.CONTAINER_SIZE_TEMPLATE.getValue());
+        }
+        System.out.println("CONTAINER_SIZE_CONTENT " + emailContent);
+      }
+    });
+  }
+
+  @Async
+  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRES_NEW, readOnly = false)
   public void sendNonStandardSealLineCodeEmail(List<ExportContainer> dontValidateSealContainers) {
     dontValidateSealContainers.forEach(exportContainer -> {
       if ((exportContainer.getContainer() == null)) {
@@ -89,12 +183,13 @@ public class NotificationService {
         try {
           context.setVariable(ApplicationConstants.EMAIL_BCC, shipEmail.getEmailBCC());
           context.setVariable(ApplicationConstants.EMAIL_CC, shipEmail.getEmailCC());
+
           if (!(exportContainer.getBaseCommonGateInOutAttribute() == null)) {
             context.setVariable("gateInTime",
                 DateUtil.getFormatteDate(exportContainer.getBaseCommonGateInOutAttribute().getTimeGateIn()));
           }
-          context.setVariable("bookingNo", exportContainer.getBookingNo());
           context.setVariable("sealCode", exportContainer.getSealAttribute().getSeal01Number());
+          context.setVariable("bookingNo", exportContainer.getBookingNo());
           context.setVariable("contNo", exportContainer.getContainer().getContainerNumber());
           context.setVariable("isoCode", exportContainer.getContainer().getContainerISOCode());
           context.setVariable("fullEmptyFlag", exportContainer.getContainer().getContainerFullOrEmpty());
@@ -140,7 +235,6 @@ public class NotificationService {
             context.setVariable("gateInTime",
                 DateUtil.getFormatteDate(exportContainer.getBaseCommonGateInOutAttribute().getTimeGateIn()));
           }
-
           context.setVariable("bookingNo", exportContainer.getBookingNo());
           context.setVariable("contNo", exportContainer.getContainer().getContainerNumber());
           context.setVariable("isoCode", exportContainer.getContainer().getContainerISOCode());
@@ -197,13 +291,10 @@ public class NotificationService {
               context.setVariable("gateInTime",
                   DateUtil.getFormatteDate(exportContainer.getBaseCommonGateInOutAttribute().getTimeGateIn()));
             }
-
             context.setVariable("bookingNo", exportContainer.getBookingNo());
-
             context.setVariable("contNo", exportContainer.getContainer().getContainerNumber());
             context.setVariable("isoCode", exportContainer.getContainer().getContainerISOCode());
             context.setVariable("fullEmptyFlag", exportContainer.getContainer().getContainerFullOrEmpty());
-
             context.setVariable("lineCode", exportContainer.getShippingLine());
             context.setVariable("netWeight", exportContainer.getExpNetWeight());
             context.setVariable("cosmosWeight", exportContainer.getCosmosNetWeight());
@@ -231,6 +322,7 @@ public class NotificationService {
 
   @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
   public void sendKioskHealthCheckMails() {
+    System.out.println("sendKioskHealthCheckMails called !--------------------------");
     Boolean notificationStatus = false;
     long totalPendingNotificationCount =
         kioskHLTCheckRepository.getCountHealthCheckInfoForNofitication(notificationStatus);
