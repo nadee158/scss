@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
-	<property name="FILE_NAME" value="express" />
-	<property name="LOG_HOME" value="/home/users/scss_logs/${FILE_NAME}" />
+	<property name="FILE_NAME" value="scss-express" />
+	<property name="LOG_HOME" value="/opt/tomcat/scss_logs/${FILE_NAME}" />
 
 	<appender name="FILE-AUDIT"	class="ch.qos.logback.core.rolling.RollingFileAppender">
 	
@@ -15,7 +15,7 @@
 
 		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
 			<!-- rollover daily -->
-			<fileNamePattern>${LOG_HOME}/archived/${FILE_NAME}.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+			<fileNamePattern>${LOG_HOME}/archived/${FILE_NAME}.%d{yyyy-MM-dd HH:mm:ss}.%i.log</fileNamePattern>
 			<timeBasedFileNamingAndTriggeringPolicy	class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
 				<maxFileSize>50MB</maxFileSize>
 			</timeBasedFileNamingAndTriggeringPolicy>
