@@ -3,6 +3,9 @@ package com.privasia.scss.cosmos.dto.exprequest;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 
+import com.privasia.scss.cosmos.xml.element.CSMCTL;
+import com.privasia.scss.cosmos.xml.element.GOTTRCINF;
+
 
 public class Message {
 
