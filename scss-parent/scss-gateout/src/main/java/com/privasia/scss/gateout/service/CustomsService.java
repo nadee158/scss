@@ -177,7 +177,6 @@ public class CustomsService {
       throw new BusinessException("Gate out client id is not available!");
     }
     Optional<List<Customs>> deletedCustoms = customsRepository.deleteByCsmGateOutClient_ClientID(gateOutClientId);
-    System.out.println("deletedCustoms " + deletedCustoms.orElse(null));
     return deletedCustoms;
   }
 }

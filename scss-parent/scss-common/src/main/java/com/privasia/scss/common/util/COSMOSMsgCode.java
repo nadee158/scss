@@ -40,8 +40,6 @@ public class COSMOSMsgCode {
 
   public static void main(String[] args) {
     Object[] objs = new Object[] {"YONG", "Kian On"};
-    // System.out.println(COSMOSMsgCode.format("ERR0027", objs));
-    // System.out.println(COSMOSMsgCode.get("ERR0027"));
   }
 
   public static String format(String msgcode, Object[] args) {

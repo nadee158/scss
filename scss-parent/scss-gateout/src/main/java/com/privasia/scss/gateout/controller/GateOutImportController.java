@@ -38,8 +38,6 @@ public class GateOutImportController {
 
 	@RequestMapping(value = "/fetchtrx/{cardnumber}/{clientID}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public CustomResponseEntity<ApiResponseObject<?>> fetchTrx(@PathVariable("cardnumber") String cardNumber, @PathVariable("clientID") Long clientID) {
-		System.out.println("cardNumber : "+cardNumber);
-		System.out.println("clientID : "+clientID);
 		GateOutMessage gateOutMessage = null;
 		return new CustomResponseEntity<ApiResponseObject<?>>(new ApiResponseObject<GateOutMessage>(HttpStatus.OK, gateOutMessage), HttpStatus.OK);
 	}

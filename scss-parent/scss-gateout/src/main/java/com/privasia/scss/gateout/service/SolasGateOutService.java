@@ -208,8 +208,6 @@ public class SolasGateOutService {
 					etpWebserviceClient.updateSolasToEtp(solasETPDTOs);
 
 				} catch (Exception e) {
-					System.out.println("Message ####################################: ");
-					System.out.println("Message : " + e.getMessage());
 					e.printStackTrace();
 				} finally {
 					// save to file references
@@ -375,8 +373,6 @@ public class SolasGateOutService {
 			JasperPrint jp = JasperFillManager.fillReport(jr, params, reportData);
 
 			byte[] pdfBytes = JasperExportManager.exportReportToPdf(jp);
-
-			System.out.println("************** pdfBytes.length *************** " + pdfBytes.length);
 
 			solasPassFileDTO.setCertificate(pdfBytes);
 

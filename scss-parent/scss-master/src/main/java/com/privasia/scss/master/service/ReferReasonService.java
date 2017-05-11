@@ -39,7 +39,6 @@ public class ReferReasonService {
     List<ReferReason> referReasonList =
         referReasonRepository.findByReferStatus(RecordStatus.fromCode(RecordStatus.ACTIVE.getValue()));
 
-    System.out.println("referReasonList :" + referReasonList);
     if (!(referReasonList == null || referReasonList.isEmpty())) {
       List<ReferReasonDTO> dtoList = new ArrayList<ReferReasonDTO>();
       try {

@@ -35,8 +35,6 @@ public class ExpressController {
   public CustomResponseEntity<ApiResponseObject<?>> getBookingInfo(@PathVariable String cardNo,
       HttpServletRequest request) {
 
-    System.out.println("cardNo : " + cardNo);
-
     BookingInfoDTO dto = expressService.getBookingInfo(cardNo);
 
     return new CustomResponseEntity<ApiResponseObject<?>>(new ApiResponseObject<BookingInfoDTO>(HttpStatus.OK, dto),

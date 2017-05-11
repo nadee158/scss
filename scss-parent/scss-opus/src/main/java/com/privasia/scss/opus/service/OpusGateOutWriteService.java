@@ -85,7 +85,6 @@ public class OpusGateOutWriteService {
 		ResponseEntity<OpusGateOutWriteResponse> response = restTemplate.postForEntity(gateOutWriteResponseURL, request,
 				OpusGateOutWriteResponse.class);
 
-		System.out.println(response.toString());
 		log.info("RESPONSE FROM OPUS: " + response.toString());
 
 		opusRequestResponseDTO.setResponse(gson.toJson(response.getBody()));
@@ -94,23 +93,19 @@ public class OpusGateOutWriteService {
 		while (true) {
 			if (future.isDone()) {
 				try {
-					System.out.println("Result from asynchronous process getGateOutWriteResponse - " + future.get());
 					opusRequestResponseService.updateOpusResponse(opusRequestResponseDTO, future);
 				} catch (InterruptedException | ExecutionException e) {
 					log.error("Error Occured when update Opus Response getGateOutWriteResponse "
 							+ opusRequestResponseDTO.getGateinTime().toString());
 					log.error(e.getMessage());
 				}
-				System.out.println("WHILE LOOP BROKEN getGateOutWriteResponse!!!!. ");
 				break;
 			}
-			System.out.println("Continue doing something else getGateOutWriteResponse. ");
 
 			try {
 				Thread.sleep(asyncWaitTime);
 			} catch (InterruptedException e) {
 				log.error(e.getMessage());
-				System.out.println("WHILE LOOP BROKEN ON THREAD EXCEPTION getGateOutWriteResponse!!!!. ");
 				break;
 			}
 		}

@@ -498,7 +498,6 @@ public class OpusDTOConstructService {
       if (errorMessage.endsWith(SEPERATOR)) {
         errorMessage = errorMessage.substring(0, (errorMessage.length() - 1));
       }
-      System.out.println("errorMessage " + errorMessage);
       return errorMessage;
     }
     return null;

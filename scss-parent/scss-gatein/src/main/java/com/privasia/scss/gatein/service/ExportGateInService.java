@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.privasia.scss.common.annotation.DontValidateSeal;
 import com.privasia.scss.common.annotation.ISaDG;
+import com.privasia.scss.common.annotation.LoggingInfor;
 import com.privasia.scss.common.dto.BaseCommonGateInOutDTO;
 import com.privasia.scss.common.dto.CommonGateInOutDTO;
 import com.privasia.scss.common.dto.ExportContainer;
@@ -511,6 +512,11 @@ public class ExportGateInService {
 			
 		});
 
+	}
+	
+	@LoggingInfor
+	public String testLogging(String name, int age){
+		return "my name is "+name+" and age "+age;
 	}
 	
 

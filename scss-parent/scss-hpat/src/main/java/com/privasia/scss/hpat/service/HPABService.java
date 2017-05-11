@@ -106,7 +106,6 @@ public class HPABService {
 		List<HpatDto> hpats = null;
 
 		List<BookingType> convertedBookingTypes = new ArrayList<>();
-		System.out.println("bookingTypes :" + bookingTypes);
 		bookingTypes.forEach(bookingType -> {
 			BookingType bk = BookingType.fromValue(bookingType);
 			if (bk != null) {
@@ -115,7 +114,6 @@ public class HPABService {
 				throw new BusinessException("Invalid Booking Type!");
 			}
 		});
-		System.out.println("convertedBookingTypes :" + convertedBookingTypes);
 		hpats = createPredicatesAndFindHpab4ImpAndExp(cardId, systemDateTime, convertedBookingTypes);
 		if (hpats != null && !hpats.isEmpty()) {
 

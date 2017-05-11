@@ -50,7 +50,6 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
       request.setAttribute(WebUtils.ERROR_EXCEPTION_ATTRIBUTE, exception, WebRequest.SCOPE_REQUEST);
     }
     final ApiError apiError = new ApiError(httpStatus, exception.getLocalizedMessage(), error);
-    System.out.println("error "+ error);
     ApiResponseObject<ApiError> body = new ApiResponseObject<ApiError>(httpStatus, apiError);
     return new CustomResponseEntity<ApiResponseObject>(body, httpStatus);
   }
@@ -61,7 +60,6 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
       request.setAttribute(WebUtils.ERROR_EXCEPTION_ATTRIBUTE, exception, WebRequest.SCOPE_REQUEST);
     }
     final ApiError apiError = new ApiError(httpStatus, exception.getLocalizedMessage(), errors);
-    System.out.println("error "+ errors);
     ApiResponseObject<ApiError> body = new ApiResponseObject<ApiError>(httpStatus, apiError);
     return new CustomResponseEntity<ApiResponseObject>(body, httpStatus);
   }
@@ -239,8 +237,7 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
   public CustomResponseEntity<ApiResponseObject> handleAll(final Exception exception, final WebRequest webRequest) {
     logger.info(exception.getClass().getName());
     logger.error("error", exception);
-    System.out.println("error "+ exception);
-    //
+    
     HttpStatus httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
     return handleExceptionInternal(exception, httpStatus, webRequest, "internal error occurred");
   }
@@ -303,8 +300,7 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
       final WebRequest webRequest) {
     logger.info(exception.getClass().getName());
     logger.error("error %%%%%%%%%%%", exception);
-    System.out.println("%%%%%%%%%%%%%%");
-    //
+    
     HttpStatus httpStatus = HttpStatus.UNAUTHORIZED;
     return handleExceptionInternal(exception, httpStatus, webRequest, "Invalid token, Malformed!");
   }
@@ -314,8 +310,7 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
       final WebRequest webRequest) {
     logger.info(exception.getClass().getName());
     logger.error("error %%%%%%%%%%%", exception);
-    System.out.println("%%%%%%%%%%%%%%");
-    //
+    
     HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
     return handleExceptionInternal(exception, httpStatus, webRequest, "Invalid json, Malformed!");
   }

@@ -26,11 +26,6 @@ public class LPSAspect {
 	@Async
 	public void openGate(JoinPoint joinPoint, OpenGate openGate){
 		
-		System.out.println("*****************   openGate called *************************");
-		System.out.println("hijacked : " + joinPoint.getSignature().getName());
-		System.out.println("Method returned value is : " + joinPoint.getArgs()[0]);
-		System.out.println("******");
-		
 		Long clientID = null;
 		
 		if(joinPoint.getArgs()[0] instanceof GateInWriteRequest){
@@ -40,8 +35,6 @@ public class LPSAspect {
 			GateOutWriteRequest gateOutWriteRequest = (GateOutWriteRequest) joinPoint.getArgs()[0];
 			clientID = gateOutWriteRequest.getGateOutClient();
 		}
-		
-		System.out.println("&&&&&&&&&&&& clientID TO OPEN : &&&&&&&&&&&&&&& " + clientID);
 		
 		log.info("*****************   openGate called *************************");
 		log.info("hijacked : " + joinPoint.getSignature().getName());

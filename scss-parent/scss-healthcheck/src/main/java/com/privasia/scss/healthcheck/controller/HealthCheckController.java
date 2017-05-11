@@ -35,8 +35,6 @@ public class HealthCheckController {
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
   public CustomResponseEntity<ApiResponseObject<?>> getHealthCheckInfo(@PathVariable("pagesize") Integer pageSize) {
 
-    System.out.println("pagesize : " + pageSize);
-
     List<HealthCheckInfoDTO> list = healthCheckService.getHealthCheckInfo(pageSize);
 
     return new CustomResponseEntity<ApiResponseObject<?>>(

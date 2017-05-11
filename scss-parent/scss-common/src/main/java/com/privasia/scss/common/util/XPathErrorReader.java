@@ -29,12 +29,10 @@ public class XPathErrorReader {
     XPath msgPath = XPath.newInstance("//Message/XMLERRINF");
 
     List msgs = msgPath.selectNodes(doc);
-    // System.out.println("XML reply has " + msgs.size() + " messages:");
 
     Iterator i = msgs.iterator();
     while (i.hasNext()) {
       Element msg = (Element) i.next();
-      // System.out.println(msg.getChild("ERRDSG").getTextTrim());
     }
   }
 
@@ -46,7 +44,6 @@ public class XPathErrorReader {
     XPath msgPath = XPath.newInstance("//Message/CSMCTL");
 
     List msgs = msgPath.selectNodes(doc);
-    // System.out.println("XML reply has " + msgs.size() + " messages:");
 
     Iterator i = msgs.iterator();
     while (i.hasNext()) {
@@ -110,7 +107,6 @@ public class XPathErrorReader {
     XPath msgPath = XPath.newInstance("//Message/CSMCTL");
 
     List msgs = msgPath.selectNodes(doc);
-    // System.out.println("XML reply has " + msgs.size() + " messages:");
 
     Iterator i = msgs.iterator();
     while (i.hasNext()) {
