@@ -11,7 +11,6 @@ import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -25,14 +24,11 @@ import com.privasia.scss.common.exception.ResultsNotFoundException;
 import com.privasia.scss.common.util.ApplicationConstants;
 import com.privasia.scss.core.model.DGValidateLog;
 import com.privasia.scss.core.model.Exports;
-import com.privasia.scss.core.model.SystemUser;
 import com.privasia.scss.core.repository.DGValidationLogRepository;
 import com.privasia.scss.core.repository.DgDetailRepository;
 import com.privasia.scss.core.repository.ExportsRepository;
-import com.privasia.scss.core.repository.SystemUserRepository;
 import com.privasia.scss.core.repository.WDCGlobalSettingRepository;
 import com.privasia.scss.core.security.model.UserContext;
-import com.privasia.scss.core.security.util.SecurityHelper;
 
 /**
  * @author Janaka
@@ -62,8 +58,6 @@ public class DGContainerService {
 	
 	private DgDetailRepository dgDetailRepository;
 	
-	private SystemUserRepository systemUserRepository;
-	
 	private ExportsRepository exportsRepository;
 	
 	private DGValidationLogRepository dgValidationLogRepository;
@@ -84,11 +78,6 @@ public class DGContainerService {
 	}
 	
 	@Autowired
-	public void setSystemUserRepository(SystemUserRepository systemUserRepository) {
-		this.systemUserRepository = systemUserRepository;
-	}
-	
-	@Autowired
 	public void setExportsRepository(ExportsRepository exportsRepository) {
 		this.exportsRepository = exportsRepository;
 	} 
@@ -96,6 +85,11 @@ public class DGContainerService {
 	@Autowired
 	public DgDetailRepository getDgDetailRepository() {
 		return dgDetailRepository;
+	}
+	
+	@Autowired
+	public void setDgValidationLogRepository(DGValidationLogRepository dgValidationLogRepository) {
+		this.dgValidationLogRepository = dgValidationLogRepository;
 	}
 
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
@@ -325,29 +319,27 @@ public class DGContainerService {
 	@Async
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRES_NEW, readOnly = false)
 	public void saveDGValidationLog(List<ExportContainer> dgContainerList){
-		
-		SystemUser gateInClerk = systemUserRepository.findOne(SecurityHelper.getCurrentUserId()).orElseThrow(
-		        () -> new AuthenticationServiceException("Log in User Not Found : " + SecurityHelper.getCurrentUserId()));
-		
+	
 		dgContainerList.forEach(dgContainer->{
 			
 			DGValidateLog dgValidationLog = new DGValidateLog();
 			dgValidationLog.setLpkApproval(dgContainer.getLpkApproval()); 
-			dgValidationLog.setLpkClass(LpkClassType.valueOf(dgContainer.getLpkClass()));
+			dgValidationLog.setLpkClass(LpkClassType.fromValue(dgContainer.getLpkClass()));
 			dgValidationLog.setGateInTime(dgContainer.getBaseCommonGateInOutAttribute().getTimeGateIn());
 			dgValidationLog.setContNo(dgContainer.getContainer().getContainerNumber());
-			dgValidationLog.setGateInClerk(gateInClerk);
 			dgValidationLog.setGateInDuringWindow(dgContainer.isDgWithinWindowEntry() ? 1 :0);
 			dgValidationLog.setDgByPassRemark(dgContainer.getDgBypassRemark());
 			Optional<Exports> optExports = exportsRepository.findOne(dgContainer.getExportID());
 			Exports exports = optExports.orElseThrow(() -> new ResultsNotFoundException
 								("Exports Reference cannot be found to save DG validation Log !"));
-			
+			System.out.println("exports : "+exports.getExportID());
 			dgValidationLog.setExports(exports);
+			dgValidationLog.setGateInClerk(exports.getBaseCommonGateInOutAttribute().getGateInClerk());
 			dgValidationLogRepository.save(dgValidationLog);
 			
+			System.out.println("dgValidationLog : "+dgValidationLog.getDgValidateLogId());
+			
 		});
-		
 	}
 
 }

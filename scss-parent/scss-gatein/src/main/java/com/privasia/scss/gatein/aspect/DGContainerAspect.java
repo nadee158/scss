@@ -13,6 +13,7 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import com.privasia.scss.common.annotation.ISaDG;
@@ -32,16 +33,18 @@ public class DGContainerAspect {
 	private static final Log log = LogFactory.getLog(DGContainerAspect.class);
 
 	private DGContainerService dgContainerService;
+	
 
 	@Autowired
 	public void setDgContainerService(DGContainerService dgContainerService) {
 		this.dgContainerService = dgContainerService;
 	}
 	
+	@Async
 	@AfterReturning(pointcut = "@annotation(isaDG)")
 	public void isADGContainer(JoinPoint joinPoint, ISaDG isaDG) {
 
-		log.info("*****************   solasApplicable called *************************");
+		log.info("*****************   isADGContainer called *************************");
 		
 		if(joinPoint.getArgs()[0] instanceof GateInWriteRequest){
 			GateInWriteRequest gateInWriteRequest = (GateInWriteRequest) joinPoint.getArgs()[0];
@@ -50,7 +53,10 @@ public class DGContainerAspect {
 						StringUtils.isNotEmpty(exports.getImdg()) && exports.isDontValidateDg()).collect(Collectors.toList());
 			
 			if(!(dgContainers == null || dgContainers.isEmpty())){
+				
 				dgContainerService.saveDGValidationLog(dgContainers);
+				
+				return;
 			}
 			
 			return;

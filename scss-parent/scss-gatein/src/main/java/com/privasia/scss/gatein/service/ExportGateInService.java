@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.privasia.scss.common.annotation.DontValidateSeal;
 import com.privasia.scss.common.annotation.ISaDG;
 import com.privasia.scss.common.dto.BaseCommonGateInOutDTO;
 import com.privasia.scss.common.dto.CommonGateInOutDTO;
@@ -293,6 +294,7 @@ public class ExportGateInService {
 	}
 
 	// @Async
+	@ISaDG @DontValidateSeal
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
 	public void saveGateInInfo(GateInWriteRequest gateInWriteRequest, Client gateInClient, SystemUser gateInClerk,
 			Card card) {
@@ -487,7 +489,7 @@ public class ExportGateInService {
 
 	}
 	
-	@ISaDG
+	
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
 	public void testDGValidationLog(GateInWriteRequest gateInWriteRequest) {
 		// construct a new export entity for each exportcontainer and save 
@@ -496,6 +498,9 @@ public class ExportGateInService {
 
 
 		gateInWriteRequest.getExportContainers().forEach(exportContainer -> {
+			if (exportContainer.getBaseCommonGateInOutAttribute() == null) {
+				exportContainer.setBaseCommonGateInOutAttribute(new BaseCommonGateInOutDTO());
+			}
 			exportContainer.getBaseCommonGateInOutAttribute().setTimeGateIn(gateInWriteRequest.getGateInDateTime());
 			exportContainer.setImdg("2.2");
 			exportContainer.setExportID(6292684l);
