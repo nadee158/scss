@@ -2,6 +2,7 @@ package com.privasia.scss.cosmos.service;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ import com.privasia.scss.common.interfaces.OpusCosmosBusinessService;
 import com.privasia.scss.common.util.DateUtil;
 import com.privasia.scss.cosmos.dto.common.CosmosCommonValuesDTO;
 import com.privasia.scss.cosmos.dto.common.UserContext;
+import com.privasia.scss.cosmos.dto.request.CosmosGateOutImport;
 import com.privasia.scss.cosmos.dto.request.CosmosGateOutWriteRequest;
 
 @Service("cosmos")
@@ -111,6 +113,13 @@ public class CosmosService implements OpusCosmosBusinessService {
     switch (impExpFlag) {
       case IMPORT:
         // getImpRequestXML
+        if (!(gateOutReponse.getImportContainers() == null || gateOutReponse.getImportContainers().isEmpty())) {
+          cosmosGateOutWriteRequest.setImportList(new ArrayList<CosmosGateOutImport>());
+          gateOutReponse.getImportContainers().forEach(importContainer -> {
+            cosmosGateOutWriteRequest.getImportList()
+                .add(cosmosGateOutImportService.constructCosmosGateOutImport(commonValuesDTO, importContainer));
+          });
+        }
         break;
       case EXPORT:
         // getExpRequestXML - CosmosGateOutExport
@@ -120,6 +129,13 @@ public class CosmosService implements OpusCosmosBusinessService {
         cosmosGateOutWriteRequest.setExport(cosmosGateOutExportService.constructCosmosGateOutExport(commonValuesDTO));
         // gateoutxmlrequest
         // getImpExpRequestXML
+        if (!(gateOutReponse.getImportContainers() == null || gateOutReponse.getImportContainers().isEmpty())) {
+          cosmosGateOutWriteRequest.setImportList(new ArrayList<CosmosGateOutImport>());
+          gateOutReponse.getImportContainers().forEach(importContainer -> {
+            cosmosGateOutWriteRequest.getImportList()
+                .add(cosmosGateOutImportService.constructCosmosGateOutImport(commonValuesDTO, importContainer));
+          });
+        }
         break;
       default:
         break;
