@@ -316,7 +316,7 @@ public class OpusDTOConstructService {
     // private String containerSeal2_SL;// null,
     exportContainer.getSealAttribute().setSeal02Origin(gIReadResponseExporterContainer.getContainerSeal2_SL());
     // private String containerSeal2_NO;// null,
-    exportContainer.getSealAttribute().setSeal02Origin(gIReadResponseExporterContainer.getContainerSeal2_NO());
+    exportContainer.getSealAttribute().setSeal02Number(gIReadResponseExporterContainer.getContainerSeal2_NO());
 
     // private String containerReeferIndicator;// N,
     exportContainer.setReferFlag(

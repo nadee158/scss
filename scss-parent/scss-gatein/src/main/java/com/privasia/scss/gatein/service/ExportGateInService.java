@@ -233,7 +233,7 @@ public class ExportGateInService {
 		boolean fullExist = gateInReponse.getExportContainers().stream()
 				.filter(expCon -> (StringUtils.equalsIgnoreCase(ContainerFullEmptyType.FULL.getValue(),
 						expCon.getContainer().getContainerFullOrEmpty())))
-				.findFirst().isPresent();
+				.findAny().isPresent();
 		if (fullExist)
 			solasService.calculateTerminalVGM(gateInReponse.getExportContainers());
 		
@@ -371,7 +371,7 @@ public class ExportGateInService {
 			System.out.println("exportsQ.getExportID() after save " + exportsQ.getExportID());
 			exportContainer.setExportID(exports.getExportID());
 			// referee reject service update
-			if (gateInWriteRequest.getReferRejectDTO().isPresent()) {
+			if (gateInWriteRequest.getReferRejectDTO().isPresent() && gateInWriteRequest.getReferRejectDTO().get().getReferRejectID()!=null) {
 				updateReferReject(gateInWriteRequest, exportContainer);
 			}
 

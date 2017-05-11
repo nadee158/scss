@@ -5,6 +5,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.privasia.scss.common.util.DateUtil;
+
 public class GateOutReponse implements Serializable {
 
 	/**
@@ -17,6 +20,7 @@ public class GateOutReponse implements Serializable {
 	private String haulageCode;// HAUCD,
 	private String truckHeadNo;// TRUCK,
 	private String truckPlateNo;// null,
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateUtil.GLOBAL_DATE_TIME_PATTERN)
 	private LocalDateTime gateOUTDateTime;// 20161130112233,
 
 	private List<ImportContainer> importContainers = new ArrayList<ImportContainer>();
@@ -37,6 +41,7 @@ public class GateOutReponse implements Serializable {
 	private String gateInLaneNo;// -string
 
 	// MM-dd-yyyy HH:mm
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateUtil.GLOBAL_DATE_TIME_PATTERN)
 	private LocalDateTime gateInDateTime;// -string
 
 	public String getUserID() {
