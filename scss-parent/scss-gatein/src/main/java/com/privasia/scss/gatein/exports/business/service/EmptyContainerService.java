@@ -36,15 +36,14 @@ public class EmptyContainerService {
 
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
 	public void setEmptyContainerWeight(ExportContainer emptyContainer, String iso) {
-		
-		if (StringUtils.isEmpty(iso))
-			throw new BusinessException("ISO Code mandatory. Please enter the code");
 
-		if (StringUtils.isNotEmpty(emptyContainer.getContainer().getContainerISOCode())) {
-			ISOCode isoCode = isoCodeService.getIsoCodeTarWeight(iso);
+		if (StringUtils.isNotEmpty(iso)) {
+			if (StringUtils.isNotEmpty(emptyContainer.getContainer().getContainerISOCode())) {
+				ISOCode isoCode = isoCodeService.getIsoCodeTarWeight(iso);
 
-			emptyContainer.setExpNetWeight(isoCode.getTareWeight());
-			emptyContainer.setEmptyWeight(isoCode.getTareWeight());
+				emptyContainer.setExpNetWeight(isoCode.getTareWeight());
+				emptyContainer.setEmptyWeight(isoCode.getTareWeight());
+			}
 		}
 
 	}

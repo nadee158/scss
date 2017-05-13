@@ -5,6 +5,7 @@ package com.privasia.scss.opus.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -115,8 +116,9 @@ public class OpusGateOutWriteService {
 
 	public GateOutReponse constructGateOutReponse(OpusGateOutWriteResponse opusGateOutWriteResponse,
 			GateOutReponse gateOutReponse) {
-		//LocalDateTime localDateTime = DateUtil.getLocalDategFromString(opusGateOutWriteResponse.getGateINDateTime());
-		//gateOutReponse.setGateOUTDateTime(localDateTime);
+		// LocalDateTime localDateTime =
+		// DateUtil.getLocalDategFromString(opusGateOutWriteResponse.getGateINDateTime());
+		// gateOutReponse.setGateOUTDateTime(localDateTime);
 		gateOutReponse.setHaulageCode(opusGateOutWriteResponse.getHaulageCode());
 		gateOutReponse.setLaneNo(opusGateOutWriteResponse.getLaneNo());
 		gateOutReponse.setTruckHeadNo(opusGateOutWriteResponse.getTruckHeadNo());
@@ -130,24 +132,31 @@ public class OpusGateOutWriteService {
 		return gateOutReponse;
 	}
 
-	public OpusGateOutWriteRequest constructOpusGateOutWriteRequest(GateOutWriteRequest gateOutWriteRequest) {
-		OpusGateOutWriteRequest opusGateOutWriteRequest = new OpusGateOutWriteRequest();
+	public Optional<OpusGateOutWriteRequest> constructOpusGateOutWriteRequest(GateOutWriteRequest gateOutWriteRequest) {
+		OpusGateOutWriteRequest opusGateOutWriteRequest = null;
 
 		List<GOWriteRequestExportContainer> exportContainerListCY = opusDTOConstructService
 				.exportContainerListToGOWriteRequestExportContainerList(gateOutWriteRequest.getExportContainers());
 		List<GOWriteRequestImportContainer> importContainerListCY = opusDTOConstructService
 				.importContainerListToGOWriteRequestImportContainerList(gateOutWriteRequest.getImportContainers());
 
-		opusGateOutWriteRequest
-				.setGateOUTDateTime(DateUtil.getJsonDateFromDate(gateOutWriteRequest.getGateOUTDateTime()));
-		opusGateOutWriteRequest.setHaulageCode(gateOutWriteRequest.getHaulageCode());
-		opusGateOutWriteRequest.setLaneNo(gateOutWriteRequest.getLaneNo());
-		opusGateOutWriteRequest.setTruckHeadNo(gateOutWriteRequest.getTruckHeadNo());
-		opusGateOutWriteRequest.setTruckPlateNo(gateOutWriteRequest.getTruckPlateNo());
-		opusGateOutWriteRequest.setUserID(gateOutWriteRequest.getUserName());
-		opusGateOutWriteRequest.setExportContainerListCY(exportContainerListCY);
-		opusGateOutWriteRequest.setImportContainerListCY(importContainerListCY);
-		return opusGateOutWriteRequest;
+		if ((exportContainerListCY != null && exportContainerListCY.isEmpty()) && 
+				(importContainerListCY != null && importContainerListCY.isEmpty())) {
+			return Optional.ofNullable(opusGateOutWriteRequest);
+		} else {
+			opusGateOutWriteRequest = new OpusGateOutWriteRequest();
+			opusGateOutWriteRequest
+					.setGateOUTDateTime(DateUtil.getJsonDateFromDate(gateOutWriteRequest.getGateOUTDateTime()));
+			opusGateOutWriteRequest.setHaulageCode(gateOutWriteRequest.getHaulageCode());
+			opusGateOutWriteRequest.setLaneNo(gateOutWriteRequest.getLaneNo());
+			opusGateOutWriteRequest.setTruckHeadNo(gateOutWriteRequest.getTruckHeadNo());
+			opusGateOutWriteRequest.setTruckPlateNo(gateOutWriteRequest.getTruckPlateNo());
+			opusGateOutWriteRequest.setUserID(gateOutWriteRequest.getUserName());
+			opusGateOutWriteRequest.setExportContainerListCY(exportContainerListCY);
+			opusGateOutWriteRequest.setImportContainerListCY(importContainerListCY);
+			return Optional.of(opusGateOutWriteRequest);
+		}
+
 	}
 
 }

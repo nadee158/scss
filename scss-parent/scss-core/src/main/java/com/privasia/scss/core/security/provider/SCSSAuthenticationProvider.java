@@ -80,7 +80,7 @@ public class SCSSAuthenticationProvider implements AuthenticationProvider {
 		UserContext userContext = UserContext.create(loguser.getSystemUser().getSystemUserID(), loguser.getUserName(),
 				AuthorityUtils.createAuthorityList(loguser.getRole().getRoleName()), functionList,
 				loguser.getSystemUser().getCommonContactAttribute().getPersonName(),
-				loguser.getSystemUser().getStaffNumber());
+				loguser.getSystemUser().getStaffNumber()); 
 		
 		
 

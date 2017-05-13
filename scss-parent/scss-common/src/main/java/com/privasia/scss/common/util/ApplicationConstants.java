@@ -122,4 +122,9 @@ public interface ApplicationConstants {
   public static final int GATE_BYPASS_DG_VALIDATION = 434;
   public static final String EMAIL_BCC = "EMAIL_BCC";
   public static final String EMAIL_CC = "EMAIL_CC";
+  
+  public static final String LPS_RES_OPEN = "O";
+  public static final String LPS_RES_MANUAL_CONTROL_MODE = "M";
+  public static final String LPS_RES_TIME_OUT = "T";
+  public static final String LPS_RES_FAIL = "F";
 }

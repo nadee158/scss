@@ -1,5 +1,7 @@
 package com.privasia.scss.opus.service;
 
+import java.util.Optional;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -116,25 +118,32 @@ public class OpusService implements OpusCosmosBusinessService {
 	public GateOutReponse sendGateOutWriteRequest(GateOutWriteRequest gateOutWriteRequest, GateOutReponse gateOutReponse) {
 
 		// call opus -
-		OpusGateOutWriteRequest opusGateOutWriteRequest = opusGateOutWriteService
+		Optional<OpusGateOutWriteRequest> optOPUSGateOutWriteRequest = opusGateOutWriteService
 				.constructOpusGateOutWriteRequest(gateOutWriteRequest);
+		
+		if(optOPUSGateOutWriteRequest.isPresent()){
+			OpusGateOutWriteRequest opusGateOutWriteRequest = optOPUSGateOutWriteRequest.get();
+			OpusRequestResponseDTO opusRequestResponseDTO = new OpusRequestResponseDTO(opusGateOutWriteRequest, gson,
+					gateOutWriteRequest.getCardID());
 
-		OpusRequestResponseDTO opusRequestResponseDTO = new OpusRequestResponseDTO(opusGateOutWriteRequest, gson,
-				gateOutWriteRequest.getCardID());
+			OpusGateOutWriteResponse opusGateOutWriteResponse = opusGateOutWriteService
+					.getGateOutWriteResponse(opusGateOutWriteRequest, opusRequestResponseDTO);
 
-		OpusGateOutWriteResponse opusGateOutWriteResponse = opusGateOutWriteService
-				.getGateOutWriteResponse(opusGateOutWriteRequest, opusRequestResponseDTO);
+			String errorMessage = opusDTOConstructService.hasErrorMessage(opusGateOutWriteResponse.getErrorList());
+			if (StringUtils.isNotEmpty(errorMessage)) {
+				// throw new business exception with constructed message - there is
+				// an error
+				throw new BusinessException(errorMessage);
 
-		String errorMessage = opusDTOConstructService.hasErrorMessage(opusGateOutWriteResponse.getErrorList());
-		if (StringUtils.isNotEmpty(errorMessage)) {
-			// throw new business exception with constructed message - there is
-			// an error
-			throw new BusinessException(errorMessage);
+			}
 
+			// TODO Auto-generated method stub
+			return opusGateOutWriteService.constructGateOutReponse(opusGateOutWriteResponse, gateOutReponse);
+		}else{
+			return gateOutReponse;
 		}
 
-		// TODO Auto-generated method stub
-		return opusGateOutWriteService.constructGateOutReponse(opusGateOutWriteResponse, gateOutReponse);
+		
 	}
 
 }

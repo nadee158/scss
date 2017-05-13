@@ -17,6 +17,7 @@ import com.privasia.scss.common.dto.ExportContainer;
 import com.privasia.scss.common.dto.GateInWriteRequest;
 import com.privasia.scss.common.dto.ImportContainer;
 import com.privasia.scss.common.enums.ContainerStatus;
+import com.privasia.scss.common.enums.TransactionStatus;
 import com.privasia.scss.common.service.export.ExportUtilService;
 import com.privasia.scss.common.util.DateUtil;
 import com.privasia.scss.opus.dto.GIReadResponseExporterContainer;
@@ -661,7 +662,9 @@ public class OpusDTOConstructService {
     if (!(exportContainers == null || exportContainers.isEmpty())) {
       List<GOWriteRequestExportContainer> goWriteRequestExportContainerList =
           new ArrayList<GOWriteRequestExportContainer>();
-      exportContainers.forEach(exportContainer -> {
+      exportContainers.stream().filter(exp -> StringUtils.equalsIgnoreCase(exp.getBaseCommonGateInOutAttribute().getEirStatus(), 
+    		  TransactionStatus.APPROVED.getValue()) || StringUtils.equalsIgnoreCase(exp.getCommonGateInOut().getGateInStatus(), 
+    	    		  TransactionStatus.APPROVED.getValue())).forEach(exportContainer -> {
         goWriteRequestExportContainerList.add(exportContainerToGOWriteRequestExportContainer(exportContainer));
       });
       return goWriteRequestExportContainerList;
@@ -674,7 +677,9 @@ public class OpusDTOConstructService {
     if (!(importContainers == null || importContainers.isEmpty())) {
       List<GOWriteRequestImportContainer> goWriteRequestImportContainerList =
           new ArrayList<GOWriteRequestImportContainer>();
-      importContainers.forEach(importContainer -> {
+      importContainers.stream().filter(imp -> StringUtils.equalsIgnoreCase(imp.getBaseCommonGateInOutAttribute().getEirStatus(), 
+    		  TransactionStatus.APPROVED.getValue()) || StringUtils.equalsIgnoreCase(imp.getCommonGateInOut().getGateInStatus(), 
+    	    		  TransactionStatus.APPROVED.getValue())).forEach(importContainer -> {
         goWriteRequestImportContainerList.add(importContainerToGOWriteRequestImportContainer(importContainer));
       });
       return goWriteRequestImportContainerList;

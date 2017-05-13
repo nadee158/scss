@@ -2,7 +2,7 @@
 <configuration>
 
 	<property name="FILE_NAME" value="scss-scancard" />
-	<property name="LOG_HOME" value="/opt/tomcat/scss_logs/${FILE_NAME}" />
+	<property name="LOG_HOME" value="${catalina.base}/scss_logs/${FILE_NAME}" />
 
 	<appender name="FILE-AUDIT"	class="ch.qos.logback.core.rolling.RollingFileAppender">
 	

@@ -52,7 +52,7 @@ public class SolasService {
 
 	}
 
-	public List<ExportContainer> calculateTerminalVGM(List<ExportContainer> exportContainers) {
+	public List<ExportContainer> calculateTerminalVGM(List<ExportContainer> exportContainers, boolean directEntry) {
 
 		Optional<ExportContainer> optFirstContainer = exportContainers.stream()
 				.filter(expCon -> StringUtils.equalsIgnoreCase(ContainerFullEmptyType.FULL.getValue(),
@@ -131,41 +131,81 @@ public class SolasService {
 				ExportContainer lastContainer = optLastContainer.get();
 				lastContainer.setWithinTolerance(false);
 				if (firstContainer.getExpWeightBridge() - lastContainer.getExpWeightBridge() == 0) {
-					int terminalVGM = firstContainer.getExpWeightBridge() - pmWeight - axelWeight - fuelWeight
-							- tireWeight;
-					firstContainer.setExpNetWeight(terminalVGM / 2);
-					firstContainer.setTireWeight(String.valueOf(tireWeight));
-					firstContainer.setFuelWeight(String.valueOf(fuelWeight));
-
-					lastContainer.setExpNetWeight(terminalVGM / 2);
-					lastContainer.setTireWeight(String.valueOf(tireWeight));
-					lastContainer.setFuelWeight(String.valueOf(fuelWeight));
-
+					//back to back when page load
+					if(directEntry){
+						int weighBridge = firstContainer.getExpNetWeight() + lastContainer.getExpNetWeight() + 
+								pmWeight + axelWeight + fuelWeight + tireWeight;
+						firstContainer.setExpWeightBridge(weighBridge);
+						lastContainer.setExpWeightBridge(weighBridge);
+					
+					}else{
+						int terminalVGM = firstContainer.getExpWeightBridge() - pmWeight - axelWeight - fuelWeight
+								- tireWeight;
+						firstContainer.setExpNetWeight(terminalVGM / 2);
+						lastContainer.setExpNetWeight(terminalVGM / 2);
+						
+					}
+					
 				} else if (firstContainer.getExpWeightBridge() < lastContainer.getExpWeightBridge()) {
+					// container 01 lifted
+					
+					if(directEntry){
+						
+						int weighbridgeFirst = firstContainer.getExpNetWeight() + pmWeight + axelWeight + fuelWeight + tireWeight;
+						firstContainer.setExpWeightBridge(weighbridgeFirst);
+						
+						int weighbridgeLast = lastContainer.getExpNetWeight() + firstContainer.getExpWeightBridge();
+						lastContainer.setExpWeightBridge(weighbridgeLast);
+						
+					}else{
+						int terminalVGMC1 = firstContainer.getExpWeightBridge() - pmWeight - axelWeight - fuelWeight
+								- tireWeight;
+						firstContainer.setExpNetWeight(terminalVGMC1);
 
-					int terminalVGMC1 = firstContainer.getExpWeightBridge() - pmWeight - axelWeight - fuelWeight
-							- tireWeight;
-					firstContainer.setExpNetWeight(terminalVGMC1);
-
-					int terminalVGMC2 = lastContainer.getExpWeightBridge() - firstContainer.getExpWeightBridge();
-					lastContainer.setExpNetWeight(terminalVGMC2);
+						int terminalVGMC2 = lastContainer.getExpWeightBridge() - firstContainer.getExpWeightBridge();
+						lastContainer.setExpNetWeight(terminalVGMC2);
+					}
+					
 
 				} else {// container 02 lifted
+					
+					if(directEntry){
+						int weighbridgeLast = lastContainer.getExpNetWeight() + pmWeight + axelWeight + fuelWeight + tireWeight;
+						lastContainer.setExpWeightBridge(weighbridgeLast);
+						
+						int weighbridgeFirst = firstContainer.getExpNetWeight() + lastContainer.getExpWeightBridge();
+						firstContainer.setExpWeightBridge(weighbridgeFirst);
+					}else{
+						int terminalVGMC2 = lastContainer.getExpWeightBridge() - pmWeight - axelWeight - fuelWeight
+								- tireWeight;
+						lastContainer.setExpNetWeight(terminalVGMC2);
 
-					int terminalVGMC2 = lastContainer.getExpWeightBridge() - pmWeight - axelWeight - fuelWeight
-							- tireWeight;
-					lastContainer.setExpNetWeight(terminalVGMC2);
-
-					int terminalVGMC1 = firstContainer.getExpWeightBridge() - lastContainer.getExpWeightBridge();
-					firstContainer.setExpNetWeight(terminalVGMC1);
+						int terminalVGMC1 = firstContainer.getExpWeightBridge() - lastContainer.getExpWeightBridge();
+						firstContainer.setExpNetWeight(terminalVGMC1);
+					}
 
 				}
-
-			} else {// this is for single container
-				int terminalVGM = firstContainer.getExpWeightBridge() - pmWeight - axelWeight - fuelWeight - tireWeight;
-				firstContainer.setExpNetWeight(terminalVGM);
+				
 				firstContainer.setTireWeight(String.valueOf(tireWeight));
 				firstContainer.setFuelWeight(String.valueOf(fuelWeight));
+				lastContainer.setTireWeight(String.valueOf(tireWeight));
+				lastContainer.setFuelWeight(String.valueOf(fuelWeight));
+
+			} else {// this is for single container
+				
+				if(directEntry){
+					
+					int weighbridge = firstContainer.getExpNetWeight() + pmWeight + axelWeight + fuelWeight + tireWeight; 
+					firstContainer.setExpWeightBridge(weighbridge);
+				}else{
+					int terminalVGM = firstContainer.getExpWeightBridge() - pmWeight - axelWeight - fuelWeight - tireWeight;
+					firstContainer.setExpNetWeight(terminalVGM);
+				}
+				
+				firstContainer.setTireWeight(String.valueOf(tireWeight));
+				firstContainer.setFuelWeight(String.valueOf(fuelWeight));
+				
+				
 			}
 
 			if (StringUtils.equalsIgnoreCase(firstContainer.getSolas().getSolasInstruction(),

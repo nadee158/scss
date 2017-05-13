@@ -42,7 +42,6 @@ import com.privasia.scss.core.model.ShipSCN;
 import com.privasia.scss.core.model.SystemUser;
 import com.privasia.scss.core.predicate.ExportsPredicates;
 import com.privasia.scss.core.repository.DamageCodeRepository;
-import com.privasia.scss.core.repository.DgDetailRepository;
 import com.privasia.scss.core.repository.ExportsQRepository;
 import com.privasia.scss.core.repository.ExportsRepository;
 import com.privasia.scss.core.repository.HPABBookingRepository;
@@ -57,7 +56,6 @@ import com.privasia.scss.gatein.exports.business.service.EarlyEntryService;
 import com.privasia.scss.gatein.exports.business.service.EmptyContainerService;
 import com.privasia.scss.gatein.exports.business.service.SSRService;
 import com.privasia.scss.gatein.exports.business.service.SealValidationService;
-import com.privasia.scss.gatein.exports.business.service.SolasService;
 import com.privasia.scss.gatein.exports.business.service.VesselOmitService;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Predicate;
@@ -91,8 +89,6 @@ public class ExportGateInService {
 	private DamageCodeService damageCodeService;
 
 	private SealValidationService sealValidationService;
-
-	private SolasService solasService;
 
 	private EarlyEntryService earlyEntryService;
 
@@ -165,11 +161,6 @@ public class ExportGateInService {
 	}
 
 	@Autowired
-	public void setSolasService(SolasService solasService) {
-		this.solasService = solasService;
-	}
-
-	@Autowired
 	public void setEarlyEntryService(EarlyEntryService earlyEntryService) {
 		this.earlyEntryService = earlyEntryService;
 	}
@@ -230,14 +221,6 @@ public class ExportGateInService {
 		});
 		
 		emptyContainerService.calculateWeightBridgeForEmpty(gateInReponse.getExportContainers(), gateInReponse.getExpWeightBridge());
-		
-		boolean fullExist = gateInReponse.getExportContainers().stream()
-				.filter(expCon -> (StringUtils.equalsIgnoreCase(ContainerFullEmptyType.FULL.getValue(),
-						expCon.getContainer().getContainerFullOrEmpty())))
-				.findAny().isPresent();
-		if (fullExist)
-			solasService.calculateTerminalVGM(gateInReponse.getExportContainers());
-		
 		
 		return gateInReponse;
 
@@ -352,7 +335,8 @@ public class ExportGateInService {
 				exportContainer.setCommonGateInOut(new CommonGateInOutDTO());
 			}
 			exportContainer.getCommonGateInOut().setGateInStatus(gateInWriteRequest.getGateInStatus());
-
+			exportContainer.getCommonGateInOut().setRejectReason(gateInWriteRequest.getRejectReason());
+			
 			Exports exports = new Exports();
 			modelMapper.map(exportContainer, exports);
 
@@ -442,6 +426,8 @@ public class ExportGateInService {
 				dgContainerService.validateUserByPassDG(exportContainer);
 				
 				if(exportContainer.getContainer().getContainerFullOrEmpty() == ContainerFullEmptyType.EMPTY.getValue()){
+					if (StringUtils.isNotEmpty(exportContainer.getContainer().getContainerISOCode()))
+						throw new BusinessException("ISO Code mandatory. Please enter the code");
 					emptyContainerService.setEmptyContainerWeight(exportContainer, exportContainer.getContainer().getContainerISOCode());
 				}
 

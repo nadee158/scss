@@ -6,14 +6,16 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 
 
 /**
- * Hello world!
+ * Janaka Wanigatunga!
  *
  */
 @Configuration
 @ComponentScan(basePackages = {"com.privasia.scss.*"})
+@PropertySource(value = {"classpath:application.properties", "classpath:client_application.properties"})
 @EnableAutoConfiguration
 public class ClientEntryPoint extends SpringBootServletInitializer {
 
