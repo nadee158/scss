@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.google.gson.Gson;
 import com.privasia.scss.common.dto.GateInReponse;
+import com.privasia.scss.common.dto.GateInRequest;
 import com.privasia.scss.common.dto.GateInWriteRequest;
 import com.privasia.scss.common.dto.GateOutReponse;
 import com.privasia.scss.common.dto.GateOutRequest;
@@ -27,123 +28,131 @@ import com.privasia.scss.opus.dto.OpusRequestResponseDTO;
 @Service("opus")
 public class OpusService implements OpusCosmosBusinessService {
 
-	private static final Log log = LogFactory.getLog(OpusService.class);
+  private static final Log log = LogFactory.getLog(OpusService.class);
 
-	private OpusGateInWriteService opusGateInWriteService;
+  private OpusGateInWriteService opusGateInWriteService;
 
-	private OpusDTOConstructService opusDTOConstructService;
+  private OpusDTOConstructService opusDTOConstructService;
 
-	private OpusGateOutReadService opusGateOutReadService;
-	
-	private OpusGateOutWriteService opusGateOutWriteService;
+  private OpusGateOutReadService opusGateOutReadService;
 
-	private Gson gson;
+  private OpusGateOutWriteService opusGateOutWriteService;
 
-	@Autowired
-	public void setOpusGateOutReadService(OpusGateOutReadService opusGateOutReadService) {
-		this.opusGateOutReadService = opusGateOutReadService;
-	}
+  private Gson gson;
 
-	@Autowired
-	public void setOpusGateInWriteService(OpusGateInWriteService opusGateInWriteService) {
-		this.opusGateInWriteService = opusGateInWriteService;
-	}
+  @Autowired
+  public void setOpusGateOutReadService(OpusGateOutReadService opusGateOutReadService) {
+    this.opusGateOutReadService = opusGateOutReadService;
+  }
 
-	@Autowired
-	public void setOpusDTOConstructService(OpusDTOConstructService opusDTOConstructService) {
-		this.opusDTOConstructService = opusDTOConstructService;
-	}
+  @Autowired
+  public void setOpusGateInWriteService(OpusGateInWriteService opusGateInWriteService) {
+    this.opusGateInWriteService = opusGateInWriteService;
+  }
 
-	@Autowired
-	public void setGson(Gson gson) {
-		this.gson = gson;
-	}
-	
-	@Autowired
-	public void setOpusGateOutWriteService(OpusGateOutWriteService opusGateOutWriteService) {
-		this.opusGateOutWriteService = opusGateOutWriteService;
-	}
+  @Autowired
+  public void setOpusDTOConstructService(OpusDTOConstructService opusDTOConstructService) {
+    this.opusDTOConstructService = opusDTOConstructService;
+  }
 
-	@Override
-	public GateInReponse sendGateInRequest(GateInWriteRequest gateInWriteRequest) {
-		OpusGateInWriteRequest opusGateInWriteRequest = opusGateInWriteService
-				.constructOpusGateInWriteRequest(gateInWriteRequest);
+  @Autowired
+  public void setGson(Gson gson) {
+    this.gson = gson;
+  }
 
-		OpusRequestResponseDTO opusRequestResponseDTO = new OpusRequestResponseDTO(opusGateInWriteRequest, gson,
-				gateInWriteRequest.getCardId());
+  @Autowired
+  public void setOpusGateOutWriteService(OpusGateOutWriteService opusGateOutWriteService) {
+    this.opusGateOutWriteService = opusGateOutWriteService;
+  }
 
-		OpusGateInWriteResponse opusGateInWriteResponse = opusGateInWriteService
-				.getGateInWriteResponse(opusGateInWriteRequest, opusRequestResponseDTO);
+  @Override
+  public GateInReponse sendGateInWriteRequest(GateInWriteRequest gateInWriteRequest) {
+    OpusGateInWriteRequest opusGateInWriteRequest =
+        opusGateInWriteService.constructOpusGateInWriteRequest(gateInWriteRequest);
 
-		String errorMessage = opusDTOConstructService.hasErrorMessage(opusGateInWriteResponse.getErrorList());
-		log.error("ERROR MESSAGE FROM OPUS SERVICE: " + errorMessage);
-		if (StringUtils.isNotEmpty(errorMessage)) {
-			// save it to the db - TO BE IMPLEMENTED
-			// throw new business exception with constructed message - there is
-			// an error
-			throw new BusinessException(errorMessage);
-		}
+    OpusRequestResponseDTO opusRequestResponseDTO =
+        new OpusRequestResponseDTO(opusGateInWriteRequest, gson, gateInWriteRequest.getCardId());
 
-		GateInReponse gateInReponse = new GateInReponse();
-		gateInReponse.setImportContainers(gateInWriteRequest.getImportContainers());
-		gateInReponse.setExportContainers(gateInWriteRequest.getExportContainers());
-		gateInReponse = opusGateInWriteService.constructGateInReponse(opusGateInWriteResponse, gateInReponse);
-		return gateInReponse;
-	}
+    OpusGateInWriteResponse opusGateInWriteResponse =
+        opusGateInWriteService.getGateInWriteResponse(opusGateInWriteRequest, opusRequestResponseDTO);
 
-	@Override
-	public GateOutReponse sendGateOutReadRequest(GateOutRequest gateOutRequest, GateOutReponse gateOutReponse) {
-		OpusGateOutReadRequest gateOutReadRequest = opusGateOutReadService.constructOpenGateOutRequest(gateOutRequest);
+    String errorMessage = opusDTOConstructService.hasErrorMessage(opusGateInWriteResponse.getErrorList());
+    log.error("ERROR MESSAGE FROM OPUS SERVICE: " + errorMessage);
+    if (StringUtils.isNotEmpty(errorMessage)) {
+      // save it to the db - TO BE IMPLEMENTED
+      // throw new business exception with constructed message - there is
+      // an error
+      throw new BusinessException(errorMessage);
+    }
 
-		OpusRequestResponseDTO opusRequestResponseDTO = new OpusRequestResponseDTO(gateOutReadRequest, gson,
-				gateOutRequest.getCardID());
+    GateInReponse gateInReponse = new GateInReponse();
+    gateInReponse.setImportContainers(gateInWriteRequest.getImportContainers());
+    gateInReponse.setExportContainers(gateInWriteRequest.getExportContainers());
+    gateInReponse = opusGateInWriteService.constructGateInReponse(opusGateInWriteResponse, gateInReponse);
+    return gateInReponse;
+  }
 
-		OpusGateOutReadResponse gateOutReadResponse = opusGateOutReadService.getGateOutReadResponse(gateOutReadRequest,
-				opusRequestResponseDTO);
-		// check the errorlist of reponse
-		String errorMessage = opusDTOConstructService.hasErrorMessage(gateOutReadResponse.getErrorList());
-		log.error("ERROR MESSAGE FROM OPUS SERVICE: " + errorMessage);
-		if (StringUtils.isNotEmpty(errorMessage)) {
-			// save it to the db - TO BE IMPLEMENTED
-			// throw new business exception with constructed message - there
-			// is
-			// an error
-			System.err.println(errorMessage);
-			throw new BusinessException(errorMessage);
-		}
-		return opusGateOutReadService.constructGateOutReponse(gateOutReadResponse, gateOutReponse);
-	}
+  @Override
+  public GateOutReponse sendGateOutReadRequest(GateOutRequest gateOutRequest, GateOutReponse gateOutReponse) {
+    OpusGateOutReadRequest gateOutReadRequest = opusGateOutReadService.constructOpenGateOutRequest(gateOutRequest);
 
-	@Override
-	public GateOutReponse sendGateOutWriteRequest(GateOutWriteRequest gateOutWriteRequest, GateOutReponse gateOutReponse) {
+    OpusRequestResponseDTO opusRequestResponseDTO =
+        new OpusRequestResponseDTO(gateOutReadRequest, gson, gateOutRequest.getCardID());
 
-		// call opus -
-		Optional<OpusGateOutWriteRequest> optOPUSGateOutWriteRequest = opusGateOutWriteService
-				.constructOpusGateOutWriteRequest(gateOutWriteRequest);
-		
-		if(optOPUSGateOutWriteRequest.isPresent()){
-			OpusGateOutWriteRequest opusGateOutWriteRequest = optOPUSGateOutWriteRequest.get();
-			OpusRequestResponseDTO opusRequestResponseDTO = new OpusRequestResponseDTO(opusGateOutWriteRequest, gson,
-					gateOutWriteRequest.getCardID());
+    OpusGateOutReadResponse gateOutReadResponse =
+        opusGateOutReadService.getGateOutReadResponse(gateOutReadRequest, opusRequestResponseDTO);
+    // check the errorlist of reponse
+    String errorMessage = opusDTOConstructService.hasErrorMessage(gateOutReadResponse.getErrorList());
+    log.error("ERROR MESSAGE FROM OPUS SERVICE: " + errorMessage);
+    if (StringUtils.isNotEmpty(errorMessage)) {
+      // save it to the db - TO BE IMPLEMENTED
+      // throw new business exception with constructed message - there
+      // is
+      // an error
+      System.err.println(errorMessage);
+      throw new BusinessException(errorMessage);
+    }
+    return opusGateOutReadService.constructGateOutReponse(gateOutReadResponse, gateOutReponse);
+  }
 
-			OpusGateOutWriteResponse opusGateOutWriteResponse = opusGateOutWriteService
-					.getGateOutWriteResponse(opusGateOutWriteRequest, opusRequestResponseDTO);
+  @Override
+  public GateOutReponse sendGateOutWriteRequest(GateOutWriteRequest gateOutWriteRequest,
+      GateOutReponse gateOutReponse) {
 
-			String errorMessage = opusDTOConstructService.hasErrorMessage(opusGateOutWriteResponse.getErrorList());
-			if (StringUtils.isNotEmpty(errorMessage)) {
-				// throw new business exception with constructed message - there is
-				// an error
-				throw new BusinessException(errorMessage);
+    // call opus -
+    Optional<OpusGateOutWriteRequest> optOPUSGateOutWriteRequest =
+        opusGateOutWriteService.constructOpusGateOutWriteRequest(gateOutWriteRequest);
 
-			}
+    if (optOPUSGateOutWriteRequest.isPresent()) {
+      OpusGateOutWriteRequest opusGateOutWriteRequest = optOPUSGateOutWriteRequest.get();
+      OpusRequestResponseDTO opusRequestResponseDTO =
+          new OpusRequestResponseDTO(opusGateOutWriteRequest, gson, gateOutWriteRequest.getCardID());
 
-			// TODO Auto-generated method stub
-			return opusGateOutWriteService.constructGateOutReponse(opusGateOutWriteResponse, gateOutReponse);
-		}else{
-			return gateOutReponse;
-		}
+      OpusGateOutWriteResponse opusGateOutWriteResponse =
+          opusGateOutWriteService.getGateOutWriteResponse(opusGateOutWriteRequest, opusRequestResponseDTO);
 
-		
-	}
+      String errorMessage = opusDTOConstructService.hasErrorMessage(opusGateOutWriteResponse.getErrorList());
+      if (StringUtils.isNotEmpty(errorMessage)) {
+        // throw new business exception with constructed message - there is
+        // an error
+        throw new BusinessException(errorMessage);
+
+      }
+
+      // TODO Auto-generated method stub
+      return opusGateOutWriteService.constructGateOutReponse(opusGateOutWriteResponse, gateOutReponse);
+    } else {
+      return gateOutReponse;
+    }
+
+
+  }
+
+  @Override
+  public GateInReponse sendGateInReadRequest(GateInRequest gateInRequest) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
 
 }

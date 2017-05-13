@@ -1,4 +1,4 @@
-package com.privasia.scss.cosmos.dto.request;
+package com.privasia.scss.cosmos.xml.element;
 
 import java.io.Serializable;
 

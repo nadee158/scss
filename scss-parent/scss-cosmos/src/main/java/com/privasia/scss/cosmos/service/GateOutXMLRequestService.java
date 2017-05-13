@@ -21,9 +21,9 @@ import com.privasia.scss.cosmos.dto.request.CosmosGateInWriteRequest;
 import com.privasia.scss.cosmos.dto.request.CosmosGateOutExport;
 import com.privasia.scss.cosmos.dto.request.CosmosGateOutImport;
 import com.privasia.scss.cosmos.dto.request.CosmosGateOutWriteRequest;
-import com.privasia.scss.cosmos.dto.request.GINCNTDRP;
-import com.privasia.scss.cosmos.dto.request.GINCNTPUP;
 import com.privasia.scss.cosmos.xml.element.CSMCTL;
+import com.privasia.scss.cosmos.xml.element.GINCNTDRP;
+import com.privasia.scss.cosmos.xml.element.GINCNTPUP;
 import com.privasia.scss.cosmos.xml.element.GOTCNTINF;
 import com.privasia.scss.cosmos.xml.element.GOTTRCINF;
 
