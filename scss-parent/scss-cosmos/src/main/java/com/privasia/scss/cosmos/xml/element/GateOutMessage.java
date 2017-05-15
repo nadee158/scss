@@ -1,17 +1,14 @@
-package com.privasia.scss.cosmos.dto.exprequest;
+package com.privasia.scss.cosmos.xml.element;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 
-import com.privasia.scss.cosmos.xml.element.CSMCTL;
-import com.privasia.scss.cosmos.xml.element.GOTTRCINF;
 
+public class GateOutMessage {
 
-public class Message {
-
-  CSMCTL CSMCTL;
-  GOTTRCINF GOTTRCINF;
-  int Index;
+  private CSMCTL CSMCTL;
+  private GOTTRCINF GOTTRCINF;
+  private int Index;
 
   public CSMCTL getCSMCTL() {
     return CSMCTL;

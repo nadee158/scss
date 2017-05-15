@@ -14,9 +14,9 @@ import com.privasia.scss.cosmos.xml.element.GOTTRCINF;
 public class CosmosGateOutExport implements Serializable {
 
   private static final long serialVersionUID = 1L;
-  CSMCTL CSMCTL;
-  GOTTRCINF GOTTRCINF;
-  int Index;
+  private CSMCTL CSMCTL;
+  private GOTTRCINF GOTTRCINF;
+  private int Index;
 
   public CSMCTL getCSMCTL() {
     return CSMCTL;

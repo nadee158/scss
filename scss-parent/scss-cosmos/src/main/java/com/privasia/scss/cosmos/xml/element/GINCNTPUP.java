@@ -10,18 +10,18 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 public class GINCNTPUP implements Serializable {
 
   private static final long serialVersionUID = 1L;
-  String MSGTSE;
-  String UNITSE;
-  String UNBTSE;
-  String CNPVSE;
-  String UPLKSE;
-  String UPPKSE;
-  String UPOMSE;
-  String CYOISE;
-  String CYCISE;
-  String ACHISE;
-  String PCHISE;
-  String CRORSE;
+  private String MSGTSE;
+  private String UNITSE;
+  private String UNBTSE;
+  private String CNPVSE;
+  private String UPLKSE;
+  private String UPPKSE;
+  private String UPOMSE;
+  private String CYOISE;
+  private String CYCISE;
+  private String ACHISE;
+  private String PCHISE;
+  private String CRORSE;
 
   public String getMSGTSE() {
     return MSGTSE;

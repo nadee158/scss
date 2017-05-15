@@ -9,18 +9,33 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import com.privasia.scss.cosmos.xml.element.GateInMessage;
+
 @XmlRootElement(name = "SGS2Cosmos")
 public class CosmosGateInWriteRequest implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
-  List<CosmosGateInExport> exportList;
+  private GateInMessage gateInMessage;
 
-  List<CosmosGateInImport> importList;
+  private List<CosmosGateInExport> exportList;
+
+  private List<CosmosGateInImport> importList;
 
   public List<CosmosGateInExport> getExportList() {
     return exportList;
   }
+
+
+  @XmlElement(name = "Message")
+  public GateInMessage getGateInMessage() {
+    return gateInMessage;
+  }
+
+  public void setGateInMessage(GateInMessage gateInMessage) {
+    this.gateInMessage = gateInMessage;
+  }
+
 
   @XmlElement(name = "Message")
   public void setExportList(List<CosmosGateInExport> exportList) {

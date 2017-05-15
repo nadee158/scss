@@ -9,36 +9,50 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import com.privasia.scss.cosmos.xml.element.GateOutMessage;
+
 @XmlRootElement(name = "SGS2Cosmos")
 public class CosmosGateOutWriteRequest implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-	private CosmosGateOutExport export;
+  private GateOutMessage gateOutMessage;
 
-	private List<CosmosGateOutImport> importList;
+  private CosmosGateOutExport export;
 
-	public CosmosGateOutExport getExport() { 
-		return export;
-	}
-	
-	@XmlElement(name = "Message")
-	public void setExport(CosmosGateOutExport export) {
-		this.export = export;
-	}
+  private List<CosmosGateOutImport> importList;
 
-	public List<CosmosGateOutImport> getImportList() {
-		return importList;
-	}
+  public CosmosGateOutExport getExport() {
+    return export;
+  }
 
-	@XmlElement(name = "Message")
-	public void setImportList(List<CosmosGateOutImport> importList) {
-		this.importList = importList;
-	}
 
-	@Override
-	public String toString() {
-		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
-	}
+  public GateOutMessage getGateOutMessage() {
+    return gateOutMessage;
+  }
+
+  @XmlElement(name = "Message")
+  public void setGateOutMessage(GateOutMessage gateOutMessage) {
+    this.gateOutMessage = gateOutMessage;
+  }
+
+  @XmlElement(name = "Message")
+  public void setExport(CosmosGateOutExport export) {
+    this.export = export;
+  }
+
+  public List<CosmosGateOutImport> getImportList() {
+    return importList;
+  }
+
+  @XmlElement(name = "Message")
+  public void setImportList(List<CosmosGateOutImport> importList) {
+    this.importList = importList;
+  }
+
+  @Override
+  public String toString() {
+    return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
+  }
 
 }

@@ -7,15 +7,17 @@ import javax.xml.bind.annotation.XmlElement;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-public class GOTTRCINF implements Serializable {
+public class GINTRCINF implements Serializable {
 
+  /**
+   * 
+   */
   private static final long serialVersionUID = 1L;
   private String MSGTSC;
   private String LANESC;
   private String VMIDSC;
   private String ATDDSC;
   private String ATDTSC;
-
   private String VMYKSC;
 
   public String getMSGTSC() {
@@ -78,4 +80,15 @@ public class GOTTRCINF implements Serializable {
   }
 
 
+
 }
+
+//@formatter:off
+//+ "<GINTRCINF>\n" // For Gate In Truck Information
+//+ "<MSGTSC>GINTRCINF</MSGTSC>\n" //Message Type : To hard code
+//+ "<LANESC>" + toUpperCase(f.getLaneNo()) + "</LANESC>\n" // Lane : To capture gate lane no
+//+ "<VMIDSC>" + toUpperCase(f.getTruckHeadNo()) + "</VMIDSC>\n" // Truck License Plate : To capture truck no
+//+ "<ATDDSC>" + date + "</ATDDSC>\n" // Date of Arrival : To capture current date
+//+ "<ATDTSC>" + time + "</ATDTSC>\n" // Time of Arrival : To capture current time
+//+ "<VMYKSC>" + toUpperCase(f.getCompCode()) + "</VMYKSC>\n" //Truck Com. Code : To capture Truck Com. Code
+//+ "</GINTRCINF>\n"

@@ -18,7 +18,6 @@ public class CosmosCommonValuesDTO implements Serializable {
   private String compCode;
 
   private String loginUser;
-  private int messageIndex;
   private String errorMessage;
 
   public String getMsgUniqueId() {
@@ -92,14 +91,6 @@ public class CosmosCommonValuesDTO implements Serializable {
   }
 
 
-
-  public int getMessageIndex() {
-    return messageIndex;
-  }
-
-  public void setMessageIndex(int messageIndex) {
-    this.messageIndex = messageIndex;
-  }
 
   public String getErrorMessage() {
     return errorMessage;

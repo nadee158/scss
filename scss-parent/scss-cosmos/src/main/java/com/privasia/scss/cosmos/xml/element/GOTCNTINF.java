@@ -11,15 +11,15 @@ public class GOTCNTINF implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
-  String UNITSE;
+  private String UNITSE;
 
-  String SO01SE;
-  String ST01SE;
-  String SN01SE;
+  private String SO01SE;
+  private String ST01SE;
+  private String SN01SE;
 
-  String SO02SE;
-  String ST02SE;
-  String SN02SE;
+  private String SO02SE;
+  private String ST02SE;
+  private String SN02SE;
 
   public String getUNITSE() {
     return UNITSE;

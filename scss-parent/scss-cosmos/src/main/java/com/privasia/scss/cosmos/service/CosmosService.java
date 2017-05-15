@@ -29,6 +29,8 @@ import com.privasia.scss.cosmos.dto.request.CosmosGateInImport;
 import com.privasia.scss.cosmos.dto.request.CosmosGateInWriteRequest;
 import com.privasia.scss.cosmos.dto.request.CosmosGateOutImport;
 import com.privasia.scss.cosmos.dto.request.CosmosGateOutWriteRequest;
+import com.privasia.scss.cosmos.xml.element.service.GateInMessageService;
+import com.privasia.scss.cosmos.xml.element.service.GateOutMessageService;
 
 @Service("cosmos")
 public class CosmosService implements OpusCosmosBusinessService {
@@ -41,6 +43,20 @@ public class CosmosService implements OpusCosmosBusinessService {
 
   private CosmosGateInExportService cosmosGateInExportService;
 
+  private GateInMessageService gateInMessageService;
+
+  private GateOutMessageService gateOutMessageService;
+
+
+  @Autowired
+  public void setGateInMessageService(GateInMessageService gateInMessageService) {
+    this.gateInMessageService = gateInMessageService;
+  }
+
+  @Autowired
+  public void setGateOutMessageService(GateOutMessageService gateOutMessageService) {
+    this.gateOutMessageService = gateOutMessageService;
+  }
 
   @Autowired
   public void setCosmosGateInImportService(CosmosGateInImportService cosmosGateInImportService) {
@@ -112,41 +128,48 @@ public class CosmosService implements OpusCosmosBusinessService {
   @Override
   public GateOutReponse sendGateOutWriteRequest(GateOutWriteRequest gateOutWriteRequest,
       GateOutReponse gateOutReponse) {
+    index = 0;
     ImpExpFlagStatus impExpFlag = ImpExpFlagStatus.fromValue(gateOutWriteRequest.getImpExpFlag());
 
     CosmosCommonValuesDTO commonValuesDTO = getCommonValues(gateOutWriteRequest);
-    commonValuesDTO.setMessageIndex(1);
     commonValuesDTO.setErrorMessage(null);
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     UserContext userContext = (UserContext) authentication.getPrincipal();
     commonValuesDTO.setLoginUser(userContext.getUsername());
 
     CosmosGateOutWriteRequest cosmosGateOutWriteRequest = new CosmosGateOutWriteRequest();
+    index++;
+    cosmosGateOutWriteRequest.setGateOutMessage(gateOutMessageService.constructGateOutMessage(commonValuesDTO, index));
 
     switch (impExpFlag) {
       case IMPORT:
+        index++;
         // getImpRequestXML
         if (!(gateOutReponse.getImportContainers() == null || gateOutReponse.getImportContainers().isEmpty())) {
           cosmosGateOutWriteRequest.setImportList(new ArrayList<CosmosGateOutImport>());
           gateOutReponse.getImportContainers().forEach(importContainer -> {
             cosmosGateOutWriteRequest.getImportList()
-                .add(cosmosGateOutImportService.constructCosmosGateOutImport(commonValuesDTO, importContainer));
+                .add(cosmosGateOutImportService.constructCosmosGateOutImport(commonValuesDTO, importContainer, index));
           });
         }
         break;
       case EXPORT:
+        index++;
         // getExpRequestXML - CosmosGateOutExport
-        cosmosGateOutWriteRequest.setExport(cosmosGateOutExportService.constructCosmosGateOutExport(commonValuesDTO));
+        cosmosGateOutWriteRequest
+            .setExport(cosmosGateOutExportService.constructCosmosGateOutExport(commonValuesDTO, index));
         break;
       case IMPORT_EXPORT:
-        cosmosGateOutWriteRequest.setExport(cosmosGateOutExportService.constructCosmosGateOutExport(commonValuesDTO));
+        index++;
+        cosmosGateOutWriteRequest
+            .setExport(cosmosGateOutExportService.constructCosmosGateOutExport(commonValuesDTO, index));
         // gateoutxmlrequest
         // getImpExpRequestXML
         if (!(gateOutReponse.getImportContainers() == null || gateOutReponse.getImportContainers().isEmpty())) {
           cosmosGateOutWriteRequest.setImportList(new ArrayList<CosmosGateOutImport>());
           gateOutReponse.getImportContainers().forEach(importContainer -> {
             cosmosGateOutWriteRequest.getImportList()
-                .add(cosmosGateOutImportService.constructCosmosGateOutImport(commonValuesDTO, importContainer));
+                .add(cosmosGateOutImportService.constructCosmosGateOutImport(commonValuesDTO, importContainer, index));
           });
         }
         break;
@@ -168,19 +191,20 @@ public class CosmosService implements OpusCosmosBusinessService {
 
   @Override
   public GateInReponse sendGateInWriteRequest(GateInWriteRequest gateInWriteRequest) {
+    index = 0;
     ImpExpFlagStatus impExpFlag = ImpExpFlagStatus.fromValue(gateInWriteRequest.getImpExpFlag());
 
     CosmosCommonValuesDTO commonValuesDTO = getCommonValues(gateInWriteRequest);
-    commonValuesDTO.setMessageIndex(1);
     commonValuesDTO.setErrorMessage(null);
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     UserContext userContext = (UserContext) authentication.getPrincipal();
     commonValuesDTO.setLoginUser(userContext.getUsername());
 
     CosmosGateInWriteRequest cosmosGateInWriteRequest = new CosmosGateInWriteRequest();
+    index++;
+    cosmosGateInWriteRequest.setGateInMessage(gateInMessageService.constructGateInMessage(commonValuesDTO, index));
     switch (impExpFlag) {
       case IMPORT:
-        index = 0;
         // getImpRequestXML
         if (!(gateInWriteRequest.getImportContainers() == null || gateInWriteRequest.getImportContainers().isEmpty())) {
           cosmosGateInWriteRequest.setImportList(new ArrayList<CosmosGateInImport>());

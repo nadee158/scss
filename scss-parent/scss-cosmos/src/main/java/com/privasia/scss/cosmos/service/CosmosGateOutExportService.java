@@ -55,13 +55,14 @@ public class CosmosGateOutExportService {
     return exportContainers;
   }
 
-  public CosmosGateOutExport constructCosmosGateOutExport(CosmosCommonValuesDTO commonValuesDTO) {
+  public CosmosGateOutExport constructCosmosGateOutExport(CosmosCommonValuesDTO commonValuesDTO, int index) {
     CosmosGateOutExport cosmosGateOutExport = new CosmosGateOutExport();
     cosmosGateOutExport.setCSMCTL(csmctlService.constructCSMCTL(commonValuesDTO));
     cosmosGateOutExport.setGOTTRCINF(gottrcinfService.constructGOTTRCINF(commonValuesDTO));
-    cosmosGateOutExport.setIndex(commonValuesDTO.getMessageIndex());
+    cosmosGateOutExport.setIndex(index);
     return cosmosGateOutExport;
   }
+
 
 
 //@formatter:off

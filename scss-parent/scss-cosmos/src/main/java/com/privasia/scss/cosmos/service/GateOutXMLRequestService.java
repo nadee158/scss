@@ -13,7 +13,6 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 import com.privasia.scss.common.util.AGSClient;
-import com.privasia.scss.cosmos.dto.exprequest.Message;
 import com.privasia.scss.cosmos.dto.exprequest.SGS2Cosmos;
 import com.privasia.scss.cosmos.dto.request.CosmosGateInExport;
 import com.privasia.scss.cosmos.dto.request.CosmosGateInImport;
@@ -298,16 +297,16 @@ public class GateOutXMLRequestService {
     gottrcinf.setATDDSC(date);
     gottrcinf.setATDTSC(time);
 
-    Message message = new Message();
-    message.setCSMCTL(csmctl);
-    message.setGOTTRCINF(gottrcinf);
-    message.setIndex(1);
-
-    List<Message> massageList = new ArrayList<Message>();
-    massageList.add(message);
+    // Message message = new Message();
+    // message.setCSMCTL(csmctl);
+    // message.setGOTTRCINF(gottrcinf);
+    // message.setIndex(1);
+    //
+    // List<Message> massageList = new ArrayList<Message>();
+    // massageList.add(message);
 
     SGS2Cosmos cosmos = new SGS2Cosmos();
-    cosmos.setMessage(massageList);
+    // cosmos.setMessage(massageList);
 
     try {
       // Marshalling

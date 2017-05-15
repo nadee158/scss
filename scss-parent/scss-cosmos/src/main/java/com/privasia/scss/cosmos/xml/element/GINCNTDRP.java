@@ -11,59 +11,59 @@ public class GINCNTDRP implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
-  String MSGTSE;
-  String UNITSE;
-  String ORRFSE;
-  String UNISSE;
-  String UNBTSE;
-  String CNPVSE;
-  String ORGVSE;
-  String LYNDSE;
+  private String MSGTSE;
+  private String UNITSE;
+  private String ORRFSE;
+  private String UNISSE;
+  private String UNBTSE;
+  private String CNPVSE;
+  private String ORGVSE;
+  private String LYNDSE;
 
-  String DM01SE;
-  String DM02SE;
-  String DM03SE;
-  String DM04SE;
-  String DM05SE;
-  String DM06SE;
-  String DM07SE;
-  String DM08SE;
-  String DM09SE;
+  private String DM01SE;
+  private String DM02SE;
+  private String DM03SE;
+  private String DM04SE;
+  private String DM05SE;
+  private String DM06SE;
+  private String DM07SE;
+  private String DM08SE;
+  private String DM09SE;
 
-  String SO01SE;
-  String ST01SE;
-  String SN01SE;
-  String SO02SE;
-  String ST02SE;
-  String SN02SE;
+  private String SO01SE;
+  private String ST01SE;
+  private String SN01SE;
+  private String SO02SE;
+  private String ST02SE;
+  private String SN02SE;
 
-  String UNBGSE;
+  private String UNBGSE;
 
-  String CNORSE;
-  String PLMNSE;
-  String RGRTSE;
-  String RGTESE;
+  private String CNORSE;
+  private String PLMNSE;
+  private String RGRTSE;
+  private String RGTESE;
 
-  String OOGISE;
-  String OVSVSE;
-  String OVSASE;
-  String OVSLSE;
-  String OVHGSE;
-  String OVSRSE;
+  private String OOGISE;
+  private String OVSVSE;
+  private String OVSASE;
+  private String OVSLSE;
+  private String OVHGSE;
+  private String OVSRSE;
 
-  String CNIMSE;
-  String CIM1SE;
-  String ISA1SE;
+  private String CNIMSE;
+  private String CIM1SE;
+  private String ISA1SE;
 
-  String CUN1SE;
+  private String CUN1SE;
 
-  String UOLCSE;
-  String UOLLSE;
-  String UOLOSE;
-  String CYOISE;
-  String CYCISE;
-  String ACHISE;
-  String PCHISE;
+  private String UOLCSE;
+  private String UOLLSE;
+  private String UOLOSE;
+  private String CYOISE;
+  private String CYCISE;
+  private String ACHISE;
+  private String PCHISE;
 
   public String getMSGTSE() {
     return MSGTSE;

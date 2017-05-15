@@ -1,21 +1,20 @@
-package com.privasia.scss.cosmos.dto.request;
+package com.privasia.scss.cosmos.xml.element;
 
 import java.io.Serializable;
 
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-import com.privasia.scss.cosmos.xml.element.CSMCTL;
-import com.privasia.scss.cosmos.xml.element.GINCNTDRP;
+public class GateInMessage implements Serializable {
 
-public class CosmosGateInExport implements Serializable {
-
+  /**
+   * 
+   */
   private static final long serialVersionUID = 1L;
   private CSMCTL CSMCTL;
-  private GINCNTDRP GINCNTDRP;
+  private GINTRCINF GINTRCINF;
   private int Index;
 
   public CSMCTL getCSMCTL() {
@@ -27,27 +26,29 @@ public class CosmosGateInExport implements Serializable {
     CSMCTL = cSMCTL;
   }
 
-  public GINCNTDRP getGINCNTDRP() {
-    return GINCNTDRP;
+  public GINTRCINF getGINTRCINF() {
+    return GINTRCINF;
   }
 
   @XmlElement
-  public void setGINCNTDRP(GINCNTDRP gINCNTDRP) {
-    GINCNTDRP = gINCNTDRP;
+  public void setGINTRCINF(GINTRCINF gINTRCINF) {
+    GINTRCINF = gINTRCINF;
   }
 
   public int getIndex() {
     return Index;
   }
 
-  @XmlAttribute
+  @XmlElement
   public void setIndex(int index) {
     Index = index;
   }
+
 
   @Override
   public String toString() {
     return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
   }
+
 
 }
