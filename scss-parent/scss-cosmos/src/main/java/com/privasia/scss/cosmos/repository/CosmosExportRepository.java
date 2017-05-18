@@ -42,6 +42,9 @@ public class CosmosExportRepository {
 	
 	@Value("${export.containerSecondaryInfo}")
 	private String queryContainerSecondaryInfo;
+	
+	@Value("${export.containerOOGInfo}")
+	private String queryContainerOOGInfo;
 
 	@Autowired
 	public void setJdbcTemplate(@Qualifier("as400JdbcTemplate") JdbcTemplate jdbcTemplate) {
@@ -122,6 +125,9 @@ public class CosmosExportRepository {
 		
 		jdbcTemplate.queryForObject(queryContainerSecondaryInfo,
 				new Object[] { exportContainerNo }, (rs, i) -> extractSecondaryContainerInfo(exportContainer, rs, i));
+		
+		jdbcTemplate.queryForObject(queryContainerOOGInfo,
+				new Object[] { exportContainerNo }, (rs, i) -> extractContainerOOGInfo(exportContainer, rs, i));
 
 		return exportContainer;
 
@@ -180,13 +186,10 @@ public class CosmosExportRepository {
 		
 		    /*exportContainer.setExportOrderStatus(gIReadResponseExporterContainer.getExportOrderStatus());
 		    exportContainer.setExportOrderType(gIReadResponseExporterContainer.getExportOrderType());
-		    exportContainer.setExpCarrierType(gIReadResponseExporterContainer.getExpCarrierType());
+		   
 		    exportContainer.setYardOpeningDateTime(
 			        DateUtil.getLocalDategFromString(gIReadResponseExporterContainer.getYardOpeningDateTime()));
-		    exportContainer.getContainer().setContainerHeight(
-			        ExportUtilService.getDoubleValueFromString(gIReadResponseExporterContainer.getContainerHeight()));
-			    exportContainer.setContainerType(gIReadResponseExporterContainer.getContainerType());
-			    exportContainer.getContainer().setContainerSize(gIReadResponseExporterContainer.getContainerSize());
+		   
 			 // private String containerSeal1_SL;// null,
 			    exportContainer.getSealAttribute().setSeal01Origin(gIReadResponseExporterContainer.getContainerSeal1_SL());
 			    // private String containerSeal1_NO;// SEAL001,
@@ -196,43 +199,21 @@ public class CosmosExportRepository {
 			    // private String containerSeal2_NO;// null,
 			    exportContainer.getSealAttribute().setSeal02Origin(gIReadResponseExporterContainer.getContainerSeal2_NO());
 
-			    // private String containerReeferIndicator;// N,
-			    exportContainer.setReferFlag(
-			        ExportUtilService.getBooleanFromString(gIReadResponseExporterContainer.getContainerReeferIndicator()));
-			    // private String containerReeferTempSign;// null,
-			    exportContainer.setReferTempType(gIReadResponseExporterContainer.getContainerReeferTempSign());
-			    // private String containerReeferTempValue;// null,
-			    if (StringUtils.isNotEmpty(gIReadResponseExporterContainer.getContainerReeferTempValue())) {
-			      exportContainer.setReferTemp(
-			          ExportUtilService.getDoubleValueFromString(gIReadResponseExporterContainer.getContainerReeferTempValue()));
-			    }
-			    // private String containerReeferTempUnit;// null,
-			    exportContainer.setReeferTempUnit(gIReadResponseExporterContainer.getContainerReeferTempUnit());
-			    
-			 // private double containerOOG_OH;// 5.0,
-			    exportContainer
-			        .setOogOH(ExportUtilService.getDoubleValueFromString(gIReadResponseExporterContainer.getContainerOOG_OH()).intValue());
-			    // private double containerOOG_OL;// 3.0,
-			    exportContainer
-			        .setOogOL(ExportUtilService.getDoubleValueFromString(gIReadResponseExporterContainer.getContainerOOG_OL()).intValue());
-			    // private double containerOOG_OF;// 1.0,
-			    exportContainer
-			        .setOogOF(ExportUtilService.getDoubleValueFromString(gIReadResponseExporterContainer.getContainerOOG_OF()).intValue());
-			    // private double containerOOG_OA;// 2.0,
-			    exportContainer
-			        .setOogOA(ExportUtilService.getDoubleValueFromString(gIReadResponseExporterContainer.getContainerOOG_OA()).intValue());
-			    // private double containerOOG_OR;// 4.0
-			    exportContainer
-			        .setOogOR(ExportUtilService.getDoubleValueFromString(gIReadResponseExporterContainer.getContainerOOG_OR()).intValue());
+			   
 			    exportContainer.setImdgLabelID(gIReadResponseExporterContainer.getContainerDGImdgLabel());
 			    // private String yardDGOpeningDateTime;// 20160904080000,
 			    exportContainer.setYardDGOpeningDateTime(
 			        DateUtil.getLocalDategFromString(gIReadResponseExporterContainer.getYardDGOpeningDateTime()));*/
 		    // private String containerInOrOut;// IN,
-//		    exportContainer.setGateInOut(TextString.format(rs.getString("HDTP10")));
-		   
+//		    
+			
+			exportContainer.setGateInOut(TextString.format(rs.getString("HDTP10")));
 		    // private String containerFullOrEmpty;// F,
 		    exportContainer.getContainer().setContainerFullOrEmpty(TextString.format(rs.getString("CNBT03")));
+		    
+		    exportContainer.setExpOut(TextString.format(rs.getString("VMSR01")));
+		    
+		    exportContainer.setExpCar(TextString.format(rs.getString("VMID01")));
 		    
 		    exportContainer.setSubHandlingType(TextString.format(rs.getString("HDST03")));
 		    
@@ -242,6 +223,19 @@ public class CosmosExportRepository {
 		    // private String containerIso;// 22G0,
 		    exportContainer.setCosmosISOCode(TextString.format(rs.getString("CNIS03")));
 		    exportContainer.getContainer().setContainerISOCode(TextString.format(rs.getString("CNIS03")));
+		    
+		 // private String containerReeferIndicator;// N,
+		    exportContainer.setReferFlag(
+		        ExportUtilService.getBooleanFromString(TextString.format(rs.getString("CNOR03"))));
+		    // private String containerReeferTempValue;// null,
+		    if (StringUtils.isNotEmpty(TextString.format(rs.getString("ORRT03")))) {
+		    	// private String containerReeferTempSign;// null,
+			    exportContainer.setReferTempType(ExportUtilService.getCosmosReferTempSign(TextString.format(rs.getString("ORRT03"))));
+			    exportContainer.setReferTemp(
+		          ExportUtilService.getDoubleValueFromString(TextString.format(rs.getString("ORRT03"))));
+		    }
+		    // private String containerReeferTempUnit;// null,
+		    exportContainer.setReeferTempUnit(TextString.format(rs.getString("ORTE03")));
 		    
 		    exportContainer.setGrossWeight(
 		        ExportUtilService.getIntValueFromString(rs.getString("CNBG03")));
@@ -259,9 +253,6 @@ public class CosmosExportRepository {
 		    exportContainer.setImdg(TextString.format(rs.getString("CNIM03")));
 		    // private String containerDGUNCode;// null,
 		    exportContainer.setDgUNCode(TextString.format(rs.getString("CNUN03")));
-		    // private String containerDGImdgLabel;// null,
-		   
-
 		    
 		    // private String containerDamageCode1;//
 		    exportContainer.setDamageCode_01(UtilService.constructDamageCode(TextString.format(rs.getString("dm0103"))));
@@ -274,6 +265,80 @@ public class CosmosExportRepository {
 		    // private String containerDamageCode5;//
 		    exportContainer.setDamageCode_05(UtilService.constructDamageCode(TextString.format(rs.getString("dm0503"))));
 		    
+
+		}
+
+
+		return exportContainer;
+	}
+	
+	private ExportContainer extractContainerOOGInfo(ExportContainer exportContainer, 
+			ResultSet rs, int rowNum) throws SQLException {
+		
+		if (rs.next()) {
+			
+			String OOGType2 = TextString.format(rs.getString("OT0207"));
+			String OOGVal2 = TextString.format(rs.getString("OW0207"));
+			
+
+			if (StringUtils.equalsIgnoreCase(OOGType2, "OH")) {
+				exportContainer.setOogOH(ExportUtilService.getDoubleValueFromString(OOGVal2).intValue());
+			} else if (StringUtils.equalsIgnoreCase(OOGType2, "OL")) {
+				 exportContainer.setOogOL(ExportUtilService.getDoubleValueFromString(OOGVal2).intValue());
+			} else if (StringUtils.equalsIgnoreCase(OOGType2, "OF")) {
+				exportContainer.setOogOF(ExportUtilService.getDoubleValueFromString(OOGVal2).intValue());
+			} else if (StringUtils.equalsIgnoreCase(OOGType2, "OA")) {
+				exportContainer.setOogOA(ExportUtilService.getDoubleValueFromString(OOGVal2).intValue());
+			} else if (StringUtils.equalsIgnoreCase(OOGType2, "OR")) {
+				 exportContainer.setOogOR(ExportUtilService.getDoubleValueFromString(OOGVal2).intValue());
+			}
+
+			String OOGType3 = TextString.format(rs.getString("ot0307"));
+			String OOGVal3 = TextString.format(rs.getString("ow0307"));
+
+			if (StringUtils.equalsIgnoreCase(OOGType3, "OH")) {
+				exportContainer.setOogOH(ExportUtilService.getDoubleValueFromString(OOGVal3).intValue());
+			} else if (StringUtils.equalsIgnoreCase(OOGType3, "OL")) {
+				exportContainer.setOogOL(ExportUtilService.getDoubleValueFromString(OOGVal3).intValue());
+			} else if (StringUtils.equalsIgnoreCase(OOGType3, "OF")) {
+				exportContainer.setOogOF(ExportUtilService.getDoubleValueFromString(OOGVal3).intValue());
+			} else if (StringUtils.equalsIgnoreCase(OOGType3, "OA")) {
+				exportContainer.setOogOA(ExportUtilService.getDoubleValueFromString(OOGVal3).intValue());
+			} else if (StringUtils.equalsIgnoreCase(OOGType3, "OR")) {
+				exportContainer.setOogOR(ExportUtilService.getDoubleValueFromString(OOGVal3).intValue());
+			}
+
+			if (rs.next()) {
+				String OOGType4 = TextString.format(rs.getString("ot0207"));
+				String OOGVal4 = TextString.format(rs.getString("ow0207"));
+
+				if (StringUtils.equalsIgnoreCase(OOGType4, "OH")) {
+					exportContainer.setOogOH(ExportUtilService.getDoubleValueFromString(OOGVal4).intValue());
+				} else if (StringUtils.equalsIgnoreCase(OOGType4, "OL")) {
+					exportContainer.setOogOL(ExportUtilService.getDoubleValueFromString(OOGVal4).intValue());
+				} else if (StringUtils.equalsIgnoreCase(OOGType4, "OF")) {
+					exportContainer.setOogOF(ExportUtilService.getDoubleValueFromString(OOGVal4).intValue());
+				} else if (StringUtils.equalsIgnoreCase(OOGType4, "OA")) {
+					exportContainer.setOogOA(ExportUtilService.getDoubleValueFromString(OOGVal4).intValue());
+				} else if (StringUtils.equalsIgnoreCase(OOGType4, "OR")) {
+					exportContainer.setOogOR(ExportUtilService.getDoubleValueFromString(OOGVal4).intValue());
+				}
+
+				String OOGType5 = TextString.format(rs.getString("ot0307"));
+				String OOGVal5 = TextString.format(rs.getString("ow0307"));
+
+				if (StringUtils.equalsIgnoreCase(OOGType5, "OH")) {
+					exportContainer.setOogOH(ExportUtilService.getDoubleValueFromString(OOGVal5).intValue());
+				} else if (StringUtils.equalsIgnoreCase(OOGType5, "OL")) {
+					exportContainer.setOogOL(ExportUtilService.getDoubleValueFromString(OOGVal5).intValue());
+				} else if (StringUtils.equalsIgnoreCase(OOGType5, "OF")) {
+					exportContainer.setOogOF(ExportUtilService.getDoubleValueFromString(OOGVal5).intValue());
+				} else if (StringUtils.equalsIgnoreCase(OOGType5, "OA")) {
+					exportContainer.setOogOA(ExportUtilService.getDoubleValueFromString(OOGVal5).intValue());
+				} else if (StringUtils.equalsIgnoreCase(OOGType5, "OR")) {
+					exportContainer.setOogOR(ExportUtilService.getDoubleValueFromString(OOGVal5).intValue());
+				}
+			}
 
 		}
 

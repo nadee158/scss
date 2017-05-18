@@ -13,21 +13,12 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.privasia.scss.common.util.DateUtil;
 
-public class GateOutWriteRequest implements Serializable {
+public class GateOutWriteRequest extends GateWriteRequest implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	private String userName = StringUtils.EMPTY;
-	private String laneNo = StringUtils.EMPTY;// -long (clientID)
-	private String haulageCode = StringUtils.EMPTY;// -long (clientID)
-	private String truckHeadNo = StringUtils.EMPTY;// -string
-	private String truckPlateNo = StringUtils.EMPTY;// -long (clientID)
-
 	@NotNull(message = "gateOutClient is required!")
 	private Long gateOutClient;
-
-	@NotNull(message = "cardId is required!")
-	private Long cardID;
 
 	private long gateOutBooth;
 
@@ -47,52 +38,13 @@ public class GateOutWriteRequest implements Serializable {
 
 	private List<WHoddDTO> whoddContainers;
 
-	public String getLaneNo() {
-		return laneNo;
-	}
-
-	public void setLaneNo(String laneNo) {
-		this.laneNo = laneNo;
-	}
-
-	public String getHaulageCode() {
-		return haulageCode;
-	}
-
-	public void setHaulageCode(String haulageCode) {
-		this.haulageCode = haulageCode;
-	}
-
-	public String getTruckHeadNo() {
-		return truckHeadNo;
-	}
-
-	public void setTruckHeadNo(String truckHeadNo) {
-		this.truckHeadNo = truckHeadNo;
-	}
-
-	public String getTruckPlateNo() {
-		return truckPlateNo;
-	}
-
-	public void setTruckPlateNo(String truckPlateNo) {
-		this.truckPlateNo = truckPlateNo;
-	}
-
+	
 	public Long getGateOutClient() {
 		return gateOutClient;
 	}
 
 	public void setGateOutClient(Long gateOutClient) {
 		this.gateOutClient = gateOutClient;
-	}
-
-	public Long getCardID() {
-		return cardID;
-	}
-
-	public void setCardID(Long cardID) {
-		this.cardID = cardID;
 	}
 
 	public LocalDateTime getGateOUTDateTime() {
@@ -117,18 +69,6 @@ public class GateOutWriteRequest implements Serializable {
 
 	public void setImportContainers(List<ImportContainer> importContainers) {
 		this.importContainers = importContainers;
-	}
-
-	public static long getSerialversionuid() {
-		return serialVersionUID;
-	}
-
-	public String getUserName() {
-		return userName;
-	}
-
-	public void setUserName(String userName) {
-		this.userName = userName;
 	}
 
 	public String getImpExpFlag() {

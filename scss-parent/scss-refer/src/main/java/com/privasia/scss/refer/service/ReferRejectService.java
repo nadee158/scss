@@ -258,7 +258,7 @@ public class ReferRejectService {
     gateInClient.setClientID(gateInWriteRequest.getGateInClient());
     baseCommonGateInOut.setGateInClient(gateInClient);
     CardDTO cardDTO = new CardDTO();
-    cardDTO.setCardID(gateInWriteRequest.getCardId());
+    cardDTO.setCardID(gateInWriteRequest.getCardID());
     baseCommonGateInOut.setCard(cardDTO);
     baseCommonGateInOut.setTimeGateIn(gateInWriteRequest.getGateInDateTime());
     baseCommonGateInOut.setEirStatus(TransactionStatus.REJECT.getValue());

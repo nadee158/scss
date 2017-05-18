@@ -150,7 +150,7 @@ public class ImportExportGateInService {
   @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
   public GateInReponse populateGateIn(GateInRequest gateInRequest) {
 
-    Optional<Card> cardOpt = cardRepository.findOne(gateInRequest.getCardID());
+    Optional<Card> cardOpt = cardRepository.findOne(gateInRequest.getCardID()); 
     Card card =
         cardOpt.orElseThrow(() -> new ResultsNotFoundException("Invalid Card ID ! " + gateInRequest.getCardID()));
 
@@ -219,6 +219,7 @@ public class ImportExportGateInService {
     gateInReponse.setExpWeightBridge(gateInRequest.getExpWeightBridge());
 
     if (!(gateInReponse.getExportContainers() == null || gateInReponse.getExportContainers().isEmpty())) {
+    	//set iso info if cosmos
       gateInReponse = exportGateInService.validateExportsGateInRead(gateInReponse, gateInRequest.getGateInDateTime());
     }
 
@@ -260,8 +261,8 @@ public class ImportExportGateInService {
       });
     }
 
-    Card card = cardRepository.findOne(gateInWriteRequest.getCardId())
-        .orElseThrow(() -> new ResultsNotFoundException("Invalid Card : " + gateInWriteRequest.getCardId()));
+    Card card = cardRepository.findOne(gateInWriteRequest.getCardID())
+        .orElseThrow(() -> new ResultsNotFoundException("Invalid Card : " + gateInWriteRequest.getCardID()));
 
     gateInWriteRequest.setHaulageCode(commonCardService.getHaulierCodeByScanCard(card));
 
@@ -275,6 +276,7 @@ public class ImportExportGateInService {
     if (StringUtils.isEmpty(gateInClient.getLaneNo()))
       throw new BusinessException("Lane no does not setup for client " + gateInClient.getClientID());
     gateInWriteRequest.setLaneNo(gateInClient.getLaneNo());
+    gateInWriteRequest.setCosmosPort(gateInClient.getCosmosPortNo());
 
     SystemUser gateInClerk = systemUserRepository.findOne(SecurityHelper.getCurrentUserId()).orElseThrow(
         () -> new AuthenticationServiceException("Log in User Not Found : " + SecurityHelper.getCurrentUserId()));
@@ -456,9 +458,9 @@ public class ImportExportGateInService {
     if (gateInWriteRequest.getWhoddContainers() == null || (gateInWriteRequest.getWhoddContainers().isEmpty()))
       throw new BusinessException("Invalid GateInWriteRequest to save ODD ! ");
 
-    Optional<Card> cardOpt = cardRepository.findOne(gateInWriteRequest.getCardId());
+    Optional<Card> cardOpt = cardRepository.findOne(gateInWriteRequest.getCardID());
     Card card = cardOpt
-        .orElseThrow(() -> new ResultsNotFoundException("Invalid Scan Card ID ! " + gateInWriteRequest.getCardId()));
+        .orElseThrow(() -> new ResultsNotFoundException("Invalid Scan Card ID ! " + gateInWriteRequest.getCardID()));
 
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     UserContext userContext = (UserContext) authentication.getPrincipal();

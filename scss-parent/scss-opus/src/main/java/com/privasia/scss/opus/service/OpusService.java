@@ -71,7 +71,7 @@ public class OpusService implements OpusCosmosBusinessService {
         opusGateInWriteService.constructOpusGateInWriteRequest(gateInWriteRequest);
 
     OpusRequestResponseDTO opusRequestResponseDTO =
-        new OpusRequestResponseDTO(opusGateInWriteRequest, gson, gateInWriteRequest.getCardId());
+        new OpusRequestResponseDTO(opusGateInWriteRequest, gson, gateInWriteRequest.getCardID());
 
     OpusGateInWriteResponse opusGateInWriteResponse =
         opusGateInWriteService.getGateInWriteResponse(opusGateInWriteRequest, opusRequestResponseDTO);
@@ -97,7 +97,7 @@ public class OpusService implements OpusCosmosBusinessService {
     OpusGateOutReadRequest gateOutReadRequest = opusGateOutReadService.constructOpenGateOutRequest(gateOutRequest);
 
     OpusRequestResponseDTO opusRequestResponseDTO =
-        new OpusRequestResponseDTO(gateOutReadRequest, gson, gateOutRequest.getCardID());
+        new OpusRequestResponseDTO(gateOutReadRequest, gson, gateOutRequest.getCardID()); 
 
     OpusGateOutReadResponse gateOutReadResponse =
         opusGateOutReadService.getGateOutReadResponse(gateOutReadRequest, opusRequestResponseDTO);

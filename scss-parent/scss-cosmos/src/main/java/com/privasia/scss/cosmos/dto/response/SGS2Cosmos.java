@@ -9,7 +9,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-@XmlRootElement(name = "SGS2Cosmos")
+@XmlRootElement(name = "SGS2CosmosRequest")
 public class SGS2Cosmos implements Serializable {
 
   private static final long serialVersionUID = 1L;

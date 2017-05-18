@@ -11,8 +11,8 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 import com.privasia.scss.cosmos.xml.element.GateOutMessage;
 
-@XmlRootElement(name = "SGS2Cosmos")
-public class CosmosGateOutWriteRequest implements Serializable {
+@XmlRootElement(name = "SGS2CosmosRequest")
+public class CosmosGateOutWriteRequest extends CosmosGateWriteRequest implements Serializable {
 
   private static final long serialVersionUID = 1L;
 

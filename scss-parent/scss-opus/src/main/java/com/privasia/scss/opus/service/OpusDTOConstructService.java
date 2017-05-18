@@ -18,6 +18,7 @@ import com.privasia.scss.common.dto.GateInWriteRequest;
 import com.privasia.scss.common.dto.ImportContainer;
 import com.privasia.scss.common.enums.ContainerStatus;
 import com.privasia.scss.common.enums.TransactionStatus;
+import com.privasia.scss.common.exception.BusinessException;
 import com.privasia.scss.common.service.export.ExportUtilService;
 import com.privasia.scss.common.util.DateUtil;
 import com.privasia.scss.opus.dto.GIReadResponseExporterContainer;
@@ -76,14 +77,13 @@ public class OpusDTOConstructService {
 
     if (exportContainer.getReferTemp() != null) {
       giWriteRequestExpContainer.setContainerReeferTempSign(exportContainer.getReferTempType());
-      giWriteRequestExpContainer.setContainerReeferTempUnit(exportContainer.getReeferTempUnit());
-      if (exportContainer.getReferTemp() == null) {
-        giWriteRequestExpContainer.setContainerReeferTempValue(null);
-      } else {
-        giWriteRequestExpContainer
-            .setContainerReeferTempValue(String.valueOf(Math.abs(exportContainer.getReferTemp())));
+      if(exportContainer.getReeferTempUnit() == null){
+    	  throw new BusinessException("Received null value for ReeferTempUnit from Client Application ");
       }
-
+      giWriteRequestExpContainer.setContainerReeferTempUnit(exportContainer.getReeferTempUnit());
+      giWriteRequestExpContainer
+            .setContainerReeferTempValue(String.valueOf(Math.abs(exportContainer.getReferTemp())));
+      
     }
 
     giWriteRequestExpContainer.setContainerDGImdg(exportContainer.getImdg());

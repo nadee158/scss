@@ -16,7 +16,7 @@ import com.privasia.scss.cosmos.repository.CosmosExportRepository;
 import com.privasia.scss.cosmos.xml.element.service.CSMCTLService;
 import com.privasia.scss.cosmos.xml.element.service.GINCNTDRPService;
 
-@Service("cosmosGateOutExportService")
+@Service("cosmosGateInExportService")
 public class CosmosGateInExportService {
 
   private CosmosExportRepository cosmosExportRepository;
@@ -55,22 +55,12 @@ public class CosmosGateInExportService {
     return exportContainers;
   }
 
-  public CosmosGateInExport constructCosmosGateInExport(ExportContainer exportContainer,
-      CosmosCommonValuesDTO commonValuesDTO, int index) {
+  public CosmosGateInExport constructCosmosGateInExport(CosmosCommonValuesDTO commonValuesDTO, ExportContainer exportContainer, int index) {
     CosmosGateInExport cosmosGateInExport = new CosmosGateInExport();
     cosmosGateInExport.setCSMCTL(csmctlService.constructCSMCTL(commonValuesDTO));
     cosmosGateInExport.setGINCNTDRP(gincntdrpService.constructGINCNTDRP(exportContainer));
     cosmosGateInExport.setIndex(index);
     return cosmosGateInExport;
   }
-//@formatter:off
-//"<Message Index=\"3\">\n";
-//  "<CSMCTL>\n"
-//  + "</CSMCTL>\n"
-//  + "<GINCNTDRP>\n" // For Gate In container drop off
-//  + "</GINCNTDRP>\n"
-//  + "</Message>\n";
-//@formatter:on
-
 
 }

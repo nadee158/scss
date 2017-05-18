@@ -13,65 +13,48 @@ import com.privasia.scss.cosmos.dto.request.CosmosGateInImport;
 import com.privasia.scss.cosmos.repository.CosmosImportRepository;
 import com.privasia.scss.cosmos.xml.element.service.CSMCTLService;
 import com.privasia.scss.cosmos.xml.element.service.GINCNTPUPService;
-import com.privasia.scss.cosmos.xml.element.service.GOTTRCINFService;
 
-@Service("cosmosGateOutImportService")
+@Service("cosmosGateInImportService")
 public class CosmosGateInImportService {
 
-  private CosmosImportRepository cosmosImportRepository;
+	private CosmosImportRepository cosmosImportRepository;
 
-  private CSMCTLService csmctlService;
+	private CSMCTLService csmctlService;
 
-  private GOTTRCINFService gottrcinfService;
+	private GINCNTPUPService gincntpupService;
 
-  private GINCNTPUPService gincntpupService;
+	@Autowired
+	public void setGincntpupService(GINCNTPUPService gincntpupService) {
+		this.gincntpupService = gincntpupService;
+	}
 
+	@Autowired
+	public void setCosmosImportRepository(CosmosImportRepository cosmosImportRepository) {
+		this.cosmosImportRepository = cosmosImportRepository;
+	}
 
-  @Autowired
-  public void setGincntpupService(GINCNTPUPService gincntpupService) {
-    this.gincntpupService = gincntpupService;
-  }
+	@Autowired
+	public void setCsmctlService(CSMCTLService csmctlService) {
+		this.csmctlService = csmctlService;
+	}
 
-  @Autowired
-  public void setCosmosImportRepository(CosmosImportRepository cosmosImportRepository) {
-    this.cosmosImportRepository = cosmosImportRepository;
-  }
+	@Transactional(value = "as400TransactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+	public List<ImportContainer> fetchCosmosSeal(List<ImportContainer> importContainers) {
+		if (!(importContainers == null || importContainers.isEmpty())) {
+			importContainers.forEach(importContainer -> {
+				cosmosImportRepository.fetchDsoSealNo(importContainer);
+			});
+		}
+		return importContainers;
+	}
 
-  @Autowired
-  public void setGottrcinfService(GOTTRCINFService gottrcinfService) {
-    this.gottrcinfService = gottrcinfService;
-  }
+	public CosmosGateInImport constructCosmosGateInImport(CosmosCommonValuesDTO commonValuesDTO,
+			ImportContainer importContainer, int index) {
+		CosmosGateInImport cosmosGateInImport = new CosmosGateInImport();
+		cosmosGateInImport.setCSMCTL(csmctlService.constructCSMCTL(commonValuesDTO));
+		cosmosGateInImport.setGINCNTPUP(gincntpupService.constructGINCNTPUP(importContainer));
+		cosmosGateInImport.setIndex(index);
+		return cosmosGateInImport;
+	}
 
-  @Autowired
-  public void setCsmctlService(CSMCTLService csmctlService) {
-    this.csmctlService = csmctlService;
-  }
-
-  @Transactional(value = "as400TransactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-  public List<ImportContainer> fetchCosmosSeal(List<ImportContainer> importContainers) {
-    if (!(importContainers == null || importContainers.isEmpty())) {
-      importContainers.forEach(importContainer -> {
-        cosmosImportRepository.fetchDsoSealNo(importContainer);
-      });
-    }
-    return importContainers;
-  }
-
-  public CosmosGateInImport constructCosmosGateInImport(CosmosCommonValuesDTO commonValuesDTO,
-      ImportContainer importContainer, int index) {
-    CosmosGateInImport cosmosGateInImport = new CosmosGateInImport();
-    cosmosGateInImport.setCSMCTL(csmctlService.constructCSMCTL(commonValuesDTO));
-    cosmosGateInImport.setGINCNTPUP(gincntpupService.constructGINCNTPUP(importContainer));
-    cosmosGateInImport.setIndex(index);
-    return cosmosGateInImport;
-  }
-
-//@formatter:off  
-//    "<Message Index=\"3\">\n";
-//    "<CSMCTL>\n"
-//      + "</CSMCTL>\n"
-//      + "<GINCNTPUP>\n" // For Gate Incontainer pick up
-//      + "</GINCNTPUP>\n"
-//      + "</Message>\n";
-    //@formatter:on
 }

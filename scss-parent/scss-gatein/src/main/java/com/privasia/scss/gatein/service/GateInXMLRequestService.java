@@ -256,7 +256,7 @@ public class GateInXMLRequestService {
     StringBuilder requestXML = new StringBuilder("");
     //@formatter:off
        requestXML.append("<?xml version=\"1.0\" encoding=\"ASCII\" standalone=\"no\"?>\n")
-                        .append("<SGS2Cosmos>\n")
+                        .append("<SGS2CosmosRequest>\n")
                         .append("<Message Index=\"1\">\n")
                         .append("<CSMCTL>\n")
                         .append("<RQST>GSRQS</RQST>\n") //Request Code : To hard code
@@ -279,7 +279,7 @@ public class GateInXMLRequestService {
                         .append("</GINTRCINF>\n")
                         .append("</Message>\n")
                         .append(createRequestXML)
-                        .append("</SGS2Cosmos>\n");
+                        .append("</SGS2CosmosRequest>\n");
   //@formatter:on
 
     if (StringUtils.isBlank(createRequestXML)) {

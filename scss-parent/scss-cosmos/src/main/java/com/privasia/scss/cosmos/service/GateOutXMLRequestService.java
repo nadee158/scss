@@ -13,7 +13,6 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 import com.privasia.scss.common.util.AGSClient;
-import com.privasia.scss.cosmos.dto.exprequest.SGS2Cosmos;
 import com.privasia.scss.cosmos.dto.request.CosmosGateInExport;
 import com.privasia.scss.cosmos.dto.request.CosmosGateInImport;
 import com.privasia.scss.cosmos.dto.request.CosmosGateInWriteRequest;
@@ -25,6 +24,7 @@ import com.privasia.scss.cosmos.xml.element.GINCNTDRP;
 import com.privasia.scss.cosmos.xml.element.GINCNTPUP;
 import com.privasia.scss.cosmos.xml.element.GOTCNTINF;
 import com.privasia.scss.cosmos.xml.element.GOTTRCINF;
+import com.privasia.scss.cosmos.xml.element.SGS2CosmosRequest;
 
 public class GateOutXMLRequestService {
 
@@ -305,12 +305,12 @@ public class GateOutXMLRequestService {
     // List<Message> massageList = new ArrayList<Message>();
     // massageList.add(message);
 
-    SGS2Cosmos cosmos = new SGS2Cosmos();
+    SGS2CosmosRequest cosmos = new SGS2CosmosRequest();
     // cosmos.setMessage(massageList);
 
     try {
       // Marshalling
-      JAXBContext jaxbContext = JAXBContext.newInstance(SGS2Cosmos.class);
+      JAXBContext jaxbContext = JAXBContext.newInstance(SGS2CosmosRequest.class);
       Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
 
       // output pretty printed
