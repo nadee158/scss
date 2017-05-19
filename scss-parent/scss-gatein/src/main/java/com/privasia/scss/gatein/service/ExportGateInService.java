@@ -404,6 +404,8 @@ public class ExportGateInService {
 	private ReferRejectDetailDTO constructReferRejectDetailDTO(GateInWriteRequest gateInWriteRequest,
 			ExportContainer exportContainer) {
 		ReferRejectDetailDTO referRejectDetailDTO = new ReferRejectDetailDTO();
+		ReferRejectDTO referRejectDTO = new ReferRejectDTO();
+		referRejectDetailDTO.setReferReject(referRejectDTO);
 		referRejectDetailDTO.setContainerNo(exportContainer.getContainer().getContainerNumber());
 		referRejectDetailDTO.setLineCode(exportContainer.getShippingLine());
 		referRejectDetailDTO.setGateInTime(gateInWriteRequest.getGateInDateTime());
