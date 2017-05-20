@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.xml.bind.JAXBException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +22,7 @@ import com.privasia.scss.common.dto.GateWriteRequest;
 import com.privasia.scss.common.dto.ImportContainer;
 import com.privasia.scss.common.enums.ImpExpFlagStatus;
 import com.privasia.scss.common.enums.TransactionType;
+import com.privasia.scss.common.exception.BusinessException;
 import com.privasia.scss.common.interfaces.OpusCosmosBusinessService;
 import com.privasia.scss.common.util.DateUtil;
 import com.privasia.scss.cosmos.dto.common.CosmosCommonValuesDTO;
@@ -29,6 +31,10 @@ import com.privasia.scss.cosmos.dto.request.CosmosGateInImport;
 import com.privasia.scss.cosmos.dto.request.CosmosGateInWriteRequest;
 import com.privasia.scss.cosmos.dto.request.CosmosGateOutImport;
 import com.privasia.scss.cosmos.dto.request.CosmosGateOutWriteRequest;
+import com.privasia.scss.cosmos.xml.element.SGS2CosmosRequest;
+import com.privasia.scss.cosmos.xml.element.SGS2CosmosResponse;
+import com.privasia.scss.cosmos.xml.element.service.CSMCTLService;
+import com.privasia.scss.cosmos.xml.element.service.GINTRCINFService;
 import com.privasia.scss.cosmos.xml.element.service.GateOutMessageService;
 
 @Service("cosmos")
@@ -43,6 +49,12 @@ public class CosmosService implements OpusCosmosBusinessService {
 	private CosmosGateInWriteService cosmosGateInWriteService;
 	
 	private AGSClientService agsClientService;
+	
+	private CSMCTLService csmctlService;
+	
+	private GINTRCINFService gintrcinfService;
+	
+	private CosmosResponseService cosmosResponseService;
 
 	@Autowired
 	public void setCosmosGateInWriteService(CosmosGateInWriteService cosmosGateInWriteService) {
@@ -67,6 +79,21 @@ public class CosmosService implements OpusCosmosBusinessService {
 	@Autowired
 	public void setAgsClientService(AGSClientService agsClientService) {
 		this.agsClientService = agsClientService;
+	}
+	
+	@Autowired
+	public void setCsmctlService(CSMCTLService csmctlService) {
+		this.csmctlService = csmctlService;
+	}
+	
+	@Autowired
+	public void setGintrcinfService(GINTRCINFService gintrcinfService) {
+		this.gintrcinfService = gintrcinfService;
+	}
+	
+	@Autowired
+	public void setCosmosResponseService(CosmosResponseService cosmosResponseService) {
+		this.cosmosResponseService = cosmosResponseService;
 	}
 
 	private int index = 0;
@@ -120,7 +147,6 @@ public class CosmosService implements OpusCosmosBusinessService {
 		ImpExpFlagStatus impExpFlag = ImpExpFlagStatus.fromValue(gateOutWriteRequest.getImpExpFlag());
 
 		CosmosCommonValuesDTO commonValuesDTO = getCommonValues(gateOutWriteRequest);
-		commonValuesDTO.setErrorMessage(null);
 		commonValuesDTO.setLoginUser(gateOutWriteRequest.getUserName());
 
 		CosmosGateOutWriteRequest cosmosGateOutWriteRequest = new CosmosGateOutWriteRequest();
@@ -178,10 +204,10 @@ public class CosmosService implements OpusCosmosBusinessService {
 		ImpExpFlagStatus impExpFlag = ImpExpFlagStatus.fromValue(gateInWriteRequest.getImpExpFlag());
 
 		CosmosCommonValuesDTO commonValuesDTO = getCommonValues(gateInWriteRequest);
-		commonValuesDTO.setErrorMessage(null);
 		commonValuesDTO.setLoginUser(gateInWriteRequest.getUserName());
 
 		CosmosGateInWriteRequest cosmosGateInWriteRequest = cosmosGateInWriteService.constructCosmosGateInWriteRequest(commonValuesDTO);
+		SGS2CosmosRequest cosmosRequest = new SGS2CosmosRequest();
 		int startIndex = 2;
 		switch (impExpFlag) {
 		case IMPORT:
@@ -209,11 +235,18 @@ public class CosmosService implements OpusCosmosBusinessService {
 			}
 			break;
 		default:
-			break;
+			throw new BusinessException("Invalid transaction Type ! "+impExpFlag.name());
 		}
 		
 		try {
-			agsClientService.sendToCosmos(cosmosGateInWriteRequest, gateInWriteRequest.getCosmosPort());
+			cosmosRequest.setIndex(0);
+			cosmosRequest.setCSMCTL(csmctlService.constructCSMCTL(commonValuesDTO));
+			cosmosRequest.setGINTRCINF(gintrcinfService.constructGINTRCINF(commonValuesDTO));
+			cosmosRequest.setCosmosGateInWriteRequest(cosmosGateInWriteRequest);
+			cosmosRequest.setCosmosGateOutWriteRequest(null);
+			SGS2CosmosResponse cosmosResponse = agsClientService.sendToCosmos(cosmosRequest, gateInWriteRequest.getCosmosPort());
+			cosmosResponseService.extractCosmosResponse(cosmosResponse, gateInWriteRequest);
+		
 		} catch (JAXBException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -227,10 +260,9 @@ public class CosmosService implements OpusCosmosBusinessService {
 		cosmosCommonValuesDTO.setMsgUniqueId(System.currentTimeMillis() + "");
 		cosmosCommonValuesDTO.setDate(DateUtil.getFormatteDate(LocalDate.now(), "yyyyMMdd"));
 		cosmosCommonValuesDTO.setTime(DateUtil.getFormatteTime(LocalTime.now(), "HHmmss"));
-		cosmosCommonValuesDTO.setExpMsgInx("3");
-		cosmosCommonValuesDTO.setLaneNo(gateWriteRequest.getLaneNo());
-		cosmosCommonValuesDTO.setTruckNo(gateWriteRequest.getTruckHeadNo());
-		cosmosCommonValuesDTO.setCompCode(gateWriteRequest.getHaulageCode());
+		cosmosCommonValuesDTO.setLaneNo(StringUtils.upperCase(gateWriteRequest.getLaneNo()));
+		cosmosCommonValuesDTO.setTruckNo(StringUtils.upperCase(gateWriteRequest.getTruckHeadNo()));
+		cosmosCommonValuesDTO.setCompCode(StringUtils.upperCase(gateWriteRequest.getHaulageCode()));
 		return cosmosCommonValuesDTO;
 	}
 

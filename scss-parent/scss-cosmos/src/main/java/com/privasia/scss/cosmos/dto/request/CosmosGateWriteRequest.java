@@ -3,14 +3,12 @@ package com.privasia.scss.cosmos.dto.request;
 import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import com.privasia.scss.cosmos.xml.element.CSMCTL;
 
-@XmlRootElement(name = "SGS2Cosmos")
 public class CosmosGateWriteRequest implements Serializable {
 
 	private static final long serialVersionUID = 1L;

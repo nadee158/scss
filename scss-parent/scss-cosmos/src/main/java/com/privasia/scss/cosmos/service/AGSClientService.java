@@ -6,6 +6,7 @@ package com.privasia.scss.cosmos.service;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
@@ -13,6 +14,7 @@ import java.net.SocketTimeoutException;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
@@ -24,6 +26,8 @@ import com.privasia.scss.common.exception.BusinessException;
 import com.privasia.scss.cosmos.dto.request.CosmosGateInWriteRequest;
 import com.privasia.scss.cosmos.dto.request.CosmosGateOutWriteRequest;
 import com.privasia.scss.cosmos.dto.request.CosmosGateWriteRequest;
+import com.privasia.scss.cosmos.xml.element.SGS2CosmosRequest;
+import com.privasia.scss.cosmos.xml.element.SGS2CosmosResponse;
 
 /**
  * @author Janaka
@@ -43,15 +47,10 @@ public class AGSClientService {
 	private static final int SECOND = 1000;
 	private static final int HEADER_SIZE = 51;
 
-	public String sendToCosmos(CosmosGateWriteRequest writeRequest, int portNo) throws JAXBException {
+	public SGS2CosmosResponse sendToCosmos(SGS2CosmosRequest writeRequest, int portNo) throws JAXBException {
 		
 		// Marshalling
-		JAXBContext jaxbContext = null;
-		if(writeRequest instanceof CosmosGateInWriteRequest){
-			jaxbContext = JAXBContext.newInstance(CosmosGateInWriteRequest.class);
-		}else if(writeRequest instanceof CosmosGateOutWriteRequest){
-			jaxbContext = JAXBContext.newInstance(CosmosGateOutWriteRequest.class);
-		}
+		JAXBContext jaxbContext = JAXBContext.newInstance(SGS2CosmosRequest.class);
 		Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
 
 		// output pretty printed
@@ -63,8 +62,18 @@ public class AGSClientService {
 
 		String responseXML = null;
 		responseXML = sendRequestXml(sw.toString(), portNo);
+		
+		if(StringUtils.isEmpty(responseXML))
+			throw new BusinessException("No response received from cosmos for the request !  "+writeRequest.getCSMCTL().getRQUI());
+		
+		jaxbContext = JAXBContext.newInstance(SGS2CosmosResponse.class);
+		Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
 
-		return responseXML;
+		StringReader reader = new StringReader(responseXML);
+		SGS2CosmosResponse response = (SGS2CosmosResponse) unmarshaller.unmarshal(reader);
+		
+
+		return response;
 
 	}
 

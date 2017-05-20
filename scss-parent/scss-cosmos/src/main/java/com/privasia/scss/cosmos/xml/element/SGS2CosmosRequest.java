@@ -9,6 +9,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import com.privasia.scss.cosmos.dto.request.CosmosGateInWriteRequest;
+import com.privasia.scss.cosmos.dto.request.CosmosGateOutWriteRequest;
 
 @XmlRootElement(name = "SGS2Cosmos")
 public class SGS2CosmosRequest implements Serializable {
@@ -22,6 +23,7 @@ public class SGS2CosmosRequest implements Serializable {
 	private CSMCTL CSMCTL;
 	private GINTRCINF GINTRCINF;
 	private CosmosGateInWriteRequest cosmosGateInWriteRequest;
+	private CosmosGateOutWriteRequest cosmosGateOutWriteRequest;
 	
 	public int getIndex() {
 		return Index;
@@ -56,6 +58,14 @@ public class SGS2CosmosRequest implements Serializable {
 
 	public void setCosmosGateInWriteRequest(CosmosGateInWriteRequest cosmosGateInWriteRequest) {
 		this.cosmosGateInWriteRequest = cosmosGateInWriteRequest;
+	}
+
+	public CosmosGateOutWriteRequest getCosmosGateOutWriteRequest() {
+		return cosmosGateOutWriteRequest;
+	}
+
+	public void setCosmosGateOutWriteRequest(CosmosGateOutWriteRequest cosmosGateOutWriteRequest) {
+		this.cosmosGateOutWriteRequest = cosmosGateOutWriteRequest;
 	}
 
 	@Override

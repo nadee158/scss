@@ -262,11 +262,12 @@ public class GateOutXMLRequestService {
       } else {
         System.out.println("not found");
       }
-      JAXBContext jaxbContext = JAXBContext.newInstance(com.privasia.scss.cosmos.dto.response.SGS2Cosmos.class);
+      JAXBContext jaxbContext = JAXBContext.newInstance(com.privasia.scss.cosmos.xml.element.SGS2CosmosResponse.class);
 
       Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-      com.privasia.scss.cosmos.dto.response.SGS2Cosmos response =
-          (com.privasia.scss.cosmos.dto.response.SGS2Cosmos) jaxbUnmarshaller.unmarshal(file);
+      com.privasia.scss.cosmos.xml.element.SGS2CosmosResponse response =
+          (com.privasia.scss.cosmos.xml.element.SGS2CosmosResponse) jaxbUnmarshaller.unmarshal(file);
+    
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -327,12 +328,12 @@ public class GateOutXMLRequestService {
       System.out.println(replyXML);
 
       // Unmarshalling
-      JAXBContext jaxbContext2 = JAXBContext.newInstance(com.privasia.scss.cosmos.dto.response.SGS2Cosmos.class);
+      JAXBContext jaxbContext2 = JAXBContext.newInstance(com.privasia.scss.cosmos.xml.element.SGS2CosmosResponse.class);
 
       Unmarshaller jaxbUnmarshaller = jaxbContext2.createUnmarshaller();
       InputStream is = new ByteArrayInputStream(replyXML.getBytes());
-      com.privasia.scss.cosmos.dto.response.SGS2Cosmos customer =
-          (com.privasia.scss.cosmos.dto.response.SGS2Cosmos) jaxbUnmarshaller.unmarshal(is);
+      com.privasia.scss.cosmos.xml.element.SGS2CosmosResponse customer =
+          (com.privasia.scss.cosmos.xml.element.SGS2CosmosResponse) jaxbUnmarshaller.unmarshal(is);
       System.out.println(customer.getMessage().get(0).getCSMCTL().getERRI());
 
     } catch (Exception e) {
