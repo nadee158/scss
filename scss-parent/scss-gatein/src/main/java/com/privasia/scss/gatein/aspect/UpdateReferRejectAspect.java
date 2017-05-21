@@ -42,9 +42,9 @@ public class UpdateReferRejectAspect {
 
   @Async
   @AfterReturning(pointcut = "@annotation(updateReferReject)")
-  public void isADGContainer(JoinPoint joinPoint, UpdateReferReject updateReferReject) {
+  public void updateReferReject(JoinPoint joinPoint, UpdateReferReject updateReferReject) {
 
-    log.info("*****************   isADGContainer called *************************");
+    log.info("*****************   updateReferReject called *************************");
 
     if (joinPoint.getArgs()[0] instanceof GateInWriteRequest) {
       GateInWriteRequest gateInWriteRequest = (GateInWriteRequest) joinPoint.getArgs()[0];
