@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.privasia.scss.common.dto.ExportContainer;
 import com.privasia.scss.common.dto.GateInWriteRequest;
 import com.privasia.scss.gatein.service.ExportGateInService;
 
@@ -42,10 +43,11 @@ public class TestController {
 
   @RequestMapping(value = "/testreferreject", method = RequestMethod.GET,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-  public ResponseEntity<String> testReferReject() {
+  public ResponseEntity<String> testReferReject(@RequestBody GateInWriteRequest gateInWriteRequest) {
 
-    System.out.println("came to test log");
-    exportService.testLogging("isuru", 29);
+    ExportContainer exportContainer = gateInWriteRequest.getExportContainers().get(0);
+
+    exportService.updateReferReject(gateInWriteRequest, exportContainer);
 
     return new ResponseEntity<String>("OK", HttpStatus.OK);
 
