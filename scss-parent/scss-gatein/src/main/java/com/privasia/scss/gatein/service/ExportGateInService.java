@@ -1,6 +1,7 @@
 package com.privasia.scss.gatein.service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -17,13 +18,12 @@ import org.springframework.transaction.annotation.Transactional;
 import com.privasia.scss.common.annotation.DontValidateSeal;
 import com.privasia.scss.common.annotation.ISaDG;
 import com.privasia.scss.common.annotation.LoggingInfor;
+import com.privasia.scss.common.annotation.UpdateReferReject;
 import com.privasia.scss.common.dto.BaseCommonGateInOutDTO;
 import com.privasia.scss.common.dto.CommonGateInOutDTO;
 import com.privasia.scss.common.dto.ExportContainer;
 import com.privasia.scss.common.dto.GateInReponse;
 import com.privasia.scss.common.dto.GateInWriteRequest;
-import com.privasia.scss.common.dto.ReferRejectDTO;
-import com.privasia.scss.common.dto.ReferRejectDetailDTO;
 import com.privasia.scss.common.enums.ContainerFullEmptyType;
 import com.privasia.scss.common.enums.HpabReferStatus;
 import com.privasia.scss.common.enums.ReferStatus;
@@ -36,12 +36,12 @@ import com.privasia.scss.core.model.Client;
 import com.privasia.scss.core.model.Exports;
 import com.privasia.scss.core.model.ExportsQ;
 import com.privasia.scss.core.model.HPABBooking;
-import com.privasia.scss.core.model.ReferRejectDetail;
+import com.privasia.scss.core.model.ReferReject;
 import com.privasia.scss.core.model.ShipCode;
 import com.privasia.scss.core.model.ShipSCN;
 import com.privasia.scss.core.model.SystemUser;
 import com.privasia.scss.core.predicate.ExportsPredicates;
-import com.privasia.scss.core.predicate.ReferRejectDetailPredicates;
+import com.privasia.scss.core.predicate.ReferRejectPredicates;
 import com.privasia.scss.core.repository.DamageCodeRepository;
 import com.privasia.scss.core.repository.ExportsQRepository;
 import com.privasia.scss.core.repository.ExportsRepository;
@@ -182,7 +182,8 @@ public class ExportGateInService {
   }
 
   @Autowired
-  public void setReferRejectDetailRepository(ReferRejectDetailRepository referRejectDetailRepository) {
+  public void setReferRejectDetailRepository(
+      ReferRejectDetailRepository referRejectDetailRepository) {
     this.referRejectDetailRepository = referRejectDetailRepository;
   }
 
@@ -198,9 +199,11 @@ public class ExportGateInService {
 
 
   @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-  public GateInReponse validateExportsGateInRead(GateInReponse gateInReponse, LocalDateTime timegateIn) {
+  public GateInReponse validateExportsGateInRead(GateInReponse gateInReponse,
+      LocalDateTime timegateIn) {
 
-    Optional<String> globalSetting = globalSettingRepository.fetchGlobalStringByGlobalCode("LPK_EDI");
+    Optional<String> globalSetting =
+        globalSettingRepository.fetchGlobalStringByGlobalCode("LPK_EDI");
 
     gateInReponse.getExportContainers().forEach(container -> {
       container.setExpWeightBridge(gateInReponse.getExpWeightBridge());
@@ -214,7 +217,8 @@ public class ExportGateInService {
       dgContainerService.validateDGContainer(container);
       dgContainerService.userAccessToByPassDG(container);
 
-      if (container.getContainer().getContainerFullOrEmpty() == ContainerFullEmptyType.EMPTY.getValue()) {
+      if (container.getContainer().getContainerFullOrEmpty() == ContainerFullEmptyType.EMPTY
+          .getValue()) {
         emptyContainerService.setEmptyContainerWeight(container, container.getCosmosISOCode());
       }
 
@@ -230,7 +234,8 @@ public class ExportGateInService {
 
   private void findLpkEdiMsg(ExportContainer container, Optional<String> globalSettingOpt) {
     if (StringUtils.equalsIgnoreCase(container.getImdg(), "Y")) {
-      globalSettingOpt.orElseThrow(() -> new ResultsNotFoundException("Global Setting not available ! LPK_EDI"));
+      globalSettingOpt.orElseThrow(
+          () -> new ResultsNotFoundException("Global Setting not available ! LPK_EDI"));
       lpkediService.findLPKEDITDigiMessage(container);
     }
   }
@@ -264,7 +269,8 @@ public class ExportGateInService {
       vesselSCN = exportContainer.getVesselSCN();
       System.out.println("scn " + vesselSCN);
 
-      Optional<ShipSCN> optionalshipSCN = shipSCNRepository.fetchContainerSCN(vesselSCN, exportContainerNumber);
+      Optional<ShipSCN> optionalshipSCN =
+          shipSCNRepository.fetchContainerSCN(vesselSCN, exportContainerNumber);
 
       if (optionalshipSCN.isPresent()) {
         ShipSCN shipSCN = optionalshipSCN.get();
@@ -281,29 +287,34 @@ public class ExportGateInService {
 
   // @Async
   @ISaDG
+  @UpdateReferReject
   @DontValidateSeal
   @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
-  public void saveGateInInfo(GateInWriteRequest gateInWriteRequest, Client gateInClient, SystemUser gateInClerk,
-      Card card) {
+  public void saveGateInInfo(GateInWriteRequest gateInWriteRequest, Client gateInClient,
+      SystemUser gateInClerk, Card card) {
     // construct a new export entity for each exportcontainer and save
 
-    System.out.println("gateInWriteRequest.getExportContainers() " + gateInWriteRequest.getExportContainers());
+    System.out.println(
+        "gateInWriteRequest.getExportContainers() " + gateInWriteRequest.getExportContainers());
 
-    if (gateInWriteRequest.getExportContainers() == null || gateInWriteRequest.getExportContainers().isEmpty())
+    if (gateInWriteRequest.getExportContainers() == null
+        || gateInWriteRequest.getExportContainers().isEmpty())
       throw new BusinessException("Invalid GateInWriteRequest to save Exports ! ");
-    System.out
-        .println("gateInWriteRequest.getExportContainers().size() " + gateInWriteRequest.getExportContainers().size());
+    System.out.println("gateInWriteRequest.getExportContainers().size() "
+        + gateInWriteRequest.getExportContainers().size());
 
     HPABBooking hpabBooking = null;
-    Optional<ExportContainer> exportContainerFirstOpt = gateInWriteRequest.getExportContainers().stream().findFirst();
+    Optional<ExportContainer> exportContainerFirstOpt =
+        gateInWriteRequest.getExportContainers().stream().findFirst();
     if (exportContainerFirstOpt.isPresent()) {
       ExportContainer exportContainerFirst = exportContainerFirstOpt.get();
       if (!(exportContainerFirst.getBaseCommonGateInOutAttribute() == null)) {
-        if (StringUtils.isNotEmpty(exportContainerFirst.getBaseCommonGateInOutAttribute().getHpabBooking())) {
-          hpabBooking =
-              hpabBookingRepository.findOne(exportContainerFirst.getBaseCommonGateInOutAttribute().getHpabBooking())
-                  .orElseThrow(() -> new ResultsNotFoundException("No HPAB Booking found ! : "
-                      + exportContainerFirst.getBaseCommonGateInOutAttribute().getHpabBooking()));
+        if (StringUtils
+            .isNotEmpty(exportContainerFirst.getBaseCommonGateInOutAttribute().getHpabBooking())) {
+          hpabBooking = hpabBookingRepository
+              .findOne(exportContainerFirst.getBaseCommonGateInOutAttribute().getHpabBooking())
+              .orElseThrow(() -> new ResultsNotFoundException("No HPAB Booking found ! : "
+                  + exportContainerFirst.getBaseCommonGateInOutAttribute().getHpabBooking()));
         }
       }
     }
@@ -315,14 +326,20 @@ public class ExportGateInService {
       if (exportContainer.getBaseCommonGateInOutAttribute() == null) {
         exportContainer.setBaseCommonGateInOutAttribute(new BaseCommonGateInOutDTO());
       }
-      System.out.println("gateInWriteRequest.getGateInDateTime() " + gateInWriteRequest.getGateInDateTime());
+      System.out.println(
+          "gateInWriteRequest.getGateInDateTime() " + gateInWriteRequest.getGateInDateTime());
 
       // assign values from header level to container level
-      exportContainer.getBaseCommonGateInOutAttribute().setEirStatus(TransactionStatus.INPROGRESS.getValue());
-      exportContainer.getBaseCommonGateInOutAttribute().setHpabBooking(gateInWriteRequest.getHpatBookingId());
-      exportContainer.getBaseCommonGateInOutAttribute().setPmHeadNo(gateInWriteRequest.getTruckHeadNo());
-      exportContainer.getBaseCommonGateInOutAttribute().setPmPlateNo(gateInWriteRequest.getTruckPlateNo());
-      exportContainer.getBaseCommonGateInOutAttribute().setTimeGateIn(gateInWriteRequest.getGateInDateTime());
+      exportContainer.getBaseCommonGateInOutAttribute()
+          .setEirStatus(TransactionStatus.INPROGRESS.getValue());
+      exportContainer.getBaseCommonGateInOutAttribute()
+          .setHpabBooking(gateInWriteRequest.getHpatBookingId());
+      exportContainer.getBaseCommonGateInOutAttribute()
+          .setPmHeadNo(gateInWriteRequest.getTruckHeadNo());
+      exportContainer.getBaseCommonGateInOutAttribute()
+          .setPmPlateNo(gateInWriteRequest.getTruckPlateNo());
+      exportContainer.getBaseCommonGateInOutAttribute()
+          .setTimeGateIn(gateInWriteRequest.getGateInDateTime());
       exportContainer.getBaseCommonGateInOutAttribute().setTimeGateInOk(LocalDateTime.now());
       exportContainer.setFuelWeight(gateInWriteRequest.getFuelWeight());
       exportContainer.setTireWeight(gateInWriteRequest.getTireWeight());
@@ -345,11 +362,11 @@ public class ExportGateInService {
       ShipSCN scn = null;
       if (!(exportContainer.getVesselSCN() == null)) { // scn = VesselSCN
 
-        scn = shipSCNRepository
-            .fetchContainerSCN(exportContainer.getVesselSCN(), exportContainer.getContainer().getContainerNumber())
-            .orElse(null);
+        scn = shipSCNRepository.fetchContainerSCN(exportContainer.getVesselSCN(),
+            exportContainer.getContainer().getContainerNumber()).orElse(null);
       }
-      exports.prepareForInsertFromOpus(gateInClerk, card, gateInClient, scn, hpabBookingFinal, damageCodeRepository);
+      exports.prepareForInsertFromOpus(gateInClerk, card, gateInClient, scn, hpabBookingFinal,
+          damageCodeRepository);
       exports = exportsRepository.save(exports);
       log.info("########## Save Exports ###############");
       ExportsQ exportsQ = new ExportsQ();
@@ -357,11 +374,6 @@ public class ExportGateInService {
       exportsQ = exportsQRepository.save(exportsQ);
       System.out.println("exportsQ.getExportID() after save " + exportsQ.getExportID());
       exportContainer.setExportID(exports.getExportID());
-      // referee reject service update
-      if (gateInWriteRequest.getReferRejectDTO().isPresent()
-          && gateInWriteRequest.getReferRejectDTO().get().getReferRejectID() != null) {
-        updateReferReject(gateInWriteRequest, exportContainer);
-      }
 
     });
 
@@ -369,10 +381,42 @@ public class ExportGateInService {
   }
 
   @Async
-  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRES_NEW, readOnly = false)
-  public void updateReferReject(GateInWriteRequest gateInWriteRequest, ExportContainer exportContainer) {
+  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRES_NEW,
+      readOnly = false)
+  public void updateReferReject(GateInWriteRequest gateInWriteRequest,
+      List<ExportContainer> containers) {
 
-    ReferRejectDetailDTO detailDTO = constructReferRejectDetailDTO(gateInWriteRequest, exportContainer);
+    Predicate byReferRejectID = ReferRejectPredicates
+        .byReferRejectID(gateInWriteRequest.getReferRejectDTO().get().getReferRejectID());
+    Predicate byStatusCode = ReferRejectPredicates.byStatusCode(HpabReferStatus.ACTIVE);
+
+    Predicate condition = ExpressionUtils.allOf(byReferRejectID, byStatusCode);
+
+    System.out.println("detailDTO.getReferReject().getReferRejectID() "
+        + gateInWriteRequest.getReferRejectDTO().get().getReferRejectID());
+
+    ReferReject referReject = referRejectRepository.findOne(condition);
+    if (referReject == null) {
+      throw new BusinessException("Refer reject to update is not available!"
+          + gateInWriteRequest.getReferRejectDTO().get().getReferRejectID());
+    }
+    System.out.println("FROM PREDiCATE METHOD  referReject :" + referReject);
+
+    referReject.getReferRejectDetails().forEach(referRejectDetail -> {
+      System.out.println("detail.getContainerNo() " + referRejectDetail.getContainerNo());
+      containers.forEach(exportContainer -> {
+        System.out.println("container.getContainer().getContainerNumber() "
+            + exportContainer.getContainer().getContainerNumber());
+        if (StringUtils.equals(referRejectDetail.getContainerNo(),
+            exportContainer.getContainer().getContainerNumber())) {
+          referRejectDetail.setLineCode(StringUtils.upperCase(exportContainer.getShippingLine()));
+          referRejectDetail.setGateInTime(gateInWriteRequest.getGateInDateTime());
+          referRejectDetail.setStatus(ReferStatus.REJECT_EXE);
+        }
+      });
+    });
+    referReject.setStatusCode(HpabReferStatus.COMPLETE);
+    referRejectRepository.save(referReject);
 
     /*
      * RestTemplate restTemplate = new RestTemplate(); HttpHeaders headers = new HttpHeaders();
@@ -389,66 +433,13 @@ public class ExportGateInService {
      * 
      * log.info("RESPONSE FROM REFER REJECT: " + response.toString());
      */
-
-    if (detailDTO == null)
-      throw new BusinessException("Refer reject details to update is not available!");
-
-    System.out
-        .println("detailDTO.getReferReject().getReferRejectID() " + detailDTO.getReferReject().getReferRejectID());
-    System.out.println("detailDTO.getContainerNo() " + detailDTO.getContainerNo());
-
-
-    Predicate byReferRejectReferRejectID =
-        ReferRejectDetailPredicates.byReferRejectReferRejectID(detailDTO.getReferReject().getReferRejectID());
-    Predicate byContainerNo = ReferRejectDetailPredicates.byContainerNo(detailDTO.getContainerNo());
-    Predicate byReferRejectStatusCode = ReferRejectDetailPredicates.byReferRejectStatusCode(HpabReferStatus.ACTIVE);
-
-    Predicate condition = ExpressionUtils.allOf(byReferRejectReferRejectID, byContainerNo, byReferRejectStatusCode);
-
-    ReferRejectDetail referRejectDetail = referRejectDetailRepository.findOne(condition);
-    if (referRejectDetail == null) {
-      throw new ResultsNotFoundException("Refer reject detail was not found!");
-    }
-
-
-    System.out.println("FROM PREDiCATE METHOD  referRejectDetail :" + referRejectDetail);
-
-
-    referRejectDetail = referRejectDetailRepository
-        .findByReferReject_ReferRejectIDAndContainerNoAndReferReject_StatusCode(
-            detailDTO.getReferReject().getReferRejectID(), detailDTO.getContainerNo(), HpabReferStatus.ACTIVE)
-        .orElseThrow(() -> new ResultsNotFoundException("Refer reject detail was not found!"));
-
-    System.out.println("FROM NORMAL METHOD  referRejectDetail :" + referRejectDetail);
-
-
-
-    referRejectDetail.setLineCode(StringUtils.upperCase(detailDTO.getLineCode()));
-    referRejectDetail.setGateInTime(detailDTO.getGateInTime());
-    referRejectDetail.setStatus(ReferStatus.REJECT_EXE);
-    referRejectDetail.getReferReject().setStatusCode(HpabReferStatus.COMPLETE);
-    referRejectRepository.save(referRejectDetail.getReferReject());
-
   }
 
-  private ReferRejectDetailDTO constructReferRejectDetailDTO(GateInWriteRequest gateInWriteRequest,
-      ExportContainer exportContainer) {
-    ReferRejectDetailDTO referRejectDetailDTO = new ReferRejectDetailDTO();
-    ReferRejectDTO referRejectDTO = new ReferRejectDTO();
-    referRejectDetailDTO.setReferReject(referRejectDTO);
-    referRejectDetailDTO.setContainerNo(exportContainer.getContainer().getContainerNumber());
-    referRejectDetailDTO.setLineCode(exportContainer.getShippingLine());
-    referRejectDetailDTO.setGateInTime(gateInWriteRequest.getGateInDateTime());
-    referRejectDetailDTO.setReferReject(new ReferRejectDTO());
-    referRejectDetailDTO.getReferReject()
-        .setReferRejectID(gateInWriteRequest.getReferRejectDTO().get().getReferRejectID());
-
-    return referRejectDetailDTO;
-  }
 
   @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
   public void validateExportsGateInWrite(GateInWriteRequest gateInWriteRequest) {
-    if (!(gateInWriteRequest.getExportContainers() == null || gateInWriteRequest.getExportContainers().isEmpty())) {
+    if (!(gateInWriteRequest.getExportContainers() == null
+        || gateInWriteRequest.getExportContainers().isEmpty())) {
       gateInWriteRequest.getExportContainers().forEach(exportContainer -> {
         // 1. DAMAGE CONTAINER CHECK - 1313 (DamageCodeService )
         damageCodeService.checkDuplicateDameCodeExistence(exportContainer);
@@ -457,7 +448,8 @@ public class ExportGateInService {
         sealValidationService.validateSeal(exportContainer);
         dgContainerService.validateUserByPassDG(exportContainer);
 
-        if (exportContainer.getContainer().getContainerFullOrEmpty() == ContainerFullEmptyType.EMPTY.getValue()) {
+        if (exportContainer.getContainer().getContainerFullOrEmpty() == ContainerFullEmptyType.EMPTY
+            .getValue()) {
           if (StringUtils.isNotEmpty(exportContainer.getContainer().getContainerISOCode()))
             throw new BusinessException("ISO Code mandatory. Please enter the code");
           emptyContainerService.setEmptyContainerWeight(exportContainer,
@@ -476,10 +468,11 @@ public class ExportGateInService {
 
     Predicate byHeadNo = ExportsPredicates.byPMHeadNo(gateInWriteRequest.getTruckHeadNo());
     Predicate byPlateNo = ExportsPredicates.byPMPlateNo(gateInWriteRequest.getTruckPlateNo());
-    Predicate byTransactionStatus = ExportsPredicates.byTransactionStatus(TransactionStatus.INPROGRESS);
+    Predicate byTransactionStatus =
+        ExportsPredicates.byTransactionStatus(TransactionStatus.INPROGRESS);
 
-    Predicate condition =
-        ExpressionUtils.allOf(ExpressionUtils.and(ExpressionUtils.or(byHeadNo, byPlateNo), byTransactionStatus));
+    Predicate condition = ExpressionUtils
+        .allOf(ExpressionUtils.and(ExpressionUtils.or(byHeadNo, byPlateNo), byTransactionStatus));
 
     Iterable<Exports> exportsList = exportsRepository.findAll(condition);
 
@@ -490,18 +483,22 @@ public class ExportGateInService {
       Exports dbExports = exportsList.iterator().next();
       if (StringUtils.equalsIgnoreCase(dbExports.getBaseCommonGateInOutAttribute().getPmHeadNo(),
           gateInWriteRequest.getTruckHeadNo())
-          && StringUtils.equalsIgnoreCase(dbExports.getBaseCommonGateInOutAttribute().getPmPlateNo(),
+          && StringUtils.equalsIgnoreCase(
+              dbExports.getBaseCommonGateInOutAttribute().getPmPlateNo(),
               gateInWriteRequest.getTruckPlateNo())) {
-        throw new BusinessException("PM Head No " + dbExports.getBaseCommonGateInOutAttribute().getPmHeadNo()
-            + "and PM plate No " + dbExports.getBaseCommonGateInOutAttribute().getPmPlateNo() + " already in use.");
-      } else if (StringUtils.equalsIgnoreCase(dbExports.getBaseCommonGateInOutAttribute().getPmHeadNo(),
-          gateInWriteRequest.getTruckHeadNo())) {
-        throw new BusinessException(
-            "PM Head No " + dbExports.getBaseCommonGateInOutAttribute().getPmHeadNo() + " already in use");
-      } else if (StringUtils.equalsIgnoreCase(dbExports.getBaseCommonGateInOutAttribute().getPmPlateNo(),
+        throw new BusinessException("PM Head No "
+            + dbExports.getBaseCommonGateInOutAttribute().getPmHeadNo() + "and PM plate No "
+            + dbExports.getBaseCommonGateInOutAttribute().getPmPlateNo() + " already in use.");
+      } else
+        if (StringUtils.equalsIgnoreCase(dbExports.getBaseCommonGateInOutAttribute().getPmHeadNo(),
+            gateInWriteRequest.getTruckHeadNo())) {
+        throw new BusinessException("PM Head No "
+            + dbExports.getBaseCommonGateInOutAttribute().getPmHeadNo() + " already in use");
+      } else if (StringUtils.equalsIgnoreCase(
+          dbExports.getBaseCommonGateInOutAttribute().getPmPlateNo(),
           gateInWriteRequest.getTruckPlateNo())) {
-        throw new BusinessException(
-            "PM plate No " + dbExports.getBaseCommonGateInOutAttribute().getPmPlateNo() + " already in use");
+        throw new BusinessException("PM plate No "
+            + dbExports.getBaseCommonGateInOutAttribute().getPmPlateNo() + " already in use");
       }
     }
 
@@ -514,14 +511,16 @@ public class ExportGateInService {
   public void testDGValidationLog(GateInWriteRequest gateInWriteRequest) {
     // construct a new export entity for each exportcontainer and save
 
-    System.out.println("gateInWriteRequest.getExportContainers() " + gateInWriteRequest.getExportContainers());
+    System.out.println(
+        "gateInWriteRequest.getExportContainers() " + gateInWriteRequest.getExportContainers());
 
 
     gateInWriteRequest.getExportContainers().forEach(exportContainer -> {
       if (exportContainer.getBaseCommonGateInOutAttribute() == null) {
         exportContainer.setBaseCommonGateInOutAttribute(new BaseCommonGateInOutDTO());
       }
-      exportContainer.getBaseCommonGateInOutAttribute().setTimeGateIn(gateInWriteRequest.getGateInDateTime());
+      exportContainer.getBaseCommonGateInOutAttribute()
+          .setTimeGateIn(gateInWriteRequest.getGateInDateTime());
       exportContainer.setImdg("2.2");
       exportContainer.setExportID(6292684l);
       exportContainer.getContainer().setContainerNumber("SGPU1180138");
