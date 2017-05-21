@@ -8,24 +8,14 @@ import javax.xml.bind.annotation.XmlElement;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-import com.privasia.scss.cosmos.xml.element.GINTRCINF;
 
-public class CosmosGateInWriteRequest extends CosmosGateWriteRequest implements Serializable {
+public class CosmosGateInWriteRequest implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	private GINTRCINF GINTRCINF;
 	private List<CosmosGateInExport> exportList;
 	private List<CosmosGateInImport> importList;
 
-	public GINTRCINF getGINTRCINF() {
-		return GINTRCINF;
-	}
-
-	@XmlElement(name = "Message")
-	public void setGINTRCINF(GINTRCINF gINTRCINF) {
-		GINTRCINF = gINTRCINF;
-	}
 
 	public List<CosmosGateInExport> getExportList() {
 		return exportList;

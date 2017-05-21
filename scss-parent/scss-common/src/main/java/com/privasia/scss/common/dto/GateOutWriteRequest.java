@@ -2,11 +2,9 @@ package com.privasia.scss.common.dto;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -27,16 +25,12 @@ public class GateOutWriteRequest extends GateWriteRequest implements Serializabl
 	private LocalDateTime gateOUTDateTime;// -string
 
 	private boolean cancelPickUP = false;
-	private List<ExportContainer> exportContainers;
-	private List<ImportContainer> importContainers;
 
 	@NotNull(message = "impExpFlag is required!") // check if an allowed value
 													// in enum
 	private String impExpFlag;
 
 	private byte[] transactionZipFile;
-
-	private List<WHoddDTO> whoddContainers;
 
 	
 	public Long getGateOutClient() {
@@ -53,22 +47,6 @@ public class GateOutWriteRequest extends GateWriteRequest implements Serializabl
 
 	public void setGateOUTDateTime(LocalDateTime gateOUTDateTime) {
 		this.gateOUTDateTime = gateOUTDateTime;
-	}
-
-	public List<ExportContainer> getExportContainers() {
-		return exportContainers;
-	}
-
-	public void setExportContainers(List<ExportContainer> exportContainers) {
-		this.exportContainers = exportContainers;
-	}
-
-	public List<ImportContainer> getImportContainers() {
-		return importContainers;
-	}
-
-	public void setImportContainers(List<ImportContainer> importContainers) {
-		this.importContainers = importContainers;
 	}
 
 	public String getImpExpFlag() {
@@ -101,14 +79,6 @@ public class GateOutWriteRequest extends GateWriteRequest implements Serializabl
 
 	public void setTransactionZipFile(byte[] transactionZipFile) {
 		this.transactionZipFile = transactionZipFile;
-	}
-
-	public List<WHoddDTO> getWhoddContainers() {
-		return whoddContainers;
-	}
-
-	public void setWhoddContainers(List<WHoddDTO> whoddContainers) {
-		this.whoddContainers = whoddContainers;
 	}
 
 	@Override

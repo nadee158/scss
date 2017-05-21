@@ -10,14 +10,12 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 import com.privasia.scss.cosmos.xml.element.CSMCTL;
 import com.privasia.scss.cosmos.xml.element.GINCNTPUP;
-import com.privasia.scss.cosmos.xml.element.GOTTRCINF;
 
 public class CosmosGateInImport implements Serializable {
 
   private static final long serialVersionUID = 1L;
-  CSMCTL CSMCTL;
-  GOTTRCINF GOTTRCINF;
-  GINCNTPUP GINCNTPUP;
+  private CSMCTL CSMCTL;
+  private GINCNTPUP GINCNTPUP;
   int Index;
 
   public CSMCTL getCSMCTL() {
@@ -28,16 +26,7 @@ public class CosmosGateInImport implements Serializable {
   public void setCSMCTL(CSMCTL cSMCTL) {
     CSMCTL = cSMCTL;
   }
-
-  public GOTTRCINF getGOTTRCINF() {
-    return GOTTRCINF;
-  }
-
-  @XmlElement
-  public void setGOTTRCINF(GOTTRCINF gOTTRCINF) {
-    GOTTRCINF = gOTTRCINF;
-  }
-
+  
   public GINCNTPUP getGINCNTPUP() {
     return GINCNTPUP;
   }

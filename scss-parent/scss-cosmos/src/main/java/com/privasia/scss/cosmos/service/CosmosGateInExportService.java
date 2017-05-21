@@ -57,7 +57,7 @@ public class CosmosGateInExportService {
 
   public CosmosGateInExport constructCosmosGateInExport(CosmosCommonValuesDTO commonValuesDTO, ExportContainer exportContainer, int index) {
     CosmosGateInExport cosmosGateInExport = new CosmosGateInExport();
-    cosmosGateInExport.setCSMCTL(csmctlService.constructCSMCTL(commonValuesDTO));
+    cosmosGateInExport.setCSMCTL(csmctlService.constructCSMCTL(commonValuesDTO)); 
     cosmosGateInExport.setGINCNTDRP(gincntdrpService.constructGINCNTDRP(exportContainer));
     cosmosGateInExport.setIndex(index);
     return cosmosGateInExport;

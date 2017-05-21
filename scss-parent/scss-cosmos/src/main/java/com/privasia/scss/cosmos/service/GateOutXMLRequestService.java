@@ -137,7 +137,7 @@ public class GateOutXMLRequestService {
     CosmosGateInImport import1 = new CosmosGateInImport();
     import1.setCSMCTL(csmctl);
     import1.setGINCNTPUP(gincntpup);
-    import1.setGOTTRCINF(gottrcinf);
+    //import1.setGOTTRCINF(gottrcinf);
     import1.setIndex(1);
 
     CosmosGateInWriteRequest cosmos = new CosmosGateInWriteRequest();
@@ -216,20 +216,20 @@ public class GateOutXMLRequestService {
     CosmosGateOutImport import1 = new CosmosGateOutImport();
     import1.setCSMCTL(csmctl);
     import1.setGOTCNTINF(gotcninf);
-    import1.setGOTTRCINF(gottrcinf);
+    //import1.setGOTTRCINF(gottrcinf);
     import1.setIndex(1);
 
     CosmosGateOutWriteRequest cosmos = new CosmosGateOutWriteRequest();
     if (type.equals("exp")) {
-      cosmos.setExport(export);
+      //cosmos.setExport(export);
       cosmos.setImportList(null);
     } else if (type.equals("imp")) {
       List<CosmosGateOutImport> importList = new ArrayList<>();
       importList.add(import1);
       cosmos.setImportList(importList);
-      cosmos.setExport(null);
+      //cosmos.setExport(null);
     } else {
-      cosmos.setExport(export);
+      //cosmos.setExport(export);
       List<CosmosGateOutImport> importList = new ArrayList<>();
       importList.add(import1);
       cosmos.setImportList(importList);
@@ -321,7 +321,7 @@ public class GateOutXMLRequestService {
       jaxbMarshaller.marshal(cosmos, sw);
 
       int portNo = 12013;
-      String host = "172.21.150.1";
+      String host = "172.21.150.1"; 
       
       String replyXML = "";
       //String replyXML = AGSClient.sendXMLMessage(sw.toString(), portNo);

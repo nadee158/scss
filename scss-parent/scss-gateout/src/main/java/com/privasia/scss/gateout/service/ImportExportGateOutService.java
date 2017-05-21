@@ -212,6 +212,7 @@ public class ImportExportGateOutService {
 		if (StringUtils.isEmpty(client.getLaneNo()))
 			throw new BusinessException("Lane no does not setup for client " + client.getClientID());
 		gateOutWriteRequest.setLaneNo(client.getLaneNo());
+		gateOutWriteRequest.setCosmosPort(client.getCosmosPortNo());
 
 		Optional<Client> boothOpt = clientRepository.findOne(gateOutWriteRequest.getGateOutBooth());
 		Client booth = boothOpt.orElseThrow(

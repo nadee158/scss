@@ -4,6 +4,7 @@
 package com.privasia.scss.common.dto;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
@@ -26,6 +27,10 @@ public class GateWriteRequest implements Serializable {
 	private String haulageCode = StringUtils.EMPTY;// 
 	private String truckPlateNo = StringUtils.EMPTY;// 
 	private String truckHeadNo;
+	private int cosmosPort;
+	private List<ExportContainer> exportContainers;
+	private List<ImportContainer> importContainers;
+	private List<WHoddDTO> whoddContainers;
 	
 	@NotNull(message = "cardId is required!")
 	private Long cardID;
@@ -76,6 +81,38 @@ public class GateWriteRequest implements Serializable {
 
 	public void setCardID(Long cardID) {
 		this.cardID = cardID;
+	}
+	
+	public int getCosmosPort() {
+		return cosmosPort;
+	}
+
+	public void setCosmosPort(int cosmosPort) {
+		this.cosmosPort = cosmosPort;
+	}
+	
+	public List<ExportContainer> getExportContainers() {
+		return exportContainers;
+	}
+
+	public void setExportContainers(List<ExportContainer> exportContainers) {
+		this.exportContainers = exportContainers;
+	}
+
+	public List<ImportContainer> getImportContainers() {
+		return importContainers;
+	}
+
+	public void setImportContainers(List<ImportContainer> importContainers) {
+		this.importContainers = importContainers;
+	}
+
+	public List<WHoddDTO> getWhoddContainers() {
+		return whoddContainers;
+	}
+
+	public void setWhoddContainers(List<WHoddDTO> whoddContainers) {
+		this.whoddContainers = whoddContainers;
 	}
 
 	@Override

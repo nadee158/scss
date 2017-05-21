@@ -2,7 +2,6 @@ package com.privasia.scss.common.dto;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 
 import javax.validation.constraints.NotNull;
@@ -19,7 +18,7 @@ public class GateInWriteRequest extends GateWriteRequest implements Serializable
 
 	private int truckWeight;
 	private String trailerNo;
-	private int trailerWeight;
+	private int trailerWeight; 
 
 	@NotNull(message = "gateInDateTime is required!")
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateUtil.GLOBAL_DATE_TIME_PATTERN)
@@ -45,14 +44,9 @@ public class GateInWriteRequest extends GateWriteRequest implements Serializable
 	private String tireWeight;// ":"45",
 	private String variance;//
 
-	private List<ExportContainer> exportContainers;
-	private List<ImportContainer> importContainers;
-
-	private List<WHoddDTO> whoddContainers;
-
 	private Optional<ReferRejectDTO> referRejectDTO;
 
-	private int cosmosPort;
+	
 
 	public Optional<ReferRejectDTO> getReferRejectDTO() {
 		return referRejectDTO;
@@ -102,36 +96,12 @@ public class GateInWriteRequest extends GateWriteRequest implements Serializable
 		this.weightBridge = weightBridge;
 	}
 
-	public List<ExportContainer> getExportContainers() {
-		return exportContainers;
-	}
-
-	public void setExportContainers(List<ExportContainer> exportContainers) {
-		this.exportContainers = exportContainers;
-	}
-
-	public List<ImportContainer> getImportContainers() {
-		return importContainers;
-	}
-
-	public void setImportContainers(List<ImportContainer> importContainers) {
-		this.importContainers = importContainers;
-	}
-
 	public Long getGateInClient() {
 		return gateInClient;
 	}
 
 	public void setGateInClient(Long gateInClient) {
 		this.gateInClient = gateInClient;
-	}
-
-	public List<WHoddDTO> getWhoddContainers() {
-		return whoddContainers;
-	}
-
-	public void setWhoddContainers(List<WHoddDTO> whoddContainers) {
-		this.whoddContainers = whoddContainers;
 	}
 
 	public String getHpatBookingId() {
@@ -206,13 +176,6 @@ public class GateInWriteRequest extends GateWriteRequest implements Serializable
 		this.oddReject = oddReject;
 	}
 
-	public int getCosmosPort() {
-		return cosmosPort;
-	}
-
-	public void setCosmosPort(int cosmosPort) {
-		this.cosmosPort = cosmosPort;
-	}
 
 	@Override
 	public String toString() {

@@ -22,6 +22,7 @@ public class SGS2CosmosRequest implements Serializable {
 	private int Index;
 	private CSMCTL CSMCTL;
 	private GINTRCINF GINTRCINF;
+	private GOTTRCINF GOTTRCINF;
 	private CosmosGateInWriteRequest cosmosGateInWriteRequest;
 	private CosmosGateOutWriteRequest cosmosGateOutWriteRequest;
 	
@@ -50,6 +51,15 @@ public class SGS2CosmosRequest implements Serializable {
 	@XmlElement(name = "Message")
 	public void setGINTRCINF(GINTRCINF gINTRCINF) {
 		GINTRCINF = gINTRCINF;
+	}
+
+	public GOTTRCINF getGOTTRCINF() {
+		return GOTTRCINF;
+	}
+	
+	@XmlElement(name = "Message")
+	public void setGOTTRCINF(GOTTRCINF gOTTRCINF) {
+		GOTTRCINF = gOTTRCINF;
 	}
 
 	public CosmosGateInWriteRequest getCosmosGateInWriteRequest() {
