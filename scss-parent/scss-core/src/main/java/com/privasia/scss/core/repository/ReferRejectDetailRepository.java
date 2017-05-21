@@ -4,11 +4,13 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.querydsl.QueryDslPredicateExecutor;
 
 import com.privasia.scss.common.enums.HpabReferStatus;
 import com.privasia.scss.core.model.ReferRejectDetail;
 
-public interface ReferRejectDetailRepository extends BaseRepository<ReferRejectDetail, Long> {
+public interface ReferRejectDetailRepository
+    extends BaseRepository<ReferRejectDetail, Long>, QueryDslPredicateExecutor<ReferRejectDetail> {
 
   List<ReferRejectDetail> findByReferReject_StatusCodeOrderByReferReject_ReferDateTimeDesc(HpabReferStatus statusCode,
       Pageable pageRequest);
