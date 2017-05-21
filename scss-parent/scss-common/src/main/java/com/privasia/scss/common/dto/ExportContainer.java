@@ -16,7 +16,7 @@ import com.privasia.scss.common.util.DateUtil;
  * @author nadee158
  *
  */
-public class ExportContainer extends Container implements Serializable {
+public class ExportContainer extends BaseContainer implements Serializable {
 
 	/**
 	 * 

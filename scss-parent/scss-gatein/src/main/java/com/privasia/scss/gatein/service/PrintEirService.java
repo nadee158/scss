@@ -330,8 +330,8 @@ public class PrintEirService {
 	private StringBuffer constructReferLineString(ExportContainer exportContainer, StringBuffer line) {
 
 		if (exportContainer.getReferFlag()) {
-			line.append("Reefer:").append(BLANK).append(exportContainer.getOperationReefer()).append(BLANK)
-					.append(exportContainer.getReferTemp()).append(exportContainer.getReeferTempUnit()).append(BLANK);
+			/*line.append("Reefer:").append(BLANK).append(exportContainer.getOperationReefer()).append(BLANK)
+					.append(exportContainer.getReferTemp()).append(exportContainer.getReeferTempUnit()).append(BLANK);*/
 		}
 
 		return line;

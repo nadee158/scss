@@ -12,7 +12,7 @@ import com.privasia.scss.common.enums.GateInOutStatus;
 import com.privasia.scss.common.enums.GatePassStatus;
 import com.privasia.scss.common.util.DateUtil;
 
-public class ImportContainer extends Container implements Serializable {
+public class ImportContainer extends BaseContainer implements Serializable {
 
   /**
    * 
