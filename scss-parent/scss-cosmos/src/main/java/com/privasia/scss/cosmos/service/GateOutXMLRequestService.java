@@ -12,7 +12,6 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
-import com.privasia.scss.common.util.AGSClient;
 import com.privasia.scss.cosmos.dto.request.CosmosGateInExport;
 import com.privasia.scss.cosmos.dto.request.CosmosGateInImport;
 import com.privasia.scss.cosmos.dto.request.CosmosGateInWriteRequest;
@@ -266,7 +265,7 @@ public class GateOutXMLRequestService {
 
       Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
       com.privasia.scss.cosmos.xml.element.SGS2CosmosResponse response =
-          (com.privasia.scss.cosmos.xml.element.SGS2CosmosResponse) jaxbUnmarshaller.unmarshal(file);
+          (com.privasia.scss.cosmos.xml.element.SGS2CosmosResponse) jaxbUnmarshaller.unmarshal(file); 
     
     } catch (Exception e) {
       e.printStackTrace();
@@ -323,8 +322,9 @@ public class GateOutXMLRequestService {
 
       int portNo = 12013;
       String host = "172.21.150.1";
-
-      String replyXML = AGSClient.sendXMLMessage(sw.toString(), portNo);
+      
+      String replyXML = "";
+      //String replyXML = AGSClient.sendXMLMessage(sw.toString(), portNo);
       System.out.println(replyXML);
 
       // Unmarshalling

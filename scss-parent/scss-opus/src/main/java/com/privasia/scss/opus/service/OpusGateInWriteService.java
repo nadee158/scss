@@ -21,6 +21,7 @@ import org.springframework.web.client.RestTemplate;
 import com.google.gson.Gson;
 import com.privasia.scss.common.dto.GateInReponse;
 import com.privasia.scss.common.dto.GateInWriteRequest;
+import com.privasia.scss.common.util.ApplicationConstants;
 import com.privasia.scss.common.util.DateUtil;
 import com.privasia.scss.opus.dto.GIWriteRequestExportContainer;
 import com.privasia.scss.opus.dto.GIWriteRequestImportContainer;
@@ -123,10 +124,12 @@ public class OpusGateInWriteService {
     gateInReponse.setExportContainers(opusDTOConstructService.giWriteResponseExportContainerListToExportContainerList(
         opusGateInWriteResponse, gateInReponse.getExportContainers()));
     gateInReponse.setImportContainers(opusDTOConstructService.giWriteResponseImportContainerListToImportContainerList(
-        opusGateInWriteResponse, gateInReponse.getImportContainers()));
+        opusGateInWriteResponse, gateInReponse.getImportContainers())); 
     gateInReponse.setCallCardNo(opusGateInWriteResponse.getCallCardNo());
+    gateInReponse.setManualPlanIndicator(false);
     return gateInReponse;
   }
+  
 
   public OpusGateInWriteRequest constructOpusGateInWriteRequest(GateInWriteRequest gateInWriteRequest) {
     OpusGateInWriteRequest opusGateInWriteRequest = new OpusGateInWriteRequest();

@@ -162,9 +162,12 @@ public class OpusDTOConstructService {
 
 		exportContainer.setYardPosition(giWriteResponseExportContainer.getYardPosition());
 		exportContainer.setYardBayCode(giWriteResponseExportContainer.getYardBayCode());
-		exportContainer.setManualPlanIndicator(giWriteResponseExportContainer.getManualPlanIndicator());
+		if(StringUtils.equalsIgnoreCase(giWriteResponseExportContainer.getManualPlanIndicator(), "Y")){
+			exportContainer.setManualPlanIndicator(true);
+		}
+		 
 		if (StringUtils.isNotEmpty(opusGateInWriteResponse.getCallCardNo())) {
-			exportContainer.setCallCard(Integer.parseInt(opusGateInWriteResponse.getCallCardNo()));
+			exportContainer.setCallCard(Long.parseLong(opusGateInWriteResponse.getCallCardNo()));
 		}
 
 		return exportContainer;

@@ -237,7 +237,7 @@ public class CosmosService implements OpusCosmosBusinessService {
 		default:
 			throw new BusinessException("Invalid transaction Type ! "+impExpFlag.name());
 		}
-		
+		GateInReponse gateInReponse = null;
 		try {
 			cosmosRequest.setIndex(0);
 			cosmosRequest.setCSMCTL(csmctlService.constructCSMCTL(commonValuesDTO));
@@ -245,14 +245,14 @@ public class CosmosService implements OpusCosmosBusinessService {
 			cosmosRequest.setCosmosGateInWriteRequest(cosmosGateInWriteRequest);
 			cosmosRequest.setCosmosGateOutWriteRequest(null);
 			SGS2CosmosResponse cosmosResponse = agsClientService.sendToCosmos(cosmosRequest, gateInWriteRequest.getCosmosPort());
-			cosmosResponseService.extractCosmosResponse(cosmosResponse, gateInWriteRequest);
+			gateInReponse = cosmosResponseService.extractCosmosGateInResponse(cosmosResponse, gateInWriteRequest);
 		
 		} catch (JAXBException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-		return null;
+		return gateInReponse;
 	}
 
 	private CosmosCommonValuesDTO getCommonValues(GateWriteRequest gateWriteRequest) {

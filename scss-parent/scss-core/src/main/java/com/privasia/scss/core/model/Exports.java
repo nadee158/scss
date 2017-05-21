@@ -196,7 +196,7 @@ public class Exports extends AuditEntity implements Serializable {
 	private Integer oogOR;
 
 	@Column(name = "EXP_CALL_CARD")
-	private Integer callCard;
+	private Long callCard;
 
 	@Column(name = "VESSEL_VISIT_ID")
 	private String vesselVisitID;
@@ -556,11 +556,11 @@ public class Exports extends AuditEntity implements Serializable {
 		this.oogOR = oogOR;
 	}
 
-	public Integer getCallCard() {
+	public Long getCallCard() {
 		return callCard;
 	}
 
-	public void setCallCard(Integer callCard) {
+	public void setCallCard(Long callCard) {
 		this.callCard = callCard;
 	}
 
