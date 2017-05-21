@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.privasia.scss.common.enums.SolasInstructionType;
+import com.privasia.scss.common.util.ApplicationConstants;
 import com.privasia.scss.common.util.DateUtil;
 
 public class GateInReponse implements Serializable {
@@ -54,6 +55,10 @@ public class GateInReponse implements Serializable {
 	private String hpabBookingId;
 	
 	private String impExpFlagStatus;
+	
+	private boolean manualPlanIndicator = false;
+	
+	private String manualPlanDescription;
 
 	public String getLaneNo() {
 		return laneNo;
@@ -222,5 +227,31 @@ public class GateInReponse implements Serializable {
 	public void setImpExpFlagStatus(String impExpFlagStatus) {
 		this.impExpFlagStatus = impExpFlagStatus;
 	}
+
+	public boolean isManualPlanIndicator() {
+		return manualPlanIndicator;
+	}
+
+	public void setManualPlanIndicator(boolean manualPlanIndicator) {
+		
+		if (!(this.getExportContainers() == null || this.getExportContainers().isEmpty())) {
+
+			this.manualPlanIndicator = this.getExportContainers().stream()
+				.filter(expContainer -> expContainer.isManualPlanIndicator()).findAny().isPresent();
+			this.setManualPlanDescription(ApplicationConstants.INF0016);
+
+		}else{
+			this.manualPlanIndicator = manualPlanIndicator;
+		}
+	}
+
+	public String getManualPlanDescription() {
+		return manualPlanDescription;
+	}
+
+	public void setManualPlanDescription(String manualPlanDescription) {
+		this.manualPlanDescription = manualPlanDescription;
+	}
+
 	
 }

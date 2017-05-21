@@ -8,11 +8,9 @@ import org.springframework.format.annotation.DateTimeFormat;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.privasia.scss.common.util.DateUtil;
 
-public class Container implements Serializable {
+public class BaseContainer implements Serializable {
 
   private static final long serialVersionUID = 1L;
-
-  // ####################################################################
 
   private PrintEirDTO printEir;
 
@@ -39,8 +37,6 @@ public class Container implements Serializable {
   private Long callCard;
 
   private String shippingAgent;
-
-  private String operationReefer;
 
   private String imdg;
 
@@ -204,17 +200,6 @@ public class Container implements Serializable {
   public void setShippingAgent(String shippingAgent) {
     this.shippingAgent = shippingAgent;
   }
-
-
-  public String getOperationReefer() {
-    return operationReefer;
-  }
-
-
-  public void setOperationReefer(String operationReefer) {
-    this.operationReefer = operationReefer;
-  }
-
 
   public String getImdg() {
     return imdg;

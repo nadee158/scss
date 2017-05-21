@@ -127,4 +127,8 @@ public interface ApplicationConstants {
   public static final String LPS_RES_MANUAL_CONTROL_MODE = "M";
   public static final String LPS_RES_TIME_OUT = "T";
   public static final String LPS_RES_FAIL = "F";
+  
+  public static final String COSMOS_MSG_CODE_PROPERTY_FILE = "classpath:cosmos_msg_codes.properties";
+  
+  public static final String INF0016 = "Container(s) are re-planned.";
 }
