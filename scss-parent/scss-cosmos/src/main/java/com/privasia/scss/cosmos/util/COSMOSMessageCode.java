@@ -6,30 +6,30 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ResourceLoaderAware;
+import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 
 import com.privasia.scss.common.util.ApplicationConstants;
 
 @Component("cosmosMessageCode")
-public class COSMOSMessageCode {
-
-	private ResourceLoader resourceLoader;
+public class COSMOSMessageCode  {
 
 	private Set<Object> keys = null;
 
 	private Properties prop = null;
 
+	private ResourceLoader resourceLoader;
+	
 	@Autowired
-	public void setResourceLoader(ResourceLoader resourceLoader) {
+	public COSMOSMessageCode(ResourceLoader resourceLoader) throws IOException {
 		this.resourceLoader = resourceLoader;
-	}
-
-	private COSMOSMessageCode() throws IOException {
 		InputStream is = null;
 		try {
 			this.prop = new Properties();
-			is = resourceLoader.getResource(ApplicationConstants.COSMOS_MSG_CODE_PROPERTY_FILE).getInputStream();
+			Resource file = this.resourceLoader.getResource(ApplicationConstants.COSMOS_MSG_CODE_PROPERTY_FILE);
+			is = file.getInputStream();
 			prop.load(is);
 			getAllKeys();
 		} finally {

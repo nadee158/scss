@@ -30,7 +30,7 @@ import com.privasia.scss.etpws.ETPWsEntryPoint;
     "com.privasia.scss.opus.*", "com.privasia.scss.etpws.*", "com.privasia.scss.common.*",})
 @EntityScan(basePackages = {"com.privasia.scss.core.model"})
 @PropertySource(value = {"classpath:mongodb.properties", "classpath:cosmos_application.properties",
-    "classpath:cosmos_sql-dev.properties", "classpath:opus_application.properties", "classpath:ws.properties"})
+    "classpath:cosmos_sql-dev.properties", "classpath:opus_application.properties", "classpath:ws.properties", "classpath:cosmos_msg_codes.properties"})
 @Import({AS400DBConfig.class, SCSSEntryPoint.class, ETPWsEntryPoint.class})
 @EnableJpaRepositories(basePackages = {"com.privasia.scss.core.repository"})
 @EnableAsync
