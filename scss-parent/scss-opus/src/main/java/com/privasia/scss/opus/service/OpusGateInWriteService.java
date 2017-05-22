@@ -21,7 +21,6 @@ import org.springframework.web.client.RestTemplate;
 import com.google.gson.Gson;
 import com.privasia.scss.common.dto.GateInReponse;
 import com.privasia.scss.common.dto.GateInWriteRequest;
-import com.privasia.scss.common.util.ApplicationConstants;
 import com.privasia.scss.common.util.DateUtil;
 import com.privasia.scss.opus.dto.GIWriteRequestExportContainer;
 import com.privasia.scss.opus.dto.GIWriteRequestImportContainer;
