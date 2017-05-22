@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.privasia.scss.common.annotation.HasAuthority;
 import com.privasia.scss.common.dto.ExportContainer;
 import com.privasia.scss.common.dto.GateInWriteRequest;
 import com.privasia.scss.common.exception.ResultsNotFoundException;
@@ -61,6 +62,7 @@ public class TestController {
 
   }
 
+  @HasAuthority(functions = {"12345"})
   @RequestMapping(value = "/testreferreject", method = RequestMethod.PUT,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
       consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)

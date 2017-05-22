@@ -12,54 +12,61 @@ import org.springframework.security.core.GrantedAuthority;
 
 public class UserContext {
 
-	private final Long userID;
-	private final String username;
-	private final String staffName;
-	private final String staffNumber;
-	private final List<GrantedAuthority> authorities;
-	private final List<Long> functions;
+  private final Long userID;
+  private final String username;
+  private final String staffName;
+  private final String staffNumber;
+  private final List<GrantedAuthority> authorities;
+  private final List<Long> functions;
 
-	private UserContext(Long userID, String username, List<GrantedAuthority> authorities, List<Long> functions,
-			String staffName, String staffNumber) {
-		this.userID = userID;
-		this.username = username;
-		this.authorities = authorities;
-		this.functions = functions;
-		this.staffName = staffName;
-		this.staffNumber = staffNumber;
-	}
+  private UserContext(Long userID, String username, List<GrantedAuthority> authorities,
+      List<Long> functions, String staffName, String staffNumber) {
+    this.userID = userID;
+    this.username = username;
+    this.authorities = authorities;
+    this.functions = functions;
+    this.staffName = staffName;
+    this.staffNumber = staffNumber;
+  }
 
-	public static UserContext create(Long userID, String username, List<GrantedAuthority> authorities,
-			List<Long> functions, String staffName, String staffNumber) {
-		if (StringUtils.isBlank(username))
-			throw new IllegalArgumentException("Username is blank: " + username);
-		return new UserContext(userID, username, authorities, functions, staffName, staffNumber);
-	}
+  public static UserContext create(Long userID, String username, List<GrantedAuthority> authorities,
+      List<Long> functions, String staffName, String staffNumber) {
+    if (StringUtils.isBlank(username))
+      throw new IllegalArgumentException("Username is blank: " + username);
+    return new UserContext(userID, username, authorities, functions, staffName, staffNumber);
+  }
 
-	public String getUsername() {
-		return username;
-	}
+  public String getUsername() {
+    return username;
+  }
 
-	public List<GrantedAuthority> getAuthorities() {
-		return authorities;
-	}
+  public List<GrantedAuthority> getAuthorities() {
+    return authorities;
+  }
 
-	public List<Long> getFunctions() {
-		return functions;
-	}
+  public List<Long> getFunctions() {
+    return functions;
+  }
 
-	public String getStaffName() {
-		return staffName;
-	}
+  public String getStaffName() {
+    return staffName;
+  }
 
-	public String getStaffNumber() {
-		return staffNumber;
-	}
+  public String getStaffNumber() {
+    return staffNumber;
+  }
 
-	public Long getUserID() {
-		return userID;
-	}
-	
-	
+  public Long getUserID() {
+    return userID;
+  }
+
+  @Override
+  public String toString() {
+    return "UserContext [userID=" + userID + ", username=" + username + ", staffName=" + staffName
+        + ", staffNumber=" + staffNumber + ", authorities=" + authorities + ", functions="
+        + functions + "]";
+  }
+
+
 
 }

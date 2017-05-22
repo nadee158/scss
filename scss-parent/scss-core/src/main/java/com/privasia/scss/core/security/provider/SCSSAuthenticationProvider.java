@@ -3,7 +3,6 @@
  */
 package com.privasia.scss.core.security.provider;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -14,7 +13,6 @@ import org.springframework.security.authentication.InsufficientAuthenticationExc
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -32,64 +30,51 @@ import com.privasia.scss.core.service.SecurityService;
 @Component
 public class SCSSAuthenticationProvider implements AuthenticationProvider {
 
-	private final SecurityService securityService;
-	private final PasswordEncoder encoder;
+  private final SecurityService securityService;
+  private final PasswordEncoder encoder;
 
-	@Autowired
-	public SCSSAuthenticationProvider(final SecurityService securityService, final PasswordEncoder encoder) {
-		this.securityService = securityService;
-		this.encoder = encoder;
-	}
+  @Autowired
+  public SCSSAuthenticationProvider(final SecurityService securityService,
+      final PasswordEncoder encoder) {
+    this.securityService = securityService;
+    this.encoder = encoder;
+  }
 
-	@Override
-	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-		Assert.notNull(authentication, "No authentication data provided");
+  @Override
+  public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+    Assert.notNull(authentication, "No authentication data provided");
 
-		String username = (String) authentication.getPrincipal();
-		String password = (String) authentication.getCredentials();
+    String username = (String) authentication.getPrincipal();
+    String password = (String) authentication.getCredentials();
 
-		Login loguser = securityService.getByUsername(username)
-				.orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+    Login loguser = securityService.getByUsername(username)
+        .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
 
-		List<Long> functionList = loguser.getRole().getRoleRights().stream()
-				.map(roleRights -> roleRights.getRoleRightsID().getFunction().getFunctionID())
-				.collect(Collectors.toList());
-		
-		List<GrantedAuthority> grantedAuthorities = new ArrayList<GrantedAuthority>();
-	    /*functionList.forEach(functionId -> {
-	      grantedAuthorities.add(new GrantedAuthority() {
-	        private static final long serialVersionUID = 1L;
-	        @Override
-	        public String getAuthority() {
-	          return "ROLE_"+Long.toString(functionId);
-	        }
-	      });
-	    });*/
-	    
-	    functionList.stream().map(String::valueOf).forEach(s->{
-	    	grantedAuthorities.add(() -> "ROLE_"+s);
-	    });
+    List<Long> functionList = loguser.getRole().getRoleRights().stream()
+        .map(roleRights -> roleRights.getRoleRightsID().getFunction().getFunctionID())
+        .collect(Collectors.toList());
 
-		if (!encoder.matches(password, loguser.getPassword())) {
-			throw new BadCredentialsException("Authentication Failed. Username or Password not valid.");
-		}
 
-		if (loguser.getRole() == null)
-			throw new InsufficientAuthenticationException("User has no roles assigned");
+    if (!encoder.matches(password, loguser.getPassword())) {
+      throw new BadCredentialsException("Authentication Failed. Username or Password not valid.");
+    }
 
-		UserContext userContext = UserContext.create(loguser.getSystemUser().getSystemUserID(), loguser.getUserName(),
-				AuthorityUtils.createAuthorityList(loguser.getRole().getRoleName()), functionList,
-				loguser.getSystemUser().getCommonContactAttribute().getPersonName(),
-				loguser.getSystemUser().getStaffNumber()); 
-		
-		
+    if (loguser.getRole() == null)
+      throw new InsufficientAuthenticationException("User has no roles assigned");
 
-		return new UsernamePasswordAuthenticationToken(userContext, null, userContext.getAuthorities());
-	}
+    UserContext userContext = UserContext.create(loguser.getSystemUser().getSystemUserID(),
+        loguser.getUserName(), AuthorityUtils.createAuthorityList(loguser.getRole().getRoleName()),
+        functionList, loguser.getSystemUser().getCommonContactAttribute().getPersonName(),
+        loguser.getSystemUser().getStaffNumber());
 
-	@Override
-	public boolean supports(Class<?> authentication) {
-		return (UsernamePasswordAuthenticationToken.class.isAssignableFrom(authentication));
-	}
+
+
+    return new UsernamePasswordAuthenticationToken(userContext, null, userContext.getAuthorities());
+  }
+
+  @Override
+  public boolean supports(Class<?> authentication) {
+    return (UsernamePasswordAuthenticationToken.class.isAssignableFrom(authentication));
+  }
 
 }

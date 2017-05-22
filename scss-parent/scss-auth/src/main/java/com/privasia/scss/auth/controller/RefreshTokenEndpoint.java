@@ -4,7 +4,6 @@
 package com.privasia.scss.auth.controller;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -64,10 +62,11 @@ public class RefreshTokenEndpoint {
   @RequestMapping(method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE},
       consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
 
-  public @ResponseBody JwtToken refreshToken(HttpServletRequest request, HttpServletResponse response)
-      throws IOException, ServletException {
+  public @ResponseBody JwtToken refreshToken(HttpServletRequest request,
+      HttpServletResponse response) throws IOException, ServletException {
 
-    String tokenPayload = tokenExtractor.extract(request.getHeader(WebSecurityConfig.JWT_TOKEN_HEADER_PARAM));
+    String tokenPayload =
+        tokenExtractor.extract(request.getHeader(WebSecurityConfig.JWT_TOKEN_HEADER_PARAM));
 
     RawAccessJwtToken rawToken = new RawAccessJwtToken(tokenPayload);
     RefreshToken refreshToken = RefreshToken.create(rawToken, jwtSettings.getTokenSigningKey())
@@ -83,26 +82,21 @@ public class RefreshTokenEndpoint {
         .orElseThrow(() -> new UsernameNotFoundException("User not found: " + subject));
 
     List<Long> functionList = loguser.getRole().getRoleRights().stream()
-        .map(roleRights -> roleRights.getRoleRightsID().getFunction().getFunctionID()).collect(Collectors.toList());
+        .map(roleRights -> roleRights.getRoleRightsID().getFunction().getFunctionID())
+        .collect(Collectors.toList());
 
     if (loguser.getRole() == null)
       throw new InsufficientAuthenticationException("User has no roles assigned");
-    
-    List<GrantedAuthority> grantedAuthorities = new ArrayList<GrantedAuthority>();
-    
-    functionList.stream().map(String::valueOf).forEach(s->{
-    	grantedAuthorities.add(() -> "ROLE_"+s);
-    });
-    
-    UserContext userContext = UserContext.create(loguser.getSystemUser().getSystemUserID(), loguser.getUserName(),
-			AuthorityUtils.createAuthorityList(loguser.getRole().getRoleName()), functionList,
-			loguser.getSystemUser().getCommonContactAttribute().getPersonName(),
-			loguser.getSystemUser().getStaffNumber());
+
+    UserContext userContext = UserContext.create(loguser.getSystemUser().getSystemUserID(),
+        loguser.getUserName(), AuthorityUtils.createAuthorityList(loguser.getRole().getRoleName()),
+        functionList, loguser.getSystemUser().getCommonContactAttribute().getPersonName(),
+        loguser.getSystemUser().getStaffNumber());
 
     JwtToken accessToken = tokenFactory.createAccessJwtToken(userContext);
 
-    cachedTokenValidatorService.updateTokenDetailsOfCache(rawToken.getToken(), accessToken.getToken(),
-        refreshToken.getToken(), userContext);
+    cachedTokenValidatorService.updateTokenDetailsOfCache(rawToken.getToken(),
+        accessToken.getToken(), refreshToken.getToken(), userContext);
 
     return accessToken;
   }
