@@ -237,7 +237,7 @@ public class GateInReponse implements Serializable {
 		if (!(this.getExportContainers() == null || this.getExportContainers().isEmpty())) {
 
 			this.manualPlanIndicator = this.getExportContainers().stream()
-				.filter(expContainer -> expContainer.isManualPlanIndicator()).findAny().isPresent();
+				.filter(expContainer -> expContainer.getManualPlanIndicator()).findAny().isPresent();
 			this.setManualPlanDescription(ApplicationConstants.INF0016);
 
 		}else{

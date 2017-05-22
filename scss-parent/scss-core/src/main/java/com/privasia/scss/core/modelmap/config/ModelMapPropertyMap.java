@@ -5,6 +5,7 @@ package com.privasia.scss.core.modelmap.config;
 
 import org.modelmapper.PropertyMap;
 
+import com.privasia.scss.common.dto.CommonSealDTO;
 import com.privasia.scss.common.dto.ExportContainer;
 import com.privasia.scss.common.dto.ImportContainer;
 import com.privasia.scss.common.dto.KioskBoothRightsDTO;
@@ -12,6 +13,7 @@ import com.privasia.scss.common.dto.ReferRejectDTO;
 import com.privasia.scss.common.dto.ReferRejectDetailDTO;
 import com.privasia.scss.common.dto.ReferRejectReasonDTO;
 import com.privasia.scss.common.enums.TransactionStatus;
+import com.privasia.scss.core.model.CommonSealAttribute;
 import com.privasia.scss.core.model.Exports;
 import com.privasia.scss.core.model.ExportsQ;
 import com.privasia.scss.core.model.GatePass;
@@ -130,7 +132,16 @@ public final class ModelMapPropertyMap {
 				skip().getBaseCommonGateInOutAttribute().setGateOutClerk(null);
 				skip().getBaseCommonGateInOutAttribute().setGateOutClient(null);
 				skip().setPrintEir(null);
+				skip().setManualPlanIndicator(null);
 
+			}
+		};
+	}
+	
+	public static PropertyMap<Exports, ExportContainer> exportsToExportContainer() {
+		return new PropertyMap<Exports, ExportContainer>() {
+			protected void configure() {
+				skip().setManualPlanIndicator(null);
 			}
 		};
 	}

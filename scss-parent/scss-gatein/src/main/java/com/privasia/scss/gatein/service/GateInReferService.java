@@ -70,21 +70,23 @@ public class GateInReferService {
 				referReject.getReferRejectDetails().forEach(referRejectDetail -> {
 					ExportContainer exportContainer = new ExportContainer();
 
-					if (!(referRejectDetail.getSolas() == null)) {
+					if (referRejectDetail.getSolas() != null) {
 						if (exportContainer.getSolas() == null) {
 							exportContainer.setSolas(new CommonSolasDTO());
 						}
 						modelMapper.map(referRejectDetail.getSolas(), exportContainer.getSolas());
+						gateInReponse.setSolasInstruction(exportContainer.getSolas().getSolasInstruction());
+						
 					}
 
-					if (!(referRejectDetail.getSeal() == null)) {
+					if (referRejectDetail.getSeal() != null) {
 						if (exportContainer.getSealAttribute() == null) {
 							exportContainer.setSealAttribute(new CommonSealDTO());
 						}
 						modelMapper.map(referRejectDetail.getSeal(), exportContainer.getSealAttribute());
 					}
 
-					if (!(referReject.getBaseCommonGateInOut() == null)) {
+					if (referReject.getBaseCommonGateInOut() != null) {
 						if (exportContainer.getBaseCommonGateInOutAttribute() == null) {
 							exportContainer.setBaseCommonGateInOutAttribute(new BaseCommonGateInOutDTO());
 						}

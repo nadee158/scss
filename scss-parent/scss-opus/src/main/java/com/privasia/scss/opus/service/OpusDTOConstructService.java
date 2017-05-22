@@ -327,14 +327,25 @@ public class OpusDTOConstructService {
 			exportContainer.setSealAttribute(new CommonSealDTO());
 		}
 		// private String containerSeal1_SL;// null,
-		exportContainer.getSealAttribute().setSeal01Origin(gIReadResponseExporterContainer.getContainerSeal1_SL());
+		if(StringUtils.isNotEmpty(gIReadResponseExporterContainer.getContainerSeal1_SL())){
+			exportContainer.getSealAttribute().setSeal01Origin(gIReadResponseExporterContainer.getContainerSeal1_SL());
+		}
+		
 		// private String containerSeal1_NO;// SEAL001,
-		exportContainer.getSealAttribute().setSeal01Number(gIReadResponseExporterContainer.getContainerSeal1_NO());
+		if(StringUtils.isNotEmpty(gIReadResponseExporterContainer.getContainerSeal1_NO())){
+			exportContainer.getSealAttribute().setSeal01Number(gIReadResponseExporterContainer.getContainerSeal1_NO());
+		}
+		
 		// private String containerSeal2_SL;// null,
-		exportContainer.getSealAttribute().setSeal02Origin(gIReadResponseExporterContainer.getContainerSeal2_SL());
+		if(StringUtils.isNotEmpty(gIReadResponseExporterContainer.getContainerSeal2_SL())){
+			exportContainer.getSealAttribute().setSeal02Origin(gIReadResponseExporterContainer.getContainerSeal2_SL());
+		}
+		
 		// private String containerSeal2_NO;// null,
-		exportContainer.getSealAttribute().setSeal02Number(gIReadResponseExporterContainer.getContainerSeal2_NO());
-
+		if(StringUtils.isNotEmpty(gIReadResponseExporterContainer.getContainerSeal2_NO())){
+			exportContainer.getSealAttribute().setSeal02Number(gIReadResponseExporterContainer.getContainerSeal2_NO());
+		}
+		
 		// private String containerReeferIndicator;// N,
 		exportContainer.setReferFlag(
 				ExportUtilService.getBooleanFromString(gIReadResponseExporterContainer.getContainerReeferIndicator()));

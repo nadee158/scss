@@ -25,7 +25,7 @@ public class ExportContainer extends BaseContainer implements Serializable {
 
 	private Long exportID;
 
-	private boolean manualPlanIndicator = false;
+	private Boolean manualPlanIndicator = false;
 
 	private String bookingNo; // opus exportOrderNo
 
@@ -240,12 +240,12 @@ public class ExportContainer extends BaseContainer implements Serializable {
 	public void setExportID(Long exportID) {
 		this.exportID = exportID;
 	}
-
-	public boolean isManualPlanIndicator() {
+	
+	public Boolean getManualPlanIndicator() {
 		return manualPlanIndicator;
 	}
 
-	public void setManualPlanIndicator(boolean manualPlanIndicator) {
+	public void setManualPlanIndicator(Boolean manualPlanIndicator) {
 		this.manualPlanIndicator = manualPlanIndicator;
 	}
 
