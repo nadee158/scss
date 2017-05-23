@@ -22,13 +22,19 @@ public class UpdateSealDTO implements Serializable {
 	private String gatePass02Seal01;
 	private String gatePass02Seal02;
 	private boolean forceSealUpdate;
-	private GateOutMessage gateOutMessage;
 	
+
 	public Long getGatePass01() {
 		return gatePass01;
 	}
 	public void setGatePass01(Long gatePass01) {
 		this.gatePass01 = gatePass01;
+	}
+	public Long getGatePass02() {
+		return gatePass02;
+	}
+	public void setGatePass02(Long gatePass02) {
+		this.gatePass02 = gatePass02;
 	}
 	public String getGatePass01Seal01() {
 		return gatePass01Seal01;
@@ -41,12 +47,6 @@ public class UpdateSealDTO implements Serializable {
 	}
 	public void setGatePass01Seal02(String gatePass01Seal02) {
 		this.gatePass01Seal02 = gatePass01Seal02;
-	}
-	public Long getGatePass02() {
-		return gatePass02;
-	}
-	public void setGatePass02(Long gatePass02) {
-		this.gatePass02 = gatePass02;
 	}
 	public String getGatePass02Seal01() {
 		return gatePass02Seal01;
@@ -66,13 +66,5 @@ public class UpdateSealDTO implements Serializable {
 	public void setForceSealUpdate(boolean forceSealUpdate) {
 		this.forceSealUpdate = forceSealUpdate;
 	}
-	public GateOutMessage getGateOutMessage() {
-		return gateOutMessage;
-	}
-	public void setGateOutMessage(GateOutMessage gateOutMessage) {
-		this.gateOutMessage = gateOutMessage;
-	}
 	
-	
-
 }

@@ -129,31 +129,29 @@ public class WHODD extends AuditEntity implements Serializable {
 
 	@Embedded
 	@AttributeOverrides({ @AttributeOverride(name = "containerNo", column = @Column(name = "ODD_CONTAINERNO1")),
-			@AttributeOverride(name = "location", column = @Column(name = "ODD_LOCATION")),
 			@AttributeOverride(name = "remarks", column = @Column(name = "ODD_REMARKS1")),
 			@AttributeOverride(name = "oddStatus", column = @Column(name = "ODD_STATUS", nullable = true)),
 			@AttributeOverride(name = "rejectionReason", column = @Column(name = "ODD_REJECTREASON")),
 			@AttributeOverride(name = "fullOrEmpty", column = @Column(name = "ODD_F_E", nullable = true)),
 			@AttributeOverride(name = "containerSize", column = @Column(name = "ODD_CONTAINERNO1_SIZE", nullable = true)),
-			@AttributeOverride(name = "hdbsBkgDetailNo", column = @Column(name = "HDBS_BKG_DETAIL_NO_1")),
 			@AttributeOverride(name = "hdbsStatus", column = @Column(name = "HDBS_STATUS1", nullable = true)),
 			@AttributeOverride(name = "hdbsArrivalStatus", column = @Column(name = "ARRIVAL_STATUS1", nullable = true)) })
 	@AssociationOverrides({
-			@AssociationOverride(name = "hdbsBkgDetailNo", joinColumns = @JoinColumn(name = "HDBS_STATUS1", referencedColumnName = "BKG_DETAIL_ID", nullable = true)) })
+			@AssociationOverride(name = "hdbsBkgDetailNo", joinColumns = @JoinColumn(name = "HDBS_BKG_DETAIL_NO_1", referencedColumnName = "BKG_DETAIL_ID", nullable = true)),
+			@AssociationOverride(name = "location", joinColumns = @JoinColumn(name = "ODD_LOCATION", referencedColumnName = "ODD_CODE", nullable = true))})
 	private ODDContainerDetails container01;
 
 	@Embedded
 	@AttributeOverrides({ @AttributeOverride(name = "containerNo", column = @Column(name = "ODD_CONTAINERNO2")),
-			@AttributeOverride(name = "location", column = @Column(name = "ODD_LOCATION2")),
 			@AttributeOverride(name = "remarks", column = @Column(name = "ODD_REMARKS2")),
 			@AttributeOverride(name = "oddStatus", column = @Column(name = "ODD_STATUS2", nullable = true)),
 			@AttributeOverride(name = "rejectionReason", column = @Column(name = "ODD_REJECTREASON2")),
 			@AttributeOverride(name = "fullOrEmpty", column = @Column(name = "ODD_F_E_2", nullable = true)),
 			@AttributeOverride(name = "containerSize", column = @Column(name = "ODD_CONTAINERNO2_SIZE", nullable = true)),
-			@AttributeOverride(name = "hdbsBkgDetailNo", column = @Column(name = "HDBS_BKG_DETAIL_NO_2")),
 			@AttributeOverride(name = "hdbsArrivalStatus", column = @Column(name = "ARRIVAL_STATUS2", nullable = true)) })
 	@AssociationOverrides({
-			@AssociationOverride(name = "hdbsBkgDetailNo", joinColumns = @JoinColumn(name = "HDBS_BKG_DETAIL_NO_2", referencedColumnName = "BKG_DETAIL_ID", nullable = true)) })
+			@AssociationOverride(name = "hdbsBkgDetailNo", joinColumns = @JoinColumn(name = "HDBS_BKG_DETAIL_NO_2", referencedColumnName = "BKG_DETAIL_ID", nullable = true)),
+			@AssociationOverride(name = "location", joinColumns = @JoinColumn(name = "ODD_LOCATION2", referencedColumnName = "ODD_CODE", nullable = true))})
 	private ODDContainerDetails container02;
 
 	@Column(name = "ODD_ZIP_FILE_NO")

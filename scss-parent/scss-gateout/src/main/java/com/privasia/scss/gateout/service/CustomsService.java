@@ -84,7 +84,7 @@ public class CustomsService {
     this.oddRepository = oddRepository;
   }
 
-  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
+  
   public String updateCustoms(CustomsDTO customsDTO) {
     String returnValue = null;
 
@@ -99,11 +99,13 @@ public class CustomsService {
     }
     return null;
   }
-
+  
+  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
   public String updateCustomsODD(CustomsDTO customsDTO) {
     return null;
   }
-
+  
+  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
   public String updateCustomsImport(CustomsDTO customsDTO) {
     // TODO Auto-generated method stub
     return null;

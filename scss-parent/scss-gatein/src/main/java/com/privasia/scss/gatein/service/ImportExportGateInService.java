@@ -431,47 +431,4 @@ public class ImportExportGateInService {
     return gateInReponse;
   }
 
-  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
-  public Long saveODDGateInFo(GateInWriteRequest gateInWriteRequest) {
-
-    if (gateInWriteRequest.getWhoddContainers() == null || (gateInWriteRequest.getWhoddContainers().isEmpty()))
-      throw new BusinessException("Invalid GateInWriteRequest to save ODD ! ");
-
-    Optional<Card> cardOpt = cardRepository.findOne(gateInWriteRequest.getCardID());
-    Card card = cardOpt
-        .orElseThrow(() -> new ResultsNotFoundException("Invalid Scan Card ID ! " + gateInWriteRequest.getCardID()));
-
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    UserContext userContext = (UserContext) authentication.getPrincipal();
-    log.info("userContext.getUsername() " + userContext.getUsername());
-
-    Optional<SystemUser> systemUserOpt = systemUserRepository.findOne(userContext.getUserID());
-    SystemUser user = systemUserOpt
-        .orElseThrow(() -> new ResultsNotFoundException("Invalid Login User ! " + userContext.getUsername()));
-
-    Optional<Client> clientOpt = clientRepository.findOne(gateInWriteRequest.getGateInClient());
-    Client client = clientOpt
-        .orElseThrow(() -> new ResultsNotFoundException("Invalid lane ID ! " + gateInWriteRequest.getGateInClient()));
-
-    if (StringUtils.isEmpty(gateInWriteRequest.getImpExpFlag()))
-      throw new BusinessException("Invalid GateInWriteRequest Empty ImpExpFlag");
-    ImpExpFlagStatus impExpFlag = ImpExpFlagStatus.fromValue(gateInWriteRequest.getImpExpFlag());
-
-    switch (impExpFlag) {
-      case IMPORT:
-
-        break;
-      case EXPORT:
-
-        break;
-      case IMPORT_EXPORT:
-
-        break;
-      default:
-        break;
-    }
-
-    return null;
-  }
-
 }

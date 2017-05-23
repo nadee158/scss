@@ -168,7 +168,7 @@ public class ImportGateOutService {
 
     gatePassList.forEach(gatePass -> {
       gatePass.getBaseCommonGateInOutAttribute().setEirStatus(TransactionStatus.REJECT);
-      if (gatePass.getGatePassNo() == cancelPickUpDTO.getGatePass01()) {
+      if (gatePass.getGatePassNo().longValue() == cancelPickUpDTO.getGatePass01().longValue()) {
         gatePass.getCommonGateInOut().setRejectReason(cancelPickUpDTO.getRemarks01());
       } else {
         gatePass.getCommonGateInOut().setRejectReason(cancelPickUpDTO.getRemarks02());
@@ -195,7 +195,7 @@ public class ImportGateOutService {
       if (gatePass.getSealAttribute() == null) {
         gatePass.setSealAttribute(new CommonSealAttribute());
       }
-      if (gatePass.getGatePassNo() == updateSealDTO.getGatePass01()) {
+      if (gatePass.getGatePassNo().longValue() == updateSealDTO.getGatePass01().longValue()) {
         gatePass.getSealAttribute().setSeal01Number(updateSealDTO.getGatePass01Seal01().trim());
         gatePass.getSealAttribute().setSeal02Number(updateSealDTO.getGatePass01Seal02().trim());
       } else {
@@ -230,7 +230,7 @@ public class ImportGateOutService {
       gatePass.getBaseCommonGateInOutAttribute().setGateOutClerk(systemUser);
       gatePass.getBaseCommonGateInOutAttribute().setGateOutClient(client);
       gatePass.getBaseCommonGateInOutAttribute().setTimeGateInOk(LocalDateTime.now());
-      if (gatePass.getGatePassNo() == confirmedKioskDTO.getGatePass01()) {
+      if (gatePass.getGatePassNo().longValue() == confirmedKioskDTO.getGatePass01().longValue()) {
         gatePass.getCommonGateInOut().setKioskConfirmed(confirmedKioskDTO.isStatus01());
       } else {
         gatePass.getCommonGateInOut().setKioskConfirmed(confirmedKioskDTO.isStatus02());

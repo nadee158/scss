@@ -3,122 +3,129 @@ package com.privasia.scss.common.dto;
 import java.io.Serializable;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 public class ODDContainerDetailsDTO implements Serializable {
 
-  /**
-   * 
-   */
-  private static final long serialVersionUID = 1L;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
-  private String containerNo = StringUtils.EMPTY;
+	private String containerNo = StringUtils.EMPTY;
 
-  private String location = StringUtils.EMPTY;
+	private ODDLocationDTO location;
 
-  private String remarks = StringUtils.EMPTY;
+	private String remarks = StringUtils.EMPTY;
 
-  private String oddStatus = StringUtils.EMPTY;
+	private String oddStatus = StringUtils.EMPTY;
 
-  private String rejectionReason = StringUtils.EMPTY;
+	private String rejectionReason = StringUtils.EMPTY;
 
-  private String fullOrEmpty = StringUtils.EMPTY;
+	private Long rejectionReasonID;
 
-  private String containerSize = StringUtils.EMPTY;
+	private String fullOrEmpty = StringUtils.EMPTY;
 
-  private String hdbsBkgDetailNoId;
+	private String containerSize = StringUtils.EMPTY;
 
-  private String hdbsStatus;
+	private String hdbsBkgDetailNoId;
 
-  private String hdbsArrivalStatus;
+	private String hdbsStatus;
 
-  public String getContainerNo() {
-    return containerNo;
-  }
+	private String hdbsArrivalStatus;
 
-  public void setContainerNo(String containerNo) {
-    this.containerNo = containerNo;
-  }
+	public String getContainerNo() {
+		return containerNo;
+	}
 
-  public String getLocation() {
-    return location;
-  }
+	public void setContainerNo(String containerNo) {
+		this.containerNo = containerNo;
+	}
 
-  public void setLocation(String location) {
-    this.location = location;
-  }
+	public ODDLocationDTO getLocation() {
+		return location;
+	}
 
-  public String getRemarks() {
-    return remarks;
-  }
+	public void setLocation(ODDLocationDTO location) {
+		this.location = location;
+	}
 
-  public void setRemarks(String remarks) {
-    this.remarks = remarks;
-  }
+	public String getRemarks() {
+		return remarks;
+	}
 
-  public String getOddStatus() {
-    return oddStatus;
-  }
+	public void setRemarks(String remarks) {
+		this.remarks = remarks;
+	}
 
-  public void setOddStatus(String oddStatus) {
-    this.oddStatus = oddStatus;
-  }
+	public String getOddStatus() {
+		return oddStatus;
+	}
 
-  public String getRejectionReason() {
-    return rejectionReason;
-  }
+	public void setOddStatus(String oddStatus) {
+		this.oddStatus = oddStatus;
+	}
 
-  public void setRejectionReason(String rejectionReason) {
-    this.rejectionReason = rejectionReason;
-  }
+	public String getRejectionReason() {
+		return rejectionReason;
+	}
 
-  public String getFullOrEmpty() {
-    return fullOrEmpty;
-  }
+	public void setRejectionReason(String rejectionReason) {
+		this.rejectionReason = rejectionReason;
+	}
 
-  public void setFullOrEmpty(String fullOrEmpty) {
-    this.fullOrEmpty = fullOrEmpty;
-  }
+	public String getFullOrEmpty() {
+		return fullOrEmpty;
+	}
 
-  public String getContainerSize() {
-    return containerSize;
-  }
+	public void setFullOrEmpty(String fullOrEmpty) {
+		this.fullOrEmpty = fullOrEmpty;
+	}
 
-  public void setContainerSize(String containerSize) {
-    this.containerSize = containerSize;
-  }
+	public String getContainerSize() {
+		return containerSize;
+	}
 
-  public String getHdbsStatus() {
-    return hdbsStatus;
-  }
+	public void setContainerSize(String containerSize) {
+		this.containerSize = containerSize;
+	}
 
-  public void setHdbsStatus(String hdbsStatus) {
-    this.hdbsStatus = hdbsStatus;
-  }
+	public String getHdbsStatus() {
+		return hdbsStatus;
+	}
 
-  public String getHdbsArrivalStatus() {
-    return hdbsArrivalStatus;
-  }
+	public void setHdbsStatus(String hdbsStatus) {
+		this.hdbsStatus = hdbsStatus;
+	}
 
-  public void setHdbsArrivalStatus(String hdbsArrivalStatus) {
-    this.hdbsArrivalStatus = hdbsArrivalStatus;
-  }
+	public String getHdbsArrivalStatus() {
+		return hdbsArrivalStatus;
+	}
 
-  public String getHdbsBkgDetailNoId() {
-    return hdbsBkgDetailNoId;
-  }
+	public void setHdbsArrivalStatus(String hdbsArrivalStatus) {
+		this.hdbsArrivalStatus = hdbsArrivalStatus;
+	}
 
-  public void setHdbsBkgDetailNoId(String hdbsBkgDetailNoId) {
-    this.hdbsBkgDetailNoId = hdbsBkgDetailNoId;
-  }
+	public String getHdbsBkgDetailNoId() {
+		return hdbsBkgDetailNoId;
+	}
 
-  @Override
-  public String toString() {
-    return "ODDContainerDetailsDTO [containerNo=" + containerNo + ", location=" + location + ", remarks=" + remarks
-        + ", oddStatus=" + oddStatus + ", rejectionReason=" + rejectionReason + ", fullOrEmpty=" + fullOrEmpty
-        + ", containerSize=" + containerSize + ", hdbsBkgDetailNoId=" + hdbsBkgDetailNoId + ", hdbsStatus=" + hdbsStatus
-        + ", hdbsArrivalStatus=" + hdbsArrivalStatus + "]";
-  }
+	public void setHdbsBkgDetailNoId(String hdbsBkgDetailNoId) {
+		this.hdbsBkgDetailNoId = hdbsBkgDetailNoId;
+	}
 
+	public Long getRejectionReasonID() {
+		return rejectionReasonID;
+	}
 
+	public void setRejectionReasonID(Long rejectionReasonID) {
+		this.rejectionReasonID = rejectionReasonID;
+	}
+
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
+	}
 
 }

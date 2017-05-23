@@ -6,6 +6,8 @@ import java.util.Optional;
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
 import org.apache.commons.lang3.StringUtils;
@@ -26,8 +28,10 @@ public class ODDContainerDetails implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private String containerNo;
-
-	private String location;
+	
+	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+	@JoinColumn(name = "ODD_LOCATION", nullable = false, referencedColumnName = "ODD_CODE")
+	private ODDLocation location;
 
 	private String remarks;
 	
@@ -62,14 +66,11 @@ public class ODDContainerDetails implements Serializable {
 		this.containerNo = containerNo;
 	}
 
-	public String getLocation() {
+	public ODDLocation getLocation() {
 		return location;
 	}
 
-	public void setLocation(String location) {
-		if(StringUtils.isNotEmpty(location)){
-			location = StringUtils.upperCase(location);
-		}
+	public void setLocation(ODDLocation location) {
 		this.location = location;
 	}
 

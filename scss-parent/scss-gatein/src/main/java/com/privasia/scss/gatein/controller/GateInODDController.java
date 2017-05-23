@@ -21,6 +21,7 @@ import com.privasia.scss.common.dto.CustomResponseEntity;
 import com.privasia.scss.common.dto.GateInReponse;
 import com.privasia.scss.common.dto.GateInRequest;
 import com.privasia.scss.common.dto.GateInWriteRequest;
+import com.privasia.scss.gatein.odd.service.ODDGateInService;
 import com.privasia.scss.gatein.service.ImportExportGateInService;
 import com.privasia.scss.hdbs.service.HDBSService;
 
@@ -37,7 +38,7 @@ public class GateInODDController {
 	private HDBSService hdbsService;
 
 	@Autowired
-	private ImportExportGateInService importExportGateInService;
+	private ODDGateInService oddGateInService;
 	
 	@Autowired
 	public void setHdbsService(HDBSService hdbsService) {
@@ -45,18 +46,20 @@ public class GateInODDController {
 	}
 	
 	@Autowired
-	public void setImportExportGateInService(ImportExportGateInService importExportGateInService) {
-		this.importExportGateInService = importExportGateInService;
+	public void setOddGateInService(ODDGateInService oddGateInService) {
+		this.oddGateInService = oddGateInService;
 	}
-
+	
 	@RequestMapping(value = "/whodd/save", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public CustomResponseEntity<ApiResponseObject<?>> saveWhodd(@RequestBody GateInWriteRequest gateInWriteRequest) {
 
-		Long generatedId = importExportGateInService.saveODDGateInFo(gateInWriteRequest);
+		GateInReponse gateInReponse = oddGateInService.saveODDGateInInFo(gateInWriteRequest);
 
 		return new CustomResponseEntity<ApiResponseObject<?>>(
-				new ApiResponseObject<Long>(HttpStatus.CREATED, generatedId), HttpStatus.CREATED);
+				new ApiResponseObject<GateInReponse>(HttpStatus.CREATED, gateInReponse), HttpStatus.CREATED);
 	}
+
+	
 
 	@RequestMapping(value = "/populate/bybkgdetails", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<GateInReponse> populateODD(@RequestBody GateInRequest gateInRequest, 

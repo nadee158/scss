@@ -28,6 +28,7 @@ import com.privasia.scss.common.dto.HDBSBkgDetailGridDTO;
 import com.privasia.scss.common.dto.HDBSBkgGridDTO;
 import com.privasia.scss.common.dto.HDBSBookingResponse;
 import com.privasia.scss.common.dto.ODDContainerDetailsDTO;
+import com.privasia.scss.common.dto.ODDLocationDTO;
 import com.privasia.scss.common.dto.WHoddDTO;
 import com.privasia.scss.common.enums.ContainerSize;
 import com.privasia.scss.common.enums.HDBSBookingType;
@@ -68,7 +69,7 @@ public class HDBSService {
 	private WDCGlobalSettingRepository wdcGlobalSettingRepository;
 
 	private ModelMapper modelMapper;
-	
+
 	private ODDLocationRepository oddLocationRepository;
 
 	@Autowired
@@ -416,10 +417,10 @@ public class HDBSService {
 
 					if (pickup) {
 						WHoddDTO importODDDTO = new WHoddDTO();
-						if(gateInRequest.isOddReject()){
+						if (gateInRequest.isOddReject()) {
 							importODDDTO.setGateInStatus(TransactionStatus.REJECT.getValue());
 						}
-						
+
 						bkgMaster.getHdbsBookingDetails().stream().filter(bkgDetail -> {
 							return bkgDetail.getHdbsBkgType().equals(HDBSBookingType.PICKUP);
 						}).forEach(bkgDetail -> {
@@ -437,7 +438,7 @@ public class HDBSService {
 
 					if (drop) {
 						WHoddDTO exportODDDTO = new WHoddDTO();
-						if(gateInRequest.isOddReject()){
+						if (gateInRequest.isOddReject()) {
 							exportODDDTO.setGateInStatus(TransactionStatus.REJECT.getValue());
 						}
 						bkgMaster.getHdbsBookingDetails().stream().filter(bkgDetail -> {
@@ -472,22 +473,27 @@ public class HDBSService {
 	public WHoddDTO setODDContainerInfo(WHoddDTO oddDTO, HDBSBkgDetail bkgDetails, ImpExpFlagStatus impExpFlag) {
 
 		ODDContainerDetailsDTO containerDetailsDTO = new ODDContainerDetailsDTO();
+		ODDLocationDTO oddLocationDTO = new ODDLocationDTO();
+		containerDetailsDTO.setLocation(oddLocationDTO);
 		containerDetailsDTO.setContainerNo(bkgDetails.getContainerNo());
-		containerDetailsDTO.setLocation(bkgDetails.gethDBSBkgMaster().getDepotCode());
+		containerDetailsDTO.getLocation().setOddCode(bkgDetails.gethDBSBkgMaster().getDepotCode());
 		containerDetailsDTO.setHdbsBkgDetailNoId(bkgDetails.getHdbsBKGDetailID());
 		containerDetailsDTO.setHdbsStatus(bkgDetails.getStatusCode().getValue());
 		containerDetailsDTO.setContainerSize(
 				bkgDetails.getContainerSize() == null ? "" : bkgDetails.getContainerSize().getValue());
-		
-		if(StringUtils.isNotEmpty(bkgDetails.gethDBSBkgMaster().getDepotCode())){
-			Optional<ODDLocation> optLocation = oddLocationRepository.findOne(bkgDetails.gethDBSBkgMaster().getDepotCode());
-			if(optLocation.isPresent()){
-				containerDetailsDTO.setLocation(optLocation.get().getOddDesc());
-			}else{
-				containerDetailsDTO.setLocation(optLocation.get().getOddDesc());
-			}
+
+		if (StringUtils.isNotEmpty(bkgDetails.gethDBSBkgMaster().getDepotCode())) {
+			Optional<ODDLocation> optLocation = oddLocationRepository
+					.findOne(bkgDetails.gethDBSBkgMaster().getDepotCode());
+
+			ODDLocation oddLocation = optLocation.orElseThrow(() -> new BusinessException(
+					"Depot Code " + bkgDetails.gethDBSBkgMaster().getDepotCode() + " Not found in SCSS ODD Location"));
+
+			ODDLocationDTO location = modelMapper.map(oddLocation, ODDLocationDTO.class);
+			containerDetailsDTO.setLocation(location);
+
 		}
-		
+
 		if (LocalDateTime.now().isAfter(bkgDetails.getApptDateTimeToActual())) {
 			containerDetailsDTO.setHdbsArrivalStatus(ApplicationConstants.LATE);
 		} else if (LocalDateTime.now().isAfter(bkgDetails.getApptDateTimeFrom())

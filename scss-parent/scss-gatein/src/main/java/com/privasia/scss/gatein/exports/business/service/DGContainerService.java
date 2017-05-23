@@ -82,10 +82,6 @@ public class DGContainerService {
 		this.exportsRepository = exportsRepository;
 	} 
 	
-	@Autowired
-	public DgDetailRepository getDgDetailRepository() {
-		return dgDetailRepository;
-	}
 	
 	@Autowired
 	public void setDgValidationLogRepository(DGValidationLogRepository dgValidationLogRepository) {

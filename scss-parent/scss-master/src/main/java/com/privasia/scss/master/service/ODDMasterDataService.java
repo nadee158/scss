@@ -28,57 +28,69 @@ import com.privasia.scss.core.repository.ODDLocationRepository;
 @Service("oddMasterDataService")
 public class ODDMasterDataService {
 
-  @Autowired
-  private ODDImportReasonRepository oddImportReasonRepository;
+	private ODDImportReasonRepository oddImportReasonRepository;
 
-  @Autowired
-  private ODDExportReasonRepository oddExportReasonRepository;
+	private ODDExportReasonRepository oddExportReasonRepository;
 
-  @Autowired
-  private ODDLocationRepository oddLocationRepository;
+	private ODDLocationRepository oddLocationRepository;
+	
+	@Autowired
+	public void setOddImportReasonRepository(ODDImportReasonRepository oddImportReasonRepository) {
+		this.oddImportReasonRepository = oddImportReasonRepository;
+	}
+	
+	@Autowired
+	public void setOddExportReasonRepository(ODDExportReasonRepository oddExportReasonRepository) {
+		this.oddExportReasonRepository = oddExportReasonRepository;
+	}
+	
+	@Autowired
+	public void setOddLocationRepository(ODDLocationRepository oddLocationRepository) {
+		this.oddLocationRepository = oddLocationRepository;
+	}
 
-  @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-  public List<ODDImportReason> findAllImportReason() throws ResultsNotFoundException {
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
+	public List<ODDImportReason> findAllImportReason() throws ResultsNotFoundException {
 
-    Stream<ODDImportReason> oddImportReason = oddImportReasonRepository.findAll();
+		Stream<ODDImportReason> oddImportReason = oddImportReasonRepository.findAll();
 
-    if (oddImportReason != null) {
+		if (oddImportReason != null) {
 
-      return oddImportReason.collect(Collectors.toList());
+			return oddImportReason.collect(Collectors.toList());
 
-    } else {
-      throw new ResultsNotFoundException("No ODD Import Reasons were found!");
-    }
-  }
+		} else {
+			throw new ResultsNotFoundException("No ODD Import Reasons were found!");
+		}
+	}
 
-  @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-  public List<ODDExportReason> findAllExporteason() throws ResultsNotFoundException {
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
+	public List<ODDExportReason> findAllExporteason() throws ResultsNotFoundException {
 
-    Stream<ODDExportReason> oddExportReason = oddExportReasonRepository.findAll();
+		Stream<ODDExportReason> oddExportReason = oddExportReasonRepository.findAll();
 
-    if (oddExportReason != null) {
+		if (oddExportReason != null) {
 
-      return oddExportReason.collect(Collectors.toList());
+			return oddExportReason.collect(Collectors.toList());
 
-    } else {
-      throw new ResultsNotFoundException("No ODD Export Reasons were found!");
-    }
-  }
+		} else {
+			throw new ResultsNotFoundException("No ODD Export Reasons were found!");
+		}
+	}
 
-  @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-  public List<ODDLocation> findActiveODDLocation() throws ResultsNotFoundException {
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
+	public List<ODDLocation> findActiveODDLocation() throws ResultsNotFoundException {
 
-    RecordStatus recordStatus = RecordStatus.ACTIVE;
+		RecordStatus recordStatus = RecordStatus.ACTIVE;
 
-    Stream<ODDLocation> activeLocations = oddLocationRepository.findByStatusCodeOrderByOddCodeAsc(recordStatus);
+		Stream<ODDLocation> activeLocations = oddLocationRepository.findByStatusCodeOrderByOddCodeAsc(recordStatus);
 
-    if (activeLocations != null) {
+		if (activeLocations != null) {
 
-      return activeLocations.collect(Collectors.toList());
+			return activeLocations.collect(Collectors.toList());
 
-    } else {
-      throw new ResultsNotFoundException("No ODD Locations were found!");
-    }
-  }
+		} else {
+			throw new ResultsNotFoundException("No ODD Locations were found!");
+		}
+	}
 
 }
