@@ -102,7 +102,7 @@ public class ODDGateOutService {
 			
 			transactionList.forEach(whODD -> {
 				WHoddDTO oddDTO = modelMapper.map(whODD, WHoddDTO.class);
-				if (oddDTO.getContainer01() != null) {
+				/*if (oddDTO.getContainer01() != null) {
 					Optional<ODDLocation> optionalLocation = oddLocationRepository
 							.findOne(oddDTO.getContainer01().getLocation());
 					if (optionalLocation.isPresent()) {
@@ -117,7 +117,7 @@ public class ODDGateOutService {
 					if (optionalLocation.isPresent()) {
 						oddDTO.getContainer02().setLocation(optionalLocation.get().getOddDesc());
 					}
-				}
+				}*/
 				whODDContainers.add(oddDTO);
 			});
 			
@@ -153,7 +153,7 @@ public class ODDGateOutService {
 	}
 
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
-	public Long saveODDGateOutInFo(GateOutWriteRequest gateOutWriteRequest, Card card, Client gateOutClient,
+	public Long saveODDGateOutInFo(GateOutWriteRequest gateOutWriteRequest, Card card, Client gateOutClient, 
 			SystemUser gateOutClerk, ImpExpFlagStatus impExpFlag, Optional<Client> gateOutBooth,
 			Optional<SystemUser> gateOutBoothClerk) {
 
