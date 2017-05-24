@@ -34,6 +34,7 @@ import com.privasia.scss.common.enums.ContainerSize;
 import com.privasia.scss.common.enums.HDBSBookingType;
 import com.privasia.scss.common.enums.HDBSStatus;
 import com.privasia.scss.common.enums.ImpExpFlagStatus;
+import com.privasia.scss.common.enums.RecordStatus;
 import com.privasia.scss.common.enums.TransactionStatus;
 import com.privasia.scss.common.exception.BusinessException;
 import com.privasia.scss.common.exception.ResultsNotFoundException;
@@ -484,7 +485,7 @@ public class HDBSService {
 
 		if (StringUtils.isNotEmpty(bkgDetails.gethDBSBkgMaster().getDepotCode())) {
 			Optional<ODDLocation> optLocation = oddLocationRepository
-					.findOne(bkgDetails.gethDBSBkgMaster().getDepotCode());
+					.findByOddCodeAndStatusCode(bkgDetails.gethDBSBkgMaster().getDepotCode(), RecordStatus.ACTIVE);
 
 			ODDLocation oddLocation = optLocation.orElseThrow(() -> new BusinessException(
 					"Depot Code " + bkgDetails.gethDBSBkgMaster().getDepotCode() + " Not found in SCSS ODD Location"));

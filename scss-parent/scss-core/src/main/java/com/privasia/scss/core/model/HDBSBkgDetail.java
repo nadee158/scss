@@ -192,7 +192,7 @@ public class HDBSBkgDetail extends AuditEntity implements Serializable {
 	@Column(name = "REJECTED_DATE")
 	private LocalDateTime rejectedDate;
 
-	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
 	@JoinColumn(name = "ODD_ID_SEQ", nullable = true)
 	private WHODD oddIdSeq;
 

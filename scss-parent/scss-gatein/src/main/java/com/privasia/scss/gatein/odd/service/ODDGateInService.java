@@ -143,14 +143,15 @@ public class ODDGateInService {
 				throw new BusinessException("Invalid Transaction type for ODD " + impExpFlag.name());
 
 			if (gateInWriteRequest.isOddReject()) {
-				whODDdto.setGateInStatus(TransactionStatus.REJECT.getValue());
-
+				
 				if (StringUtils.isEmpty(whODDdto.getContainer01().getRemarks())) 
 					throw new BusinessException(
 							"Rejection Remarks is need for container  : " + whODDdto.getContainer01().getContainerNo());
 				if (whODDdto.getContainer01().getRejectionReasonID() == null)
 					throw new BusinessException(
 							"Rejection Reason is need for container  : " + whODDdto.getContainer01().getContainerNo());
+				whODDdto.setGateInStatus(TransactionStatus.REJECT.getValue());
+				
 
 				if (whODDdto.getContainer02() != null) {
 					if (StringUtils.isEmpty(whODDdto.getContainer02().getRemarks()))
@@ -219,12 +220,14 @@ public class ODDGateInService {
 			WHODD whODD = modelMapper.map(whODDdto, WHODD.class);
 
 			if (whODDdto.getContainer01() != null) {
+				
+				whODDdto.getContainer01().setOddStatus(TransactionStatus.INPROGRESS.getValue());
 				Optional<ODDLocation> optLocation = oddLocationRepository
 						.findByOddCodeAndStatusCode(whODDdto.getContainer01().getLocation().getOddCode(), RecordStatus.ACTIVE);
 				
 				ODDLocation location = optLocation.orElseThrow(() -> new ResultsNotFoundException(
-						"Invalid location provided for container " + whODDdto.getContainer01().getLocation() + " / "
-								+ whODDdto.getContainer01().getLocation()));
+						"Invalid location provided for container " + whODDdto.getContainer01().getContainerNo() + " / "
+								+ whODDdto.getContainer01().getLocation().getOddCode()));
 				
 				whODD.getContainer01().setLocation(location);
 				
@@ -237,19 +240,20 @@ public class ODDGateInService {
 									+ whODDdto.getContainer01().getHdbsBkgDetailNoId()));
 					whODD.getContainer01().setHdbsBkgDetailNo(hdbsBookingDetail);
 					whODD.getContainer01().setHdbsStatus(hdbsBookingDetail.getStatusCode());
-					hdbsBookingDetail.setScssStatusCode(SCSSHDBSStatus.IN_PROGRESS);
-					hdbsBookingDetail.setOddTimeGateInOk(whODD.getTimeGateInOk());
-					hdbsBookingDetail.setOddIdSeq(whODD);
+					//hdbsBookingDetail.setScssStatusCode(SCSSHDBSStatus.IN_PROGRESS);
+					//hdbsBookingDetail.setOddTimeGateInOk(whODD.getTimeGateInOk());
+					//hdbsBookingDetail.setOddIdSeq(whODD);
 				}
 			}
 			if (whODDdto.getContainer02() != null) {
-
+				
+				whODDdto.getContainer02().setOddStatus(TransactionStatus.INPROGRESS.getValue());
 				Optional<ODDLocation> optLocation = oddLocationRepository
 						.findByOddCodeAndStatusCode(whODDdto.getContainer02().getLocation().getOddCode(), RecordStatus.ACTIVE);
 				
 				ODDLocation location = optLocation.orElseThrow(() -> new ResultsNotFoundException(
-						"Invalid location provided for container " + whODDdto.getContainer02().getLocation() + " / "
-								+ whODDdto.getContainer02().getLocation()));
+						"Invalid location provided for container " + whODDdto.getContainer02().getContainerNo() + " / "
+								+ whODDdto.getContainer02().getLocation().getOddCode()));
 				
 				whODD.getContainer02().setLocation(location);
 				
@@ -264,9 +268,9 @@ public class ODDGateInService {
 
 					whODD.getContainer02().setHdbsBkgDetailNo(hdbsBookingDetail);
 					whODD.getContainer02().setHdbsStatus(hdbsBookingDetail.getStatusCode());
-					hdbsBookingDetail.setScssStatusCode(SCSSHDBSStatus.IN_PROGRESS);
-					hdbsBookingDetail.setOddTimeGateInOk(whODD.getTimeGateInOk());
-					hdbsBookingDetail.setOddIdSeq(whODD);
+					//hdbsBookingDetail.setScssStatusCode(SCSSHDBSStatus.IN_PROGRESS);
+					//hdbsBookingDetail.setOddTimeGateInOk(whODD.getTimeGateInOk());
+					//hdbsBookingDetail.setOddIdSeq(whODD);
 				}
 			}
 
@@ -315,7 +319,7 @@ public class ODDGateInService {
 			WHODD dbODD = oddList.iterator().next();
 			if (StringUtils.equalsIgnoreCase(dbODD.getPmHeadNo(), whodd.getPmHeadNo())
 					&& StringUtils.equalsIgnoreCase(dbODD.getPmPlateNo(), whodd.getPmPlateNo())) {
-				throw new BusinessException("PM Head No " + dbODD.getPmHeadNo() + "and PM plate No "
+				throw new BusinessException("PM Head No " + dbODD.getPmHeadNo() + " and PM plate No "
 						+ dbODD.getPmPlateNo() + " already in use.");
 			} else if (StringUtils.equalsIgnoreCase(dbODD.getPmHeadNo(), whodd.getPmHeadNo())) {
 				throw new BusinessException("PM Head No " + dbODD.getPmHeadNo() + " already in use");

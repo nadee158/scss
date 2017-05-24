@@ -42,7 +42,7 @@ public class WHODD extends AuditEntity implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_SCSS_WH_ODD")
-	@SequenceGenerator(name = "SEQ_SCSS_WH_ODD", sequenceName = "ODD_ID_SEQ")
+	@SequenceGenerator(name = "SEQ_SCSS_WH_ODD", sequenceName = "ODD_ID_SEQ", allocationSize = 1)
 	@Column(name = "ODD_ID_SEQ")
 	private Long oddIdSeq;
 
@@ -78,23 +78,23 @@ public class WHODD extends AuditEntity implements Serializable {
 	@JoinColumn(name = "ODD_HCTDID", nullable = true, referencedColumnName = "CRD_CARDID_SEQ")
 	private Card card;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY,  cascade = CascadeType.MERGE)
 	@JoinColumn(name = "ODD_GATEINCLERKID", nullable = true, referencedColumnName = "SYS_USERID_SEQ")
 	private SystemUser gateInClerk;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
 	@JoinColumn(name = "ODD_GATEOUTCLERKID", nullable = true, referencedColumnName = "SYS_USERID_SEQ")
 	private SystemUser gateOutClerk;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
 	@JoinColumn(name = "CLI_CLIENTID_GATEIN", nullable = true, referencedColumnName = "CLI_CLIENTID_SEQ")
 	private Client gateInClient;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
 	@JoinColumn(name = "CLI_CLIENTID_GATEOUT", nullable = true, referencedColumnName = "CLI_CLIENTID_SEQ")
 	private Client gateOutClient;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
 	@JoinColumn(name = "ODD_GATEOUT_BOOTH_CLERKID", nullable = true, referencedColumnName = "SYS_USERID_SEQ")
 	private SystemUser gateOutBoothClerk;
 
@@ -148,6 +148,7 @@ public class WHODD extends AuditEntity implements Serializable {
 			@AttributeOverride(name = "rejectionReason", column = @Column(name = "ODD_REJECTREASON2")),
 			@AttributeOverride(name = "fullOrEmpty", column = @Column(name = "ODD_F_E_2", nullable = true)),
 			@AttributeOverride(name = "containerSize", column = @Column(name = "ODD_CONTAINERNO2_SIZE", nullable = true)),
+			@AttributeOverride(name = "hdbsStatus", column = @Column(name = "HDBS_STATUS2", nullable = true)),
 			@AttributeOverride(name = "hdbsArrivalStatus", column = @Column(name = "ARRIVAL_STATUS2", nullable = true)) })
 	@AssociationOverrides({
 			@AssociationOverride(name = "hdbsBkgDetailNo", joinColumns = @JoinColumn(name = "HDBS_BKG_DETAIL_NO_2", referencedColumnName = "BKG_DETAIL_ID", nullable = true)),

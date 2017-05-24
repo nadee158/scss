@@ -31,7 +31,7 @@ public class LaneOpenService {
 		laneOpen.setLaneOpenFlag(LaneOpenFlag.OPENED);
 		laneOpenRepository.save(laneOpen);
 
-		return "SCSS TRANSACTION SUCCESS";
+		return "success";
 	}
 
 }

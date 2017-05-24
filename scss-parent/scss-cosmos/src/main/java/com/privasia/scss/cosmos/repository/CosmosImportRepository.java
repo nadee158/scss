@@ -2,9 +2,6 @@ package com.privasia.scss.cosmos.repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
@@ -12,16 +9,14 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.privasia.scss.common.dto.CommonContainerDTO;
 import com.privasia.scss.common.dto.CommonSealDTO;
 import com.privasia.scss.common.dto.ImportContainer;
-import com.privasia.scss.common.dto.SealInfo;
+import com.privasia.scss.common.exception.BusinessException;
 import com.privasia.scss.cosmos.util.TextString;
 
 @Repository
@@ -55,30 +50,28 @@ public class CosmosImportRepository {
 	}
 
 	@Transactional(value = "as400TransactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-	public ImportContainer getContainerInfo(ImportContainer importContainer, String containerNo) {
+	public ImportContainer getContainerInfo(ImportContainer importContainer) {
 
-		containerNo = StringUtils.upperCase(containerNo);
+		String containerNo = StringUtils.upperCase(importContainer.getContainer().getContainerNumber());
 		return jdbcTemplate.queryForObject(queryGetContainerInfo, new Object[] { containerNo },
-				(rs, i) -> mapToImportContainer(importContainer, rs, i));
+				(rs, i) -> mapToImportContainer(importContainer, rs));
 	}
 
-	private ImportContainer mapToImportContainer(ImportContainer importContainer, ResultSet rs, int rowNum)
+	private ImportContainer mapToImportContainer(ImportContainer importContainer, ResultSet rs)
 			throws SQLException {
-		if (rs != null) {
-			importContainer.setShippingAgent(TextString.format(rs.getString("orgv05")));
-			importContainer.getContainer().setContainerNumber(TextString.format(rs.getString("cnid03")));
-			importContainer.setGateInOut(rs.getString("hdtp03"));
-			importContainer.setShippingLine(TextString.format(rs.getString("lynd05")));
-			importContainer.getContainer().setContainerFullOrEmpty(TextString.format(rs.getString("cnbt03")));
-			if (importContainer.getContainer() == null) {
-				importContainer.setContainer(new CommonContainerDTO());
-			}
-			importContainer.getContainer().setContainerISOCode(TextString.format(rs.getString("cnis03")));
-			importContainer.setOrderFOT(TextString.format(rs.getString("orrf05")));
-			importContainer.setCurrentPosition(TextString.format(rs.getString("psex45")));
-			importContainer.setHandlingID(Long.parseLong(TextString.format(rs.getString("hdid10"))));
-		} else {
-			importContainer.setFOTBKGFlag(false);
+		if (rs != null && rs.next()) {
+			importContainer.setShippingAgent(TextString.format(rs.getString("ORGV05")));
+			importContainer.getContainer().setContainerNumber(TextString.format(rs.getString("CNID03")));
+			importContainer.setGateInOut(rs.getString("HDTP03"));
+			importContainer.setShippingLine(TextString.format(rs.getString("LYND05")));
+			importContainer.getContainer().setContainerFullOrEmpty(TextString.format(rs.getString("CNBT03")));
+			importContainer.getContainer().setContainerISOCode(TextString.format(rs.getString("CNIS03")));
+			importContainer.setOrderFOT(TextString.format(rs.getString("ORRF05")));
+			importContainer.setCurrentPosition(TextString.format(rs.getString("PSEX45")));
+		} 
+		
+		if (rs.getRow() == 0) {
+			throw new BusinessException("FOT/BKG does not exist");
 		}
 		return importContainer;
 	}

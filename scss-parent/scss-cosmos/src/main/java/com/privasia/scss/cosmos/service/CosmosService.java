@@ -161,7 +161,7 @@ public class CosmosService implements OpusCosmosBusinessService {
 			// getImpRequestXML
 			if (!(gateOutWriteRequest.getImportContainers() == null || gateOutWriteRequest.getImportContainers().isEmpty())) {
 				
-				List<CosmosGateOutImport> cosmosImportList = cosmosGateOutWriteService.constructCosmosGateoutImport(
+				List<CosmosGateOutImport> cosmosImportList = cosmosGateOutWriteService.constructCosmosGateOutImport( 
 						commonValuesDTO, gateOutWriteRequest.getImportContainers(), startIndex);
 				if(cosmosImportList.isEmpty())
 					return gateOutReponse;
@@ -174,7 +174,7 @@ public class CosmosService implements OpusCosmosBusinessService {
 		case IMPORT_EXPORT:
 			if (!(gateOutWriteRequest.getImportContainers() == null || gateOutWriteRequest.getImportContainers().isEmpty())) {
 				
-				List<CosmosGateOutImport> cosmosImportList = cosmosGateOutWriteService.constructCosmosGateoutImport(
+				List<CosmosGateOutImport> cosmosImportList = cosmosGateOutWriteService.constructCosmosGateOutImport(
 						commonValuesDTO, gateOutWriteRequest.getImportContainers(), startIndex);
 				cosmosGateOutWriteRequest.setImportList(cosmosImportList);
 			}
