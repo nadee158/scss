@@ -19,8 +19,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
+import com.privasia.scss.common.security.model.UserContext;
 import com.privasia.scss.core.model.Login;
-import com.privasia.scss.core.security.model.UserContext;
 import com.privasia.scss.core.service.SecurityService;
 
 /**

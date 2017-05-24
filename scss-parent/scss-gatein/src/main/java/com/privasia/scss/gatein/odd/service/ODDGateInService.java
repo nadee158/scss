@@ -25,6 +25,7 @@ import com.privasia.scss.common.enums.SCSSHDBSStatus;
 import com.privasia.scss.common.enums.TransactionStatus;
 import com.privasia.scss.common.exception.BusinessException;
 import com.privasia.scss.common.exception.ResultsNotFoundException;
+import com.privasia.scss.common.security.model.UserContext;
 import com.privasia.scss.core.model.Card;
 import com.privasia.scss.core.model.Client;
 import com.privasia.scss.core.model.HDBSBkgDetail;
@@ -42,7 +43,6 @@ import com.privasia.scss.core.repository.ODDImportReasonRepository;
 import com.privasia.scss.core.repository.ODDLocationRepository;
 import com.privasia.scss.core.repository.ODDRepository;
 import com.privasia.scss.core.repository.SystemUserRepository;
-import com.privasia.scss.core.security.model.UserContext;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Predicate;
 

@@ -7,9 +7,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import com.privasia.scss.common.security.model.UserContext;
 import com.privasia.scss.core.config.WebSecurityConfig;
 import com.privasia.scss.core.security.jwt.extractor.TokenExtractor;
-import com.privasia.scss.core.security.model.UserContext;
 
 public final class SecurityHelper {
 

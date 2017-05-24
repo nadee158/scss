@@ -22,13 +22,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.privasia.scss.common.security.model.UserContext;
 import com.privasia.scss.core.config.JwtSettings;
 import com.privasia.scss.core.config.WebSecurityConfig;
 import com.privasia.scss.core.exception.InvalidJwtTokenException;
 import com.privasia.scss.core.model.Login;
 import com.privasia.scss.core.security.jwt.extractor.TokenExtractor;
 import com.privasia.scss.core.security.jwt.verifier.TokenVerifier;
-import com.privasia.scss.core.security.model.UserContext;
 import com.privasia.scss.core.security.model.token.JwtToken;
 import com.privasia.scss.core.security.model.token.JwtTokenFactory;
 import com.privasia.scss.core.security.model.token.RawAccessJwtToken;

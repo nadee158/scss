@@ -14,9 +14,9 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
+import com.privasia.scss.common.security.model.UserContext;
 import com.privasia.scss.core.config.JwtSettings;
 import com.privasia.scss.core.exception.JwtExpiredTokenException;
-import com.privasia.scss.core.security.model.UserContext;
 import com.privasia.scss.core.security.model.token.JwtAuthenticationToken;
 import com.privasia.scss.core.security.model.token.RawAccessJwtToken;
 import com.privasia.scss.core.service.CachedTokenValidatorService;

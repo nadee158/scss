@@ -16,16 +16,17 @@ import com.privasia.scss.cosmos.repository.CosmosImportRepository;
 @RequestMapping("**/test")
 public class TestController {
 
-	@Autowired
-	private CosmosImportRepository cosmosImportRepository;
-	
+  @Autowired
+  private CosmosImportRepository cosmosImportRepository;
 
-	@RequestMapping(value = "/{containerNo}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public ResponseEntity<ImportContainer> scanCardByCardNo(@PathVariable("containerNo") String containerNo) {
-		System.out.println("CAME HERE CONTROLLER :" + containerNo);
-		ImportContainer importContainer = new ImportContainer();
-		importContainer = cosmosImportRepository.getContainerInfo(importContainer, containerNo);
-		return new ResponseEntity<ImportContainer>(importContainer, HttpStatus.OK);
-	}
+
+  @RequestMapping(value = "/{containerNo}", method = RequestMethod.GET,
+      produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+  public ResponseEntity<ImportContainer> scanCardByCardNo(@PathVariable("containerNo") String containerNo) {
+    System.out.println("CAME HERE CONTROLLER :" + containerNo);
+    ImportContainer importContainer = new ImportContainer();
+    // importContainer = cosmosImportRepository.getContainerInfo(importContainer, containerNo);
+    return new ResponseEntity<ImportContainer>(importContainer, HttpStatus.OK);
+  }
 
 }

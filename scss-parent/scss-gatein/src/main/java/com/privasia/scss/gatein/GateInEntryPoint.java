@@ -19,6 +19,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import com.privasia.scss.common.interfaces.ContainerExternalDataService;
 import com.privasia.scss.core.config.SCSSEntryPoint;
 import com.privasia.scss.cosmos.AS400DBConfig;
+import com.privasia.scss.cosmos.OracleDBConfig;
 import com.privasia.scss.etpws.ETPWsEntryPoint;
 
 /**
@@ -31,12 +32,14 @@ import com.privasia.scss.etpws.ETPWsEntryPoint;
 @ComponentScan(basePackages = {"com.privasia.scss.hdbs.*", "com.privasia.scss.cosmos.*", "com.privasia.scss.hpat.*",
     "com.privasia.scss.gatein.*", "com.privasia.scss.core.*", "com.privasia.scss.common.*", "com.privasia.scss.opus.*",
     "com.privasia.scss.etpws.*"})
-@EntityScan(basePackages = {"com.privasia.scss.core.model"})
+@EntityScan(basePackages = {"com.privasia.scss.core.model", "com.privasia.scss.cosmos.model"})
 @PropertySource(value = {"classpath:cosmos_application.properties", "classpath:cosmos_sql-dev.properties",
     "classpath:opus_application.properties", "classpath:ws.properties", "classpath:lpkedi.properties",
     "classpath:lpkedi_sql.properties", "classpath:ws.properties", "classpath:cosmos_msg_codes.properties"})
-@Import({AS400DBConfig.class, SCSSEntryPoint.class, LpkediPersistenceContext.class, ETPWsEntryPoint.class})
-@EnableJpaRepositories(basePackages = {"com.privasia.scss.core.repository"})
+@Import({AS400DBConfig.class, OracleDBConfig.class, SCSSEntryPoint.class, LpkediPersistenceContext.class,
+    ETPWsEntryPoint.class})
+@EnableJpaRepositories(
+    basePackages = {"com.privasia.scss.core.repository", "com.privasia.scss.cosmos.oracle.repository"})
 @EnableAsync
 public class GateInEntryPoint extends SpringBootServletInitializer {
 

@@ -21,6 +21,7 @@ import com.privasia.scss.common.dto.ExportContainer;
 import com.privasia.scss.common.enums.LpkClassType;
 import com.privasia.scss.common.exception.BusinessException;
 import com.privasia.scss.common.exception.ResultsNotFoundException;
+import com.privasia.scss.common.security.model.UserContext;
 import com.privasia.scss.common.util.ApplicationConstants;
 import com.privasia.scss.core.model.DGValidateLog;
 import com.privasia.scss.core.model.Exports;
@@ -28,7 +29,6 @@ import com.privasia.scss.core.repository.DGValidationLogRepository;
 import com.privasia.scss.core.repository.DgDetailRepository;
 import com.privasia.scss.core.repository.ExportsRepository;
 import com.privasia.scss.core.repository.WDCGlobalSettingRepository;
-import com.privasia.scss.core.security.model.UserContext;
 
 /**
  * @author Janaka
