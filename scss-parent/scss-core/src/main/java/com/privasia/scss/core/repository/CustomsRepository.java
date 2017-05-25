@@ -4,8 +4,8 @@
 package com.privasia.scss.core.repository;
 
 
-import java.util.List;
-import java.util.Optional;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.privasia.scss.core.model.Customs;
 
@@ -15,5 +15,6 @@ import com.privasia.scss.core.model.Customs;
  */
 public interface CustomsRepository extends BaseRepository<Customs, Long> {
 
-  Optional<List<Customs>> deleteByCsmGateOutClient_ClientID(long clientID);
+  @Query(name="Customs.deleteByClientID")
+  public void deleteByClientID(@Param("clientID") long clientID);
 }

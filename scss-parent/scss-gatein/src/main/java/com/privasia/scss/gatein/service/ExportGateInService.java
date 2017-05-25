@@ -280,19 +280,14 @@ public class ExportGateInService {
 				"gateInWriteRequest.getExportContainers().size() " + gateInWriteRequest.getExportContainers().size());
 
 		HPABBooking hpabBooking = null;
-		Optional<ExportContainer> exportContainerFirstOpt = gateInWriteRequest.getExportContainers().stream()
-				.findFirst();
-		if (exportContainerFirstOpt.isPresent()) {
-			ExportContainer exportContainerFirst = exportContainerFirstOpt.get();
-			if (!(exportContainerFirst.getBaseCommonGateInOutAttribute() == null)) {
-				if (StringUtils.isNotEmpty(exportContainerFirst.getBaseCommonGateInOutAttribute().getHpabBooking())) {
-					hpabBooking = hpabBookingRepository
-							.findOne(exportContainerFirst.getBaseCommonGateInOutAttribute().getHpabBooking())
-							.orElseThrow(() -> new ResultsNotFoundException("No HPAB Booking found ! : "
-									+ exportContainerFirst.getBaseCommonGateInOutAttribute().getHpabBooking()));
-				}
-			}
+		
+		if(StringUtils.isNotEmpty(gateInWriteRequest.getHpatBookingId())){
+			hpabBooking = hpabBookingRepository
+					.findOne(gateInWriteRequest.getHpatBookingId())
+					.orElseThrow(() -> new ResultsNotFoundException("No HPAB Booking found ! : "
+							+ gateInWriteRequest.getHpatBookingId()));
 		}
+		
 		final HPABBooking hpabBookingFinal = hpabBooking;
 
 		boolean backToback = gateInWriteRequest.getExportContainers().size() == 2 ? true : false;

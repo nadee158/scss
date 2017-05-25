@@ -24,7 +24,7 @@ public class TestController {
 	public ResponseEntity<ImportContainer> scanCardByCardNo(@PathVariable("containerNo") String containerNo) {
 		System.out.println("CAME HERE CONTROLLER :" + containerNo);
 		ImportContainer importContainer = new ImportContainer();
-		importContainer = cosmosImportRepository.getContainerInfo(importContainer, containerNo);
+		importContainer = cosmosImportRepository.getContainerInfo(importContainer);
 		return new ResponseEntity<ImportContainer>(importContainer, HttpStatus.OK);
 	}
 

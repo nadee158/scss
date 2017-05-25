@@ -41,7 +41,7 @@ public class CustomContainer implements Serializable {
 	
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
 	@JoinColumn(name = "GATE_PASS_NO", nullable = true, referencedColumnName = "GTP_PASSNO")
-	private GatePass gatePassID;
+	private GatePass gatePass;
 
 	private String gcsDelcarerNo;
 
@@ -53,7 +53,7 @@ public class CustomContainer implements Serializable {
 	
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
 	@JoinColumn(name = "EXP_EXPORTNO_SEQ", nullable = true, referencedColumnName = "EXP_EXPORTNO_SEQ")
-	private Exports exportID;
+	private Exports export;
 	
 	private String oddLocation;
 
@@ -89,12 +89,12 @@ public class CustomContainer implements Serializable {
 		this.customEirStatus = customEirStatus;
 	}
 
-	public GatePass getGatePassID() {
-		return gatePassID;
+	public GatePass getGatePass() {
+		return gatePass;
 	}
 
-	public void setGatePassID(GatePass gatePassID) {
-		this.gatePassID = gatePassID;
+	public void setGatePass(GatePass gatePass) {
+		this.gatePass = gatePass;
 	}
 
 	public String getGcsDelcarerNo() {
@@ -129,12 +129,12 @@ public class CustomContainer implements Serializable {
 		this.gatePassIssuedDate = gatePassIssuedDate;
 	}
 
-	public Exports getExportID() {
-		return exportID;
+	public Exports getExport() {
+		return export;
 	}
 
-	public void setExportID(Exports exportID) {
-		this.exportID = exportID;
+	public void setExport(Exports export) {
+		this.export = export;
 	}
 
 	public String getOddLocation() {
