@@ -16,9 +16,8 @@ import com.privasia.scss.cosmos.repository.CosmosImportRepository;
 @RequestMapping("**/test")
 public class TestController {
 
-	@Autowired
-	private CosmosImportRepository cosmosImportRepository;
-	
+  @Autowired
+  private CosmosImportRepository cosmosImportRepository;
 
 	@RequestMapping(value = "/{containerNo}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResponseEntity<ImportContainer> scanCardByCardNo(@PathVariable("containerNo") String containerNo) {
@@ -27,5 +26,6 @@ public class TestController {
 		importContainer = cosmosImportRepository.getContainerInfo(importContainer);
 		return new ResponseEntity<ImportContainer>(importContainer, HttpStatus.OK);
 	}
+
 
 }

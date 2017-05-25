@@ -1,4 +1,4 @@
-package com.privasia.scss.core.security.model;
+package com.privasia.scss.common.security.model;
 
 /**
  * @author Janaka

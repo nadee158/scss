@@ -11,7 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import com.privasia.scss.common.annotation.HasAuthority;
-import com.privasia.scss.core.security.model.UserContext;
+import com.privasia.scss.common.security.model.UserContext;
 
 
 @Aspect

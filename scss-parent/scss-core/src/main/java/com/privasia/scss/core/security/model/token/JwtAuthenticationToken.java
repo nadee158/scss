@@ -8,7 +8,7 @@ import java.util.Collection;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 
-import com.privasia.scss.core.security.model.UserContext;
+import com.privasia.scss.common.security.model.UserContext;
 
 /**
  * @author Janaka

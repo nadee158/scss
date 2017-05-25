@@ -11,8 +11,8 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.privasia.scss.common.security.model.UserContext;
 import com.privasia.scss.core.config.JwtSettings;
-import com.privasia.scss.core.security.model.UserContext;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

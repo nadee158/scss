@@ -7,7 +7,7 @@ import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
-import com.privasia.scss.core.security.model.UserContext;
+import com.privasia.scss.common.security.model.UserContext;
 
 @Service("cachedTokenValidatorService")
 public class CachedTokenValidatorService {

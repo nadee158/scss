@@ -22,7 +22,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.privasia.scss.core.security.model.UserContext;
+import com.privasia.scss.common.security.model.UserContext;
 import com.privasia.scss.core.security.model.token.JwtToken;
 import com.privasia.scss.core.security.model.token.JwtTokenFactory;
 import com.privasia.scss.core.service.CachedTokenValidatorService;
