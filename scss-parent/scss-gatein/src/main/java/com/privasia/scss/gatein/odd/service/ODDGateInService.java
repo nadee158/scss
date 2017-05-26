@@ -240,9 +240,9 @@ public class ODDGateInService {
 									+ whODDdto.getContainer01().getHdbsBkgDetailNoId()));
 					whODD.getContainer01().setHdbsBkgDetailNo(hdbsBookingDetail);
 					whODD.getContainer01().setHdbsStatus(hdbsBookingDetail.getStatusCode());
-					hdbsBookingDetail.setScssStatusCode(SCSSHDBSStatus.IN_PROGRESS);
-					hdbsBookingDetail.setOddTimeGateInOk(whODD.getTimeGateInOk());
-					hdbsBookingDetail.setOddIdSeq(whODD);
+					//hdbsBookingDetail.setScssStatusCode(SCSSHDBSStatus.IN_PROGRESS);
+					//hdbsBookingDetail.setOddTimeGateInOk(whODD.getTimeGateInOk());
+					//hdbsBookingDetail.setOddIdSeq(whODD);
 				}
 			}
 			if (whODDdto.getContainer02() != null) {
@@ -268,9 +268,9 @@ public class ODDGateInService {
 
 					whODD.getContainer02().setHdbsBkgDetailNo(hdbsBookingDetail);
 					whODD.getContainer02().setHdbsStatus(hdbsBookingDetail.getStatusCode());
-					hdbsBookingDetail.setScssStatusCode(SCSSHDBSStatus.IN_PROGRESS);
-					hdbsBookingDetail.setOddTimeGateInOk(whODD.getTimeGateInOk());
-					hdbsBookingDetail.setOddIdSeq(whODD);
+					//hdbsBookingDetail.setScssStatusCode(SCSSHDBSStatus.IN_PROGRESS);
+					//hdbsBookingDetail.setOddTimeGateInOk(whODD.getTimeGateInOk());
+					//hdbsBookingDetail.setOddIdSeq(whODD);
 				}
 			}
 

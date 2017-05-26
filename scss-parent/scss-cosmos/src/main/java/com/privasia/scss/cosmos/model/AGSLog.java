@@ -15,7 +15,7 @@ import javax.persistence.Table;
 		@AttributeOverride(name = "updateBy", column = @Column(name = "UPDATE_BY")),
 		@AttributeOverride(name = "dateTimeAdd", column = @Column(name = "DATE_TIME_ADD")),
 		@AttributeOverride(name = "dateTimeUpdate", column = @Column(name = "DATETIME_UPDATE")) })
-public class AGSLog extends AuditEntity implements Serializable {
+public class AGSLog extends AuditEntity  implements Serializable {
 
 	/**
 	 * 

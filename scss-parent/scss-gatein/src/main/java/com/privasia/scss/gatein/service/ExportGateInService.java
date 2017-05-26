@@ -45,7 +45,6 @@ import com.privasia.scss.core.predicate.ReferRejectPredicates;
 import com.privasia.scss.core.repository.DamageCodeRepository;
 import com.privasia.scss.core.repository.ExportsQRepository;
 import com.privasia.scss.core.repository.ExportsRepository;
-import com.privasia.scss.core.repository.HPABBookingRepository;
 import com.privasia.scss.core.repository.ReferRejectRepository;
 import com.privasia.scss.core.repository.ShipCodeRepository;
 import com.privasia.scss.core.repository.ShipSCNRepository;
@@ -74,8 +73,6 @@ public class ExportGateInService {
 	private ExportsRepository exportsRepository;
 
 	private ExportsQRepository exportsQRepository;
-
-	private HPABBookingRepository hpabBookingRepository;
 
 	private DamageCodeRepository damageCodeRepository;
 
@@ -122,11 +119,6 @@ public class ExportGateInService {
 	@Autowired
 	public void setDamageCodeRepository(DamageCodeRepository damageCodeRepository) {
 		this.damageCodeRepository = damageCodeRepository;
-	}
-
-	@Autowired
-	public void setHpabBookingRepository(HPABBookingRepository hpabBookingRepository) {
-		this.hpabBookingRepository = hpabBookingRepository;
 	}
 
 	@Autowired
@@ -269,7 +261,7 @@ public class ExportGateInService {
 	@DontValidateSeal
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
 	public void saveGateInInfo(GateInWriteRequest gateInWriteRequest, Client gateInClient, SystemUser gateInClerk,
-			Card card) {
+			Card card, HPABBooking hpabBooking) {
 		// construct a new export entity for each exportcontainer and save
 
 		System.out.println("gateInWriteRequest.getExportContainers() " + gateInWriteRequest.getExportContainers());
@@ -279,16 +271,6 @@ public class ExportGateInService {
 		System.out.println(
 				"gateInWriteRequest.getExportContainers().size() " + gateInWriteRequest.getExportContainers().size());
 
-		HPABBooking hpabBooking = null;
-		
-		if(StringUtils.isNotEmpty(gateInWriteRequest.getHpatBookingId())){
-			hpabBooking = hpabBookingRepository
-					.findOne(gateInWriteRequest.getHpatBookingId())
-					.orElseThrow(() -> new ResultsNotFoundException("No HPAB Booking found ! : "
-							+ gateInWriteRequest.getHpatBookingId()));
-		}
-		
-		final HPABBooking hpabBookingFinal = hpabBooking;
 
 		boolean backToback = gateInWriteRequest.getExportContainers().size() == 2 ? true : false;
 
@@ -329,7 +311,7 @@ public class ExportGateInService {
 				scn = shipSCNRepository.fetchContainerSCN(exportContainer.getVesselSCN(),
 						exportContainer.getContainer().getContainerNumber()).orElse(null);
 			}
-			exports.prepareForInsertFromOpus(gateInClerk, card, gateInClient, scn, hpabBookingFinal,
+			exports.prepareForInsertFromOpus(gateInClerk, card, gateInClient, scn, hpabBooking,
 					damageCodeRepository);
 			exports = exportsRepository.save(exports);
 			log.info("########## Save Exports ###############");
