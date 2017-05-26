@@ -10,6 +10,7 @@ import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -36,8 +37,9 @@ import com.zaxxer.hikari.HikariDataSource;
 @Configuration
 @EnableTransactionManagement
 @EnableJpaAuditing(dateTimeProviderRef = "dateTimeProvider")
-@EnableJpaRepositories(basePackages = "com.privasia.scss", entityManagerFactoryRef = "entityManagerFactory",
+@EnableJpaRepositories(basePackages = "com.privasia.scss.core.repository", entityManagerFactoryRef = "entityManagerFactory",
     transactionManagerRef = "transactionManager")
+@EntityScan(basePackages = {"com.privasia.scss.core.model"})
 @EnableAutoConfiguration(exclude = {org.springframework.boot.autoconfigure.security.SecurityAutoConfiguration.class})
 public class PersistenceContext {
 

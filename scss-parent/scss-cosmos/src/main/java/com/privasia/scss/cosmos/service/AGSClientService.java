@@ -19,10 +19,12 @@ import javax.xml.bind.Unmarshaller;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.privasia.scss.common.exception.BusinessException;
+import com.privasia.scss.cosmos.oracle.repository.AGSLogRepository;
 import com.privasia.scss.cosmos.xml.element.SGS2CosmosRequest;
 import com.privasia.scss.cosmos.xml.element.SGS2CosmosResponse;
 
@@ -35,12 +37,12 @@ public class AGSClientService {
 
 	private static final Log log = LogFactory.getLog(AGSClientService.class);
 
-	/*private AGSLogRepository agsLogRepository;
+	private AGSLogRepository agsLogRepository;
 
 	@Autowired
 	public void setAgsLogRepository(AGSLogRepository agsLogRepository) {
 		this.agsLogRepository = agsLogRepository;
-	}*/
+	}
 
 	@Value("${ags.max.timeout}")
 	private int agsMaxTimeOut;
