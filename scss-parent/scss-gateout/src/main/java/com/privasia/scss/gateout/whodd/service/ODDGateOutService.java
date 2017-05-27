@@ -17,6 +17,7 @@ import com.privasia.scss.common.dto.ContainerValidationInfo;
 import com.privasia.scss.common.dto.GateOutReponse;
 import com.privasia.scss.common.dto.GateOutRequest;
 import com.privasia.scss.common.dto.GateOutWriteRequest;
+import com.privasia.scss.common.dto.ODDLocationDTO;
 import com.privasia.scss.common.dto.WHoddDTO;
 import com.privasia.scss.common.enums.ContainerFullEmptyType;
 import com.privasia.scss.common.enums.GateInOutStatus;
@@ -102,22 +103,24 @@ public class ODDGateOutService {
 			
 			transactionList.forEach(whODD -> {
 				WHoddDTO oddDTO = modelMapper.map(whODD, WHoddDTO.class);
-				/*if (oddDTO.getContainer01() != null) {
+				if (oddDTO.getContainer01() != null) {
 					Optional<ODDLocation> optionalLocation = oddLocationRepository
-							.findOne(oddDTO.getContainer01().getLocation());
+							.findOne(oddDTO.getContainer01().getLocation().getOddCode());
 					if (optionalLocation.isPresent()) {
-						oddDTO.getContainer01().setLocation(optionalLocation.get().getOddDesc());
+						ODDLocationDTO locationDTO = modelMapper.map(optionalLocation.get(), ODDLocationDTO.class);
+						oddDTO.getContainer01().setLocation(locationDTO);
 					}
 					
 				}
 
 				if (oddDTO.getContainer02() != null) {
 					Optional<ODDLocation> optionalLocation = oddLocationRepository
-							.findOne(oddDTO.getContainer02().getLocation());
+							.findOne(oddDTO.getContainer02().getLocation().getOddCode());
 					if (optionalLocation.isPresent()) {
-						oddDTO.getContainer02().setLocation(optionalLocation.get().getOddDesc());
+						ODDLocationDTO locationDTO = modelMapper.map(optionalLocation.get(), ODDLocationDTO.class);
+						oddDTO.getContainer02().setLocation(locationDTO);
 					}
-				}*/
+				}
 				whODDContainers.add(oddDTO);
 			});
 			

@@ -21,6 +21,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.Type;
 
 import com.privasia.scss.common.dto.BaseCommonGateInOutDTO;
@@ -281,9 +282,17 @@ public class HPABBookingDetail extends AuditEntity implements Serializable {
 
 		}
 		// exportContainer.getContainer().setContainerNumber(containerNumber);
-		exportContainer.setSealAttribute(new CommonSealDTO());
-		exportContainer.getSealAttribute().setSeal01Number(expSealNo01);
-		exportContainer.getSealAttribute().setSeal02Number(expSealNo02);
+		if (exportContainer.getSealAttribute() == null) {
+			exportContainer.setSealAttribute(new CommonSealDTO());
+		}
+		
+		if(StringUtils.isNotEmpty(this.expSealNo01)){
+			exportContainer.getSealAttribute().setSeal01Number(this.expSealNo01);
+		}
+		if(StringUtils.isNotEmpty(this.expSealNo02)){
+			exportContainer.getSealAttribute().setSeal02Number(this.expSealNo02);
+		}
+		
 		exportContainer.setHpabISOCode(containerISO);
 		exportContainer.setBookingNo(expBookingNo);
 		return exportContainer;

@@ -103,7 +103,6 @@ public class ETPWebserviceClient extends WebServiceGatewaySupport {
         // set header values and container 01 values
         parameters.setWeighingMethod(solasETPDTO.getWeighingMethod());
         parameters.setWeighingStation(solasETPDTO.getWeighStation());
-
         GregorianCalendar c = new GregorianCalendar();
         Date date = Date.from(solasETPDTO.getGateInOK().atZone(ZoneId.systemDefault()).toInstant());
         c.setTime(date);

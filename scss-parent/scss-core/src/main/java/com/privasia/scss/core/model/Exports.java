@@ -10,6 +10,7 @@ import javax.persistence.AssociationOverride;
 import javax.persistence.AssociationOverrides;
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -187,9 +188,11 @@ public class Exports extends AuditEntity implements Serializable {
 	private String yardBayCode;
 
 	@Column(name = "EXP_PM_BTM")
+	@Basic(fetch = FetchType.LAZY)
 	private Integer pmBTM;
 
 	@Column(name = "EXP_TR_BTM")
+	@Basic(fetch = FetchType.LAZY)
 	private Integer trBTM;
 
 	@Column(name = "EXP_OOG_OR")

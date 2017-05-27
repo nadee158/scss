@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.aspectj.lang.JoinPoint;
@@ -22,6 +23,7 @@ import com.privasia.scss.common.annotation.SolasApplicable;
 import com.privasia.scss.common.dto.ExportContainer;
 import com.privasia.scss.common.dto.GateOutWriteRequest;
 import com.privasia.scss.common.dto.SolasPassFileDTO;
+import com.privasia.scss.common.enums.TransactionStatus;
 import com.privasia.scss.common.exception.BusinessException;
 import com.privasia.scss.gateout.service.SolasGateOutService;
 
@@ -48,22 +50,23 @@ public class SolasAspect {
 	@Async
 	@AfterReturning(pointcut = "@annotation(solasApplicable)")
 	public void solasApplicable(JoinPoint joinPoint, SolasApplicable solasApplicable) {
-
+		
+		System.out.println("solasApplicable method start first ********************** ");
 		log.info("*****************   solasApplicable called *************************");
 
 		if (joinPoint.getArgs()[0] instanceof GateOutWriteRequest) {
 			List<Long> expIDList = new ArrayList<Long>();
 			GateOutWriteRequest gateOutWriteRequest = (GateOutWriteRequest) joinPoint.getArgs()[0];
-
-			for (ExportContainer container : gateOutWriteRequest.getExportContainers()) {
-				expIDList.add(container.getExportID());
-			}
+			
+			gateOutWriteRequest.getExportContainers().forEach(container ->{
+						expIDList.add(container.getExportID());
+			});
 
 			Future<SolasPassFileDTO> future = solasGateOutService.generateSolasCertificateInfo(expIDList);
 			try {
 				while (true) {
 					if (future.isDone()) {
-
+						System.out.println("future.isDone() ***************************");
 						SolasPassFileDTO solasPassFileDTO = future.get();
 						solasGateOutService.updateSolasInfo(expIDList, solasPassFileDTO);
 						break;

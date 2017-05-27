@@ -148,15 +148,15 @@ public class SolasGateOutService {
 
 		if (exportsList != null) {
 
-			Iterator<Exports> solasIterator = exportsList.iterator();
+			Iterator<Exports> etpSolasIterator = exportsList.iterator();
 
-			if (solasIterator.hasNext()) {
-
+			if (etpSolasIterator.hasNext()) {
+				System.out.println("solasIterator.hasNext() ***************************");
 				final List<SolasETPDTO> solasETPDTOs = new ArrayList<SolasETPDTO>();
 
 				try {
 
-					solasIterator.forEachRemaining(exports -> {
+					etpSolasIterator.forEachRemaining(exports -> {
 						
 						constructSolasETPDTO(exports, solasETPDTOs);
 					});
@@ -194,11 +194,13 @@ public class SolasGateOutService {
 		Predicate byHpabBooking = ExportsPredicates.byHpabNotNull();
 		Predicate byContainerFullOrEmpty = ExportsPredicates.byContainerFullOrEmpty(ContainerFullEmptyType.FULL);
 		Predicate byGateInStatus = ExportsPredicates.byGateInStatus(TransactionStatus.APPROVED);
+		Predicate bySolasCertNull = ExportsPredicates.bySolasCertNull();
+		
 
 		Predicate condition = ExpressionUtils.allOf(byExportsIDList, byTransactionStatus,
 				ExpressionUtils.or(bySolasInstructionTerminal,
 						ExpressionUtils.and(bySolasInstructionShipper, byWithinTolerance)),
-				byHpabBooking, byContainerFullOrEmpty, byGateInStatus);
+				byHpabBooking, byContainerFullOrEmpty, byGateInStatus, bySolasCertNull);
 
 		Iterable<Exports> exportsList = exportsRepository.findAll(condition);
 
@@ -207,7 +209,7 @@ public class SolasGateOutService {
 			Iterator<Exports> solasIterator = exportsList.iterator();
 
 			if (solasIterator.hasNext()) {
-
+				System.out.println("solasIterator.hasNext() ***************************");
 				final SolasPassFileDTO solasPassFileDTO = new SolasPassFileDTO();
 				FileDTO fileInfoDTO = null;
 
@@ -246,6 +248,7 @@ public class SolasGateOutService {
 
 					// save to mongodb
 					fileId = fileService.saveFileToMongoDB(fileInfoDTO);
+					System.out.println("fileId  ***************************");
 					// save to file references
 					if (fileId.isPresent()) {
 						saveReference(fileInfoDTO);
@@ -293,9 +296,9 @@ public class SolasGateOutService {
 		solasETPDTO.setSolasRefNumber(exports.getSolas().getSolasRefNumber());
 		solasETPDTO.setTerminalVGM(exports.getSolas().getMgw());
 
-		if (StringUtils.isNotBlank(exports.getCalculatedVariance())) {
+		/*if (StringUtils.isNotBlank(exports.getCalculatedVariance())) {
 			solasETPDTO.setTolerance(Integer.parseInt(exports.getCalculatedVariance()));
-		}
+		}*/
 		solasETPDTOs.add(solasETPDTO);
 
 		return solasETPDTOs;

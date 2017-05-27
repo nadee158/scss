@@ -3,7 +3,9 @@ package com.privasia.scss.core.model;
 
 import java.io.Serializable;
 
+import javax.persistence.Basic;
 import javax.persistence.Embeddable;
+import javax.persistence.FetchType;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.Type;
@@ -38,9 +40,11 @@ public class CommonGateInOutAttribute implements Serializable {
 
   @Type(type = "com.privasia.scss.common.enumusertype.TransactionStatusEnumUserType")
   private TransactionStatus gateInStatus;
-
+  
+  @Basic(fetch = FetchType.LAZY)
   private String zipFileNo;
-
+  
+  @Basic(fetch = FetchType.LAZY)
   private String trxSlipNo;
 
   public Long getEirNumber() {

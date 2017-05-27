@@ -222,28 +222,31 @@ public class ImportExportGateInService {
 		// double check with the documentation
 		gateInReponse = opusGateInReadService.constructGateInReponse(gateInReadResponse, gateInReponse);
 
-		if (gateInRequest.getExpWeightBridge() <= 0) {
+		if (gateInRequest.getExpWeightBridge() != null && gateInRequest.getExpWeightBridge() <= 0) {
 			throw new BusinessException("Invalid Exp Weight Bridge" + gateInRequest.getExpWeightBridge());
 		}
 
 		gateInReponse.setExpWeightBridge(gateInRequest.getExpWeightBridge());
 
+		// assign details from hpab booking
+		if ((StringUtils.isNotEmpty(gateInRequest.getHpabSeqId())) && (!(gateInRequest.getReferID().isPresent()))) {
+			gateInReponse = hpabService.populateHpabForImpExp(gateInReponse, gateInRequest.getHpabSeqId());
+			
+			if(gateInReponse.getExportContainers() != null) {
+				boolean fullExist = gateInReponse.getExportContainers().stream()
+						.filter(expCon -> (StringUtils.equalsIgnoreCase(ContainerFullEmptyType.FULL.getValue(),
+								expCon.getContainer().getContainerFullOrEmpty())))
+						.findAny().isPresent();
+				if (fullExist)
+					solasService.calculateTerminalVGM(gateInReponse.getExportContainers(), false);
+			}
+			
+		}
+		
 		if (!(gateInReponse.getExportContainers() == null || gateInReponse.getExportContainers().isEmpty())) {
 			// set iso info if cosmos
 			gateInReponse = exportGateInService.validateExportsGateInRead(gateInReponse,
 					gateInRequest.getGateInDateTime());
-		}
-
-		// assign details from hpab booking
-		if ((StringUtils.isNotEmpty(gateInRequest.getHpabSeqId())) && (!(gateInRequest.getReferID().isPresent()))) {
-			gateInReponse = hpabService.populateHpabForImpExp(gateInReponse, gateInRequest.getHpabSeqId());
-
-			boolean fullExist = gateInReponse.getExportContainers().stream()
-					.filter(expCon -> (StringUtils.equalsIgnoreCase(ContainerFullEmptyType.FULL.getValue(),
-							expCon.getContainer().getContainerFullOrEmpty())))
-					.findAny().isPresent();
-			if (fullExist)
-				solasService.calculateTerminalVGM(gateInReponse.getExportContainers(), false);
 		}
 
 		return gateInReponse;

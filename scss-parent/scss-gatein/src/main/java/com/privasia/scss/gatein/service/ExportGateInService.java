@@ -30,7 +30,6 @@ import com.privasia.scss.common.enums.ReferStatus;
 import com.privasia.scss.common.enums.ShipStatus;
 import com.privasia.scss.common.enums.TransactionStatus;
 import com.privasia.scss.common.exception.BusinessException;
-import com.privasia.scss.common.exception.ResultsNotFoundException;
 import com.privasia.scss.core.model.Card;
 import com.privasia.scss.core.model.Client;
 import com.privasia.scss.core.model.Exports;
@@ -48,7 +47,6 @@ import com.privasia.scss.core.repository.ExportsRepository;
 import com.privasia.scss.core.repository.ReferRejectRepository;
 import com.privasia.scss.core.repository.ShipCodeRepository;
 import com.privasia.scss.core.repository.ShipSCNRepository;
-import com.privasia.scss.core.repository.WDCGlobalSettingRepository;
 import com.privasia.scss.gatein.exports.business.service.DGContainerService;
 import com.privasia.scss.gatein.exports.business.service.DamageCodeService;
 import com.privasia.scss.gatein.exports.business.service.EarlyEntryService;
@@ -76,10 +74,6 @@ public class ExportGateInService {
 
 	private DamageCodeRepository damageCodeRepository;
 
-	private WDCGlobalSettingRepository globalSettingRepository;
-
-	private LPKEDIService lpkediService;
-
 	private DamageCodeService damageCodeService;
 
 	private SealValidationService sealValidationService;
@@ -104,16 +98,6 @@ public class ExportGateInService {
 	@Autowired
 	public void setDamageCodeService(DamageCodeService damageCodeService) {
 		this.damageCodeService = damageCodeService;
-	}
-
-	@Autowired
-	public void setLpkediService(LPKEDIService lpkediService) {
-		this.lpkediService = lpkediService;
-	}
-
-	@Autowired
-	public void setGlobalSettingRepository(WDCGlobalSettingRepository globalSettingRepository) {
-		this.globalSettingRepository = globalSettingRepository;
 	}
 
 	@Autowired
@@ -179,19 +163,14 @@ public class ExportGateInService {
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
 	public GateInReponse validateExportsGateInRead(GateInReponse gateInReponse, LocalDateTime timegateIn) {
 
-		Optional<String> globalSetting = globalSettingRepository.fetchGlobalStringByGlobalCode("LPK_EDI");
-
 		gateInReponse.getExportContainers().forEach(container -> {
 			container.setExpWeightBridge(gateInReponse.getExpWeightBridge());
 			setStoragePeriod(container);
 			setSCN(container);
-			dgContainerService.checkDg(container);
-			findLpkEdiMsg(container, globalSetting);
 			vesselOmitService.isValidVesselOmit(container);
 			earlyEntryService.isContainerHasAOpening(container);
 			ssrService.checkExportSSR(timegateIn, container);
-			dgContainerService.validateDGContainer(container);
-			dgContainerService.userAccessToByPassDG(container);
+			dgContainerService.isaDGContainer(container);
 
 			if (container.getContainer().getContainerFullOrEmpty() == ContainerFullEmptyType.EMPTY.getValue()) {
 				emptyContainerService.setEmptyContainerWeight(container, container.getCosmosISOCode());
@@ -204,13 +183,6 @@ public class ExportGateInService {
 
 		return gateInReponse;
 
-	}
-
-	private void findLpkEdiMsg(ExportContainer container, Optional<String> globalSettingOpt) {
-		if (StringUtils.equalsIgnoreCase(container.getImdg(), "Y")) {
-			globalSettingOpt.orElseThrow(() -> new ResultsNotFoundException("Global Setting not available ! LPK_EDI"));
-			lpkediService.findLPKEDITDigiMessage(container);
-		}
 	}
 
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
