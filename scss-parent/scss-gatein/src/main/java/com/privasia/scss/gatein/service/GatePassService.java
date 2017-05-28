@@ -713,9 +713,7 @@ public class GatePassService {
     // f.setCurPosC1(TextString.format(rs.getString("psex45")));
 
     // TextString.format(rs.getString("cnis03")
-    String isoCode = null;
-    ISOInfo isoInfo = selectISOInfo(isoCode);
-    container.setIsoInfo(isoInfo);
+   
 
     // TextString.format(rs.getString("hdid10"))
     String handlingId = null;
@@ -734,18 +732,7 @@ public class GatePassService {
     return transactionDTO;
   }
 
-  public ISOInfo selectISOInfo(String isoCode) throws Exception {
-    log.error("Check selectISOInfo:" + isoCode);
-
-    Optional<ISOCode> codeOpt = isoCodeRepository.findByIsoCode(isoCode);
-    if (codeOpt.isPresent()) {
-      ISOCode code = codeOpt.get();
-      if (!(code == null)) {
-        return code.constructISOInfo();
-      }
-    }
-    return null;
-  }
+  
 
   public SealInfo selectSealInfo(String handlingId) throws Exception {
 
@@ -786,32 +773,7 @@ public class GatePassService {
     return null;
   }
 
-  public void updateGatePass(TransactionDTO transactionDTO, LocalDateTime timeGateIn, String clientId, String cardIdSeq,
-      String expImpFlag) throws Exception {
-
-    if (!(transactionDTO == null)) {
-
-      ImportContainer container01 = transactionDTO.getImportContainer01();
-      ImportContainer container02 = transactionDTO.getImportContainer02();
-
-      if (!(container01 == null || StringUtils.isEmpty(container01.getContainer().getContainerNumber()))) {
-        container01.setContainerPosition("M");
-        container01.setIsoInfo(selectISOInfo(container02.getContainer().getContainerISOCode()));
-        updateGatePassIntoDb(transactionDTO, container02, cardIdSeq, timeGateIn, clientId, expImpFlag);
-      }
-
-      if (!(container02 == null || StringUtils.isEmpty(container02.getContainer().getContainerNumber()))) {
-        container02.setContainerPosition("F");
-        container02.setIsoInfo(selectISOInfo(container02.getContainer().getContainerISOCode()));
-        if (container02.getGatePassNo() != null) {
-          container02.setContainerPosition("A");
-          updateGatePassIntoDb(transactionDTO, container02, cardIdSeq, timeGateIn, clientId, expImpFlag);
-        }
-      }
-
-    }
-
-  }
+ 
 
   public void updateGatePassIntoDb(TransactionDTO transactionDTO, ImportContainer container, String cardIdSeq,
       LocalDateTime timeGateIn, String clientId, String expImpFlag) {

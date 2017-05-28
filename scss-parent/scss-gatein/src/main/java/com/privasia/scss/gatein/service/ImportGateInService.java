@@ -166,7 +166,7 @@ public class ImportGateInService {
   // @Async
   @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
   public void saveGateInInfo(GateInWriteRequest gateInWriteRequest, Client gateInClient, SystemUser gateInClerk,
-      Card card) {
+      Card card, HPABBooking hpabBooking) {
     // construct a new export entity for each exportcontainer and save
     if (gateInWriteRequest.getImportContainers() == null || gateInWriteRequest.getImportContainers().isEmpty())
       throw new BusinessException("Invalid GateInWriteRequest to save Imports ! ");
@@ -188,6 +188,7 @@ public class ImportGateInService {
         importContainer.setCommonGateInOut(new CommonGateInOutDTO());
       }
       importContainer.getCommonGateInOut().setGateInStatus(gateInWriteRequest.getGateInStatus());
+      importContainer.getCommonGateInOut().setRejectReason(gateInWriteRequest.getRejectReason());
 
       System.out.println("importContainer " + importContainer);
 
@@ -196,16 +197,6 @@ public class ImportGateInService {
         GatePass gatePass = gatePassRepository.findByGatePassNo(importContainer.getGatePassNo()).orElseThrow(
             () -> new ResultsNotFoundException("Invalid Gate Pass Number : " + importContainer.getGatePassNo()));
         if (!(gatePass == null)) {
-
-          HPABBooking hpabBooking = null;
-          if (!(importContainer.getBaseCommonGateInOutAttribute() == null)) {
-            if (StringUtils.isNotEmpty(importContainer.getBaseCommonGateInOutAttribute().getHpabBooking())) {
-              hpabBooking =
-                  hpabBookingRepository.findOne(importContainer.getBaseCommonGateInOutAttribute().getHpabBooking())
-                      .orElseThrow(() -> new ResultsNotFoundException("No HPAB Booking found ! : "
-                          + importContainer.getBaseCommonGateInOutAttribute().getHpabBooking()));
-            }
-          }
 
           importContainerToGatePass(importContainer, gatePass);
           System.out.println("importContainer.getContainer().getContainerFullOrEmpty() "

@@ -6,8 +6,10 @@ package com.privasia.scss.core.model;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.EntityListeners;
+import javax.persistence.FetchType;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Version;
 
@@ -34,20 +36,24 @@ public class AuditEntity implements Serializable {
 
 	@Column(name = "ADD_BY", nullable = true)
 	@CreatedBy
+	@Basic(fetch = FetchType.LAZY)
 	private Long addBy;
 
 	@Column(name = "UPDATE_BY", nullable = true)
 	@LastModifiedBy
+	@Basic(fetch = FetchType.LAZY)
 	private Long updateBy;
 
 	@CreatedDate
 	@Column(name = "DATETIME_ADD", nullable = true)
 	@JsonFormat(pattern = "MM/dd/yyyy hh:mm:ss a")
+	@Basic(fetch = FetchType.LAZY)
 	private LocalDateTime dateTimeAdd;
 
 	@LastModifiedDate
 	@Column(name = "DATETIME_UPDATE", nullable = true)
 	@JsonFormat(pattern = "MM/dd/yyyy hh:mm:ss a")
+	@Basic(fetch = FetchType.LAZY)
 	private LocalDateTime dateTimeUpdate;
 
 	@Version

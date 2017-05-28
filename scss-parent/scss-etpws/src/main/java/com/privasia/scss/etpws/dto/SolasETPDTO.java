@@ -27,7 +27,7 @@ public class SolasETPDTO implements Serializable {
 	private int terminalVGM;
 	private int shipperVGM;
 	private int grossWeight = 0;
-	private int tolerance;
+	//private int tolerance;
 	private BigDecimal calculatedVariance;
 	private int mgw;
 	private String exportSEQ;
@@ -95,12 +95,12 @@ public class SolasETPDTO implements Serializable {
 	public void setGrossWeight(int grossWeight) {
 		this.grossWeight = grossWeight;
 	}
-	public int getTolerance() {
+	/*public int getTolerance() {
 		return tolerance;
 	}
 	public void setTolerance(int tolerance) {
 		this.tolerance = tolerance;
-	}
+	}*/
 	public BigDecimal getCalculatedVariance() {
 		return calculatedVariance;
 	}

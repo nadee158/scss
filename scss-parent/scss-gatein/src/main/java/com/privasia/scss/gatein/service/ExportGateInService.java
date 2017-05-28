@@ -30,7 +30,6 @@ import com.privasia.scss.common.enums.ReferStatus;
 import com.privasia.scss.common.enums.ShipStatus;
 import com.privasia.scss.common.enums.TransactionStatus;
 import com.privasia.scss.common.exception.BusinessException;
-import com.privasia.scss.common.exception.ResultsNotFoundException;
 import com.privasia.scss.core.model.Card;
 import com.privasia.scss.core.model.Client;
 import com.privasia.scss.core.model.Exports;
@@ -45,11 +44,9 @@ import com.privasia.scss.core.predicate.ReferRejectPredicates;
 import com.privasia.scss.core.repository.DamageCodeRepository;
 import com.privasia.scss.core.repository.ExportsQRepository;
 import com.privasia.scss.core.repository.ExportsRepository;
-import com.privasia.scss.core.repository.HPABBookingRepository;
 import com.privasia.scss.core.repository.ReferRejectRepository;
 import com.privasia.scss.core.repository.ShipCodeRepository;
 import com.privasia.scss.core.repository.ShipSCNRepository;
-import com.privasia.scss.core.repository.WDCGlobalSettingRepository;
 import com.privasia.scss.gatein.exports.business.service.DGContainerService;
 import com.privasia.scss.gatein.exports.business.service.DamageCodeService;
 import com.privasia.scss.gatein.exports.business.service.EarlyEntryService;
@@ -75,13 +72,7 @@ public class ExportGateInService {
 
 	private ExportsQRepository exportsQRepository;
 
-	private HPABBookingRepository hpabBookingRepository;
-
 	private DamageCodeRepository damageCodeRepository;
-
-	private WDCGlobalSettingRepository globalSettingRepository;
-
-	private LPKEDIService lpkediService;
 
 	private DamageCodeService damageCodeService;
 
@@ -110,23 +101,8 @@ public class ExportGateInService {
 	}
 
 	@Autowired
-	public void setLpkediService(LPKEDIService lpkediService) {
-		this.lpkediService = lpkediService;
-	}
-
-	@Autowired
-	public void setGlobalSettingRepository(WDCGlobalSettingRepository globalSettingRepository) {
-		this.globalSettingRepository = globalSettingRepository;
-	}
-
-	@Autowired
 	public void setDamageCodeRepository(DamageCodeRepository damageCodeRepository) {
 		this.damageCodeRepository = damageCodeRepository;
-	}
-
-	@Autowired
-	public void setHpabBookingRepository(HPABBookingRepository hpabBookingRepository) {
-		this.hpabBookingRepository = hpabBookingRepository;
 	}
 
 	@Autowired
@@ -187,19 +163,14 @@ public class ExportGateInService {
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
 	public GateInReponse validateExportsGateInRead(GateInReponse gateInReponse, LocalDateTime timegateIn) {
 
-		Optional<String> globalSetting = globalSettingRepository.fetchGlobalStringByGlobalCode("LPK_EDI");
-
 		gateInReponse.getExportContainers().forEach(container -> {
 			container.setExpWeightBridge(gateInReponse.getExpWeightBridge());
 			setStoragePeriod(container);
 			setSCN(container);
-			dgContainerService.checkDg(container);
-			findLpkEdiMsg(container, globalSetting);
 			vesselOmitService.isValidVesselOmit(container);
 			earlyEntryService.isContainerHasAOpening(container);
 			ssrService.checkExportSSR(timegateIn, container);
-			dgContainerService.validateDGContainer(container);
-			dgContainerService.userAccessToByPassDG(container);
+			dgContainerService.isaDGContainer(container);
 
 			if (container.getContainer().getContainerFullOrEmpty() == ContainerFullEmptyType.EMPTY.getValue()) {
 				emptyContainerService.setEmptyContainerWeight(container, container.getCosmosISOCode());
@@ -212,13 +183,6 @@ public class ExportGateInService {
 
 		return gateInReponse;
 
-	}
-
-	private void findLpkEdiMsg(ExportContainer container, Optional<String> globalSettingOpt) {
-		if (StringUtils.equalsIgnoreCase(container.getImdg(), "Y")) {
-			globalSettingOpt.orElseThrow(() -> new ResultsNotFoundException("Global Setting not available ! LPK_EDI"));
-			lpkediService.findLPKEDITDigiMessage(container);
-		}
 	}
 
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
@@ -269,7 +233,7 @@ public class ExportGateInService {
 	@DontValidateSeal
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
 	public void saveGateInInfo(GateInWriteRequest gateInWriteRequest, Client gateInClient, SystemUser gateInClerk,
-			Card card) {
+			Card card, HPABBooking hpabBooking) {
 		// construct a new export entity for each exportcontainer and save
 
 		System.out.println("gateInWriteRequest.getExportContainers() " + gateInWriteRequest.getExportContainers());
@@ -279,16 +243,6 @@ public class ExportGateInService {
 		System.out.println(
 				"gateInWriteRequest.getExportContainers().size() " + gateInWriteRequest.getExportContainers().size());
 
-		HPABBooking hpabBooking = null;
-		
-		if(StringUtils.isNotEmpty(gateInWriteRequest.getHpatBookingId())){
-			hpabBooking = hpabBookingRepository
-					.findOne(gateInWriteRequest.getHpatBookingId())
-					.orElseThrow(() -> new ResultsNotFoundException("No HPAB Booking found ! : "
-							+ gateInWriteRequest.getHpatBookingId()));
-		}
-		
-		final HPABBooking hpabBookingFinal = hpabBooking;
 
 		boolean backToback = gateInWriteRequest.getExportContainers().size() == 2 ? true : false;
 
@@ -329,7 +283,7 @@ public class ExportGateInService {
 				scn = shipSCNRepository.fetchContainerSCN(exportContainer.getVesselSCN(),
 						exportContainer.getContainer().getContainerNumber()).orElse(null);
 			}
-			exports.prepareForInsertFromOpus(gateInClerk, card, gateInClient, scn, hpabBookingFinal,
+			exports.prepareForInsertFromOpus(gateInClerk, card, gateInClient, scn, hpabBooking,
 					damageCodeRepository);
 			exports = exportsRepository.save(exports);
 			log.info("########## Save Exports ###############");

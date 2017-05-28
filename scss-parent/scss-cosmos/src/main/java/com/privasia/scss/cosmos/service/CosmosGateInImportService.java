@@ -47,6 +47,12 @@ public class CosmosGateInImportService {
 		}
 		return importContainers;
 	}
+	
+	@Transactional(value = "as400TransactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+	public ImportContainer fetchContainerInfo(ImportContainer importContainer) {
+		cosmosImportRepository.getContainerInfo(importContainer);
+		return importContainer;
+	}
 
 	public CosmosGateInImport constructCosmosGateInImport(CosmosCommonValuesDTO commonValuesDTO,
 			ImportContainer importContainer, int index) {

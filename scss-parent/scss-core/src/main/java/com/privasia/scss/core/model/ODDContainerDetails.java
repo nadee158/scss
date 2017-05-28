@@ -39,7 +39,7 @@ public class ODDContainerDetails implements Serializable {
 
 	private String rejectionReason;
 
-	@Type(type = "com.privasia.scss.common.enumusertype.GateInOutStatusEnumUserType")
+	@Type(type = "com.privasia.scss.common.enumusertype.ContainerFullEmptyTypeEnumUserType")
 	private ContainerFullEmptyType fullOrEmpty;
 
 	@Type(type = "com.privasia.scss.common.enumusertype.ContainerSizeEnumUserType")

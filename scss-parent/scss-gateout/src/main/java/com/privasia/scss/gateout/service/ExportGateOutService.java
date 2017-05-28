@@ -164,6 +164,32 @@ public class ExportGateOutService {
     });
     // return new AsyncResult<Boolean>(true);
   }
+  
+  @SolasApplicable
+  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
+  public void testSolas(GateOutWriteRequest gateOutWriteRequest) {
+
+    if (gateOutWriteRequest.getExportContainers() == null || gateOutWriteRequest.getExportContainers().isEmpty())
+      throw new BusinessException("Invalid Request to Update Export !");
+
+    List<ExportContainer> exportContainers = gateOutWriteRequest.getExportContainers();
+    
+    exportContainers.forEach(exportContainer -> {
+      
+      System.out.println("exportContainer ********************** "+exportContainer.getExportID());
+      Optional<Exports> optExport = exportsRepository.findOne(exportContainer.getExportID());
+      Exports exports = optExport.orElseThrow(
+          () -> new BusinessException("Invalid Exports Information to Update ! " + exportContainer.getExportID()));
+      
+      exports.getBaseCommonGateInOutAttribute().setEirStatus(TransactionStatus.APPROVED);
+      exportsRepository.save(exports);
+      
+    });
+    // return new AsyncResult<Boolean>(true);
+    
+    System.out.println("testSolas method end first ********************** ");
+  }
+
 
   @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
   public void updateExportReference(FileDTO fileDTO) {

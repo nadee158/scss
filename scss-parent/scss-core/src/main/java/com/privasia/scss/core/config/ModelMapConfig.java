@@ -111,6 +111,7 @@ public class ModelMapConfig {
     modelMapper.addMappings(ModelMapPropertyMap.referRejectReasonToReferRejectReasonDTO());
     modelMapper.addMappings(ModelMapPropertyMap.referRejectToReferRejectDTO());
     modelMapper.addMappings(ModelMapPropertyMap.referRejectReasonDTOToReferRejectReason());
+    modelMapper.addMappings(ModelMapPropertyMap.WHODDToWHoddDTO());
     return modelMapper;
   }
 

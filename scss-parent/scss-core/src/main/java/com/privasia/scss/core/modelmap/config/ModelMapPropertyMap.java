@@ -5,15 +5,14 @@ package com.privasia.scss.core.modelmap.config;
 
 import org.modelmapper.PropertyMap;
 
-import com.privasia.scss.common.dto.CommonSealDTO;
 import com.privasia.scss.common.dto.ExportContainer;
 import com.privasia.scss.common.dto.ImportContainer;
 import com.privasia.scss.common.dto.KioskBoothRightsDTO;
 import com.privasia.scss.common.dto.ReferRejectDTO;
 import com.privasia.scss.common.dto.ReferRejectDetailDTO;
 import com.privasia.scss.common.dto.ReferRejectReasonDTO;
+import com.privasia.scss.common.dto.WHoddDTO;
 import com.privasia.scss.common.enums.TransactionStatus;
-import com.privasia.scss.core.model.CommonSealAttribute;
 import com.privasia.scss.core.model.Exports;
 import com.privasia.scss.core.model.ExportsQ;
 import com.privasia.scss.core.model.GatePass;
@@ -21,6 +20,7 @@ import com.privasia.scss.core.model.KioskBoothRights;
 import com.privasia.scss.core.model.ReferReject;
 import com.privasia.scss.core.model.ReferRejectDetail;
 import com.privasia.scss.core.model.ReferRejectReason;
+import com.privasia.scss.core.model.WHODD;
 
 /**
  * @author Janaka
@@ -244,6 +244,19 @@ public final class ModelMapPropertyMap {
 			}
 		};
 
+	}
+	
+	public static PropertyMap<WHODD, WHoddDTO> WHODDToWHoddDTO() {
+		return new PropertyMap<WHODD, WHoddDTO>() {
+			protected void configure() {
+				skip().setCardId(null);
+				skip().setGateOutBoothClerkId(null);
+				skip().setGateOutClerkId(null);
+				skip().setGateInClerkId(null);
+				skip().setGateInClientId(null);
+				skip().setGateOutClientId(null);
+			}
+		};
 	}
 
 }

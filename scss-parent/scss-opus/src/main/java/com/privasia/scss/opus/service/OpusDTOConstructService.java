@@ -176,19 +176,11 @@ public class OpusDTOConstructService {
 			GIWriteResponseImportContainer giWriteResponseImportContainer,
 			OpusGateInWriteResponse opusGateInWriteResponse, ImportContainer importContainer) {
 
-		/*
-		 * CommonContainerDTO commonContainerDTO = new CommonContainerDTO();
-		 * commonContainerDTO.setContainerNumber(giWriteResponseImportContainer.
-		 * getContainerNo()); importContainer.setContainer(commonContainerDTO);
-		 */
 		importContainer.setYardPosition(giWriteResponseImportContainer.getYardPosition());
 		importContainer.setYardBayCode(giWriteResponseImportContainer.getYardBayCode());
 		if (StringUtils.isNotEmpty(opusGateInWriteResponse.getCallCardNo())) {
 			importContainer.setCallCard(Long.parseLong(opusGateInWriteResponse.getCallCardNo()));
 		}
-		// importContainer.setEirNumber(150l);// eirNumber value should be come
-		// from opus in the
-		// giWriteResponse
 		return importContainer;
 	}
 
@@ -221,6 +213,7 @@ public class OpusDTOConstructService {
 		// private double containerSize;// 40,
 		importContainer.setContainerLength(
 				ExportUtilService.getIntegerValueFromString(gIReadResponseImportContainer.getContainerSize()));
+		importContainer.getContainer().setContainerSize(gIReadResponseImportContainer.getContainerSize());
 		// private String containerType;// GE,
 		importContainer.setContainerType(gIReadResponseImportContainer.getContainerType());
 		importContainer.setTareWeight(
@@ -332,7 +325,7 @@ public class OpusDTOConstructService {
 		}
 		
 		// private String containerSeal1_NO;// SEAL001,
-		if(StringUtils.isNotEmpty(gIReadResponseExporterContainer.getContainerSeal1_NO())){
+		if(StringUtils.isEmpty(exportContainer.getSealAttribute().getSeal01Number())){
 			exportContainer.getSealAttribute().setSeal01Number(gIReadResponseExporterContainer.getContainerSeal1_NO());
 		}
 		
@@ -342,7 +335,7 @@ public class OpusDTOConstructService {
 		}
 		
 		// private String containerSeal2_NO;// null,
-		if(StringUtils.isNotEmpty(gIReadResponseExporterContainer.getContainerSeal2_NO())){
+		if(StringUtils.isEmpty(exportContainer.getSealAttribute().getSeal02Number())){
 			exportContainer.getSealAttribute().setSeal02Number(gIReadResponseExporterContainer.getContainerSeal2_NO());
 		}
 		

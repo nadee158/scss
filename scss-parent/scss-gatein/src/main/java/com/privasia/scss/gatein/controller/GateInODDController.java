@@ -3,7 +3,6 @@
  */
 package com.privasia.scss.gatein.controller;
 
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -22,7 +21,6 @@ import com.privasia.scss.common.dto.GateInReponse;
 import com.privasia.scss.common.dto.GateInRequest;
 import com.privasia.scss.common.dto.GateInWriteRequest;
 import com.privasia.scss.gatein.odd.service.ODDGateInService;
-import com.privasia.scss.gatein.service.ImportExportGateInService;
 import com.privasia.scss.hdbs.service.HDBSService;
 
 /**

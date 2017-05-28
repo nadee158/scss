@@ -82,7 +82,7 @@ public class TestController {
         .orElseThrow(() -> new AuthenticationServiceException(
             "Log in User Not Found : " + SecurityHelper.getCurrentUserId()));
 
-    exportService.saveGateInInfo(gateInWriteRequest, gateInClient, gateInClerk, card);
+    //exportService.saveGateInInfo(gateInWriteRequest, gateInClient, gateInClerk, card);
 
     // exportService.updateReferReject(gateInWriteRequest, exportContainer);
 

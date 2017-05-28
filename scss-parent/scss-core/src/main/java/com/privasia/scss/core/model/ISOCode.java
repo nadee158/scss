@@ -15,111 +15,99 @@ import javax.persistence.Table;
 
 import com.privasia.scss.common.dto.ISOInfo;
 
-
 /**
  * @author Janaka
  *
  */
 @Entity
 @Table(name = "SCSS_ISO_CODES")
-@AttributeOverrides({@AttributeOverride(name = "addBy", column = @Column(name = "CREATED_BY")),
-    @AttributeOverride(name = "updateBy", column = @Column(name = "UPDATED_BY")),
-    @AttributeOverride(name = "dateTimeAdd", column = @Column(name = "DATE_TIME_CREATED")),
-    @AttributeOverride(name = "dateTimeUpdate", column = @Column(name = "DATE_TIME_UPDATE"))})
+@AttributeOverrides({ @AttributeOverride(name = "addBy", column = @Column(name = "CREATED_BY")),
+		@AttributeOverride(name = "updateBy", column = @Column(name = "UPDATED_BY")),
+		@AttributeOverride(name = "dateTimeAdd", column = @Column(name = "DATE_TIME_CREATED")),
+		@AttributeOverride(name = "dateTimeUpdate", column = @Column(name = "DATE_TIME_UPDATE")) })
 public class ISOCode extends AuditEntity implements Serializable {
 
-  /**
-   * 
-   */
-  private static final long serialVersionUID = 1L;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
+	@Id
+	@Column(name = "CN_ISO_CODE")
+	private String isoCode;
 
-  @Id
-  @Column(name = "CN_ISO_CODE")
-  private String isoCode;
+	@Column(name = "CN_LENGTH")
+	private int length;
 
-  @Column(name = "CN_LENGTH")
-  private int length;
+	@Column(name = "CN_HEIGHT")
+	private Double height;
 
-  @Column(name = "CN_HEIGHT")
-  private BigDecimal height;
+	@Column(name = "CN_TYPE")
+	private String type;
 
-  @Column(name = "CN_TYPE")
-  private String type;
+	@Column(name = "CN_TARE_WEIGHT")
+	private int tareWeight;
 
-  @Column(name = "CN_TARE_WEIGHT")
-  private int tareWeight;
+	@Column(name = "CN_WIDTH")
+	private int width;
 
-  @Column(name = "CN_WIDTH")
-  private int width;
+	@Column(name = "CN_ISO_DESC")
+	private String description;
 
-  @Column(name = "CN_ISO_DESC")
-  private String description;
+	public String getIsoCode() {
+		return isoCode;
+	}
 
-  public String getIsoCode() {
-    return isoCode;
-  }
+	public void setIsoCode(String isoCode) {
+		this.isoCode = isoCode;
+	}
 
-  public void setIsoCode(String isoCode) {
-    this.isoCode = isoCode;
-  }
+	public int getLength() {
+		return length;
+	}
 
-  public int getLength() {
-    return length;
-  }
+	public void setLength(int length) {
+		this.length = length;
+	}
 
-  public void setLength(int length) {
-    this.length = length;
-  }
+	public Double getHeight() {
+		return height;
+	}
 
-  public BigDecimal getHeight() {
-    return height;
-  }
+	public void setHeight(Double height) {
+		this.height = height;
+	}
 
-  public void setHeight(BigDecimal height) {
-    this.height = height;
-  }
+	public String getType() {
+		return type;
+	}
 
-  public String getType() {
-    return type;
-  }
+	public void setType(String type) {
+		this.type = type;
+	}
 
-  public void setType(String type) {
-    this.type = type;
-  }
+	public int getTareWeight() {
+		return tareWeight;
+	}
 
-  public int getTareWeight() {
-    return tareWeight;
-  }
+	public void setTareWeight(int tareWeight) {
+		this.tareWeight = tareWeight;
+	}
 
-  public void setTareWeight(int tareWeight) {
-    this.tareWeight = tareWeight;
-  }
+	public int getWidth() {
+		return width;
+	}
 
-  public int getWidth() {
-    return width;
-  }
+	public void setWidth(int width) {
+		this.width = width;
+	}
 
-  public void setWidth(int width) {
-    this.width = width;
-  }
+	public String getDescription() {
+		return description;
+	}
 
-  public String getDescription() {
-    return description;
-  }
-
-  public void setDescription(String description) {
-    this.description = description;
-  }
-
-  public ISOInfo constructISOInfo() {
-    ISOInfo isoInfo = new ISOInfo();
-    isoInfo.setLength(this.getLength());
-    isoInfo.setHeight(this.getHeight());
-    isoInfo.setType(this.getType());
-    isoInfo.setTareWeight(this.getTareWeight());
-    isoInfo.setTotalWeightBridge(this.getTareWeight());
-    return isoInfo;
-  }
+	public void setDescription(String description) {
+		this.description = description;
+	}
 
 }

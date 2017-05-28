@@ -13,19 +13,20 @@ import java.util.Map;
  */
 public enum ContainerSize implements Enumable {
 
-  SIZE_0("0"), SIZE_20("20"), SIZE_40("40"), SIZE_45("45");
+  SIZE_0(0), SIZE_20(20), SIZE_40(40), SIZE_45(45);
 
-  private final String containerSize;
+  private final int containerSize;
 
-  private ContainerSize(String containerSize) {
-    this.containerSize = containerSize;
+
+  private ContainerSize(int containerSize) {
+	    this.containerSize = containerSize;
   }
 
   /**
    * @return the containerSize
    */
   public String getValue() {
-    return containerSize;
+    return String.valueOf(containerSize);
   }
 
   public Enum<?> getEnumFromValue(String value) {
