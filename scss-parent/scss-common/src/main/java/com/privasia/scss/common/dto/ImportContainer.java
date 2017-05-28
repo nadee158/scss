@@ -145,44 +145,6 @@ public class ImportContainer extends BaseContainer implements Serializable {
     this.containerLength = containerLength;
   }
 
-  public ImportContainer initializeWithDefaultValues(String containerNo) {
-    this.setPrintEir(new PrintEirDTO().initializeWithIdOnly());
-    this.gatePassID = 24441450101l;
-    this.gatePassNo = 24441450101l;
-    this.gateOrderNo = 2444145l;
-    this.containerLength = 40;
-    this.setContainer(new CommonContainerDTO().initializeWithDefaultValues(containerNo));
-    this.company = 412l;
-    this.setCommonGateInOut(new CommonGateInOutDTO().initializeWithDefaultValues());
-    this.setBaseCommonGateInOutAttribute(new BaseCommonGateInOutDTO().initializeWithDefaultValues());
-    this.gatePassStatus = GatePassStatus.ACTIVE.getValue();
-    this.handlingID = 150l;
-    this.orderNo = "KKLUTH0429431";
-    this.setGateInOut(GateInOutStatus.IN.getValue());
-    this.setShippingLine("KKK");
-    this.currentPosition = "09B0405E1";
-    this.setContainerPosition(ContainerPosition.MIDDLE.getValue());
-    this.gateInLaneNo = "MG";
-    this.gateOutLaneNo = "B9B";
-    this.setSealAttribute(new CommonSealDTO().initializeWithDefaultValues());
-    this.setGateOutRemarks("gateOutRemarks");
-    this.setYardPosition("09B0405E1");
-    this.setYardBayCode("09B04");
-    this.setCallCard(9032l);
-    this.cosmosSeal01Origin = "L";
-    this.cosmosSeal01Type = "SL";
-    this.cosmosSeal01Number = "MQ133880";
-    this.cosmosSeal02Origin = "L";
-    this.cosmosSeal02Type = "NS";
-    this.cosmosSeal02Number = "MQ133881";
-    this.gatePassValidDate = "04/15/2017 02:05:30 PM";
-    this.setIsoInfo(new ISOInfo().initializeWithDefaultValues());
-    this.setShippingAgent("AG01");
-    this.orderFOT = "FOT";
-    return this;
-  }
-
-
   public Long getGatePassID() {
     return gatePassID;
   }

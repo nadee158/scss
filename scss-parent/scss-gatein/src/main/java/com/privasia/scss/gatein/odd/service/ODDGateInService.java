@@ -1,8 +1,6 @@
 package com.privasia.scss.gatein.odd.service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -21,7 +19,6 @@ import com.privasia.scss.common.dto.GateOutMessage;
 import com.privasia.scss.common.enums.GateInOutStatus;
 import com.privasia.scss.common.enums.ImpExpFlagStatus;
 import com.privasia.scss.common.enums.RecordStatus;
-import com.privasia.scss.common.enums.SCSSHDBSStatus;
 import com.privasia.scss.common.enums.TransactionStatus;
 import com.privasia.scss.common.exception.BusinessException;
 import com.privasia.scss.common.exception.ResultsNotFoundException;

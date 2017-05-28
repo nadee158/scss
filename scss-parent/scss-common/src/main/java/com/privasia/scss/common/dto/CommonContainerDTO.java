@@ -4,6 +4,7 @@
 package com.privasia.scss.common.dto;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -54,7 +55,7 @@ public class CommonContainerDTO implements Serializable {
 	public void setContainerFullOrEmpty(String containerFullOrEmpty) {
 		this.containerFullOrEmpty = containerFullOrEmpty;
 	}
-
+	
 	public double getContainerHeight() {
 		return containerHeight;
 	}
@@ -74,15 +75,6 @@ public class CommonContainerDTO implements Serializable {
 	@Override
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
-	}
-
-	public CommonContainerDTO initializeWithDefaultValues(String containerNo) {
-		this.setContainerNumber(containerNo);
-		this.setContainerFullOrEmpty(ContainerFullEmptyType.FULL.getValue());
-		this.setContainerHeight(150);
-		this.setContainerISOCode("2210");
-		this.setContainerSize("80");
-		return this;
 	}
 
 }

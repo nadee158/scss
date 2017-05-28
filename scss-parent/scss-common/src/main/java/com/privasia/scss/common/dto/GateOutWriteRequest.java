@@ -18,7 +18,7 @@ public class GateOutWriteRequest extends GateWriteRequest implements Serializabl
 	@NotNull(message = "gateOutClient is required!")
 	private Long gateOutClient;
 
-	private long gateOutBooth;
+	private Long gateOutBooth;
 
 	@NotNull(message = "gateOUTDateTime is required!")
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateUtil.GLOBAL_DATE_TIME_PATTERN)
@@ -57,11 +57,11 @@ public class GateOutWriteRequest extends GateWriteRequest implements Serializabl
 		this.impExpFlag = impExpFlag;
 	}
 
-	public long getGateOutBooth() {
+	public Long getGateOutBooth() {
 		return gateOutBooth;
 	}
 
-	public void setGateOutBooth(long gateOutBooth) {
+	public void setGateOutBooth(Long gateOutBooth) {
 		this.gateOutBooth = gateOutBooth;
 	}
 

@@ -24,7 +24,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.privasia.scss.common.exception.BusinessException;
-import com.privasia.scss.cosmos.oracle.repository.AGSLogRepository;
+import com.privasia.scss.cosmos.repository.AGSLogRepository;
 import com.privasia.scss.cosmos.xml.element.SGS2CosmosRequest;
 import com.privasia.scss.cosmos.xml.element.SGS2CosmosResponse;
 

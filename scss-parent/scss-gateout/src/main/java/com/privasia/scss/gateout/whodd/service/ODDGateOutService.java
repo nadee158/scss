@@ -9,11 +9,14 @@ import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.privasia.scss.common.dto.ContainerValidationInfo;
+import com.privasia.scss.common.dto.GateOutMessage;
 import com.privasia.scss.common.dto.GateOutReponse;
 import com.privasia.scss.common.dto.GateOutRequest;
 import com.privasia.scss.common.dto.GateOutWriteRequest;
@@ -26,6 +29,7 @@ import com.privasia.scss.common.enums.SCSSHDBSStatus;
 import com.privasia.scss.common.enums.TransactionStatus;
 import com.privasia.scss.common.exception.BusinessException;
 import com.privasia.scss.common.exception.ResultsNotFoundException;
+import com.privasia.scss.common.security.model.UserContext;
 import com.privasia.scss.core.model.Card;
 import com.privasia.scss.core.model.Client;
 import com.privasia.scss.core.model.HDBSBkgDetail;
@@ -33,9 +37,14 @@ import com.privasia.scss.core.model.ODDContainerDetails;
 import com.privasia.scss.core.model.ODDLocation;
 import com.privasia.scss.core.model.SystemUser;
 import com.privasia.scss.core.model.WHODD;
+import com.privasia.scss.core.repository.CardRepository;
+import com.privasia.scss.core.repository.ClientRepository;
 import com.privasia.scss.core.repository.HDBSBookingDetailRepository;
+import com.privasia.scss.core.repository.ODDExportReasonRepository;
+import com.privasia.scss.core.repository.ODDImportReasonRepository;
 import com.privasia.scss.core.repository.ODDLocationRepository;
 import com.privasia.scss.core.repository.ODDRepository;
+import com.privasia.scss.core.repository.SystemUserRepository;
 import com.privasia.scss.cosmos.repository.CosmosODDRepository;
 import com.privasia.scss.gateout.dto.FileDTO;
 
@@ -51,6 +60,16 @@ public class ODDGateOutService {
 	private ModelMapper modelMapper;
 
 	private HDBSBookingDetailRepository hdbsBookingDetailRepository;
+	
+	private ClientRepository clientRepository;
+
+	private CardRepository cardRepository;
+
+	private SystemUserRepository systemUserRepository;
+
+	private ODDImportReasonRepository oddImportReasonRepository;
+
+	private ODDExportReasonRepository oddExportReasonRepository;
 
 	@Autowired
 	public void setCosmosODDRepository(CosmosODDRepository cosmosODDRepository) {
@@ -75,6 +94,31 @@ public class ODDGateOutService {
 	@Autowired
 	public void setHdbsBookingDetailRepository(HDBSBookingDetailRepository hdbsBookingDetailRepository) {
 		this.hdbsBookingDetailRepository = hdbsBookingDetailRepository;
+	}
+	
+	@Autowired
+	public void setClientRepository(ClientRepository clientRepository) {
+		this.clientRepository = clientRepository;
+	}
+
+	@Autowired
+	public void setCardRepository(CardRepository cardRepository) {
+		this.cardRepository = cardRepository;
+	}
+	
+	@Autowired
+	public void setSystemUserRepository(SystemUserRepository systemUserRepository) {
+		this.systemUserRepository = systemUserRepository;
+	}
+	
+	@Autowired
+	public void setOddImportReasonRepository(ODDImportReasonRepository oddImportReasonRepository) {
+		this.oddImportReasonRepository = oddImportReasonRepository;
+	}
+	
+	@Autowired
+	public void setOddExportReasonRepository(ODDExportReasonRepository oddExportReasonRepository) {
+		this.oddExportReasonRepository = oddExportReasonRepository;
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = true, value = "as400TransactionManager")
@@ -156,14 +200,26 @@ public class ODDGateOutService {
 	}
 
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
-	public Long saveODDGateOutInFo(GateOutWriteRequest gateOutWriteRequest, Card card, Client gateOutClient, 
-			SystemUser gateOutClerk, ImpExpFlagStatus impExpFlag, Optional<Client> gateOutBooth,
-			Optional<SystemUser> gateOutBoothClerk) {
+	public GateOutReponse saveODDGateOutInFo(GateOutWriteRequest gateOutWriteRequest) {
 
 		if (gateOutWriteRequest.getWhoddContainers() == null || gateOutWriteRequest.getWhoddContainers().isEmpty())
 			throw new BusinessException("Invalid GateOutWriteRequest to save ODD ! ");
+		
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		UserContext userContext = (UserContext) authentication.getPrincipal();
+		Optional<SystemUser> systemUserOpt = systemUserRepository.findOne(userContext.getUserID());
+		SystemUser gateOutClerk = systemUserOpt
+				.orElseThrow(() -> new ResultsNotFoundException("Invalid Login User ! " + userContext.getUsername()));
 
-		gateOutWriteRequest.getWhoddContainers().forEach(whODDdto -> {
+		Optional<Client> clientOpt = clientRepository.findOne(gateOutWriteRequest.getGateOutClient());
+		Client gateOutClient = clientOpt.orElseThrow(
+				() -> new ResultsNotFoundException("Invalid lane ID ! " + gateOutWriteRequest.getGateOutClient()));
+		
+		GateOutReponse gateOutReponse = new GateOutReponse();
+		gateOutReponse.setGateOUTDateTime(gateOutWriteRequest.getGateOUTDateTime());
+		gateOutReponse.setWhODDContainers(gateOutWriteRequest.getWhoddContainers());
+		
+		gateOutReponse.getWhODDContainers().forEach(whODDdto -> {
 
 			Optional<WHODD> optODD = oddRepository.findOne(whODDdto.getOddIdSeq());
 
@@ -274,17 +330,24 @@ public class ODDGateOutService {
 			whODD.setGateOutClerk(gateOutClerk);
 			whODD.setGateOutClient(gateOutClient);
 
-			if (gateOutBooth.isPresent()) {
-				whODD.setGateOutBoothNo(String.valueOf(gateOutBooth.get().getClientID()));
-				whODD.setGateOutBoothClerk(gateOutBoothClerk.get());
+			if((gateOutWriteRequest.getGateOutBooth()== null && gateOutWriteRequest.getGateOutBooth()==0)){
+				Client gateOutBooth = clientRepository.findOne(gateOutWriteRequest.getGateOutBooth()).orElseThrow(
+						() -> new ResultsNotFoundException("Invalid Booth ID ! " + gateOutWriteRequest.getGateOutBooth()));
+				whODD.setGateOutBoothNo(String.valueOf(gateOutBooth.getClientID()));
+				whODD.setGateOutBoothClerk(gateOutClerk);
 				whODD.setTimeGateOutBooth(whODD.getTimeGateOut());
 			}
 
 			oddRepository.save(whODD);
 
 		});
+		
+		GateOutMessage gateOutMessage = new GateOutMessage();
+		gateOutMessage.setCode(GateOutMessage.OK);
+		gateOutMessage.setDescription("Saved Successfully!");
 
-		return null;
+		gateOutReponse.setMessage(gateOutMessage);
+		return gateOutReponse;
 	}
 
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRES_NEW, readOnly = false)

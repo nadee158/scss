@@ -1,6 +1,9 @@
 package com.privasia.scss.common.service.export;
 
+import java.math.BigDecimal;
+
 import org.apache.commons.lang3.StringUtils;
+
 
 public class ExportUtilService {
 
@@ -119,6 +122,17 @@ public class ExportUtilService {
 			}
 		}
 		return 0d;
+	}
+	
+	public static String getStringValueFromDouble(Double value) {
+		if (value != null) {
+			try {
+				return value.toString();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return null;
 	}
 
 }

@@ -13,7 +13,6 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.data.auditing.DateTimeProvider;
@@ -38,7 +37,7 @@ import com.zaxxer.hikari.HikariDataSource;
 @Configuration
 @EnableTransactionManagement
 @EnableJpaAuditing(dateTimeProviderRef = "cosmosOracleDateTimeProvider")
-@EnableJpaRepositories(basePackages = "com.privasia.scss.cosmos.oracle.repository",
+@EnableJpaRepositories(basePackages = "com.privasia.scss.cosmos.repository",
     entityManagerFactoryRef = "cosmosOracleEntityManagerFactory",
     transactionManagerRef = "cosmosOracleTransactionManager")
 @EntityScan("com.privasia.scss.cosmos.model")

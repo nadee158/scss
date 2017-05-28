@@ -69,7 +69,7 @@ public class ModelMapEnumConverter {
     };
   }
 
-  public static Converter<String, KioskLockStatus> convertStringToKioskLockStatus() {
+  public static Converter<String, KioskLockStatus> convertStringToKioskLockStatus() { 
 
     return new Converter<String, KioskLockStatus>() {
       @Override
@@ -266,19 +266,19 @@ public class ModelMapEnumConverter {
 
   }
 
-  public static Converter<ContainerSize, Integer> convertContainerSizeToString() {
+  public static Converter<ContainerSize, String> convertContainerSizeToString() {
 
-    return new Converter<ContainerSize, Integer>() {
+    return new Converter<ContainerSize, String>() {
       @Override
-      public Integer convert(MappingContext<ContainerSize, Integer> context) {
+      public String convert(MappingContext<ContainerSize, String> context) {
         if (context.getSource() != null) {
           switch (context.getSource()) {
             case SIZE_20:
-              return Integer.parseInt(ContainerSize.SIZE_20.getValue());
+              return ContainerSize.SIZE_20.getValue();
             case SIZE_40:
-              return Integer.parseInt(ContainerSize.SIZE_40.getValue());
+              return ContainerSize.SIZE_40.getValue();
             case SIZE_45:
-              return Integer.parseInt(ContainerSize.SIZE_45.getValue());
+              return ContainerSize.SIZE_45.getValue();
             default:
               return null;
           }
@@ -303,7 +303,7 @@ public class ModelMapEnumConverter {
             case "45":
               return ContainerSize.SIZE_45;
             default:
-              return null;
+              return ContainerSize.SIZE_0;
           }
         } else {
           return null;

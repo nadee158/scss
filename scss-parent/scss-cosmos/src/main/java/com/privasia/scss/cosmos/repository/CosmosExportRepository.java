@@ -52,8 +52,9 @@ public class CosmosExportRepository {
 	}
 
 	@Transactional(value = "as400TransactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-	public ExportContainer isOGABlock(ExportContainer exportContainer, String containerNo) {
-
+	public ExportContainer isOGABlock(ExportContainer exportContainer) {
+		
+		String containerNo = StringUtils.upperCase(exportContainer.getContainer().getContainerNumber());
 		return jdbcTemplate.queryForObject(queryOGABlock, new Object[] { containerNo },
 				(rs, i) -> extractOGABlock(exportContainer, rs));
 
@@ -68,8 +69,9 @@ public class CosmosExportRepository {
 	}
 
 	@Transactional(value = "as400TransactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-	public ExportContainer isInternalBlock(ExportContainer exportContainer, String containerNo) {
-
+	public ExportContainer isInternalBlock(ExportContainer exportContainer) {
+		
+		String containerNo = StringUtils.upperCase(exportContainer.getContainer().getContainerNumber());
 		return jdbcTemplate.queryForObject(queryInternalBlock, new Object[] { containerNo },
 				(rs, i) -> extractInternalBlock(exportContainer, rs, i));
 
@@ -109,33 +111,16 @@ public class CosmosExportRepository {
 	}
 
 	@Transactional(value = "as400TransactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-	public ExportContainer fetchContainerInfo(String exportContainerNo) {
+	public ExportContainer fetchContainerInfo(ExportContainer exportContainer) {
 
-		exportContainerNo = StringUtils.upperCase(exportContainerNo);
-		Optional<ExportContainer> optExportContainer = jdbcTemplate.queryForObject(queryContainerPrimaryInfo,
-				new Object[] { exportContainerNo }, (rs, i) -> extractPrimaryContainerInfo(rs, i));
-
-		if (!optExportContainer.isPresent())
-			optExportContainer = Optional.of(new ExportContainer());
-
-		final ExportContainer exportContainer = optExportContainer.get();
-		optExportContainer.get().getContainer().setContainerNumber(exportContainerNo);
-		isInternalBlock(exportContainer, exportContainerNo);
-		isOGABlock(exportContainer, exportContainerNo);
-		
-		jdbcTemplate.queryForObject(queryContainerSecondaryInfo,
-				new Object[] { exportContainerNo }, (rs, i) -> extractSecondaryContainerInfo(exportContainer, rs, i));
-		
-		jdbcTemplate.queryForObject(queryContainerOOGInfo,
-				new Object[] { exportContainerNo }, (rs, i) -> extractContainerOOGInfo(exportContainer, rs, i));
-
-		return exportContainer;
+		String exportContainerNo = StringUtils.upperCase(exportContainer.getContainer().getContainerNumber());
+		return  jdbcTemplate.queryForObject(queryContainerPrimaryInfo,
+				new Object[] { exportContainerNo }, (rs, i) -> extractPrimaryContainerInfo(exportContainer, rs, i));
 
 	}
 
-	private Optional<ExportContainer> extractPrimaryContainerInfo(ResultSet rs, int rowNum) throws SQLException {
+	private ExportContainer extractPrimaryContainerInfo(ExportContainer exportContainer, ResultSet rs, int rowNum) throws SQLException {
 
-		ExportContainer exportContainer = null;
 		int rowcount = 0;
 		if (rs.last()) {
 			rowcount = rs.getRow();
@@ -143,10 +128,6 @@ public class CosmosExportRepository {
 		}
 
 		if (rs.next()) {
-
-			exportContainer = new ExportContainer();
-			CommonContainerDTO commonContainerDTO = new CommonContainerDTO();
-			exportContainer.setContainer(commonContainerDTO);
 			exportContainer.setTotalBooking(rowcount);
 
 			exportContainer.setBookingNoExist(true);
@@ -166,6 +147,9 @@ public class CosmosExportRepository {
 			exportContainer.setVesselETADate(DateUtil.getLocalDategFromString(
 					rs.getString("ETAD01") + TextString.padding(rs.getString("ETAT01"), 6, '0', true)));
 
+		}else{
+			isInternalBlock(exportContainer);
+			return null;
 		}
 
 		if (rowcount > 1)
@@ -176,7 +160,7 @@ public class CosmosExportRepository {
 			throw new BusinessException(
 					"Invalid Container No(s) " + exportContainer.getContainer().getContainerNumber());
 
-		return Optional.ofNullable(exportContainer);
+		return exportContainer;
 	}
 	
 	private ExportContainer extractSecondaryContainerInfo(ExportContainer exportContainer, 

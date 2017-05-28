@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.privasia.scss.common.dto.CommonContainerDTO;
 import com.privasia.scss.common.dto.CommonSealDTO;
 import com.privasia.scss.common.dto.ImportContainer;
 import com.privasia.scss.common.exception.BusinessException;
@@ -60,6 +61,9 @@ public class CosmosImportRepository {
 	private ImportContainer mapToImportContainer(ImportContainer importContainer, ResultSet rs)
 			throws SQLException {
 		if (rs != null && rs.next()) {
+			if(importContainer.getContainer() == null){
+				importContainer.setContainer(new CommonContainerDTO());
+			}
 			importContainer.setShippingAgent(TextString.format(rs.getString("ORGV05")));
 			importContainer.getContainer().setContainerNumber(TextString.format(rs.getString("CNID03")));
 			importContainer.setGateInOut(rs.getString("HDTP03"));

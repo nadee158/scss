@@ -213,6 +213,7 @@ public class OpusDTOConstructService {
 		// private double containerSize;// 40,
 		importContainer.setContainerLength(
 				ExportUtilService.getIntegerValueFromString(gIReadResponseImportContainer.getContainerSize()));
+		importContainer.getContainer().setContainerSize(gIReadResponseImportContainer.getContainerSize());
 		// private String containerType;// GE,
 		importContainer.setContainerType(gIReadResponseImportContainer.getContainerType());
 		importContainer.setTareWeight(
