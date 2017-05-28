@@ -23,7 +23,7 @@ import com.zaxxer.hikari.HikariDataSource;
  *
  */
 @Configuration
-@PropertySource(value = {"classpath:cosmos_application.properties", "classpath:cosmos_sql-dev.properties"})
+@PropertySource(value = {"classpath:cosmos_application.properties", "classpath:cosmos_sql.properties"})
 public class AS400DBConfig {
 
   @Bean(name = "as400Db", destroyMethod = "close")
