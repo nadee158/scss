@@ -16,6 +16,8 @@ import java.util.concurrent.Future;
 import javax.imageio.ImageIO;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -42,7 +44,6 @@ import com.privasia.scss.core.repository.ExportsRepository;
 import com.privasia.scss.etpws.dto.SolasETPDTO;
 import com.privasia.scss.etpws.service.client.ETPWebserviceClient;
 import com.privasia.scss.gateout.dto.FileDTO;
-import com.privasia.scss.gateout.whodd.service.ODDGateOutService;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Predicate;
 
@@ -59,17 +60,13 @@ import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
 @Service("solasGateOutService")
 public class SolasGateOutService {
+	
+	private static final Log log = LogFactory.getLog(SolasGateOutService.class);
 
 	@Value("${solas.cert.name}")
 	private String solasCertName;
 
 	private FileService fileService;
-
-	private ExportGateOutService exportGateOutService;
-
-	private ImportGateOutService importGateOutService;
-
-	private ODDGateOutService oDDGateOutService;
 
 	private ETPWebserviceClient etpWebserviceClient;
 
@@ -94,21 +91,6 @@ public class SolasGateOutService {
 	@Autowired
 	public void setEtpWebserviceClient(@Qualifier("etpWebserviceClient") ETPWebserviceClient etpWebserviceClient) {
 		this.etpWebserviceClient = etpWebserviceClient;
-	}
-
-	@Autowired
-	public void setGateOutODDService(ODDGateOutService oDDGateOutService) {
-		this.oDDGateOutService = oDDGateOutService;
-	}
-
-	@Autowired
-	public void setImportGateOutService(ImportGateOutService importGateOutService) {
-		this.importGateOutService = importGateOutService;
-	}
-
-	@Autowired
-	public void setExportGateOutService(ExportGateOutService exportGateOutService) {
-		this.exportGateOutService = exportGateOutService;
 	}
 
 	@Autowired
@@ -151,7 +133,7 @@ public class SolasGateOutService {
 			Iterator<Exports> etpSolasIterator = exportsList.iterator();
 
 			if (etpSolasIterator.hasNext()) {
-				System.out.println("solasIterator.hasNext() ***************************");
+				System.out.println("etpSolasIterator.hasNext() ***************************");
 				final List<SolasETPDTO> solasETPDTOs = new ArrayList<SolasETPDTO>();
 
 				try {
@@ -209,7 +191,7 @@ public class SolasGateOutService {
 			Iterator<Exports> solasIterator = exportsList.iterator();
 
 			if (solasIterator.hasNext()) {
-				System.out.println("solasIterator.hasNext() ***************************");
+				log.info("solasIterator.hasNext() ***************************");
 				final SolasPassFileDTO solasPassFileDTO = new SolasPassFileDTO();
 				FileDTO fileInfoDTO = null;
 
@@ -231,7 +213,7 @@ public class SolasGateOutService {
 
 					fileInfoDTO = new FileDTO();
 					fileInfoDTO.setFileName(Optional.ofNullable(solasPassFileDTO.getCertificateNo()));
-					fileInfoDTO.setTrxType(TransactionType.EXPORT);
+					fileInfoDTO.setTrxType(TransactionType.EXPORT.getValue());
 
 					if (StringUtils.isNotEmpty(solasPassFileDTO.getExportSEQ01())) {
 						fileInfoDTO.setExportNoSeq1(
@@ -248,10 +230,11 @@ public class SolasGateOutService {
 
 					// save to mongodb
 					fileId = fileService.saveFileToMongoDB(fileInfoDTO);
-					System.out.println("fileId  ***************************");
+					log.info("fileId  *************************** "+fileId);
 					// save to file references
 					if (fileId.isPresent()) {
-						saveReference(fileInfoDTO);
+						log.info("fileId  *************************** "+fileId.get());
+						fileService.saveReference(fileInfoDTO);
 					}else{
 						throw new BusinessException("Failed to save in MongoDB : ");
 					}
@@ -262,6 +245,8 @@ public class SolasGateOutService {
 				
 				return new AsyncResult<SolasPassFileDTO>(solasPassFileDTO);
 			}
+		}else{
+			log.info("*********** exportsList is null ****************"+expIDList.get(0));
 		}
 		return new AsyncResult<SolasPassFileDTO>(null);
 	}
@@ -304,7 +289,7 @@ public class SolasGateOutService {
 		return solasETPDTOs;
 	}
 
-	public List<SolasETPDTO> updateSolasETPDTOList(List<SolasETPDTO> solasETPDTOs, SolasPassFileDTO solasPassFileDTO) {
+	public List<SolasETPDTO> updateSolasETPDTOList(List<SolasETPDTO> solasETPDTOs, SolasPassFileDTO solasPassFileDTO) { 
 		if (!(solasETPDTOs == null || solasETPDTOs.isEmpty())) {
 			solasETPDTOs.forEach(solasETPDTO -> {
 				solasETPDTO.setCertificateNo(solasPassFileDTO.getCertificateNo());
@@ -428,29 +413,6 @@ public class SolasGateOutService {
 
 		return solasPassFileDTO;
 
-	}
-
-	public void saveReference(FileDTO fileDTO) {
-		TransactionType trxType = fileDTO.getTrxType();
-		switch (trxType) {
-		case ODD_EXPORT:
-		case ODD_IMPORT:
-		case ODD_IMPORT_EXPORT:
-			oDDGateOutService.updateODDReference(fileDTO);
-			break;
-		case IMPORT:
-			importGateOutService.updateGatePassReference(fileDTO);
-			break;
-		case EXPORT:
-			exportGateOutService.updateExportReference(fileDTO);
-			break;
-		case IMPORT_EXPORT:
-			importGateOutService.updateGatePassReference(fileDTO);
-			exportGateOutService.updateExportReference(fileDTO);
-			break;
-		default:
-			break;
-		}
 	}
 
 }

@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.privasia.scss.common.annotation.OpenGate;
 import com.privasia.scss.common.dto.ExportContainer;
 import com.privasia.scss.common.dto.GateOutMessage;
 import com.privasia.scss.common.dto.GateOutReponse;
@@ -190,7 +189,6 @@ public class ImportExportGateOutService {
 
 	}
 
-	@OpenGate
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
 	public GateOutReponse saveGateOutInfo(GateOutWriteRequest gateOutWriteRequest) {
 

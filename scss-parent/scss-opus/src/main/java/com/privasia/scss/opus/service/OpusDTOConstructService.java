@@ -14,6 +14,7 @@ import com.privasia.scss.common.dto.CommonSealDTO;
 import com.privasia.scss.common.dto.CommonSolasDTO;
 import com.privasia.scss.common.dto.DamageCodeDTO;
 import com.privasia.scss.common.dto.ExportContainer;
+import com.privasia.scss.common.dto.GateInReponse;
 import com.privasia.scss.common.dto.GateInWriteRequest;
 import com.privasia.scss.common.dto.ImportContainer;
 import com.privasia.scss.common.enums.ContainerStatus;
@@ -730,13 +731,13 @@ public class OpusDTOConstructService {
 	}
 
 	public List<ExportContainer> giReadResponseExporterContainerListToExportContainerList(
-			List<GIReadResponseExporterContainer> exportContainerListCY, List<ExportContainer> exportContainers) {
+			List<GIReadResponseExporterContainer> exportContainerListCY, GateInReponse gateInReponse) {
 		if (!(exportContainerListCY == null || exportContainerListCY.isEmpty())) {
 			List<ExportContainer> updatedExportContainers = new ArrayList<ExportContainer>();
 			exportContainerListCY.forEach(opusExportContainer -> {
 				ExportContainer exportContainer = null;
-				if (!(exportContainers == null || exportContainers.isEmpty())) {
-					exportContainer = exportContainers.stream()
+				if (!(gateInReponse.getExportContainers() == null || gateInReponse.getExportContainers().isEmpty())) {
+					exportContainer = gateInReponse.getExportContainers().stream()
 							.filter(e -> (e.getContainer() != null)
 									&& (StringUtils.equals(e.getContainer().getContainerNumber(),
 											opusExportContainer.getContainerNo())))
@@ -744,6 +745,7 @@ public class OpusDTOConstructService {
 				}
 				exportContainer = giReadResponseExporterContainerToExportContainer(opusExportContainer,
 						Optional.ofNullable(exportContainer));
+				exportContainer.setExpWeightBridge(gateInReponse.getExpWeightBridge());
 
 				log.info("exportContainer.getGateInOut " + exportContainer.getGateInOut());
 				log.info("exportContainer.getShippingLine " + exportContainer.getShippingLine());
@@ -771,13 +773,13 @@ public class OpusDTOConstructService {
 	}
 
 	public List<ImportContainer> giReadResponseImportContainerListToImportContainerList(
-			List<GIReadResponseImportContainer> importContainerListCY, List<ImportContainer> importContainers) {
+			List<GIReadResponseImportContainer> importContainerListCY, GateInReponse gateInReponse) {
 		if (!(importContainerListCY == null || importContainerListCY.isEmpty())) {
 			List<ImportContainer> updatedImportContainers = new ArrayList<ImportContainer>();
 			importContainerListCY.forEach(opusExportContainer -> {
 				ImportContainer importContainer = null;
-				if (!(importContainers == null || importContainers.isEmpty())) {
-					importContainer = importContainers.stream()
+				if (!(gateInReponse.getImportContainers() == null || gateInReponse.getImportContainers().isEmpty())) {
+					importContainer = gateInReponse.getImportContainers().stream()
 							.filter(e -> (e.getContainer() != null)
 									&& (StringUtils.equals(e.getContainer().getContainerNumber(),
 											opusExportContainer.getContainerNo())))

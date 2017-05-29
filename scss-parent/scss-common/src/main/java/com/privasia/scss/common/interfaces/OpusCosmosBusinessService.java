@@ -3,6 +3,7 @@
  */
 package com.privasia.scss.common.interfaces;
 
+import com.privasia.scss.common.dto.ContainerValidationInfo;
 import com.privasia.scss.common.dto.GateInReponse;
 import com.privasia.scss.common.dto.GateInRequest;
 import com.privasia.scss.common.dto.GateInWriteRequest;
@@ -23,5 +24,7 @@ public interface OpusCosmosBusinessService {
   public GateOutReponse sendGateOutReadRequest(GateOutRequest gateOutRequest, GateOutReponse gateOutReponse);
 
   public GateOutReponse sendGateOutWriteRequest(GateOutWriteRequest gateOutWriteRequest, GateOutReponse gateOutReponse);
+  
+  public ContainerValidationInfo sendODDContainerValidationRequest(GateOutRequest gateOutRequest);
 
 }

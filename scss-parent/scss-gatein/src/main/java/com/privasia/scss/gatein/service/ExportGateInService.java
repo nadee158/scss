@@ -164,7 +164,6 @@ public class ExportGateInService {
 	public GateInReponse validateExportsGateInRead(GateInReponse gateInReponse, LocalDateTime timegateIn) {
 
 		gateInReponse.getExportContainers().forEach(container -> {
-			container.setExpWeightBridge(gateInReponse.getExpWeightBridge());
 			setStoragePeriod(container);
 			setSCN(container);
 			vesselOmitService.isValidVesselOmit(container);

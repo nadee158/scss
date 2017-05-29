@@ -13,6 +13,7 @@ import com.privasia.scss.common.dto.ApiResponseObject;
 import com.privasia.scss.common.dto.ContainerValidationInfo;
 import com.privasia.scss.common.dto.CustomResponseEntity;
 import com.privasia.scss.common.dto.GateOutReponse;
+import com.privasia.scss.common.dto.GateOutRequest;
 import com.privasia.scss.common.dto.GateOutWriteRequest;
 import com.privasia.scss.gateout.whodd.service.ODDGateOutService;
 
@@ -33,14 +34,13 @@ public class GateOutODDController {
 	}
 
 	@RequestMapping(value = "/validatecontainer", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public CustomResponseEntity<ApiResponseObject<?>> validateContainers(
-			@RequestBody ContainerValidationInfo validationInfo) {
-		validationInfo = oddGateOutService.validateODDContainers(validationInfo);
+	public CustomResponseEntity<ApiResponseObject<?>> validateContainers(@RequestBody GateOutRequest gateOutRequest) {
+		ContainerValidationInfo validationInfo = oddGateOutService.validateODDContainers(gateOutRequest);
 		return new CustomResponseEntity<ApiResponseObject<?>>(
 				new ApiResponseObject<ContainerValidationInfo>(HttpStatus.OK, validationInfo), HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/whodd/update", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@RequestMapping(value = "/update", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public CustomResponseEntity<ApiResponseObject<?>> saveWhodd(@RequestBody GateOutWriteRequest gateOutWriteRequest) {
 
 		GateOutReponse gateOutReponse = oddGateOutService.saveODDGateOutInFo(gateOutWriteRequest);

@@ -28,7 +28,7 @@ public class FileDTO implements Serializable {
 
 	private Optional<Long> exportNoSeq2;
 	
-	private TransactionType trxType;
+	private String trxType;
 
 	private Optional<String> fileName;
 
@@ -146,11 +146,11 @@ public class FileDTO implements Serializable {
 		this.fileSize = fileSize;
 	}
 
-	public TransactionType getTrxType() {
+	public String getTrxType() {
 		return trxType;
 	}
 
-	public void setTrxType(TransactionType trxType) {
+	public void setTrxType(String trxType) {
 		this.trxType = trxType;
 	}
 

@@ -316,7 +316,7 @@ public class ImportGateOutService {
     // return new AsyncResult<Boolean>(true);
   }
 
-  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRES_NEW, readOnly = false)
+  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
   public void updateGatePassReference(FileDTO fileDTO) {
 
     Optional<List<GatePass>> gatePassOptList = gatePassRepository

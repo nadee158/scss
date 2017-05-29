@@ -9,6 +9,7 @@ import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,8 @@ import com.privasia.scss.common.enums.SCSSHDBSStatus;
 import com.privasia.scss.common.enums.TransactionStatus;
 import com.privasia.scss.common.exception.BusinessException;
 import com.privasia.scss.common.exception.ResultsNotFoundException;
+import com.privasia.scss.common.interfaces.ContainerExternalDataService;
+import com.privasia.scss.common.interfaces.OpusCosmosBusinessService;
 import com.privasia.scss.common.security.model.UserContext;
 import com.privasia.scss.core.model.Card;
 import com.privasia.scss.core.model.Client;
@@ -45,14 +48,15 @@ import com.privasia.scss.core.repository.ODDImportReasonRepository;
 import com.privasia.scss.core.repository.ODDLocationRepository;
 import com.privasia.scss.core.repository.ODDRepository;
 import com.privasia.scss.core.repository.SystemUserRepository;
-import com.privasia.scss.cosmos.repository.CosmosODDRepository;
+import com.privasia.scss.core.service.CommonCardService;
 import com.privasia.scss.gateout.dto.FileDTO;
 
 @Service("oddGateOutService")
 public class ODDGateOutService {
-
-	private CosmosODDRepository cosmosODDRepository;
-
+	
+	@Value("${service.implementor}")
+	private String implementor;
+	
 	private ODDRepository oddRepository;
 
 	private ODDLocationRepository oddLocationRepository;
@@ -70,10 +74,14 @@ public class ODDGateOutService {
 	private ODDImportReasonRepository oddImportReasonRepository;
 
 	private ODDExportReasonRepository oddExportReasonRepository;
+	
+	private ContainerExternalDataService containerExternalDataService;
+	
+	private CommonCardService commonCardService;
 
 	@Autowired
-	public void setCosmosODDRepository(CosmosODDRepository cosmosODDRepository) {
-		this.cosmosODDRepository = cosmosODDRepository;
+	public void setContainerExternalDataService(ContainerExternalDataService containerExternalDataService) {
+		this.containerExternalDataService = containerExternalDataService;
 	}
 
 	@Autowired
@@ -120,19 +128,39 @@ public class ODDGateOutService {
 	public void setOddExportReasonRepository(ODDExportReasonRepository oddExportReasonRepository) {
 		this.oddExportReasonRepository = oddExportReasonRepository;
 	}
+	
+	@Autowired
+	public void setCommonCardService(CommonCardService commonCardService) {
+		this.commonCardService = commonCardService;
+	}
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = true, value = "as400TransactionManager")
-	public ContainerValidationInfo validateODDContainers(ContainerValidationInfo containerValidationInfo) {
+	public ContainerValidationInfo validateODDContainers(GateOutRequest gateOutRequest) {
+		
+		Optional<Card> cardOpt = cardRepository.findOne(gateOutRequest.getCardID());
+		Card card = cardOpt.orElseThrow(
+				() -> new ResultsNotFoundException("Invalid Scan Card ID ! " + gateOutRequest.getCardID()));
+		gateOutRequest.setComID(card.getCompany().getCompanyID());
 
-		containerValidationInfo.setContainerNo1Status(
-				cosmosODDRepository.validateODDContainer(containerValidationInfo.getContainerNo1()));
+		gateOutRequest.setHaulageCode(commonCardService.getHaulierCodeByScanCard(card));
 
-		if (StringUtils.isNotEmpty(containerValidationInfo.getContainerNo2())) {
-			containerValidationInfo.setContainerNo2Status(
-					cosmosODDRepository.validateODDContainer(containerValidationInfo.getContainerNo2()));
-		}
-
-		return containerValidationInfo;
+		Optional<Client> clientOpt = clientRepository.findOne(gateOutRequest.getClientID());
+		Client client = clientOpt
+				.orElseThrow(() -> new ResultsNotFoundException("Invalid lane ID ! " + gateOutRequest.getClientID()));
+		if (StringUtils.isEmpty(client.getLaneNo()))
+			throw new BusinessException("Lane no does not setup for client " + client.getClientID());
+		gateOutRequest.setLaneNo(client.getLaneNo());
+		
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		UserContext userContext = (UserContext) authentication.getPrincipal();
+		gateOutRequest.setUserName(userContext.getUsername());
+		
+		OpusCosmosBusinessService businessService = containerExternalDataService
+				.getImplementationService(implementor);
+		
+		ContainerValidationInfo validateInfo = businessService.sendODDContainerValidationRequest(gateOutRequest);
+		
+		return validateInfo;
 	}
 
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
@@ -350,7 +378,7 @@ public class ODDGateOutService {
 		return gateOutReponse;
 	}
 
-	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRES_NEW, readOnly = false)
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
 	public void updateODDReference(FileDTO fileDTO) {
 
 		Optional<List<WHODD>> oddOptList = oddRepository

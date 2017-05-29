@@ -218,15 +218,11 @@ public class ImportExportGateInService {
 			// an error
 			throw new BusinessException(errorMessage);
 		}
-
+	
+		gateInReponse.setExpWeightBridge(gateInRequest.getExpWeightBridge());
+		
 		// double check with the documentation
 		gateInReponse = opusGateInReadService.constructGateInReponse(gateInReadResponse, gateInReponse);
-
-		if (gateInRequest.getExpWeightBridge() != null && gateInRequest.getExpWeightBridge() <= 0) {
-			throw new BusinessException("Invalid Exp Weight Bridge" + gateInRequest.getExpWeightBridge());
-		}
-
-		gateInReponse.setExpWeightBridge(gateInRequest.getExpWeightBridge());
 
 		// assign details from hpab booking
 		if ((StringUtils.isNotEmpty(gateInRequest.getHpabSeqId())) && (!(gateInRequest.getReferID().isPresent()))) {

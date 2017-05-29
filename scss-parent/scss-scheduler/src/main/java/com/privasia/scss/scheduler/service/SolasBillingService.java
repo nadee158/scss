@@ -8,7 +8,6 @@ import java.util.Iterator;
 import java.util.concurrent.Future;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -76,10 +75,12 @@ public class SolasBillingService {
 
 			Iterator<Exports> expIterator = exportsList.iterator();
 			logger.info("Results to execute " + expIterator.hasNext());
+			System.out.println("Results to execute " + expIterator.hasNext());
 
 			while (expIterator.hasNext()) {
 				Exports export = exportsList.iterator().next();
 				logger.info("ExportID  : " + export.getExportID());
+				System.out.println("ExportID  : " + export.getExportID());
 				populateTermWeighingDetail(export);
 
 			}
@@ -87,8 +88,8 @@ public class SolasBillingService {
 		}
 	}
 
-	@Async
-	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRES_NEW, readOnly = true)
+	
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
 	public void populateTermWeighingDetail(Exports export) {
 
 		WDCTermWeighingDetail weighingDetail = new WDCTermWeighingDetail();
@@ -141,14 +142,14 @@ public class SolasBillingService {
 
 	}
 
-	@Async
-	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRES_NEW, readOnly = false)
-	public Future<Long> saveBillingInfo(WDCTermWeighingDetail weighingDetail) {
-
+	
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
+	public void saveBillingInfo(WDCTermWeighingDetail weighingDetail) {
 		WDCTermWeighingDetail persist = wdcTermWeighingDetailRepository.save(weighingDetail);
 		logger.info("SAVED BILLING INFO ID : " + persist.getTermWeighingDetailID());
+		System.out.println("SAVED BILLING INFO ID : " + persist.getTermWeighingDetailID());
 
-		return new AsyncResult<Long>(persist.getTermWeighingDetailID());
+		
 	}
 
 }

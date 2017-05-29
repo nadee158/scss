@@ -17,10 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.privasia.scss.common.dto.CommonSealDTO;
 import com.privasia.scss.common.dto.ExportContainer;
 import com.privasia.scss.common.enums.ContainerFullEmptyType;
-import com.privasia.scss.common.enums.LpkClassType;
 import com.privasia.scss.common.exception.BusinessException;
 import com.privasia.scss.common.exception.ResultsNotFoundException;
-import com.privasia.scss.core.model.DGValidateLog;
 import com.privasia.scss.core.model.Exports;
 import com.privasia.scss.core.model.SealValidateLog;
 import com.privasia.scss.core.model.ShipSeal;
@@ -73,13 +71,21 @@ public class SealValidationService {
 			return true;
 		if(StringUtils.isEmpty(exportContainer.getShippingLine()))
 			throw new BusinessException("For Container " + exportContainer.getContainer().getContainerNumber() + " Shipping Line not provided");
+		
 		Optional<Stream<ShipSeal>> optShipSealList = shipSealRepository.findByLineCode(exportContainer.getShippingLine());
 		if(optShipSealList.isPresent()){
 			Stream<ShipSeal> shipSealStream = optShipSealList.get();
-			 return shipSealStream
-		            .filter(shipSeal -> (! StringUtils.equalsIgnoreCase("*", shipSeal.getRules())) && 
+			boolean exist =  shipSealStream
+		            .filter(shipSeal -> (!StringUtils.equalsIgnoreCase("*", shipSeal.getRules())) && 
 		            		StringUtils.startsWithIgnoreCase(shipSeal.getRules(), sealDTO.getSeal01Number()))
 		            .findFirst().isPresent();
+			
+			if(exist){
+				return true;
+			}else{
+				throw new BusinessException("Container " + exportContainer.getContainer().
+								getContainerNumber() + " Seal 1 Prefix Seal No is Invalid");
+			}
 		}else{
 			return true;
 		}
@@ -109,5 +115,6 @@ public class SealValidationService {
 			
 		});
 	}
+	
 
 }

@@ -59,9 +59,10 @@ public class SolasAspect {
 			GateOutWriteRequest gateOutWriteRequest = (GateOutWriteRequest) joinPoint.getArgs()[0];
 			
 			gateOutWriteRequest.getExportContainers().forEach(container ->{
+				log.info("Adding export ID ************"+container.getExportID());
 						expIDList.add(container.getExportID());
 			});
-
+			log.info("Calling  generateSolasCertificateInfo method************");
 			Future<SolasPassFileDTO> future = solasGateOutService.generateSolasCertificateInfo(expIDList);
 			try {
 				while (true) {

@@ -144,11 +144,11 @@ public class OpusGateInReadService {
 		// already hav import containers and export containers, update them
 		List<ExportContainer> updatedExportContainerList = opusDTOConstructService
 				.giReadResponseExporterContainerListToExportContainerList(
-						opusGateInReadResponse.getExportContainerListCY(), gateInReponse.getExportContainers());
+						opusGateInReadResponse.getExportContainerListCY(), gateInReponse);
 
 		List<ImportContainer> updatedImportContainerList = opusDTOConstructService
 				.giReadResponseImportContainerListToImportContainerList(
-						opusGateInReadResponse.getImportContainerListCY(), gateInReponse.getImportContainers());
+						opusGateInReadResponse.getImportContainerListCY(), gateInReponse);
 
 		gateInReponse.setExportContainers(updatedExportContainerList);
 		gateInReponse.setImportContainers(updatedImportContainerList);

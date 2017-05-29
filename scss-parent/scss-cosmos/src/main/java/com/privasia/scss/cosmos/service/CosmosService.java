@@ -10,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.privasia.scss.common.dto.ContainerValidationInfo;
 import com.privasia.scss.common.dto.ExportContainer;
 import com.privasia.scss.common.dto.GateInReponse;
 import com.privasia.scss.common.dto.GateInRequest;
@@ -30,6 +31,7 @@ import com.privasia.scss.cosmos.dto.request.CosmosGateInImport;
 import com.privasia.scss.cosmos.dto.request.CosmosGateInWriteRequest;
 import com.privasia.scss.cosmos.dto.request.CosmosGateOutImport;
 import com.privasia.scss.cosmos.dto.request.CosmosGateOutWriteRequest;
+import com.privasia.scss.cosmos.repository.CosmosODDRepository;
 import com.privasia.scss.cosmos.xml.element.SGS2CosmosRequest;
 import com.privasia.scss.cosmos.xml.element.SGS2CosmosResponse;
 import com.privasia.scss.cosmos.xml.element.service.CSMCTLService;
@@ -56,6 +58,8 @@ public class CosmosService implements OpusCosmosBusinessService {
 	private GOTTRCINFService gottrcinfService;
 
 	private CosmosResponseService cosmosResponseService;
+	
+	private CosmosODDRepository cosmosODDRepository;
 
 	@Autowired
 	public void setCosmosGateInWriteService(CosmosGateInWriteService cosmosGateInWriteService) {
@@ -100,6 +104,11 @@ public class CosmosService implements OpusCosmosBusinessService {
 	@Autowired
 	public void setCosmosResponseService(CosmosResponseService cosmosResponseService) {
 		this.cosmosResponseService = cosmosResponseService;
+	}
+	
+	@Autowired
+	public void setCosmosODDRepository(CosmosODDRepository cosmosODDRepository) {
+		this.cosmosODDRepository = cosmosODDRepository;
 	}
 
 	@Override
@@ -286,6 +295,22 @@ public class CosmosService implements OpusCosmosBusinessService {
 		cosmosCommonValuesDTO.setTruckNo(StringUtils.upperCase(gateWriteRequest.getTruckHeadNo()));
 		cosmosCommonValuesDTO.setCompCode(StringUtils.upperCase(gateWriteRequest.getHaulageCode()));
 		return cosmosCommonValuesDTO;
+	}
+
+	@Override
+	public ContainerValidationInfo sendODDContainerValidationRequest(GateOutRequest gateOutRequest) {
+		
+		ContainerValidationInfo validationInfo = new ContainerValidationInfo();
+		validationInfo.setContainerNo1(gateOutRequest.getOddImpContainer1());
+		validationInfo.setContainerNo1Status(
+				cosmosODDRepository.validateODDContainer(gateOutRequest.getOddImpContainer1()));
+
+		if (StringUtils.isNotEmpty(gateOutRequest.getOddImpContainer2())) {
+			validationInfo.setContainerNo2(gateOutRequest.getOddImpContainer2());
+			validationInfo.setContainerNo2Status(
+					cosmosODDRepository.validateODDContainer(gateOutRequest.getOddImpContainer2()));
+		}
+		return validationInfo;
 	}
 
 }

@@ -38,9 +38,10 @@ public class SolasBillingJob implements Job {
 	@Override
 	public void execute(JobExecutionContext jobExecutionContext) {
 		LocalDateTime today = LocalDateTime.now(); // Start date
-		LocalDateTime yesterday = LocalDateTime.now().minusDays(10);
+		LocalDateTime yesterday = LocalDateTime.now().minusDays(1);
 		solasBillingService.fetchSolasBilling(yesterday, today);
 		logger.info("Running solasBillingJob | frequency {}", frequency);
+		System.out.println("Running solasBillingJob | frequency {}"+ frequency);
 	}
 
 	@Bean(name = "solasBillingJobTrigger")

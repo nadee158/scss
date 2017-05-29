@@ -13,18 +13,43 @@ import com.mongodb.DBObject;
 import com.mongodb.gridfs.GridFSInputFile;
 import com.privasia.scss.common.enums.CollectionType;
 import com.privasia.scss.common.enums.TransactionType;
+import com.privasia.scss.common.exception.BusinessException;
 import com.privasia.scss.gateout.dto.FileDTO;
 import com.privasia.scss.gateout.mongo.repository.GridFSRepository;
+import com.privasia.scss.gateout.whodd.service.ODDGateOutService;
 
 @Service("fileService")
 public class FileService {
 
 	private GridFSRepository gridFSRepository;
+	
+	private ImportGateOutService importGateOutService;
+	
+	private ExportGateOutService exportGateOutService;
+	
+	private ODDGateOutService oddGateOutService;
 
 	@Autowired
 	public void setGridFSRepository(GridFSRepository gridFSRepository) {
 		this.gridFSRepository = gridFSRepository;
 	}
+	
+	@Autowired
+	public void setImportGateOutService(ImportGateOutService importGateOutService) {
+		this.importGateOutService = importGateOutService;
+	}
+
+	@Autowired
+	public void setExportGateOutService(ExportGateOutService exportGateOutService) {
+		this.exportGateOutService = exportGateOutService;
+	}
+
+	@Autowired
+	public void setOddGateOutService(ODDGateOutService oddGateOutService) {
+		this.oddGateOutService = oddGateOutService;
+	}
+
+
 
 	public Optional<String> saveFileToMongoDB(FileDTO fileDTO) throws IOException {
 
@@ -34,7 +59,7 @@ public class FileService {
 
 			DBObject metaData = new BasicDBObject();
 
-			Document doc = new Document().append("trxType", convertTransactionTypeToString(fileDTO.getTrxType()))
+			Document doc = new Document().append("trxType", getTransactionTypeValue(fileDTO))
 					.append("trxId", fileDTO.getFileName().get()).append("fileSize", fileDTO.getFileSize());
 
 			metaData.put(fileDTO.getFileName().get() + "_Info", doc);
@@ -55,7 +80,7 @@ public class FileService {
 				CollectionType.SOLAS_CERTIFICATE_COLLECTION.getValue()))) {
 			StringBuilder uniqueId = new StringBuilder("");
 
-			TransactionType trxType = fileDTO.getTrxType();
+			TransactionType trxType = TransactionType.fromCode(fileDTO.getTrxType());
 
 			switch (fileDTO.getCollectionType()) {
 			case PDF_FILE_COLLECTION:
@@ -146,7 +171,9 @@ public class FileService {
 
 	}
 
-	private String convertTransactionTypeToString(TransactionType trxType) {
+	private String getTransactionTypeValue(FileDTO fileDTO) {
+		
+		TransactionType trxType = TransactionType.fromCode(fileDTO.getTrxType());
 
 		switch (trxType) {
 		case IMPORT:
@@ -161,6 +188,47 @@ public class FileService {
 			return "oddWHTransaction";
 		default:
 			return "noTransaction";
+		}
+	}
+	
+	public String saveTransactionSlip(FileDTO fileDTO, CollectionType collectionType) throws IOException {
+		
+		fileDTO.setCollectionType(collectionType);
+		
+		Optional<String> optFileID  = saveFileToMongoDB(fileDTO);
+		
+		// save to file references
+		if (optFileID.isPresent()) {
+			fileDTO.setFileSize(fileDTO.getFile().length);
+			
+			saveReference(fileDTO);
+		}else{
+			throw new BusinessException("Failed to save in MongoDB : ");
+		}
+		
+		return "success";
+	}
+	
+	public void saveReference(FileDTO fileDTO) {
+		TransactionType trxType = TransactionType.fromCode(fileDTO.getTrxType());
+		switch (trxType) {
+		case ODD_EXPORT:
+		case ODD_IMPORT:
+		case ODD_IMPORT_EXPORT:
+			oddGateOutService.updateODDReference(fileDTO);
+			break;
+		case IMPORT:
+			importGateOutService.updateGatePassReference(fileDTO);
+			break;
+		case EXPORT:
+			exportGateOutService.updateExportReference(fileDTO);
+			break;
+		case IMPORT_EXPORT:
+			importGateOutService.updateGatePassReference(fileDTO);
+			exportGateOutService.updateExportReference(fileDTO);
+			break;
+		default:
+			break;
 		}
 	}
 

@@ -3,7 +3,6 @@
  */
 package com.privasia.scss.opus.service;
 
-import java.time.LocalDateTime;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -71,6 +70,8 @@ public class OpusGateOutReadService {
 		opusGateOutRequest.setContainerNo2ImportCY(gateOutRequest.getImpContainer2());
 		opusGateOutRequest.setContainerNo1ExportCY(gateOutRequest.getExpContainer1());
 		opusGateOutRequest.setContainerNo2ExportCY(gateOutRequest.getExpContainer2());
+		opusGateOutRequest.setContainerNo1ImportWHODD(gateOutRequest.getOddImpContainer1());
+		opusGateOutRequest.setContainerNo2ImportWHODD(gateOutRequest.getOddImpContainer2());
 		// 20161130112233 - yyyyMMddHHmmss
 		opusGateOutRequest.setGateOUTDateTime(DateUtil.getJsonDateFromDate(gateOutRequest.getGateOUTDateTime()));
 		opusGateOutRequest.setHaulageCode(gateOutRequest.getHaulageCode());

@@ -18,7 +18,7 @@ public class TestClass {
     // GateOutWriteRequest obj = GateOutWriteRequest.emptyGateOutWriteRequest();
 
     GateOutRequest obj = new GateOutRequest();
-    obj.initializeWithDefaultValues();
+   
     // 1. Java object to JSON, and save into a file
     gson.toJson(obj, new FileWriter("D:\\GateInRequest.json"));
 
