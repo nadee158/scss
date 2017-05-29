@@ -15,9 +15,9 @@
 
 		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
 			<!-- rollover daily -->
-			<fileNamePattern>${LOG_HOME}/archived/${FILE_NAME}.%d{yyyy-MM-dd.HH:mm:ss}.%i.log</fileNamePattern>
+			<fileNamePattern>${LOG_HOME}/archived/${FILE_NAME}.%d{yyyy-MM-dd-HH-mm-ss}.%i.log</fileNamePattern>
 			<timeBasedFileNamingAndTriggeringPolicy	class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-				<maxFileSize>50MB</maxFileSize>
+				<maxFileSize>50MB</maxFileSize>	
 			</timeBasedFileNamingAndTriggeringPolicy>
 		</rollingPolicy>
 
