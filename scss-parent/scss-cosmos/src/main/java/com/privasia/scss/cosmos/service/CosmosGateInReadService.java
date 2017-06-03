@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +21,8 @@ import com.privasia.scss.cosmos.repository.ISOCodeCosmosRepository;
 
 @Service("cosmosGateInReadService")
 public class CosmosGateInReadService {
+	
+	private static final Log log = LogFactory.getLog(CosmosGateInReadService.class);
 
 	private CosmosGateInImportService cosmosGateInImportService;
 
@@ -67,28 +71,30 @@ public class CosmosGateInReadService {
 		return importContainers;
 	}
 	
+	
 	public List<ExportContainer> populateCosmosGateInExport(List<ExportContainer> exportContainers) {
 
 		if (!(exportContainers == null || exportContainers.isEmpty())) {
-
-			exportContainers.forEach(exportContainer -> {
-				cosmosGateInExportService.fetchContainerPrimaryInfo(exportContainer);
-				
-				if (StringUtils.isNotEmpty(exportContainer.getContainer().getContainerISOCode())) {
-					Optional<ISOCode> optISOCode = isoCodeCosmosRepository
-							.findOne(exportContainer.getContainer().getContainerISOCode());
-					ISOCode iso = optISOCode.orElseThrow(() -> new ResultsNotFoundException("Cosmos Iso Code Not found in SCSS "
-							+ exportContainer.getContainer().getContainerISOCode()));
+			
+				exportContainers.forEach(exportContainer -> {
+						
+						cosmosGateInExportService.fetchPrimanyInfoContainerInfo(exportContainer);
+						cosmosGateInExportService.fetchSecondaryContainerInfo(exportContainer);
 					
-					exportContainer.getContainer().setContainerHeight(iso.getHeight());
-					//exportContainer.setContainerLength(iso.getLength());
-					exportContainer.getContainer().setContainerSize(ExportUtilService.getStringValueFromInteger(iso.getLength()));
-					exportContainer.setContainerType(iso.getType());
-					exportContainer.setTareWeight(iso.getTareWeight());
-				}
+					/*if (StringUtils.isNotEmpty(exportContainer.getContainer().getContainerISOCode())) {
+						Optional<ISOCode> optISOCode = isoCodeCosmosRepository
+								.findOne(exportContainer.getContainer().getContainerISOCode());
+						ISOCode iso = optISOCode.orElseThrow(() -> new ResultsNotFoundException("Cosmos Iso Code Not found in SCSS "
+								+ exportContainer.getContainer().getContainerISOCode()));
+						
+						exportContainer.getContainer().setContainerHeight(iso.getHeight());
+						//exportContainer.setContainerLength(iso.getLength());
+						exportContainer.getContainer().setContainerSize(ExportUtilService.getStringValueFromInteger(iso.getLength()));
+						exportContainer.setContainerType(iso.getType());
+						exportContainer.setTareWeight(iso.getTareWeight());
+					}*/
 
-			});
-
+				});
 		}
 
 		return exportContainers;

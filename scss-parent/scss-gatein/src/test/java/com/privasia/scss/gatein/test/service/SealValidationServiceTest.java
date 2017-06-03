@@ -5,6 +5,7 @@ package com.privasia.scss.gatein.test.service;
 
 import javax.transaction.Transactional;
 
+import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -37,17 +38,25 @@ public class SealValidationServiceTest extends GateInAbstractTest {
 		exportContainer.setContainer(new CommonContainerDTO());
 		exportContainer.setSealAttribute(new CommonSealDTO());
 		
-		exportContainer.getSealAttribute().setSeal01Number("SEAL1");
+		/*exportContainer.getSealAttribute().setSeal01Number("EMCCFS");
 		exportContainer.getContainer().setContainerFullOrEmpty("F");
-		exportContainer.getContainer().setContainerNumber("BEMC1000001");
+		exportContainer.getContainer().setContainerNumber("SAMA33333333");
 		exportContainer.setShippingLine("EMC");
+		exportContainer.setDontValidateSeal(false);*/
+		
+		exportContainer.getSealAttribute().setSeal01Number("UIT UK");
+		exportContainer.getContainer().setContainerFullOrEmpty("F");
+		exportContainer.getContainer().setContainerNumber("IPOH11111143");
+		exportContainer.setShippingLine("CMA");
 		exportContainer.setDontValidateSeal(false);
 		
-		thrown.expect(BusinessException.class);
+		/*thrown.expect(BusinessException.class);
 		thrown.expectMessage("Container " + exportContainer.getContainer().
-				getContainerNumber() + " Seal 1 Prefix Seal No is Invalid");
+				getContainerNumber() + " Seal 1 Prefix Seal No is Invalid");*/
 		
-		sealValidationService.validateSeal(exportContainer);
+		boolean exist = sealValidationService.validateSeal(exportContainer);
+		
+		Assert.assertTrue(exist);
 		
 		
 	}

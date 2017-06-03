@@ -12,8 +12,7 @@ public class OpusBaseGateReadRequest extends OpusBase implements Serializable {
 	private String containerNo2ExportCY = StringUtils.EMPTY;// CCMO1000031"
 	private String containerNo1ImportCY = StringUtils.EMPTY;// QASS1234566"
 	private String containerNo2ImportCY = StringUtils.EMPTY;// EPLA0000002"
-	private String containerNo1ImportWHODD = StringUtils.EMPTY;// EPLA0000002"
-	private String containerNo2ImportWHODD = StringUtils.EMPTY;// EPLA0000002"
+	
 
 	public String getContainerNo1ExportCY() {
 		return containerNo1ExportCY;
@@ -47,20 +46,5 @@ public class OpusBaseGateReadRequest extends OpusBase implements Serializable {
 		this.containerNo2ImportCY = containerNo2ImportCY;
 	}
 
-	public String getContainerNo1ImportWHODD() {
-		return containerNo1ImportWHODD;
-	}
-
-	public void setContainerNo1ImportWHODD(String containerNo1ImportWHODD) {
-		this.containerNo1ImportWHODD = containerNo1ImportWHODD;
-	}
-
-	public String getContainerNo2ImportWHODD() {
-		return containerNo2ImportWHODD;
-	}
-
-	public void setContainerNo2ImportWHODD(String containerNo2ImportWHODD) {
-		this.containerNo2ImportWHODD = containerNo2ImportWHODD;
-	}
-
+	
 }

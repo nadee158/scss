@@ -1,5 +1,6 @@
 package com.privasia.scss.gateout.service;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Optional;
 
@@ -56,9 +57,11 @@ public class FileService {
 		fileDTO = createFileId(fileDTO);
 
 		if (fileDTO.getFileName().isPresent()) {
-
+			fileDTO.setFileStream(new ByteArrayInputStream(fileDTO.getFile()));
+			fileDTO.setFileSize(fileDTO.getFile().length);
+			
 			DBObject metaData = new BasicDBObject();
-
+			
 			Document doc = new Document().append("trxType", getTransactionTypeValue(fileDTO))
 					.append("trxId", fileDTO.getFileName().get()).append("fileSize", fileDTO.getFileSize());
 
@@ -128,37 +131,13 @@ public class FileService {
 					uniqueId.append("_").append(fileDTO.getExportNoSeq2().get());
 				}
 				break;
-			case ODD_IMPORT_EXPORT:
-				if (fileDTO.getOddImpSeq1().isPresent()) {
-					uniqueId.append("_").append(fileDTO.getOddImpSeq1().get());
+			case ODD:
+				if (fileDTO.getOddSeq1().isPresent()) {
+					uniqueId.append("_").append(fileDTO.getOddSeq1().get());
 				}
-				if (fileDTO.getOddImpSeq2().isPresent()) {
-					uniqueId.append("_").append(fileDTO.getOddImpSeq2().get());
+				if (fileDTO.getOddSeq2().isPresent()) {
+					uniqueId.append("_").append(fileDTO.getOddSeq2().get());
 				}
-				if (fileDTO.getOddExpSeq1().isPresent()) {
-					uniqueId.append("_").append(fileDTO.getOddExpSeq1().get());
-				}
-				if (fileDTO.getOddExpSeq2().isPresent()) {
-					uniqueId.append("_").append(fileDTO.getOddExpSeq2().get());
-				}
-				break;
-			case ODD_EXPORT:
-				if (fileDTO.getOddExpSeq1().isPresent()) {
-					uniqueId.append("_").append(fileDTO.getOddExpSeq1().get());
-				}
-				if (fileDTO.getOddExpSeq2().isPresent()) {
-					uniqueId.append("_").append(fileDTO.getOddExpSeq2().get());
-				}
-				break;
-			case ODD_IMPORT:
-
-				if (fileDTO.getOddImpSeq1().isPresent()) {
-					uniqueId.append("_").append(fileDTO.getOddImpSeq1().get());
-				}
-				if (fileDTO.getOddImpSeq2().isPresent()) {
-					uniqueId.append("_").append(fileDTO.getOddImpSeq2().get());
-				}
-
 				break;
 			default:
 				break;
@@ -182,24 +161,22 @@ public class FileService {
 			return "exportTransaction";
 		case IMPORT_EXPORT:
 			return "importExportTransaction";
-		case ODD_IMPORT:
-		case ODD_EXPORT:
-		case ODD_IMPORT_EXPORT:
+		case ODD:
 			return "oddWHTransaction";
 		default:
 			return "noTransaction";
 		}
 	}
 	
-	public String saveTransactionSlip(FileDTO fileDTO, CollectionType collectionType) throws IOException {
+	public String saveFile(FileDTO fileDTO, CollectionType collectionType) throws IOException {
 		
 		fileDTO.setCollectionType(collectionType);
-		
 		Optional<String> optFileID  = saveFileToMongoDB(fileDTO);
 		
 		// save to file references
 		if (optFileID.isPresent()) {
-			fileDTO.setFileSize(fileDTO.getFile().length);
+			System.out.println("SAVED FILE ID"+ optFileID.get());
+			
 			
 			saveReference(fileDTO);
 		}else{
@@ -212,9 +189,7 @@ public class FileService {
 	public void saveReference(FileDTO fileDTO) {
 		TransactionType trxType = TransactionType.fromCode(fileDTO.getTrxType());
 		switch (trxType) {
-		case ODD_EXPORT:
-		case ODD_IMPORT:
-		case ODD_IMPORT_EXPORT:
+		case ODD:
 			oddGateOutService.updateODDReference(fileDTO);
 			break;
 		case IMPORT:

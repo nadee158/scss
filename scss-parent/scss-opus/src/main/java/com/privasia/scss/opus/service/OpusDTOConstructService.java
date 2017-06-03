@@ -64,10 +64,6 @@ public class OpusDTOConstructService {
 		giWriteRequestExpContainer.setContainerNo(commonContainerDTO.getContainerNumber());
 		giWriteRequestExpContainer.setContainerIso(commonContainerDTO.getContainerISOCode());
 
-		if (exportContainer.getExpNetWeight() != null) {
-			giWriteRequestExpContainer.setContainerNetWeight(String.valueOf(exportContainer.getExpNetWeight()));
-		}
-
 		if (sealDTO != null) {
 			giWriteRequestExpContainer.setContainerSeal1_NO(sealDTO.getSeal01Number());
 			giWriteRequestExpContainer.setContainerSeal2_NO(sealDTO.getSeal02Number());
@@ -140,10 +136,13 @@ public class OpusDTOConstructService {
 			if (StringUtils.equalsIgnoreCase(solasDTO.getSolasInstruction(),
 					SolasInstructionType.VGM_INSTRUCTION_SHIPPER.getValue()) && exportContainer.isWithinTolerance()) {
 				giWriteRequestExpContainer.setVgmNetWeight(String.valueOf(exportContainer.getShipperVGM()));
+				giWriteRequestExpContainer.setContainerNetWeight(String.valueOf(exportContainer.getShipperVGM()));
 			} else {
 				if (exportContainer.getExpNetWeight() != null) {
 					giWriteRequestExpContainer.setVgmNetWeight(String.valueOf(exportContainer.getExpNetWeight()));
+					giWriteRequestExpContainer.setContainerNetWeight(String.valueOf(exportContainer.getExpNetWeight()));
 				}
+				
 			}
 
 			giWriteRequestExpContainer.setVgmSolasRefNo(solasDTO.getSolasRefNumber());

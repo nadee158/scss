@@ -192,9 +192,9 @@ public class HDBSBkgDetail extends AuditEntity implements Serializable {
 	@Column(name = "REJECTED_DATE")
 	private LocalDateTime rejectedDate;
 
-	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
 	@JoinColumn(name = "ODD_ID_SEQ", nullable = true)
-	private WHODD oddIdSeq;
+	private WHODD whodd;
 
 	@Basic(fetch = FetchType.LAZY)
 	@Column(name = "ODD_TIMEGATEINOK")
@@ -544,12 +544,12 @@ public class HDBSBkgDetail extends AuditEntity implements Serializable {
 		this.rejectedDate = rejectedDate;
 	}
 
-	public WHODD getOddIdSeq() {
-		return oddIdSeq;
+	public WHODD getWhodd() {
+		return whodd;
 	}
 
-	public void setOddIdSeq(WHODD oddIdSeq) {
-		this.oddIdSeq = oddIdSeq;
+	public void setWhodd(WHODD whodd) {
+		this.whodd = whodd;
 	}
 
 	public LocalDateTime getOddTimeGateInOk() {

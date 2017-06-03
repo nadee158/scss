@@ -4,22 +4,18 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.util.Optional;
 
+
 import com.privasia.scss.common.enums.CollectionType;
-import com.privasia.scss.common.enums.TransactionType;
 
 
 public class FileDTO implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
-	private Optional<Long> oddImpSeq1;
+	private Optional<Long> oddSeq1;
 
-	private Optional<Long> oddImpSeq2;
+	private Optional<Long> oddSeq2;
 	
-	private Optional<Long> oddExpSeq1;
-
-	private Optional<Long> oddExpSeq2;
-
 	private Optional<Long> gatePassNo1;
 
 	private Optional<Long> gatePassNo2;
@@ -42,36 +38,20 @@ public class FileDTO implements Serializable {
 
 	private long fileSize;
 	
-	public Optional<Long> getOddImpSeq1() {
-		return oddImpSeq1;
+	public Optional<Long> getOddSeq1() {
+		return oddSeq1;
 	}
 
-	public void setOddImpSeq1(Optional<Long> oddImpSeq1) {
-		this.oddImpSeq1 = oddImpSeq1;
+	public void setOddSeq1(Optional<Long> oddSeq1) {
+		this.oddSeq1 = oddSeq1;
 	}
 
-	public Optional<Long> getOddImpSeq2() {
-		return oddImpSeq2;
+	public Optional<Long> getOddSeq2() {
+		return oddSeq2;
 	}
 
-	public void setOddImpSeq2(Optional<Long> oddImpSeq2) {
-		this.oddImpSeq2 = oddImpSeq2;
-	}
-
-	public Optional<Long> getOddExpSeq1() {
-		return oddExpSeq1;
-	}
-
-	public void setOddExpSeq1(Optional<Long> oddExpSeq1) {
-		this.oddExpSeq1 = oddExpSeq1;
-	}
-
-	public Optional<Long> getOddExpSeq2() {
-		return oddExpSeq2;
-	}
-
-	public void setOddExpSeq2(Optional<Long> oddExpSeq2) {
-		this.oddExpSeq2 = oddExpSeq2;
+	public void setOddSeq2(Optional<Long> oddSeq2) {
+		this.oddSeq2 = oddSeq2;
 	}
 
 	public Optional<Long> getGatePassNo1() {

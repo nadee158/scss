@@ -24,6 +24,7 @@ import com.privasia.scss.common.dto.GateOutMessage;
 import com.privasia.scss.common.dto.ImportContainer;
 import com.privasia.scss.common.enums.ContainerFullEmptyType;
 import com.privasia.scss.common.enums.ImpExpFlagStatus;
+import com.privasia.scss.common.enums.TransactionStatus;
 import com.privasia.scss.common.exception.BusinessException;
 import com.privasia.scss.common.exception.ResultsNotFoundException;
 import com.privasia.scss.common.interfaces.ContainerExternalDataService;
@@ -294,23 +295,41 @@ public class ImportExportGateInService {
 
 		switch (impExpFlag) {
 		case IMPORT:
-			gateInReponse = businessService.sendGateInWriteRequest(gateInWriteRequest);
-			gateInWriteRequest.setImportContainers(gateInReponse.getImportContainers());
+			if(StringUtils.equalsIgnoreCase(gateInWriteRequest.getGateInStatus(), TransactionStatus.APPROVED.getValue())){
+				gateInReponse = businessService.sendGateInWriteRequest(gateInWriteRequest);
+				gateInWriteRequest.setImportContainers(gateInReponse.getImportContainers());
+			}else{
+				gateInReponse = new GateInReponse();
+				gateInReponse.setImportContainers(gateInWriteRequest.getImportContainers());
+			}
+			
 			importGateInService.saveGateInInfo(gateInWriteRequest, gateInClient, gateInClerk, card, hpabBooking);
 			// expSave = new AsyncResult<Boolean>(true);
 			break;
 		case EXPORT:
 			// impSave = new AsyncResult<Boolean>(true);
 			exportGateInService.validateExportsGateInWrite(gateInWriteRequest);
-			gateInReponse = businessService.sendGateInWriteRequest(gateInWriteRequest);
-			gateInWriteRequest.setExportContainers(gateInReponse.getExportContainers());
+			if(StringUtils.equalsIgnoreCase(gateInWriteRequest.getGateInStatus(), TransactionStatus.APPROVED.getValue())){
+				gateInReponse = businessService.sendGateInWriteRequest(gateInWriteRequest);
+				gateInWriteRequest.setExportContainers(gateInReponse.getExportContainers());
+			}else{
+				gateInReponse = new GateInReponse();
+				gateInReponse.setExportContainers(gateInWriteRequest.getExportContainers());
+			}
 			exportGateInService.saveGateInInfo(gateInWriteRequest, gateInClient, gateInClerk, card, hpabBooking);
 			break;
 		case IMPORT_EXPORT:
 			exportGateInService.validateExportsGateInWrite(gateInWriteRequest);
-			gateInReponse = businessService.sendGateInWriteRequest(gateInWriteRequest);
-			gateInWriteRequest.setImportContainers(gateInReponse.getImportContainers());
-			gateInWriteRequest.setExportContainers(gateInReponse.getExportContainers());
+			
+			if(StringUtils.equalsIgnoreCase(gateInWriteRequest.getGateInStatus(), TransactionStatus.APPROVED.getValue())){
+				gateInReponse = businessService.sendGateInWriteRequest(gateInWriteRequest);
+				gateInWriteRequest.setImportContainers(gateInReponse.getImportContainers());
+				gateInWriteRequest.setExportContainers(gateInReponse.getExportContainers());
+			}else{
+				gateInReponse = new GateInReponse();
+				gateInReponse.setImportContainers(gateInWriteRequest.getImportContainers());
+				gateInReponse.setExportContainers(gateInWriteRequest.getExportContainers());
+			}
 			importGateInService.saveGateInInfo(gateInWriteRequest, gateInClient, gateInClerk, card, hpabBooking);
 			exportGateInService.saveGateInInfo(gateInWriteRequest, gateInClient, gateInClerk, card, hpabBooking);
 			break;

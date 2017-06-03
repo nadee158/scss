@@ -19,6 +19,7 @@ import com.privasia.scss.common.dto.GateOutMessage;
 import com.privasia.scss.common.enums.GateInOutStatus;
 import com.privasia.scss.common.enums.ImpExpFlagStatus;
 import com.privasia.scss.common.enums.RecordStatus;
+import com.privasia.scss.common.enums.SCSSHDBSStatus;
 import com.privasia.scss.common.enums.TransactionStatus;
 import com.privasia.scss.common.exception.BusinessException;
 import com.privasia.scss.common.exception.ResultsNotFoundException;
@@ -129,7 +130,7 @@ public class ODDGateInService {
 		Optional<Client> clientOpt = clientRepository.findOne(gateInWriteRequest.getGateInClient());
 		Client gateInClient = clientOpt.orElseThrow(
 				() -> new ResultsNotFoundException("Invalid lane ID ! " + gateInWriteRequest.getGateInClient()));
-
+		
 		gateInWriteRequest.getWhoddContainers().forEach(whODDdto -> {
 
 			if (StringUtils.isEmpty(whODDdto.getImpExpFlag()))
@@ -215,68 +216,68 @@ public class ODDGateInService {
 			whODDdto.setInOutFlag(GateInOutStatus.IN.getValue());
 
 			WHODD whODD = modelMapper.map(whODDdto, WHODD.class);
-
-			if (whODDdto.getContainer01() != null) {
-				
-				whODDdto.getContainer01().setOddStatus(TransactionStatus.INPROGRESS.getValue());
-				Optional<ODDLocation> optLocation = oddLocationRepository
-						.findByOddCodeAndStatusCode(whODDdto.getContainer01().getLocation().getOddCode(), RecordStatus.ACTIVE);
-				
-				ODDLocation location = optLocation.orElseThrow(() -> new ResultsNotFoundException(
-						"Invalid location provided for container " + whODDdto.getContainer01().getContainerNo() + " / "
-								+ whODDdto.getContainer01().getLocation().getOddCode()));
-				
-				whODD.getContainer01().setLocation(location);
-				
-				whODD.getContainer01().setOddStatus(TransactionStatus.INPROGRESS);
-				if (whODDdto.getContainer01().getHdbsBkgDetailNoId() != null) {
-					Optional<HDBSBkgDetail> optHDBSBookingDetail = hdbsBookingDetailRepository
-							.findOne(whODDdto.getContainer01().getHdbsBkgDetailNoId());
-					HDBSBkgDetail hdbsBookingDetail = optHDBSBookingDetail
-							.orElseThrow(() -> new ResultsNotFoundException("Invalid HDBS Booking Detail ID :"
-									+ whODDdto.getContainer01().getHdbsBkgDetailNoId()));
-					whODD.getContainer01().setHdbsBkgDetailNo(hdbsBookingDetail);
-					whODD.getContainer01().setHdbsStatus(hdbsBookingDetail.getStatusCode());
-					//hdbsBookingDetail.setScssStatusCode(SCSSHDBSStatus.IN_PROGRESS);
-					//hdbsBookingDetail.setOddTimeGateInOk(whODD.getTimeGateInOk());
-					//hdbsBookingDetail.setOddIdSeq(whODD);
-				}
-			}
-			if (whODDdto.getContainer02() != null) {
-				
-				whODDdto.getContainer02().setOddStatus(TransactionStatus.INPROGRESS.getValue());
-				Optional<ODDLocation> optLocation = oddLocationRepository
-						.findByOddCodeAndStatusCode(whODDdto.getContainer02().getLocation().getOddCode(), RecordStatus.ACTIVE);
-				
-				ODDLocation location = optLocation.orElseThrow(() -> new ResultsNotFoundException(
-						"Invalid location provided for container " + whODDdto.getContainer02().getContainerNo() + " / "
-								+ whODDdto.getContainer02().getLocation().getOddCode()));
-				
-				whODD.getContainer02().setLocation(location);
-				
-				whODD.getContainer02().setOddStatus(TransactionStatus.INPROGRESS);
-				if (whODDdto.getContainer02().getHdbsBkgDetailNoId() != null) {
-
-					Optional<HDBSBkgDetail> optHDBSBookingDetail = hdbsBookingDetailRepository
-							.findOne(whODDdto.getContainer02().getHdbsBkgDetailNoId());
-					HDBSBkgDetail hdbsBookingDetail = optHDBSBookingDetail
-							.orElseThrow(() -> new ResultsNotFoundException("Invalid HDBS Booking Detail ID :"
-									+ whODDdto.getContainer02().getHdbsBkgDetailNoId()));
-
-					whODD.getContainer02().setHdbsBkgDetailNo(hdbsBookingDetail);
-					whODD.getContainer02().setHdbsStatus(hdbsBookingDetail.getStatusCode());
-					//hdbsBookingDetail.setScssStatusCode(SCSSHDBSStatus.IN_PROGRESS);
-					//hdbsBookingDetail.setOddTimeGateInOk(whODD.getTimeGateInOk());
-					//hdbsBookingDetail.setOddIdSeq(whODD);
-				}
-			}
-
 			whODD.setCard(card);
 			whODD.setGateInClerk(gateInClerk);
 			whODD.setGateInClient(gateInClient);
-
+			
 			// before save check the pm plate in used
 			if (!isPlateNoHeadNoUsed(whODD)) {
+
+				if (whODDdto.getContainer01() != null) {
+					
+					whODDdto.getContainer01().setOddStatus(TransactionStatus.INPROGRESS.getValue());
+					Optional<ODDLocation> optLocation = oddLocationRepository
+							.findByOddCodeAndStatusCode(whODDdto.getContainer01().getLocation().getOddCode(), RecordStatus.ACTIVE);
+					
+					ODDLocation location = optLocation.orElseThrow(() -> new ResultsNotFoundException(
+							"Invalid location provided for container " + whODDdto.getContainer01().getContainerNo() + " / "
+									+ whODDdto.getContainer01().getLocation().getOddCode()));
+					
+					whODD.getContainer01().setLocation(location);
+					
+					whODD.getContainer01().setOddStatus(TransactionStatus.INPROGRESS);
+					if (whODDdto.getContainer01().getHdbsBkgDetailNoId() != null) {
+						Optional<HDBSBkgDetail> optHDBSBookingDetail = hdbsBookingDetailRepository
+								.findOne(whODDdto.getContainer01().getHdbsBkgDetailNoId());
+						HDBSBkgDetail hdbsBookingDetail = optHDBSBookingDetail
+								.orElseThrow(() -> new ResultsNotFoundException("Invalid HDBS Booking Detail ID :"
+										+ whODDdto.getContainer01().getHdbsBkgDetailNoId()));
+						whODD.getContainer01().setHdbsBkgDetailNo(hdbsBookingDetail);
+						whODD.getContainer01().setHdbsStatus(hdbsBookingDetail.getStatusCode());
+						hdbsBookingDetail.setScssStatusCode(SCSSHDBSStatus.IN_PROGRESS);
+						hdbsBookingDetail.setOddTimeGateInOk(whODD.getTimeGateInOk());
+						hdbsBookingDetail.setWhodd(whODD);
+					}
+				}
+				if (whODDdto.getContainer02() != null) {
+					
+					whODDdto.getContainer02().setOddStatus(TransactionStatus.INPROGRESS.getValue());
+					Optional<ODDLocation> optLocation = oddLocationRepository
+							.findByOddCodeAndStatusCode(whODDdto.getContainer02().getLocation().getOddCode(), RecordStatus.ACTIVE);
+					
+					ODDLocation location = optLocation.orElseThrow(() -> new ResultsNotFoundException(
+							"Invalid location provided for container " + whODDdto.getContainer02().getContainerNo() + " / "
+									+ whODDdto.getContainer02().getLocation().getOddCode()));
+					
+					whODD.getContainer02().setLocation(location);
+					
+					whODD.getContainer02().setOddStatus(TransactionStatus.INPROGRESS);
+					if (whODDdto.getContainer02().getHdbsBkgDetailNoId() != null) {
+	
+						Optional<HDBSBkgDetail> optHDBSBookingDetail = hdbsBookingDetailRepository
+								.findOne(whODDdto.getContainer02().getHdbsBkgDetailNoId());
+						HDBSBkgDetail hdbsBookingDetail = optHDBSBookingDetail
+								.orElseThrow(() -> new ResultsNotFoundException("Invalid HDBS Booking Detail ID :"
+										+ whODDdto.getContainer02().getHdbsBkgDetailNoId()));
+	
+						whODD.getContainer02().setHdbsBkgDetailNo(hdbsBookingDetail);
+						whODD.getContainer02().setHdbsStatus(hdbsBookingDetail.getStatusCode());
+						hdbsBookingDetail.setScssStatusCode(SCSSHDBSStatus.IN_PROGRESS);
+						hdbsBookingDetail.setOddTimeGateInOk(whODD.getTimeGateInOk());
+						hdbsBookingDetail.setWhodd(whODD);
+					}
+				}
+				
 				oddRepository.save(whODD);
 				whODDdto.setOddIdSeq(whODD.getOddIdSeq());
 			}
@@ -298,8 +299,8 @@ public class ODDGateInService {
 
 		Predicate byHeadNo = ODDPredicates.byPMHeadNo(whodd.getPmHeadNo());
 		Predicate byPlateNo = ODDPredicates.byPMPlateNo(whodd.getPmPlateNo());
-		Predicate bycon01ODDStatus = ODDPredicates.byContainer01Status(whodd.getContainer01().getOddStatus());
-		Predicate bycon02ODDStatus = ODDPredicates.byContainer02Status(whodd.getContainer02().getOddStatus());
+		Predicate bycon01ODDStatus = ODDPredicates.byContainer01Status(TransactionStatus.INPROGRESS);
+		Predicate bycon02ODDStatus = ODDPredicates.byContainer02Status(TransactionStatus.INPROGRESS);
 		Predicate byTransactionType = ODDPredicates.byTransactionType(whodd.getImpExpFlag());
 
 		Predicate condition = ExpressionUtils.allOf(

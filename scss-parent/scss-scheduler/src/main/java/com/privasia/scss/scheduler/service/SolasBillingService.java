@@ -5,10 +5,8 @@ package com.privasia.scss.scheduler.service;
 
 import java.time.LocalDateTime;
 import java.util.Iterator;
-import java.util.concurrent.Future;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +21,6 @@ import com.privasia.scss.core.model.SystemUser;
 import com.privasia.scss.core.model.WDCTermWeighingDetail;
 import com.privasia.scss.core.predicate.ExportsPredicates;
 import com.privasia.scss.core.repository.ExportsRepository;
-import com.privasia.scss.core.repository.WDCTermWeighingDetailRepository;
 import com.privasia.scss.scheduler.util.AppLogger;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.OrderSpecifier;
@@ -40,7 +37,7 @@ public class SolasBillingService {
 
 	private ExportsRepository exportsRepository;
 
-	private WDCTermWeighingDetailRepository wdcTermWeighingDetailRepository;
+	private WDCBillingService wdcBillingService;
 
 	@Autowired
 	public void setExportsRepository(ExportsRepository exportsRepository) {
@@ -48,8 +45,8 @@ public class SolasBillingService {
 	}
 
 	@Autowired
-	public void setWdcTermWeighingDetailRepository(WDCTermWeighingDetailRepository wdcTermWeighingDetailRepository) {
-		this.wdcTermWeighingDetailRepository = wdcTermWeighingDetailRepository;
+	public void setWdcBillingService(WDCBillingService wdcBillingService) {
+		this.wdcBillingService = wdcBillingService;
 	}
 
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
@@ -75,12 +72,9 @@ public class SolasBillingService {
 
 			Iterator<Exports> expIterator = exportsList.iterator();
 			logger.info("Results to execute " + expIterator.hasNext());
-			System.out.println("Results to execute " + expIterator.hasNext());
-
 			while (expIterator.hasNext()) {
-				Exports export = exportsList.iterator().next();
+				Exports export = expIterator.next();
 				logger.info("ExportID  : " + export.getExportID());
-				System.out.println("ExportID  : " + export.getExportID());
 				populateTermWeighingDetail(export);
 
 			}
@@ -138,18 +132,8 @@ public class SolasBillingService {
 		weighingDetail.setContainerPosition(export.getContainerPosition());
 		weighingDetail.setVesselSCN(export.getVesselSCN());
 		weighingDetail.setPrintEir(export.getPrintEir());
-		saveBillingInfo(weighingDetail);
+		wdcBillingService.saveBillingInfo(weighingDetail);
 
-	}
-
-	
-	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
-	public void saveBillingInfo(WDCTermWeighingDetail weighingDetail) {
-		WDCTermWeighingDetail persist = wdcTermWeighingDetailRepository.save(weighingDetail);
-		logger.info("SAVED BILLING INFO ID : " + persist.getTermWeighingDetailID());
-		System.out.println("SAVED BILLING INFO ID : " + persist.getTermWeighingDetailID());
-
-		
 	}
 
 }

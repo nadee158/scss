@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -31,6 +32,10 @@ public class GateOutWriteRequest extends GateWriteRequest implements Serializabl
 	private String impExpFlag;
 
 	private byte[] transactionZipFile;
+	
+	private String reviseHeadNoRemarks = StringUtils.EMPTY;
+
+	private String reviseHeadNo = StringUtils.EMPTY;
 
 	
 	public Long getGateOutClient() {
@@ -79,6 +84,22 @@ public class GateOutWriteRequest extends GateWriteRequest implements Serializabl
 
 	public void setTransactionZipFile(byte[] transactionZipFile) {
 		this.transactionZipFile = transactionZipFile;
+	}
+	
+	public String getReviseHeadNoRemarks() {
+		return reviseHeadNoRemarks;
+	}
+
+	public void setReviseHeadNoRemarks(String reviseHeadNoRemarks) {
+		this.reviseHeadNoRemarks = reviseHeadNoRemarks;
+	}
+
+	public String getReviseHeadNo() {
+		return reviseHeadNo;
+	}
+
+	public void setReviseHeadNo(String reviseHeadNo) {
+		this.reviseHeadNo = reviseHeadNo;
 	}
 
 	@Override

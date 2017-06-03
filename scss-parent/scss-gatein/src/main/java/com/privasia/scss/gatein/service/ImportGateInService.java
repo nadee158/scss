@@ -38,7 +38,6 @@ import com.privasia.scss.core.model.HPABBooking;
 import com.privasia.scss.core.model.SystemUser;
 import com.privasia.scss.core.predicate.GatePassPredicates;
 import com.privasia.scss.core.repository.GatePassRepository;
-import com.privasia.scss.core.repository.HPABBookingRepository;
 import com.privasia.scss.gatein.imports.business.service.GatePassValidationService;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Predicate;
@@ -52,14 +51,7 @@ public class ImportGateInService {
 
   private ModelMapper modelMapper;
 
-  private HPABBookingRepository hpabBookingRepository;
-
   private GatePassValidationService gatePassValidationService;
-
-  @Autowired
-  public void setHpabBookingRepository(HPABBookingRepository hpabBookingRepository) {
-    this.hpabBookingRepository = hpabBookingRepository;
-  }
 
   @Autowired
   public void setGatePassRepository(GatePassRepository gatePassRepository) {

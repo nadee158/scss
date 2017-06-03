@@ -21,6 +21,7 @@ import com.privasia.scss.common.dto.GateOutMessage;
 import com.privasia.scss.common.dto.GateOutReponse;
 import com.privasia.scss.common.dto.GateOutRequest;
 import com.privasia.scss.common.dto.GateOutWriteRequest;
+import com.privasia.scss.common.dto.ODDContainerDetailsDTO;
 import com.privasia.scss.common.dto.ODDLocationDTO;
 import com.privasia.scss.common.dto.WHoddDTO;
 import com.privasia.scss.common.enums.ContainerFullEmptyType;
@@ -37,6 +38,8 @@ import com.privasia.scss.core.model.Card;
 import com.privasia.scss.core.model.Client;
 import com.privasia.scss.core.model.HDBSBkgDetail;
 import com.privasia.scss.core.model.ODDContainerDetails;
+import com.privasia.scss.core.model.ODDExportReason;
+import com.privasia.scss.core.model.ODDImportReason;
 import com.privasia.scss.core.model.ODDLocation;
 import com.privasia.scss.core.model.SystemUser;
 import com.privasia.scss.core.model.WHODD;
@@ -53,10 +56,10 @@ import com.privasia.scss.gateout.dto.FileDTO;
 
 @Service("oddGateOutService")
 public class ODDGateOutService {
-	
+
 	@Value("${service.implementor}")
 	private String implementor;
-	
+
 	private ODDRepository oddRepository;
 
 	private ODDLocationRepository oddLocationRepository;
@@ -64,7 +67,7 @@ public class ODDGateOutService {
 	private ModelMapper modelMapper;
 
 	private HDBSBookingDetailRepository hdbsBookingDetailRepository;
-	
+
 	private ClientRepository clientRepository;
 
 	private CardRepository cardRepository;
@@ -74,9 +77,9 @@ public class ODDGateOutService {
 	private ODDImportReasonRepository oddImportReasonRepository;
 
 	private ODDExportReasonRepository oddExportReasonRepository;
-	
+
 	private ContainerExternalDataService containerExternalDataService;
-	
+
 	private CommonCardService commonCardService;
 
 	@Autowired
@@ -103,7 +106,7 @@ public class ODDGateOutService {
 	public void setHdbsBookingDetailRepository(HDBSBookingDetailRepository hdbsBookingDetailRepository) {
 		this.hdbsBookingDetailRepository = hdbsBookingDetailRepository;
 	}
-	
+
 	@Autowired
 	public void setClientRepository(ClientRepository clientRepository) {
 		this.clientRepository = clientRepository;
@@ -113,22 +116,22 @@ public class ODDGateOutService {
 	public void setCardRepository(CardRepository cardRepository) {
 		this.cardRepository = cardRepository;
 	}
-	
+
 	@Autowired
 	public void setSystemUserRepository(SystemUserRepository systemUserRepository) {
 		this.systemUserRepository = systemUserRepository;
 	}
-	
+
 	@Autowired
 	public void setOddImportReasonRepository(ODDImportReasonRepository oddImportReasonRepository) {
 		this.oddImportReasonRepository = oddImportReasonRepository;
 	}
-	
+
 	@Autowired
 	public void setOddExportReasonRepository(ODDExportReasonRepository oddExportReasonRepository) {
 		this.oddExportReasonRepository = oddExportReasonRepository;
 	}
-	
+
 	@Autowired
 	public void setCommonCardService(CommonCardService commonCardService) {
 		this.commonCardService = commonCardService;
@@ -136,7 +139,7 @@ public class ODDGateOutService {
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = true, value = "as400TransactionManager")
 	public ContainerValidationInfo validateODDContainers(GateOutRequest gateOutRequest) {
-		
+
 		Optional<Card> cardOpt = cardRepository.findOne(gateOutRequest.getCardID());
 		Card card = cardOpt.orElseThrow(
 				() -> new ResultsNotFoundException("Invalid Scan Card ID ! " + gateOutRequest.getCardID()));
@@ -150,16 +153,15 @@ public class ODDGateOutService {
 		if (StringUtils.isEmpty(client.getLaneNo()))
 			throw new BusinessException("Lane no does not setup for client " + client.getClientID());
 		gateOutRequest.setLaneNo(client.getLaneNo());
-		
+
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		UserContext userContext = (UserContext) authentication.getPrincipal();
 		gateOutRequest.setUserName(userContext.getUsername());
-		
-		OpusCosmosBusinessService businessService = containerExternalDataService
-				.getImplementationService(implementor);
-		
+
+		OpusCosmosBusinessService businessService = containerExternalDataService.getImplementationService(implementor);
+
 		ContainerValidationInfo validateInfo = businessService.sendODDContainerValidationRequest(gateOutRequest);
-		
+
 		return validateInfo;
 	}
 
@@ -172,7 +174,7 @@ public class ODDGateOutService {
 		if (optionalODDList.isPresent()) {
 			List<WHoddDTO> whODDContainers = new ArrayList<WHoddDTO>();
 			List<WHODD> transactionList = optionalODDList.get();
-			
+
 			transactionList.forEach(whODD -> {
 				WHoddDTO oddDTO = modelMapper.map(whODD, WHoddDTO.class);
 				if (oddDTO.getContainer01() != null) {
@@ -182,7 +184,7 @@ public class ODDGateOutService {
 						ODDLocationDTO locationDTO = modelMapper.map(optionalLocation.get(), ODDLocationDTO.class);
 						oddDTO.getContainer01().setLocation(locationDTO);
 					}
-					
+
 				}
 
 				if (oddDTO.getContainer02() != null) {
@@ -195,34 +197,34 @@ public class ODDGateOutService {
 				}
 				whODDContainers.add(oddDTO);
 			});
-			
+
 			Optional<WHODD> optElement = optionalODDList.get().stream().findAny();
 			gateOutReponse.setWhODDContainers(whODDContainers);
 			gateOutReponse.setGateOUTDateTime(gateOutRequest.getGateOUTDateTime());
-			if(optElement.isPresent()){
+			if (optElement.isPresent()) {
 				gateOutReponse.setGateInDateTime(optElement.get().getTimeGateIn());
 				gateOutReponse.setTruckPlateNo(optElement.get().getPmPlateNo());
 				gateOutReponse.setTruckHeadNo(optElement.get().getPmHeadNo());
 			}
-			
-			boolean imports = optionalODDList.get().stream().filter(whODD -> 
-						StringUtils.equalsIgnoreCase(whODD.getImpExpFlag().getValue(), 
-								ImpExpFlagStatus.IMPORT.getValue())).findAny().isPresent();
-			
-			boolean exports = optionalODDList.get().stream().filter(whODD -> 
-			StringUtils.equalsIgnoreCase(whODD.getImpExpFlag().getValue(), 
-					ImpExpFlagStatus.EXPORT.getValue())).findAny().isPresent();
-			
-			if(imports && exports){
+
+			boolean imports = optionalODDList.get().stream().filter(whODD -> StringUtils
+					.equalsIgnoreCase(whODD.getImpExpFlag().getValue(), ImpExpFlagStatus.IMPORT.getValue())).findAny()
+					.isPresent();
+
+			boolean exports = optionalODDList.get().stream().filter(whODD -> StringUtils
+					.equalsIgnoreCase(whODD.getImpExpFlag().getValue(), ImpExpFlagStatus.EXPORT.getValue())).findAny()
+					.isPresent();
+
+			if (imports && exports) {
 				gateOutReponse.setTransactionType(ImpExpFlagStatus.IMPORT_EXPORT.getValue());
-			}else if(imports){
+			} else if (imports) {
 				gateOutReponse.setTransactionType(ImpExpFlagStatus.IMPORT.getValue());
-			}else if(exports){
+			} else if (exports) {
 				gateOutReponse.setTransactionType(ImpExpFlagStatus.EXPORT.getValue());
 			}
-			
+
 		}
-		
+
 		return gateOutReponse;
 
 	}
@@ -232,7 +234,7 @@ public class ODDGateOutService {
 
 		if (gateOutWriteRequest.getWhoddContainers() == null || gateOutWriteRequest.getWhoddContainers().isEmpty())
 			throw new BusinessException("Invalid GateOutWriteRequest to save ODD ! ");
-		
+
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		UserContext userContext = (UserContext) authentication.getPrincipal();
 		Optional<SystemUser> systemUserOpt = systemUserRepository.findOne(userContext.getUserID());
@@ -242,11 +244,11 @@ public class ODDGateOutService {
 		Optional<Client> clientOpt = clientRepository.findOne(gateOutWriteRequest.getGateOutClient());
 		Client gateOutClient = clientOpt.orElseThrow(
 				() -> new ResultsNotFoundException("Invalid lane ID ! " + gateOutWriteRequest.getGateOutClient()));
-		
+
 		GateOutReponse gateOutReponse = new GateOutReponse();
 		gateOutReponse.setGateOUTDateTime(gateOutWriteRequest.getGateOUTDateTime());
 		gateOutReponse.setWhODDContainers(gateOutWriteRequest.getWhoddContainers());
-		
+
 		gateOutReponse.getWhODDContainers().forEach(whODDdto -> {
 
 			Optional<WHODD> optODD = oddRepository.findOne(whODDdto.getOddIdSeq());
@@ -264,9 +266,9 @@ public class ODDGateOutService {
 				throw new BusinessException(
 						"Not a valid Gate In ODD Transaction to update : " + whODDdto.getOddIdSeq());
 
-			whODD.setReviseHeadNo(whODDdto.getReviseHeadNo());
-			whODD.setReviseHeadNoRemarks(whODDdto.getReviseHeadNoRemarks());
-			if (StringUtils.isNotEmpty(whODDdto.getReviseHeadNo())) {
+			whODD.setReviseHeadNo(gateOutWriteRequest.getReviseHeadNo());
+			whODD.setReviseHeadNoRemarks(gateOutWriteRequest.getReviseHeadNoRemarks());
+			if (StringUtils.isNotEmpty(gateOutWriteRequest.getReviseHeadNo())) {
 				whODD.setOldHeadNo(whODD.getPmHeadNo());
 				whODD.setPmHeadNo(whODDdto.getReviseHeadNo());
 			}
@@ -284,13 +286,26 @@ public class ODDGateOutService {
 					if (StringUtils.isEmpty(whODDdto.getContainer01().getRemarks()))
 						throw new BusinessException("Rejection Remarks is need for container  : "
 								+ whODDdto.getContainer01().getContainerNo());
-					if (StringUtils.isEmpty(whODDdto.getContainer01().getRejectionReason()))
+					if (whODDdto.getContainer01().getRejectionReasonID() == null)
 						throw new BusinessException("Rejection Reason is need for container  : "
 								+ whODDdto.getContainer01().getContainerNo());
-
-					whODD.getContainer01().setRemarks(whODDdto.getContainer01().getRemarks());
-					whODD.getContainer01().setRejectionReason(whODDdto.getContainer01().getRejectionReason());
+					setRejectReason(whODD.getImpExpFlag(), whODD.getContainer01(), whODDdto.getContainer01());
 				}
+
+				if (StringUtils.equalsIgnoreCase(whODDdto.getContainer02().getOddStatus(),
+						TransactionStatus.REJECT.getValue())) {
+
+					if (whODDdto.getContainer02() != null) {
+						if (StringUtils.isEmpty(whODDdto.getContainer02().getRemarks()))
+							throw new BusinessException("Rejection Remarks is need for container  : "
+									+ whODDdto.getContainer02().getContainerNo());
+						if (whODDdto.getContainer02().getRejectionReasonID() == null)
+							throw new BusinessException("Rejection Reason is need for container  : "
+									+ whODDdto.getContainer02().getContainerNo()); 
+						setRejectReason(whODD.getImpExpFlag(), whODD.getContainer02(), whODDdto.getContainer02());
+					}
+				}
+
 			}
 
 			whODD.getContainer01()
@@ -313,26 +328,10 @@ public class ODDGateOutService {
 			if (whODDdto.getContainer02() != null) {
 
 				if (StringUtils.equalsIgnoreCase(ImpExpFlagStatus.IMPORT.getValue(), whODDdto.getImpExpFlag())) {
-					ODDContainerDetails oddContainerDetails = new ODDContainerDetails();
-					oddContainerDetails.setContainerNo(whODDdto.getContainer02().getContainerNo());
-					whODD.setContainer02(oddContainerDetails);
+					whODD.getContainer02().setContainerNo(whODDdto.getContainer02().getContainerNo());
 				}
 				whODD.getContainer02()
 						.setFullOrEmpty(ContainerFullEmptyType.fromValue(whODDdto.getContainer02().getFullOrEmpty()));
-
-				if (StringUtils.equalsIgnoreCase(whODDdto.getContainer02().getOddStatus(),
-						TransactionStatus.REJECT.getValue())) {
-
-					if (StringUtils.isEmpty(whODDdto.getContainer02().getRemarks()))
-						throw new BusinessException("Rejection Remarks is need for container  : "
-								+ whODDdto.getContainer02().getContainerNo());
-					if (StringUtils.isEmpty(whODDdto.getContainer02().getRejectionReason()))
-						throw new BusinessException("Rejection Reason is need for container  : "
-								+ whODDdto.getContainer02().getContainerNo());
-
-					whODD.getContainer02().setRemarks(whODDdto.getContainer02().getRemarks());
-					whODD.getContainer02().setRejectionReason(whODDdto.getContainer02().getRejectionReason());
-				}
 
 				whODD.getContainer02()
 						.setOddStatus(TransactionStatus.fromCode(whODDdto.getContainer02().getOddStatus()));
@@ -358,9 +357,10 @@ public class ODDGateOutService {
 			whODD.setGateOutClerk(gateOutClerk);
 			whODD.setGateOutClient(gateOutClient);
 
-			if((gateOutWriteRequest.getGateOutBooth()== null && gateOutWriteRequest.getGateOutBooth()==0)){
-				Client gateOutBooth = clientRepository.findOne(gateOutWriteRequest.getGateOutBooth()).orElseThrow(
-						() -> new ResultsNotFoundException("Invalid Booth ID ! " + gateOutWriteRequest.getGateOutBooth()));
+			if (!(gateOutWriteRequest.getGateOutBooth() == null && gateOutWriteRequest.getGateOutBooth() == 0)) {
+				Client gateOutBooth = clientRepository.findOne(gateOutWriteRequest.getGateOutBooth())
+						.orElseThrow(() -> new ResultsNotFoundException(
+								"Invalid Booth ID ! " + gateOutWriteRequest.getGateOutBooth()));
 				whODD.setGateOutBoothNo(String.valueOf(gateOutBooth.getClientID()));
 				whODD.setGateOutBoothClerk(gateOutClerk);
 				whODD.setTimeGateOutBooth(whODD.getTimeGateOut());
@@ -369,7 +369,7 @@ public class ODDGateOutService {
 			oddRepository.save(whODD);
 
 		});
-		
+
 		GateOutMessage gateOutMessage = new GateOutMessage();
 		gateOutMessage.setCode(GateOutMessage.OK);
 		gateOutMessage.setDescription("Saved Successfully!");
@@ -382,8 +382,7 @@ public class ODDGateOutService {
 	public void updateODDReference(FileDTO fileDTO) {
 
 		Optional<List<WHODD>> oddOptList = oddRepository
-				.findByOddIdSeqIn(Arrays.asList(fileDTO.getOddImpSeq1().orElse(0l), fileDTO.getOddImpSeq2().orElse(0l),
-						fileDTO.getOddExpSeq1().orElse(null), fileDTO.getOddExpSeq2().orElse(null)));
+				.findByOddIdSeqIn(Arrays.asList(fileDTO.getOddSeq1().orElse(0l), fileDTO.getOddSeq2().orElse(0l)));
 
 		if (oddOptList.isPresent() && !oddOptList.get().isEmpty()) {
 			oddOptList.get().forEach(whODD -> {
@@ -392,8 +391,46 @@ public class ODDGateOutService {
 			});
 		} else {
 			throw new BusinessException("Invalid WhODD ID to update file reference : "
-					+ fileDTO.getOddImpSeq1().orElse(null) + " / " + fileDTO.getOddImpSeq2().orElse(null) + " / "
-					+ fileDTO.getOddExpSeq1().orElse(null) + " / " + fileDTO.getOddExpSeq2().orElse(null));
+					+ fileDTO.getOddSeq1().orElse(null) + " / " + fileDTO.getOddSeq2().orElse(null));
+		}
+	}
+
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+	public void setRejectReason(ImpExpFlagStatus impExpFlag, ODDContainerDetails container, ODDContainerDetailsDTO containerDTO) {
+
+		if (impExpFlag == null)
+			throw new BusinessException("Transaction not specified Import or Export ");
+
+		switch (impExpFlag) {
+		case IMPORT:
+			Optional<ODDImportReason> optODDImportReason = oddImportReasonRepository
+					.findOne(containerDTO.getRejectionReasonID());
+			if (optODDImportReason.isPresent()) {
+				container.setRejectionReason(optODDImportReason.get().getImportReason());
+				container.setRemarks(containerDTO.getRemarks());
+			} else {
+				throw new BusinessException("Rejection Reason cannot be found for container  : "
+						+ containerDTO.getContainerNo());
+			}
+
+			break;
+
+		case EXPORT:
+
+			Optional<ODDExportReason> optODDExportReason = oddExportReasonRepository
+					.findOne(containerDTO.getRejectionReasonID());
+			if (optODDExportReason.isPresent()) {
+				container.setRejectionReason(optODDExportReason.get().getExportReason());
+				container.setRemarks(containerDTO.getRemarks());
+			} else {
+				throw new BusinessException("Rejection Reason cannot be found for container  : "
+						+ containerDTO.getContainerNo());
+			}
+
+			break;
+		default:
+			break;
+
 		}
 	}
 

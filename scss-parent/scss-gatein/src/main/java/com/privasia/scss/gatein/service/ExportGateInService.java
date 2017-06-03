@@ -286,10 +286,14 @@ public class ExportGateInService {
 					damageCodeRepository);
 			exports = exportsRepository.save(exports);
 			log.info("########## Save Exports ###############");
-			ExportsQ exportsQ = new ExportsQ();
-			modelMapper.map(exports, exportsQ);
-			exportsQ = exportsQRepository.save(exportsQ);
-			System.out.println("exportsQ.getExportID() after save " + exportsQ.getExportID());
+			
+			if(StringUtils.equalsIgnoreCase(gateInWriteRequest.getGateInStatus(), TransactionStatus.APPROVED.getValue())){
+				ExportsQ exportsQ = new ExportsQ();
+				modelMapper.map(exports, exportsQ);
+				exportsQ = exportsQRepository.save(exportsQ);
+				System.out.println("exportsQ.getExportID() after save " + exportsQ.getExportID());
+			}
+			
 			exportContainer.setExportID(exports.getExportID());
 
 		});

@@ -5,7 +5,6 @@ package com.privasia.scss.gatein.exports.business.service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +20,6 @@ import com.privasia.scss.common.exception.BusinessException;
 import com.privasia.scss.common.exception.ResultsNotFoundException;
 import com.privasia.scss.core.model.Exports;
 import com.privasia.scss.core.model.SealValidateLog;
-import com.privasia.scss.core.model.ShipSeal;
 import com.privasia.scss.core.repository.ExportsRepository;
 import com.privasia.scss.core.repository.SealValidationLogRepository;
 import com.privasia.scss.core.repository.ShipSealRepository;
@@ -72,23 +70,26 @@ public class SealValidationService {
 		if(StringUtils.isEmpty(exportContainer.getShippingLine()))
 			throw new BusinessException("For Container " + exportContainer.getContainer().getContainerNumber() + " Shipping Line not provided");
 		
-		Optional<Stream<ShipSeal>> optShipSealList = shipSealRepository.findByLineCode(exportContainer.getShippingLine());
-		if(optShipSealList.isPresent()){
-			Stream<ShipSeal> shipSealStream = optShipSealList.get();
-			boolean exist =  shipSealStream
-		            .filter(shipSeal -> (!StringUtils.equalsIgnoreCase("*", shipSeal.getRules())) && 
-		            		StringUtils.startsWithIgnoreCase(shipSeal.getRules(), sealDTO.getSeal01Number()))
-		            .findFirst().isPresent();
+		List<String> ruleList = shipSealRepository.fetchSealRules(exportContainer.getShippingLine());
+		
+		if(ruleList == null || ruleList.isEmpty()){
+			// no shpping line to check rules
+			return true;
+		}else{
+			// need to validate the rule
 			
+			boolean exist =  ruleList.stream()
+		            .filter(rule -> (!StringUtils.equalsIgnoreCase("*", rule)) && 
+		            		StringUtils.startsWithIgnoreCase(sealDTO.getSeal01Number(), rule))
+		            .findFirst().isPresent();
 			if(exist){
 				return true;
 			}else{
 				throw new BusinessException("Container " + exportContainer.getContainer().
 								getContainerNumber() + " Seal 1 Prefix Seal No is Invalid");
 			}
-		}else{
-			return true;
 		}
+		
 		
 	}
 	

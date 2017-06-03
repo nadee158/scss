@@ -9,7 +9,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.privasia.scss.common.dto.ExportContainer;
-import com.privasia.scss.common.exception.BusinessException;
 import com.privasia.scss.common.util.DateUtil;
 import com.privasia.scss.cosmos.dto.common.CosmosCommonValuesDTO;
 import com.privasia.scss.cosmos.dto.request.CosmosGateInExport;
@@ -57,15 +56,20 @@ public class CosmosGateInExportService {
   }
   
   @Transactional(value = "as400TransactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-  public ExportContainer fetchContainerPrimaryInfo(ExportContainer exportContainer) {
+  public ExportContainer fetchPrimanyInfoContainerInfo(ExportContainer exportContainer){
 	  
-	  String containerNumber  = exportContainer.getContainer().getContainerNumber();
-	  exportContainer = cosmosExportRepository.fetchContainerInfo(exportContainer);
-	  if(exportContainer != null){
-		  cosmosExportRepository.isInternalBlock(exportContainer);
-	  }else{
-		  throw new BusinessException("Container cound not found found in cosmos "+containerNumber);
-	  }
+	  exportContainer = cosmosExportRepository.fetchContainerPrimanyInfo(exportContainer);
+	  cosmosExportRepository.isInternalBlock(exportContainer);
+	  cosmosExportRepository.isOGABlock(exportContainer);
+	  
+    return exportContainer;
+  }
+  
+  @Transactional(value = "as400TransactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+  public ExportContainer fetchSecondaryContainerInfo(ExportContainer exportContainer){
+	  
+	  exportContainer = cosmosExportRepository.fetchContainerSecondaryInfo(exportContainer);
+	  
     return exportContainer;
   }
 

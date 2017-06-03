@@ -98,11 +98,11 @@ public class HPABBooking extends AuditEntity implements Serializable {
 	private String trailerPlate;
 
 	@Column(name = "AXLE_VERIFIED", nullable = true)
-	@Type(type = "yes_no")
+	@Type(type = "true_false")
 	private Boolean axleVerified;
 
 	@Column(name = "PM_VERIFIED", nullable = true)
-	@Type(type = "yes_no")
+	@Type(type = "true_false")
 	private Boolean pmVerified;
 
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "hpabBooking")

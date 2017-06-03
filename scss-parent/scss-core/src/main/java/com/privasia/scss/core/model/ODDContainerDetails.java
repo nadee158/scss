@@ -44,8 +44,9 @@ public class ODDContainerDetails implements Serializable {
 
 	@Type(type = "com.privasia.scss.common.enumusertype.ContainerSizeEnumUserType")
 	private ContainerSize containerSize;
-
-	@OneToOne(fetch = FetchType.LAZY, mappedBy = "oddIdSeq", cascade = CascadeType.MERGE)
+	
+	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+	@JoinColumn(name = "HDBS_BKG_DETAIL_NO", nullable = true)
 	private HDBSBkgDetail hdbsBkgDetailNo;
 
 	@Type(type = "com.privasia.scss.common.enumusertype.HDBSStatusEnumUserType")

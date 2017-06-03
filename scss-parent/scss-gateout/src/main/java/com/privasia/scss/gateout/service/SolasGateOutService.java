@@ -1,6 +1,5 @@
 package com.privasia.scss.gateout.service;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -11,7 +10,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.Future;
 
 import javax.imageio.ImageIO;
 
@@ -22,8 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ResourceLoader;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -77,6 +73,8 @@ public class SolasGateOutService {
 	private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
 
 	private ExportsRepository exportsRepository;
+	
+	private ExportGateOutService exportGateOutService;
 
 	@Autowired
 	public void setExportsRepository(ExportsRepository exportsRepository) {
@@ -102,9 +100,14 @@ public class SolasGateOutService {
 	public void setResourceLoader(ResourceLoader resourceLoader) {
 		this.resourceLoader = resourceLoader;
 	}
+	
+	@Autowired
+	public void setExportGateOutService(ExportGateOutService exportGateOutService) {
+		this.exportGateOutService = exportGateOutService;
+	}
 
-	@Async
-	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRES_NEW, readOnly = false)
+	//@Async
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
 	public void updateSolasInfo(List<Long> expIDList, SolasPassFileDTO solasPassFileDTO) {
 
 		if (expIDList == null || expIDList.isEmpty()) {
@@ -159,9 +162,9 @@ public class SolasGateOutService {
 		}
 	}
 
-	@Async
-	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRES_NEW, readOnly = false)
-	public Future<SolasPassFileDTO> generateSolasCertificateInfo(List<Long> expIDList) {
+	//@Async
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
+	public SolasPassFileDTO generateSolasCertificateInfo(List<Long> expIDList) {
 		if (expIDList == null || expIDList.isEmpty()) {
 			throw new BusinessException("No exports id available");
 		}
@@ -208,6 +211,7 @@ public class SolasGateOutService {
 
 					byte[] pdfBytes = solasPassFileDTO.getCertificate();
 					if ((pdfBytes == null || pdfBytes.length <= 0)) {
+						log.info("Failed to generate the certificate : ");
 						throw new BusinessException("Failed to generate the certificate : ");
 					}
 
@@ -224,31 +228,34 @@ public class SolasGateOutService {
 								Optional.ofNullable(Long.parseLong(solasPassFileDTO.getExportSEQ02())));
 					}
 
-					fileInfoDTO.setFileSize(pdfBytes.length);
-					fileInfoDTO.setFileStream(new ByteArrayInputStream(pdfBytes));
+					fileInfoDTO.setFile(pdfBytes);
 					fileInfoDTO.setCollectionType(CollectionType.SOLAS_CERTIFICATE_COLLECTION);
 
 					// save to mongodb
 					fileId = fileService.saveFileToMongoDB(fileInfoDTO);
 					log.info("fileId  *************************** "+fileId);
+					System.out.println("fileId  *************************** "+fileId);
 					// save to file references
 					if (fileId.isPresent()) {
 						log.info("fileId  *************************** "+fileId.get());
-						fileService.saveReference(fileInfoDTO);
+						System.out.println("calling exportGateOutService.updateExportReference  *************************** "+fileId);
+						exportGateOutService.updateExportReference(fileInfoDTO);
 					}else{
+						log.info("Failed to save in MongoDB : ");
 						throw new BusinessException("Failed to save in MongoDB : ");
 					}
 
 				} catch (Exception e) {
+					log.error("Exception in solas cert : "+e.getMessage());
 					e.printStackTrace();
 				} 
 				
-				return new AsyncResult<SolasPassFileDTO>(solasPassFileDTO);
+				return solasPassFileDTO;
 			}
 		}else{
 			log.info("*********** exportsList is null ****************"+expIDList.get(0));
 		}
-		return new AsyncResult<SolasPassFileDTO>(null);
+		return null;
 	}
 
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)

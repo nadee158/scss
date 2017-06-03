@@ -2,18 +2,19 @@ package com.privasia.scss.cosmos.repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.privasia.scss.common.dto.CommonContainerDTO;
 import com.privasia.scss.common.dto.CommonSealDTO;
 import com.privasia.scss.common.dto.ExportContainer;
 import com.privasia.scss.common.enums.ContainerStatus;
@@ -25,6 +26,8 @@ import com.privasia.scss.cosmos.util.UtilService;
 
 @Repository
 public class CosmosExportRepository {
+
+	private static final Log log = LogFactory.getLog(CosmosExportRepository.class);
 
 	private JdbcTemplate jdbcTemplate;
 
@@ -39,12 +42,15 @@ public class CosmosExportRepository {
 
 	@Value("${export.containerPrimaryInfo}")
 	private String queryContainerPrimaryInfo;
-	
+
 	@Value("${export.containerSecondaryInfo}")
 	private String queryContainerSecondaryInfo;
-	
+
 	@Value("${export.containerOOGInfo}")
 	private String queryContainerOOGInfo;
+
+	@Value("${export.containerSealInfo}")
+	private String queryContainerSealInfo;
 
 	@Autowired
 	public void setJdbcTemplate(@Qualifier("as400JdbcTemplate") JdbcTemplate jdbcTemplate) {
@@ -53,41 +59,51 @@ public class CosmosExportRepository {
 
 	@Transactional(value = "as400TransactionManager", propagation = Propagation.REQUIRED, readOnly = true)
 	public ExportContainer isOGABlock(ExportContainer exportContainer) {
-		
+
 		String containerNo = StringUtils.upperCase(exportContainer.getContainer().getContainerNumber());
-		return jdbcTemplate.queryForObject(queryOGABlock, new Object[] { containerNo },
-				(rs, i) -> extractOGABlock(exportContainer, rs));
+		try {
+			return jdbcTemplate.queryForObject(queryOGABlock, new Object[] { containerNo },
+					(rs, i) -> extractOGABlock(exportContainer, rs));
+		} catch (EmptyResultDataAccessException e) {
+			return exportContainer;
+		}
 
 	}
 
-	private ExportContainer extractOGABlock(ExportContainer exportContainer, ResultSet rs) throws SQLException {
-
-		if (rs.next()) {
-			exportContainer.setOgaBlock(true);
-		}
+	private ExportContainer extractOGABlock(ExportContainer exportContainer, ResultSet rs) {
+		exportContainer.setOgaBlock(true);
 		return exportContainer;
 	}
 
 	@Transactional(value = "as400TransactionManager", propagation = Propagation.REQUIRED, readOnly = true)
 	public ExportContainer isInternalBlock(ExportContainer exportContainer) {
-		
+
 		String containerNo = StringUtils.upperCase(exportContainer.getContainer().getContainerNumber());
-		return jdbcTemplate.queryForObject(queryInternalBlock, new Object[] { containerNo },
-				(rs, i) -> extractInternalBlock(exportContainer, rs, i));
+
+		try {
+			return jdbcTemplate.queryForObject(queryInternalBlock, new Object[] { containerNo },
+					(rs, i) -> extractInternalBlock(exportContainer, rs, i));
+		} catch (EmptyResultDataAccessException e) {
+			exportContainer.setInternalBlock(false);
+			exportContainer.setInternalBlockDesc(null);
+			return exportContainer;
+		}
 
 	}
 
-	private ExportContainer extractInternalBlock(ExportContainer exportContainer, ResultSet rs, int rowNum)
-			throws SQLException {
+	private ExportContainer extractInternalBlock(ExportContainer exportContainer, ResultSet rs, int rowNum) {
 
-		if (rs.next()) {
+		try {
 			exportContainer.setInternalBlock(true);
 			exportContainer.setInternalBlockDesc(rs.getString("INOP30"));
 			throw new BusinessException("Container " + exportContainer.getContainer().getContainerNumber()
 					+ " : Internal Block! " + exportContainer.getInternalBlockDesc());
+		} catch (SQLException e) {
+			log.error("ExportContainer extractInternalBlock " + e.getMessage());
+			e.printStackTrace();
+			throw new BusinessException("Error cound while fetching container in cosmos "
+					+ exportContainer.getContainer().getContainerNumber());
 		}
-
-		return exportContainer;
 
 	}
 
@@ -111,27 +127,34 @@ public class CosmosExportRepository {
 	}
 
 	@Transactional(value = "as400TransactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-	public ExportContainer fetchContainerInfo(ExportContainer exportContainer) {
+	public ExportContainer fetchContainerPrimanyInfo(ExportContainer exportContainer) {
 
 		String exportContainerNo = StringUtils.upperCase(exportContainer.getContainer().getContainerNumber());
-		return  jdbcTemplate.queryForObject(queryContainerPrimaryInfo,
-				new Object[] { exportContainerNo }, (rs, i) -> extractPrimaryContainerInfo(exportContainer, rs, i));
 
+		try {
+			return jdbcTemplate.queryForObject(queryContainerPrimaryInfo, new Object[] { exportContainerNo },
+					(rs, i) -> extractPrimaryContainerInfo(exportContainer, rs, i));
+		} catch (EmptyResultDataAccessException e) {
+			log.error("ExportContainer fetchContainerPrimanyInfo " + e.getMessage());
+			e.printStackTrace();
+			throw new BusinessException(
+					"Container cound not found in cosmos " + exportContainer.getContainer().getContainerNumber());
+		}
 	}
 
-	private ExportContainer extractPrimaryContainerInfo(ExportContainer exportContainer, ResultSet rs, int rowNum) throws SQLException {
+	private ExportContainer extractPrimaryContainerInfo(ExportContainer exportContainer, ResultSet rs, int row) {
 
 		int rowcount = 0;
-		if (rs.last()) {
-			rowcount = rs.getRow();
-			rs.beforeFirst();
-		}
 
-		if (rs.next()) {
-			exportContainer.setTotalBooking(rowcount);
-
-			exportContainer.setBookingNoExist(true);
+		try {
 			exportContainer.setBookingNo(rs.getString("ORRF05"));
+			if (StringUtils.isNotEmpty(exportContainer.getBookingNo())) {
+				exportContainer.setBookingNoExist(true);
+			} else {
+				throw new BusinessException("Invalid Container. Booking Number Not Found in Cosmos "
+						+ exportContainer.getContainer().getContainerNumber());
+			}
+
 			exportContainer.getContainer().setContainerFullOrEmpty(rs.getString("CNBT03"));
 			exportContainer.setShippingLine(rs.getString("LYND05"));
 			exportContainer.setShippingAgent(rs.getString("ORGV05"));
@@ -147,187 +170,233 @@ public class CosmosExportRepository {
 			exportContainer.setVesselETADate(DateUtil.getLocalDategFromString(
 					rs.getString("ETAD01") + TextString.padding(rs.getString("ETAT01"), 6, '0', true)));
 
-		}else{
-			isInternalBlock(exportContainer);
-			return null;
+			while (rs.next()) {
+				rowcount += rs.getRow();
+			}
+
+			exportContainer.setTotalBooking(rowcount);
+			if (rowcount > 1)
+				throw new BusinessException("Multiple Bookings found for container in COSMOS "
+						+ exportContainer.getContainer().getContainerNumber());
+
+			return exportContainer;
+		} catch (SQLException e) {
+			log.error("ExportContainer fetchContainerPrimanyInfo " + e.getMessage());
+			e.printStackTrace();
+			throw new BusinessException("Error cound while fetching container in cosmos "
+					+ exportContainer.getContainer().getContainerNumber());
 		}
 
-		if (rowcount > 1)
-			throw new BusinessException(
-					"Multiple booking found for container " + exportContainer.getContainer().getContainerNumber());
-
-		if (!exportContainer.isBookingNoExist())
-			throw new BusinessException(
-					"Invalid Container No(s) " + exportContainer.getContainer().getContainerNumber());
-
-		return exportContainer;
 	}
-	
-	private ExportContainer extractSecondaryContainerInfo(ExportContainer exportContainer, 
-			ResultSet rs, int rowNum) throws SQLException {
-		
-		if (rs.next()) {
-		
-		    /*exportContainer.setExportOrderStatus(gIReadResponseExporterContainer.getExportOrderStatus());
-		    exportContainer.setExportOrderType(gIReadResponseExporterContainer.getExportOrderType());
-		   
-		    exportContainer.setYardOpeningDateTime(
-			        DateUtil.getLocalDategFromString(gIReadResponseExporterContainer.getYardOpeningDateTime()));
-		   
-			 // private String containerSeal1_SL;// null,
-			    exportContainer.getSealAttribute().setSeal01Origin(gIReadResponseExporterContainer.getContainerSeal1_SL());
-			    // private String containerSeal1_NO;// SEAL001,
-			    exportContainer.getSealAttribute().setSeal01Number(gIReadResponseExporterContainer.getContainerSeal1_NO());
-			    // private String containerSeal2_SL;// null,
-			    exportContainer.getSealAttribute().setSeal02Origin(gIReadResponseExporterContainer.getContainerSeal2_SL());
-			    // private String containerSeal2_NO;// null,
-			    exportContainer.getSealAttribute().setSeal02Origin(gIReadResponseExporterContainer.getContainerSeal2_NO());
 
-			   
-			    exportContainer.setImdgLabelID(gIReadResponseExporterContainer.getContainerDGImdgLabel());
-			    // private String yardDGOpeningDateTime;// 20160904080000,
-			    exportContainer.setYardDGOpeningDateTime(
-			        DateUtil.getLocalDategFromString(gIReadResponseExporterContainer.getYardDGOpeningDateTime()));*/
-		    // private String containerInOrOut;// IN,
-//		    
-			
+	@Transactional(value = "as400TransactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+	public ExportContainer fetchContainerSecondaryInfo(ExportContainer exportContainer) {
+
+		String exportContainerNo = StringUtils.upperCase(exportContainer.getContainer().getContainerNumber());
+
+		try {
+			return jdbcTemplate.queryForObject(queryContainerSecondaryInfo, new Object[] { exportContainerNo },
+					(rs, i) -> extractSecondaryContainerInfo(exportContainer, rs));
+		} catch (EmptyResultDataAccessException e) {
+			log.error("ExportContainer fetchContainerSecondaryInfo " + e.getMessage());
+			e.printStackTrace();
+			throw new BusinessException(
+					"Container cound not found in cosmos " + exportContainer.getContainer().getContainerNumber());
+		}
+	}
+
+	private ExportContainer extractSecondaryContainerInfo(ExportContainer exportContainer, ResultSet rs) {
+
+		try {
+
 			exportContainer.setGateInOut(TextString.format(rs.getString("HDTP10")));
-		    // private String containerFullOrEmpty;// F,
-		    exportContainer.getContainer().setContainerFullOrEmpty(TextString.format(rs.getString("CNBT03")));
-		    
-		    exportContainer.setExpOut(TextString.format(rs.getString("VMSR01")));
-		    
-		    exportContainer.setExpCar(TextString.format(rs.getString("VMID01")));
-		    
-		    exportContainer.setSubHandlingType(TextString.format(rs.getString("HDST03")));
-		    
-		   
-		    // private String containerSpod;// USSVN,
-		    exportContainer.setExpSpod(TextString.format(rs.getString("SPOD")));
-		    // private String containerIso;// 22G0,
-		    exportContainer.setCosmosISOCode(TextString.format(rs.getString("CNIS03")));
-		    exportContainer.getContainer().setContainerISOCode(TextString.format(rs.getString("CNIS03")));
-		    
-		 // private String containerReeferIndicator;// N,
-		    exportContainer.setReferFlag(
-		        ExportUtilService.getBooleanFromString(TextString.format(rs.getString("CNOR03"))));
-		    // private String containerReeferTempValue;// null,
-		    if (StringUtils.isNotEmpty(TextString.format(rs.getString("ORRT03")))) {
-		    	// private String containerReeferTempSign;// null,
-			    exportContainer.setReferTempType(ExportUtilService.getCosmosReferTempSign(TextString.format(rs.getString("ORRT03"))));
-			    exportContainer.setReferTemp(
-		          ExportUtilService.getDoubleValueFromString(TextString.format(rs.getString("ORRT03"))));
-		    }
-		    // private String containerReeferTempUnit;// null,
-		    exportContainer.setReeferTempUnit(TextString.format(rs.getString("ORTE03")));
-		    
-		    exportContainer.setGrossWeight(
-		        ExportUtilService.getIntValueFromString(rs.getString("CNBG03")));
-		    exportContainer.setCosmosNetWeight(
-		        ExportUtilService.getIntValueFromString(rs.getString("CNNG03")));
-		    exportContainer.setTareWeight(
-		        ExportUtilService.getIntValueFromString(rs.getString("CNTG03")));
+			// private String containerFullOrEmpty;// F,
+			exportContainer.getContainer().setContainerFullOrEmpty(TextString.format(rs.getString("CNBT03")));
 
-		    if (exportContainer.getSealAttribute() == null) {
-		      exportContainer.setSealAttribute(new CommonSealDTO());
-		    }
-		    
+			exportContainer.setExpOut(TextString.format(rs.getString("VMSR01")));
 
-		    // private String containerDGImdg;// null,
-		    exportContainer.setImdg(TextString.format(rs.getString("CNIM03")));
-		    // private String containerDGUNCode;// null,
-		    exportContainer.setDgUNCode(TextString.format(rs.getString("CNUN03")));
-		    
-		    // private String containerDamageCode1;//
-		    exportContainer.setDamageCode_01(UtilService.constructDamageCode(TextString.format(rs.getString("dm0103"))));
-		    // private String containerDamageCode2;//
-		    exportContainer.setDamageCode_02(UtilService.constructDamageCode(TextString.format(rs.getString("dm0203"))));
-		    // private String containerDamageCode3;//
-		    exportContainer.setDamageCode_03(UtilService.constructDamageCode(TextString.format(rs.getString("dm0303"))));
-		    // private String containerDamageCode4;//
-		    exportContainer.setDamageCode_04(UtilService.constructDamageCode(TextString.format(rs.getString("dm0403"))));
-		    // private String containerDamageCode5;//
-		    exportContainer.setDamageCode_05(UtilService.constructDamageCode(TextString.format(rs.getString("dm0503"))));
-		    
+			exportContainer.setExpCar(TextString.format(rs.getString("VMID01")));
 
+			exportContainer.setSubHandlingType(TextString.format(rs.getString("HDST03")));
+
+			// private String containerSpod;// USSVN,
+			exportContainer.setExpSpod(TextString.format(rs.getString("SPOD")));
+			// private String containerIso;// 22G0,
+			exportContainer.setCosmosISOCode(TextString.format(rs.getString("CNIS03")));
+			exportContainer.getContainer().setContainerISOCode(TextString.format(rs.getString("CNIS03")));
+
+			// private String containerReeferIndicator;// N,
+			exportContainer
+					.setReferFlag(ExportUtilService.getBooleanFromString(TextString.format(rs.getString("CNOR03"))));
+			// private String containerReeferTempValue;// null,
+			if (StringUtils.isNotEmpty(TextString.format(rs.getString("ORRT03")))) {
+				// private String containerReeferTempSign;// null,
+				exportContainer.setReferTempType(
+						ExportUtilService.getCosmosReferTempSign(TextString.format(rs.getString("ORRT03"))));
+				exportContainer.setReferTemp(
+						ExportUtilService.getDoubleValueFromString(TextString.format(rs.getString("ORRT03"))));
+			}
+			// private String containerReeferTempUnit;// null,
+			exportContainer.setReeferTempUnit(TextString.format(rs.getString("ORTE03")));
+
+			exportContainer.setGrossWeight(ExportUtilService.getIntValueFromString(rs.getString("CNBG03")));
+			exportContainer.setCosmosNetWeight(ExportUtilService.getIntValueFromString(rs.getString("CNNG03")));
+			exportContainer.setTareWeight(ExportUtilService.getIntValueFromString(rs.getString("CNTG03")));
+
+			// private String containerDGImdg;// null,
+			exportContainer.setImdg(TextString.format(rs.getString("CNIM03")));
+			// private String containerDGUNCode;// null,
+			exportContainer.setDgUNCode(TextString.format(rs.getString("CNUN03")));
+
+			// private String containerDamageCode1;//
+			exportContainer
+					.setDamageCode_01(UtilService.constructDamageCode(TextString.format(rs.getString("DM0103"))));
+			// private String containerDamageCode2;//
+			exportContainer
+					.setDamageCode_02(UtilService.constructDamageCode(TextString.format(rs.getString("DM0203"))));
+			// private String containerDamageCode3;//
+			exportContainer
+					.setDamageCode_03(UtilService.constructDamageCode(TextString.format(rs.getString("DM0303"))));
+			// private String containerDamageCode4;//
+			exportContainer
+					.setDamageCode_04(UtilService.constructDamageCode(TextString.format(rs.getString("DM0403"))));
+			// private String containerDamageCode5;//
+			exportContainer
+					.setDamageCode_05(UtilService.constructDamageCode(TextString.format(rs.getString("DM0503"))));
+			
+			String type = TextString.format(rs.getString("OT0103"));
+			String val = TextString.format(rs.getString("OW0103"));
+			setOGG(exportContainer, type, val);
+			fetchOOGInfo(exportContainer, TextString.format(rs.getString("HDID10")));
+			fetchSealInfo(exportContainer, TextString.format(rs.getString("HDID10")));
+
+			return exportContainer;
+
+		} catch (SQLException e) {
+			log.error("ExportContainer extractSecondaryContainerInfo " + e.getMessage());
+			e.printStackTrace();
+			throw new BusinessException("Error cound while fetching container in cosmos "
+					+ exportContainer.getContainer().getContainerNumber());
 		}
 
+	}
 
+	@Transactional(value = "as400TransactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+	public ExportContainer fetchSealInfo(ExportContainer exportContainer, String handlingId) {
+
+		try {
+			return jdbcTemplate.queryForObject(queryContainerSealInfo, new Object[] { handlingId },
+					(rs, i) -> extractSealInfo(exportContainer, rs, i));
+		} catch (EmptyResultDataAccessException e) {
+			return exportContainer;
+		}
+
+	}
+
+	private ExportContainer extractSealInfo(ExportContainer exportContainer, ResultSet rs, int rowNum) {
+
+		if (exportContainer.getSealAttribute() == null) {
+			exportContainer.setSealAttribute(new CommonSealDTO());
+		}
+		try {
+
+			exportContainer.getSealAttribute().setSeal01Number(rs.getString("SEAL2K"));
+			exportContainer.getSealAttribute().setSeal01Origin(TextString.format(rs.getString("SLOR2K")));
+			exportContainer.getSealAttribute().setSeal01Type(TextString.format(rs.getString("SLTP2K")));
+
+			while (rs.next()) {
+				exportContainer.getSealAttribute().setSeal02Number(rs.getString("SEAL2K"));
+				exportContainer.getSealAttribute().setSeal02Origin(TextString.format(rs.getString("SLOR2K")));
+				exportContainer.getSealAttribute().setSeal02Type(TextString.format(rs.getString("SLTP2K")));
+			}
+
+			return exportContainer;
+		} catch (SQLException e) {
+			log.error("ExportContainer extractSealInfo " + e.getMessage());
+			e.printStackTrace();
+			throw new BusinessException("Error cound while fetching container seal in cosmos "
+					+ exportContainer.getContainer().getContainerNumber());
+		}
+
+	}
+
+	@Transactional(value = "as400TransactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+	public ExportContainer fetchOOGInfo(ExportContainer exportContainer, String handlingId) {
+
+		try {
+			return jdbcTemplate.queryForObject(queryContainerOOGInfo, new Object[] { handlingId },
+					(rs, i) -> extractContainerOOGInfo(exportContainer, rs, i));
+		} catch (EmptyResultDataAccessException e) {
+			return exportContainer;
+		}
+
+	}
+
+	private ExportContainer extractContainerOOGInfo(ExportContainer exportContainer, ResultSet rs, int rowNum) {
+
+		try {
+
+			String type207 = TextString.format(rs.getString("OT0207"));
+			String val207 = TextString.format(rs.getString("OW0207"));
+
+			String type307 = TextString.format(rs.getString("OT0307"));
+			String val307 = TextString.format(rs.getString("OW0307"));
+
+			while (rs.next()) {
+				type207 = TextString.format(rs.getString("OT0207"));
+				val207 = TextString.format(rs.getString("OW0207"));
+				type307 = TextString.format(rs.getString("OT0307"));
+				val307 = TextString.format(rs.getString("OW0307"));
+				break;
+			}
+			
+			setOGG(exportContainer, type207, val207);
+			setOGG(exportContainer, type307, val307);
+			
+
+		} catch (SQLException e) {
+			log.error("ExportContainer extractContainerOOGInfo " + e.getMessage());
+			e.printStackTrace();
+			throw new BusinessException("Error cound while fetching container OOG in cosmos "
+					+ exportContainer.getContainer().getContainerNumber());
+		}
 		return exportContainer;
 	}
 	
-	private ExportContainer extractContainerOOGInfo(ExportContainer exportContainer, 
-			ResultSet rs, int rowNum) throws SQLException {
+	private ExportContainer setOGG(ExportContainer exportContainer, String type, String value){
 		
-		if (rs.next()) {
-			
-			String OOGType2 = TextString.format(rs.getString("OT0207"));
-			String OOGVal2 = TextString.format(rs.getString("OW0207"));
-			
-
-			if (StringUtils.equalsIgnoreCase(OOGType2, "OH")) {
-				exportContainer.setOogOH(ExportUtilService.getDoubleValueFromString(OOGVal2).intValue());
-			} else if (StringUtils.equalsIgnoreCase(OOGType2, "OL")) {
-				 exportContainer.setOogOL(ExportUtilService.getDoubleValueFromString(OOGVal2).intValue());
-			} else if (StringUtils.equalsIgnoreCase(OOGType2, "OF")) {
-				exportContainer.setOogOF(ExportUtilService.getDoubleValueFromString(OOGVal2).intValue());
-			} else if (StringUtils.equalsIgnoreCase(OOGType2, "OA")) {
-				exportContainer.setOogOA(ExportUtilService.getDoubleValueFromString(OOGVal2).intValue());
-			} else if (StringUtils.equalsIgnoreCase(OOGType2, "OR")) {
-				 exportContainer.setOogOR(ExportUtilService.getDoubleValueFromString(OOGVal2).intValue());
-			}
-
-			String OOGType3 = TextString.format(rs.getString("ot0307"));
-			String OOGVal3 = TextString.format(rs.getString("ow0307"));
-
-			if (StringUtils.equalsIgnoreCase(OOGType3, "OH")) {
-				exportContainer.setOogOH(ExportUtilService.getDoubleValueFromString(OOGVal3).intValue());
-			} else if (StringUtils.equalsIgnoreCase(OOGType3, "OL")) {
-				exportContainer.setOogOL(ExportUtilService.getDoubleValueFromString(OOGVal3).intValue());
-			} else if (StringUtils.equalsIgnoreCase(OOGType3, "OF")) {
-				exportContainer.setOogOF(ExportUtilService.getDoubleValueFromString(OOGVal3).intValue());
-			} else if (StringUtils.equalsIgnoreCase(OOGType3, "OA")) {
-				exportContainer.setOogOA(ExportUtilService.getDoubleValueFromString(OOGVal3).intValue());
-			} else if (StringUtils.equalsIgnoreCase(OOGType3, "OR")) {
-				exportContainer.setOogOR(ExportUtilService.getDoubleValueFromString(OOGVal3).intValue());
-			}
-
-			if (rs.next()) {
-				String OOGType4 = TextString.format(rs.getString("ot0207"));
-				String OOGVal4 = TextString.format(rs.getString("ow0207"));
-
-				if (StringUtils.equalsIgnoreCase(OOGType4, "OH")) {
-					exportContainer.setOogOH(ExportUtilService.getDoubleValueFromString(OOGVal4).intValue());
-				} else if (StringUtils.equalsIgnoreCase(OOGType4, "OL")) {
-					exportContainer.setOogOL(ExportUtilService.getDoubleValueFromString(OOGVal4).intValue());
-				} else if (StringUtils.equalsIgnoreCase(OOGType4, "OF")) {
-					exportContainer.setOogOF(ExportUtilService.getDoubleValueFromString(OOGVal4).intValue());
-				} else if (StringUtils.equalsIgnoreCase(OOGType4, "OA")) {
-					exportContainer.setOogOA(ExportUtilService.getDoubleValueFromString(OOGVal4).intValue());
-				} else if (StringUtils.equalsIgnoreCase(OOGType4, "OR")) {
-					exportContainer.setOogOR(ExportUtilService.getDoubleValueFromString(OOGVal4).intValue());
-				}
-
-				String OOGType5 = TextString.format(rs.getString("ot0307"));
-				String OOGVal5 = TextString.format(rs.getString("ow0307"));
-
-				if (StringUtils.equalsIgnoreCase(OOGType5, "OH")) {
-					exportContainer.setOogOH(ExportUtilService.getDoubleValueFromString(OOGVal5).intValue());
-				} else if (StringUtils.equalsIgnoreCase(OOGType5, "OL")) {
-					exportContainer.setOogOL(ExportUtilService.getDoubleValueFromString(OOGVal5).intValue());
-				} else if (StringUtils.equalsIgnoreCase(OOGType5, "OF")) {
-					exportContainer.setOogOF(ExportUtilService.getDoubleValueFromString(OOGVal5).intValue());
-				} else if (StringUtils.equalsIgnoreCase(OOGType5, "OA")) {
-					exportContainer.setOogOA(ExportUtilService.getDoubleValueFromString(OOGVal5).intValue());
-				} else if (StringUtils.equalsIgnoreCase(OOGType5, "OR")) {
-					exportContainer.setOogOR(ExportUtilService.getDoubleValueFromString(OOGVal5).intValue());
-				}
-			}
-
+		
+		if(StringUtils.isNotEmpty(type)){
+			type = StringUtils.trim(type).toString();
 		}
-
-
+		
+		switch (type) {
+		case "OH":
+			exportContainer.setOogOH(ExportUtilService.getDoubleValueFromString(value).intValue());
+			break;
+			
+		case "OL":
+			exportContainer.setOogOL(ExportUtilService.getDoubleValueFromString(value).intValue());
+			break;
+			
+		case "OF":
+			exportContainer.setOogOF(ExportUtilService.getDoubleValueFromString(value).intValue());
+			break;
+			
+		case "OA":
+			exportContainer.setOogOA(ExportUtilService.getDoubleValueFromString(value).intValue());
+			break;
+			
+		case "OR":
+			exportContainer.setOogOR(ExportUtilService.getDoubleValueFromString(value).intValue());
+			break;
+		
+		default:
+			break;
+		}
+		
 		return exportContainer;
+		
 	}
 
 }
