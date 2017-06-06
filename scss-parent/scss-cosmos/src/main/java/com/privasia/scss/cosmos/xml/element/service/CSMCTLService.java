@@ -29,5 +29,19 @@ public class CSMCTLService {
 		csmctl.setTRMC("WPT1");
 		return csmctl;
 	}
+	
+	public CSMCTL constructCSMCTLForImport(CosmosCommonValuesDTO commonValuesDTO) {
+
+		CSMCTL csmctl = new CSMCTL();
+		csmctl.setRQST("GSRQS");
+		csmctl.setACTN("CRT");
+		csmctl.setRTNC("0");
+		csmctl.setRQDS("CTEDSE");
+		csmctl.setRTNM("AS");
+		csmctl.setUSID(StringUtils.upperCase(commonValuesDTO.getLoginUser()));
+		csmctl.setRQUI(commonValuesDTO.getMsgUniqueId());
+		csmctl.setTRMC("WPT1");
+		return csmctl;
+	}
 
 }

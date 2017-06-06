@@ -6,7 +6,6 @@ package com.privasia.scss.cosmos.service;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
@@ -14,19 +13,16 @@ import java.net.SocketTimeoutException;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.privasia.scss.common.annotation.LogCosmosData;
 import com.privasia.scss.common.exception.BusinessException;
-import com.privasia.scss.cosmos.repository.AGSLogRepository;
 import com.privasia.scss.cosmos.xml.element.SGS2CosmosRequest;
-import com.privasia.scss.cosmos.xml.element.SGS2CosmosResponse;
 
 /**
  * @author Janaka
@@ -37,13 +33,6 @@ public class AGSClientService {
 
 	private static final Log log = LogFactory.getLog(AGSClientService.class);
 
-	private AGSLogRepository agsLogRepository;
-
-	@Autowired
-	public void setAgsLogRepository(AGSLogRepository agsLogRepository) {
-		this.agsLogRepository = agsLogRepository;
-	}
-
 	@Value("${ags.max.timeout}")
 	private int agsMaxTimeOut;
 
@@ -52,34 +41,90 @@ public class AGSClientService {
 
 	private static final int SECOND = 1000;
 	private static final int HEADER_SIZE = 51;
-
-	public SGS2CosmosResponse sendToCosmos(SGS2CosmosRequest writeRequest, int portNo) throws JAXBException {
+	
+	@LogCosmosData
+	public String sendToCosmos(SGS2CosmosRequest writeRequest, int portNo) throws JAXBException {
 
 		// Marshalling
-		JAXBContext jaxbContext = JAXBContext.newInstance(SGS2CosmosRequest.class);
+		
+		System.out.println("writeRequest.getClass() : "+ writeRequest.getClass());
+		
+		JAXBContext jaxbContext = JAXBContext.newInstance(writeRequest.getClass());
+		
 		Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
 
 		// output pretty printed
+		//jaxbMarshaller.setProperty("jaxb.encoding", "ASCII");
+		//jaxbMarshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
 		jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 
-		jaxbMarshaller.marshal(writeRequest, System.out);
+	
 		java.io.StringWriter sw = new StringWriter();
 		jaxbMarshaller.marshal(writeRequest, sw);
-
+		
+		System.out.println("requestXML : "+ sw.toString());
+		
+		/*String s = "<?xml version=\"1.0\" encoding=\"ASCII\" standalone=\"no\"?>\n"
+				+ "<SGS2Cosmos>\n"
+				+ "<Message index=\"1\">\n"
+				+ "<CSMCTL>\n"
+				+ "<RQST>GSRQS</RQST>\n"
+				+ "<ACTN>CRT</ACTN>\n"
+				+ "<RTNC>0</RTNC>\n"
+				+ "<RQDS>CTEDSC</RQDS>\n"
+				+ "<RTNM>AS</RTNM>\n"
+				+ "<USID>TESTT</USID>\n"
+				+ "<RQUI>1496585166085</RQUI>\n"
+				+ "<TRMC>WPT1</TRMC>\n"
+				+ "</CSMCTL>\n"
+				+ "<GINTRCINF>\n"
+				+ "<MSGTSC>GINTRCINF</MSGTSC>\n"
+				+ "<LANESC>K7</LANESC>\n"
+				+ "<VMIDSC>KN6785</VMIDSC>\n"
+				+ "<ATDDSC>20170604</ATDDSC>\n"
+				+ "<ATDTSC>224006</ATDTSC>\n"
+				+ "<VMYKSC>KN</VMYKSC>\n"
+				+ "</GINTRCINF>\n"
+				+ "</Message>\n"
+				+ "<Message index=\"2\">\n"
+				+ "<CSMCTL>\n"
+				+ "<RQST>GSRQS</RQST>\n"
+				+ "<ACTN>CRT</ACTN>\n"
+				+ "<RTNC>0</RTNC>\n"
+				+ "<RQDS>CTEDSE</RQDS>\n"
+				+ "<RTNM>AS</RTNM>\n"
+				+ "<USID>TESTT</USID>\n"
+				+ "<RQUI>1496585166085</RQUI>\n"
+				+ "<TRMC>WPT1</TRMC>\n"
+				+ "</CSMCTL>\n"
+				+ "<GINCNTPUP>\n"
+				+ "<MSGTSE>GINCNTPUP</MSGTSE>\n"
+				+ "<UNITSE>ATOS12345611</UNITSE>\n"
+				+ "<UNBTSE>F</UNBTSE>\n"
+				+ "<CNPVSE>M</CNPVSE>\n"
+				+ "<UPLKSE>MY</UPLKSE>\n"
+				+ "<UPPKSE>PKG</UPPKSE>\n"
+				+ "<UPOMSE>PKG</UPOMSE>\n"
+				+ "<CYOISE>N</CYOISE>\n"
+				+ "<CYCISE>N</CYCISE>\n"
+				+ "<ACHISE>Y</ACHISE>\n"
+				+ "<PCHISE>Y</PCHISE>\n"
+				+ "<CRORSE>Y</CRORSE>\n"
+				+ "</GINCNTPUP>\n"
+				+ "</Message>\n"
+				+ "</SGS2Cosmos>\n";
+		
+		System.out.println("requestXML : "+ s);*/
+		
 		String responseXML = null;
 		responseXML = sendRequestXml(sw.toString(), portNo);
+		System.out.println("responseXML : "+ responseXML);
 
 		if (StringUtils.isEmpty(responseXML))
 			throw new BusinessException(
-					"No response received from cosmos for the request !  " + writeRequest.getCSMCTL().getRQUI());
+					"No response received from cosmos for the request !  " + writeRequest.getMessage().getCSMCTL().getRQUI());
 
-		jaxbContext = JAXBContext.newInstance(SGS2CosmosResponse.class);
-		Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-
-		StringReader reader = new StringReader(responseXML);
-		SGS2CosmosResponse response = (SGS2CosmosResponse) unmarshaller.unmarshal(reader);
-
-		return response;
+		return responseXML;
 
 	}
 

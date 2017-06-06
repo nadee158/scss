@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.privasia.scss.common.dto.ExportContainer;
-import com.privasia.scss.common.dto.GateInReponse;
+import com.privasia.scss.common.dto.GateInResponse;
 import com.privasia.scss.common.dto.HpatDto;
 import com.privasia.scss.common.dto.ImportContainer;
 import com.privasia.scss.common.dto.TransactionDTO;
@@ -226,7 +226,7 @@ public class HPABService {
 	// rename method to populateHpabForImpExp
 	// return GateOutReponse
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-	public GateInReponse populateHpabForImpExp(GateInReponse gateInReponse, String hpabSeqId) {
+	public GateInResponse populateHpabForImpExp(GateInResponse gateInResponse, String hpabSeqId) {
 
 		Optional<HPABBooking> hpatBookingOpt = hpabBookingRepository.findByBookingIDAndStatus(hpabSeqId,
 				HpabReferStatus.ACTIVE);
@@ -239,20 +239,20 @@ public class HPABService {
 
 		if (!(booking.getHpabBookingDetails() == null || booking.getHpabBookingDetails().isEmpty())) {
 			
-			gateInReponse.setTrailerPlate(booking.getTrailerNo());
+			gateInResponse.setTrailerPlate(booking.getTrailerNo());
 			if(StringUtils.isNotEmpty(booking.getAxleWeight())){
-				gateInReponse.setTrailerWeight(Integer.parseInt(booking.getAxleWeight()));
+				gateInResponse.setTrailerWeight(Integer.parseInt(booking.getAxleWeight()));
 			}
 			
 			if(StringUtils.isNotEmpty(booking.getPmWeight())){
-				gateInReponse.setTruckWeight(Integer.parseInt(booking.getPmWeight()));
+				gateInResponse.setTruckWeight(Integer.parseInt(booking.getPmWeight()));
 			}
-			gateInReponse.setTruckHeadNo(booking.getPmNumber());
-			gateInReponse.setTruckPlateNo(booking.getTrailerPlate());
+			gateInResponse.setTruckHeadNo(booking.getPmNumber());
+			gateInResponse.setTruckPlateNo(booking.getTrailerPlate());
 			
-			gateInReponse.setPmVerified(booking.getPmVerified());
-			gateInReponse.setAxleVerified(booking.getAxleVerified());
-			gateInReponse.setHpabBookingId(booking.getBookingID());
+			gateInResponse.setPmVerified(booking.getPmVerified());
+			gateInResponse.setAxleVerified(booking.getAxleVerified());
+			gateInResponse.setHpabBookingId(booking.getBookingID());
 			
 			// construct DTO from domain
 			booking.getHpabBookingDetails().forEach(bookingDetail -> {
@@ -265,9 +265,9 @@ public class HPABService {
 					// fetch details from hpat
 					// add to a list
 					ImportContainer importContainer = null;
-					if (!(gateInReponse.getImportContainers() == null
-							|| gateInReponse.getImportContainers().isEmpty())) {
-						importContainer = gateInReponse.getImportContainers().stream()
+					if (!(gateInResponse.getImportContainers() == null
+							|| gateInResponse.getImportContainers().isEmpty())) {
+						importContainer = gateInResponse.getImportContainers().stream()
 								.filter(e -> (e.getContainer() != null)
 										&& (StringUtils.equals(e.getContainer().getContainerNumber(),
 												bookingDetail.getContainerNumber())))
@@ -281,9 +281,9 @@ public class HPABService {
 					// add to a list
 
 					ExportContainer exportContainer = null;
-					if (!(gateInReponse.getExportContainers() == null
-							|| gateInReponse.getExportContainers().isEmpty())) {
-						exportContainer = gateInReponse.getExportContainers().stream()
+					if (!(gateInResponse.getExportContainers() == null
+							|| gateInResponse.getExportContainers().isEmpty())) {
+						exportContainer = gateInResponse.getExportContainers().stream()
 								.filter(e -> (e.getContainer() != null)
 										&& (StringUtils.equals(e.getContainer().getContainerNumber(),
 												bookingDetail.getContainerNumber())))
@@ -291,7 +291,7 @@ public class HPABService {
 					}
 
 					ExportContainer exportContainerCons = bookingDetail.constructExportContainer(exportContainer);
-					gateInReponse.setSolasInstruction(exportContainerCons.getSolas().getSolasInstruction());
+					gateInResponse.setSolasInstruction(exportContainerCons.getSolas().getSolasInstruction());
 					updatedExportContainers.add(exportContainerCons);
 					break;
 				case EMPTY_PICKUP:
@@ -309,14 +309,14 @@ public class HPABService {
 		}
 
 		if (!(updatedImportContainers == null || updatedImportContainers.isEmpty())) {
-			gateInReponse.setImportContainers(updatedImportContainers);
+			gateInResponse.setImportContainers(updatedImportContainers);
 		}
 
 		if (!(updatedExportContainers == null || updatedExportContainers.isEmpty())) {
-			gateInReponse.setExportContainers(updatedExportContainers);
+			gateInResponse.setExportContainers(updatedExportContainers);
 		}
 
-		return gateInReponse;
+		return gateInResponse;
 
 	}
 

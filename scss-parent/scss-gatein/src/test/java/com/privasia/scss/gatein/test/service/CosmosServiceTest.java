@@ -15,9 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.privasia.scss.common.dto.CommonContainerDTO;
 import com.privasia.scss.common.dto.ExportContainer;
 import com.privasia.scss.common.dto.GateInResponse;
+import com.privasia.scss.common.dto.GateInWriteRequest;
 import com.privasia.scss.common.dto.ImportContainer;
-import com.privasia.scss.common.exception.BusinessException;
-import com.privasia.scss.cosmos.service.CosmosGateInReadService;
 import com.privasia.scss.cosmos.service.CosmosService;
 import com.privasia.scss.gatein.test.GateInAbstractTest;
 
@@ -25,7 +24,7 @@ import com.privasia.scss.gatein.test.GateInAbstractTest;
  * @author Janaka
  *
  */
-public class CosmosGateInExportServiceTest extends GateInAbstractTest {
+public class CosmosServiceTest extends GateInAbstractTest {
 	
 	@Rule
     public ExpectedException thrown = ExpectedException.none();
@@ -34,7 +33,9 @@ public class CosmosGateInExportServiceTest extends GateInAbstractTest {
 	private CosmosService cosmos;
 	
 	@Test
-	public void testPopulateCosmosGateInExport() throws BusinessException{
+	public void testSendGateInWriteRequest(){
+		
+		GateInWriteRequest gateInWriteRequest = new GateInWriteRequest();
 		
 		ExportContainer exportContainer = new ExportContainer();
 		exportContainer.setContainer(new CommonContainerDTO());
@@ -45,33 +46,26 @@ public class CosmosGateInExportServiceTest extends GateInAbstractTest {
 		ImportContainer importContainer = new ImportContainer();
 		importContainer.setContainer(new CommonContainerDTO());
 		importContainer.getContainer().setContainerNumber("ATOS12345611");
+		importContainer.getContainer().setContainerFullOrEmpty("F");
+		importContainer.setContainerPosition("A");
 		List<ImportContainer> importContainers = new ArrayList<ImportContainer>();
 		importContainers.add(importContainer);
 		
-		GateInResponse gateInResponse = new GateInResponse();
-		gateInResponse.setExportContainers(exportContainers);
-		gateInResponse.setImportContainers(importContainers);
+		gateInWriteRequest.setImportContainers(importContainers);
+		gateInWriteRequest.setExportContainers(exportContainers);
+		gateInWriteRequest.setUserName("TESTT");
+		gateInWriteRequest.setHaulageCode("KN");
+		gateInWriteRequest.setCosmosPort(12222);
+		gateInWriteRequest.setTruckHeadNo("KN6785");
+		gateInWriteRequest.setTruckPlateNo("WHY7778");
+		gateInWriteRequest.setLaneNo("K7");// SELECT cli_unitno
+		gateInWriteRequest.setImpExpFlag("I");
 		
-		//thrown.expect(BusinessException.class);
-		//thrown.expectMessage("Error cound while fetching container in cosmos "+exportContainer.getContainer().getContainerNumber());
+		GateInResponse gateInResponse = cosmos.sendGateInWriteRequest(gateInWriteRequest);
 		
-		gateInResponse = cosmos.sendGateInReadRequest(null, gateInResponse);	
-		
-		gateInResponse.getExportContainers().forEach(container ->{
-			System.out.println(container);
-			Assert.assertNotNull(container.getBookingNo());
-		});
-		
-		gateInResponse.getImportContainers().forEach(container ->{
-			System.out.println(container);
-			Assert.assertNotNull(container.getShippingAgent());
-		});
-		
-		
+		Assert.assertNotNull(gateInResponse);
 		
 		
 	}
-	
-	
 
 }

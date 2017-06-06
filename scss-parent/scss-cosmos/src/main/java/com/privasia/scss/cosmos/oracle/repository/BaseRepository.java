@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.privasia.scss.cosmos.repository;
+package com.privasia.scss.cosmos.oracle.repository;
 
 import java.io.Serializable;
 import java.util.Optional;

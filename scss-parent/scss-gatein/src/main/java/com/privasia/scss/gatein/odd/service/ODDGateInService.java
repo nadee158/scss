@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.privasia.scss.common.dto.GateInReponse;
+import com.privasia.scss.common.dto.GateInResponse;
 import com.privasia.scss.common.dto.GateInWriteRequest;
 import com.privasia.scss.common.dto.GateOutMessage;
 import com.privasia.scss.common.enums.GateInOutStatus;
@@ -111,7 +111,7 @@ public class ODDGateInService {
 	}
 
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
-	public GateInReponse saveODDGateInInFo(GateInWriteRequest gateInWriteRequest) {
+	public GateInResponse saveODDGateInInFo(GateInWriteRequest gateInWriteRequest) {
 
 		if (gateInWriteRequest.getWhoddContainers() == null || gateInWriteRequest.getWhoddContainers().isEmpty())
 			throw new BusinessException("Invalid GateInWriteRequest to save ODD ! ");
@@ -283,15 +283,15 @@ public class ODDGateInService {
 			}
 
 		});
-		GateInReponse gateInReponse = new GateInReponse();
+		GateInResponse gateInResponse = new GateInResponse();
 		GateOutMessage gateOutMessage = new GateOutMessage();
 	    gateOutMessage.setCode(GateOutMessage.OK);
 	    gateOutMessage.setDescription("Saved Successfully!");
 	    
-	    gateInReponse.setMessage(gateOutMessage);
-	    gateInReponse.setGateINDateTime(gateInWriteRequest.getGateInDateTime());
-	    gateInReponse.setWhoddContainers(gateInWriteRequest.getWhoddContainers());
-		return gateInReponse;
+	    gateInResponse.setMessage(gateOutMessage);
+	    gateInResponse.setGateINDateTime(gateInWriteRequest.getGateInDateTime());
+	    gateInResponse.setWhoddContainers(gateInWriteRequest.getWhoddContainers());
+		return gateInResponse;
 	}
 
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)

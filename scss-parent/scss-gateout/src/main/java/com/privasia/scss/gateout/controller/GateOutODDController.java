@@ -46,7 +46,7 @@ public class GateOutODDController {
 		GateOutReponse gateOutReponse = oddGateOutService.saveODDGateOutInFo(gateOutWriteRequest);
 
 		return new CustomResponseEntity<ApiResponseObject<?>>(
-				new ApiResponseObject<GateOutReponse>(HttpStatus.CREATED, gateOutReponse), HttpStatus.OK);
+				new ApiResponseObject<GateOutReponse>(HttpStatus.OK, gateOutReponse), HttpStatus.OK);
 	}
 
 }

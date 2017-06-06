@@ -3,31 +3,32 @@
  */
 package com.privasia.scss.cosmos.service;
 
-import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.Future;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
 
-import com.privasia.scss.common.dto.ExportContainer;
-import com.privasia.scss.common.dto.ImportContainer;
+import com.privasia.scss.common.dto.GateInResponse;
 import com.privasia.scss.common.exception.ResultsNotFoundException;
 import com.privasia.scss.common.service.export.ExportUtilService;
 import com.privasia.scss.cosmos.model.ISOCode;
-import com.privasia.scss.cosmos.repository.ISOCodeCosmosRepository;
+import com.privasia.scss.cosmos.oracle.repository.ISOCodeCosmosRepository;
 
 @Service("cosmosGateInReadService")
 public class CosmosGateInReadService {
-	
+
 	private static final Log log = LogFactory.getLog(CosmosGateInReadService.class);
 
 	private CosmosGateInImportService cosmosGateInImportService;
 
 	private ISOCodeCosmosRepository isoCodeCosmosRepository;
-	
+
 	private CosmosGateInExportService cosmosGateInExportService;
 
 	@Autowired
@@ -39,27 +40,31 @@ public class CosmosGateInReadService {
 	public void setIsoCodeCosmosRepository(ISOCodeCosmosRepository isoCodeCosmosRepository) {
 		this.isoCodeCosmosRepository = isoCodeCosmosRepository;
 	}
-	
+
 	@Autowired
 	public void setCosmosGateInExportService(CosmosGateInExportService cosmosGateInExportService) {
 		this.cosmosGateInExportService = cosmosGateInExportService;
 	}
 
-	public List<ImportContainer> populateCosmosGateInImport(List<ImportContainer> importContainers) {
+	@Async
+	public Future<GateInResponse> populateCosmosGateInImport(GateInResponse gateInResponse) {
 
-		if (!(importContainers == null || importContainers.isEmpty())) {
+		if (!(gateInResponse.getImportContainers() == null || gateInResponse.getImportContainers().isEmpty())) {
 
-			importContainers.forEach(importContainer -> {
+			gateInResponse.getImportContainers().forEach(importContainer -> {
 				cosmosGateInImportService.fetchContainerInfo(importContainer);
+
 				if (StringUtils.isNotEmpty(importContainer.getContainer().getContainerISOCode())) {
 					Optional<ISOCode> optISOCode = isoCodeCosmosRepository
 							.findOne(importContainer.getContainer().getContainerISOCode());
-					ISOCode iso = optISOCode.orElseThrow(() -> new ResultsNotFoundException("Cosmos Iso Code Not found in SCSS "
-							+ importContainer.getContainer().getContainerISOCode()));
-					
+					ISOCode iso = optISOCode
+							.orElseThrow(() -> new ResultsNotFoundException("Cosmos Iso Code Not found in SCSS "
+									+ importContainer.getContainer().getContainerISOCode()));
+
 					importContainer.getContainer().setContainerHeight(iso.getHeight());
 					importContainer.setContainerLength(iso.getLength());
-					importContainer.getContainer().setContainerSize(ExportUtilService.getStringValueFromInteger(iso.getLength()));
+					importContainer.getContainer()
+							.setContainerSize(ExportUtilService.getStringValueFromInteger(iso.getLength()));
 					importContainer.setContainerType(iso.getType());
 					importContainer.setTareWeight(iso.getTareWeight());
 				}
@@ -68,38 +73,40 @@ public class CosmosGateInReadService {
 
 		}
 
-		return importContainers;
+		return new AsyncResult<GateInResponse>(gateInResponse);
 	}
-	
-	
-	public List<ExportContainer> populateCosmosGateInExport(List<ExportContainer> exportContainers) {
 
-		if (!(exportContainers == null || exportContainers.isEmpty())) {
-			
-				exportContainers.forEach(exportContainer -> {
-						
-						cosmosGateInExportService.fetchPrimanyInfoContainerInfo(exportContainer);
-						cosmosGateInExportService.fetchSecondaryContainerInfo(exportContainer);
-					
-					/*if (StringUtils.isNotEmpty(exportContainer.getContainer().getContainerISOCode())) {
+	@Async
+	public Future<GateInResponse> populateCosmosGateInExport(GateInResponse gateInResponse) {
+
+		if (!(gateInResponse.getExportContainers() == null || gateInResponse.getExportContainers().isEmpty())) {
+
+			gateInResponse.getExportContainers().forEach(exportContainer -> {
+
+				Future<Boolean> primary = cosmosGateInExportService.fetchPrimanyInfoContainerInfo(exportContainer);
+				Future<Boolean> Secondary = cosmosGateInExportService.fetchSecondaryContainerInfo(exportContainer);
+
+				while (primary.isDone() && Secondary.isDone()) {
+					if (StringUtils.isNotEmpty(exportContainer.getContainer().getContainerISOCode())) {
 						Optional<ISOCode> optISOCode = isoCodeCosmosRepository
 								.findOne(exportContainer.getContainer().getContainerISOCode());
-						ISOCode iso = optISOCode.orElseThrow(() -> new ResultsNotFoundException("Cosmos Iso Code Not found in SCSS "
-								+ exportContainer.getContainer().getContainerISOCode()));
-						
+						ISOCode iso = optISOCode
+								.orElseThrow(() -> new ResultsNotFoundException("Cosmos Iso Code Not found in SCSS "
+										+ exportContainer.getContainer().getContainerISOCode()));
+
 						exportContainer.getContainer().setContainerHeight(iso.getHeight());
-						//exportContainer.setContainerLength(iso.getLength());
-						exportContainer.getContainer().setContainerSize(ExportUtilService.getStringValueFromInteger(iso.getLength()));
+						// exportContainer.setContainerLength(iso.getLength());
+						exportContainer.getContainer()
+								.setContainerSize(ExportUtilService.getStringValueFromInteger(iso.getLength()));
 						exportContainer.setContainerType(iso.getType());
 						exportContainer.setTareWeight(iso.getTareWeight());
-					}*/
+					}
+				}
 
-				});
+			});
 		}
 
-		return exportContainers;
+		return new AsyncResult<GateInResponse>(gateInResponse);
 	}
 
-	
-	
 }

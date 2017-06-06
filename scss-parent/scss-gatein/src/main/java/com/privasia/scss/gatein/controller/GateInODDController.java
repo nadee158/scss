@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.privasia.scss.common.dto.ApiResponseObject;
 import com.privasia.scss.common.dto.CustomResponseEntity;
-import com.privasia.scss.common.dto.GateInReponse;
+import com.privasia.scss.common.dto.GateInResponse;
 import com.privasia.scss.common.dto.GateInRequest;
 import com.privasia.scss.common.dto.GateInWriteRequest;
 import com.privasia.scss.gatein.odd.service.ODDGateInService;
@@ -51,19 +51,19 @@ public class GateInODDController {
 	@RequestMapping(value = "/whodd/save", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public CustomResponseEntity<ApiResponseObject<?>> saveWhodd(@RequestBody GateInWriteRequest gateInWriteRequest) {
 
-		GateInReponse gateInReponse = oddGateInService.saveODDGateInInFo(gateInWriteRequest);
+		GateInResponse gateInResponse = oddGateInService.saveODDGateInInFo(gateInWriteRequest);
 
 		return new CustomResponseEntity<ApiResponseObject<?>>(
-				new ApiResponseObject<GateInReponse>(HttpStatus.CREATED, gateInReponse), HttpStatus.CREATED);
+				new ApiResponseObject<GateInResponse>(HttpStatus.CREATED, gateInResponse), HttpStatus.CREATED);
 	}
 
 	
 
 	@RequestMapping(value = "/populate/bybkgdetails", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<GateInReponse> populateODD(@RequestBody GateInRequest gateInRequest, 
+	public ResponseEntity<GateInResponse> populateODD(@RequestBody GateInRequest gateInRequest, 
 			HttpServletRequest request) {
-		GateInReponse gateInResponse = hdbsService.populateGateInODD(gateInRequest);
-		return new ResponseEntity<GateInReponse>(gateInResponse, HttpStatus.OK);
+		GateInResponse gateInResponse = hdbsService.populateGateInODD(gateInRequest);
+		return new ResponseEntity<GateInResponse>(gateInResponse, HttpStatus.OK);
 	}
 
 }

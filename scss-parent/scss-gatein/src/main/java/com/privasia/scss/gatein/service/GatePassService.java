@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.privasia.scss.common.dto.ClientDTO;
 import com.privasia.scss.common.dto.CommonSealDTO;
-import com.privasia.scss.common.dto.ISOInfo;
 import com.privasia.scss.common.dto.ImportContainer;
 import com.privasia.scss.common.dto.SealInfo;
 import com.privasia.scss.common.dto.TransactionDTO;
@@ -42,7 +41,6 @@ import com.privasia.scss.core.model.Company;
 import com.privasia.scss.core.model.GatePass;
 import com.privasia.scss.core.model.HPABBooking;
 import com.privasia.scss.core.model.HPABBookingDetail;
-import com.privasia.scss.core.model.ISOCode;
 import com.privasia.scss.core.model.PrintEir;
 import com.privasia.scss.core.model.SmartCardUser;
 import com.privasia.scss.core.model.SystemUser;
@@ -54,12 +52,10 @@ import com.privasia.scss.core.repository.ClientRepository;
 import com.privasia.scss.core.repository.GatePassRepository;
 import com.privasia.scss.core.repository.HPABBookingDetailRepository;
 import com.privasia.scss.core.repository.HPABBookingRepository;
-import com.privasia.scss.core.repository.ISOCodeRepository;
 import com.privasia.scss.core.repository.PrintEirRepository;
 import com.privasia.scss.core.repository.SystemUserRepository;
 import com.privasia.scss.core.repository.WDCGatePassRepository;
 import com.privasia.scss.core.repository.WDCGlobalSettingRepository;
-import com.privasia.scss.cosmos.repository.CosmosImportRepository;
 import com.privasia.scss.etpws.service.EdoExpiryForLineResponseType;
 import com.privasia.scss.etpws.service.client.ETPWebserviceClient;
 
@@ -89,9 +85,6 @@ public class GatePassService {
   private ClientRepository clientRepository;
 
   @Autowired
-  private ISOCodeRepository isoCodeRepository;
-
-  @Autowired
   private SystemUserRepository systemUserRepository;
 
   @Autowired
@@ -103,16 +96,10 @@ public class GatePassService {
   @Autowired
   private HPABBookingRepository hpabBookingRepository;
 
-  private CosmosImportRepository cosmosImportRepository;
 
   @Autowired
   public void setCardRepository(CardRepository cardRepository) {
     this.cardRepository = cardRepository;
-  }
-
-  @Autowired
-  public void setCosmosImportRepository(CosmosImportRepository cosmosImportRepository) {
-    this.cosmosImportRepository = cosmosImportRepository;
   }
 
   public boolean validateGatePass(String cardIdSeq, String gatePassNo, String check, String hpatSeqId,
@@ -363,16 +350,7 @@ public class GatePassService {
     }
   }
 
-  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-  public boolean checkOGABlock(String containerNo) {
-    return cosmosImportRepository.isOGABlock(containerNo);
-
-  }
-
-  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-  public boolean checkInternalBlock(String containerNo) {
-    return cosmosImportRepository.isInternalBlock(containerNo);
-  }
+  
 
   public boolean checkMatchCompanyPreArrival(String cardIdSeq, String gatePassNo, String check, String hpatSeqId,
       String truckHeadNo, long companyId, GatePass gatePass) throws Exception {
@@ -391,29 +369,7 @@ public class GatePassService {
           CommonUtil.formatMessageCode(ApplicationConstants.GATE_PASS_COMPANY_NOT_MATCH, new Object[] {gatePassNo}));
     }
 
-    /**
-     * OGA And Internal Block
-     */
-    log.error("-------------START OGA And Internal Block -----------" + gatePassNo + ":" + containerNo);
-    // AS400Database db
-    boolean isOgaBlock = checkOGABlock(containerNo);
-    // AS400Database db = null;
-    boolean isInternalBlock = checkInternalBlock(containerNo);
-
-    if (isOgaBlock && isInternalBlock) {
-      throw new BusinessException(
-          CommonUtil.formatMessageCode(ApplicationConstants.GATE_PASS_OGA_INTERNAL_BLOCK, new Object[] {containerNo}));
-    } else if (isOgaBlock && !isInternalBlock) {
-      throw new BusinessException(
-          CommonUtil.formatMessageCode(ApplicationConstants.GATE_PASS_OGA_BLOCK, new Object[] {containerNo}));
-    } else if (!isOgaBlock && isInternalBlock) {
-      throw new BusinessException(
-          CommonUtil.formatMessageCode(ApplicationConstants.GATE_PASS_INTERNAL_BLOCK, new Object[] {containerNo}));
-    }
-
-    /**
-     * End OGA And Internal Block
-     */
+    
     log.error("-------------END OGA And Internal Block -----------" + gatePassNo + ":" + containerNo);
 
     return checkPreArrival(containerNo, cardIdSeq, "MANUALLY", "", gatePassNo);

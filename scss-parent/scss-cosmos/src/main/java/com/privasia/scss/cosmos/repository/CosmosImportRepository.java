@@ -9,6 +9,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
@@ -54,29 +55,37 @@ public class CosmosImportRepository {
 	public ImportContainer getContainerInfo(ImportContainer importContainer) {
 
 		String containerNo = StringUtils.upperCase(importContainer.getContainer().getContainerNumber());
-		return jdbcTemplate.queryForObject(queryGetContainerInfo, new Object[] { containerNo },
-				(rs, i) -> mapToImportContainer(importContainer, rs));
+		try {
+			return jdbcTemplate.queryForObject(queryGetContainerInfo, new Object[] { containerNo },
+					(rs, i) -> mapToImportContainer(importContainer, rs));
+		} catch (EmptyResultDataAccessException e) {
+			log.error("ImportContainer getContainerInfo " + e.getMessage());
+			e.printStackTrace();
+			throw new BusinessException("FOT/BKG does not exist");
+		}
 	}
 
-	private ImportContainer mapToImportContainer(ImportContainer importContainer, ResultSet rs)
-			throws SQLException {
-		if (rs != null && rs.next()) {
+	private ImportContainer mapToImportContainer(ImportContainer importContainer, ResultSet rs){
+		
 			if(importContainer.getContainer() == null){
 				importContainer.setContainer(new CommonContainerDTO());
 			}
-			importContainer.setShippingAgent(TextString.format(rs.getString("ORGV05")));
-			importContainer.getContainer().setContainerNumber(TextString.format(rs.getString("CNID03")));
-			importContainer.setGateInOut(rs.getString("HDTP03"));
-			importContainer.setShippingLine(TextString.format(rs.getString("LYND05")));
-			importContainer.getContainer().setContainerFullOrEmpty(TextString.format(rs.getString("CNBT03")));
-			importContainer.getContainer().setContainerISOCode(TextString.format(rs.getString("CNIS03")));
-			importContainer.setOrderFOT(TextString.format(rs.getString("ORRF05")));
-			importContainer.setCurrentPosition(TextString.format(rs.getString("PSEX45")));
-		} 
-		
-		if (rs.getRow() == 0) {
-			throw new BusinessException("FOT/BKG does not exist");
-		}
+			try {
+				importContainer.setShippingAgent(TextString.format(rs.getString("ORGV05")));
+				importContainer.getContainer().setContainerNumber(TextString.format(rs.getString("CNID03")));
+				importContainer.setGateInOut(rs.getString("HDTP03"));
+				importContainer.setShippingLine(TextString.format(rs.getString("LYND05")));
+				importContainer.getContainer().setContainerFullOrEmpty(TextString.format(rs.getString("CNBT03")));
+				importContainer.getContainer().setContainerISOCode(TextString.format(rs.getString("CNIS03")));
+				importContainer.setOrderFOT(TextString.format(rs.getString("ORRF05")));
+				importContainer.setCurrentPosition(TextString.format(rs.getString("PSEX45")));
+			} catch (SQLException e) {
+				log.error("ImportContainer mapToImportContainer " + e.getMessage());
+				e.printStackTrace();
+				throw new BusinessException("Error cound while fetching container in cosmos "
+						+ importContainer.getContainer().getContainerNumber());
+			}
+			
 		return importContainer;
 	}
 
@@ -128,27 +137,31 @@ public class CosmosImportRepository {
 	}*/
 
 	@Transactional(value = "as400TransactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-	public boolean isOGABlock(String containerNo) {
+	public boolean isOGABlock(ImportContainer importContainer) {
 
-		containerNo = StringUtils.upperCase(containerNo);
-		return jdbcTemplate.query(queryIsOGABlock, new Object[] { containerNo }, this::extractOGAOrInternalBlock);
+		String containerNo = StringUtils.upperCase(importContainer.getContainer().getContainerNumber());
+		try {
+			return jdbcTemplate.queryForObject(queryIsOGABlock, new Object[] { containerNo }, (rs, i) -> extractOGAOrInternalBlock(rs));
+		} catch (EmptyResultDataAccessException e) {
+			return false;
+		}
 
 	}
 
-	private boolean extractOGAOrInternalBlock(ResultSet rs) throws SQLException {
-
-		if (rs.next()) {
-			return true;
-		}
-
-		return false;
+	private boolean extractOGAOrInternalBlock(ResultSet rs){
+		return true;
 	}
 
 	@Transactional(value = "as400TransactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-	public boolean isInternalBlock(String containerNo) {
+	public boolean isInternalBlock(ImportContainer importContainer) {
 
-		containerNo = StringUtils.upperCase(containerNo);
-		return jdbcTemplate.query(queryIsInternalBlock, new Object[] { containerNo }, this::extractOGAOrInternalBlock);
+		String containerNo = StringUtils.upperCase(importContainer.getContainer().getContainerNumber());
+		
+		try {
+			return jdbcTemplate.queryForObject(queryIsInternalBlock, new Object[] { containerNo }, (rs, i) -> extractOGAOrInternalBlock(rs));
+		} catch (EmptyResultDataAccessException e) {
+			return false;
+		}
 
 	}
 

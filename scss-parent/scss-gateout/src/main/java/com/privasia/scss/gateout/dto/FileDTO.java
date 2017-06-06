@@ -12,17 +12,17 @@ public class FileDTO implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
-	private Optional<Long> oddSeq1;
+	private Optional<Long> oddSeq1 = Optional.of(0l);
 
-	private Optional<Long> oddSeq2;
+	private Optional<Long> oddSeq2 = Optional.of(0l);
 	
-	private Optional<Long> gatePassNo1;
+	private Optional<Long> gatePassNo1 = Optional.of(0l);
 
-	private Optional<Long> gatePassNo2;
+	private Optional<Long> gatePassNo2 = Optional.of(0l);
 
-	private Optional<Long> exportNoSeq1;
+	private Optional<Long> exportNoSeq1 = Optional.of(0l);
 
-	private Optional<Long> exportNoSeq2;
+	private Optional<Long> exportNoSeq2 = Optional.of(0l);
 	
 	private String trxType;
 

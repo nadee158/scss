@@ -22,7 +22,7 @@ import com.privasia.scss.common.annotation.UpdateReferReject;
 import com.privasia.scss.common.dto.BaseCommonGateInOutDTO;
 import com.privasia.scss.common.dto.CommonGateInOutDTO;
 import com.privasia.scss.common.dto.ExportContainer;
-import com.privasia.scss.common.dto.GateInReponse;
+import com.privasia.scss.common.dto.GateInResponse;
 import com.privasia.scss.common.dto.GateInWriteRequest;
 import com.privasia.scss.common.enums.ContainerFullEmptyType;
 import com.privasia.scss.common.enums.HpabReferStatus;
@@ -161,9 +161,9 @@ public class ExportGateInService {
 	}
 
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-	public GateInReponse validateExportsGateInRead(GateInReponse gateInReponse, LocalDateTime timegateIn) {
+	public GateInResponse validateExportsGateInRead(GateInResponse gateInResponse, LocalDateTime timegateIn) {
 
-		gateInReponse.getExportContainers().forEach(container -> {
+		gateInResponse.getExportContainers().forEach(container -> {
 			setStoragePeriod(container);
 			setSCN(container);
 			vesselOmitService.isValidVesselOmit(container);
@@ -177,10 +177,10 @@ public class ExportGateInService {
 
 		});
 
-		emptyContainerService.calculateWeightBridgeForEmpty(gateInReponse.getExportContainers(),
-				gateInReponse.getExpWeightBridge());
+		emptyContainerService.calculateWeightBridgeForEmpty(gateInResponse.getExportContainers(),
+				gateInResponse.getExpWeightBridge());
 
-		return gateInReponse;
+		return gateInResponse;
 
 	}
 

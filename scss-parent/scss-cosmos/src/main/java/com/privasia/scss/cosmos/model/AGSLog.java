@@ -6,8 +6,15 @@ import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.Type;
+
+import com.privasia.scss.common.enums.AGSMessageStatus;
 
 @Entity
 @Table(name = "SCSS_AGS_LOG")
@@ -22,14 +29,17 @@ public class AGSLog extends AuditEntity  implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
     @Id
-	@Column(name = "AGS_MESSAGE_ID")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_AGS_LOG")
+	@SequenceGenerator(name = "SEQ_AGS_LOG", sequenceName = "AGS_MESSAGE_ID_SEQ", allocationSize = 1)
+    @Column(name = "AGS_MESSAGE_ID")
 	private Long agsMessageId;
 
 	@Column(name = "SEND_RCV")
-	private String sendRCV;
+	@Type(type = "com.privasia.scss.common.enumusertype.AGSMessageStatusEnumUserType")
+	private AGSMessageStatus sendRCV;
 
 	@Column(name = "PORT_NUMBER")
-	private String portNumber;
+	private Integer portNumber;
 
 	@Column(name = "XML_DATA")
 	private String xmlData;
@@ -43,19 +53,19 @@ public class AGSLog extends AuditEntity  implements Serializable {
 		this.agsMessageId = agsMessageId;
 	}
 
-	public String getSendRCV() {
+	public AGSMessageStatus getSendRCV() {
 		return sendRCV;
 	}
 
-	public void setSendRCV(String sendRCV) {
+	public void setSendRCV(AGSMessageStatus sendRCV) {
 		this.sendRCV = sendRCV;
 	}
 
-	public String getPortNumber() {
+	public Integer getPortNumber() {
 		return portNumber;
 	}
 
-	public void setPortNumber(String portNumber) {
+	public void setPortNumber(Integer portNumber) {
 		this.portNumber = portNumber;
 	}
 

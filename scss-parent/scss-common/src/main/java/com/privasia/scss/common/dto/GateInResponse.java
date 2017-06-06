@@ -10,7 +10,7 @@ import com.privasia.scss.common.enums.SolasInstructionType;
 import com.privasia.scss.common.util.ApplicationConstants;
 import com.privasia.scss.common.util.DateUtil;
 
-public class GateInReponse implements Serializable {
+public class GateInResponse implements Serializable {
 
 	/**
 	 * 

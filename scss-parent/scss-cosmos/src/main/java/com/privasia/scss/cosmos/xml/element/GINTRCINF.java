@@ -3,10 +3,12 @@ package com.privasia.scss.cosmos.xml.element;
 import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+@XmlType(propOrder = {"MSGTSC", "LANESC", "VMIDSC", "ATDDSC", "ATDTSC", "VMYKSC"})
 public class GINTRCINF implements Serializable {
 
   /**

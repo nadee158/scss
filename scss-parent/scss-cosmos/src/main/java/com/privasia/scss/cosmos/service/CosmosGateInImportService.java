@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.privasia.scss.common.dto.ImportContainer;
+import com.privasia.scss.common.exception.BusinessException;
 import com.privasia.scss.cosmos.dto.common.CosmosCommonValuesDTO;
 import com.privasia.scss.cosmos.dto.request.CosmosGateInImport;
 import com.privasia.scss.cosmos.repository.CosmosImportRepository;
@@ -51,13 +52,23 @@ public class CosmosGateInImportService {
 	@Transactional(value = "as400TransactionManager", propagation = Propagation.REQUIRED, readOnly = true)
 	public ImportContainer fetchContainerInfo(ImportContainer importContainer) {
 		cosmosImportRepository.getContainerInfo(importContainer);
+		boolean internalBlock = cosmosImportRepository.isInternalBlock(importContainer);
+		boolean ogaBlock = cosmosImportRepository.isOGABlock(importContainer);
+		
+		if(internalBlock && ogaBlock){
+			throw new BusinessException("Container "+importContainer.getContainer().getContainerNumber() +" :Internal & OGA Block!");
+		}else if(internalBlock){
+			throw new BusinessException("Container "+importContainer.getContainer().getContainerNumber() +" : Internal Block!");
+		}else if(ogaBlock){
+			throw new BusinessException("Container "+importContainer.getContainer().getContainerNumber() +" : OGA Block!");
+		}
 		return importContainer;
 	}
 
 	public CosmosGateInImport constructCosmosGateInImport(CosmosCommonValuesDTO commonValuesDTO,
 			ImportContainer importContainer, int index) {
 		CosmosGateInImport cosmosGateInImport = new CosmosGateInImport();
-		cosmosGateInImport.setCSMCTL(csmctlService.constructCSMCTL(commonValuesDTO));
+		cosmosGateInImport.setCSMCTL(csmctlService.constructCSMCTLForImport(commonValuesDTO));
 		cosmosGateInImport.setGINCNTPUP(gincntpupService.constructGINCNTPUP(importContainer));
 		cosmosGateInImport.setIndex(index);
 		return cosmosGateInImport;

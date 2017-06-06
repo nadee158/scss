@@ -3,10 +3,12 @@ package com.privasia.scss.cosmos.xml.element;
 import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+@XmlType(propOrder = {"RQST", "ACTN", "RTNC", "ERRI", "RQDS", "RTNM", "USID", "RQUI", "TRMC"})
 public class CSMCTL implements Serializable {
 
   private static final long serialVersionUID = 1L;

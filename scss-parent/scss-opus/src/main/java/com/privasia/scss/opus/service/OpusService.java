@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.google.gson.Gson;
 import com.privasia.scss.common.dto.ContainerValidationInfo;
-import com.privasia.scss.common.dto.GateInReponse;
+import com.privasia.scss.common.dto.GateInResponse;
 import com.privasia.scss.common.dto.GateInRequest;
 import com.privasia.scss.common.dto.GateInWriteRequest;
 import com.privasia.scss.common.dto.GateOutReponse;
@@ -18,6 +18,8 @@ import com.privasia.scss.common.dto.GateOutRequest;
 import com.privasia.scss.common.dto.GateOutWriteRequest;
 import com.privasia.scss.common.exception.BusinessException;
 import com.privasia.scss.common.interfaces.OpusCosmosBusinessService;
+import com.privasia.scss.opus.dto.OpusGateInReadRequest;
+import com.privasia.scss.opus.dto.OpusGateInReadResponse;
 import com.privasia.scss.opus.dto.OpusGateInWriteRequest;
 import com.privasia.scss.opus.dto.OpusGateInWriteResponse;
 import com.privasia.scss.opus.dto.OpusGateOutReadRequest;
@@ -30,6 +32,8 @@ import com.privasia.scss.opus.dto.OpusRequestResponseDTO;
 public class OpusService implements OpusCosmosBusinessService {
 
 	private static final Log log = LogFactory.getLog(OpusService.class);
+	
+	private OpusGateInReadService opusGateInReadService;
 
 	private OpusGateInWriteService opusGateInWriteService;
 
@@ -40,6 +44,11 @@ public class OpusService implements OpusCosmosBusinessService {
 	private OpusGateOutWriteService opusGateOutWriteService;
 
 	private Gson gson;
+	
+	@Autowired
+	public void setOpusGateInReadService(OpusGateInReadService opusGateInReadService) {
+		this.opusGateInReadService = opusGateInReadService;
+	}
 
 	@Autowired
 	public void setOpusGateOutReadService(OpusGateOutReadService opusGateOutReadService) {
@@ -67,7 +76,7 @@ public class OpusService implements OpusCosmosBusinessService {
 	}
 
 	@Override
-	public GateInReponse sendGateInWriteRequest(GateInWriteRequest gateInWriteRequest) {
+	public GateInResponse sendGateInWriteRequest(GateInWriteRequest gateInWriteRequest) {
 		OpusGateInWriteRequest opusGateInWriteRequest = opusGateInWriteService
 				.constructOpusGateInWriteRequest(gateInWriteRequest);
 
@@ -83,11 +92,11 @@ public class OpusService implements OpusCosmosBusinessService {
 			throw new BusinessException(errorMessage);
 		}
 
-		GateInReponse gateInReponse = new GateInReponse();
-		gateInReponse.setImportContainers(gateInWriteRequest.getImportContainers());
-		gateInReponse.setExportContainers(gateInWriteRequest.getExportContainers());
-		gateInReponse = opusGateInWriteService.constructGateInReponse(opusGateInWriteResponse, gateInReponse);
-		return gateInReponse;
+		GateInResponse gateInResponse = new GateInResponse();
+		gateInResponse.setImportContainers(gateInWriteRequest.getImportContainers());
+		gateInResponse.setExportContainers(gateInWriteRequest.getExportContainers());
+		gateInResponse = opusGateInWriteService.constructGateInReponse(opusGateInWriteResponse, gateInResponse);
+		return gateInResponse;
 	}
 
 	@Override
@@ -139,9 +148,22 @@ public class OpusService implements OpusCosmosBusinessService {
 	}
 
 	@Override
-	public GateInReponse sendGateInReadRequest(GateInRequest gateInRequest) {
-		// TODO Auto-generated method stub
-		return null;
+	public GateInResponse sendGateInReadRequest(GateInRequest gateInRequest, GateInResponse gateInResponse) {
+
+		OpusGateInReadRequest gateInReadRequest = opusGateInReadService.constructOpenGateInRequest(gateInRequest);
+
+		OpusRequestResponseDTO opusRequestResponseDTO = new OpusRequestResponseDTO(gateInReadRequest, gson,
+				gateInRequest.getCardID());
+
+		OpusGateInReadResponse gateInReadResponse = opusGateInReadService.getGateInReadResponse(gateInReadRequest,
+				opusRequestResponseDTO);
+
+		String errorMessage = opusDTOConstructService.hasErrorMessage(gateInReadResponse.getErrorList());
+		if (StringUtils.isNotEmpty(errorMessage)) {
+			throw new BusinessException(errorMessage);
+		}
+
+		return  opusGateInReadService.constructGateInReponse(gateInReadResponse, gateInResponse);
 	}
 
 	@Override
@@ -159,7 +181,7 @@ public class OpusService implements OpusCosmosBusinessService {
 		if (StringUtils.isNotEmpty(errorMessage)) {
 			throw new BusinessException(errorMessage);
 		}
-		
+
 		ContainerValidationInfo validationInfo = new ContainerValidationInfo();
 		validationInfo.setContainerNo1(gateOutRequest.getOddImpContainer1());
 		validationInfo.setContainerNo1Status(true);

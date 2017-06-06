@@ -15,7 +15,7 @@ import com.privasia.scss.common.dto.CommonContainerDTO;
 import com.privasia.scss.common.dto.CommonSealDTO;
 import com.privasia.scss.common.dto.CommonSolasDTO;
 import com.privasia.scss.common.dto.ExportContainer;
-import com.privasia.scss.common.dto.GateInReponse;
+import com.privasia.scss.common.dto.GateInResponse;
 import com.privasia.scss.core.model.ReferReject;
 import com.privasia.scss.core.repository.ReferRejectRepository;
 
@@ -42,29 +42,29 @@ public class GateInReferService {
 	}
 
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-	public GateInReponse fetchReferDataForExport(Long referID) {
+	public GateInResponse fetchReferDataForExport(Long referID) {
 		Optional<ReferReject> optReferReject = referRejectRepository.findOne(referID);
 		if (optReferReject.isPresent()) {
 			ReferReject referReject = optReferReject.get();
 			if (!(referReject.getReferRejectDetails() == null || referReject.getReferRejectDetails().isEmpty())) {
-				GateInReponse gateInReponse = new GateInReponse();
-				gateInReponse.setExpWeightBridge(referReject.getExpWeightBridge());
-				gateInReponse.setGateINDateTime(referReject.getReferDateTime());
-				gateInReponse.setPmVerified(referReject.getPmVerified());
-				gateInReponse.setAxleVerified(referReject.getAxleVerified());
+				GateInResponse gateInResponse = new GateInResponse();
+				gateInResponse.setExpWeightBridge(referReject.getExpWeightBridge());
+				gateInResponse.setGateINDateTime(referReject.getReferDateTime());
+				gateInResponse.setPmVerified(referReject.getPmVerified());
+				gateInResponse.setAxleVerified(referReject.getAxleVerified());
 				if (referReject.getBaseCommonGateInOut() != null) {
 					
 					if(referReject.getBaseCommonGateInOut().getHpabBooking()!=null){
-						gateInReponse
+						gateInResponse
 						.setHpabBookingId(referReject.getBaseCommonGateInOut().getHpabBooking().getBookingID());
 					}
 					
-					gateInReponse.setTruckHeadNo(referReject.getBaseCommonGateInOut().getPmHeadNo());
-					gateInReponse.setTruckPlateNo(referReject.getBaseCommonGateInOut().getPmPlateNo());
+					gateInResponse.setTruckHeadNo(referReject.getBaseCommonGateInOut().getPmHeadNo());
+					gateInResponse.setTruckPlateNo(referReject.getBaseCommonGateInOut().getPmPlateNo());
 				}
-				gateInReponse.setTrailerPlate(referReject.getTrailerPlateNo());
-				gateInReponse.setTrailerWeight(referReject.getTrailerWeight());
-				gateInReponse.setTruckWeight(referReject.getPmWeight());
+				gateInResponse.setTrailerPlate(referReject.getTrailerPlateNo());
+				gateInResponse.setTrailerWeight(referReject.getTrailerWeight());
+				gateInResponse.setTruckWeight(referReject.getPmWeight());
 				
 				List<ExportContainer> exportContainers = new ArrayList<ExportContainer>();
 				referReject.getReferRejectDetails().forEach(referRejectDetail -> {
@@ -75,7 +75,7 @@ public class GateInReferService {
 							exportContainer.setSolas(new CommonSolasDTO());
 						}
 						modelMapper.map(referRejectDetail.getSolas(), exportContainer.getSolas());
-						gateInReponse.setSolasInstruction(exportContainer.getSolas().getSolasInstruction());
+						gateInResponse.setSolasInstruction(exportContainer.getSolas().getSolasInstruction());
 						
 					}
 
@@ -106,8 +106,8 @@ public class GateInReferService {
 				
 				
 
-				gateInReponse.setExportContainers(exportContainers);
-				return gateInReponse;
+				gateInResponse.setExportContainers(exportContainers);
+				return gateInResponse;
 			}
 		}
 		return null;

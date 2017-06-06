@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import com.google.gson.Gson;
-import com.privasia.scss.common.dto.GateInReponse;
+import com.privasia.scss.common.dto.GateInResponse;
 import com.privasia.scss.common.dto.GateInWriteRequest;
 import com.privasia.scss.common.util.DateUtil;
 import com.privasia.scss.opus.dto.GIWriteRequestExportContainer;
@@ -111,22 +111,22 @@ public class OpusGateInWriteService {
     return response.getBody();
   }
 
-  public GateInReponse constructGateInReponse(OpusGateInWriteResponse opusGateInWriteResponse,
-      GateInReponse gateInReponse) {
+  public GateInResponse constructGateInReponse(OpusGateInWriteResponse opusGateInWriteResponse,
+      GateInResponse gateInResponse) {
 
     //LocalDateTime localDateTime = DateUtil.getLocalDategFromString(opusGateInWriteResponse.getGateINDateTime());
     //gateInReponse.setGateINDateTime(localDateTime);
-    gateInReponse.setHaulageCode(opusGateInWriteResponse.getHaulageCode());
-    gateInReponse.setLaneNo(opusGateInWriteResponse.getLaneNo());
-    gateInReponse.setTruckHeadNo(opusGateInWriteResponse.getTruckHeadNo());
-    gateInReponse.setTruckPlateNo(opusGateInWriteResponse.getTruckPlateNo());
-    gateInReponse.setExportContainers(opusDTOConstructService.giWriteResponseExportContainerListToExportContainerList(
-        opusGateInWriteResponse, gateInReponse.getExportContainers()));
-    gateInReponse.setImportContainers(opusDTOConstructService.giWriteResponseImportContainerListToImportContainerList(
-        opusGateInWriteResponse, gateInReponse.getImportContainers())); 
-    gateInReponse.setCallCardNo(opusGateInWriteResponse.getCallCardNo());
-    gateInReponse.setManualPlanIndicator(false);
-    return gateInReponse;
+    gateInResponse.setHaulageCode(opusGateInWriteResponse.getHaulageCode());
+    gateInResponse.setLaneNo(opusGateInWriteResponse.getLaneNo());
+    gateInResponse.setTruckHeadNo(opusGateInWriteResponse.getTruckHeadNo());
+    gateInResponse.setTruckPlateNo(opusGateInWriteResponse.getTruckPlateNo());
+    gateInResponse.setExportContainers(opusDTOConstructService.giWriteResponseExportContainerListToExportContainerList(
+        opusGateInWriteResponse, gateInResponse.getExportContainers()));
+    gateInResponse.setImportContainers(opusDTOConstructService.giWriteResponseImportContainerListToImportContainerList(
+        opusGateInWriteResponse, gateInResponse.getImportContainers())); 
+    gateInResponse.setCallCardNo(opusGateInWriteResponse.getCallCardNo());
+    gateInResponse.setManualPlanIndicator(false);
+    return gateInResponse;
   }
   
 

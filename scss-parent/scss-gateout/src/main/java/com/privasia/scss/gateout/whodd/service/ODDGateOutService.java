@@ -24,6 +24,7 @@ import com.privasia.scss.common.dto.GateOutWriteRequest;
 import com.privasia.scss.common.dto.ODDContainerDetailsDTO;
 import com.privasia.scss.common.dto.ODDLocationDTO;
 import com.privasia.scss.common.dto.WHoddDTO;
+import com.privasia.scss.common.enums.ClientType;
 import com.privasia.scss.common.enums.ContainerFullEmptyType;
 import com.privasia.scss.common.enums.GateInOutStatus;
 import com.privasia.scss.common.enums.ImpExpFlagStatus;
@@ -266,15 +267,31 @@ public class ODDGateOutService {
 				throw new BusinessException(
 						"Not a valid Gate In ODD Transaction to update : " + whODDdto.getOddIdSeq());
 
-			whODD.setReviseHeadNo(gateOutWriteRequest.getReviseHeadNo());
-			whODD.setReviseHeadNoRemarks(gateOutWriteRequest.getReviseHeadNoRemarks());
 			if (StringUtils.isNotEmpty(gateOutWriteRequest.getReviseHeadNo())) {
+				whODD.setReviseHeadNo(gateOutWriteRequest.getReviseHeadNo());
+				whODD.setReviseHeadNoRemarks(gateOutWriteRequest.getReviseHeadNoRemarks());
 				whODD.setOldHeadNo(whODD.getPmHeadNo());
-				whODD.setPmHeadNo(whODDdto.getReviseHeadNo());
+				whODD.setPmHeadNo(gateOutWriteRequest.getReviseHeadNo());
 			}
 
 			if (StringUtils.equalsIgnoreCase(ImpExpFlagStatus.IMPORT.getValue(), whODDdto.getImpExpFlag())) {
 				whODD.getContainer01().setContainerNo(whODDdto.getContainer01().getContainerNo());
+				// check lane
+
+				if (StringUtils.equalsIgnoreCase(whODDdto.getContainer01().getOddStatus(),
+						TransactionStatus.APPROVED.getValue())) {
+					if (gateOutClient.getType() != null) {
+						if (StringUtils.isNotBlank(gateOutClient.getType().getValue())) {
+							if (ClientType.GATE_IN.getValue()
+									.equalsIgnoreCase(StringUtils.trim(gateOutClient.getType().getValue()))) {
+								throw new BusinessException("Gate out transaction not allowed for gate in lane "
+										+ gateOutClient.getDescription()
+										+ ". Please rescan the card at gate out lane and try again.");
+							}
+						}
+					}
+
+				}
 			}
 
 			if (StringUtils.equalsIgnoreCase(TransactionStatus.APPROVED.getValue(),
@@ -291,21 +308,6 @@ public class ODDGateOutService {
 								+ whODDdto.getContainer01().getContainerNo());
 					setRejectReason(whODD.getImpExpFlag(), whODD.getContainer01(), whODDdto.getContainer01());
 				}
-
-				if (StringUtils.equalsIgnoreCase(whODDdto.getContainer02().getOddStatus(),
-						TransactionStatus.REJECT.getValue())) {
-
-					if (whODDdto.getContainer02() != null) {
-						if (StringUtils.isEmpty(whODDdto.getContainer02().getRemarks()))
-							throw new BusinessException("Rejection Remarks is need for container  : "
-									+ whODDdto.getContainer02().getContainerNo());
-						if (whODDdto.getContainer02().getRejectionReasonID() == null)
-							throw new BusinessException("Rejection Reason is need for container  : "
-									+ whODDdto.getContainer02().getContainerNo()); 
-						setRejectReason(whODD.getImpExpFlag(), whODD.getContainer02(), whODDdto.getContainer02());
-					}
-				}
-
 			}
 
 			whODD.getContainer01()
@@ -321,7 +323,7 @@ public class ODDGateOutService {
 								+ whODD.getContainer01().getHdbsBkgDetailNo().get().getHdbsBKGDetailID()));
 
 				hdbsBookingDetail.setScssStatusCode(SCSSHDBSStatus.fromValue(whODDdto.getContainer02().getOddStatus()));
-				hdbsBookingDetail.setOddTimeGateOutOk(whODD.getTimeGateInOk());
+				hdbsBookingDetail.setOddTimeGateOutOk(whODD.getTimeGateOutOk());
 				hdbsBookingDetail.setContainerNo(whODD.getContainer01().getContainerNo());
 			}
 
@@ -329,12 +331,40 @@ public class ODDGateOutService {
 
 				if (StringUtils.equalsIgnoreCase(ImpExpFlagStatus.IMPORT.getValue(), whODDdto.getImpExpFlag())) {
 					whODD.getContainer02().setContainerNo(whODDdto.getContainer02().getContainerNo());
+
+					if (StringUtils.equalsIgnoreCase(whODDdto.getContainer02().getOddStatus(),
+							TransactionStatus.APPROVED.getValue())) {
+						if (gateOutClient.getType() != null) {
+							if (StringUtils.isNotBlank(gateOutClient.getType().getValue())) {
+								if (ClientType.GATE_IN.getValue()
+										.equalsIgnoreCase(StringUtils.trim(gateOutClient.getType().getValue()))) {
+									throw new BusinessException("Gate out transaction not allowed for gate in lane "
+											+ gateOutClient.getDescription()
+											+ ". Please rescan the card at gate out lane and try again.");
+								}
+							}
+						}
+
+					}
 				}
 				whODD.getContainer02()
 						.setFullOrEmpty(ContainerFullEmptyType.fromValue(whODDdto.getContainer02().getFullOrEmpty()));
 
 				whODD.getContainer02()
 						.setOddStatus(TransactionStatus.fromCode(whODDdto.getContainer02().getOddStatus()));
+
+				if (StringUtils.equalsIgnoreCase(whODDdto.getContainer02().getOddStatus(),
+						TransactionStatus.REJECT.getValue())) {
+
+					if (StringUtils.isEmpty(whODDdto.getContainer02().getRemarks()))
+						throw new BusinessException("Rejection Remarks is need for container  : "
+								+ whODDdto.getContainer02().getContainerNo());
+					if (whODDdto.getContainer02().getRejectionReasonID() == null)
+						throw new BusinessException("Rejection Reason is need for container  : "
+								+ whODDdto.getContainer02().getContainerNo());
+					setRejectReason(whODD.getImpExpFlag(), whODD.getContainer02(), whODDdto.getContainer02());
+
+				}
 
 				if (whODD.getContainer02().getHdbsBkgDetailNo().isPresent()) {
 
@@ -346,7 +376,7 @@ public class ODDGateOutService {
 
 					hdbsBookingDetail
 							.setScssStatusCode(SCSSHDBSStatus.fromValue(whODDdto.getContainer02().getOddStatus()));
-					hdbsBookingDetail.setOddTimeGateOutOk(whODD.getTimeGateInOk());
+					hdbsBookingDetail.setOddTimeGateOutOk(whODD.getTimeGateOutOk());
 					hdbsBookingDetail.setContainerNo(whODD.getContainer02().getContainerNo());
 				}
 			}
@@ -396,7 +426,8 @@ public class ODDGateOutService {
 	}
 
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-	public void setRejectReason(ImpExpFlagStatus impExpFlag, ODDContainerDetails container, ODDContainerDetailsDTO containerDTO) {
+	public void setRejectReason(ImpExpFlagStatus impExpFlag, ODDContainerDetails container,
+			ODDContainerDetailsDTO containerDTO) {
 
 		if (impExpFlag == null)
 			throw new BusinessException("Transaction not specified Import or Export ");
@@ -409,8 +440,8 @@ public class ODDGateOutService {
 				container.setRejectionReason(optODDImportReason.get().getImportReason());
 				container.setRemarks(containerDTO.getRemarks());
 			} else {
-				throw new BusinessException("Rejection Reason cannot be found for container  : "
-						+ containerDTO.getContainerNo());
+				throw new BusinessException(
+						"Rejection Reason cannot be found for container  : " + containerDTO.getContainerNo());
 			}
 
 			break;
@@ -423,8 +454,8 @@ public class ODDGateOutService {
 				container.setRejectionReason(optODDExportReason.get().getExportReason());
 				container.setRemarks(containerDTO.getRemarks());
 			} else {
-				throw new BusinessException("Rejection Reason cannot be found for container  : "
-						+ containerDTO.getContainerNo());
+				throw new BusinessException(
+						"Rejection Reason cannot be found for container  : " + containerDTO.getContainerNo());
 			}
 
 			break;

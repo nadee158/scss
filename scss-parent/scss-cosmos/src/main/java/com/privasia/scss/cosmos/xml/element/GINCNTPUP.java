@@ -3,10 +3,13 @@ package com.privasia.scss.cosmos.xml.element;
 import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+@XmlType(propOrder = {"MSGTSE", "UNITSE", "UNBTSE", "CNPVSE", 
+				"UPLKSE", "UPPKSE", "UPOMSE", "CYOISE", "CYCISE", "ACHISE", "PCHISE", "CRORSE"})
 public class GINCNTPUP implements Serializable {
 
   private static final long serialVersionUID = 1L;

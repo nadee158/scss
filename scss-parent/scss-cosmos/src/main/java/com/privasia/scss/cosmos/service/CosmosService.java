@@ -2,18 +2,25 @@ package com.privasia.scss.cosmos.service;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import javax.xml.bind.JAXBException;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.privasia.scss.common.dto.CommonContainerDTO;
 import com.privasia.scss.common.dto.ContainerValidationInfo;
 import com.privasia.scss.common.dto.ExportContainer;
-import com.privasia.scss.common.dto.GateInReponse;
 import com.privasia.scss.common.dto.GateInRequest;
+import com.privasia.scss.common.dto.GateInResponse;
 import com.privasia.scss.common.dto.GateInWriteRequest;
 import com.privasia.scss.common.dto.GateOutReponse;
 import com.privasia.scss.common.dto.GateOutRequest;
@@ -32,21 +39,30 @@ import com.privasia.scss.cosmos.dto.request.CosmosGateInWriteRequest;
 import com.privasia.scss.cosmos.dto.request.CosmosGateOutImport;
 import com.privasia.scss.cosmos.dto.request.CosmosGateOutWriteRequest;
 import com.privasia.scss.cosmos.repository.CosmosODDRepository;
+import com.privasia.scss.cosmos.xml.element.Message;
 import com.privasia.scss.cosmos.xml.element.SGS2CosmosRequest;
 import com.privasia.scss.cosmos.xml.element.SGS2CosmosResponse;
 import com.privasia.scss.cosmos.xml.element.service.CSMCTLService;
 import com.privasia.scss.cosmos.xml.element.service.GINTRCINFService;
 import com.privasia.scss.cosmos.xml.element.service.GOTTRCINFService;
+import com.privasia.scss.cosmos.xml.element.service.MessageService;
 
 @Service("cosmos")
 public class CosmosService implements OpusCosmosBusinessService {
+
+	private static final Logger log = LoggerFactory.getLogger(CosmosService.class);
+
+	@Value("${async.wait.time}")
+	private long asyncWaitTime;
+
+	private CosmosGateInReadService cosmosGateInReadService;
 
 	private CosmosGateOutImportService cosmosGateOutImportService;
 
 	private CosmosGateOutExportService cosmosGateOutExportService;
 
 	private CosmosGateInWriteService cosmosGateInWriteService;
-	
+
 	private CosmosGateOutWriteService cosmosGateOutWriteService;
 
 	private AGSClientService agsClientService;
@@ -58,8 +74,15 @@ public class CosmosService implements OpusCosmosBusinessService {
 	private GOTTRCINFService gottrcinfService;
 
 	private CosmosResponseService cosmosResponseService;
-	
+
 	private CosmosODDRepository cosmosODDRepository;
+	
+	private MessageService messageService;
+
+	@Autowired
+	public void setCosmosGateInReadService(CosmosGateInReadService cosmosGateInReadService) {
+		this.cosmosGateInReadService = cosmosGateInReadService;
+	}
 
 	@Autowired
 	public void setCosmosGateInWriteService(CosmosGateInWriteService cosmosGateInWriteService) {
@@ -105,10 +128,15 @@ public class CosmosService implements OpusCosmosBusinessService {
 	public void setCosmosResponseService(CosmosResponseService cosmosResponseService) {
 		this.cosmosResponseService = cosmosResponseService;
 	}
-	
+
 	@Autowired
 	public void setCosmosODDRepository(CosmosODDRepository cosmosODDRepository) {
 		this.cosmosODDRepository = cosmosODDRepository;
+	}
+	
+	@Autowired
+	public void setMessageService(MessageService messageService) {
+		this.messageService = messageService;
 	}
 
 	@Override
@@ -156,7 +184,7 @@ public class CosmosService implements OpusCosmosBusinessService {
 	@Override
 	public GateOutReponse sendGateOutWriteRequest(GateOutWriteRequest gateOutWriteRequest,
 			GateOutReponse gateOutReponse) {
-		
+
 		ImpExpFlagStatus impExpFlag = ImpExpFlagStatus.fromValue(gateOutWriteRequest.getImpExpFlag());
 
 		CosmosCommonValuesDTO commonValuesDTO = getCommonValues(gateOutWriteRequest);
@@ -168,11 +196,12 @@ public class CosmosService implements OpusCosmosBusinessService {
 		switch (impExpFlag) {
 		case IMPORT:
 			// getImpRequestXML
-			if (!(gateOutWriteRequest.getImportContainers() == null || gateOutWriteRequest.getImportContainers().isEmpty())) {
-				
-				List<CosmosGateOutImport> cosmosImportList = cosmosGateOutWriteService.constructCosmosGateOutImport( 
+			if (!(gateOutWriteRequest.getImportContainers() == null
+					|| gateOutWriteRequest.getImportContainers().isEmpty())) {
+
+				List<CosmosGateOutImport> cosmosImportList = cosmosGateOutWriteService.constructCosmosGateOutImport(
 						commonValuesDTO, gateOutWriteRequest.getImportContainers(), startIndex);
-				if(cosmosImportList.isEmpty())
+				if (cosmosImportList.isEmpty())
 					return gateOutReponse;
 				cosmosGateOutWriteRequest.setImportList(cosmosImportList);
 			}
@@ -181,8 +210,9 @@ public class CosmosService implements OpusCosmosBusinessService {
 			cosmosGateOutWriteRequest.setImportList(null);
 			break;
 		case IMPORT_EXPORT:
-			if (!(gateOutWriteRequest.getImportContainers() == null || gateOutWriteRequest.getImportContainers().isEmpty())) {
-				
+			if (!(gateOutWriteRequest.getImportContainers() == null
+					|| gateOutWriteRequest.getImportContainers().isEmpty())) {
+
 				List<CosmosGateOutImport> cosmosImportList = cosmosGateOutWriteService.constructCosmosGateOutImport(
 						commonValuesDTO, gateOutWriteRequest.getImportContainers(), startIndex);
 				cosmosGateOutWriteRequest.setImportList(cosmosImportList);
@@ -194,13 +224,16 @@ public class CosmosService implements OpusCosmosBusinessService {
 
 		try {
 			SGS2CosmosRequest cosmosRequest = new SGS2CosmosRequest();
-			cosmosRequest.setIndex(1);
-			cosmosRequest.setCSMCTL(csmctlService.constructCSMCTL(commonValuesDTO));
-			cosmosRequest.setGOTTRCINF(gottrcinfService.constructGOTTRCINF(commonValuesDTO));
-			cosmosRequest.setCosmosGateOutWriteRequest(cosmosGateOutWriteRequest);
-			cosmosRequest.setGINTRCINF(null);
-			cosmosRequest.setCosmosGateInWriteRequest(null);
-			SGS2CosmosResponse cosmosResponse = agsClientService.sendToCosmos(cosmosRequest,
+			Message message = messageService.constructGateInRootMessage(commonValuesDTO);
+			cosmosRequest.setMessage(message);
+			
+			
+			//cosmosRequest.setCSMCTL(csmctlService.constructCSMCTL(commonValuesDTO));
+			//cosmosRequest.setGOTTRCINF(gottrcinfService.constructGOTTRCINF(commonValuesDTO));
+			//cosmosRequest.setCosmosGateOutWriteRequest(cosmosGateOutWriteRequest);
+			////cosmosRequest.setGINTRCINF(null);
+			//cosmosRequest.setCosmosGateInWriteRequest(null);
+			String cosmosResponse = agsClientService.sendToCosmos(cosmosRequest,
 					gateOutWriteRequest.getCosmosPort());
 			cosmosResponseService.extractCosmosGateOutResponse(cosmosResponse);
 
@@ -213,13 +246,67 @@ public class CosmosService implements OpusCosmosBusinessService {
 	}
 
 	@Override
-	public GateInReponse sendGateInReadRequest(GateInRequest gateInRequest) {
-		// TODO Auto-generated method stub
-		return null;
+	public GateInResponse sendGateInReadRequest(GateInRequest gateInRequest, GateInResponse gateInResponse) {
+		
+		long start = System.currentTimeMillis();
+
+		Future<GateInResponse> importResponse = cosmosGateInReadService.populateCosmosGateInImport(gateInResponse);
+
+		if (gateInResponse.getExportContainers() == null || gateInResponse.getExportContainers().isEmpty()) {
+
+			List<ExportContainer> exportContainers = new ArrayList<>();
+			ExportContainer exportContainer = null;
+			if (StringUtils.isNotEmpty(gateInRequest.getExpContainer1())) {
+				exportContainer = new ExportContainer();
+				exportContainer.setContainer(new CommonContainerDTO());
+				exportContainer.getContainer()
+						.setContainerNumber(StringUtils.upperCase(gateInRequest.getExpContainer1()));
+				exportContainers.add(exportContainer);
+			}
+
+			if (StringUtils.isNotEmpty(gateInRequest.getExpContainer2())) {
+				exportContainer = new ExportContainer();
+				exportContainer.setContainer(new CommonContainerDTO());
+				exportContainer.getContainer()
+						.setContainerNumber(StringUtils.upperCase(gateInRequest.getExpContainer2()));
+				exportContainers.add(exportContainer);
+			}
+
+		}
+
+		Future<GateInResponse> exportResponse = cosmosGateInReadService.populateCosmosGateInExport(gateInResponse);
+
+		while (true) {
+			System.out.println("inside the loop");
+			if (importResponse.isDone() && exportResponse.isDone()) {
+				System.out.println("now done");
+				try {
+					gateInResponse.setImportContainers(importResponse.get().getImportContainers());
+					gateInResponse.setExportContainers(exportResponse.get().getExportContainers());
+				} catch (InterruptedException | ExecutionException e) {
+					log.error("Error Occured while retrieve data data from cosmos");
+					log.error(e.getMessage());
+				}
+				break;
+			}else{
+				System.out.println("not done yet");
+			}
+
+			try {
+				System.out.println("waiting "+asyncWaitTime);
+				Thread.sleep(5);
+			} catch (InterruptedException e) {
+				log.error(e.getMessage());
+				break;
+			}
+		}
+		long end = System.currentTimeMillis();
+		System.out.println("time : "+(end - start) / 1000.0 + "sec");
+		return gateInResponse;
 	}
 
 	@Override
-	public GateInReponse sendGateInWriteRequest(GateInWriteRequest gateInWriteRequest) {
+	public GateInResponse sendGateInWriteRequest(GateInWriteRequest gateInWriteRequest) {
 		ImpExpFlagStatus impExpFlag = ImpExpFlagStatus.fromValue(gateInWriteRequest.getImpExpFlag());
 
 		CosmosCommonValuesDTO commonValuesDTO = getCommonValues(gateInWriteRequest);
@@ -265,16 +352,12 @@ public class CosmosService implements OpusCosmosBusinessService {
 		default:
 			throw new BusinessException("Invalid transaction Type ! " + impExpFlag.name());
 		}
-		GateInReponse gateInReponse = null;
+		GateInResponse gateInReponse = null;
 		try {
-			SGS2CosmosRequest cosmosRequest = new SGS2CosmosRequest();
-			cosmosRequest.setIndex(1);
-			cosmosRequest.setCSMCTL(csmctlService.constructCSMCTL(commonValuesDTO));
-			cosmosRequest.setGINTRCINF(gintrcinfService.constructGINTRCINF(commonValuesDTO));
-			cosmosRequest.setCosmosGateInWriteRequest(cosmosGateInWriteRequest);
-			cosmosRequest.setCosmosGateOutWriteRequest(null);
-			cosmosRequest.setGOTTRCINF(null);
-			SGS2CosmosResponse cosmosResponse = agsClientService.sendToCosmos(cosmosRequest,
+			Message message = messageService.constructGateInRootMessage(commonValuesDTO);
+			cosmosGateInWriteRequest.setMessage(message);
+			
+			String cosmosResponse = agsClientService.sendToCosmos(cosmosGateInWriteRequest,
 					gateInWriteRequest.getCosmosPort());
 			gateInReponse = cosmosResponseService.extractCosmosGateInResponse(cosmosResponse, gateInWriteRequest);
 
@@ -299,11 +382,11 @@ public class CosmosService implements OpusCosmosBusinessService {
 
 	@Override
 	public ContainerValidationInfo sendODDContainerValidationRequest(GateOutRequest gateOutRequest) {
-		
+
 		ContainerValidationInfo validationInfo = new ContainerValidationInfo();
 		validationInfo.setContainerNo1(gateOutRequest.getOddImpContainer1());
-		validationInfo.setContainerNo1Status(
-				cosmosODDRepository.validateODDContainer(gateOutRequest.getOddImpContainer1()));
+		validationInfo
+				.setContainerNo1Status(cosmosODDRepository.validateODDContainer(gateOutRequest.getOddImpContainer1()));
 
 		if (StringUtils.isNotEmpty(gateOutRequest.getOddImpContainer2())) {
 			validationInfo.setContainerNo2(gateOutRequest.getOddImpContainer2());

@@ -15,9 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.gson.Gson;
-import com.privasia.scss.common.annotation.OpenGate;
-import com.privasia.scss.common.dto.GateInReponse;
+import com.privasia.scss.common.dto.GateInResponse;
 import com.privasia.scss.common.dto.GateInRequest;
 import com.privasia.scss.common.dto.GateInWriteRequest;
 import com.privasia.scss.common.dto.GateOutMessage;
@@ -42,11 +40,6 @@ import com.privasia.scss.core.security.util.SecurityHelper;
 import com.privasia.scss.core.service.CommonCardService;
 import com.privasia.scss.gatein.exports.business.service.SolasService;
 import com.privasia.scss.hpat.service.HPABService;
-import com.privasia.scss.opus.dto.OpusGateInReadRequest;
-import com.privasia.scss.opus.dto.OpusGateInReadResponse;
-import com.privasia.scss.opus.dto.OpusRequestResponseDTO;
-import com.privasia.scss.opus.service.OpusDTOConstructService;
-import com.privasia.scss.opus.service.OpusGateInReadService;
 
 @Service("importExportGateInService")
 public class ImportExportGateInService {
@@ -63,19 +56,13 @@ public class ImportExportGateInService {
 
 	private ExportGateInService exportGateInService;
 
-	private OpusGateInReadService opusGateInReadService;
-
 	private ClientRepository clientRepository;
 
 	private CardRepository cardRepository;
 
-	private OpusDTOConstructService opusDTOConstructService;
-
 	private HPABService hpabService;
 
 	private CommonCardService commonCardService;
-
-	private Gson gson;
 
 	private SystemUserRepository systemUserRepository;
 
@@ -113,16 +100,6 @@ public class ImportExportGateInService {
 	}
 
 	@Autowired
-	public void setOpusDTOConstructService(OpusDTOConstructService opusDTOConstructService) {
-		this.opusDTOConstructService = opusDTOConstructService;
-	}
-
-	@Autowired
-	public void setOpusGateInReadService(OpusGateInReadService opusGateInReadService) {
-		this.opusGateInReadService = opusGateInReadService;
-	}
-
-	@Autowired
 	public void setImportGateInService(ImportGateInService importGateInService) {
 		this.importGateInService = importGateInService;
 	}
@@ -143,11 +120,6 @@ public class ImportExportGateInService {
 	}
 
 	@Autowired
-	public void setGson(Gson gson) {
-		this.gson = gson;
-	}
-
-	@Autowired
 	public void setSolasService(SolasService solasService) {
 		this.solasService = solasService;
 	}
@@ -158,7 +130,7 @@ public class ImportExportGateInService {
 	}
 
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-	public GateInReponse populateGateIn(GateInRequest gateInRequest) {
+	public GateInResponse populateGateIn(GateInRequest gateInRequest) {
 
 		Optional<Card> cardOpt = cardRepository.findOne(gateInRequest.getCardID());
 		Card card = cardOpt
@@ -177,8 +149,7 @@ public class ImportExportGateInService {
 		UserContext userContext = (UserContext) authentication.getPrincipal();
 		gateInRequest.setUserName(userContext.getUsername());
 
-		GateInReponse gateInReponse = new GateInReponse();
-		gateInReponse.setGateINDateTime(gateInRequest.getGateInDateTime());
+		GateInResponse gateInResponse = new GateInResponse();
 
 		/*
 		 * if the refer id avaliable then fetch here. then pass export container
@@ -186,71 +157,53 @@ public class ImportExportGateInService {
 		 */
 		// refere reject details
 		if (gateInRequest.getReferID().isPresent()) {
-			gateInReponse = gateInReferService.fetchReferDataForExport(gateInRequest.getReferID().get());
+			gateInResponse = gateInReferService.fetchReferDataForExport(gateInRequest.getReferID().get());
 		}
 
-		gateInReponse.setCheckPreArrival(gateInRequest.isCheckPreArrival());
+		gateInResponse.setCheckPreArrival(gateInRequest.isCheckPreArrival());
+		gateInResponse.setGateINDateTime(gateInRequest.getGateInDateTime());
+		gateInResponse.setExpWeightBridge(gateInRequest.getExpWeightBridge());
 
 		if ((gateInRequest.getGatePass1() != null && gateInRequest.getGatePass1() > 0)
 				|| (gateInRequest.getGatePass2() != null && gateInRequest.getGatePass2() > 0)) {
-			// List<Long> gatePassList =
-			// Arrays.asList(gateInRequest.getGatePass1(),
-			// gateInRequest.getGatePass2());
+			
 			List<ImportContainer> importContainerList = importGateInService.populateGateInImport(gateInRequest);
 			// GatePassValidationService call validate - within another method
 			importGateInService.validateImport(gateInRequest, importContainerList);
-			gateInReponse.setImportContainers(importContainerList);
+			gateInResponse.setImportContainers(importContainerList);
 		}
-
-		// call opus -
-		OpusGateInReadRequest gateInReadRequest = opusGateInReadService.constructOpenGateInRequest(gateInRequest);
-
-		OpusRequestResponseDTO opusRequestResponseDTO = new OpusRequestResponseDTO(gateInReadRequest, gson,
-				gateInRequest.getCardID());
-
-		OpusGateInReadResponse gateInReadResponse = opusGateInReadService.getGateInReadResponse(gateInReadRequest,
-				opusRequestResponseDTO);
-
-		// check the errorlist of reponse
-		String errorMessage = opusDTOConstructService.hasErrorMessage(gateInReadResponse.getErrorList());
-		if (StringUtils.isNotEmpty(errorMessage)) {
-			// save it to the db - TO BE IMPLEMENTED
-			// throw new business exception with constructed message - there is
-			// an error
-			throw new BusinessException(errorMessage);
-		}
-	
-		gateInReponse.setExpWeightBridge(gateInRequest.getExpWeightBridge());
 		
-		// double check with the documentation
-		gateInReponse = opusGateInReadService.constructGateInReponse(gateInReadResponse, gateInReponse);
+		
+		OpusCosmosBusinessService businessService = containerExternalDataService.getImplementationService(implementor);
+		businessService.sendGateInReadRequest(gateInRequest, gateInResponse);
+		
 
 		// assign details from hpab booking
 		if ((StringUtils.isNotEmpty(gateInRequest.getHpabSeqId())) && (!(gateInRequest.getReferID().isPresent()))) {
-			gateInReponse = hpabService.populateHpabForImpExp(gateInReponse, gateInRequest.getHpabSeqId());
+			gateInResponse = hpabService.populateHpabForImpExp(gateInResponse, gateInRequest.getHpabSeqId());
 			
-			if(gateInReponse.getExportContainers() != null) {
-				boolean fullExist = gateInReponse.getExportContainers().stream()
+			if(gateInResponse.getExportContainers() != null) {
+				boolean fullExist = gateInResponse.getExportContainers().stream()
 						.filter(expCon -> (StringUtils.equalsIgnoreCase(ContainerFullEmptyType.FULL.getValue(),
 								expCon.getContainer().getContainerFullOrEmpty())))
 						.findAny().isPresent();
 				if (fullExist)
-					solasService.calculateTerminalVGM(gateInReponse.getExportContainers(), false);
+					solasService.calculateTerminalVGM(gateInResponse.getExportContainers(), false);
 			}
 			
 		}
 		
-		if (!(gateInReponse.getExportContainers() == null || gateInReponse.getExportContainers().isEmpty())) {
+		if (!(gateInResponse.getExportContainers() == null || gateInResponse.getExportContainers().isEmpty())) {
 			// set iso info if cosmos
-			gateInReponse = exportGateInService.validateExportsGateInRead(gateInReponse,
+			gateInResponse = exportGateInService.validateExportsGateInRead(gateInResponse,
 					gateInRequest.getGateInDateTime());
 		}
 
-		return gateInReponse;
+		return gateInResponse;
 	}
 
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
-	public GateInReponse saveGateInInfo(GateInWriteRequest gateInWriteRequest) {
+	public GateInResponse saveGateInInfo(GateInWriteRequest gateInWriteRequest) {
 
 		Card card = cardRepository.findOne(gateInWriteRequest.getCardID())
 				.orElseThrow(() -> new ResultsNotFoundException("Invalid Card : " + gateInWriteRequest.getCardID()));
@@ -289,18 +242,18 @@ public class ImportExportGateInService {
 			throw new BusinessException("Invalid GateOutWriteRequest Empty ImpExpFlag");
 		ImpExpFlagStatus impExpFlag = ImpExpFlagStatus.fromValue(gateInWriteRequest.getImpExpFlag());
 
-		GateInReponse gateInReponse = null;
+		GateInResponse gateInResponse = null;
 
 		OpusCosmosBusinessService businessService = containerExternalDataService.getImplementationService(implementor);
 
 		switch (impExpFlag) {
 		case IMPORT:
 			if(StringUtils.equalsIgnoreCase(gateInWriteRequest.getGateInStatus(), TransactionStatus.APPROVED.getValue())){
-				gateInReponse = businessService.sendGateInWriteRequest(gateInWriteRequest);
-				gateInWriteRequest.setImportContainers(gateInReponse.getImportContainers());
+				gateInResponse = businessService.sendGateInWriteRequest(gateInWriteRequest);
+				gateInWriteRequest.setImportContainers(gateInResponse.getImportContainers());
 			}else{
-				gateInReponse = new GateInReponse();
-				gateInReponse.setImportContainers(gateInWriteRequest.getImportContainers());
+				gateInResponse = new GateInResponse();
+				gateInResponse.setImportContainers(gateInWriteRequest.getImportContainers());
 			}
 			
 			importGateInService.saveGateInInfo(gateInWriteRequest, gateInClient, gateInClerk, card, hpabBooking);
@@ -310,11 +263,11 @@ public class ImportExportGateInService {
 			// impSave = new AsyncResult<Boolean>(true);
 			exportGateInService.validateExportsGateInWrite(gateInWriteRequest);
 			if(StringUtils.equalsIgnoreCase(gateInWriteRequest.getGateInStatus(), TransactionStatus.APPROVED.getValue())){
-				gateInReponse = businessService.sendGateInWriteRequest(gateInWriteRequest);
-				gateInWriteRequest.setExportContainers(gateInReponse.getExportContainers());
+				gateInResponse = businessService.sendGateInWriteRequest(gateInWriteRequest);
+				gateInWriteRequest.setExportContainers(gateInResponse.getExportContainers());
 			}else{
-				gateInReponse = new GateInReponse();
-				gateInReponse.setExportContainers(gateInWriteRequest.getExportContainers());
+				gateInResponse = new GateInResponse();
+				gateInResponse.setExportContainers(gateInWriteRequest.getExportContainers());
 			}
 			exportGateInService.saveGateInInfo(gateInWriteRequest, gateInClient, gateInClerk, card, hpabBooking);
 			break;
@@ -322,13 +275,13 @@ public class ImportExportGateInService {
 			exportGateInService.validateExportsGateInWrite(gateInWriteRequest);
 			
 			if(StringUtils.equalsIgnoreCase(gateInWriteRequest.getGateInStatus(), TransactionStatus.APPROVED.getValue())){
-				gateInReponse = businessService.sendGateInWriteRequest(gateInWriteRequest);
-				gateInWriteRequest.setImportContainers(gateInReponse.getImportContainers());
-				gateInWriteRequest.setExportContainers(gateInReponse.getExportContainers());
+				gateInResponse = businessService.sendGateInWriteRequest(gateInWriteRequest);
+				gateInWriteRequest.setImportContainers(gateInResponse.getImportContainers());
+				gateInWriteRequest.setExportContainers(gateInResponse.getExportContainers());
 			}else{
-				gateInReponse = new GateInReponse();
-				gateInReponse.setImportContainers(gateInWriteRequest.getImportContainers());
-				gateInReponse.setExportContainers(gateInWriteRequest.getExportContainers());
+				gateInResponse = new GateInResponse();
+				gateInResponse.setImportContainers(gateInWriteRequest.getImportContainers());
+				gateInResponse.setExportContainers(gateInWriteRequest.getExportContainers());
 			}
 			importGateInService.saveGateInInfo(gateInWriteRequest, gateInClient, gateInClerk, card, hpabBooking);
 			exportGateInService.saveGateInInfo(gateInWriteRequest, gateInClient, gateInClerk, card, hpabBooking);
@@ -360,138 +313,10 @@ public class ImportExportGateInService {
 		 * log.error(e.getMessage()); System.out.println(
 		 * "WHILE LOOP BROKEN ON THREAD EXCEPTION!!!!. " ); break; } }
 		 */
-		gateInReponse.setGateINDateTime(gateInWriteRequest.getGateInDateTime());
-		gateInReponse.setMessage(gateOutMessage);
+		gateInResponse.setGateINDateTime(gateInWriteRequest.getGateInDateTime());
+		gateInResponse.setMessage(gateOutMessage);
 
-		return gateInReponse;
-	}
-
-	@OpenGate
-	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
-	public GateInReponse saveTestGateInInfo(GateInWriteRequest gateInWriteRequest) {
-
-		System.out.println("################# REQUEST : ############ " + gateInWriteRequest.toString());
-		/*
-		 * Card card = cardRepository.findOne(gateInWriteRequest.getCardId())
-		 * .orElseThrow(() -> new ResultsNotFoundException("Invalid Card : " +
-		 * gateInWriteRequest.getCardId()));
-		 * 
-		 * gateInWriteRequest.setHaulageCode(commonCardService.
-		 * getHaulierCodeByScanCard(card));
-		 * 
-		 * Authentication authentication =
-		 * SecurityContextHolder.getContext().getAuthentication(); UserContext
-		 * userContext = (UserContext) authentication.getPrincipal();
-		 * gateInWriteRequest.setUserName(userContext.getUsername());
-		 * 
-		 * Client gateInClient =
-		 * clientRepository.findOne(gateInWriteRequest.getGateInClient())
-		 * .orElseThrow(() -> new ResultsNotFoundException(
-		 * "Invalid Client Id : " + gateInWriteRequest.getGateInClient()));
-		 * 
-		 * if (StringUtils.isEmpty(gateInClient.getLaneNo())) throw new
-		 * BusinessException( "Lane no does not setup for client " +
-		 * gateInClient.getClientID());
-		 * gateInWriteRequest.setLaneNo(gateInClient.getLaneNo());
-		 * 
-		 * SystemUser gateInClerk =
-		 * systemUserRepository.findOne(SecurityHelper.getCurrentUserId()).
-		 * orElseThrow( () -> new AuthenticationServiceException(
-		 * "Log in User Not Found : " + SecurityHelper.getCurrentUserId()));
-		 * System.out.println("gateInClerk " + gateInClerk);
-		 * 
-		 * OpusGateInWriteRequest opusGateInWriteRequest =
-		 * opusGateInWriteService.constructOpusGateInWriteRequest(
-		 * gateInWriteRequest); System.out.println("opusGateInWriteRequest " +
-		 * gson.toJson(opusGateInWriteRequest));
-		 * 
-		 * OpusRequestResponseDTO opusRequestResponseDTO = new
-		 * OpusRequestResponseDTO(opusGateInWriteRequest, gson,
-		 * gateInWriteRequest.getCardId()); System.out.println(
-		 * "populateGateIn :: opusRequestResponseDTO " +
-		 * opusRequestResponseDTO);
-		 * 
-		 * OpusGateInWriteResponse opusGateInWriteResponse =
-		 * opusGateInWriteService.getGateInWriteResponse(opusGateInWriteRequest,
-		 * opusRequestResponseDTO);
-		 * 
-		 * System.out.println("opusGateInWriteResponse " +
-		 * gson.toJson(opusGateInWriteResponse)); String errorMessage =
-		 * opusDTOConstructService.hasErrorMessage(opusGateInWriteResponse.
-		 * getErrorList()); log.error("ERROR MESSAGE FROM OPUS SERVICE: " +
-		 * errorMessage); /* if (StringUtils.isNotEmpty(errorMessage)) { // save
-		 * it to the db - TO BE IMPLEMENTED // throw new business exception with
-		 * constructed message - there is // an error throw new
-		 * BusinessException(errorMessage); }
-		 */
-
-		GateInReponse gateInReponse = new GateInReponse();
-		/*
-		 * gateInReponse.setImportContainers(gateInWriteRequest.
-		 * getImportContainers());
-		 * gateInReponse.setExportContainers(gateInWriteRequest.
-		 * getExportContainers()); gateInReponse =
-		 * opusGateInWriteService.constructGateInReponse(
-		 * opusGateInWriteResponse, gateInReponse);
-		 * gateInWriteRequest.setImportContainers(gateInReponse.
-		 * getImportContainers());
-		 * gateInWriteRequest.setExportContainers(gateInReponse.
-		 * getExportContainers());
-		 */
-
-		/*
-		 * Future<Boolean> impSave = null; Future<Boolean> expSave = null;
-		 */
-
-		/*
-		 * if (StringUtils.isEmpty(gateInWriteRequest.getImpExpFlag())) throw
-		 * new BusinessException( "Invalid GateOutWriteRequest Empty ImpExpFlag"
-		 * ); ImpExpFlagStatus impExpFlag =
-		 * ImpExpFlagStatus.fromValue(gateInWriteRequest.getImpExpFlag());
-		 * 
-		 * switch (impExpFlag) { case IMPORT:
-		 * importGateInService.saveGateInInfo(gateInWriteRequest, gateInClient,
-		 * gateInClerk, card); // expSave = new AsyncResult<Boolean>(true);
-		 * break; case EXPORT: // impSave = new AsyncResult<Boolean>(true);
-		 * exportGateInService.validateExport(gateInWriteRequest.
-		 * getExportContainers());
-		 * exportGateInService.saveGateInInfo(gateInWriteRequest, gateInClient,
-		 * gateInClerk, card); break; case IMPORT_EXPORT:
-		 * importGateInService.saveGateInInfo(gateInWriteRequest, gateInClient,
-		 * gateInClerk, card);
-		 * 
-		 * exportGateInService.validateExport(gateInWriteRequest.
-		 * getExportContainers());
-		 * exportGateInService.saveGateInInfo(gateInWriteRequest, gateInClient,
-		 * gateInClerk, card); break; default: // impSave = new
-		 * AsyncResult<Boolean>(true); // expSave = new
-		 * AsyncResult<Boolean>(true); break; }
-		 * 
-		 * if (StringUtils.isNotEmpty(gateInWriteRequest.getHpatBookingId())) {
-		 * hpabService.updateHPABAfterGateIn(gateInWriteRequest.getHpatBookingId
-		 * ()); }
-		 */
-		GateOutMessage gateOutMessage = new GateOutMessage();
-		gateOutMessage.setCode(GateOutMessage.OK);
-		gateOutMessage.setDescription("Saved Successfully!");
-
-		/*
-		 * while (true) { if (impSave.isDone() && expSave.isDone()) {
-		 * 
-		 * gateOutMessage.setCode(GateOutMessage.OK);
-		 * gateOutMessage.setDescription( "Saved Successfully!");
-		 * 
-		 * System.out.println("WHILE LOOP BROKEN!!!!. "); break; }
-		 * System.out.println( "Continue doing something else. ");
-		 * 
-		 * try { Thread.sleep(asyncWaitTime); } catch (InterruptedException e) {
-		 * log.error(e.getMessage()); System.out.println(
-		 * "WHILE LOOP BROKEN ON THREAD EXCEPTION!!!!. " ); break; } }
-		 */
-
-		gateInReponse.setMessage(gateOutMessage);
-
-		return gateInReponse;
+		return gateInResponse;
 	}
 
 }

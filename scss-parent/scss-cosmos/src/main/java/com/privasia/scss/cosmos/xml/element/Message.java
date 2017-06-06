@@ -3,80 +3,54 @@ package com.privasia.scss.cosmos.xml.element;
 import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 public class Message implements Serializable {
 
-  private static final long serialVersionUID = 1L;
-  CSMCTL CSMCTL;
-  XMLERRINF XMLERRINF;
-  GINTRCINFR GINTRCINFR;
-  GINCNTDRPR GINCNTDRPR;
-  GINCNTPUPR GINCNTPUPR;
-  int Index;
+	private static final long serialVersionUID = 1L;
+	private int Index;
+	private CSMCTL CSMCTL;
+	private GINTRCINF GINTRCINF;
+	private GOTTRCINF GOTTRCINF;
 
-  public CSMCTL getCSMCTL() {
-    return CSMCTL;
-  }
+	public int getIndex() {
+		return Index;
+	}
 
-  @XmlElement
-  public void setCSMCTL(CSMCTL cSMCTL) {
-    CSMCTL = cSMCTL;
-  }
+	@XmlAttribute
+	public void setIndex(int index) {
+		Index = index;
+	}
 
-  public XMLERRINF getXMLERRINF() {
-    return XMLERRINF;
-  }
+	public CSMCTL getCSMCTL() {
+		return CSMCTL;
+	}
 
-  @XmlElement
-  public void setXMLERRINF(XMLERRINF xMLERRINF) {
-    XMLERRINF = xMLERRINF;
-  }
+	public void setCSMCTL(CSMCTL cSMCTL) {
+		CSMCTL = cSMCTL;
+	}
 
-  public GINTRCINFR getGINTRCINFR() {
-    return GINTRCINFR;
-  }
+	public GINTRCINF getGINTRCINF() {
+		return GINTRCINF;
+	}
 
-  @XmlElement
-  public void setGINTRCINFR(GINTRCINFR gINTRCINFR) {
-    GINTRCINFR = gINTRCINFR;
-  }
+	public void setGINTRCINF(GINTRCINF gINTRCINF) {
+		GINTRCINF = gINTRCINF;
+	}
 
-  public int getIndex() {
-    return Index;
-  }
+	public GOTTRCINF getGOTTRCINF() {
+		return GOTTRCINF;
+	}
 
-  @XmlAttribute
-  public void setIndex(int index) {
-    Index = index;
-  }
+	public void setGOTTRCINF(GOTTRCINF gOTTRCINF) {
+		GOTTRCINF = gOTTRCINF;
+	}
 
-  public GINCNTDRPR getGINCNTDRPR() {
-    return GINCNTDRPR;
-  }
-
-  @XmlElement
-  public void setGINCNTDRPR(GINCNTDRPR gINCNTDRPR) {
-    GINCNTDRPR = gINCNTDRPR;
-  }
-
-  public GINCNTPUPR getGINCNTPUPR() {
-    return GINCNTPUPR;
-  }
-
-  @XmlElement
-  public void setGINCNTPUPR(GINCNTPUPR gINCNTPUPR) {
-    GINCNTPUPR = gINCNTPUPR;
-  }
-
-  @Override
-  public String toString() {
-    return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
-  }
-
-
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
+	}
 
 }

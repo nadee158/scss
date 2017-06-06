@@ -37,7 +37,7 @@ import com.zaxxer.hikari.HikariDataSource;
 @Configuration
 @EnableTransactionManagement
 @EnableJpaAuditing(dateTimeProviderRef = "cosmosOracleDateTimeProvider")
-@EnableJpaRepositories(basePackages = "com.privasia.scss.cosmos.repository",
+@EnableJpaRepositories(basePackages = "com.privasia.scss.cosmos.oracle.repository",
     entityManagerFactoryRef = "cosmosOracleEntityManagerFactory",
     transactionManagerRef = "cosmosOracleTransactionManager")
 @EntityScan("com.privasia.scss.cosmos.model")

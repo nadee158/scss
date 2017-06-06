@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.privasia.scss.common.dto.GateInReponse;
+import com.privasia.scss.common.dto.GateInResponse;
 import com.privasia.scss.common.dto.GateInRequest;
 import com.privasia.scss.common.dto.HDBSBkgDetailGridDTO;
 import com.privasia.scss.common.dto.HDBSBkgGridDTO;
@@ -376,10 +376,10 @@ public class HDBSService {
 	}
 
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-	public GateInReponse populateGateInODD(GateInRequest gateInRequest) {
+	public GateInResponse populateGateInODD(GateInRequest gateInRequest) {
 
-		GateInReponse gateInReponse = new GateInReponse();
-		gateInReponse.setGateINDateTime(gateInRequest.getGateInDateTime());
+		GateInResponse gateInResponse = new GateInResponse();
+		gateInResponse.setGateINDateTime(gateInRequest.getGateInDateTime());
 
 		if (gateInRequest.getBkgDetailIDList().isPresent() && !gateInRequest.getBkgDetailIDList().get().isEmpty()) {
 
@@ -428,7 +428,7 @@ public class HDBSService {
 
 						});
 
-						gateInReponse.setImpExpFlagStatus(ImpExpFlagStatus.IMPORT.getValue());
+						gateInResponse.setImpExpFlagStatus(ImpExpFlagStatus.IMPORT.getValue());
 					}
 
 					boolean drop = bkgMaster.getHdbsBookingDetails().stream().filter(bkgDetail -> StringUtils
@@ -447,15 +447,15 @@ public class HDBSService {
 							oddInfoList.add(exportODDDTO);
 						});
 
-						gateInReponse.setImpExpFlagStatus(ImpExpFlagStatus.EXPORT.getValue());
+						gateInResponse.setImpExpFlagStatus(ImpExpFlagStatus.EXPORT.getValue());
 					}
 
-					gateInReponse.setTruckPlateNo(bkgMaster.getPlateNo());
-					gateInReponse.setTruckHeadNo(bkgMaster.getPmHeadNo());
-					gateInReponse.setWhoddContainers(oddInfoList);
+					gateInResponse.setTruckPlateNo(bkgMaster.getPlateNo());
+					gateInResponse.setTruckHeadNo(bkgMaster.getPmHeadNo());
+					gateInResponse.setWhoddContainers(oddInfoList);
 
 					if (drop && pickup) {
-						gateInReponse.setImpExpFlagStatus(ImpExpFlagStatus.IMPORT_EXPORT.getValue());
+						gateInResponse.setImpExpFlagStatus(ImpExpFlagStatus.IMPORT_EXPORT.getValue());
 					}
 				}
 			} else {
@@ -464,7 +464,7 @@ public class HDBSService {
 
 		}
 
-		return gateInReponse;
+		return gateInResponse;
 
 	}
 

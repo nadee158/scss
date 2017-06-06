@@ -242,18 +242,17 @@ public class ImportGateOutService {
 
   }
 
-  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-  public void ogaInternalBlockCheck(String containerNo) {
+  public void ogaInternalBlockCheck(ImportContainer importContainer) {
 
-    boolean ogaBlock = cosmosImportRepository.isOGABlock(containerNo);
-    boolean internalBlock = cosmosImportRepository.isInternalBlock(containerNo);
+    boolean ogaBlock = cosmosImportRepository.isOGABlock(importContainer);
+    boolean internalBlock = cosmosImportRepository.isInternalBlock(importContainer);
 
     if (ogaBlock && internalBlock) {
-      throw new BusinessException("Container " + containerNo + " : Internal & OGA Block!");
+      throw new BusinessException("Container " + importContainer.getContainer().getContainerNumber() + " : Internal & OGA Block!");
     } else if (ogaBlock) {
-      throw new BusinessException("Container " + containerNo + " : OGA Block!");
+      throw new BusinessException("Container " + importContainer.getContainer().getContainerNumber() + " : OGA Block!");
     } else if (internalBlock) {
-      throw new BusinessException("Container " + containerNo + " : Internal Block!");
+      throw new BusinessException("Container " + importContainer.getContainer().getContainerNumber() + " : Internal Block!");
     }
   }
 

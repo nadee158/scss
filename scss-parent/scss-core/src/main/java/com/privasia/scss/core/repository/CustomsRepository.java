@@ -3,9 +3,11 @@
  */
 package com.privasia.scss.core.repository;
 
-
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.privasia.scss.core.model.Customs;
 
@@ -15,6 +17,8 @@ import com.privasia.scss.core.model.Customs;
  */
 public interface CustomsRepository extends BaseRepository<Customs, Long> {
 
-  @Query(name="Customs.deleteByClientID")
-  public void deleteByClientID(@Param("clientID") long clientID);
+	@Modifying
+	@Query(name = "Customs.deleteByClientID")
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
+	public void deleteByClientID(@Param("clientID") long clientID);
 }

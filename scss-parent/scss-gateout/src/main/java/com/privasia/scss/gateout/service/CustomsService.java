@@ -106,24 +106,20 @@ public class CustomsService {
 		
 		if((customsDTO.getExportIDSeq01().isPresent() || customsDTO.getExportIDSeq02().isPresent()) && 
 				(customsDTO.getGatePassIDSeq01().isPresent() || customsDTO.getGatePassIDSeq02().isPresent())){
-			deleteCustomsByGateOutClientId(customsDTO.getGateOutClientId());
 			updateCustomsExport(customsDTO);
 			updateCustomsImport(customsDTO);
 			return "success";
 		}
 		
 		if (customsDTO.getExportIDSeq01().isPresent() || customsDTO.getExportIDSeq02().isPresent()) {
-			deleteCustomsByGateOutClientId(customsDTO.getGateOutClientId());
 			updateCustomsExport(customsDTO);
 			return "success";
 		}
 		if (customsDTO.getGatePassIDSeq01().isPresent() || customsDTO.getGatePassIDSeq02().isPresent()) {
-			deleteCustomsByGateOutClientId(customsDTO.getGateOutClientId());
 			updateCustomsImport(customsDTO);
 			return "success";
 		}
 		if (customsDTO.getOddIdSeq01().isPresent() || customsDTO.getOddIdSeq02().isPresent()) {
-			deleteCustomsByGateOutClientId(customsDTO.getGateOutClientId());
 			updateCustomsODD(customsDTO);
 			return "success";
 		}
@@ -142,9 +138,9 @@ public class CustomsService {
 		Predicate condition = ExpressionUtils.allOf(byGateInStatus, byWHoddIDList);
 		Iterable<WHODD> whODDList = oddRepository.findAll(condition);
 		if ((whODDList != null && whODDList.iterator().hasNext())) {
-			
+			deleteCustomsByGateOutClientId(customsDTO.getGateOutClientId());
 			whODDList.forEach(whODD -> {
-				Customs customs = constructCustoms(customsDTO, TransactionType.valueOf(whODD.getImpExpFlag().getValue()));
+				Customs customs = constructCustoms(customsDTO, TransactionType.fromCode(whODD.getImpExpFlag().getValue()));
 				customs.setWhODD(whODD);
 				if (customs.getContainer01() == null) {
 					customs.setContainer01(constructCustomContainer(whODD.getContainer01(), whODD.getImpExpFlag()));
@@ -156,11 +152,14 @@ public class CustomsService {
 				if (!(customs.getCustomsID() == null || customs.getCustomsID() == 0)) {
 					CustomsReport customsReport = new CustomsReport();
 					modelMapper.map(customs, customsReport);
+					customsReport.setCustomsReportID(customs.getCustomsID());
 					customsReportRepository.save(customsReport);
 				}else{
 					throw new BusinessException("Save customs failed ! ");
 				}
 			});
+		}else{
+			throw new BusinessException("Save customs failed. Given data not valid ");
 		}
 		
 		
@@ -177,7 +176,7 @@ public class CustomsService {
 		Predicate condition = ExpressionUtils.allOf(byContainerFullOrEmpty, byCancelPickup, byGatePassIDList);
 		Iterable<GatePass> gatePassList = gatePassRepository.findAll(condition);
 		if ((gatePassList != null && gatePassList.iterator().hasNext())) {
-			
+			deleteCustomsByGateOutClientId(customsDTO.getGateOutClientId());
 			final Customs customs = constructCustoms(customsDTO, TransactionType.IMPORT);
 			gatePassList.forEach(gatePass -> {
 				if (customs.getContainer01() == null) {
@@ -191,11 +190,14 @@ public class CustomsService {
 			if (!(customs.getCustomsID() == null || customs.getCustomsID() == 0)) {
 				CustomsReport customsReport = new CustomsReport();
 				modelMapper.map(customs, customsReport);
+				customsReport.setCustomsReportID(customs.getCustomsID());
 				customsReportRepository.save(customsReport);
 			}else{
 				throw new BusinessException("Save customs failed ! ");
 			}
 			
+		}else{
+			throw new BusinessException("Save customs failed. Given data not valid ");
 		}
 		return "success";
 	}
@@ -211,6 +213,7 @@ public class CustomsService {
 		Predicate condition = ExpressionUtils.allOf(byContainerFullOrEmpty, byGateInStatus, byExportsIDList);
 		Iterable<Exports> exportsList = exportsRepository.findAll(condition);
 		if ((exportsList != null && exportsList.iterator().hasNext())) {
+			deleteCustomsByGateOutClientId(customsDTO.getGateOutClientId());
 			final Customs customs = constructCustoms(customsDTO, TransactionType.EXPORT);
 			exportsList.forEach(exports -> {
 				if (customs.getContainer01() == null) {
@@ -223,10 +226,13 @@ public class CustomsService {
 			if (!(customs.getCustomsID() == null || customs.getCustomsID() == 0)) {
 				CustomsReport customsReport = new CustomsReport();
 				modelMapper.map(customs, customsReport);
+				customsReport.setCustomsReportID(customs.getCustomsID());
 				customsReportRepository.save(customsReport);
 			}else{
 				throw new BusinessException("Save customs failed ! ");
 			}
+		}else{
+			throw new BusinessException("Save customs failed. Given data not valid ");
 		}
 		return "success";
 	}

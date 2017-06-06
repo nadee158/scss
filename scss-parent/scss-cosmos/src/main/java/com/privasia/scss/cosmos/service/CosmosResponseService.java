@@ -3,26 +3,27 @@
  */
 package com.privasia.scss.cosmos.service;
 
+import java.io.StringReader;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.privasia.scss.common.dto.ExportContainer;
-import com.privasia.scss.common.dto.GateInReponse;
+import com.privasia.scss.common.dto.GateInResponse;
 import com.privasia.scss.common.dto.GateInWriteRequest;
-import com.privasia.scss.common.dto.GateOutWriteRequest;
 import com.privasia.scss.common.dto.ImportContainer;
 import com.privasia.scss.common.enums.ImpExpFlagStatus;
 import com.privasia.scss.common.exception.BusinessException;
 import com.privasia.scss.cosmos.util.COSMOSMessageCode;
 import com.privasia.scss.cosmos.xml.element.CSMCTL;
-import com.privasia.scss.cosmos.xml.element.GINCNTDRPR;
-import com.privasia.scss.cosmos.xml.element.GINCNTPUPR;
-import com.privasia.scss.cosmos.xml.element.GINTRCINFR;
 import com.privasia.scss.cosmos.xml.element.Message;
 import com.privasia.scss.cosmos.xml.element.SGS2CosmosResponse;
 
@@ -40,25 +41,33 @@ public class CosmosResponseService {
 		this.cosmosMessageCode = cosmosMessageCode;
 	}
 
-	public GateInReponse extractCosmosGateInResponse(SGS2CosmosResponse cosmosResponse,
-			GateInWriteRequest gateInWriteRequest) {
+	public GateInResponse extractCosmosGateInResponse(String cosmosResponse,
+			GateInWriteRequest gateInWriteRequest) throws JAXBException {
+		
+		JAXBContext jaxbContext = JAXBContext.newInstance(SGS2CosmosResponse.class);
+		Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+
+		StringReader reader = new StringReader(cosmosResponse);
+		SGS2CosmosResponse response = (SGS2CosmosResponse) unmarshaller.unmarshal(reader);
 
 		ImpExpFlagStatus impExpFlag = ImpExpFlagStatus.fromValue(gateInWriteRequest.getImpExpFlag());
-		GateInReponse gateInReponse = new GateInReponse();
-		gateInReponse.setImportContainers(gateInWriteRequest.getImportContainers());
-		gateInReponse.setExportContainers(gateInWriteRequest.getExportContainers());
+		GateInResponse gateInResponse = new GateInResponse();
+		gateInResponse.setImportContainers(gateInWriteRequest.getImportContainers());
+		gateInResponse.setExportContainers(gateInWriteRequest.getExportContainers());
 
-		String errorCode = getCosmosError(cosmosResponse);
+		String errorCode = getCosmosError(response);
+		
+		System.out.println("errorCode : "+ errorCode);
 
 		if (StringUtils.isNotEmpty(errorCode)) {
 
 			if (StringUtils.equalsIgnoreCase(errorCode, "INF0016")) {
 
 				// set manual plan indicator
-				setManualPlanIndicatorForExports(gateInReponse);
-				setCallCardCode(cosmosResponse, gateInReponse);
-				gateInReponse.setManualPlanIndicator(true);
-				return gateInReponse;
+				setManualPlanIndicatorForExports(gateInResponse);
+				setCallCardCode(response, gateInResponse);
+				gateInResponse.setManualPlanIndicator(true);
+				return gateInResponse;
 
 			} else {
 				// read the error
@@ -66,28 +75,28 @@ public class CosmosResponseService {
 				throw new BusinessException(messageDescription);
 			}
 		} else {
-			setCallCardCode(cosmosResponse, gateInReponse);
+			setCallCardCode(response, gateInResponse);
 
 			switch (impExpFlag) {
 			case IMPORT:
-				if (!(gateInReponse.getImportContainers() == null || gateInReponse.getImportContainers().isEmpty())) {
-					setImportYardPositionAndBayCode(cosmosResponse, gateInReponse.getImportContainers());
+				if (!(gateInResponse.getImportContainers() == null || gateInResponse.getImportContainers().isEmpty())) {
+					setImportYardPositionAndBayCode(response, gateInResponse.getImportContainers());
 
 				}
 				break;
 			case EXPORT:
-				if (!(gateInReponse.getExportContainers() == null || gateInReponse.getExportContainers().isEmpty())) {
-					setExportYardPositionAndBayCode(cosmosResponse, gateInReponse.getExportContainers());
+				if (!(gateInResponse.getExportContainers() == null || gateInResponse.getExportContainers().isEmpty())) {
+					setExportYardPositionAndBayCode(response, gateInResponse.getExportContainers());
 
 				}
 				break;
 			case IMPORT_EXPORT:
-				if (!(gateInReponse.getImportContainers() == null || gateInReponse.getImportContainers().isEmpty())) {
-					setImportYardPositionAndBayCode(cosmosResponse, gateInReponse.getImportContainers());
+				if (!(gateInResponse.getImportContainers() == null || gateInResponse.getImportContainers().isEmpty())) {
+					setImportYardPositionAndBayCode(response, gateInResponse.getImportContainers());
 
 				}
-				if (!(gateInReponse.getExportContainers() == null || gateInReponse.getExportContainers().isEmpty())) {
-					setExportYardPositionAndBayCode(cosmosResponse, gateInReponse.getExportContainers());
+				if (!(gateInResponse.getExportContainers() == null || gateInResponse.getExportContainers().isEmpty())) {
+					setExportYardPositionAndBayCode(response, gateInResponse.getExportContainers());
 
 				}
 				break;
@@ -96,13 +105,19 @@ public class CosmosResponseService {
 			}
 		}
 
-		return gateInReponse;
+		return gateInResponse;
 
 	}
 
-	public void extractCosmosGateOutResponse(SGS2CosmosResponse cosmosResponse) {
+	public void extractCosmosGateOutResponse(String cosmosResponse) throws JAXBException {
+		
+		JAXBContext jaxbContext = JAXBContext.newInstance(SGS2CosmosResponse.class);
+		Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
 
-		String errorCode = getCosmosError(cosmosResponse);
+		StringReader reader = new StringReader(cosmosResponse);
+		SGS2CosmosResponse response = (SGS2CosmosResponse) unmarshaller.unmarshal(reader);
+
+		String errorCode = getCosmosError(response);
 
 		if (StringUtils.isNotEmpty(errorCode)) {
 
@@ -117,7 +132,7 @@ public class CosmosResponseService {
 	private List<ImportContainer> setImportYardPositionAndBayCode(SGS2CosmosResponse cosmosResponse,
 			List<ImportContainer> importContainers) {
 
-		List<Message> elementList = cosmosResponse.getMessage();
+		/*List<Message> elementList = cosmosResponse.getMessage();
 
 		if (elementList == null || elementList.isEmpty())
 			throw new BusinessException("Invalid response received from cosmos. No Message elements found! ");
@@ -142,7 +157,7 @@ public class CosmosResponseService {
 				importContainer.setYardPosition(gincntpupr.getPSIDSE().trim());
 
 			});
-		}
+		}*/
 
 		return importContainers;
 	}
@@ -150,7 +165,7 @@ public class CosmosResponseService {
 	private List<ExportContainer> setExportYardPositionAndBayCode(SGS2CosmosResponse cosmosResponse,
 			List<ExportContainer> exportContainers) {
 
-		List<Message> elementList = cosmosResponse.getMessage();
+		/*List<Message> elementList = cosmosResponse.getMessage();
 
 		if (elementList == null || elementList.isEmpty())
 			throw new BusinessException("Invalid response received from cosmos. No Message elements found! ");
@@ -175,14 +190,14 @@ public class CosmosResponseService {
 				exportContainer.setYardPosition(gincntdrpr.getPSIDSE().trim());
 
 			});
-		}
+		}*/
 
 		return exportContainers;
 	}
 
-	private GateInReponse setCallCardCode(SGS2CosmosResponse cosmosResponse, GateInReponse gateInReponse) {
+	private GateInResponse setCallCardCode(SGS2CosmosResponse cosmosResponse, GateInResponse gateInResponse) {
 
-		List<Message> elementList = cosmosResponse.getMessage();
+		/*List<Message> elementList = cosmosResponse.getMessage();
 
 		if (elementList == null || elementList.isEmpty())
 			throw new BusinessException("Invalid response received from cosmos. No Message elements found! ");
@@ -196,23 +211,23 @@ public class CosmosResponseService {
 
 		GINTRCINFR gintrcinfr = optElement.get();
 
-		if (!(gateInReponse.getImportContainers() == null || gateInReponse.getImportContainers().isEmpty())) {
+		if (!(gateInResponse.getImportContainers() == null || gateInResponse.getImportContainers().isEmpty())) {
 
-			gateInReponse.getImportContainers().stream().forEach(importContainer -> {
+			gateInResponse.getImportContainers().stream().forEach(importContainer -> {
 				importContainer.setCallCard(Long.parseLong(gintrcinfr.getBZKNSC().trim()));
 
 			});
 		}
 
-		if (!(gateInReponse.getExportContainers() == null || gateInReponse.getExportContainers().isEmpty())) {
+		if (!(gateInResponse.getExportContainers() == null || gateInResponse.getExportContainers().isEmpty())) {
 
-			gateInReponse.getExportContainers().stream().forEach(exportContainer -> {
+			gateInResponse.getExportContainers().stream().forEach(exportContainer -> {
 				exportContainer.setCallCard(Long.parseLong(gintrcinfr.getBZKNSC().trim()));
 
 			});
-		}
+		}*/
 
-		return gateInReponse;
+		return gateInResponse;
 	}
 
 	private String getCosmosError(SGS2CosmosResponse cosmosResponse) {
@@ -241,17 +256,17 @@ public class CosmosResponseService {
 
 	}
 
-	private GateInReponse setManualPlanIndicatorForExports(GateInReponse gateInReponse) {
+	private GateInResponse setManualPlanIndicatorForExports(GateInResponse gateInResponse) {
 
-		if (!(gateInReponse.getExportContainers() == null || gateInReponse.getExportContainers().isEmpty())) {
+		if (!(gateInResponse.getExportContainers() == null || gateInResponse.getExportContainers().isEmpty())) {
 
-			gateInReponse.getExportContainers().stream().forEach(exportContainer -> {
+			gateInResponse.getExportContainers().stream().forEach(exportContainer -> {
 				exportContainer.setManualPlanIndicator(true);
 
 			});
 		}
 
-		return gateInReponse;
+		return gateInResponse;
 	}
 
 }

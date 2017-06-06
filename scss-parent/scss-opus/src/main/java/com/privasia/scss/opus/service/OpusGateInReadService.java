@@ -20,7 +20,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.google.gson.Gson;
 import com.privasia.scss.common.dto.ExportContainer;
-import com.privasia.scss.common.dto.GateInReponse;
+import com.privasia.scss.common.dto.GateInResponse;
 import com.privasia.scss.common.dto.GateInRequest;
 import com.privasia.scss.common.dto.ImportContainer;
 import com.privasia.scss.common.util.DateUtil;
@@ -131,28 +131,28 @@ public class OpusGateInReadService {
 		return response.getBody();
 	}
 
-	public GateInReponse constructGateInReponse(OpusGateInReadResponse opusGateInReadResponse,
-			GateInReponse gateInReponse) {
+	public GateInResponse constructGateInReponse(OpusGateInReadResponse opusGateInReadResponse,
+			GateInResponse gateInResponse) {
 
-		gateInReponse.setUserId(opusGateInReadResponse.getUserID());
+		gateInResponse.setUserId(opusGateInReadResponse.getUserID());
 		//LocalDateTime localDateTime = DateUtil.getLocalDategFromString(opusGateInReadResponse.getGateInDateTime());
 
 		//gateInReponse.setGateINDateTime(localDateTime);
-		gateInReponse.setHaulageCode(opusGateInReadResponse.getHaulageCode());
-		gateInReponse.setLaneNo(opusGateInReadResponse.getLaneNo());
-		gateInReponse.setTruckHeadNo(opusGateInReadResponse.getTruckHeadNo());
+		gateInResponse.setHaulageCode(opusGateInReadResponse.getHaulageCode());
+		gateInResponse.setLaneNo(opusGateInReadResponse.getLaneNo());
+		gateInResponse.setTruckHeadNo(opusGateInReadResponse.getTruckHeadNo());
 		// already hav import containers and export containers, update them
 		List<ExportContainer> updatedExportContainerList = opusDTOConstructService
 				.giReadResponseExporterContainerListToExportContainerList(
-						opusGateInReadResponse.getExportContainerListCY(), gateInReponse);
+						opusGateInReadResponse.getExportContainerListCY(), gateInResponse);
 
 		List<ImportContainer> updatedImportContainerList = opusDTOConstructService
 				.giReadResponseImportContainerListToImportContainerList(
-						opusGateInReadResponse.getImportContainerListCY(), gateInReponse);
+						opusGateInReadResponse.getImportContainerListCY(), gateInResponse);
 
-		gateInReponse.setExportContainers(updatedExportContainerList);
-		gateInReponse.setImportContainers(updatedImportContainerList);
-		return gateInReponse;
+		gateInResponse.setExportContainers(updatedExportContainerList);
+		gateInResponse.setImportContainers(updatedImportContainerList);
+		return gateInResponse;
 	}
 
 }

@@ -2,8 +2,11 @@ package com.privasia.scss.cosmos.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.concurrent.Future;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,22 +58,24 @@ public class CosmosGateInExportService {
     return exportContainers;
   }
   
-  @Transactional(value = "as400TransactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-  public ExportContainer fetchPrimanyInfoContainerInfo(ExportContainer exportContainer){
+  @Async
+  @Transactional(value = "as400TransactionManager", propagation = Propagation.REQUIRES_NEW, readOnly = true)
+  public Future<Boolean> fetchPrimanyInfoContainerInfo(ExportContainer exportContainer){
 	  
 	  exportContainer = cosmosExportRepository.fetchContainerPrimanyInfo(exportContainer);
 	  cosmosExportRepository.isInternalBlock(exportContainer);
 	  cosmosExportRepository.isOGABlock(exportContainer);
 	  
-    return exportContainer;
+    return new AsyncResult<Boolean>(true);
   }
   
-  @Transactional(value = "as400TransactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-  public ExportContainer fetchSecondaryContainerInfo(ExportContainer exportContainer){
+  @Async
+  @Transactional(value = "as400TransactionManager", propagation = Propagation.REQUIRES_NEW, readOnly = true)
+  public Future<Boolean> fetchSecondaryContainerInfo(ExportContainer exportContainer){
 	  
 	  exportContainer = cosmosExportRepository.fetchContainerSecondaryInfo(exportContainer);
 	  
-    return exportContainer;
+	  return new AsyncResult<Boolean>(true);
   }
 
   public CosmosGateInExport constructCosmosGateInExport(CosmosCommonValuesDTO commonValuesDTO, ExportContainer exportContainer, int index) {
