@@ -16,9 +16,12 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.privasia.scss.common.dto.ExportContainer;
+import com.privasia.scss.common.enums.ShipStatus;
 import com.privasia.scss.common.exception.BusinessException;
 import com.privasia.scss.common.exception.ResultsNotFoundException;
+import com.privasia.scss.core.model.ShipCode;
 import com.privasia.scss.core.model.WDCGlobalSetting;
+import com.privasia.scss.core.repository.ShipCodeRepository;
 import com.privasia.scss.core.repository.WDCGlobalSettingRepository;
 
 /**
@@ -30,66 +33,77 @@ public class EarlyEntryService {
 
 	private WDCGlobalSettingRepository wdcGlobalSettingRepository;
 
+	private ShipCodeRepository shipCodeRepository;
+
 	@Autowired
 	public void setWdcGlobalSettingRepository(WDCGlobalSettingRepository wdcGlobalSettingRepository) {
 		this.wdcGlobalSettingRepository = wdcGlobalSettingRepository;
 	}
 
-	public boolean isContainerHasAOpening(ExportContainer container) {// !c1.isAllowIn() 
+	@Autowired
+	public void setShipCodeRepository(ShipCodeRepository shipCodeRepository) {
+		this.shipCodeRepository = shipCodeRepository;
+	}
+
+	public boolean isContainerHasAOpening(ExportContainer container) {// !c1.isAllowIn()
 
 		final LocalDateTime now = LocalDateTime.now();
 
-		// if no record found in the shp_ship_code table
-		if (container.getStoragePeriod() == -1) {
-			return true;
-		}
+		Optional<Integer> storagePeriod = getStoragePeriod(container);
 
-		long earlyEnrtyDate = 0;
-		LocalDateTime vesselETADate = container.getVesselETADate();
-		if(vesselETADate==null)
-			throw new BusinessException("Container " + container.getContainer().getContainerNumber() + "vessel ETA date not provided for early entry !");
-		vesselETADate.minusDays(1);
-		earlyEnrtyDate = vesselETADate.until(now, ChronoUnit.DAYS);
+		if (storagePeriod.isPresent()) {
+			long earlyEnrtyDate = 0;
+			LocalDateTime vesselETADate = container.getVesselETADate();
+			if (vesselETADate == null)
+				throw new BusinessException("Container " + container.getContainer().getContainerNumber()
+						+ "vessel ETA date not provided for early entry !");
+			vesselETADate.minusDays(1);
+			earlyEnrtyDate = vesselETADate.until(now, ChronoUnit.DAYS);
 
-		// Before Eta Date
-		if (earlyEnrtyDate > 1) {
-			if (earlyEnrtyDate <= container.getStoragePeriod()) {
-				return true;
-			} else {
-				/**
-				 * Check if it is allowed for early entry
-				 */
-				if (container.getShipSCNID().isPresent()) {
-					container.setEarlyEntry(true);
-
+			// Before Eta Date
+			if (earlyEnrtyDate > 1) {
+				if (earlyEnrtyDate <= storagePeriod.get()) {
+					return true;
+				} else {
 					/**
-					 * check if container coming during early entry window.
+					 * Check if it is allowed for early entry
 					 */
+					if (container.isRegisteredInEarlyEntry()) {
+						container.setEarlyEntry(true);
 
-					if (withInEarlyEntryWindow(container)) {
-						return true;
-					} else {
+						/**
+						 * check if container coming during early entry window.
+						 */
+
 						if (container.isBypassEEntry()) {
+							return true;
+						} else if (withInEarlyEntryWindow(container)) {
 							return true;
 						} else {
 							// return false;
 
 							// here !c1.isAllowIn() && c1.isEarlyEntry() = true
 							throw new BusinessException("Container " + container.getContainer().getContainerNumber()
-									+ "does not have opening." + System.lineSeparator() +"Early entry out of window. Early entry at "
-									+ container.getStartFullEarlyEntryTime() + " to " + container.getEndFullEarlyEntryTime());
+									+ "does not have opening." + System.lineSeparator()
+									+ "Early entry out of window. Early entry at "
+									+ container.getStartFullEarlyEntryTime() + " to "
+									+ container.getEndFullEarlyEntryTime());
 						}
+
+					} else {
+						// here !c1.isAllowIn() && c1.isEarlyEntry() = false
+						// should return false
+						container.setEarlyEntry(false);
+						throw new BusinessException(
+								"Container " + container.getContainer().getContainerNumber() + "does not have opening");
 					}
-				} else {
-					// here !c1.isAllowIn() && c1.isEarlyEntry() = false
-					// should return false
-					container.setEarlyEntry(false);
-					throw new BusinessException(
-							"Container " + container.getContainer().getContainerNumber() + "does not have opening");
 				}
+			} else {
+				// After ETA
+				return true;
 			}
 		} else {
-			// After ETA
+			// if no record found in the shp_ship_code table
 			return true;
 		}
 
@@ -126,13 +140,27 @@ public class EarlyEntryService {
 		if (now.isAfter(startFullDate) && now.isBefore(endFullDate)) {
 			isInWindow = true;
 		}
-		
+
 		container.setStartFullEarlyEntryTime(startFullDate.toLocalTime().format(timeformatter));
 		container.setEndFullEarlyEntryTime(endFullDate.toLocalTime().format(timeformatter));
 		return isInWindow;
 
 	}
-	
-	
+
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+	public Optional<Integer> getStoragePeriod(ExportContainer exportContainer) {
+		if (exportContainer != null) {
+			String shipCodeStr = exportContainer.getShippingLine();
+			Optional<ShipCode> optionalShipCode = shipCodeRepository.findByShipStatusAndShippingCode(ShipStatus.ACTIVE,
+					shipCodeStr);
+			if (optionalShipCode.isPresent()) {
+				ShipCode shipCode = optionalShipCode.get();
+				return Optional.of(shipCode.getStoragePeriod());
+			}
+		}
+
+		return Optional.ofNullable(null);
+
+	}
 
 }

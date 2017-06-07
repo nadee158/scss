@@ -5,9 +5,12 @@ import java.sql.SQLException;
 import java.sql.SQLTimeoutException;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
@@ -17,6 +20,8 @@ import com.privasia.scss.common.dto.ExportContainer;
 
 @Repository("lpkediRepository")
 public class LPKEDIRepository {
+	
+	private static final Log log = LogFactory.getLog(LPKEDIRepository.class);
 
   private JdbcTemplate lpkediJdbcTemplate;
 
@@ -29,8 +34,7 @@ public class LPKEDIRepository {
   }
 
   @Transactional(value = "lpkediTransactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-  public ExportContainer findLPKEDITDigiMessage(ExportContainer exportContainer)
-      throws SQLException, SQLTimeoutException {
+  public ExportContainer findLPKEDITDigiMessage(ExportContainer exportContainer) {
 
     String contNo = StringUtils.upperCase(exportContainer.getContainer().getContainerNumber());
     String contNoWithSpace = "";
@@ -42,25 +46,33 @@ public class LPKEDIRepository {
     }
 
     String vessleSCN = StringUtils.upperCase(exportContainer.getVesselSCN());
-
-
-    return lpkediJdbcTemplate.queryForObject(findLPKEDITDigiMessage, new Object[] {contNoWithSpace, contNo, vessleSCN},
-        (rs, i) -> extractLPKEDITDigiMessage(exportContainer, rs, i));
+    
+    try {
+    	return lpkediJdbcTemplate.queryForObject(findLPKEDITDigiMessage, new Object[] {contNoWithSpace, contNo, vessleSCN},
+    	        (rs, i) -> extractLPKEDITDigiMessage(exportContainer, rs, i));
+	} catch (EmptyResultDataAccessException e) {
+		return exportContainer;
+	}
 
   }
 
 
-  private ExportContainer extractLPKEDITDigiMessage(ExportContainer exportContainer, ResultSet rs, int rowNum)
-      throws SQLException, SQLTimeoutException {
+  private ExportContainer extractLPKEDITDigiMessage(ExportContainer exportContainer, ResultSet rs, int rowNum) {
 
-    if (rs.next()) {
-      exportContainer.setLpkApproval(rs.getString("KPA_APPROVAL"));
-      exportContainer.setHdlGoodsCode(rs.getString("GOODS_HDL_CODE"));
-      // f.setGoodsHdlDescC1(rs.getString("GOODS_HDL_DESC"));
-      exportContainer.setHdlGoodsDescription(rs.getString("HANDLING_DESC"));
-      exportContainer.setDgDescription(rs.getString("DG_DESC"));
-      exportContainer.setLpkClass(rs.getString("KPA_CLASS"));
-    }
+      try {
+		exportContainer.setLpkApproval(rs.getString("KPA_APPROVAL"));
+		exportContainer.setHdlGoodsCode(rs.getString("GOODS_HDL_CODE"));
+	    exportContainer.setHdlGoodsDescription(rs.getString("HANDLING_DESC"));
+	    exportContainer.setDgDescription(rs.getString("DG_DESC"));
+	    exportContainer.setLpkClass(rs.getString("KPA_CLASS"));
+	} catch (SQLTimeoutException e) {
+		log.error("ExportContainer extractLPKEDITDigiMessage " + e.getMessage());
+		e.printStackTrace();
+		exportContainer.setDgMessage("Unable to access DG container approval record <Timeout>, please proceed with manual validation.");
+	} catch (SQLException e) {
+		log.error("ExportContainer extractLPKEDITDigiMessage " + e.getMessage());
+		exportContainer.setDgMessage("Unable to access DG container approval record, please proceed with manual validation. ");
+	}
     return exportContainer;
   }
 

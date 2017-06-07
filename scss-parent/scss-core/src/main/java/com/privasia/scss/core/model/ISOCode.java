@@ -21,10 +21,10 @@ import com.privasia.scss.common.dto.ISOInfo;
  */
 @Entity
 @Table(name = "SCSS_ISO_CODES")
-@AttributeOverrides({ @AttributeOverride(name = "addBy", column = @Column(name = "CREATED_BY")),
-		@AttributeOverride(name = "updateBy", column = @Column(name = "UPDATED_BY")),
-		@AttributeOverride(name = "dateTimeAdd", column = @Column(name = "DATE_TIME_CREATED")),
-		@AttributeOverride(name = "dateTimeUpdate", column = @Column(name = "DATE_TIME_UPDATE")) })
+@AttributeOverrides({ @AttributeOverride(name = "addBy", column = @Column(name = "ADD_BY")),
+		@AttributeOverride(name = "updateBy", column = @Column(name = "UPDATE_BY")),
+		@AttributeOverride(name = "dateTimeAdd", column = @Column(name = "DATETIME_ADD")),
+		@AttributeOverride(name = "dateTimeUpdate", column = @Column(name = "DATETIME_UPDATE")) })
 public class ISOCode extends AuditEntity implements Serializable {
 
 	/**

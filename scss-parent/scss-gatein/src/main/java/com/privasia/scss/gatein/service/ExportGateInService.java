@@ -27,7 +27,6 @@ import com.privasia.scss.common.dto.GateInWriteRequest;
 import com.privasia.scss.common.enums.ContainerFullEmptyType;
 import com.privasia.scss.common.enums.HpabReferStatus;
 import com.privasia.scss.common.enums.ReferStatus;
-import com.privasia.scss.common.enums.ShipStatus;
 import com.privasia.scss.common.enums.TransactionStatus;
 import com.privasia.scss.common.exception.BusinessException;
 import com.privasia.scss.core.model.Card;
@@ -36,7 +35,6 @@ import com.privasia.scss.core.model.Exports;
 import com.privasia.scss.core.model.ExportsQ;
 import com.privasia.scss.core.model.HPABBooking;
 import com.privasia.scss.core.model.ReferReject;
-import com.privasia.scss.core.model.ShipCode;
 import com.privasia.scss.core.model.ShipSCN;
 import com.privasia.scss.core.model.SystemUser;
 import com.privasia.scss.core.predicate.ExportsPredicates;
@@ -45,7 +43,6 @@ import com.privasia.scss.core.repository.DamageCodeRepository;
 import com.privasia.scss.core.repository.ExportsQRepository;
 import com.privasia.scss.core.repository.ExportsRepository;
 import com.privasia.scss.core.repository.ReferRejectRepository;
-import com.privasia.scss.core.repository.ShipCodeRepository;
 import com.privasia.scss.core.repository.ShipSCNRepository;
 import com.privasia.scss.gatein.exports.business.service.DGContainerService;
 import com.privasia.scss.gatein.exports.business.service.DamageCodeService;
@@ -63,8 +60,6 @@ public class ExportGateInService {
 	private static final Log log = LogFactory.getLog(ExportGateInService.class);
 
 	private ModelMapper modelMapper;
-
-	private ShipCodeRepository shipCodeRepository;
 
 	private ShipSCNRepository shipSCNRepository;
 
@@ -108,11 +103,6 @@ public class ExportGateInService {
 	@Autowired
 	public void setModelMapper(ModelMapper modelMapper) {
 		this.modelMapper = modelMapper;
-	}
-
-	@Autowired
-	public void setShipCodeRepository(ShipCodeRepository shipCodeRepository) {
-		this.shipCodeRepository = shipCodeRepository;
 	}
 
 	@Autowired
@@ -164,14 +154,14 @@ public class ExportGateInService {
 	public GateInResponse validateExportsGateInRead(GateInResponse gateInResponse, LocalDateTime timegateIn) {
 
 		gateInResponse.getExportContainers().forEach(container -> {
-			setStoragePeriod(container);
 			setSCN(container);
 			vesselOmitService.isValidVesselOmit(container);
 			earlyEntryService.isContainerHasAOpening(container);
 			ssrService.checkExportSSR(timegateIn, container);
 			dgContainerService.isaDGContainer(container);
 
-			if (container.getContainer().getContainerFullOrEmpty() == ContainerFullEmptyType.EMPTY.getValue()) {
+			if (StringUtils.equalsIgnoreCase(container.getContainer().getContainerFullOrEmpty(),  
+					ContainerFullEmptyType.EMPTY.getValue())) {
 				emptyContainerService.setEmptyContainerWeight(container, container.getCosmosISOCode());
 			}
 
@@ -185,27 +175,12 @@ public class ExportGateInService {
 	}
 
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-	public void setStoragePeriod(ExportContainer exportContainer) {
-		if (exportContainer != null) {
-			String shipCodeStr = exportContainer.getShippingLine();
-			Optional<ShipCode> optionalShipCode = shipCodeRepository.findByShipStatusAndShippingCode(ShipStatus.ACTIVE,
-					shipCodeStr);
-			if (optionalShipCode.isPresent()) {
-				ShipCode shipCode = optionalShipCode.get();
-				exportContainer.setStoragePeriod(shipCode.getStoragePeriod());
-			}
-
-		}
-
-	}
-
-	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
 	public void setSCN(ExportContainer exportContainer) {
 
 		String exportContainerNumber = null;
 		String vesselSCN = null; // vessel scn and ship scn are same
 
-		if (!(exportContainer == null)) {
+		if (exportContainer != null) {
 
 			exportContainerNumber = exportContainer.getContainer().getContainerNumber();
 			vesselSCN = exportContainer.getVesselSCN();
@@ -343,8 +318,8 @@ public class ExportGateInService {
 				sealValidationService.validateSeal(exportContainer);
 				dgContainerService.validateUserByPassDG(exportContainer);
 
-				if (exportContainer.getContainer().getContainerFullOrEmpty() == ContainerFullEmptyType.EMPTY
-						.getValue()) {
+				if (StringUtils.equalsIgnoreCase(exportContainer.getContainer().getContainerFullOrEmpty(),  
+						ContainerFullEmptyType.EMPTY.getValue())) {
 					if (StringUtils.isNotEmpty(exportContainer.getContainer().getContainerISOCode()))
 						throw new BusinessException("ISO Code mandatory. Please enter the code");
 					emptyContainerService.setEmptyContainerWeight(exportContainer,

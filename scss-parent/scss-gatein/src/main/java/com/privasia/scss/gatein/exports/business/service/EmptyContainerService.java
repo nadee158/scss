@@ -15,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.privasia.scss.common.dto.ExportContainer;
 import com.privasia.scss.common.enums.ContainerFullEmptyType;
-import com.privasia.scss.common.exception.BusinessException;
 import com.privasia.scss.core.model.ISOCode;
 import com.privasia.scss.gatein.service.IsoCodeService;
 
@@ -36,13 +35,14 @@ public class EmptyContainerService {
 
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
 	public void setEmptyContainerWeight(ExportContainer emptyContainer, String iso) {
-
+		
 		if (StringUtils.isNotEmpty(iso)) {
 			if (StringUtils.isNotEmpty(emptyContainer.getContainer().getContainerISOCode())) {
 				ISOCode isoCode = isoCodeService.getIsoCodeTarWeight(iso);
 
 				emptyContainer.setExpNetWeight(isoCode.getTareWeight());
 				emptyContainer.setEmptyWeight(isoCode.getTareWeight());
+				
 			}
 		}
 
@@ -58,11 +58,11 @@ public class EmptyContainerService {
 						exportContainer.getContainer().getContainerFullOrEmpty()))
 				.collect(Collectors.toList());
 
-		if (emptyContainerList != null && !emptyContainerList.isEmpty()) {
+		if (!(emptyContainerList == null || emptyContainerList.isEmpty())) {
 			// 1empty 0r both
 
 			if (emptyContainerList.size() == 1) {
-				// one empty and can have one full
+				// one empty and can have one full in exports
 
 				ExportContainer fullContainer = exports.stream()
 						.filter(expCon -> StringUtils.equalsIgnoreCase(ContainerFullEmptyType.FULL.getValue(),
@@ -73,12 +73,7 @@ public class EmptyContainerService {
 
 			} else { // all empty
 
-				ExportContainer emptyContainer02 = exports.stream()
-						.filter(expCon -> StringUtils.equalsIgnoreCase(ContainerFullEmptyType.EMPTY.getValue(),
-								expCon.getContainer().getContainerFullOrEmpty()))
-						.findFirst().orElse(null);
-
-				calculateWeightBridge(emptyContainerList.get(0), Optional.ofNullable(emptyContainer02), weightBridge);
+				calculateWeightBridge(exports.get(0), Optional.ofNullable(exports.get(1)), weightBridge);
 			}
 		}
 

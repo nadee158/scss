@@ -185,7 +185,7 @@ public class ExportContainer extends BaseContainer implements Serializable {
 	private boolean dontValidateDg = false;
 
 	private String lpkClass;
-	private boolean isRegisteredInEarlyEntry;
+	private boolean isRegisteredInEarlyEntry = false;
 	private LocalTime startEarlyEntry;
 
 	private LocalTime endEarlyEntry;
