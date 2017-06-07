@@ -180,7 +180,7 @@ public class DGContainerService {
 			 */
 			exportContainer.setDgWithinWindowEntry(false);
 			throw new BusinessException("DG container " + exportContainer.getContainer().getContainerNumber()
-					+ " approval record not found");
+					+ " approval record not found. Please proceed with manual validation");
 
 		}
 		return true;

@@ -20,8 +20,10 @@ import com.privasia.scss.common.enums.ShipStatus;
 import com.privasia.scss.common.exception.BusinessException;
 import com.privasia.scss.common.exception.ResultsNotFoundException;
 import com.privasia.scss.core.model.ShipCode;
+import com.privasia.scss.core.model.ShipSCN;
 import com.privasia.scss.core.model.WDCGlobalSetting;
 import com.privasia.scss.core.repository.ShipCodeRepository;
+import com.privasia.scss.core.repository.ShipSCNRepository;
 import com.privasia.scss.core.repository.WDCGlobalSettingRepository;
 
 /**
@@ -35,6 +37,8 @@ public class EarlyEntryService {
 
 	private ShipCodeRepository shipCodeRepository;
 
+	private ShipSCNRepository shipSCNRepository;
+
 	@Autowired
 	public void setWdcGlobalSettingRepository(WDCGlobalSettingRepository wdcGlobalSettingRepository) {
 		this.wdcGlobalSettingRepository = wdcGlobalSettingRepository;
@@ -45,9 +49,17 @@ public class EarlyEntryService {
 		this.shipCodeRepository = shipCodeRepository;
 	}
 
+	@Autowired
+	public void setShipSCNRepository(ShipSCNRepository shipSCNRepository) {
+		this.shipSCNRepository = shipSCNRepository;
+	}
+
 	public boolean isContainerHasAOpening(ExportContainer container) {// !c1.isAllowIn()
 
 		final LocalDateTime now = LocalDateTime.now();
+
+		// final LocalDateTime now = LocalDateTime.of(2017, 06, 05, 11, 50, 30);
+		// System.out.println("now *************** "+now);
 
 		Optional<Integer> storagePeriod = getStoragePeriod(container);
 
@@ -58,8 +70,8 @@ public class EarlyEntryService {
 				throw new BusinessException("Container " + container.getContainer().getContainerNumber()
 						+ "vessel ETA date not provided for early entry !");
 			vesselETADate.minusDays(1);
-			earlyEnrtyDate = vesselETADate.until(now, ChronoUnit.DAYS);
-
+			earlyEnrtyDate = now.until(vesselETADate, ChronoUnit.DAYS);
+			// System.out.println("earlyEnrtyDate "+earlyEnrtyDate);
 			// Before Eta Date
 			if (earlyEnrtyDate > 1) {
 				if (earlyEnrtyDate <= storagePeriod.get()) {
@@ -68,7 +80,8 @@ public class EarlyEntryService {
 					/**
 					 * Check if it is allowed for early entry
 					 */
-					if (container.isRegisteredInEarlyEntry()) {
+
+					if (isRegisteredForEarlyEntry(container)) {
 						container.setEarlyEntry(true);
 
 						/**
@@ -158,8 +171,37 @@ public class EarlyEntryService {
 				return Optional.of(shipCode.getStoragePeriod());
 			}
 		}
-
 		return Optional.ofNullable(null);
+
+	}
+
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+	public boolean isRegisteredForEarlyEntry(ExportContainer exportContainer) {
+
+		String exportContainerNumber = null;
+		String vesselSCN = null; // vessel scn and ship scn are same
+
+		if (exportContainer != null) {
+
+			exportContainerNumber = exportContainer.getContainer().getContainerNumber();
+			vesselSCN = exportContainer.getVesselSCN();
+
+			Optional<ShipSCN> optionalshipSCN = shipSCNRepository.fetchContainerSCN(vesselSCN, exportContainerNumber);
+
+			if (optionalshipSCN.isPresent()) {
+				ShipSCN shipSCN = optionalshipSCN.get();
+				exportContainer.setShipSCNID(Optional.of(shipSCN.getShipSCNID()));
+				exportContainer.setBypassEEntry(shipSCN.getScnByPass());
+				exportContainer.setRegisteredInEarlyEntry(true);
+				return true;
+			} else {
+				exportContainer.setRegisteredInEarlyEntry(false);
+				return false;
+			}
+
+		}
+
+		return false;
 
 	}
 

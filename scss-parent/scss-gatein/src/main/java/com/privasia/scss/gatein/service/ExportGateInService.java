@@ -154,7 +154,6 @@ public class ExportGateInService {
 	public GateInResponse validateExportsGateInRead(GateInResponse gateInResponse, LocalDateTime timegateIn) {
 
 		gateInResponse.getExportContainers().forEach(container -> {
-			setSCN(container);
 			vesselOmitService.isValidVesselOmit(container);
 			earlyEntryService.isContainerHasAOpening(container);
 			ssrService.checkExportSSR(timegateIn, container);
@@ -174,32 +173,7 @@ public class ExportGateInService {
 
 	}
 
-	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-	public void setSCN(ExportContainer exportContainer) {
-
-		String exportContainerNumber = null;
-		String vesselSCN = null; // vessel scn and ship scn are same
-
-		if (exportContainer != null) {
-
-			exportContainerNumber = exportContainer.getContainer().getContainerNumber();
-			vesselSCN = exportContainer.getVesselSCN();
-			System.out.println("scn " + vesselSCN);
-
-			Optional<ShipSCN> optionalshipSCN = shipSCNRepository.fetchContainerSCN(vesselSCN, exportContainerNumber);
-
-			if (optionalshipSCN.isPresent()) {
-				ShipSCN shipSCN = optionalshipSCN.get();
-				exportContainer.setShipSCNID(Optional.of(shipSCN.getShipSCNID()));
-				exportContainer.setBypassEEntry(shipSCN.getScnByPass());
-				exportContainer.setRegisteredInEarlyEntry(true);
-			} else {
-				exportContainer.setRegisteredInEarlyEntry(false);
-			}
-
-		}
-
-	}
+	
 
 	// @Async
 	@ISaDG
