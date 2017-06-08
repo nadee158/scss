@@ -128,9 +128,7 @@ public class ExportGateOutService {
 		}
 		return null;
 	}
-
-	// @Async
-	@SolasApplicable
+	
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
 	public void saveGateOutInfo(GateOutWriteRequest gateOutWriteRequest, Client gateOutClient, SystemUser gateOutClerk,
 			Client booth) {
@@ -176,7 +174,6 @@ public class ExportGateOutService {
 		// return new AsyncResult<Boolean>(true);
 	}
 
-	@SolasApplicable
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
 	public void testSolas(GateOutWriteRequest gateOutWriteRequest) {
 

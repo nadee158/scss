@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.privasia.scss.common.annotation.SolasApplicable;
 import com.privasia.scss.common.dto.ExportContainer;
 import com.privasia.scss.common.dto.GateOutMessage;
 import com.privasia.scss.common.dto.GateOutReponse;
@@ -189,7 +190,8 @@ public class ImportExportGateOutService {
 		}
 
 	}
-
+	
+	@SolasApplicable
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
 	public GateOutReponse saveGateOutInfo(GateOutWriteRequest gateOutWriteRequest) {
 
@@ -286,6 +288,24 @@ public class ImportExportGateOutService {
 		 */
 		gateOutReponse.setMessage(gateOutMessage);
 		return gateOutReponse;
+	}
+	
+	
+	@SolasApplicable
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
+	public GateOutReponse testSaveGateOutInfo(GateOutWriteRequest gateOutWriteRequest) {
+		
+		exportGateOutService.testSolas(gateOutWriteRequest);
+		
+		GateOutReponse gateOutReponse = new GateOutReponse();
+		GateOutMessage gateOutMessage = new GateOutMessage();
+		gateOutMessage.setCode(GateOutMessage.OK);
+		gateOutMessage.setDescription("Saved Successfully!");
+
+		
+		gateOutReponse.setMessage(gateOutMessage);
+		return gateOutReponse;
+		
 	}
 
 }

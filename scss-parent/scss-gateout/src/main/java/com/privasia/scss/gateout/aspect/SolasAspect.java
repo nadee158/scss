@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.privasia.scss.common.annotation.SolasApplicable;
 import com.privasia.scss.common.dto.GateOutWriteRequest;
 import com.privasia.scss.common.dto.SolasPassFileDTO;
+import com.privasia.scss.common.enums.ImpExpFlagStatus;
 import com.privasia.scss.common.exception.BusinessException;
 import com.privasia.scss.gateout.service.SolasGateOutService;
 
@@ -51,29 +52,40 @@ public class SolasAspect {
 	@AfterReturning(pointcut = "@annotation(solasApplicable)")
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRES_NEW, readOnly = false)
 	public void solasApplicable(JoinPoint joinPoint, SolasApplicable solasApplicable) {
-		
+
 		System.out.println("solasApplicable method start first ********************** ");
 		log.info("*****************   solasApplicable called *************************");
 
 		if (joinPoint.getArgs()[0] instanceof GateOutWriteRequest) {
 			List<Long> expIDList = new ArrayList<Long>();
 			GateOutWriteRequest gateOutWriteRequest = (GateOutWriteRequest) joinPoint.getArgs()[0];
-			
-			gateOutWriteRequest.getExportContainers().forEach(container ->{
-				log.info("Adding export ID ************"+container.getExportID());
-						expIDList.add(container.getExportID());
-			});
-			
-			SolasPassFileDTO solasPassFileDTO;
-			try {
-				log.info("Calling  generateSolasCertificateInfo method************");
-				solasPassFileDTO = solasGateOutService.generateSolasCertificateInfo(expIDList);
-				log.info("Calling  updateSolasInfo method************");
-				solasGateOutService.updateSolasInfo(expIDList, solasPassFileDTO);
-			} catch (IOException | JRException e) {
-				log.error("Exception in solasApplicable ******************** " + e.getMessage());
-				e.printStackTrace();
+
+			ImpExpFlagStatus impExpFlag = ImpExpFlagStatus.fromValue(gateOutWriteRequest.getImpExpFlag());
+
+			switch (impExpFlag) {
+			case EXPORT:
+			case IMPORT_EXPORT:
+				gateOutWriteRequest.getExportContainers().forEach(container -> {
+					log.info("Adding export ID ************" + container.getExportID());
+					expIDList.add(container.getExportID());
+					SolasPassFileDTO solasPassFileDTO;
+					try {
+						log.info("Calling  generateSolasCertificateInfo method ************");
+						solasPassFileDTO = solasGateOutService.generateSolasCertificateInfo(expIDList);
+						log.info("Calling  updateSolasInfo method ************");
+						solasGateOutService.updateSolasInfo(expIDList, solasPassFileDTO);
+					} catch (IOException | JRException e) {
+						log.error("Exception in solasApplicable ******************** " + e.getMessage());
+						e.printStackTrace();
+					}
+
+				});
+				break;
+
+			default:
+				break;
 			}
+
 		} else {
 			throw new BusinessException("Invalid agruments for update Solas");
 		}
