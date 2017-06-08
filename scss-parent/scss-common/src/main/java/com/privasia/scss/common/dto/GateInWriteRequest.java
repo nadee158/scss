@@ -32,7 +32,6 @@ public class GateInWriteRequest extends GateWriteRequest implements Serializable
 
 	private String hpatBookingId;
 	private String rejectReason;
-	private String gateInStatus;
 
 	private boolean oddReject = false;
 
@@ -118,14 +117,6 @@ public class GateInWriteRequest extends GateWriteRequest implements Serializable
 
 	public void setRejectReason(String rejectReason) {
 		this.rejectReason = rejectReason;
-	}
-
-	public String getGateInStatus() {
-		return gateInStatus;
-	}
-
-	public void setGateInStatus(String gateInStatus) {
-		this.gateInStatus = gateInStatus;
 	}
 
 	public int getTotalEmptyWeightBridge() {

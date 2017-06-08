@@ -141,9 +141,9 @@ public class ImportExportGateInService {
 		Optional<Client> clientOpt = clientRepository.findOne(gateInRequest.getClientID());
 		Client client = clientOpt
 				.orElseThrow(() -> new ResultsNotFoundException("Invalid client ID ! " + gateInRequest.getClientID()));
-		if (StringUtils.isEmpty(client.getLaneNo()))
-			throw new BusinessException("Lane no does not setup for client " + client.getClientID());
-		gateInRequest.setLaneNo(client.getLaneNo());
+		if (StringUtils.isEmpty(client.getUnitNo()))
+			throw new BusinessException("Unit no does not setup for client " + client.getClientID());
+		gateInRequest.setLaneNo(client.getUnitNo());
 
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		UserContext userContext = (UserContext) authentication.getPrincipal();
@@ -217,9 +217,9 @@ public class ImportExportGateInService {
 		Client gateInClient = clientRepository.findOne(gateInWriteRequest.getGateInClient()).orElseThrow(
 				() -> new ResultsNotFoundException("Invalid Client Id : " + gateInWriteRequest.getGateInClient()));
 
-		if (StringUtils.isEmpty(gateInClient.getLaneNo()))
-			throw new BusinessException("Lane no does not setup for client " + gateInClient.getClientID());
-		gateInWriteRequest.setLaneNo(gateInClient.getLaneNo());
+		if (StringUtils.isEmpty(gateInClient.getUnitNo()))
+			throw new BusinessException("Unit no does not setup for client " + gateInClient.getClientID());
+		gateInWriteRequest.setLaneNo(gateInClient.getUnitNo());
 		gateInWriteRequest.setCosmosPort(gateInClient.getCosmosPortNo());
 
 		SystemUser gateInClerk = systemUserRepository.findOne(SecurityHelper.getCurrentUserId())

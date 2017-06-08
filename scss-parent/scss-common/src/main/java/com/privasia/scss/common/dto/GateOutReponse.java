@@ -43,6 +43,8 @@ public class GateOutReponse implements Serializable {
 	// MM-dd-yyyy HH:mm
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateUtil.GLOBAL_DATE_TIME_PATTERN)
 	private LocalDateTime gateInDateTime;// -string
+	
+	private String gateInStatus;
 
 	public String getUserID() {
 		return userID;
@@ -162,6 +164,14 @@ public class GateOutReponse implements Serializable {
 
 	public void setGateInDateTime(LocalDateTime gateInDateTime) {
 		this.gateInDateTime = gateInDateTime;
+	}
+
+	public String getGateInStatus() {
+		return gateInStatus;
+	}
+
+	public void setGateInStatus(String gateInStatus) {
+		this.gateInStatus = gateInStatus;
 	}
 	
 	

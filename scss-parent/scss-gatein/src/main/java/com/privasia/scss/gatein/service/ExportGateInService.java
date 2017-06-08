@@ -294,7 +294,7 @@ public class ExportGateInService {
 
 				if (StringUtils.equalsIgnoreCase(exportContainer.getContainer().getContainerFullOrEmpty(),  
 						ContainerFullEmptyType.EMPTY.getValue())) {
-					if (StringUtils.isNotEmpty(exportContainer.getContainer().getContainerISOCode()))
+					if (StringUtils.isEmpty(exportContainer.getContainer().getContainerISOCode()))
 						throw new BusinessException("ISO Code mandatory. Please enter the code");
 					emptyContainerService.setEmptyContainerWeight(exportContainer,
 							exportContainer.getContainer().getContainerISOCode());

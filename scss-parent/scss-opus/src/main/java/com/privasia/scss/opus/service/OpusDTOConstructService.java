@@ -699,9 +699,7 @@ public class OpusDTOConstructService {
 			List<GOWriteRequestExportContainer> goWriteRequestExportContainerList = new ArrayList<GOWriteRequestExportContainer>();
 			exportContainers.stream()
 					.filter(exp -> StringUtils.equalsIgnoreCase(exp.getBaseCommonGateInOutAttribute().getEirStatus(),
-							TransactionStatus.APPROVED.getValue())
-							&& StringUtils.equalsIgnoreCase(exp.getCommonGateInOut().getGateInStatus(),
-									TransactionStatus.APPROVED.getValue()))
+							TransactionStatus.APPROVED.getValue()))
 					.forEach(exportContainer -> {
 						goWriteRequestExportContainerList
 								.add(exportContainerToGOWriteRequestExportContainer(exportContainer));
@@ -717,9 +715,7 @@ public class OpusDTOConstructService {
 			List<GOWriteRequestImportContainer> goWriteRequestImportContainerList = new ArrayList<GOWriteRequestImportContainer>();
 			importContainers.stream()
 					.filter(imp -> StringUtils.equalsIgnoreCase(imp.getBaseCommonGateInOutAttribute().getEirStatus(),
-							TransactionStatus.APPROVED.getValue())
-							&& StringUtils.equalsIgnoreCase(imp.getCommonGateInOut().getGateInStatus(),
-									TransactionStatus.APPROVED.getValue()))
+							TransactionStatus.APPROVED.getValue()))
 					.forEach(importContainer -> {
 						goWriteRequestImportContainerList
 								.add(importContainerToGOWriteRequestImportContainer(importContainer));

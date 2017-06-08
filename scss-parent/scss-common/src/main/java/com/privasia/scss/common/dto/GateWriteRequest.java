@@ -35,6 +35,8 @@ public class GateWriteRequest implements Serializable {
 	@NotNull(message = "cardId is required!")
 	private Long cardID;
 	
+	private String gateInStatus;
+	
 	public String getUserName() {
 		return userName;
 	}
@@ -113,6 +115,14 @@ public class GateWriteRequest implements Serializable {
 
 	public void setWhoddContainers(List<WHoddDTO> whoddContainers) {
 		this.whoddContainers = whoddContainers;
+	}
+	
+	public String getGateInStatus() {
+		return gateInStatus;
+	}
+
+	public void setGateInStatus(String gateInStatus) {
+		this.gateInStatus = gateInStatus;
 	}
 
 	@Override

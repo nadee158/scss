@@ -5,8 +5,6 @@ import java.time.LocalDateTime;
 
 import javax.validation.constraints.NotNull;
 
-import org.apache.commons.lang3.StringUtils;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.privasia.scss.common.util.DateUtil;
 

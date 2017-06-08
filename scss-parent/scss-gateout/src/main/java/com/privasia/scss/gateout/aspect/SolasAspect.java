@@ -3,6 +3,7 @@
  */
 package com.privasia.scss.gateout.aspect;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +24,8 @@ import com.privasia.scss.common.dto.GateOutWriteRequest;
 import com.privasia.scss.common.dto.SolasPassFileDTO;
 import com.privasia.scss.common.exception.BusinessException;
 import com.privasia.scss.gateout.service.SolasGateOutService;
+
+import net.sf.jasperreports.engine.JRException;
 
 /**
  * @author Janaka
@@ -60,11 +63,17 @@ public class SolasAspect {
 				log.info("Adding export ID ************"+container.getExportID());
 						expIDList.add(container.getExportID());
 			});
-			log.info("Calling  generateSolasCertificateInfo method************");
-			SolasPassFileDTO solasPassFileDTO = solasGateOutService.generateSolasCertificateInfo(expIDList);
-			solasGateOutService.updateSolasInfo(expIDList, solasPassFileDTO);
 			
-			return;
+			SolasPassFileDTO solasPassFileDTO;
+			try {
+				log.info("Calling  generateSolasCertificateInfo method************");
+				solasPassFileDTO = solasGateOutService.generateSolasCertificateInfo(expIDList);
+				log.info("Calling  updateSolasInfo method************");
+				solasGateOutService.updateSolasInfo(expIDList, solasPassFileDTO);
+			} catch (IOException | JRException e) {
+				log.error("Exception in solasApplicable ******************** " + e.getMessage());
+				e.printStackTrace();
+			}
 		} else {
 			throw new BusinessException("Invalid agruments for update Solas");
 		}

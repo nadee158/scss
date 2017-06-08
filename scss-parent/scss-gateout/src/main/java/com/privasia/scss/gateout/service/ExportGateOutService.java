@@ -99,6 +99,7 @@ public class ExportGateOutService {
 				gateOutRequest.setExpContainer2(export.getContainer().getContainerNumber());
 			}
 			gateOutRequest.setTruckHeadNo(export.getBaseCommonGateInOutAttribute().getPmHeadNo());
+			gateOutReponse.setGateInStatus(export.getCommonGateInOut().getGateInStatus().getValue());
 		});
 
 		return exportContainerList;
@@ -158,13 +159,16 @@ public class ExportGateOutService {
 			exports.getCommonGateInOut().setRejectReason(exportContainer.getGateOutRemarks());
 
 			exportsRepository.save(exports);
+			
+			if(StringUtils.equalsIgnoreCase(exports.getCommonGateInOut().getGateInStatus().getValue(), TransactionStatus.APPROVED.getValue())){
+				Optional<ExportsQ> exportQOpt = exportsQRepository.findOne(exports.getExportID());
+				ExportsQ exportq = exportQOpt.orElseThrow(() -> new ResultsNotFoundException(
+						"Not valid Gate In ExportQ Process found ! " + exports.getExportID()));
 
-			Optional<ExportsQ> exportQOpt = exportsQRepository.findOne(exports.getExportID());
-			ExportsQ exportq = exportQOpt.orElseThrow(() -> new ResultsNotFoundException(
-					"Not valid Gate In ExportQ Process found ! " + exports.getExportID()));
-
-			modelMapper.map(exports, exportq);
-			exportsQRepository.save(exportq);
+				modelMapper.map(exports, exportq);
+				exportsQRepository.save(exportq);
+			}
+		
 
 		});
 
@@ -189,6 +193,12 @@ public class ExportGateOutService {
 					"Invalid Exports Information to Update ! " + exportContainer.getExportID()));
 
 			exports.getBaseCommonGateInOutAttribute().setEirStatus(TransactionStatus.APPROVED);
+			try {
+				Thread.sleep(3000);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			exportsRepository.save(exports);
 
 		});

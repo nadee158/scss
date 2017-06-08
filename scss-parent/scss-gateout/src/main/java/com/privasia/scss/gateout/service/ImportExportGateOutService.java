@@ -22,6 +22,7 @@ import com.privasia.scss.common.dto.GateOutWriteRequest;
 import com.privasia.scss.common.dto.ImportContainer;
 import com.privasia.scss.common.dto.InProgressTrxDTO;
 import com.privasia.scss.common.enums.ImpExpFlagStatus;
+import com.privasia.scss.common.enums.TransactionStatus;
 import com.privasia.scss.common.exception.BusinessException;
 import com.privasia.scss.common.exception.ResultsNotFoundException;
 import com.privasia.scss.common.interfaces.ContainerExternalDataService;
@@ -136,9 +137,9 @@ public class ImportExportGateOutService {
 		Optional<Client> clientOpt = clientRepository.findOne(gateOutRequest.getClientID());
 		Client client = clientOpt
 				.orElseThrow(() -> new ResultsNotFoundException("Invalid lane ID ! " + gateOutRequest.getClientID()));
-		if (StringUtils.isEmpty(client.getLaneNo()))
-			throw new BusinessException("Lane no does not setup for client " + client.getClientID());
-		gateOutRequest.setLaneNo(client.getLaneNo());
+		if (StringUtils.isEmpty(client.getUnitNo()))
+			throw new BusinessException("Unit no does not setup for client " + client.getClientID());
+		gateOutRequest.setLaneNo(client.getUnitNo());
 
 		InProgressTrxDTO trxDTO = commonCardService.isTrxInProgress(gateOutRequest.getCardID());
 
@@ -165,22 +166,22 @@ public class ImportExportGateOutService {
 			default:
 				break;
 			}
-
-			OpusCosmosBusinessService businessService = containerExternalDataService
-					.getImplementationService(implementor);
-
+			
 			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 			UserContext userContext = (UserContext) authentication.getPrincipal();
-			log.info("userContext.getUsername() " + userContext.getUsername());
 			gateOutRequest.setUserName(userContext.getUsername());
 
 			gateOutReponse.setImportContainers(importContainers);
 			gateOutReponse.setExportContainers(exportContainers);
 			gateOutReponse.setTransactionType(trxDTO.getTrxType().name());
-
-			// call opus or cosmos-
-			gateOutReponse = businessService.sendGateOutReadRequest(gateOutRequest, gateOutReponse);
-
+			
+			// call opus or cosmos only for approved gate in state
+			if(StringUtils.equalsIgnoreCase(TransactionStatus.APPROVED.getValue(), gateOutReponse.getGateInStatus())){
+				OpusCosmosBusinessService businessService = containerExternalDataService
+						.getImplementationService(implementor);
+				gateOutReponse = businessService.sendGateOutReadRequest(gateOutRequest, gateOutReponse);
+			}
+		
 			return gateOutReponse;
 		} else {
 			throw new BusinessException(
@@ -207,9 +208,9 @@ public class ImportExportGateOutService {
 		Optional<Client> clientOpt = clientRepository.findOne(gateOutWriteRequest.getGateOutClient());
 		Client client = clientOpt.orElseThrow(
 				() -> new ResultsNotFoundException("Invalid lane ID ! " + gateOutWriteRequest.getGateOutClient()));
-		if (StringUtils.isEmpty(client.getLaneNo()))
-			throw new BusinessException("Lane no does not setup for client " + client.getClientID());
-		gateOutWriteRequest.setLaneNo(client.getLaneNo());
+		if (StringUtils.isEmpty(client.getUnitNo()))
+			throw new BusinessException("Unit no does not setup for client " + client.getClientID());
+		gateOutWriteRequest.setLaneNo(client.getUnitNo());
 		gateOutWriteRequest.setCosmosPort(client.getCosmosPortNo());
 
 		Optional<Client> boothOpt = clientRepository.findOne(gateOutWriteRequest.getGateOutBooth());
@@ -226,17 +227,21 @@ public class ImportExportGateOutService {
 		ImpExpFlagStatus impExpFlag = ImpExpFlagStatus.fromValue(gateOutWriteRequest.getImpExpFlag());
 
 		importExportCommonGateOutBusinessService.isValidGateOutLane(client, gateOutWriteRequest);
-
-		
-		OpusCosmosBusinessService businessService = containerExternalDataService
-				.getImplementationService(implementor);
 		
 		GateOutReponse gateOutReponse = new GateOutReponse();
 		gateOutReponse.setGateOUTDateTime(gateOutWriteRequest.getGateOUTDateTime());
 		gateOutReponse.setImportContainers(importContainers);
 		gateOutReponse.setExportContainers(exportContainers);
 		
-		gateOutReponse = businessService.sendGateOutWriteRequest(gateOutWriteRequest, gateOutReponse);
+		if(StringUtils.isEmpty(gateOutWriteRequest.getGateInStatus()))
+			throw new BusinessException(
+					"Gate In status Required for the transaction : " + gateOutWriteRequest.getGateInStatus());
+		
+		if(StringUtils.equalsIgnoreCase(TransactionStatus.APPROVED.getValue(), gateOutWriteRequest.getGateInStatus())){
+			OpusCosmosBusinessService businessService = containerExternalDataService.getImplementationService(implementor);
+			gateOutReponse = businessService.sendGateOutWriteRequest(gateOutWriteRequest, gateOutReponse);
+		}
+		
 		/*
 		 * Future<Boolean> impSave = null; Future<Boolean> expSave = null;
 		 */

@@ -164,7 +164,11 @@ public class SolasGateOutService {
 
 	//@Async
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
-	public SolasPassFileDTO generateSolasCertificateInfo(List<Long> expIDList) {
+	public SolasPassFileDTO generateSolasCertificateInfo(List<Long> expIDList) throws IOException, JRException {
+		
+		System.out.println("calling generateSolasCertificateInfo *************************** ");
+		log.info("calling generateSolasCertificateInfo *************************** ");
+		
 		if (expIDList == null || expIDList.isEmpty()) {
 			throw new BusinessException("No exports id available");
 		}
@@ -199,8 +203,6 @@ public class SolasGateOutService {
 				FileDTO fileInfoDTO = null;
 
 				Optional<String> fileId = Optional.ofNullable(null);
-
-				try {
 
 					solasIterator.forEachRemaining(exports -> {
 						constructSolasPassFileDTO(exports, solasPassFileDTO);
@@ -239,21 +241,21 @@ public class SolasGateOutService {
 					if (fileId.isPresent()) {
 						log.info("fileId  *************************** "+fileId.get());
 						System.out.println("calling exportGateOutService.updateExportReference  *************************** "+fileId);
+						log.info("calling exportGateOutService.updateExportReference  *************************** "+fileId);
 						exportGateOutService.updateExportReference(fileInfoDTO);
 					}else{
 						log.info("Failed to save in MongoDB : ");
 						throw new BusinessException("Failed to save in MongoDB : ");
 					}
 
-				} catch (Exception e) {
-					log.error("Exception in solas cert : "+e.getMessage());
-					e.printStackTrace();
-				} 
 				
 				return solasPassFileDTO;
+			}else{
+				log.info("*********** exportsList is empty ****************");
+				System.out.println("*********** exportsList is empty ****************");
 			}
 		}else{
-			log.info("*********** exportsList is null ****************"+expIDList.get(0));
+			log.info("*********** exportsList is null ****************");
 		}
 		return null;
 	}
