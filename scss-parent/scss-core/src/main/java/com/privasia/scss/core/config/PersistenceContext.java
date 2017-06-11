@@ -37,8 +37,8 @@ import com.zaxxer.hikari.HikariDataSource;
 @Configuration
 @EnableTransactionManagement
 @EnableJpaAuditing(dateTimeProviderRef = "dateTimeProvider")
-@EnableJpaRepositories(basePackages = "com.privasia.scss.core.repository", entityManagerFactoryRef = "entityManagerFactory",
-    transactionManagerRef = "transactionManager")
+@EnableJpaRepositories(basePackages = "com.privasia.scss.core.repository",
+    entityManagerFactoryRef = "entityManagerFactory", transactionManagerRef = "transactionManager")
 @EntityScan(basePackages = {"com.privasia.scss.core.model"})
 @EnableAutoConfiguration(exclude = {org.springframework.boot.autoconfigure.security.SecurityAutoConfiguration.class})
 public class PersistenceContext {
@@ -64,7 +64,7 @@ public class PersistenceContext {
     dataSourceConfig.setJdbcUrl(env.getRequiredProperty("spring.datasource.url"));
     dataSourceConfig.setUsername(env.getRequiredProperty("spring.datasource.username"));
     dataSourceConfig.setPassword(env.getRequiredProperty("spring.datasource.password"));
-    dataSourceConfig.setPoolName("scss");
+    dataSourceConfig.setPoolName(env.getRequiredProperty("spring.datasource.poolname"));
 
     dataSourceConfig.setConnectionTestQuery(env.getRequiredProperty("spr.datasource.validationQuery"));
 
@@ -122,9 +122,10 @@ public class PersistenceContext {
     // If the value of this property is true, Hibernate will format the SQL
     // that is written to the console.
     jpaProperties.put("hibernate.format_sql", env.getRequiredProperty("spring.jpa.format_sql"));
-    
-    jpaProperties.put("hibernate.enable_lazy_load_no_trans", env.getRequiredProperty("spring.jpa.properties.hibernate.enable_lazy_load_no_trans"));
-    
+
+    jpaProperties.put("hibernate.enable_lazy_load_no_trans",
+        env.getRequiredProperty("spring.jpa.properties.hibernate.enable_lazy_load_no_trans"));
+
     jpaProperties.put("hibernate.open-in-view", env.getRequiredProperty("spring.jpa.open-in-view"));
 
     entityManagerFactoryBean.setJpaProperties(jpaProperties);

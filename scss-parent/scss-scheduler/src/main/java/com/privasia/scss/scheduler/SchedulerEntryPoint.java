@@ -24,7 +24,7 @@ import com.privasia.scss.core.config.SCSSEntryPoint;
 @ComponentScan(basePackages = {"com.privasia.scss.*"})
 @EnableAutoConfiguration
 @PropertySource(value = {"classpath:scheduler_application.properties", "classpath:quartz.properties"})
-@Import({SCSSEntryPoint.class})
+@Import({SCSSEntryPoint.class, EmailConfig.class})
 @EntityScan(basePackages = {"com.privasia.scss.core.model"})
 @EnableJpaRepositories(basePackages = {"com.privasia.scss.core.repository"})
 @EnableAsync

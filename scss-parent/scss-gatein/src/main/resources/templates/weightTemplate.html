@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http:www.w3.org/1999/xhtml"
+	xmlns:th="http:www.thymeleaf.org">
+<head></head>
+<body>
+
+	<p>Dear Customer,</p>
+	<p>
+		<b> Please take note that the container below has been found with
+			following weight discrepancy prior to gate IN at Westports container
+			gate terminal: - </b>
+	</p>
+	<br />
+	<br />
+
+	<table width="400" border="1" cellpadding="0" cellspacing="0" bordercolor="#000000">
+		<tr>
+			<td colspan="2" style="font-size: 14px;"><b>WEIGHT
+					DISCREPANCY REPORT DURING GATE IN</b></td>
+		</tr>
+		<tr>
+			<td width="312" style="font-size: 12px;"><b>GATE IN TIME</b></td>
+			<td width="282" style="font-size: 12px;"><span th:text="${gateInTime}"></span></td>
+		</tr>
+		<tr>
+			<td style="font-size: 12px;"><b>BOOKING NO</b></td>
+			<td style="font-size: 12px;"><span th:text="${bookingNo}"></span></td>
+		</tr>
+		<tr>
+			<td style="font-size: 12px;"><b>CONTAINER NO</b></td>
+			<td style="font-size: 12px;"><span th:text="${contNo}"></span></td>
+		</tr>
+		<tr>
+			<td style="font-size: 12px;"><b>ISO CODE</b></td>
+			<td style="font-size: 12px;"><span th:text="${isoCode}"></span></td>
+		</tr>
+		<tr>
+			<td style="font-size: 12px;"><b>F/E FLAG</b></td>
+			<td style="font-size: 12px;"><span th:text="${fullEmptyFlag}"></span></td>
+		</tr>
+		<tr>
+			<td style="font-size: 12px;"><b>LINE</b></td>
+			<td style="font-size: 12px;"><span th:text="${lineCode}"></span></td>
+		</tr>
+		<tr>
+			<td style="font-size: 12px;"><b>PHYSICAL GROSS WEIGHT</b></td>
+			<td style="font-size: 12px;"><span th:text="${netWeight}"></span></td>
+		</tr>
+		<tr>
+			<td style="font-size: 12px;"><b>BOOKING GROSS WEIGHT</b></td>
+			<td style="font-size: 12px;"><span th:text="${cosmosWeight}"></span></td>
+		</tr>
+		<tr>
+			<td style="font-size: 12px;"><b>WEIGHT DIFFERENCE IN TON(S)</b></td>
+			<td style="font-size: 12px;"><b><span th:text="${weightDifferent}"></span></b></td>
+		</tr>
+		<tr>
+			<td style="font-size: 12px;"><b>PERCENTAGE DIFFERENCE</b></td>
+			<td style="font-size: 12px;"><font color="red"><b><span th:text="${signPercentage}"></span></b></font></td>
+		</tr>
+		<tr>
+			<td style="font-size: 12px;"><b>VESSEL SCN</b></td>
+			<td style="font-size: 12px;"><span th:text="${vesselScn}"></span></td>
+		</tr>
+		<tr>
+			<td style="font-size: 12px;"><b>VESSEL NAME</b></td>
+			<td style="font-size: 12px;"><span th:text="${vesselName}"></span></td>
+		</tr>
+	</table>
+
+	<p>&nbsp;</p>
+	<p>This is for your info and further action before the container is
+		loaded onto vessel.</p>
+	<p>&nbsp;</p>
+	<p>
+		<b>Thank You,</b>
+	</p>
+	Logistics Department
+	<br /> Westports Malaysia Sdn Bhd
+	<br /> Phone : 03-3169 4066
+	<br /> For after office hours, please +603-3169 4066 / +603-3169 4062
+
+</body>
+</html>

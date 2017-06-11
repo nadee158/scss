@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http:www.w3.org/1999/xhtml"
+	xmlns:th="http:www.thymeleaf.org">
+<head></head>
+<body>
+
+	<p>Dear Customer,</p>
+	<p>
+		Please take note that the container below has beed found to be pre
+		booked under a different<br /> size compared to the actual one that
+		came to Westports container gate terminal.
+	</p>
+	<br />
+	<br />
+
+	<table width="450" border="1" cellpadding="0" cellspacing="0" bordercolor="#000000">
+		<tr>
+			<td colspan="3"
+				style="font-size: 14px; text-align: center; background-color: rgb(196, 196, 196);"><b>CONTAINER
+					SIZE DISCREPANCY REPORT</b></td>
+		</tr>
+		<tr>
+			<td width="220" style="font-size: 12px;">GATE IN DATE/TIME</td>
+			<td width="10" style="background-color: rgb(196, 196, 196);">&nbsp;</td>
+			<td width="220" style="font-size: 12px; text-align: right;"><span th:text="${gateInTime}"></span></td>
+		</tr>
+		<tr>
+			<td width="220" style="font-size: 12px;">BOOKING NO</td>
+			<td width="10" style="background-color: rgb(196, 196, 196);">&nbsp;</td>
+			<td width="220" style="font-size: 12px; text-align: right;"><span th:text="${bookingNo}"></span></td>
+		</tr>
+		<tr>
+			<td style="font-size: 12px;">CONTAINER NO</td>
+			<td width="10" style="background-color: rgb(196, 196, 196);">&nbsp;</td>
+			<td style="font-size: 12px; text-align: right;"><span th:text="${contNo}"></span></td>
+		</tr>
+		<tr>
+			<td style="font-size: 12px;">F/E Flag</td>
+			<td width="10" style="background-color: rgb(196, 196, 196);">&nbsp;</td>
+			<td style="font-size: 12px; text-align: right;"><span th:text="${fullEmptyFlag}"></span></td>
+		</tr>
+		<tr>
+			<td style="font-size: 12px;">Line</td>
+			<td width="10" style="background-color: rgb(196, 196, 196);">&nbsp;</td>
+			<td style="font-size: 12px; text-align: right;"><span th:text="${lineCode}"></span></td>
+		</tr>
+		<tr>
+			<td style="font-size: 12px;">Haulage CO.</td>
+			<td width="10" style="background-color: rgb(196, 196, 196);">&nbsp;</td>
+			<td style="font-size: 12px; text-align: right;"><span th:text="${haulageCompany}"></span></td>
+		</tr>
+		<tr>
+			<td style="font-size: 12px;">COSMOS ISO SIZE</td>
+			<td width="10" style="background-color: rgb(196, 196, 196);">&nbsp;</td>
+			<td style="font-size: 12px; text-align: right;"><span th:text="${cosmosIsoCode}"></span></td>
+		</tr>
+		<tr>
+			<td style="font-size: 12px;">HPAB ISO SIZE</td>
+			<td width="10" style="background-color: rgb(196, 196, 196);">&nbsp;</td>
+			<td style="font-size: 12px; text-align: right;"><span th:text="${hpabIsoCode}"></span></td>
+		</tr>
+		<tr>
+			<td style="font-size: 12px;">SCSS ISO SIZE</td>
+			<td width="10" style="background-color: rgb(196, 196, 196);">&nbsp;</td>
+			<td style="font-size: 12px; text-align: right;"><span th:text="${isoCode}"></span></td>
+		</tr>
+	</table>
+
+	<p>&nbsp;</p>
+	<p>This is for you info and further action.</p>
+	<p>&nbsp;</p>
+	<p>
+		<b>Thank You,</b>
+	</p>
+	Logistics Department
+	<br /> Westports Malaysia Sdn Bhd
+	<br /> Phone : 03-3169 4066
+	<br /> For after office hours, please +603-3169 4066 / +603-3169 4062
+
+</body>
+</html>

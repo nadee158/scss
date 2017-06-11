@@ -1,4 +1,4 @@
-package com.privasia.scss.core.config;
+package com.privasia.scss.gatein;
 
 import java.util.Collections;
 import java.util.Properties;

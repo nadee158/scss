@@ -58,7 +58,7 @@ public class OracleDBConfig {
     return new AuditingDateTimeProvider(currentDateTimeService);
   }
 
-  
+
   @Bean(name = "cosmosOracleDataSource", destroyMethod = "close")
   public DataSource cosmosOracleDataSource(Environment env) {
 
@@ -67,16 +67,19 @@ public class OracleDBConfig {
     dataSourceConfig.setJdbcUrl(env.getRequiredProperty("spring.ds_ora.datasource.url"));
     dataSourceConfig.setUsername(env.getRequiredProperty("spring.ds_ora.datasource.username"));
     dataSourceConfig.setPassword(env.getRequiredProperty("spring.ds_ora.datasource.password"));
-    dataSourceConfig.setPoolName("cosmos-oracle");
+    dataSourceConfig.setPoolName(env.getRequiredProperty("spring.ds_ora.datasource.poolname"));
+
 
     dataSourceConfig.setConnectionTestQuery(env.getRequiredProperty("spring.ds_ora.datasource.validationQuery"));
 
-    dataSourceConfig.setConnectionTimeout(Long.parseLong(env.getRequiredProperty("spring.ds_ora.datasource.connectionTimeout")));
+    dataSourceConfig
+        .setConnectionTimeout(Long.parseLong(env.getRequiredProperty("spring.ds_ora.datasource.connectionTimeout")));
     dataSourceConfig.setIdleTimeout(Long.parseLong(env.getRequiredProperty("spring.ds_ora.datasource.idleTimeout")));
     dataSourceConfig.setInitializationFailFast(false);
+    dataSourceConfig.setLeakDetectionThreshold(
+        Long.parseLong(env.getRequiredProperty("spring.ds_ora.datasource.leakDetection.threshold")));
     dataSourceConfig
-        .setLeakDetectionThreshold(Long.parseLong(env.getRequiredProperty("spring.ds_ora.datasource.leakDetection.threshold")));
-    dataSourceConfig.setMaximumPoolSize(Integer.parseInt(env.getRequiredProperty("spring.ds_ora.datasource.maximumPoolSize")));
+        .setMaximumPoolSize(Integer.parseInt(env.getRequiredProperty("spring.ds_ora.datasource.maximumPoolSize")));
     dataSourceConfig.setMaxLifetime(Integer.parseInt(env.getRequiredProperty("spring.ds_ora.datasource.maxLifetime")));
     dataSourceConfig.setMinimumIdle(Integer.parseInt(env.getRequiredProperty("spring.ds_ora.datasource.minimumIdle")));
 
@@ -93,7 +96,7 @@ public class OracleDBConfig {
 
   }
 
-  
+
   @Bean(name = "cosmosOracleEntityManagerFactory")
   public LocalContainerEntityManagerFactoryBean cosmosOracleEntityManagerFactory(
       @Qualifier("cosmosOracleDataSource") DataSource dataSource, Environment env) {
@@ -116,7 +119,8 @@ public class OracleDBConfig {
 
     // Configures the naming strategy that is used when Hibernate creates
     // new database objects and schema elements
-    jpaProperties.put("hibernate.ejb.naming_strategy", env.getRequiredProperty("spring.ds_ora.jpa.hibernate.naming-strategy"));
+    jpaProperties.put("hibernate.ejb.naming_strategy",
+        env.getRequiredProperty("spring.ds_ora.jpa.hibernate.naming-strategy"));
 
     // If the value of this property is true, Hibernate writes all SQL
     // statements to the console.

@@ -47,7 +47,7 @@ public class LpkediPersistenceContext {
     dataSourceConfig.setJdbcUrl(env.getRequiredProperty("lpkedi.spring.datasource.url"));
     dataSourceConfig.setUsername(env.getRequiredProperty("lpkedi.spring.datasource.username"));
     dataSourceConfig.setPassword(env.getRequiredProperty("lpkedi.spring.datasource.password"));
-    dataSourceConfig.setPoolName("scss_lpkedi");
+    dataSourceConfig.setPoolName(env.getRequiredProperty("lpkedi.spring.datasource.poolname"));
 
     dataSourceConfig.setConnectionTestQuery(env.getRequiredProperty("lpkedi.spring.datasource.validationQuery"));
 

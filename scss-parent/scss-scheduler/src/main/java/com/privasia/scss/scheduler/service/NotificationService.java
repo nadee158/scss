@@ -1,4 +1,4 @@
-package com.privasia.scss.core.service;
+package com.privasia.scss.scheduler.service;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -134,6 +134,7 @@ public class NotificationService {
         Context context = new Context();
         String subject =
             "CONTAINER SIZE DISCREPANCY - " + StringUtils.trim(exportContainer.getContainer().getContainerNumber());
+        System.out.println("subject " + subject);
         try {
           context.setVariable(ApplicationConstants.EMAIL_BCC, shipEmail.getEmailBCC());
           context.setVariable(ApplicationConstants.EMAIL_CC, shipEmail.getEmailCC());

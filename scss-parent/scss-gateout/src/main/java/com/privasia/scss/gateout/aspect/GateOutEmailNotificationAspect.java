@@ -18,7 +18,7 @@ import com.privasia.scss.common.annotation.DSOSealNotification;
 import com.privasia.scss.common.dto.GateOutWriteRequest;
 import com.privasia.scss.common.dto.ImportContainer;
 import com.privasia.scss.common.exception.BusinessException;
-import com.privasia.scss.core.service.NotificationService;
+import com.privasia.scss.gateout.service.NotificationService;
 
 /**
  * @author Janaka

@@ -34,7 +34,7 @@ import com.privasia.scss.etpws.ETPWsEntryPoint;
     "classpath:opus_application.properties", "classpath:ws.properties", "classpath:lpkedi.properties",
     "classpath:lpkedi_sql.properties", "classpath:ws.properties", "classpath:cosmos_msg_codes.properties"})
 @Import({AS400DBConfig.class, OracleDBConfig.class, SCSSEntryPoint.class, LpkediPersistenceContext.class,
-    ETPWsEntryPoint.class})
+    ETPWsEntryPoint.class, EmailConfig.class})
 @EnableAsync
 public class GateInEntryPoint extends SpringBootServletInitializer {
 

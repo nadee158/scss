@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http:www.w3.org/1999/xhtml"
+	xmlns:th="http:www.thymeleaf.org">
+<head></head>
+<body>
+
+	<p>Dear Customer,</p>
+	<p>Please take note that we have detected a container with a non
+		standard seal line</p>
+	<p>code for you particular line.</p>
+	<br />
+	<br />
+	<p>The details are as follow:</p>
+
+	<table width="450" border="1" cellpadding="0" cellspacing="0"
+		bordercolor="#000000">
+		<tr>
+			<td colspan="3"
+				style="font-size: 14px; text-align: center; background-color: rgb(196, 196, 196);"><b>SEAL
+					LINE CONTAINER DETAILS REPORT</b></td>
+		</tr>
+		<tr>
+			<td width="220" style="font-size: 12px;">GATE IN TIME</td>
+			<td width="10" style="background-color: rgb(196, 196, 196);">&nbsp;</td>
+			<td width="220" style="font-size: 12px; text-align: left;"><span th:text="${gateInTime}"></span></td>
+		</tr>
+		<tr>
+			<td width="220" style="font-size: 12px;">SEAL LINE CODE</td>
+			<td width="10" style="background-color: rgb(196, 196, 196);">&nbsp;</td>
+			<td width="220" style="font-size: 12px; text-align: left;"><span th:text="${sealCode}"></span></td>
+		</tr>
+		<tr>
+			<td style="font-size: 12px;">BOOKING NO</td>
+			<td width="10" style="background-color: rgb(196, 196, 196);">&nbsp;</td>
+			<td style="font-size: 12px; text-align: left;"><span th:text="${bookingNo}"></span></td>
+		</tr>
+		<tr>
+			<td style="font-size: 12px;">CONTAINER NO</td>
+			<td width="10" style="background-color: rgb(196, 196, 196);">&nbsp;</td>
+			<td style="font-size: 12px; text-align: left;"><span th:text="${contNo}"></span></td>
+		</tr>
+		<tr>
+			<td style="font-size: 12px;">ISO CODE</td>
+			<td width="10" style="background-color: rgb(196, 196, 196);">&nbsp;</td>
+			<td style="font-size: 12px; text-align: left;"><span th:text="${isoCode}"></span></td>
+		</tr>
+		<tr>
+			<td style="font-size: 12px;">F/E FLAG</td>
+			<td width="10" style="background-color: rgb(196, 196, 196);">&nbsp;</td>
+			<td style="font-size: 12px; text-align: left;"><span th:text="${fullEmptyFlag}"></span></td>
+		</tr>
+		<tr>
+			<td style="font-size: 12px;">LINE</td>
+			<td width="10" style="background-color: rgb(196, 196, 196);">&nbsp;</td>
+			<td style="font-size: 12px; text-align: left;"><span th:text="${lineCode}"></span></td>
+		</tr>
+		<tr>
+			<td style="font-size: 12px;">VESSEL SCN</td>
+			<td width="10" style="background-color: rgb(196, 196, 196);">&nbsp;</td>
+			<td style="font-size: 12px; text-align: left;"><span th:text="${vesselScn}"></span></td>
+		</tr>
+		<tr>
+			<td style="font-size: 12px;">VESSEL NAME</td>
+			<td width="10" style="background-color: rgb(196, 196, 196);">&nbsp;</td>
+			<td style="font-size: 12px; text-align: left;"><span th:text="${vesselName}"></span></td>
+		</tr>
+	</table>
+	
+	<p>Currently, you character rules include for the following first 3
+		characters:</p>
+	<p th:each="rule ${rules}" th:text="${rule.index+1}.${rule}"></p>
+
+	<p>&nbsp;</p>
+	<p>
+		<b>Please advice on whether we should or not put this seal line
+			code charcater rule</b>
+	</p>
+	<p>
+		<b>as one of the standards for future entry process.</b>
+	</p>
+	<p>&nbsp;</p>
+	<p>
+		<b>Thank You,</b>
+	</p>
+	Logistics Department
+	<br /> Westports Malaysia Sdn Bhd
+	<br /> Phone : 03-3169 4066
+	<br /> For after office hours, please 603-3169 4066 / 603-3169 4062
+
+</body>
+</html>

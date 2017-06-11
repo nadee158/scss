@@ -28,9 +28,9 @@ import com.privasia.scss.etpws.ETPWsEntryPoint;
 @ComponentScan(basePackages = {"com.privasia.scss.cosmos.*", "com.privasia.scss.gateout.*", "com.privasia.scss.core.*",
     "com.privasia.scss.opus.*", "com.privasia.scss.etpws.*", "com.privasia.scss.common.*",})
 @PropertySource(value = {"classpath:mongodb.properties", "classpath:cosmos_application.properties",
-    "classpath:cosmos_sql-dev.properties", "classpath:opus_application.properties", "classpath:ws.properties", 
+    "classpath:cosmos_sql-dev.properties", "classpath:opus_application.properties", "classpath:ws.properties",
     "classpath:cosmos_msg_codes.properties", "classpath:jasperreports_extension.properties"})
-@Import({AS400DBConfig.class, SCSSEntryPoint.class, OracleDBConfig.class, ETPWsEntryPoint.class})
+@Import({AS400DBConfig.class, SCSSEntryPoint.class, OracleDBConfig.class, ETPWsEntryPoint.class, EmailConfig.class})
 @EnableAsync
 public class GateOutEntryPoint extends SpringBootServletInitializer {
 

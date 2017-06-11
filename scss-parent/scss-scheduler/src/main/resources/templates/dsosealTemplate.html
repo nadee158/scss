@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head></head>
+<body>
+
+	<p>Dear Customer,</p>
+	<p>
+		Please take note that the pre-registered seal number for the container
+		below has been<br />identified to have updated its seal number during
+		gate out.
+	</p>
+	<br />
+	<br />
+
+	<table width="450" border="1" cellpadding="0" cellspacing="0" bordercolor="#000000">
+		<tr>
+			<td colspan="3" style="font-size: 14px; text-align: center; background-color: rgb(196, 196, 196);">
+			<b>UPDATED SEAL NUMBER REPORT</b></td>
+		</tr>
+		<tr>
+			<td width="220" style="font-size: 12px;">GATE OUT DATE/TIME</td>
+			<td width="10" style="background-color: rgb(196, 196, 196);">&nbsp;</td>
+			<td width="220" style="font-size: 12px; text-align: right;"><span th:text="${gateOutDateTime}"></span></td>
+		</tr>
+		<tr>
+			<td width="220" style="font-size: 12px;">CONTAINER NO</td>
+			<td width="10" style="background-color: rgb(196, 196, 196);">&nbsp;</td>
+			<td width="220" style="font-size: 12px; text-align: right;"><span th:text="${contNo}"></span></td>
+		</tr>
+		<tr>
+			<td style="font-size: 12px;">ISO CODE</td>
+			<td width="10" style="background-color: rgb(196, 196, 196);">&nbsp;</td>
+			<td style="font-size: 12px; text-align: right;"><span th:text="${isoCode}"></span></td>
+		</tr>
+		<tr>
+			<td style="font-size: 12px;">F/E Flag</td>
+			<td width="10" style="background-color: rgb(196, 196, 196);">&nbsp;</td>
+			<td style="font-size: 12px; text-align: right;"><span th:text="${fullEmptyFlag}"></span></td>
+		</tr>
+		<tr>
+			<td style="font-size: 12px;">Line</td>
+			<td width="10" style="background-color: rgb(196, 196, 196);">&nbsp;</td>
+			<td style="font-size: 12px; text-align: right;"><span th:text="${lineCode}"></span></td>
+		</tr>
+		<tr>
+			<td style="font-size: 12px;">Vessel SCN</td>
+			<td width="10" style="background-color: rgb(196, 196, 196);">&nbsp;</td>
+			<td style="font-size: 12px; text-align: right;"><span th:text="${vesselScn}"></span></td>
+		</tr>
+		<tr>
+			<td style="font-size: 12px;">Vessel Name</td>
+			<td width="10" style="background-color: rgb(196, 196, 196);">&nbsp;</td>
+			<td style="font-size: 12px; text-align: right;"><span th:text="${vesselName}"></span></td>
+		</tr>
+		<tr>
+			<td style="font-size: 12px;">DSO SEAL NO 1</td>
+			<td width="10" style="background-color: rgb(196, 196, 196);">&nbsp;</td>
+			<td style="font-size: 12px; text-align: right;"><span th:text="${dsoSealNo1}"></span></td>
+		</tr>
+		<tr>
+			<td style="font-size: 12px;">SCSS SEAL NO 1</td>
+			<td width="10" style="background-color: rgb(196, 196, 196);">&nbsp;</td>
+			<td style="font-size: 12px; text-align: right;"><span th:text="${scssSealNo1}"></span></td>
+		</tr>
+		<tr>
+			<td style="font-size: 12px;">DSO SEAL NO 2</td>
+			<td width="10" style="background-color: rgb(196, 196, 196);">&nbsp;</td>
+			<td style="font-size: 12px; text-align: right;"><span th:text="${dsoSealNo2}"></span></td>
+		</tr>
+		<tr>
+			<td style="font-size: 12px;">SCSS SEAL NO 2</td>
+			<td width="10" style="background-color: rgb(196, 196, 196);">&nbsp;</td>
+			<td style="font-size: 12px; text-align: right;"><span th:text="${scssSealNo2}"></span></td>
+		</tr>
+	</table>
+
+	<p>&nbsp;</p>
+	<p>
+		This is an auto notification for updated seal number execution and is
+		sent for your<br />inofrmation and further action.
+	</p>
+	<p>&nbsp;</p>
+	<p>
+		<b>Thank You,</b>
+	</p>
+	Logistics Department
+	<br /> Westports Malaysia Sdn Bhd
+	<br /> Phone : 03-3169 4066
+	<br /> For after office hours, please +603-3169 4066 / +603-3169 4062
+
+</body>
+</html>

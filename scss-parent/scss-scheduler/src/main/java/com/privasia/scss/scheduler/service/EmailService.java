@@ -1,4 +1,4 @@
-package com.privasia.scss.core.service;
+package com.privasia.scss.scheduler.service;
 
 import javax.mail.internet.InternetAddress;
 
@@ -16,6 +16,7 @@ import org.thymeleaf.context.Context;
 import com.privasia.scss.common.util.ApplicationConstants;
 import com.privasia.scss.core.model.SendMailQueue;
 import com.privasia.scss.core.repository.SendMailQueueRepository;
+import com.privasia.scss.core.service.WDCGlobalSettingService;
 
 @Service("emailService")
 public class EmailService {
@@ -54,6 +55,7 @@ public class EmailService {
 
 
   public String prepareAndSendEmail(String recipient, String subject, Context context, String templateName) {
+    System.out.println("prepareAndSendEmail ");
     emailContent = null;
     MimeMessagePreparator messagePreparator = mimeMessage -> {
       MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, true, "UTF-8"); // true =
@@ -77,6 +79,7 @@ public class EmailService {
       System.out.println("EMAIL CONTENT :" + emailContent);
       messageHelper.setText(emailContent, true);
     };
+    System.out.println("messagePreparator " + messagePreparator);
     javaMailSender.send(messagePreparator);
     return emailContent;
   }

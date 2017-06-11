@@ -17,7 +17,7 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 import com.privasia.scss.core.util.service.CurrentDateTimeService;
 
 @Configuration
-@Import({PersistenceContext.class, ModelMapConfig.class, EmailConfig.class})
+@Import({PersistenceContext.class, ModelMapConfig.class})
 @EnableAsync
 public class SCSSEntryPoint {
 

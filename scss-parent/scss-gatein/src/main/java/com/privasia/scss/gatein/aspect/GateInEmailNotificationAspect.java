@@ -21,7 +21,7 @@ import com.privasia.scss.common.annotation.WrongDoorNotification;
 import com.privasia.scss.common.dto.ExportContainer;
 import com.privasia.scss.common.dto.GateInWriteRequest;
 import com.privasia.scss.common.exception.BusinessException;
-import com.privasia.scss.core.service.NotificationService;
+import com.privasia.scss.gatein.service.NotificationService;
 
 /**
  * @author Janaka
@@ -33,7 +33,6 @@ public class GateInEmailNotificationAspect {
   private static final Log log = LogFactory.getLog(GateInEmailNotificationAspect.class);
 
   private NotificationService notificationService;
-
 
 
   @Autowired

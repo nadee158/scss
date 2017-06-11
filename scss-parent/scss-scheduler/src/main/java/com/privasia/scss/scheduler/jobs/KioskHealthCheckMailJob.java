@@ -11,13 +11,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.quartz.CronTriggerFactoryBean;
 import org.springframework.scheduling.quartz.JobDetailFactoryBean;
-import org.springframework.stereotype.Component;
 
-import com.privasia.scss.core.service.NotificationService;
 import com.privasia.scss.scheduler.config.ConfigureQuartz;
+import com.privasia.scss.scheduler.service.NotificationService;
 import com.privasia.scss.scheduler.util.AppLogger;
 
-//@Component
+// @Component
 @DisallowConcurrentExecution
 public class KioskHealthCheckMailJob implements Job {
 
