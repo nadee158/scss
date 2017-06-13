@@ -129,6 +129,7 @@ public class ExportGateOutService {
 		return null;
 	}
 	
+	@SolasApplicable
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
 	public void saveGateOutInfo(GateOutWriteRequest gateOutWriteRequest, Client gateOutClient, SystemUser gateOutClerk,
 			Client booth) {

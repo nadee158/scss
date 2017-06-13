@@ -6,11 +6,13 @@ package com.privasia.scss.gatein.test.service;
 import java.util.ArrayList;
 import java.util.List;
 
+
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.privasia.scss.common.dto.CommonContainerDTO;
 import com.privasia.scss.common.dto.ExportContainer;
@@ -24,6 +26,7 @@ import com.privasia.scss.gatein.test.GateInAbstractTest;
  * @author Janaka
  *
  */
+@Transactional(value = "cosmosOracleTransactionManager")
 public class CosmosServiceTest extends GateInAbstractTest {
 	
 	@Rule
@@ -67,5 +70,7 @@ public class CosmosServiceTest extends GateInAbstractTest {
 		
 		
 	}
+	
+
 
 }

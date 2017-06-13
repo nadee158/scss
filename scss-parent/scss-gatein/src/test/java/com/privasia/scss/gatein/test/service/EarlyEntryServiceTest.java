@@ -44,6 +44,7 @@ public class EarlyEntryServiceTest extends GateInAbstractTest {
 		
 		boolean results = earlyEntryService.isContainerHasAOpening(exportContainer);
 		
+		
 		System.out.println("results ****************************  "+results);
 	}
 

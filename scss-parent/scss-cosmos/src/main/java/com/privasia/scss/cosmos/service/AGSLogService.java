@@ -33,7 +33,7 @@ public class AGSLogService {
 		this.agsLogRepository = agsLogRepository;
 	}
 
-
+	//@Async
 	@Transactional(value = "cosmosOracleTransactionManager", propagation = Propagation.REQUIRED, readOnly = false)
 	public void saveAGSLog(SGS2CosmosRequest request, String response, int portNo) throws JAXBException{
 		System.out.println("*****************   saveAGSLog ******************** ");
@@ -60,6 +60,7 @@ public class AGSLogService {
 		agsResponse.setSendRCV(AGSMessageStatus.RECEIVE);
 		agsLogRepository.save(agsResponse);
 		System.out.println("*****************   saveAGSLog response ******************** "+agsResponse.getAgsMessageId());
+		
 		
 		
 	}

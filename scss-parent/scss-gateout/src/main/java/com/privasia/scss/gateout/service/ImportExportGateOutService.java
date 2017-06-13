@@ -191,7 +191,7 @@ public class ImportExportGateOutService {
 
 	}
 	
-	@SolasApplicable
+	
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
 	public GateOutReponse saveGateOutInfo(GateOutWriteRequest gateOutWriteRequest) {
 

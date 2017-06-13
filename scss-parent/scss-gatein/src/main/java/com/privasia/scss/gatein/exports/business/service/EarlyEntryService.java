@@ -131,10 +131,10 @@ public class EarlyEntryService {
 		WDCGlobalSetting wdcGlobalSetting = optWDCGlobalSetting.orElseThrow(
 				() -> new ResultsNotFoundException("No Result Found for WDCGlobalSetting Global Code : EE_TIME"));
 
-		DateTimeFormatter timeformatter = DateTimeFormatter.ofPattern("h:mm a");
+		DateTimeFormatter timeformatter = DateTimeFormatter.ofPattern("hh:mm a");
 
-		container.setStartEarlyEntry(LocalTime.parse(wdcGlobalSetting.getGlobalString(), timeformatter));
-		container.setEndEarlyEntry(LocalTime.parse(wdcGlobalSetting.getParamValue1(), timeformatter));
+		container.setStartEarlyEntry(LocalTime.parse(wdcGlobalSetting.getGlobalString().toUpperCase(), timeformatter));
+		container.setEndEarlyEntry(LocalTime.parse(wdcGlobalSetting.getParamValue1().toUpperCase(), timeformatter));
 
 		LocalDateTime now = LocalDateTime.now();
 		LocalDate nowDate = now.toLocalDate();

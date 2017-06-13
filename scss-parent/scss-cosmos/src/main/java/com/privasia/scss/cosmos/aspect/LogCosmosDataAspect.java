@@ -39,9 +39,9 @@ public class LogCosmosDataAspect {
 
 
 
-	@Async
+	//@Async
 	@AfterReturning(pointcut = "@annotation(logCosmosData)", returning = "response")
-	//@Transactional(value = "cosmosOracleTransactionManager", propagation = Propagation.REQUIRES_NEW, readOnly = false)
+	@Transactional(value = "cosmosOracleTransactionManager", propagation = Propagation.REQUIRES_NEW, readOnly = false)
 	public void logCosmosData(JoinPoint joinPoint, LogCosmosData logCosmosData, Object response) {
 
 		System.out.println("*****************   logCosmosData called *************************");

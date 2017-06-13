@@ -42,6 +42,7 @@ public class AGSClientService {
 	private static final int SECOND = 1000;
 	private static final int HEADER_SIZE = 51;
 	
+	
 	@LogCosmosData
 	public String sendToCosmos(SGS2CosmosRequest writeRequest, int portNo) throws JAXBException {
 
@@ -123,7 +124,7 @@ public class AGSClientService {
 		if (StringUtils.isEmpty(responseXML))
 			throw new BusinessException(
 					"No response received from cosmos for the request !  " + writeRequest.getMessage().getCSMCTL().getRQUI());
-
+		
 		return responseXML;
 
 	}

@@ -71,10 +71,16 @@ public class SolasAspect {
 					SolasPassFileDTO solasPassFileDTO;
 					try {
 						log.info("Calling  generateSolasCertificateInfo method ************");
+						
+						// time waiting for transaction to be commit
+						Thread.sleep(15000);
+						
 						solasPassFileDTO = solasGateOutService.generateSolasCertificateInfo(expIDList);
 						log.info("Calling  updateSolasInfo method ************");
+						
+						
 						solasGateOutService.updateSolasInfo(expIDList, solasPassFileDTO);
-					} catch (IOException | JRException e) {
+					} catch (IOException | JRException  | InterruptedException e) {
 						log.error("Exception in solasApplicable ******************** " + e.getMessage());
 						e.printStackTrace();
 					}

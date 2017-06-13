@@ -159,6 +159,8 @@ public class SolasGateOutService {
 					etpSolasLogService.saveETPSolasLog(solasETPDTOs);
 				}
 			}
+		}else{
+			log.info("*********** exportsList is null for etpSolas ****************");
 		}
 	}
 
