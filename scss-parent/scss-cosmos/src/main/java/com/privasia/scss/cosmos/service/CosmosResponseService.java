@@ -44,6 +44,9 @@ public class CosmosResponseService {
     this.cosmosMessageCode = cosmosMessageCode;
   }
 
+  // get the cosmosResponse from db
+  // GateInWriteRequest set as new object, set flag as impexp, new importcontainer list, add 2 also
+  // to export container list
   public GateInResponse extractCosmosGateInResponse(String cosmosResponse, GateInWriteRequest gateInWriteRequest)
       throws JAXBException {
 
@@ -221,7 +224,7 @@ public class CosmosResponseService {
 
       gateInResponse.getImportContainers().stream().forEach(importContainer -> {
         importContainer.setCallCard(Long.parseLong(gintrcinfr.getBZKNSC().trim()));
-
+        System.out.println("importContainer.getCallCard() " + importContainer.getCallCard());
       });
     }
 
@@ -229,7 +232,7 @@ public class CosmosResponseService {
 
       gateInResponse.getExportContainers().stream().forEach(exportContainer -> {
         exportContainer.setCallCard(Long.parseLong(gintrcinfr.getBZKNSC().trim()));
-
+        System.out.println("exportContainer.getCallCard() " + exportContainer.getCallCard());
       });
     }
 
