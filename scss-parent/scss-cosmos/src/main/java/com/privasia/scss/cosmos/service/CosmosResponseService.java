@@ -24,7 +24,10 @@ import com.privasia.scss.common.enums.ImpExpFlagStatus;
 import com.privasia.scss.common.exception.BusinessException;
 import com.privasia.scss.cosmos.util.COSMOSMessageCode;
 import com.privasia.scss.cosmos.xml.element.CSMCTL;
-import com.privasia.scss.cosmos.xml.element.Message;
+import com.privasia.scss.cosmos.xml.element.GINCNTDRPR;
+import com.privasia.scss.cosmos.xml.element.GINCNTPUPR;
+import com.privasia.scss.cosmos.xml.element.GINTRCINFR;
+import com.privasia.scss.cosmos.xml.element.ResponseMessage;
 import com.privasia.scss.cosmos.xml.element.SGS2CosmosResponse;
 
 /**
@@ -34,239 +37,242 @@ import com.privasia.scss.cosmos.xml.element.SGS2CosmosResponse;
 @Service("cosmosResponseService")
 public class CosmosResponseService {
 
-	private COSMOSMessageCode cosmosMessageCode;
+  private COSMOSMessageCode cosmosMessageCode;
 
-	@Autowired
-	public void setCosmosMessageCode(COSMOSMessageCode cosmosMessageCode) {
-		this.cosmosMessageCode = cosmosMessageCode;
-	}
+  @Autowired
+  public void setCosmosMessageCode(COSMOSMessageCode cosmosMessageCode) {
+    this.cosmosMessageCode = cosmosMessageCode;
+  }
 
-	public GateInResponse extractCosmosGateInResponse(String cosmosResponse,
-			GateInWriteRequest gateInWriteRequest) throws JAXBException {
-		
-		JAXBContext jaxbContext = JAXBContext.newInstance(SGS2CosmosResponse.class);
-		Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+  public GateInResponse extractCosmosGateInResponse(String cosmosResponse, GateInWriteRequest gateInWriteRequest)
+      throws JAXBException {
 
-		StringReader reader = new StringReader(cosmosResponse);
-		SGS2CosmosResponse response = (SGS2CosmosResponse) unmarshaller.unmarshal(reader);
+    JAXBContext jaxbContext = JAXBContext.newInstance(SGS2CosmosResponse.class);
+    Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
 
-		ImpExpFlagStatus impExpFlag = ImpExpFlagStatus.fromValue(gateInWriteRequest.getImpExpFlag());
-		GateInResponse gateInResponse = new GateInResponse();
-		gateInResponse.setImportContainers(gateInWriteRequest.getImportContainers());
-		gateInResponse.setExportContainers(gateInWriteRequest.getExportContainers());
+    StringReader reader = new StringReader(cosmosResponse);
+    SGS2CosmosResponse response = (SGS2CosmosResponse) unmarshaller.unmarshal(reader);
 
-		String errorCode = getCosmosError(response);
-		
-		System.out.println("errorCode : "+ errorCode);
+    ImpExpFlagStatus impExpFlag = ImpExpFlagStatus.fromValue(gateInWriteRequest.getImpExpFlag());
+    GateInResponse gateInResponse = new GateInResponse();
+    gateInResponse.setImportContainers(gateInWriteRequest.getImportContainers());
+    gateInResponse.setExportContainers(gateInWriteRequest.getExportContainers());
 
-		if (StringUtils.isNotEmpty(errorCode)) {
+    String errorCode = getCosmosError(response);
 
-			if (StringUtils.equalsIgnoreCase(errorCode, "INF0016")) {
+    System.out.println("errorCode : " + errorCode);
 
-				// set manual plan indicator
-				setManualPlanIndicatorForExports(gateInResponse);
-				setCallCardCode(response, gateInResponse);
-				gateInResponse.setManualPlanIndicator(true);
-				return gateInResponse;
+    if (StringUtils.isNotEmpty(errorCode)) {
 
-			} else {
-				// read the error
-				String messageDescription = cosmosMessageCode.getMessageFromCode(errorCode);
-				throw new BusinessException(messageDescription);
-			}
-		} else {
-			setCallCardCode(response, gateInResponse);
+      if (StringUtils.equalsIgnoreCase(errorCode, "INF0016")) {
 
-			switch (impExpFlag) {
-			case IMPORT:
-				if (!(gateInResponse.getImportContainers() == null || gateInResponse.getImportContainers().isEmpty())) {
-					setImportYardPositionAndBayCode(response, gateInResponse.getImportContainers());
+        // set manual plan indicator
+        setManualPlanIndicatorForExports(gateInResponse);
+        setCallCardCode(response, gateInResponse);
+        gateInResponse.setManualPlanIndicator(true);
+        return gateInResponse;
 
-				}
-				break;
-			case EXPORT:
-				if (!(gateInResponse.getExportContainers() == null || gateInResponse.getExportContainers().isEmpty())) {
-					setExportYardPositionAndBayCode(response, gateInResponse.getExportContainers());
+      } else {
+        // read the error
+        String messageDescription = cosmosMessageCode.getMessageFromCode(errorCode);
+        throw new BusinessException(messageDescription);
+      }
+    } else {
+      setCallCardCode(response, gateInResponse);
 
-				}
-				break;
-			case IMPORT_EXPORT:
-				if (!(gateInResponse.getImportContainers() == null || gateInResponse.getImportContainers().isEmpty())) {
-					setImportYardPositionAndBayCode(response, gateInResponse.getImportContainers());
+      switch (impExpFlag) {
+        case IMPORT:
+          if (!(gateInResponse.getImportContainers() == null || gateInResponse.getImportContainers().isEmpty())) {
+            setImportYardPositionAndBayCode(response, gateInResponse.getImportContainers());
 
-				}
-				if (!(gateInResponse.getExportContainers() == null || gateInResponse.getExportContainers().isEmpty())) {
-					setExportYardPositionAndBayCode(response, gateInResponse.getExportContainers());
+          }
+          break;
+        case EXPORT:
+          if (!(gateInResponse.getExportContainers() == null || gateInResponse.getExportContainers().isEmpty())) {
+            setExportYardPositionAndBayCode(response, gateInResponse.getExportContainers());
 
-				}
-				break;
-			default:
-				throw new BusinessException("Invalid transaction Type ! " + impExpFlag.name());
-			}
-		}
+          }
+          break;
+        case IMPORT_EXPORT:
+          if (!(gateInResponse.getImportContainers() == null || gateInResponse.getImportContainers().isEmpty())) {
+            setImportYardPositionAndBayCode(response, gateInResponse.getImportContainers());
 
-		return gateInResponse;
+          }
+          if (!(gateInResponse.getExportContainers() == null || gateInResponse.getExportContainers().isEmpty())) {
+            setExportYardPositionAndBayCode(response, gateInResponse.getExportContainers());
 
-	}
+          }
+          break;
+        default:
+          throw new BusinessException("Invalid transaction Type ! " + impExpFlag.name());
+      }
+    }
 
-	public void extractCosmosGateOutResponse(String cosmosResponse) throws JAXBException {
-		
-		JAXBContext jaxbContext = JAXBContext.newInstance(SGS2CosmosResponse.class);
-		Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+    return gateInResponse;
 
-		StringReader reader = new StringReader(cosmosResponse);
-		SGS2CosmosResponse response = (SGS2CosmosResponse) unmarshaller.unmarshal(reader);
+  }
 
-		String errorCode = getCosmosError(response);
+  public void extractCosmosGateOutResponse(String cosmosResponse) throws JAXBException {
 
-		if (StringUtils.isNotEmpty(errorCode)) {
+    JAXBContext jaxbContext = JAXBContext.newInstance(SGS2CosmosResponse.class);
+    Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
 
-			// read the error
-			String messageDescription = cosmosMessageCode.getMessageFromCode(errorCode);
-			throw new BusinessException(messageDescription);
+    StringReader reader = new StringReader(cosmosResponse);
+    SGS2CosmosResponse response = (SGS2CosmosResponse) unmarshaller.unmarshal(reader);
 
-		}
+    String errorCode = getCosmosError(response);
 
-	}
+    if (StringUtils.isNotEmpty(errorCode)) {
 
-	private List<ImportContainer> setImportYardPositionAndBayCode(SGS2CosmosResponse cosmosResponse,
-			List<ImportContainer> importContainers) {
+      // read the error
+      String messageDescription = cosmosMessageCode.getMessageFromCode(errorCode);
+      throw new BusinessException(messageDescription);
 
-		/*List<Message> elementList = cosmosResponse.getMessage();
+    }
 
-		if (elementList == null || elementList.isEmpty())
-			throw new BusinessException("Invalid response received from cosmos. No Message elements found! ");
+  }
 
-		List<GINCNTPUPR> yardPositionlist = elementList.stream().map(Message::getGINCNTPUPR)
-				.collect(Collectors.toList());
+  private List<ImportContainer> setImportYardPositionAndBayCode(SGS2CosmosResponse cosmosResponse,
+      List<ImportContainer> importContainers) {
 
-		if (yardPositionlist == null || yardPositionlist.isEmpty())
-			throw new BusinessException("Cannot find Yard Position information from cosmos ");
 
-		if (!(importContainers == null || importContainers.isEmpty())) {
+    List<ResponseMessage> elementList = cosmosResponse.getResponseMessage();
 
-			importContainers.stream().forEach(importContainer -> {
-				Optional<GINCNTPUPR> optElement = yardPositionlist.stream().filter(element -> StringUtils
-						.equalsIgnoreCase(element.getUNITSE(), importContainer.getContainer().getContainerNumber()))
-						.findAny();
+    if (elementList == null || elementList.isEmpty())
+      throw new BusinessException("Invalid response received from cosmos. No Message elements found! ");
 
-				GINCNTPUPR gincntpupr = optElement.orElseThrow(() -> new BusinessException("Container No "
-						+ importContainer.getContainer().getContainerNumber() + " not found to populate data"));
+    List<GINCNTPUPR> yardPositionlist =
+        elementList.stream().map(ResponseMessage::getGINCNTPUPR).collect(Collectors.toList());
 
-				importContainer.setYardBayCode(gincntpupr.getPKIDSE().trim());
-				importContainer.setYardPosition(gincntpupr.getPSIDSE().trim());
+    if (yardPositionlist == null || yardPositionlist.isEmpty())
+      throw new BusinessException("Cannot find Yard Position information from cosmos ");
 
-			});
-		}*/
+    if (!(importContainers == null || importContainers.isEmpty())) {
 
-		return importContainers;
-	}
+      importContainers.stream().forEach(importContainer -> {
+        Optional<GINCNTPUPR> optElement = yardPositionlist.stream().filter(element -> StringUtils
+            .equalsIgnoreCase(element.getUNITSE(), importContainer.getContainer().getContainerNumber())).findAny();
 
-	private List<ExportContainer> setExportYardPositionAndBayCode(SGS2CosmosResponse cosmosResponse,
-			List<ExportContainer> exportContainers) {
+        GINCNTPUPR gincntpupr = optElement.orElseThrow(() -> new BusinessException(
+            "Container No " + importContainer.getContainer().getContainerNumber() + " not found to populate data"));
 
-		/*List<Message> elementList = cosmosResponse.getMessage();
+        importContainer.setYardBayCode(gincntpupr.getPKIDSE().trim());
+        importContainer.setYardPosition(gincntpupr.getPSIDSE().trim());
 
-		if (elementList == null || elementList.isEmpty())
-			throw new BusinessException("Invalid response received from cosmos. No Message elements found! ");
+      });
+    }
 
-		List<GINCNTDRPR> yardPositionlist = elementList.stream().map(Message::getGINCNTDRPR)
-				.collect(Collectors.toList());
 
-		if (yardPositionlist == null || yardPositionlist.isEmpty())
-			throw new BusinessException("Cannot find Yard Position information from cosmos ");
+    return importContainers;
+  }
 
-		if (!(exportContainers == null || exportContainers.isEmpty())) {
+  private List<ExportContainer> setExportYardPositionAndBayCode(SGS2CosmosResponse cosmosResponse,
+      List<ExportContainer> exportContainers) {
 
-			exportContainers.stream().forEach(exportContainer -> {
-				Optional<GINCNTDRPR> optElement = yardPositionlist.stream().filter(element -> StringUtils
-						.equalsIgnoreCase(element.getUNITSE(), exportContainer.getContainer().getContainerNumber()))
-						.findAny();
 
-				GINCNTDRPR gincntdrpr = optElement.orElseThrow(() -> new BusinessException("Container No "
-						+ exportContainer.getContainer().getContainerNumber() + " not found to populate data"));
+    List<ResponseMessage> elementList = cosmosResponse.getResponseMessage();
 
-				exportContainer.setYardBayCode(gincntdrpr.getPKIDSE().trim());
-				exportContainer.setYardPosition(gincntdrpr.getPSIDSE().trim());
+    if (elementList == null || elementList.isEmpty())
+      throw new BusinessException("Invalid response received from cosmos. No Message elements found! ");
 
-			});
-		}*/
+    List<GINCNTDRPR> yardPositionlist =
+        elementList.stream().map(ResponseMessage::getGINCNTDRPR).collect(Collectors.toList());
 
-		return exportContainers;
-	}
+    if (yardPositionlist == null || yardPositionlist.isEmpty())
+      throw new BusinessException("Cannot find Yard Position information from cosmos ");
 
-	private GateInResponse setCallCardCode(SGS2CosmosResponse cosmosResponse, GateInResponse gateInResponse) {
+    if (!(exportContainers == null || exportContainers.isEmpty())) {
 
-		/*List<Message> elementList = cosmosResponse.getMessage();
+      exportContainers.stream().forEach(exportContainer -> {
+        Optional<GINCNTDRPR> optElement = yardPositionlist.stream().filter(element -> StringUtils
+            .equalsIgnoreCase(element.getUNITSE(), exportContainer.getContainer().getContainerNumber())).findAny();
 
-		if (elementList == null || elementList.isEmpty())
-			throw new BusinessException("Invalid response received from cosmos. No Message elements found! ");
+        GINCNTDRPR gincntdrpr = optElement.orElseThrow(() -> new BusinessException(
+            "Container No " + exportContainer.getContainer().getContainerNumber() + " not found to populate data"));
 
-		List<GINTRCINFR> callCardlist = elementList.stream().map(Message::getGINTRCINFR).collect(Collectors.toList());
+        exportContainer.setYardBayCode(gincntdrpr.getPKIDSE().trim());
+        exportContainer.setYardPosition(gincntdrpr.getPSIDSE().trim());
 
-		if (callCardlist == null || callCardlist.isEmpty())
-			throw new BusinessException("Cannot find Call card code information from cosmos ");
+      });
+    }
 
-		Optional<GINTRCINFR> optElement = callCardlist.stream().findAny();
 
-		GINTRCINFR gintrcinfr = optElement.get();
+    return exportContainers;
+  }
 
-		if (!(gateInResponse.getImportContainers() == null || gateInResponse.getImportContainers().isEmpty())) {
+  private GateInResponse setCallCardCode(SGS2CosmosResponse cosmosResponse, GateInResponse gateInResponse) {
 
-			gateInResponse.getImportContainers().stream().forEach(importContainer -> {
-				importContainer.setCallCard(Long.parseLong(gintrcinfr.getBZKNSC().trim()));
+    List<ResponseMessage> elementList = cosmosResponse.getResponseMessage();
 
-			});
-		}
+    if (elementList == null || elementList.isEmpty())
+      throw new BusinessException("Invalid response received from cosmos. No Message elements found! ");
 
-		if (!(gateInResponse.getExportContainers() == null || gateInResponse.getExportContainers().isEmpty())) {
+    List<GINTRCINFR> callCardlist =
+        elementList.stream().map(ResponseMessage::getGINTRCINFR).collect(Collectors.toList());
 
-			gateInResponse.getExportContainers().stream().forEach(exportContainer -> {
-				exportContainer.setCallCard(Long.parseLong(gintrcinfr.getBZKNSC().trim()));
+    if (callCardlist == null || callCardlist.isEmpty())
+      throw new BusinessException("Cannot find Call card code information from cosmos ");
 
-			});
-		}*/
+    Optional<GINTRCINFR> optElement = callCardlist.stream().findAny();
 
-		return gateInResponse;
-	}
+    GINTRCINFR gintrcinfr = optElement.get();
 
-	private String getCosmosError(SGS2CosmosResponse cosmosResponse) {
+    if (!(gateInResponse.getImportContainers() == null || gateInResponse.getImportContainers().isEmpty())) {
 
-		List<Message> elementList = cosmosResponse.getMessage();
+      gateInResponse.getImportContainers().stream().forEach(importContainer -> {
+        importContainer.setCallCard(Long.parseLong(gintrcinfr.getBZKNSC().trim()));
 
-		if (elementList == null || elementList.isEmpty())
-			throw new BusinessException("Invalid response received from cosmos. No Message elements found! ");
+      });
+    }
 
-		List<CSMCTL> csmctlList = elementList.stream().map(Message::getCSMCTL).collect(Collectors.toList());
+    if (!(gateInResponse.getExportContainers() == null || gateInResponse.getExportContainers().isEmpty())) {
 
-		if (csmctlList == null || csmctlList.isEmpty())
-			throw new BusinessException("Invalid cosmos response. No CSMCTL elements");
+      gateInResponse.getExportContainers().stream().forEach(exportContainer -> {
+        exportContainer.setCallCard(Long.parseLong(gintrcinfr.getBZKNSC().trim()));
 
-		Optional<CSMCTL> optElement = csmctlList.stream().findFirst();
+      });
+    }
 
-		CSMCTL csmctl = optElement
-				.orElseThrow(() -> new BusinessException("Invalid cosmos response. No CSMCTL elements"));
 
-		if (csmctl.getERRI() == null || StringUtils.isEmpty(csmctl.getERRI())) {
-			return null;
-		} else {
-			return csmctl.getERRI().trim();
+    return gateInResponse;
+  }
 
-		}
+  private String getCosmosError(SGS2CosmosResponse cosmosResponse) {
 
-	}
+    List<ResponseMessage> elementList = cosmosResponse.getResponseMessage();
 
-	private GateInResponse setManualPlanIndicatorForExports(GateInResponse gateInResponse) {
+    if (elementList == null || elementList.isEmpty())
+      throw new BusinessException("Invalid response received from cosmos. No Message elements found! ");
 
-		if (!(gateInResponse.getExportContainers() == null || gateInResponse.getExportContainers().isEmpty())) {
+    List<CSMCTL> csmctlList = elementList.stream().map(ResponseMessage::getCSMCTL).collect(Collectors.toList());
 
-			gateInResponse.getExportContainers().stream().forEach(exportContainer -> {
-				exportContainer.setManualPlanIndicator(true);
+    if (csmctlList == null || csmctlList.isEmpty())
+      throw new BusinessException("Invalid cosmos response. No CSMCTL elements");
 
-			});
-		}
+    Optional<CSMCTL> optElement = csmctlList.stream().findFirst();
 
-		return gateInResponse;
-	}
+    CSMCTL csmctl = optElement.orElseThrow(() -> new BusinessException("Invalid cosmos response. No CSMCTL elements"));
+
+    if (csmctl.getERRI() == null || StringUtils.isEmpty(csmctl.getERRI())) {
+      return null;
+    } else {
+      return csmctl.getERRI().trim();
+
+    }
+
+  }
+
+  private GateInResponse setManualPlanIndicatorForExports(GateInResponse gateInResponse) {
+
+    if (!(gateInResponse.getExportContainers() == null || gateInResponse.getExportContainers().isEmpty())) {
+
+      gateInResponse.getExportContainers().stream().forEach(exportContainer -> {
+        exportContainer.setManualPlanIndicator(true);
+
+      });
+    }
+
+    return gateInResponse;
+  }
 
 }

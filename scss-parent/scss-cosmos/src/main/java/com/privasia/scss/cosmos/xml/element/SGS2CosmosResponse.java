@@ -13,16 +13,18 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 public class SGS2CosmosResponse implements Serializable {
 
   private static final long serialVersionUID = 1L;
-  private List<Message> message;
+  private List<ResponseMessage> responseMessage;
 
-  public List<Message> getMessage() {
-    return message;
+
+  public List<ResponseMessage> getResponseMessage() {
+    return responseMessage;
   }
 
   @XmlElement(name = "Message")
-  public void setMessage(List<Message> message) {
-    this.message = message;
+  public void setResponseMessage(List<ResponseMessage> responseMessage) {
+    this.responseMessage = responseMessage;
   }
+
 
   @Override
   public String toString() {

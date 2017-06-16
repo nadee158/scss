@@ -137,7 +137,7 @@ public class GateOutXMLRequestService {
     CosmosGateInImport import1 = new CosmosGateInImport();
     import1.setCSMCTL(csmctl);
     import1.setGINCNTPUP(gincntpup);
-    //import1.setGOTTRCINF(gottrcinf);
+    // import1.setGOTTRCINF(gottrcinf);
     import1.setIndex(1);
 
     CosmosGateInWriteRequest cosmos = new CosmosGateInWriteRequest();
@@ -216,20 +216,20 @@ public class GateOutXMLRequestService {
     CosmosGateOutImport import1 = new CosmosGateOutImport();
     import1.setCSMCTL(csmctl);
     import1.setGOTCNTINF(gotcninf);
-    //import1.setGOTTRCINF(gottrcinf);
+    // import1.setGOTTRCINF(gottrcinf);
     import1.setIndex(1);
 
     CosmosGateOutWriteRequest cosmos = new CosmosGateOutWriteRequest();
     if (type.equals("exp")) {
-      //cosmos.setExport(export);
+      // cosmos.setExport(export);
       cosmos.setImportList(null);
     } else if (type.equals("imp")) {
       List<CosmosGateOutImport> importList = new ArrayList<>();
       importList.add(import1);
       cosmos.setImportList(importList);
-      //cosmos.setExport(null);
+      // cosmos.setExport(null);
     } else {
-      //cosmos.setExport(export);
+      // cosmos.setExport(export);
       List<CosmosGateOutImport> importList = new ArrayList<>();
       importList.add(import1);
       cosmos.setImportList(importList);
@@ -265,8 +265,8 @@ public class GateOutXMLRequestService {
 
       Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
       com.privasia.scss.cosmos.xml.element.SGS2CosmosResponse response =
-          (com.privasia.scss.cosmos.xml.element.SGS2CosmosResponse) jaxbUnmarshaller.unmarshal(file); 
-    
+          (com.privasia.scss.cosmos.xml.element.SGS2CosmosResponse) jaxbUnmarshaller.unmarshal(file);
+
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -321,10 +321,10 @@ public class GateOutXMLRequestService {
       jaxbMarshaller.marshal(cosmos, sw);
 
       int portNo = 12013;
-      String host = "172.21.150.1"; 
-      
+      String host = "172.21.150.1";
+
       String replyXML = "";
-      //String replyXML = AGSClient.sendXMLMessage(sw.toString(), portNo);
+      // String replyXML = AGSClient.sendXMLMessage(sw.toString(), portNo);
       System.out.println(replyXML);
 
       // Unmarshalling
@@ -334,7 +334,7 @@ public class GateOutXMLRequestService {
       InputStream is = new ByteArrayInputStream(replyXML.getBytes());
       com.privasia.scss.cosmos.xml.element.SGS2CosmosResponse customer =
           (com.privasia.scss.cosmos.xml.element.SGS2CosmosResponse) jaxbUnmarshaller.unmarshal(is);
-      System.out.println(customer.getMessage().get(0).getCSMCTL().getERRI());
+      System.out.println(customer.getResponseMessage().get(0).getCSMCTL().getERRI());
 
     } catch (Exception e) {
       e.printStackTrace();

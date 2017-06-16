@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.privasia.scss.cosmos.dto.common.CosmosCommonValuesDTO;
-import com.privasia.scss.cosmos.xml.element.Message;
+import com.privasia.scss.cosmos.xml.element.RequestMessage;
 
 /**
  * @author Janaka
@@ -38,13 +38,13 @@ public class MessageService {
 	}
 	
 	
-	public Message constructGateInRootMessage(CosmosCommonValuesDTO commonValuesDTO) {
-		Message message = new Message();
-		message.setIndex(1);
-		message.setCSMCTL(csmctlService.constructCSMCTL(commonValuesDTO));
-		message.setGINTRCINF(gintrcinfService.constructGINTRCINF(commonValuesDTO));
-		message.setGOTTRCINF(null);
-		return message;
+	public RequestMessage constructGateInRootMessage(CosmosCommonValuesDTO commonValuesDTO) {
+		RequestMessage requestMessage = new RequestMessage();
+		requestMessage.setIndex(1);
+		requestMessage.setCSMCTL(csmctlService.constructCSMCTL(commonValuesDTO));
+		requestMessage.setGINTRCINF(gintrcinfService.constructGINTRCINF(commonValuesDTO));
+		requestMessage.setGOTTRCINF(null);
+		return requestMessage;
 	}
 
 }

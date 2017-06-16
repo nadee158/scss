@@ -16,15 +16,15 @@ public class SGS2CosmosRequest implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private Message message;
+	private RequestMessage requestMessage;
 	
-	public Message getMessage() {
-		return message;
+	public RequestMessage getMessage() {
+		return requestMessage;
 	}
 	
 	@XmlElement(name = "Message")
-	public void setMessage(Message message) {
-		this.message = message;
+	public void setMessage(RequestMessage requestMessage) {
+		this.requestMessage = requestMessage;
 	}
 
 	@Override

@@ -39,7 +39,7 @@ import com.privasia.scss.cosmos.dto.request.CosmosGateInWriteRequest;
 import com.privasia.scss.cosmos.dto.request.CosmosGateOutImport;
 import com.privasia.scss.cosmos.dto.request.CosmosGateOutWriteRequest;
 import com.privasia.scss.cosmos.repository.CosmosODDRepository;
-import com.privasia.scss.cosmos.xml.element.Message;
+import com.privasia.scss.cosmos.xml.element.RequestMessage;
 import com.privasia.scss.cosmos.xml.element.SGS2CosmosRequest;
 import com.privasia.scss.cosmos.xml.element.SGS2CosmosResponse;
 import com.privasia.scss.cosmos.xml.element.service.CSMCTLService;
@@ -224,8 +224,8 @@ public class CosmosService implements OpusCosmosBusinessService {
 
 		try {
 			SGS2CosmosRequest cosmosRequest = new SGS2CosmosRequest();
-			Message message = messageService.constructGateInRootMessage(commonValuesDTO);
-			cosmosRequest.setMessage(message);
+			RequestMessage requestMessage = messageService.constructGateInRootMessage(commonValuesDTO);
+			cosmosRequest.setMessage(requestMessage);
 			
 			
 			//cosmosRequest.setCSMCTL(csmctlService.constructCSMCTL(commonValuesDTO));
@@ -354,8 +354,8 @@ public class CosmosService implements OpusCosmosBusinessService {
 		}
 		GateInResponse gateInReponse = null;
 		try {
-			Message message = messageService.constructGateInRootMessage(commonValuesDTO);
-			cosmosGateInWriteRequest.setMessage(message);
+			RequestMessage requestMessage = messageService.constructGateInRootMessage(commonValuesDTO);
+			cosmosGateInWriteRequest.setMessage(requestMessage);
 			
 			String cosmosResponse = agsClientService.sendToCosmos(cosmosGateInWriteRequest,
 					gateInWriteRequest.getCosmosPort());
