@@ -68,58 +68,65 @@ public class CosmosResponseServiceTest extends GateInAbstractTest {
       logs.forEach(log -> {
         String cosmosResponse = log.getXmlData();
 
-        List<ExportContainer> exportContainers = new ArrayList<ExportContainer>();
-        List<ImportContainer> importContainers = new ArrayList<ImportContainer>();
+        if (!((StringUtils.contains(cosmosResponse, "GOTTRCINFR"))
+            || (StringUtils.contains(cosmosResponse, "<GOTTRCINFR>")))) {
+          List<ExportContainer> exportContainers = new ArrayList<ExportContainer>();
+          List<ImportContainer> importContainers = new ArrayList<ImportContainer>();
 
-        GateInResponse gateInResponse = null;
-        try {
-          SGS2CosmosResponse response = getUnmarshalledObject(cosmosResponse);
-          if (!(response == null || response.getResponseMessage() == null || response.getResponseMessage().isEmpty())) {
-            response.getResponseMessage().forEach(msg -> {
+          GateInResponse gateInResponse = null;
+          try {
+            SGS2CosmosResponse response = getUnmarshalledObject(cosmosResponse);
+            if (!(response == null || response.getResponseMessage() == null
+                || response.getResponseMessage().isEmpty())) {
+              response.getResponseMessage().forEach(msg -> {
 
-              if (!(msg.getGINCNTDRPR() == null)) {
-                String exportContainerNumber = msg.getGINCNTDRPR().getUNITSE();
-                if (StringUtils.isNotEmpty(exportContainerNumber)) {
-                  ExportContainer exportContainer = new ExportContainer();
-                  exportContainer.setContainer(new CommonContainerDTO());
-                  exportContainer.getContainer().setContainerNumber(exportContainerNumber);
-                  exportContainers.add(exportContainer);
+                if (!(msg.getGINCNTDRPR() == null)) {
+                  String exportContainerNumber = msg.getGINCNTDRPR().getUNITSE();
+                  if (StringUtils.isNotEmpty(exportContainerNumber)) {
+                    ExportContainer exportContainer = new ExportContainer();
+                    exportContainer.setContainer(new CommonContainerDTO());
+                    exportContainer.getContainer().setContainerNumber(exportContainerNumber);
+                    exportContainers.add(exportContainer);
+                  }
                 }
-              }
 
-              if (!(msg.getGINCNTPUPR() == null)) {
-                String importContainerNumber = msg.getGINCNTPUPR().getUNITSE();
-                if (StringUtils.isNotEmpty(importContainerNumber)) {
-                  ImportContainer importContainer = new ImportContainer();
-                  importContainer.setContainer(new CommonContainerDTO());
-                  importContainer.getContainer().setContainerNumber(importContainerNumber);
-                  importContainer.getContainer().setContainerFullOrEmpty("F");
-                  importContainer.setContainerPosition("A");
-                  importContainers.add(importContainer);
+                if (!(msg.getGINCNTPUPR() == null)) {
+                  String importContainerNumber = msg.getGINCNTPUPR().getUNITSE();
+                  if (StringUtils.isNotEmpty(importContainerNumber)) {
+                    ImportContainer importContainer = new ImportContainer();
+                    importContainer.setContainer(new CommonContainerDTO());
+                    importContainer.getContainer().setContainerNumber(importContainerNumber);
+                    importContainer.getContainer().setContainerFullOrEmpty("F");
+                    importContainer.setContainerPosition("A");
+                    importContainers.add(importContainer);
+                  }
                 }
-              }
 
-            });
+              });
+            }
+
+            gateInWriteRequest.setImportContainers(importContainers);
+            gateInWriteRequest.setExportContainers(exportContainers);
+
+            if (!(importContainers.isEmpty() && exportContainers.isEmpty())) {
+              gateInWriteRequest.setImpExpFlag(ImpExpFlagStatus.IMPORT_EXPORT.getValue());
+            } else if (!(importContainers.isEmpty())) {
+              gateInWriteRequest.setImpExpFlag(ImpExpFlagStatus.IMPORT.getValue());
+            } else if (!(exportContainers.isEmpty())) {
+              gateInWriteRequest.setImpExpFlag(ImpExpFlagStatus.EXPORT.getValue());
+            }
+
+            gateInResponse = cosmosResponseService.extractCosmosGateInResponse(cosmosResponse, gateInWriteRequest);
+          } catch (JAXBException e) {
+            e.printStackTrace();
+          } catch (Exception e2) {
+            System.out.println("log.getXmlData() " + log.getXmlData());
+            e2.printStackTrace();
           }
-
-          gateInWriteRequest.setImportContainers(importContainers);
-          gateInWriteRequest.setExportContainers(exportContainers);
-
-          if (!(importContainers.isEmpty() && exportContainers.isEmpty())) {
-            gateInWriteRequest.setImpExpFlag(ImpExpFlagStatus.IMPORT_EXPORT.getValue());
-          } else if (!(importContainers.isEmpty())) {
-            gateInWriteRequest.setImpExpFlag(ImpExpFlagStatus.IMPORT.getValue());
-          } else if (!(exportContainers.isEmpty())) {
-            gateInWriteRequest.setImpExpFlag(ImpExpFlagStatus.EXPORT.getValue());
-          }
-
-          gateInResponse = cosmosResponseService.extractCosmosGateInResponse(cosmosResponse, gateInWriteRequest);
-        } catch (JAXBException e) {
-          e.printStackTrace();
-        } catch (Exception e2) {
-          e2.printStackTrace();
+          // Assert.assertNotNull(gateInResponse);
         }
-        // Assert.assertNotNull(gateInResponse);
+
+
       });
     }
   }
