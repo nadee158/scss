@@ -4,16 +4,25 @@ import java.io.Serializable;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import com.privasia.scss.cosmos.xml.element.SGS2CosmosRequest;
 
-public class CosmosGateOutWriteRequest implements Serializable {
+@XmlRootElement(name = "SGS2Cosmos")
+public class CosmosGateOutWriteRequest extends SGS2CosmosRequest implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
+  // import - both importList and requestMessage available
+  // export - importlist is null - only requestMessage is available
+  // importexport - both importList and requestMessage available - additionally CosmosGateOutExport
+
   private List<CosmosGateOutImport> importList;
+
+  private CosmosGateOutExport export;
 
   public List<CosmosGateOutImport> getImportList() {
     return importList;
@@ -22,6 +31,17 @@ public class CosmosGateOutWriteRequest implements Serializable {
   @XmlElement(name = "Message")
   public void setImportList(List<CosmosGateOutImport> importList) {
     this.importList = importList;
+  }
+
+
+
+  public CosmosGateOutExport getExport() {
+    return export;
+  }
+
+  @XmlElement(name = "Message")
+  public void setExport(CosmosGateOutExport export) {
+    this.export = export;
   }
 
   @Override
