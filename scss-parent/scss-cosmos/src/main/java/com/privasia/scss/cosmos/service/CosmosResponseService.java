@@ -185,8 +185,10 @@ public class CosmosResponseService {
       throw new BusinessException("Cannot find Yard Position information from cosmos ");
 
     if (!(exportContainers == null || exportContainers.isEmpty())) {
-
       exportContainers.stream().forEach(exportContainer -> {
+        System.out.println("exportContainer.getContainer() " + exportContainer.getContainer());
+        System.out.println("exportContainer.getContainer().getContainerNumber() "
+            + exportContainer.getContainer().getContainerNumber());
         Optional<GINCNTDRPR> optElement = yardPositionlist.stream().filter(element -> StringUtils
             .equalsIgnoreCase(element.getUNITSE(), exportContainer.getContainer().getContainerNumber())).findAny();
 

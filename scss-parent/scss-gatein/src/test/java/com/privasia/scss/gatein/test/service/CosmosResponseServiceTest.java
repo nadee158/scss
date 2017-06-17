@@ -53,12 +53,6 @@ public class CosmosResponseServiceTest extends GateInAbstractTest {
     GateInWriteRequest gateInWriteRequest = new GateInWriteRequest();
 
 
-    List<ExportContainer> exportContainers = new ArrayList<ExportContainer>();
-
-
-    List<ImportContainer> importContainers = new ArrayList<ImportContainer>();
-
-
     gateInWriteRequest.setUserName("TESTT");
     gateInWriteRequest.setHaulageCode("KN");
     gateInWriteRequest.setCosmosPort(12222);
@@ -74,6 +68,9 @@ public class CosmosResponseServiceTest extends GateInAbstractTest {
       logs.forEach(log -> {
         String cosmosResponse = log.getXmlData();
 
+        List<ExportContainer> exportContainers = new ArrayList<ExportContainer>();
+        List<ImportContainer> importContainers = new ArrayList<ImportContainer>();
+
         GateInResponse gateInResponse = null;
         try {
           SGS2CosmosResponse response = getUnmarshalledObject(cosmosResponse);
@@ -82,6 +79,7 @@ public class CosmosResponseServiceTest extends GateInAbstractTest {
 
               if (!(msg.getGINCNTDRPR() == null)) {
                 String exportContainerNumber = msg.getGINCNTDRPR().getUNITSE();
+                System.out.println("exportContainerNumber " + exportContainerNumber);
                 if (StringUtils.isNotEmpty(exportContainerNumber)) {
                   ExportContainer exportContainer = new ExportContainer();
                   exportContainer.setContainer(new CommonContainerDTO());
@@ -92,6 +90,7 @@ public class CosmosResponseServiceTest extends GateInAbstractTest {
 
               if (!(msg.getGINCNTPUPR() == null)) {
                 String importContainerNumber = msg.getGINCNTPUPR().getUNITSE();
+                System.out.println("importContainerNumber " + importContainerNumber);
                 if (StringUtils.isNotEmpty(importContainerNumber)) {
                   ImportContainer importContainer = new ImportContainer();
                   importContainer.setContainer(new CommonContainerDTO());
