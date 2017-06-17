@@ -186,11 +186,9 @@ public class CosmosResponseService {
 
     if (!(exportContainers == null || exportContainers.isEmpty())) {
       exportContainers.stream().forEach(exportContainer -> {
-        System.out.println("exportContainer.getContainer() " + exportContainer.getContainer());
-        System.out.println("exportContainer.getContainer().getContainerNumber() "
-            + exportContainer.getContainer().getContainerNumber());
-        Optional<GINCNTDRPR> optElement = yardPositionlist.stream().filter(element -> StringUtils
-            .equalsIgnoreCase(element.getUNITSE(), exportContainer.getContainer().getContainerNumber())).findAny();
+
+        Optional<GINCNTDRPR> optElement = yardPositionlist.stream().filter(element -> ((element != null) && (StringUtils
+            .equalsIgnoreCase(element.getUNITSE(), exportContainer.getContainer().getContainerNumber())))).findAny();
 
         GINCNTDRPR gincntdrpr = optElement.orElseThrow(() -> new BusinessException(
             "Container No " + exportContainer.getContainer().getContainerNumber() + " not found to populate data"));
@@ -212,11 +210,13 @@ public class CosmosResponseService {
     if (elementList == null || elementList.isEmpty())
       throw new BusinessException("Invalid response received from cosmos. No Message elements found! ");
 
-    List<GINTRCINFR> callCardlist =
-        elementList.stream().map(ResponseMessage::getGINTRCINFR).collect(Collectors.toList());
+    List<GINTRCINFR> callCardlist = elementList.stream().map(ResponseMessage::getGINTRCINFR)
+        .filter(element -> element != null).collect(Collectors.toList());
 
     if (callCardlist == null || callCardlist.isEmpty())
       throw new BusinessException("Cannot find Call card code information from cosmos ");
+
+
 
     Optional<GINTRCINFR> optElement = callCardlist.stream().findAny();
 

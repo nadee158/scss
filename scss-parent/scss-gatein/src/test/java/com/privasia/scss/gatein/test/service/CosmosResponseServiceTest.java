@@ -59,7 +59,7 @@ public class CosmosResponseServiceTest extends GateInAbstractTest {
     gateInWriteRequest.setTruckHeadNo("KN6785");
     gateInWriteRequest.setTruckPlateNo("WHY7778");
     gateInWriteRequest.setLaneNo("K7");// SELECT cli_unitno
-    gateInWriteRequest.setImpExpFlag(ImpExpFlagStatus.IMPORT_EXPORT.getValue());
+
 
 
     List<AGSLog> logs = agsLogRepository.findBySendRCV(AGSMessageStatus.RECEIVE);
@@ -79,7 +79,6 @@ public class CosmosResponseServiceTest extends GateInAbstractTest {
 
               if (!(msg.getGINCNTDRPR() == null)) {
                 String exportContainerNumber = msg.getGINCNTDRPR().getUNITSE();
-                System.out.println("exportContainerNumber " + exportContainerNumber);
                 if (StringUtils.isNotEmpty(exportContainerNumber)) {
                   ExportContainer exportContainer = new ExportContainer();
                   exportContainer.setContainer(new CommonContainerDTO());
@@ -90,7 +89,6 @@ public class CosmosResponseServiceTest extends GateInAbstractTest {
 
               if (!(msg.getGINCNTPUPR() == null)) {
                 String importContainerNumber = msg.getGINCNTPUPR().getUNITSE();
-                System.out.println("importContainerNumber " + importContainerNumber);
                 if (StringUtils.isNotEmpty(importContainerNumber)) {
                   ImportContainer importContainer = new ImportContainer();
                   importContainer.setContainer(new CommonContainerDTO());
@@ -106,6 +104,14 @@ public class CosmosResponseServiceTest extends GateInAbstractTest {
 
           gateInWriteRequest.setImportContainers(importContainers);
           gateInWriteRequest.setExportContainers(exportContainers);
+
+          if (!(importContainers.isEmpty() && exportContainers.isEmpty())) {
+            gateInWriteRequest.setImpExpFlag(ImpExpFlagStatus.IMPORT_EXPORT.getValue());
+          } else if (!(importContainers.isEmpty())) {
+            gateInWriteRequest.setImpExpFlag(ImpExpFlagStatus.IMPORT.getValue());
+          } else if (!(exportContainers.isEmpty())) {
+            gateInWriteRequest.setImpExpFlag(ImpExpFlagStatus.EXPORT.getValue());
+          }
 
           gateInResponse = cosmosResponseService.extractCosmosGateInResponse(cosmosResponse, gateInWriteRequest);
         } catch (JAXBException e) {
