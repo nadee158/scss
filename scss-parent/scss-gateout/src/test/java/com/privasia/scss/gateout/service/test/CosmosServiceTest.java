@@ -13,11 +13,14 @@ import org.junit.rules.ExpectedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.privasia.scss.common.dto.BaseCommonGateInOutDTO;
 import com.privasia.scss.common.dto.CommonContainerDTO;
 import com.privasia.scss.common.dto.ExportContainer;
 import com.privasia.scss.common.dto.GateOutReponse;
 import com.privasia.scss.common.dto.GateOutWriteRequest;
 import com.privasia.scss.common.dto.ImportContainer;
+import com.privasia.scss.common.enums.ImpExpFlagStatus;
+import com.privasia.scss.common.enums.TransactionStatus;
 import com.privasia.scss.cosmos.service.CosmosService;
 import com.privasia.scss.gateout.test.GateOutAbstractTest;
 
@@ -43,6 +46,8 @@ public class CosmosServiceTest extends GateOutAbstractTest {
     ExportContainer exportContainer = new ExportContainer();
     exportContainer.setContainer(new CommonContainerDTO());
     exportContainer.getContainer().setContainerNumber("ASYT98765420");
+    exportContainer.setBaseCommonGateInOutAttribute(new BaseCommonGateInOutDTO());
+    exportContainer.getBaseCommonGateInOutAttribute().setEirStatus(TransactionStatus.INPROGRESS.getValue());
     List<ExportContainer> exportContainers = new ArrayList<ExportContainer>();
     exportContainers.add(exportContainer);
 
@@ -51,6 +56,8 @@ public class CosmosServiceTest extends GateOutAbstractTest {
     importContainer.getContainer().setContainerNumber("ATOS12345611");
     importContainer.getContainer().setContainerFullOrEmpty("F");
     importContainer.setContainerPosition("A");
+    importContainer.setBaseCommonGateInOutAttribute(new BaseCommonGateInOutDTO());
+    importContainer.getBaseCommonGateInOutAttribute().setEirStatus(TransactionStatus.INPROGRESS.getValue());
     List<ImportContainer> importContainers = new ArrayList<ImportContainer>();
     importContainers.add(importContainer);
 
@@ -62,7 +69,7 @@ public class CosmosServiceTest extends GateOutAbstractTest {
     gateOutWriteRequest.setTruckHeadNo("KN6785");
     gateOutWriteRequest.setTruckPlateNo("WHY7778");
     gateOutWriteRequest.setLaneNo("K7");// SELECT cli_unitno
-    gateOutWriteRequest.setImpExpFlag("I");
+    gateOutWriteRequest.setImpExpFlag(ImpExpFlagStatus.IMPORT_EXPORT.getValue());
 
     gateOutReponse = cosmos.sendGateOutWriteRequest(gateOutWriteRequest, gateOutReponse);
 
