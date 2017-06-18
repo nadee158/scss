@@ -75,6 +75,12 @@
 				</plugin>
 			</plugins>
 		</pluginManagement>
+		<resources>
+	        <resource>
+	            <directory>src/main/resources</directory>
+	            <filtering>true</filtering>
+	        </resource>
+	    </resources>
 		<finalName>scss-gateout</finalName>
 	</build>
 

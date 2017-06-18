@@ -3,6 +3,8 @@ package com.privasia.scss.core.config;
 import javax.servlet.Filter;
 import javax.servlet.MultipartConfigElement;
 
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.MultipartConfigFactory;
@@ -21,8 +23,15 @@ import com.privasia.scss.core.util.service.CurrentDateTimeService;
 @EnableAsync
 public class SCSSEntryPoint {
 
+  private static Logger logger = Logger.getLogger(SCSSEntryPoint.class.getName());
+
+  @Value("${current.active.profile.check.value}")
+  private String currentActiveProfile;
+
   @Bean
   CurrentDateTimeService getCurrentDateTimeService() {
+    System.out.println("currentActiveProfile " + currentActiveProfile);
+    logger.error("currentActiveProfile " + currentActiveProfile);
     return new CurrentDateTimeService();
   }
 
