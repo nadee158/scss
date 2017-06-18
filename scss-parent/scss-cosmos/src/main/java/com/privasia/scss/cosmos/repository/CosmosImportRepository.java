@@ -165,7 +165,7 @@ public class CosmosImportRepository {
     try {
       String containerNo = StringUtils.upperCase(importContainer.getContainer().getContainerNumber());
       String vesselScn = StringUtils.upperCase(importContainer.getVesselScn());
-      return jdbcTemplate.queryForObject(queryDsoSealNo, new Object[] {containerNo, vesselScn},
+      return jdbcTemplate.queryForObject(queryDsoSealNo, new Object[] {containerNo, vesselScn, containerNo, vesselScn},
           (rs, i) -> extractDsoSealNumbers(importContainer, rs, i));
     } catch (EmptyResultDataAccessException e) {
       return importContainer;
