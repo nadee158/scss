@@ -42,7 +42,6 @@ import com.privasia.scss.cosmos.dto.request.CosmosGateOutImport;
 import com.privasia.scss.cosmos.dto.request.CosmosGateOutWriteRequest;
 import com.privasia.scss.cosmos.repository.CosmosODDRepository;
 import com.privasia.scss.cosmos.xml.element.RequestMessage;
-import com.privasia.scss.cosmos.xml.element.SGS2CosmosRequest;
 import com.privasia.scss.cosmos.xml.element.service.CSMCTLService;
 import com.privasia.scss.cosmos.xml.element.service.GINTRCINFService;
 import com.privasia.scss.cosmos.xml.element.service.GOTTRCINFService;
@@ -209,10 +208,7 @@ public class CosmosService implements OpusCosmosBusinessService {
         break;
       case EXPORT:
         cosmosGateOutWriteRequest.setImportList(null);
-        if (!(gateOutWriteRequest.getExportContainers() == null
-            || gateOutWriteRequest.getExportContainers().isEmpty())) {
-
-        }
+        cosmosGateOutWriteRequest.setExport(null);
         break;
       case IMPORT_EXPORT:
         if (!(gateOutWriteRequest.getImportContainers() == null
@@ -221,6 +217,7 @@ public class CosmosService implements OpusCosmosBusinessService {
           List<CosmosGateOutImport> cosmosImportList = cosmosGateOutWriteService
               .constructCosmosGateOutImport(commonValuesDTO, gateOutWriteRequest.getImportContainers(), startIndex);
           cosmosGateOutWriteRequest.setImportList(cosmosImportList);
+          startIndex += gateOutWriteRequest.getImportContainers().size();
         }
         if (!(gateOutWriteRequest.getExportContainers() == null
             || gateOutWriteRequest.getExportContainers().isEmpty())) {
@@ -236,17 +233,11 @@ public class CosmosService implements OpusCosmosBusinessService {
     }
 
     try {
-      SGS2CosmosRequest cosmosRequest = new SGS2CosmosRequest();
       RequestMessage requestMessage = messageService.constructGateInRootMessage(commonValuesDTO);
-      cosmosRequest.setMessage(requestMessage);
+      cosmosGateOutWriteRequest.setMessage(requestMessage);
 
-
-      // cosmosRequest.setCSMCTL(csmctlService.constructCSMCTL(commonValuesDTO));
-      // cosmosRequest.setGOTTRCINF(gottrcinfService.constructGOTTRCINF(commonValuesDTO));
-      // cosmosRequest.setCosmosGateOutWriteRequest(cosmosGateOutWriteRequest);
-      //// cosmosRequest.setGINTRCINF(null);
-      // cosmosRequest.setCosmosGateInWriteRequest(null);
-      String cosmosResponse = agsClientService.sendToCosmos(cosmosRequest, gateOutWriteRequest.getCosmosPort());
+      String cosmosResponse =
+          agsClientService.sendToCosmos(cosmosGateOutWriteRequest, gateOutWriteRequest.getCosmosPort());
       cosmosResponseService.extractCosmosGateOutResponse(cosmosResponse);
 
     } catch (JAXBException e) {
