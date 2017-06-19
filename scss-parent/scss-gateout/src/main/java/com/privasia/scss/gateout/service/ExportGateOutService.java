@@ -89,7 +89,10 @@ public class ExportGateOutService {
 					LocalDateTime timeGateIn = export.getBaseCommonGateInOutAttribute().getTimeGateIn();
 					gateOutReponse.setGateInDateTime(timeGateIn);
 				}
-
+				if(export.getBaseCommonGateInOutAttribute().getGateInClerk()!=null)
+					gateOutReponse.setClerkName(export.getBaseCommonGateInOutAttribute().getGateInClerk().getCommonContactAttribute().getPersonName());
+					if(export.getBaseCommonGateInOutAttribute().getGateInClient()!=null)
+					gateOutReponse.setGateInLaneNo(export.getBaseCommonGateInOutAttribute().getGateInClient().getLaneNo());
 			}
 			// adding log info
 			exportContainerList.add(exportContainer);
