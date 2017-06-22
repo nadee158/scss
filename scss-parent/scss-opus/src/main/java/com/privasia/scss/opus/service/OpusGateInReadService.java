@@ -3,9 +3,8 @@
  */
 package com.privasia.scss.opus.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import com.google.gson.Gson;
+import com.privasia.scss.common.annotation.LogOpusData;
 import com.privasia.scss.common.dto.ExportContainer;
 import com.privasia.scss.common.dto.GateInResponse;
 import com.privasia.scss.common.dto.GateInRequest;
@@ -38,22 +38,14 @@ public class OpusGateInReadService {
 
 	private static final Logger log = LoggerFactory.getLogger(OpusGateInReadService.class);
 
-	@Value("${async.wait.time}")
-	private long asyncWaitTime;
-
 	@Value("${gate_in.read.response.url}")
 	private String gateInReadResponseURL;
-
+	
+	private OpusRequestResponseService opusRequestResponseService;
+	
 	private OpusDTOConstructService opusDTOConstructService;
 
-	private OpusRequestResponseService opusRequestResponseService;
-
 	private Gson gson;
-
-	@Autowired
-	public void setOpusRequestResponseService(OpusRequestResponseService opusRequestResponseService) {
-		this.opusRequestResponseService = opusRequestResponseService;
-	}
 
 	@Autowired
 	public void setGson(Gson gson) {
@@ -63,6 +55,11 @@ public class OpusGateInReadService {
 	@Autowired
 	public void setOpusDTOConstructService(OpusDTOConstructService opusDTOConstructService) {
 		this.opusDTOConstructService = opusDTOConstructService;
+	}
+	
+	@Autowired
+	public void setOpusRequestResponseService(OpusRequestResponseService opusRequestResponseService) {
+		this.opusRequestResponseService = opusRequestResponseService;
 	}
 
 	public OpusGateInReadRequest constructOpenGateInRequest(GateInRequest gateInRequest) {
@@ -97,37 +94,17 @@ public class OpusGateInReadService {
 
 		log.info("OpusGateInReadRequest : -" + (new Gson()).toJson(opusGateInReadRequest));
 
-		// save in to db
-		Future<Long> future = opusRequestResponseService.saveOpusRequest(opusRequestResponseDTO);
-
+		opusRequestResponseDTO.setSendTime(LocalDateTime.now());
 		ResponseEntity<OpusGateInReadResponse> response = restTemplate.postForEntity(gateInReadResponseURL, request,
 				OpusGateInReadResponse.class);
 
 		log.info("RESPONSE FROM OPUS: " + response.toString());
 
 		opusRequestResponseDTO.setResponse(gson.toJson(response.getBody()));
-
-		// update to db
-		while (true) {
-			if (future.isDone()) {
-				try {
-					opusRequestResponseService.updateOpusResponse(opusRequestResponseDTO, future);
-				} catch (InterruptedException | ExecutionException e) {
-					log.error("Error Occured when update Opus Response getGateInReadResponse "
-							+ opusRequestResponseDTO.getGateinTime().toString());
-					log.error(e.getMessage());
-				}
-				break;
-			}
-
-			try {
-				Thread.sleep(asyncWaitTime);
-			} catch (InterruptedException e) {
-				log.error(e.getMessage());
-				break;
-			}
-		}
-
+		opusRequestResponseDTO.setReceivedTime(LocalDateTime.now());
+		
+		opusRequestResponseService.saveOpusRequestResponse(opusRequestResponseDTO);
+		
 		return response.getBody();
 	}
 

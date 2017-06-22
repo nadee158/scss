@@ -60,7 +60,7 @@ public class OpusRequestResponse implements Serializable {
 	@Column(name = "ODD_IMP_CONTAINER_02")
 	private String oddImpContainer02;
 
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
 	@JoinColumn(name = "CARD_ID", nullable = true, referencedColumnName = "CRD_CARDID_SEQ")
 	private Card card;
 

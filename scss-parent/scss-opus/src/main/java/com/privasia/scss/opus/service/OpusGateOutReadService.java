@@ -3,8 +3,7 @@
  */
 package com.privasia.scss.opus.service;
 
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
+import java.time.LocalDateTime;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,9 +31,6 @@ import com.privasia.scss.opus.dto.OpusRequestResponseDTO;
 
 @Service("opusGateOutReadService")
 public class OpusGateOutReadService {
-
-	@Value("${async.wait.time}")
-	private long asyncWaitTime;
 
 	private static final Logger log = LoggerFactory.getLogger(OpusGateOutReadService.class);
 
@@ -91,38 +87,17 @@ public class OpusGateOutReadService {
 
 		HttpEntity<OpusGateOutReadRequest> request = new HttpEntity<OpusGateOutReadRequest>(opusGateOutReadRequest,
 				headers);
-		// save in to db
-		Future<Long> future = opusRequestResponseService.saveOpusRequest(opusRequestResponseDTO);
-
+		
+		opusRequestResponseDTO.setSendTime(LocalDateTime.now());
 		ResponseEntity<OpusGateOutReadResponse> response = restTemplate.postForEntity(gateOutReadResponseURL, request,
 				OpusGateOutReadResponse.class);
 
 		log.info("OpusGateOutReadRequest : -" + (new Gson()).toJson(opusGateOutReadRequest));
 
 		opusRequestResponseDTO.setResponse(gson.toJson(response.getBody()));
+		opusRequestResponseDTO.setReceivedTime(LocalDateTime.now());
 
-		log.info("RESPONSE FROM OPUS: " + response.toString());
-
-		// update to db
-		while (true) {
-			if (future.isDone()) {
-				try {
-					opusRequestResponseService.updateOpusResponse(opusRequestResponseDTO, future);
-				} catch (InterruptedException | ExecutionException e) {
-					log.error("Error Occured when update Opus Response getGateOutReadResponse "
-							+ opusRequestResponseDTO.getGateinTime().toString());
-					log.error(e.getMessage());
-				}
-				break;
-			}
-
-			try {
-				Thread.sleep(asyncWaitTime);
-			} catch (InterruptedException e) {
-				log.error(e.getMessage());
-				break;
-			}
-		}
+		opusRequestResponseService.saveOpusRequestResponse(opusRequestResponseDTO);
 
 		return response.getBody();
 	}

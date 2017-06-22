@@ -3,7 +3,10 @@
  */
 package com.privasia.opus.aspect;
 
+import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.After;
+import org.aspectj.lang.annotation.AfterReturning;
+import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +23,9 @@ import com.privasia.scss.opus.service.OpusRequestResponseService;
  * @author Janaka
  *
  */
-@Component
+
 @Aspect
+@Component
 public class LogOpusRequestResponseAspect {
 	
 	private OpusRequestResponseService opusRequestResponseService;
@@ -31,21 +35,33 @@ public class LogOpusRequestResponseAspect {
 		this.opusRequestResponseService = opusRequestResponseService;
 	}
 
-	
-	@Before("@annotation(logOpusData) && args(opusRequestResponseDTO)")
-	@Async
+	//@Async
+	@AfterReturning(pointcut = "@annotation(logOpusData)", returning = "response")
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRES_NEW, readOnly = false)
-	public void logOpusRequestBefore(LogOpusData logOpusData, OpusRequestResponseDTO opusRequestResponseDTO){
+	public void logOpusRequestResponse(JoinPoint joinPoint, LogOpusData logOpusData, Object response){
 		
-		opusRequestResponseService.saveOpusRequest(opusRequestResponseDTO);
+		System.out.println("called logOpusRequestResponse ****************************** ");
+		
+		if(joinPoint.getArgs()[1] instanceof OpusRequestResponseDTO){
+			
+			OpusRequestResponseDTO opusRequestResponseDTO = (OpusRequestResponseDTO) joinPoint.getArgs()[1];
+			System.out.println("opusRequestResponseDTO ****************************** " +opusRequestResponseDTO);
+			opusRequestResponseService.saveOpusRequestResponse(opusRequestResponseDTO);
+		}else{
+			System.out.println("instanse of false ****************************** ");
+		}
+		
+		
 	}
 	
-	@After("@annotation(logOpusData) && args(opusRequestResponseDTO)")
-	@Async
-	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRES_NEW, readOnly = false)
-	public void logOpusResponseAfter(LogOpusData logOpusData, OpusRequestResponseDTO opusRequestResponseDTO){
+	
+	@AfterThrowing(pointcut = "@annotation(logOpusData)", throwing="ex")
+	public void logOpusRequestResponse2(Exception ex, LogOpusData logOpusData){
 		
-		//opusRequestResponseService.updateOpusResponse(opusRequestResponseDTO, null);
+		System.out.println("called logOpusRequestResponse exception method****************************** ");
+		
+		
 	}
+	
 
 }

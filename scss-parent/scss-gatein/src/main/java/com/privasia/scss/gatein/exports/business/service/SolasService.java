@@ -242,6 +242,14 @@ public class SolasService {
 					} else {
 						container.setWithinTolerance(false);
 					}
+					
+					/*if (variance.compareTo(tolerancePercentage) >= 0
+					        && (variance.negate()).compareTo(tolerancePercentage) <= 0) {
+						container.setWithinTolerance(true);
+					} else {
+						container.setWithinTolerance(false);
+					}*/
+					
 				});
 
 		return exportContainers;

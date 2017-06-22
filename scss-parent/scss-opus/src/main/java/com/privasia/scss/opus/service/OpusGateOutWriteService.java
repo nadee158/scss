@@ -3,10 +3,9 @@
  */
 package com.privasia.scss.opus.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,9 +37,6 @@ import com.privasia.scss.opus.dto.OpusRequestResponseDTO;
 public class OpusGateOutWriteService {
 
 	private static final Logger log = LoggerFactory.getLogger(OpusGateOutWriteService.class);
-
-	@Value("${async.wait.time}")
-	private long asyncWaitTime;
 
 	@Value("${gate_out.write.response.url}")
 	private String gateOutWriteResponseURL;
@@ -79,37 +75,16 @@ public class OpusGateOutWriteService {
 		HttpEntity<OpusGateOutWriteRequest> request = new HttpEntity<OpusGateOutWriteRequest>(opusGateOutWriteRequest,
 				headers);
 
-		// save in to db
-		Future<Long> future = opusRequestResponseService.saveOpusRequest(opusRequestResponseDTO);
-
+		opusRequestResponseDTO.setSendTime(LocalDateTime.now());
 		ResponseEntity<OpusGateOutWriteResponse> response = restTemplate.postForEntity(gateOutWriteResponseURL, request,
 				OpusGateOutWriteResponse.class);
 
 		log.info("RESPONSE FROM OPUS: " + response.toString());
 
 		opusRequestResponseDTO.setResponse(gson.toJson(response.getBody()));
-
-		// update to db
-		while (true) {
-			if (future.isDone()) {
-				try {
-					opusRequestResponseService.updateOpusResponse(opusRequestResponseDTO, future);
-				} catch (InterruptedException | ExecutionException e) {
-					log.error("Error Occured when update Opus Response getGateOutWriteResponse "
-							+ opusRequestResponseDTO.getGateinTime().toString());
-					log.error(e.getMessage());
-				}
-				break;
-			}
-
-			try {
-				Thread.sleep(asyncWaitTime);
-			} catch (InterruptedException e) {
-				log.error(e.getMessage());
-				break;
-			}
-		}
-
+		opusRequestResponseDTO.setReceivedTime(LocalDateTime.now());
+		opusRequestResponseService.saveOpusRequestResponse(opusRequestResponseDTO);
+		
 		return response.getBody();
 	}
 

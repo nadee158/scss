@@ -61,17 +61,17 @@ public class Card extends AuditEntity implements Serializable {
 	@JoinColumn(name = "SCU_USERID", nullable = false, referencedColumnName = "SCU_USERID_SEQ")
 	private SmartCardUser smartCardUser;
 
-	@Column(name = "CRD_CONTRACTEXPIRYDATE")
+	@Column(name = "CRD_CONTRACTEXPIRYDATE", nullable = true)
 	private LocalDateTime contractExpiryDate;
 
-	@Column(name = "CRD_VALIDITYTYPE")
+	@Column(name = "CRD_VALIDITYTYPE", nullable = true)
 	@Type(type = "com.privasia.scss.common.enumusertype.CardValidityEnumUserType")
 	private CardValidityType cardValidityType;
 
 	@Column(name = "CRD_AUTHORISEDATE")
 	private LocalDateTime authoriseDate;
 
-	@Column(name = "CRD_DATEJOIN")
+	@Column(name = "CRD_DATEJOIN", nullable = true)
 	private LocalDateTime dateJoin;
 
 	@Column(name = "CRD_EMAILADDR")
@@ -86,28 +86,28 @@ public class Card extends AuditEntity implements Serializable {
 	@Column(name = "CRD_PHONEWORK")
 	private String phoneOffice;
 
-	@Column(name = "CRD_DATETHRU")
+	@Column(name = "CRD_DATETHRU", nullable = true)
 	private LocalDateTime dateThrough;
 
-	@Column(name = "CRD_DATESINCE")
+	@Column(name = "CRD_DATESINCE", nullable = true)
 	private LocalDateTime dateSince;
 
-	@Column(name = "CRD_CARDSTATUS")
+	@Column(name = "CRD_CARDSTATUS", nullable = true)
 	@Type(type = "com.privasia.scss.common.enumusertype.CardStatusEnumUserType")
 	private CardStatus cardStatus;
 
-	@Column(name = "CRD_PRINTSTATUS")
+	@Column(name = "CRD_PRINTSTATUS", nullable = true)
 	@Type(type = "com.privasia.scss.common.enumusertype.CardPrintStatusEnumUserType")
 	private CardPrintStatus cardPrintStatus;
 
-	@Column(name = "CRD_PRINTDATE")
+	@Column(name = "CRD_PRINTDATE", nullable = true)
 	private LocalDateTime printDate;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "CRD_PRINTEDBY", nullable = true, referencedColumnName = "SYS_USERID_SEQ")
 	private SystemUser printedBy;
 
-	@Column(name = "CRD_ISUSED")
+	@Column(name = "CRD_ISUSED", nullable = true)
 	@Type(type = "com.privasia.scss.common.enumusertype.CardIssuedEnumUserType")
 	private CardIssuedStatus cardIssued;
 
@@ -117,7 +117,7 @@ public class Card extends AuditEntity implements Serializable {
 	@Column(name = "CRD_REF_NO")
 	private String referenceNumber;
 
-	@Column(name = "CRD_TYPE")
+	@Column(name = "CRD_TYPE", nullable = true)
 	@Type(type = "com.privasia.scss.common.enumusertype.CompanyTypeEnumUserType")
 	private CompanyType cardType;
 

@@ -4,8 +4,6 @@
 package com.privasia.scss.client.controller;
 
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -19,7 +17,6 @@ import com.privasia.scss.client.service.ClientService;
 import com.privasia.scss.client.service.lps.LPSService;
 import com.privasia.scss.common.dto.ApiResponseObject;
 import com.privasia.scss.common.dto.CustomResponseEntity;
-import com.privasia.scss.common.dto.ReferReasonDTO;
 /**
  * @author Janaka
  *
@@ -55,5 +52,5 @@ public class ClientController {
 		 return new CustomResponseEntity<ApiResponseObject<?>>(
 			        new ApiResponseObject<String>(HttpStatus.OK, status), HttpStatus.OK);
 	}
-
+	
 }

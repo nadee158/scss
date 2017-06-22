@@ -19,7 +19,7 @@ public class ClientService {
   private ClientRepository clientRepository;
 
 
-  @Transactional(propagation=Propagation.REQUIRED, readOnly = true)
+  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
   public String getClientUnitNoByIp(String webIPAddress) {
     Optional<String> unitNo = clientRepository.getClientUnitNoByIp(webIPAddress);
     

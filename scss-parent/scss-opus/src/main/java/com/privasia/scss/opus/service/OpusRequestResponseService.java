@@ -56,7 +56,7 @@ public class OpusRequestResponseService {
     this.modelMapper = modelMapper;
   }
 
-  @Async
+  //@Async
   @Transactional(value = "transactionManager", propagation = Propagation.REQUIRES_NEW, readOnly = false)
   public Future<Long> saveOpusRequest(OpusRequestResponseDTO opusRequestResponseDTO) {
 
@@ -70,7 +70,9 @@ public class OpusRequestResponseService {
       opusRequestResponse.setSendTime(LocalDateTime.now());
       // set id upon save dfdf
       opusRequestResponse.setOpusReqResID(CommonUtil.getUniqueID());
+      System.out.println("before  opusRequestResponse ######################### ");
       opusRequestResponse = opusRepository.save(opusRequestResponse);
+      System.out.println("save  opusRequestResponse ######################### ");
     } catch (Exception e) {
       log.error("Error Occured when update Opus Response " + opusRequestResponse);
       log.error(e.getMessage());
@@ -78,21 +80,47 @@ public class OpusRequestResponseService {
     return new AsyncResult<Long>(opusRequestResponse.getOpusReqResID());
   }
 
-  @Async
+  //@Async
   @Transactional(value = "transactionManager", propagation = Propagation.REQUIRES_NEW, readOnly = false)
   public void updateOpusResponse(OpusRequestResponseDTO opusRequestResponseDTO, Future<Long> future)
       throws InterruptedException, ExecutionException {
+	  try {
+	    Optional<OpusRequestResponse> OptOpus = opusRepository.findOne(future.get());
+	    if (OptOpus.isPresent()) {
+	      OpusRequestResponse opusRequestResponse = OptOpus.get();
+	      opusRequestResponse.setResponse(opusRequestResponseDTO.getResponse());
+	      opusRequestResponse.setReceivedTime(LocalDateTime.now());
+	      opusRepository.save(opusRequestResponse);
+	    } else {
+	      log.info("OpusRequestResponse not found " + future.get());
+	    }
+	  } catch (Exception e) {
+	      log.error("Error Occured when update Opus Response " + future.get());
+	      log.error(e.getMessage());
+	 } 
+  }
+  
+  @Async
+  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRES_NEW, readOnly = false)
+  public Future<Long> saveOpusRequestResponse(OpusRequestResponseDTO opusRequestResponseDTO) {
 
-    Optional<OpusRequestResponse> OptOpus = opusRepository.findOne(future.get());
-    if (OptOpus.isPresent()) {
-      OpusRequestResponse opusRequestResponse = OptOpus.get();
-      opusRequestResponse.setResponse(opusRequestResponseDTO.getResponse());
-      opusRequestResponse.setReceivedTime(LocalDateTime.now());
-      opusRepository.save(opusRequestResponse);
-    } else {
-      log.info("OpusRequestResponse not found " + future.get());
+    OpusRequestResponse opusRequestResponse = null;
+    Optional<Card> cardOpt = cardRepository.findOne(opusRequestResponseDTO.getCardID());
+    Card card = cardOpt.orElseThrow(
+        () -> new ResultsNotFoundException("Invalid Scan Card ID ! " + opusRequestResponseDTO.getCardID()));
+    try {
+      opusRequestResponse = modelMapper.map(opusRequestResponseDTO, OpusRequestResponse.class);
+      opusRequestResponse.setCard(card);
+      // set id upon save dfdf
+      opusRequestResponse.setOpusReqResID(CommonUtil.getUniqueID());
+      System.out.println("before  opusRequestResponse ######################### " + opusRequestResponse.getOpusReqResID());
+      opusRequestResponse = opusRepository.save(opusRequestResponse);
+      System.out.println("save  opusRequestResponse ######################### "+ opusRequestResponse.getOpusReqResID());
+    } catch (Exception e) {
+      log.error("Error Occured when update Opus Response " + opusRequestResponse);
+      log.error(e.getMessage());
     }
-
+    return new AsyncResult<Long>(opusRequestResponse.getOpusReqResID());
   }
 
 
