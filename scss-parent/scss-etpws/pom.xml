@@ -61,6 +61,12 @@
 			</plugin>
 			<!-- end::wsdl[] -->
 		</plugins>
+		<resources>
+	        <resource>
+	            <directory>src/main/resources</directory>
+	            <filtering>true</filtering>
+	        </resource>
+	    </resources>
 		<finalName>scss-etpws</finalName>
 	</build>
 

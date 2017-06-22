@@ -46,6 +46,10 @@ public class EmailConfig {
   @Value("${mail.ssLFactory}")
   private String sslFactory;
 
+  @Value("${profile.test.prop}")
+  private String profileTestProp;
+
+
 
   private WDCGlobalSettingService wdcGlobalSettingService;
 
@@ -62,6 +66,7 @@ public class EmailConfig {
 
   @Bean(name = "emailTemplateEngine")
   public TemplateEngine getEmailTemplateEngine() {
+    System.out.println("profileTestProp " + profileTestProp);
     final SpringTemplateEngine templateEngine = new SpringTemplateEngine();
     // Resolver for HTML emails
     templateEngine.addTemplateResolver(htmlTemplateResolver());

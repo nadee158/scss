@@ -36,25 +36,14 @@
 		</dependency>
 	</dependencies>
 	
-	<build>
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<groupId>org.springframework.boot</groupId>
-					<artifactId>spring-boot-maven-plugin</artifactId>	
-					<configuration>
-	                    <executable>true</executable>
-	                </configuration>
-					<dependencies>
-						<dependency>
-							<groupId>org.springframework</groupId>
-							<artifactId>springloaded</artifactId>
-							<version>${spring-loaded.version}</version>
-						</dependency>
-					</dependencies>				
-				</plugin>				
-			</plugins>
-		</pluginManagement>
+	
+	<build>		
+		<resources>
+	        <resource>
+	            <directory>src/main/resources</directory>
+	            <filtering>true</filtering>
+	        </resource>
+	    </resources>
 		<finalName>scss-opus</finalName>
 	</build>
 	

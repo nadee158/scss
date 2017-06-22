@@ -13,6 +13,7 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.data.auditing.DateTimeProvider;
@@ -41,9 +42,27 @@ import com.zaxxer.hikari.HikariDataSource;
     entityManagerFactoryRef = "cosmosOracleEntityManagerFactory",
     transactionManagerRef = "cosmosOracleTransactionManager")
 @EntityScan("com.privasia.scss.cosmos.model")
-@PropertySource(value = {"classpath:cosmos_application.properties"})
-@EnableAutoConfiguration(exclude = {org.springframework.boot.autoconfigure.security.SecurityAutoConfiguration.class})
+@EnableAutoConfiguration(
+    exclude = {org.springframework.boot.autoconfigure.security.SecurityAutoConfiguration.class})
 public class OracleDBConfig {
+
+  @Configuration
+  @Profile("dev")
+  @PropertySource({"classpath:cosmos_application-dev.properties"})
+  static class Dev {
+  }
+
+  @Configuration
+  @Profile("prod")
+  @PropertySource({"classpath:cosmos_application-prod.properties"})
+  static class Prod {
+  }
+
+  @Configuration
+  @Profile("uat")
+  @PropertySource({"classpath:cosmos_application-uat.properties"})
+  static class Uat {
+  }
 
 
 
@@ -70,24 +89,28 @@ public class OracleDBConfig {
     dataSourceConfig.setPoolName(env.getRequiredProperty("spring.ds_ora.datasource.poolname"));
 
 
-    dataSourceConfig.setConnectionTestQuery(env.getRequiredProperty("spring.ds_ora.datasource.validationQuery"));
+    dataSourceConfig.setConnectionTestQuery(
+        env.getRequiredProperty("spring.ds_ora.datasource.validationQuery"));
 
-    dataSourceConfig
-        .setConnectionTimeout(Long.parseLong(env.getRequiredProperty("spring.ds_ora.datasource.connectionTimeout")));
-    dataSourceConfig.setIdleTimeout(Long.parseLong(env.getRequiredProperty("spring.ds_ora.datasource.idleTimeout")));
+    dataSourceConfig.setConnectionTimeout(
+        Long.parseLong(env.getRequiredProperty("spring.ds_ora.datasource.connectionTimeout")));
+    dataSourceConfig.setIdleTimeout(
+        Long.parseLong(env.getRequiredProperty("spring.ds_ora.datasource.idleTimeout")));
     dataSourceConfig.setInitializationFailFast(false);
-    dataSourceConfig.setLeakDetectionThreshold(
-        Long.parseLong(env.getRequiredProperty("spring.ds_ora.datasource.leakDetection.threshold")));
-    dataSourceConfig
-        .setMaximumPoolSize(Integer.parseInt(env.getRequiredProperty("spring.ds_ora.datasource.maximumPoolSize")));
-    dataSourceConfig.setMaxLifetime(Integer.parseInt(env.getRequiredProperty("spring.ds_ora.datasource.maxLifetime")));
-    dataSourceConfig.setMinimumIdle(Integer.parseInt(env.getRequiredProperty("spring.ds_ora.datasource.minimumIdle")));
+    dataSourceConfig.setLeakDetectionThreshold(Long
+        .parseLong(env.getRequiredProperty("spring.ds_ora.datasource.leakDetection.threshold")));
+    dataSourceConfig.setMaximumPoolSize(
+        Integer.parseInt(env.getRequiredProperty("spring.ds_ora.datasource.maximumPoolSize")));
+    dataSourceConfig.setMaxLifetime(
+        Integer.parseInt(env.getRequiredProperty("spring.ds_ora.datasource.maxLifetime")));
+    dataSourceConfig.setMinimumIdle(
+        Integer.parseInt(env.getRequiredProperty("spring.ds_ora.datasource.minimumIdle")));
 
 
     dataSourceConfig.addDataSourceProperty("prepStmtCacheSize",
         Integer.parseInt(env.getRequiredProperty("spring.ds_ora.dataSource.prepStmtCacheSize")));
-    dataSourceConfig.addDataSourceProperty("prepStmtCacheSqlLimit",
-        Integer.parseInt(env.getRequiredProperty("spring.ds_ora.dataSource.prepStmtCacheSqlLimit")));
+    dataSourceConfig.addDataSourceProperty("prepStmtCacheSqlLimit", Integer
+        .parseInt(env.getRequiredProperty("spring.ds_ora.dataSource.prepStmtCacheSqlLimit")));
     dataSourceConfig.addDataSourceProperty("useServerPrepStmts",
         Boolean.parseBoolean(env.getRequiredProperty("spring.ds_ora.dataSource.cachePrepStmts")));
 
@@ -100,7 +123,8 @@ public class OracleDBConfig {
   @Bean(name = "cosmosOracleEntityManagerFactory")
   public LocalContainerEntityManagerFactoryBean cosmosOracleEntityManagerFactory(
       @Qualifier("cosmosOracleDataSource") DataSource dataSource, Environment env) {
-    LocalContainerEntityManagerFactoryBean entityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();
+    LocalContainerEntityManagerFactoryBean entityManagerFactoryBean =
+        new LocalContainerEntityManagerFactoryBean();
     entityManagerFactoryBean.setDataSource(dataSource);
     entityManagerFactoryBean.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
     entityManagerFactoryBean.setPackagesToScan("com.privasia.scss.cosmos.model",
@@ -110,7 +134,8 @@ public class OracleDBConfig {
 
     // Configures the used database dialect. This allows Hibernate to create SQL
     // that is optimized for the used database.
-    jpaProperties.put("hibernate.dialect", env.getRequiredProperty("spring.ds_ora.jpa.properties.hibernate.dialect"));
+    jpaProperties.put("hibernate.dialect",
+        env.getRequiredProperty("spring.ds_ora.jpa.properties.hibernate.dialect"));
 
     // Specifies the action that is invoked to the database when the Hibernate
     // SessionFactory is created or closed.
@@ -128,7 +153,8 @@ public class OracleDBConfig {
 
     // If the value of this property is true, Hibernate will format the SQL
     // that is written to the console.
-    jpaProperties.put("hibernate.format_sql", env.getRequiredProperty("spring.ds_ora.jpa.format_sql"));
+    jpaProperties.put("hibernate.format_sql",
+        env.getRequiredProperty("spring.ds_ora.jpa.format_sql"));
 
     entityManagerFactoryBean.setJpaProperties(jpaProperties);
 

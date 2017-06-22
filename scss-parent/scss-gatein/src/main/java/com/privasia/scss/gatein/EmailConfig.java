@@ -46,6 +46,10 @@ public class EmailConfig {
   @Value("${mail.ssLFactory}")
   private String sslFactory;
 
+  @Value("${server_root_url}")
+  private String opusServerRootUrl;
+
+
 
   private WDCGlobalSettingService wdcGlobalSettingService;
 
@@ -62,6 +66,7 @@ public class EmailConfig {
 
   @Bean(name = "emailTemplateEngine")
   public TemplateEngine getEmailTemplateEngine() {
+    System.out.println("opusServerRootUrl " + opusServerRootUrl);
     final SpringTemplateEngine templateEngine = new SpringTemplateEngine();
     // Resolver for HTML emails
     templateEngine.addTemplateResolver(htmlTemplateResolver());

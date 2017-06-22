@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
@@ -23,12 +24,32 @@ import com.privasia.scss.core.config.SCSSEntryPoint;
 @Configuration
 @ComponentScan(basePackages = {"com.privasia.scss.*"})
 @EnableAutoConfiguration
-@PropertySource(value = {"classpath:scheduler_application.properties", "classpath:quartz.properties"})
 @Import({SCSSEntryPoint.class, EmailConfig.class})
 @EntityScan(basePackages = {"com.privasia.scss.core.model"})
 @EnableJpaRepositories(basePackages = {"com.privasia.scss.core.repository"})
 @EnableAsync
 public class SchedulerEntryPoint extends SpringBootServletInitializer {
+
+  @Configuration
+  @Profile("dev")
+  @PropertySource({"classpath:scheduler_application-dev.properties",
+      "classpath:quartz-dev.properties"})
+  static class Dev {
+  }
+
+  @Configuration
+  @Profile("prod")
+  @PropertySource({"classpath:scheduler_application-prod.properties",
+      "classpath:quartz-prod.properties"})
+  static class Prod {
+  }
+
+  @Configuration
+  @Profile("uat")
+  @PropertySource({"classpath:scheduler_application-uat.properties",
+      "classpath:quartz-uat.properties"})
+  static class Uat {
+  }
 
   public static void main(String[] args) {
     SpringApplication.run(SchedulerEntryPoint.class, args);

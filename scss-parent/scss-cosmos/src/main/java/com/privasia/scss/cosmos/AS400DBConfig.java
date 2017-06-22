@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -23,8 +24,28 @@ import com.zaxxer.hikari.HikariDataSource;
  *
  */
 @Configuration
-@PropertySource(value = {"classpath:cosmos_application.properties", "classpath:cosmos_sql.properties"})
 public class AS400DBConfig {
+
+  @Configuration
+  @Profile("dev")
+  @PropertySource({"classpath:cosmos_application-dev.properties",
+      "classpath:cosmos_sql-dev.properties"})
+  static class Dev {
+  }
+
+  @Configuration
+  @Profile("prod")
+  @PropertySource({"classpath:cosmos_application-prod.properties",
+      "classpath:cosmos_sql-prod.properties"})
+  static class Prod {
+  }
+
+  @Configuration
+  @Profile("uat")
+  @PropertySource({"classpath:cosmos_application-uat.properties",
+      "classpath:cosmos_sql-uat.properties"})
+  static class Uat {
+  }
 
   @Bean(name = "as400Db", destroyMethod = "close")
   @ConfigurationProperties(prefix = "spring.ds_as400")
@@ -36,7 +57,8 @@ public class AS400DBConfig {
     dataSourceConfig.setUsername(env.getRequiredProperty("spring.ds_as400.username"));
     dataSourceConfig.setPassword(env.getRequiredProperty("spring.ds_as400.password"));
     dataSourceConfig.setPoolName(env.getRequiredProperty("spring.ds_as400.connectionPool"));
-    dataSourceConfig.setConnectionTestQuery(env.getRequiredProperty("spring.ds_as400.connectionTestQuery"));
+    dataSourceConfig
+        .setConnectionTestQuery(env.getRequiredProperty("spring.ds_as400.connectionTestQuery"));
     return new HikariDataSource(dataSourceConfig);
 
 

@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
@@ -15,7 +16,6 @@ import com.privasia.scss.etpws.service.client.ETPWebserviceClient;
  *
  */
 @Configuration
-@PropertySource("classpath:ws.properties")
 public class ETPWsEntryPoint {
 
   @Value("${ws.client.default.uri}")
@@ -26,6 +26,24 @@ public class ETPWsEntryPoint {
 
   @Value("${ws.server.uri}")
   private String wsServerUri;
+
+  @Configuration
+  @Profile("dev")
+  @PropertySource({"classpath:ws-dev.properties"})
+  static class Dev {
+  }
+
+  @Configuration
+  @Profile("prod")
+  @PropertySource({"classpath:ws-prod.properties"})
+  static class Prod {
+  }
+
+  @Configuration
+  @Profile("uat")
+  @PropertySource({"classpath:ws-uat.properties"})
+  static class Uat {
+  }
 
 
   // public static void main(String[] args) {
@@ -50,7 +68,8 @@ public class ETPWsEntryPoint {
   }
 
   @Bean(name = "etpWebserviceClient")
-  public ETPWebserviceClient etpWebserviceClient(@Qualifier("marshaller") Jaxb2Marshaller marshaller) throws Exception {
+  public ETPWebserviceClient etpWebserviceClient(
+      @Qualifier("marshaller") Jaxb2Marshaller marshaller) throws Exception {
     ETPWebserviceClient client = new ETPWebserviceClient(clientDefaultUri, wsServerUri);
     client.setDefaultUri(clientDefaultUri);
     client.setMarshaller(marshaller);
