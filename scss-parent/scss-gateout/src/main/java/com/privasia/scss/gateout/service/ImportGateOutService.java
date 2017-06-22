@@ -106,9 +106,16 @@ public class ImportGateOutService {
       if (gatePass.getBaseCommonGateInOutAttribute() != null) {
        
         if (!(gatePass.getBaseCommonGateInOutAttribute().getTimeGateIn() == null)) {
-          LocalDateTime timeGateIn = gatePass.getBaseCommonGateInOutAttribute().getTimeGateIn();
-          gateOutReponse.setGateInDateTime(timeGateIn);
+        	LocalDateTime timeGateIn = gatePass.getBaseCommonGateInOutAttribute().getTimeGateIn();
+        	gateOutReponse.setGateInDateTime(timeGateIn);
         }
+        
+        if(gatePass.getBaseCommonGateInOutAttribute().getGateInClerk()!=null){
+			gateOutReponse.setClerkName(gatePass.getBaseCommonGateInOutAttribute().getGateInClerk().getCommonContactAttribute().getPersonName());
+		}
+		if(gatePass.getBaseCommonGateInOutAttribute().getGateInClient()!=null){
+			gateOutReponse.setGateInLaneNo(gatePass.getBaseCommonGateInOutAttribute().getGateInClient().getLaneNo());
+		}
       }
       // adding log info
       if (gatePass.getContainerLength() != null) {
