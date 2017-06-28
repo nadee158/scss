@@ -27,7 +27,7 @@ import com.privasia.scss.common.enums.TransactionStatus;
 import com.privasia.scss.common.exception.BusinessException;
 import com.privasia.scss.common.exception.ResultsNotFoundException;
 import com.privasia.scss.common.interfaces.ContainerExternalDataService;
-import com.privasia.scss.common.interfaces.OpusCosmosBusinessService;
+import com.privasia.scss.common.interfaces.TOSService;
 import com.privasia.scss.common.security.model.UserContext;
 import com.privasia.scss.core.model.Card;
 import com.privasia.scss.core.model.Client;
@@ -178,7 +178,7 @@ public class ImportExportGateOutService {
 			
 			// call opus or cosmos only for approved gate in state
 			if(StringUtils.equalsIgnoreCase(TransactionStatus.APPROVED.getValue(), gateOutReponse.getGateInStatus())){
-				OpusCosmosBusinessService businessService = containerExternalDataService
+				TOSService businessService = containerExternalDataService
 						.getImplementationService(implementor);
 				gateOutReponse = businessService.sendGateOutReadRequest(gateOutRequest, gateOutReponse);
 			}
@@ -240,7 +240,7 @@ public class ImportExportGateOutService {
 					"Gate In status Required for the transaction : " + gateOutWriteRequest.getGateInStatus());
 		
 		if(StringUtils.equalsIgnoreCase(TransactionStatus.APPROVED.getValue(), gateOutWriteRequest.getGateInStatus())){
-			OpusCosmosBusinessService businessService = containerExternalDataService.getImplementationService(implementor);
+			TOSService businessService = containerExternalDataService.getImplementationService(implementor);
 			gateOutReponse = businessService.sendGateOutWriteRequest(gateOutWriteRequest, gateOutReponse);
 		}
 		

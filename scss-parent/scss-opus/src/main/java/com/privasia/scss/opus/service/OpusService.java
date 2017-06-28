@@ -17,7 +17,7 @@ import com.privasia.scss.common.dto.GateOutReponse;
 import com.privasia.scss.common.dto.GateOutRequest;
 import com.privasia.scss.common.dto.GateOutWriteRequest;
 import com.privasia.scss.common.exception.BusinessException;
-import com.privasia.scss.common.interfaces.OpusCosmosBusinessService;
+import com.privasia.scss.common.interfaces.TOSService;
 import com.privasia.scss.opus.dto.OpusGateInReadRequest;
 import com.privasia.scss.opus.dto.OpusGateInReadResponse;
 import com.privasia.scss.opus.dto.OpusGateInWriteRequest;
@@ -29,7 +29,7 @@ import com.privasia.scss.opus.dto.OpusGateOutWriteResponse;
 import com.privasia.scss.opus.dto.OpusRequestResponseDTO;
 
 @Service("opus")
-public class OpusService implements OpusCosmosBusinessService {
+public class OpusService implements TOSService {
 
 	private static final Log log = LogFactory.getLog(OpusService.class);
 	

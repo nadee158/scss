@@ -33,7 +33,7 @@ import com.privasia.scss.common.enums.TransactionStatus;
 import com.privasia.scss.common.exception.BusinessException;
 import com.privasia.scss.common.exception.ResultsNotFoundException;
 import com.privasia.scss.common.interfaces.ContainerExternalDataService;
-import com.privasia.scss.common.interfaces.OpusCosmosBusinessService;
+import com.privasia.scss.common.interfaces.TOSService;
 import com.privasia.scss.common.security.model.UserContext;
 import com.privasia.scss.core.model.Card;
 import com.privasia.scss.core.model.Client;
@@ -159,7 +159,7 @@ public class ODDGateOutService {
 		UserContext userContext = (UserContext) authentication.getPrincipal();
 		gateOutRequest.setUserName(userContext.getUsername());
 
-		OpusCosmosBusinessService businessService = containerExternalDataService.getImplementationService(implementor);
+		TOSService businessService = containerExternalDataService.getImplementationService(implementor);
 
 		ContainerValidationInfo validateInfo = businessService.sendODDContainerValidationRequest(gateOutRequest);
 

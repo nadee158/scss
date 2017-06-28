@@ -31,7 +31,7 @@ import com.privasia.scss.common.dto.ImportContainer;
 import com.privasia.scss.common.enums.ImpExpFlagStatus;
 import com.privasia.scss.common.enums.TransactionType;
 import com.privasia.scss.common.exception.BusinessException;
-import com.privasia.scss.common.interfaces.OpusCosmosBusinessService;
+import com.privasia.scss.common.interfaces.TOSService;
 import com.privasia.scss.common.util.DateUtil;
 import com.privasia.scss.cosmos.dto.common.CosmosCommonValuesDTO;
 import com.privasia.scss.cosmos.dto.request.CosmosGateInExport;
@@ -48,7 +48,7 @@ import com.privasia.scss.cosmos.xml.element.service.GOTTRCINFService;
 import com.privasia.scss.cosmos.xml.element.service.MessageService;
 
 @Service("cosmos")
-public class CosmosService implements OpusCosmosBusinessService {
+public class CosmosService implements TOSService {
 
   private static final Logger log = LoggerFactory.getLogger(CosmosService.class);
 

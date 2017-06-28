@@ -15,7 +15,7 @@ import com.privasia.scss.common.dto.GateOutWriteRequest;
  * @author Janaka
  *
  */
-public interface OpusCosmosBusinessService {
+public interface TOSService {
 
   public GateInResponse sendGateInReadRequest(GateInRequest gateInRequest, GateInResponse gateInResponse);
 
