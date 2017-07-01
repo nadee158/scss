@@ -31,6 +31,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.hibernate.annotations.Type;
 
 import com.privasia.scss.common.enums.HpabReferStatus;
+import com.privasia.scss.common.enums.TOSServiceType;
 
 /**
  * @author Janaka
@@ -124,6 +125,18 @@ public class ReferReject extends AuditEntity implements Serializable {
 
   @OneToMany(fetch = FetchType.EAGER, mappedBy = "referReject", cascade = CascadeType.ALL)
   private Set<ReferRejectDetail> referRejectDetails;
+
+  @Column(name = "TOS_SERVICE_TYPE", nullable = true)
+  @Type(type = "com.privasia.scss.common.enumusertype.TOSServiceTypeEnumUserType")
+  private TOSServiceType tosServiceType;
+
+  public TOSServiceType getTosServiceType() {
+    return tosServiceType;
+  }
+
+  public void setTosServiceType(TOSServiceType tosServiceType) {
+    this.tosServiceType = tosServiceType;
+  }
 
   public Long getReferRejectID() {
     return referRejectID;
