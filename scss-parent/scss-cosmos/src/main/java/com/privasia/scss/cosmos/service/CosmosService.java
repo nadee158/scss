@@ -281,9 +281,9 @@ public class CosmosService implements TOSService {
     Future<GateInResponse> exportResponse = cosmosGateInReadService.populateCosmosGateInExport(gateInResponse);
 
     while (true) {
-      System.out.println("inside the loop");
+      System.out.println("inside the loop cosmos");
       if (importResponse.isDone() && exportResponse.isDone()) {
-        System.out.println("now done");
+        System.out.println("now done cosmos");
         try {
           gateInResponse.setImportContainers(importResponse.get().getImportContainers());
           gateInResponse.setExportContainers(exportResponse.get().getExportContainers());
@@ -293,11 +293,11 @@ public class CosmosService implements TOSService {
         }
         break;
       } else {
-        System.out.println("not done yet");
+        System.out.println("not done yet cosmos");
       }
 
       try {
-        System.out.println("waiting " + asyncWaitTime);
+        System.out.println("waiting cosmos " + asyncWaitTime);
         Thread.sleep(5);
       } catch (InterruptedException e) {
         log.error(e.getMessage());
