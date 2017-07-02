@@ -149,9 +149,9 @@ public class ImportExportGateInService {
       throw new BusinessException("Unit no does not setup for client " + client.getClientID());
     gateInRequest.setLaneNo(client.getUnitNo());
 
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    UserContext userContext = (UserContext) authentication.getPrincipal();
-    gateInRequest.setUserName(userContext.getUsername());
+    // Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    // UserContext userContext = (UserContext) authentication.getPrincipal();
+    gateInRequest.setUserName(gateInRequest.getUserName());
 
     GateInResponse gateInResponse = new GateInResponse();
 
@@ -159,7 +159,7 @@ public class ImportExportGateInService {
      * if the refer id avaliable then fetch here. then pass export container list
      */
     // refere reject details
-    if (gateInRequest.getReferID().isPresent()) {
+    if ((!(gateInRequest.getReferID() == null)) && gateInRequest.getReferID().isPresent()) {
       gateInResponse = gateInReferService.fetchReferDataForExport(gateInRequest.getReferID().get());
     }
 
@@ -183,7 +183,7 @@ public class ImportExportGateInService {
       gateInResponse = exportGateInService.validateExportsGateInRead(gateInResponse, gateInRequest.getGateInDateTime());
     }
     gateInResponse.setLaneNo(client.getUnitNo());
-    gateInResponse.setUserId(userContext.getStaffName());
+    gateInResponse.setUserId("MyUser");
     return gateInResponse;
   }
 
@@ -241,7 +241,7 @@ public class ImportExportGateInService {
         }
 
 
-        if (!(gateInRequest.getReferID().isPresent())) {
+        if (!(gateInRequest.getReferID() != null && gateInRequest.getReferID().isPresent())) {
 
           gateInResponse = hpabService.populateHpabForImpExp(gateInResponse, gateInRequest.getHpabSeqId());
 

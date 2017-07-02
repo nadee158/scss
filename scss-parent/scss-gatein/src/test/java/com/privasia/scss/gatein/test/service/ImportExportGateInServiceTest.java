@@ -28,7 +28,7 @@ public class ImportExportGateInServiceTest extends GateInAbstractTest {
   @Test
   public void testPopulateGateIn() {
     GateInRequest gateInRequest = new GateInRequest();
-    gateInRequest.setCardID(359129l);
+    gateInRequest.setCardID(1729l);
     gateInRequest.setCheckPreArrival(false);
     gateInRequest.setClientID(481l);
     gateInRequest.setExpContainer1("KMAL0000003");
@@ -38,7 +38,7 @@ public class ImportExportGateInServiceTest extends GateInAbstractTest {
     gateInRequest.setGatePass1(0l);
     gateInRequest.setGatePass2(0l);
     gateInRequest.setHaulageCode("");
-    gateInRequest.setHpabSeqId("2c95da965cc34629015cc49fa8ce00ca");
+    gateInRequest.setHpabSeqId(null);
     gateInRequest.setImpContainer1(null);
     gateInRequest.setImpContainer2(null);
     gateInRequest.setLaneNo(null);
