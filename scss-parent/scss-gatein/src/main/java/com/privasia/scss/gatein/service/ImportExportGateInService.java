@@ -231,11 +231,11 @@ public class ImportExportGateInService {
     opusResponse = opusBusinessService.sendGateInReadRequest(gateInRequest, gateInResponse);
 
     while (true) {
-      System.out.println("inside the loop");
+      System.out.println("inside the loop sendAllTOSServiceGateInReadRequest");
 
       if (cosmosResponse.isDone() && opusResponse.isDone()) {
 
-        System.out.println("now done");
+        System.out.println("now done sendAllTOSServiceGateInReadRequest");
 
         try {
           gateInResponse = cosmosResponse.get();
@@ -253,13 +253,13 @@ public class ImportExportGateInService {
           log.error(e.getMessage());
         }
 
-
+        break;
       } else {
-        System.out.println("not done yet");
+        System.out.println("not done yet sendAllTOSServiceGateInReadRequest");
       }
 
       try {
-        System.out.println("waiting " + asyncWaitTime);
+        System.out.println("waiting sendAllTOSServiceGateInReadRequest " + asyncWaitTime);
         Thread.sleep(5);
       } catch (InterruptedException e) {
         log.error(e.getMessage());
