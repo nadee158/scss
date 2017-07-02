@@ -15,6 +15,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
 
 import com.privasia.scss.common.dto.CommonContainerDTO;
@@ -248,8 +250,9 @@ public class CosmosService implements TOSService {
     return gateOutReponse;
   }
 
+  @Async
   @Override
-  public GateInResponse sendGateInReadRequest(GateInRequest gateInRequest, GateInResponse gateInResponse) {
+  public Future<GateInResponse> sendGateInReadRequest(GateInRequest gateInRequest, GateInResponse gateInResponse) {
 
     long start = System.currentTimeMillis();
 
@@ -303,7 +306,7 @@ public class CosmosService implements TOSService {
     }
     long end = System.currentTimeMillis();
     System.out.println("time : " + (end - start) / 1000.0 + "sec");
-    return gateInResponse;
+    return new AsyncResult<GateInResponse>(gateInResponse);
   }
 
   @Override

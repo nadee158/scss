@@ -2,6 +2,8 @@ package com.privasia.scss.gatein.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
@@ -75,8 +77,7 @@ public class ImportExportGateInService {
   private HPABBookingRepository hpabBookingRepository;
 
   @Autowired
-  public void setExternalContainerInformationService(
-      ContainerExternalDataService containerExternalDataService) {
+  public void setExternalContainerInformationService(ContainerExternalDataService containerExternalDataService) {
     this.containerExternalDataService = containerExternalDataService;
   }
 
@@ -134,14 +135,14 @@ public class ImportExportGateInService {
   public GateInResponse populateGateIn(GateInRequest gateInRequest) {
 
     Optional<Card> cardOpt = cardRepository.findOne(gateInRequest.getCardID());
-    Card card = cardOpt.orElseThrow(
-        () -> new ResultsNotFoundException("Invalid Card ID ! " + gateInRequest.getCardID()));
+    Card card =
+        cardOpt.orElseThrow(() -> new ResultsNotFoundException("Invalid Card ID ! " + gateInRequest.getCardID()));
 
     gateInRequest.setHaulageCode(commonCardService.getHaulierCodeByScanCard(card));
 
     Optional<Client> clientOpt = clientRepository.findOne(gateInRequest.getClientID());
-    Client client = clientOpt.orElseThrow(
-        () -> new ResultsNotFoundException("Invalid client ID ! " + gateInRequest.getClientID()));
+    Client client =
+        clientOpt.orElseThrow(() -> new ResultsNotFoundException("Invalid client ID ! " + gateInRequest.getClientID()));
     if (StringUtils.isEmpty(client.getUnitNo()))
       throw new BusinessException("Unit no does not setup for client " + client.getClientID());
     gateInRequest.setLaneNo(client.getUnitNo());
@@ -167,8 +168,7 @@ public class ImportExportGateInService {
     if ((gateInRequest.getGatePass1() != null && gateInRequest.getGatePass1() > 0)
         || (gateInRequest.getGatePass2() != null && gateInRequest.getGatePass2() > 0)) {
 
-      List<ImportContainer> importContainerList =
-          importGateInService.populateGateInImport(gateInRequest);
+      List<ImportContainer> importContainerList = importGateInService.populateGateInImport(gateInRequest);
       // GatePassValidationService call validate - within another method
       importGateInService.validateImport(gateInRequest, importContainerList);
       gateInResponse.setImportContainers(importContainerList);
@@ -179,46 +179,133 @@ public class ImportExportGateInService {
     // assign details from hpab booking
     if (StringUtils.isNotEmpty(gateInRequest.getHpabSeqId())) {
 
-      TOSService businessService =
-          containerExternalDataService.getImplementationService(implementor);
-      businessService.sendGateInReadRequest(gateInRequest, gateInResponse);
+      TOSService businessService = containerExternalDataService.getImplementationService(implementor);
 
-      if (!(gateInRequest.getReferID().isPresent())) {
+      gateInResponse = sendTosServiceGateInReadRequest(businessService, gateInRequest, gateInResponse);
 
-        gateInResponse =
-            hpabService.populateHpabForImpExp(gateInResponse, gateInRequest.getHpabSeqId());
-
-        if (gateInResponse.getExportContainers() != null) {
-          boolean fullExist =
-              gateInResponse.getExportContainers().stream()
-                  .filter(expCon -> (StringUtils.equalsIgnoreCase(
-                      ContainerFullEmptyType.FULL.getValue(),
-                      expCon.getContainer().getContainerFullOrEmpty())))
-                  .findAny().isPresent();
-          if (fullExist)
-            solasService.calculateTerminalVGM(gateInResponse.getExportContainers(), false);
-        }
-      }
     } else {
       // no hpab or refer id present - access simultaniously
+      TOSService cosmosBusinessService = containerExternalDataService.getImplementationService("cosmos");
+      TOSService opusBusinessService = containerExternalDataService.getImplementationService("opus");
+
+      gateInResponse =
+          sendAllTosServiceGateInReadRequest(cosmosBusinessService, opusBusinessService, gateInRequest, gateInResponse);
     }
 
-    if (!(gateInResponse.getExportContainers() == null
-        || gateInResponse.getExportContainers().isEmpty())) {
+    if (!(gateInResponse.getExportContainers() == null || gateInResponse.getExportContainers().isEmpty())) {
       // set iso info if cosmos
-      gateInResponse = exportGateInService.validateExportsGateInRead(gateInResponse,
-          gateInRequest.getGateInDateTime());
+      gateInResponse = exportGateInService.validateExportsGateInRead(gateInResponse, gateInRequest.getGateInDateTime());
     }
     gateInResponse.setLaneNo(client.getUnitNo());
     gateInResponse.setUserId(userContext.getStaffName());
     return gateInResponse;
   }
 
+  private GateInResponse sendAllTosServiceGateInReadRequest(TOSService cosmosBusinessService,
+      TOSService opusBusinessService, GateInRequest gateInRequest, GateInResponse gateInResponse) {
+    long start = System.currentTimeMillis();
+    Future<GateInResponse> cosmosResponse = cosmosBusinessService.sendGateInReadRequest(gateInRequest, gateInResponse);
+    Future<GateInResponse> opusResponse = opusBusinessService.sendGateInReadRequest(gateInRequest, gateInResponse);
+
+    while (true) {
+      System.out.println("inside the loop");
+      if (cosmosResponse.isDone() && opusResponse.isDone()) {
+        System.out.println("now done");
+        try {
+
+          gateInResponse = cosmosResponse.get();
+
+          gateInResponse = opusResponse.get();
+
+          if (!(gateInRequest.getReferID().isPresent())) {
+
+            gateInResponse = hpabService.populateHpabForImpExp(gateInResponse, gateInRequest.getHpabSeqId());
+
+            if (gateInResponse.getExportContainers() != null) {
+              boolean fullExist = gateInResponse.getExportContainers().stream()
+                  .filter(expCon -> (StringUtils.equalsIgnoreCase(ContainerFullEmptyType.FULL.getValue(),
+                      expCon.getContainer().getContainerFullOrEmpty())))
+                  .findAny().isPresent();
+              if (fullExist)
+                solasService.calculateTerminalVGM(gateInResponse.getExportContainers(), false);
+            }
+          }
+
+        } catch (InterruptedException | ExecutionException e) {
+          log.error("Error Occured while retrieve data data from cosmos");
+          log.error(e.getMessage());
+        }
+        break;
+      } else {
+        System.out.println("not done yet");
+      }
+
+      try {
+        System.out.println("waiting " + asyncWaitTime);
+        Thread.sleep(5);
+      } catch (InterruptedException e) {
+        log.error(e.getMessage());
+        break;
+      }
+    }
+    long end = System.currentTimeMillis();
+    System.out.println("time : " + (end - start) / 1000.0 + "sec");
+    return gateInResponse;
+  }
+
+  public GateInResponse sendTosServiceGateInReadRequest(TOSService businessService, GateInRequest gateInRequest,
+      GateInResponse gateInResponse) {
+
+    long start = System.currentTimeMillis();
+    Future<GateInResponse> response = businessService.sendGateInReadRequest(gateInRequest, gateInResponse);
+
+    while (true) {
+      System.out.println("inside the loop");
+      if (response.isDone()) {
+        System.out.println("now done");
+        try {
+          gateInResponse = response.get();
+          if (!(gateInRequest.getReferID().isPresent())) {
+
+            gateInResponse = hpabService.populateHpabForImpExp(gateInResponse, gateInRequest.getHpabSeqId());
+
+            if (gateInResponse.getExportContainers() != null) {
+              boolean fullExist = gateInResponse.getExportContainers().stream()
+                  .filter(expCon -> (StringUtils.equalsIgnoreCase(ContainerFullEmptyType.FULL.getValue(),
+                      expCon.getContainer().getContainerFullOrEmpty())))
+                  .findAny().isPresent();
+              if (fullExist)
+                solasService.calculateTerminalVGM(gateInResponse.getExportContainers(), false);
+            }
+          }
+
+        } catch (InterruptedException | ExecutionException e) {
+          log.error("Error Occured while retrieve data data from cosmos");
+          log.error(e.getMessage());
+        }
+        break;
+      } else {
+        System.out.println("not done yet");
+      }
+
+      try {
+        System.out.println("waiting " + asyncWaitTime);
+        Thread.sleep(5);
+      } catch (InterruptedException e) {
+        log.error(e.getMessage());
+        break;
+      }
+    }
+    long end = System.currentTimeMillis();
+    System.out.println("time : " + (end - start) / 1000.0 + "sec");
+    return gateInResponse;
+  }
+
   @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
   public GateInResponse saveGateInInfo(GateInWriteRequest gateInWriteRequest) {
 
-    Card card = cardRepository.findOne(gateInWriteRequest.getCardID()).orElseThrow(
-        () -> new ResultsNotFoundException("Invalid Card : " + gateInWriteRequest.getCardID()));
+    Card card = cardRepository.findOne(gateInWriteRequest.getCardID())
+        .orElseThrow(() -> new ResultsNotFoundException("Invalid Card : " + gateInWriteRequest.getCardID()));
 
     gateInWriteRequest.setHaulageCode(commonCardService.getHaulierCodeByScanCard(card));
 
@@ -227,25 +314,21 @@ public class ImportExportGateInService {
     gateInWriteRequest.setUserName(userContext.getUsername());
 
     Client gateInClient = clientRepository.findOne(gateInWriteRequest.getGateInClient())
-        .orElseThrow(() -> new ResultsNotFoundException(
-            "Invalid Client Id : " + gateInWriteRequest.getGateInClient()));
+        .orElseThrow(() -> new ResultsNotFoundException("Invalid Client Id : " + gateInWriteRequest.getGateInClient()));
 
     if (StringUtils.isEmpty(gateInClient.getUnitNo()))
-      throw new BusinessException(
-          "Unit no does not setup for client " + gateInClient.getClientID());
+      throw new BusinessException("Unit no does not setup for client " + gateInClient.getClientID());
     gateInWriteRequest.setLaneNo(gateInClient.getUnitNo());
     gateInWriteRequest.setCosmosPort(gateInClient.getCosmosPortNo());
 
-    SystemUser gateInClerk = systemUserRepository.findOne(SecurityHelper.getCurrentUserId())
-        .orElseThrow(() -> new AuthenticationServiceException(
-            "Log in User Not Found : " + SecurityHelper.getCurrentUserId()));
+    SystemUser gateInClerk = systemUserRepository.findOne(SecurityHelper.getCurrentUserId()).orElseThrow(
+        () -> new AuthenticationServiceException("Log in User Not Found : " + SecurityHelper.getCurrentUserId()));
 
     HPABBooking hpabBooking = null;
 
     if (StringUtils.isNotEmpty(gateInWriteRequest.getHpatBookingId())) {
-      hpabBooking = hpabBookingRepository.findOne(gateInWriteRequest.getHpatBookingId())
-          .orElseThrow(() -> new ResultsNotFoundException(
-              "No HPAB Booking found ! : " + gateInWriteRequest.getHpatBookingId()));
+      hpabBooking = hpabBookingRepository.findOne(gateInWriteRequest.getHpatBookingId()).orElseThrow(
+          () -> new ResultsNotFoundException("No HPAB Booking found ! : " + gateInWriteRequest.getHpatBookingId()));
     }
 
     /*
@@ -262,8 +345,7 @@ public class ImportExportGateInService {
 
     switch (impExpFlag) {
       case IMPORT:
-        if (StringUtils.equalsIgnoreCase(gateInWriteRequest.getGateInStatus(),
-            TransactionStatus.APPROVED.getValue())) {
+        if (StringUtils.equalsIgnoreCase(gateInWriteRequest.getGateInStatus(), TransactionStatus.APPROVED.getValue())) {
           gateInResponse = businessService.sendGateInWriteRequest(gateInWriteRequest);
           gateInWriteRequest.setImportContainers(gateInResponse.getImportContainers());
         } else {
@@ -271,29 +353,25 @@ public class ImportExportGateInService {
           gateInResponse.setImportContainers(gateInWriteRequest.getImportContainers());
         }
 
-        importGateInService.saveGateInInfo(gateInWriteRequest, gateInClient, gateInClerk, card,
-            hpabBooking);
+        importGateInService.saveGateInInfo(gateInWriteRequest, gateInClient, gateInClerk, card, hpabBooking);
         // expSave = new AsyncResult<Boolean>(true);
         break;
       case EXPORT:
         // impSave = new AsyncResult<Boolean>(true);
         exportGateInService.validateExportsGateInWrite(gateInWriteRequest);
-        if (StringUtils.equalsIgnoreCase(gateInWriteRequest.getGateInStatus(),
-            TransactionStatus.APPROVED.getValue())) {
+        if (StringUtils.equalsIgnoreCase(gateInWriteRequest.getGateInStatus(), TransactionStatus.APPROVED.getValue())) {
           gateInResponse = businessService.sendGateInWriteRequest(gateInWriteRequest);
           gateInWriteRequest.setExportContainers(gateInResponse.getExportContainers());
         } else {
           gateInResponse = new GateInResponse();
           gateInResponse.setExportContainers(gateInWriteRequest.getExportContainers());
         }
-        exportGateInService.saveGateInInfo(gateInWriteRequest, gateInClient, gateInClerk, card,
-            hpabBooking);
+        exportGateInService.saveGateInInfo(gateInWriteRequest, gateInClient, gateInClerk, card, hpabBooking);
         break;
       case IMPORT_EXPORT:
         exportGateInService.validateExportsGateInWrite(gateInWriteRequest);
 
-        if (StringUtils.equalsIgnoreCase(gateInWriteRequest.getGateInStatus(),
-            TransactionStatus.APPROVED.getValue())) {
+        if (StringUtils.equalsIgnoreCase(gateInWriteRequest.getGateInStatus(), TransactionStatus.APPROVED.getValue())) {
           gateInResponse = businessService.sendGateInWriteRequest(gateInWriteRequest);
           gateInWriteRequest.setImportContainers(gateInResponse.getImportContainers());
           gateInWriteRequest.setExportContainers(gateInResponse.getExportContainers());
@@ -302,10 +380,8 @@ public class ImportExportGateInService {
           gateInResponse.setImportContainers(gateInWriteRequest.getImportContainers());
           gateInResponse.setExportContainers(gateInWriteRequest.getExportContainers());
         }
-        importGateInService.saveGateInInfo(gateInWriteRequest, gateInClient, gateInClerk, card,
-            hpabBooking);
-        exportGateInService.saveGateInInfo(gateInWriteRequest, gateInClient, gateInClerk, card,
-            hpabBooking);
+        importGateInService.saveGateInInfo(gateInWriteRequest, gateInClient, gateInClerk, card, hpabBooking);
+        exportGateInService.saveGateInInfo(gateInWriteRequest, gateInClient, gateInClerk, card, hpabBooking);
         break;
       default:
         // impSave = new AsyncResult<Boolean>(true);
@@ -324,15 +400,13 @@ public class ImportExportGateInService {
     /*
      * while (true) { if (impSave.isDone() && expSave.isDone()) {
      * 
-     * gateOutMessage.setCode(GateOutMessage.OK); gateOutMessage.setDescription(
-     * "Saved Successfully!");
+     * gateOutMessage.setCode(GateOutMessage.OK); gateOutMessage.setDescription( "Saved Successfully!");
      * 
      * System.out.println("WHILE LOOP BROKEN!!!!. "); break; } System.out.println(
      * "Continue doing something else. ");
      * 
-     * try { Thread.sleep(asyncWaitTime); } catch (InterruptedException e) {
-     * log.error(e.getMessage()); System.out.println( "WHILE LOOP BROKEN ON THREAD EXCEPTION!!!!. "
-     * ); break; } }
+     * try { Thread.sleep(asyncWaitTime); } catch (InterruptedException e) { log.error(e.getMessage());
+     * System.out.println( "WHILE LOOP BROKEN ON THREAD EXCEPTION!!!!. " ); break; } }
      */
     gateInResponse.setGateINDateTime(gateInWriteRequest.getGateInDateTime());
     gateInResponse.setMessage(gateOutMessage);
