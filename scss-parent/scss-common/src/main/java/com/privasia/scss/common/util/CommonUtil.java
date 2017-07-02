@@ -128,13 +128,35 @@ public final class CommonUtil {
   public static TOSServiceType getTOSServiceTypeFromTOSIndicator(String tosIndecator) {
     TOSServiceType tosServiceType = null;
     if (StringUtils.isNotEmpty(tosIndecator)) {
-      if (StringUtils.equals(tosIndecator, ApplicationConstants.COSMOS)) {
-        tosServiceType = TOSServiceType.COSMOS;
-      } else if (StringUtils.equals(tosIndecator, ApplicationConstants.OPUS)) {
-        tosServiceType = TOSServiceType.OPUS;
+      switch (tosIndecator) {
+        case ApplicationConstants.COSMOS:
+          tosServiceType = TOSServiceType.COSMOS;
+          break;
+        case ApplicationConstants.OPUS:
+          tosServiceType = TOSServiceType.OPUS;
+          break;
+        default:
+          break;
       }
     }
     return tosServiceType;
+  }
+
+  public static String getTOSIndicatorFromTOSServiceType(TOSServiceType tosServiceType) {
+    String tosIndecator = null;
+    if (!(tosServiceType == null)) {
+      switch (tosServiceType) {
+        case COSMOS:
+          tosIndecator = ApplicationConstants.COSMOS;
+          break;
+        case OPUS:
+          tosIndecator = ApplicationConstants.OPUS;
+          break;
+        default:
+          break;
+      }
+    }
+    return tosIndecator;
   }
 
 }

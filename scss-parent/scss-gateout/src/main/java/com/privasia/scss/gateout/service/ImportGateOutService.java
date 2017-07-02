@@ -29,6 +29,7 @@ import com.privasia.scss.common.enums.ContainerFullEmptyType;
 import com.privasia.scss.common.enums.TransactionStatus;
 import com.privasia.scss.common.exception.BusinessException;
 import com.privasia.scss.common.exception.ResultsNotFoundException;
+import com.privasia.scss.common.util.CommonUtil;
 import com.privasia.scss.core.model.Client;
 import com.privasia.scss.core.model.CommonSealAttribute;
 import com.privasia.scss.core.model.GatePass;
@@ -102,20 +103,21 @@ public class ImportGateOutService {
     inprogressGatePassList.forEach(gatePass -> {
       ImportContainer importContainer = new ImportContainer();
       modelMapper.map(gatePass, importContainer);
-
+      gateOutReponse.setTosIndicator(CommonUtil.getTOSIndicatorFromTOSServiceType(gatePass.getTosServiceType()));
       if (gatePass.getBaseCommonGateInOutAttribute() != null) {
-       
+
         if (!(gatePass.getBaseCommonGateInOutAttribute().getTimeGateIn() == null)) {
-        	LocalDateTime timeGateIn = gatePass.getBaseCommonGateInOutAttribute().getTimeGateIn();
-        	gateOutReponse.setGateInDateTime(timeGateIn);
+          LocalDateTime timeGateIn = gatePass.getBaseCommonGateInOutAttribute().getTimeGateIn();
+          gateOutReponse.setGateInDateTime(timeGateIn);
         }
-        
-        if(gatePass.getBaseCommonGateInOutAttribute().getGateInClerk()!=null){
-			gateOutReponse.setClerkName(gatePass.getBaseCommonGateInOutAttribute().getGateInClerk().getCommonContactAttribute().getPersonName());
-		}
-		if(gatePass.getBaseCommonGateInOutAttribute().getGateInClient()!=null){
-			gateOutReponse.setGateInLaneNo(gatePass.getBaseCommonGateInOutAttribute().getGateInClient().getLaneNo());
-		}
+
+        if (gatePass.getBaseCommonGateInOutAttribute().getGateInClerk() != null) {
+          gateOutReponse.setClerkName(
+              gatePass.getBaseCommonGateInOutAttribute().getGateInClerk().getCommonContactAttribute().getPersonName());
+        }
+        if (gatePass.getBaseCommonGateInOutAttribute().getGateInClient() != null) {
+          gateOutReponse.setGateInLaneNo(gatePass.getBaseCommonGateInOutAttribute().getGateInClient().getLaneNo());
+        }
       }
       // adding log info
       if (gatePass.getContainerLength() != null) {
@@ -255,11 +257,13 @@ public class ImportGateOutService {
     boolean internalBlock = cosmosImportRepository.isInternalBlock(importContainer);
 
     if (ogaBlock && internalBlock) {
-      throw new BusinessException("Container " + importContainer.getContainer().getContainerNumber() + " : Internal & OGA Block!");
+      throw new BusinessException(
+          "Container " + importContainer.getContainer().getContainerNumber() + " : Internal & OGA Block!");
     } else if (ogaBlock) {
       throw new BusinessException("Container " + importContainer.getContainer().getContainerNumber() + " : OGA Block!");
     } else if (internalBlock) {
-      throw new BusinessException("Container " + importContainer.getContainer().getContainerNumber() + " : Internal Block!");
+      throw new BusinessException(
+          "Container " + importContainer.getContainer().getContainerNumber() + " : Internal Block!");
     }
   }
 
@@ -325,10 +329,10 @@ public class ImportGateOutService {
   @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
   public void updateGatePassReference(FileDTO fileDTO) {
 
-    Optional<List<GatePass>> gatePassOptList = gatePassRepository
-        .findByGatePassNoIn(Arrays.asList(fileDTO.getGatePassNo1().orElse(null), fileDTO.getGatePassNo2().orElse(null)));
+    Optional<List<GatePass>> gatePassOptList = gatePassRepository.findByGatePassNoIn(
+        Arrays.asList(fileDTO.getGatePassNo1().orElse(null), fileDTO.getGatePassNo2().orElse(null)));
 
-    if (gatePassOptList.isPresent() && ! gatePassOptList.get().isEmpty()) {
+    if (gatePassOptList.isPresent() && !gatePassOptList.get().isEmpty()) {
       gatePassOptList.get().forEach(gatePass -> {
         assignUpdatedValuesGatePass(gatePass, fileDTO);
         gatePassRepository.save(gatePass);
