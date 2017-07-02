@@ -2,6 +2,7 @@ package com.privasia.scss.gatein.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -30,6 +31,7 @@ import com.privasia.scss.common.exception.ResultsNotFoundException;
 import com.privasia.scss.common.interfaces.ContainerExternalDataService;
 import com.privasia.scss.common.interfaces.TOSService;
 import com.privasia.scss.common.security.model.UserContext;
+import com.privasia.scss.common.util.ApplicationConstants;
 import com.privasia.scss.core.model.Card;
 import com.privasia.scss.core.model.Client;
 import com.privasia.scss.core.model.HPABBooking;
@@ -174,23 +176,7 @@ public class ImportExportGateInService {
       gateInResponse.setImportContainers(importContainerList);
     }
 
-
-
-    // assign details from hpab booking
-    if (StringUtils.isNotEmpty(gateInRequest.getHpabSeqId())) {
-
-      TOSService businessService = containerExternalDataService.getImplementationService(implementor);
-
-      gateInResponse = sendTosServiceGateInReadRequest(businessService, gateInRequest, gateInResponse);
-
-    } else {
-      // no hpab or refer id present - access simultaniously
-      TOSService cosmosBusinessService = containerExternalDataService.getImplementationService("cosmos");
-      TOSService opusBusinessService = containerExternalDataService.getImplementationService("opus");
-
-      gateInResponse =
-          sendAllTosServiceGateInReadRequest(cosmosBusinessService, opusBusinessService, gateInRequest, gateInResponse);
-    }
+    getTOSServiceDataAtGateInRead(gateInRequest, gateInResponse);
 
     if (!(gateInResponse.getExportContainers() == null || gateInResponse.getExportContainers().isEmpty())) {
       // set iso info if cosmos
@@ -201,89 +187,75 @@ public class ImportExportGateInService {
     return gateInResponse;
   }
 
-  private GateInResponse sendAllTosServiceGateInReadRequest(TOSService cosmosBusinessService,
-      TOSService opusBusinessService, GateInRequest gateInRequest, GateInResponse gateInResponse) {
+  public void getTOSServiceDataAtGateInRead(GateInRequest gateInRequest, GateInResponse gateInResponse) {
+    // assign details from hpab booking
+    if (StringUtils.isNotEmpty(gateInRequest.getHpabSeqId())) {
+
+      TOSService businessService = containerExternalDataService.getImplementationService(implementor);
+      businessService.sendGateInReadRequest(gateInRequest, gateInResponse);
+      gateInResponse.setTosIndicator(implementor);
+
+    } else {
+      // no hpab or refer id present - access simultaniously
+      gateInResponse = sendAllTOSServiceGateInReadRequest(gateInRequest, gateInResponse);
+
+    }
+
+  }
+
+  public GateInResponse sendAllTOSServiceGateInReadRequest(GateInRequest gateInRequest, GateInResponse gateInResponse) {
     long start = System.currentTimeMillis();
-    Future<GateInResponse> cosmosResponse = cosmosBusinessService.sendGateInReadRequest(gateInRequest, gateInResponse);
-    Future<GateInResponse> opusResponse = opusBusinessService.sendGateInReadRequest(gateInRequest, gateInResponse);
+
+    TOSService cosmosBusinessService = containerExternalDataService.getImplementationService("cosmos");
+    TOSService opusBusinessService = containerExternalDataService.getImplementationService("opus");
+
+    Future<GateInResponse> cosmosResponse = null;
+    Future<GateInResponse> opusResponse = null;
+
+
+    cosmosResponse = cosmosBusinessService.sendGateInReadRequest(gateInRequest, gateInResponse);
+
+    opusResponse = opusBusinessService.sendGateInReadRequest(gateInRequest, gateInResponse);
 
     while (true) {
       System.out.println("inside the loop");
+
       if (cosmosResponse.isDone() && opusResponse.isDone()) {
-        System.out.println("now done");
-        try {
 
+        System.out.println("now done");
+
+        try {
           gateInResponse = cosmosResponse.get();
-
-          gateInResponse = opusResponse.get();
-
-          if (!(gateInRequest.getReferID().isPresent())) {
-
-            gateInResponse = hpabService.populateHpabForImpExp(gateInResponse, gateInRequest.getHpabSeqId());
-
-            if (gateInResponse.getExportContainers() != null) {
-              boolean fullExist = gateInResponse.getExportContainers().stream()
-                  .filter(expCon -> (StringUtils.equalsIgnoreCase(ContainerFullEmptyType.FULL.getValue(),
-                      expCon.getContainer().getContainerFullOrEmpty())))
-                  .findAny().isPresent();
-              if (fullExist)
-                solasService.calculateTerminalVGM(gateInResponse.getExportContainers(), false);
-            }
-          }
-
-        } catch (InterruptedException | ExecutionException e) {
+          gateInResponse.setTosIndicator(ApplicationConstants.COSMOS);
+        } catch (InterruptedException | ExecutionException | CancellationException e) {
           log.error("Error Occured while retrieve data data from cosmos");
           log.error(e.getMessage());
         }
-        break;
-      } else {
-        System.out.println("not done yet");
-      }
 
-      try {
-        System.out.println("waiting " + asyncWaitTime);
-        Thread.sleep(5);
-      } catch (InterruptedException e) {
-        log.error(e.getMessage());
-        break;
-      }
-    }
-    long end = System.currentTimeMillis();
-    System.out.println("time : " + (end - start) / 1000.0 + "sec");
-    return gateInResponse;
-  }
-
-  public GateInResponse sendTosServiceGateInReadRequest(TOSService businessService, GateInRequest gateInRequest,
-      GateInResponse gateInResponse) {
-
-    long start = System.currentTimeMillis();
-    Future<GateInResponse> response = businessService.sendGateInReadRequest(gateInRequest, gateInResponse);
-
-    while (true) {
-      System.out.println("inside the loop");
-      if (response.isDone()) {
-        System.out.println("now done");
         try {
-          gateInResponse = response.get();
-          if (!(gateInRequest.getReferID().isPresent())) {
-
-            gateInResponse = hpabService.populateHpabForImpExp(gateInResponse, gateInRequest.getHpabSeqId());
-
-            if (gateInResponse.getExportContainers() != null) {
-              boolean fullExist = gateInResponse.getExportContainers().stream()
-                  .filter(expCon -> (StringUtils.equalsIgnoreCase(ContainerFullEmptyType.FULL.getValue(),
-                      expCon.getContainer().getContainerFullOrEmpty())))
-                  .findAny().isPresent();
-              if (fullExist)
-                solasService.calculateTerminalVGM(gateInResponse.getExportContainers(), false);
-            }
-          }
-
-        } catch (InterruptedException | ExecutionException e) {
-          log.error("Error Occured while retrieve data data from cosmos");
+          gateInResponse = opusResponse.get();
+          gateInResponse.setTosIndicator(ApplicationConstants.OPUS);
+        } catch (InterruptedException | ExecutionException | CancellationException e) {
+          log.error("Error Occured while retrieve data data from opus");
           log.error(e.getMessage());
         }
-        break;
+
+
+        if (!(gateInRequest.getReferID().isPresent())) {
+
+          gateInResponse = hpabService.populateHpabForImpExp(gateInResponse, gateInRequest.getHpabSeqId());
+
+          if (gateInResponse.getExportContainers() != null) {
+            boolean fullExist = gateInResponse.getExportContainers().stream()
+                .filter(expCon -> (StringUtils.equalsIgnoreCase(ContainerFullEmptyType.FULL.getValue(),
+                    expCon.getContainer().getContainerFullOrEmpty())))
+                .findAny().isPresent();
+            if (fullExist)
+              solasService.calculateTerminalVGM(gateInResponse.getExportContainers(), false);
+          }
+        }
+
+
       } else {
         System.out.println("not done yet");
       }
@@ -298,8 +270,10 @@ public class ImportExportGateInService {
     }
     long end = System.currentTimeMillis();
     System.out.println("time : " + (end - start) / 1000.0 + "sec");
+
     return gateInResponse;
   }
+
 
   @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
   public GateInResponse saveGateInInfo(GateInWriteRequest gateInWriteRequest) {
@@ -340,6 +314,15 @@ public class ImportExportGateInService {
     ImpExpFlagStatus impExpFlag = ImpExpFlagStatus.fromValue(gateInWriteRequest.getImpExpFlag());
 
     GateInResponse gateInResponse = null;
+
+    System.out.println("gateInWriteRequest.getTosIndicator() " + gateInWriteRequest.getTosIndicator());
+    if (StringUtils.isNotEmpty(gateInWriteRequest.getTosIndicator())) {
+      implementor = gateInWriteRequest.getTosIndicator();
+    } else {
+      log.error("gateInWriteRequest.getTosIndicator() not recieved from UI, setting the default " + implementor);
+      gateInWriteRequest.setTosIndicator(implementor);
+    }
+    log.debug("implementor " + implementor);
 
     TOSService businessService = containerExternalDataService.getImplementationService(implementor);
 

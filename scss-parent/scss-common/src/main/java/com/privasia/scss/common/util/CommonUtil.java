@@ -12,6 +12,8 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
+import com.privasia.scss.common.enums.TOSServiceType;
+
 public final class CommonUtil {
 
   private static final Logger LOGGER = Logger.getLogger(CommonUtil.class);
@@ -22,7 +24,7 @@ public final class CommonUtil {
   public static final String LOWER_CASE = "L";
   private static final AtomicLong LAST_TIME_MS = new AtomicLong();
 
- 
+
 
   public static String formatMessageCode(String msgcode, Object[] args) {
 
@@ -121,6 +123,18 @@ public final class CommonUtil {
       if (LAST_TIME_MS.compareAndSet(lastTime, now))
         return now;
     }
+  }
+
+  public static TOSServiceType getTOSServiceTypeFromTOSIndicator(String tosIndecator) {
+    TOSServiceType tosServiceType = null;
+    if (StringUtils.isNotEmpty(tosIndecator)) {
+      if (StringUtils.equals(tosIndecator, ApplicationConstants.COSMOS)) {
+        tosServiceType = TOSServiceType.COSMOS;
+      } else if (StringUtils.equals(tosIndecator, ApplicationConstants.OPUS)) {
+        tosServiceType = TOSServiceType.OPUS;
+      }
+    }
+    return tosServiceType;
   }
 
 }

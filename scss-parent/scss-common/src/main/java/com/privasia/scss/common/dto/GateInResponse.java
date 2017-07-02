@@ -12,246 +12,256 @@ import com.privasia.scss.common.util.DateUtil;
 
 public class GateInResponse implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 1L;
 
-	private String userId;
+  private String userId;
 
-	private String laneNo;// LNO01,
-	private String haulageCode;// HAUCD,
-	private String truckHeadNo;// TRUCK,
-	private String truckPlateNo;// null,
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateUtil.GLOBAL_DATE_TIME_PATTERN)
-	private LocalDateTime gateINDateTime;// 20161130112233,
-	private boolean checkPreArrival = false;// -boolean
+  private String laneNo;// LNO01,
+  private String haulageCode;// HAUCD,
+  private String truckHeadNo;// TRUCK,
+  private String truckPlateNo;// null,
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateUtil.GLOBAL_DATE_TIME_PATTERN)
+  private LocalDateTime gateINDateTime;// 20161130112233,
+  private boolean checkPreArrival = false;// -boolean
 
-	private List<ImportContainer> importContainers = new ArrayList<ImportContainer>();
+  private List<ImportContainer> importContainers = new ArrayList<ImportContainer>();
 
-	private List<ExportContainer> exportContainers = new ArrayList<ExportContainer>();
+  private List<ExportContainer> exportContainers = new ArrayList<ExportContainer>();
 
-	private List<WHoddDTO> whoddContainers;
+  private List<WHoddDTO> whoddContainers;
 
-	private Integer expWeightBridge;// -long
+  private Integer expWeightBridge;// -long
 
-	// for gate in write
-	private String callCardNo;// 20161130112233,
+  // for gate in write
+  private String callCardNo;// 20161130112233,
 
-	private GateOutMessage message;
+  private GateOutMessage message;
 
-	private String solasInstruction = SolasInstructionType.VGM_INSTRUCTION_NO_SOLAS.getValue();
+  private String solasInstruction = SolasInstructionType.VGM_INSTRUCTION_NO_SOLAS.getValue();
 
-	private String trailerPlate;
+  private String trailerPlate;
 
-	private Integer trailerWeight;
-	
-	private Integer truckWeight;
-	
-	private Boolean axleVerified;
-	
-	private Boolean pmVerified;
-	
-	private String hpabBookingId;
-	
-	private String impExpFlagStatus;
-	
-	private boolean manualPlanIndicator = false;
-	
-	private String manualPlanDescription;
+  private Integer trailerWeight;
 
-	public String getLaneNo() {
-		return laneNo;
-	}
+  private Integer truckWeight;
 
-	public void setLaneNo(String laneNo) {
-		this.laneNo = laneNo;
-	}
+  private Boolean axleVerified;
 
-	public String getHaulageCode() {
-		return haulageCode;
-	}
+  private Boolean pmVerified;
 
-	public void setHaulageCode(String haulageCode) {
-		this.haulageCode = haulageCode;
-	}
+  private String hpabBookingId;
 
-	public String getTruckHeadNo() {
-		return truckHeadNo;
-	}
+  private String impExpFlagStatus;
 
-	public void setTruckHeadNo(String truckHeadNo) {
-		this.truckHeadNo = truckHeadNo;
-	}
+  private boolean manualPlanIndicator = false;
 
-	public String getTruckPlateNo() {
-		return truckPlateNo;
-	}
+  private String manualPlanDescription;
 
-	public void setTruckPlateNo(String truckPlateNo) {
-		this.truckPlateNo = truckPlateNo;
-	}
+  private String tosIndicator;
 
-	public LocalDateTime getGateINDateTime() {
-		return gateINDateTime;
-	}
+  public String getLaneNo() {
+    return laneNo;
+  }
 
-	public void setGateINDateTime(LocalDateTime gateINDateTime) {
-		this.gateINDateTime = gateINDateTime;
-	}
+  public void setLaneNo(String laneNo) {
+    this.laneNo = laneNo;
+  }
 
-	public List<ImportContainer> getImportContainers() {
-		return importContainers;
-	}
+  public String getHaulageCode() {
+    return haulageCode;
+  }
 
-	public void setImportContainers(List<ImportContainer> importContainers) {
-		this.importContainers = importContainers;
-	}
+  public void setHaulageCode(String haulageCode) {
+    this.haulageCode = haulageCode;
+  }
 
-	public List<ExportContainer> getExportContainers() {
-		return exportContainers;
-	}
+  public String getTruckHeadNo() {
+    return truckHeadNo;
+  }
 
-	public void setExportContainers(List<ExportContainer> exportContainers) {
-		this.exportContainers = exportContainers;
-	}
+  public void setTruckHeadNo(String truckHeadNo) {
+    this.truckHeadNo = truckHeadNo;
+  }
 
-	public String getCallCardNo() {
-		return callCardNo;
-	}
+  public String getTruckPlateNo() {
+    return truckPlateNo;
+  }
 
-	public void setCallCardNo(String callCardNo) {
-		this.callCardNo = callCardNo;
-	}
+  public void setTruckPlateNo(String truckPlateNo) {
+    this.truckPlateNo = truckPlateNo;
+  }
 
-	public boolean isCheckPreArrival() {
-		return checkPreArrival;
-	}
+  public LocalDateTime getGateINDateTime() {
+    return gateINDateTime;
+  }
 
-	public void setCheckPreArrival(boolean checkPreArrival) {
-		this.checkPreArrival = checkPreArrival;
-	}
+  public void setGateINDateTime(LocalDateTime gateINDateTime) {
+    this.gateINDateTime = gateINDateTime;
+  }
 
-	public String getUserId() {
-		return userId;
-	}
+  public List<ImportContainer> getImportContainers() {
+    return importContainers;
+  }
 
-	public void setUserId(String userId) {
-		this.userId = userId;
-	}
+  public void setImportContainers(List<ImportContainer> importContainers) {
+    this.importContainers = importContainers;
+  }
 
-	public GateOutMessage getMessage() {
-		return message;
-	}
+  public List<ExportContainer> getExportContainers() {
+    return exportContainers;
+  }
 
-	public void setMessage(GateOutMessage message) {
-		this.message = message;
-	}
+  public void setExportContainers(List<ExportContainer> exportContainers) {
+    this.exportContainers = exportContainers;
+  }
 
-	public Integer getExpWeightBridge() {
-		return expWeightBridge;
-	}
+  public String getCallCardNo() {
+    return callCardNo;
+  }
 
-	public void setExpWeightBridge(Integer expWeightBridge) {
-		this.expWeightBridge = expWeightBridge;
-	}
+  public void setCallCardNo(String callCardNo) {
+    this.callCardNo = callCardNo;
+  }
 
-	public String getSolasInstruction() {
-		return solasInstruction;
-	}
+  public boolean isCheckPreArrival() {
+    return checkPreArrival;
+  }
 
-	public void setSolasInstruction(String solasInstruction) {
-		this.solasInstruction = solasInstruction;
-	}
+  public void setCheckPreArrival(boolean checkPreArrival) {
+    this.checkPreArrival = checkPreArrival;
+  }
 
-	public List<WHoddDTO> getWhoddContainers() {
-		return whoddContainers;
-	}
+  public String getUserId() {
+    return userId;
+  }
 
-	public void setWhoddContainers(List<WHoddDTO> whoddContainers) {
-		this.whoddContainers = whoddContainers;
-	}
+  public void setUserId(String userId) {
+    this.userId = userId;
+  }
 
-	public String getTrailerPlate() {
-		return trailerPlate;
-	}
+  public GateOutMessage getMessage() {
+    return message;
+  }
 
-	public void setTrailerPlate(String trailerPlate) {
-		this.trailerPlate = trailerPlate;
-	}
+  public void setMessage(GateOutMessage message) {
+    this.message = message;
+  }
 
-	public Integer getTruckWeight() {
-		return truckWeight;
-	}
+  public Integer getExpWeightBridge() {
+    return expWeightBridge;
+  }
 
-	public void setTruckWeight(Integer truckWeight) {
-		this.truckWeight = truckWeight;
-	}
+  public void setExpWeightBridge(Integer expWeightBridge) {
+    this.expWeightBridge = expWeightBridge;
+  }
 
-	public Integer getTrailerWeight() {
-		return trailerWeight;
-	}
+  public String getSolasInstruction() {
+    return solasInstruction;
+  }
 
-	public void setTrailerWeight(Integer trailerWeight) {
-		this.trailerWeight = trailerWeight;
-	}
-	
-	public Boolean getAxleVerified() {
-		return axleVerified;
-	}
+  public void setSolasInstruction(String solasInstruction) {
+    this.solasInstruction = solasInstruction;
+  }
 
-	public void setAxleVerified(Boolean axleVerified) {
-		this.axleVerified = axleVerified;
-	}
+  public List<WHoddDTO> getWhoddContainers() {
+    return whoddContainers;
+  }
 
-	public Boolean getPmVerified() {
-		return pmVerified;
-	}
+  public void setWhoddContainers(List<WHoddDTO> whoddContainers) {
+    this.whoddContainers = whoddContainers;
+  }
 
-	public void setPmVerified(Boolean pmVerified) {
-		this.pmVerified = pmVerified;
-	}
+  public String getTrailerPlate() {
+    return trailerPlate;
+  }
 
-	public String getHpabBookingId() {
-		return hpabBookingId;
-	}
+  public void setTrailerPlate(String trailerPlate) {
+    this.trailerPlate = trailerPlate;
+  }
 
-	public void setHpabBookingId(String hpabBookingId) {
-		this.hpabBookingId = hpabBookingId;
-	}
+  public Integer getTruckWeight() {
+    return truckWeight;
+  }
 
-	public String getImpExpFlagStatus() {
-		return impExpFlagStatus;
-	}
+  public void setTruckWeight(Integer truckWeight) {
+    this.truckWeight = truckWeight;
+  }
 
-	public void setImpExpFlagStatus(String impExpFlagStatus) {
-		this.impExpFlagStatus = impExpFlagStatus;
-	}
+  public Integer getTrailerWeight() {
+    return trailerWeight;
+  }
 
-	public boolean isManualPlanIndicator() {
-		return manualPlanIndicator;
-	}
+  public void setTrailerWeight(Integer trailerWeight) {
+    this.trailerWeight = trailerWeight;
+  }
 
-	public void setManualPlanIndicator(boolean manualPlanIndicator) {
-		
-		if (!(this.getExportContainers() == null || this.getExportContainers().isEmpty())) {
+  public Boolean getAxleVerified() {
+    return axleVerified;
+  }
 
-			this.manualPlanIndicator = this.getExportContainers().stream()
-				.filter(expContainer -> expContainer.getManualPlanIndicator()).findAny().isPresent();
-			this.setManualPlanDescription(ApplicationConstants.INF0016);
+  public void setAxleVerified(Boolean axleVerified) {
+    this.axleVerified = axleVerified;
+  }
 
-		}else{
-			this.manualPlanIndicator = manualPlanIndicator;
-		}
-	}
+  public Boolean getPmVerified() {
+    return pmVerified;
+  }
 
-	public String getManualPlanDescription() {
-		return manualPlanDescription;
-	}
+  public void setPmVerified(Boolean pmVerified) {
+    this.pmVerified = pmVerified;
+  }
 
-	public void setManualPlanDescription(String manualPlanDescription) {
-		this.manualPlanDescription = manualPlanDescription;
-	}
+  public String getHpabBookingId() {
+    return hpabBookingId;
+  }
 
-	
+  public void setHpabBookingId(String hpabBookingId) {
+    this.hpabBookingId = hpabBookingId;
+  }
+
+  public String getImpExpFlagStatus() {
+    return impExpFlagStatus;
+  }
+
+  public void setImpExpFlagStatus(String impExpFlagStatus) {
+    this.impExpFlagStatus = impExpFlagStatus;
+  }
+
+  public boolean isManualPlanIndicator() {
+    return manualPlanIndicator;
+  }
+
+  public void setManualPlanIndicator(boolean manualPlanIndicator) {
+
+    if (!(this.getExportContainers() == null || this.getExportContainers().isEmpty())) {
+
+      this.manualPlanIndicator = this.getExportContainers().stream()
+          .filter(expContainer -> expContainer.getManualPlanIndicator()).findAny().isPresent();
+      this.setManualPlanDescription(ApplicationConstants.INF0016);
+
+    } else {
+      this.manualPlanIndicator = manualPlanIndicator;
+    }
+  }
+
+  public String getManualPlanDescription() {
+    return manualPlanDescription;
+  }
+
+  public void setManualPlanDescription(String manualPlanDescription) {
+    this.manualPlanDescription = manualPlanDescription;
+  }
+
+  public String getTosIndicator() {
+    return tosIndicator;
+  }
+
+  public void setTosIndicator(String tosIndicator) {
+    this.tosIndicator = tosIndicator;
+  }
+
+
 }

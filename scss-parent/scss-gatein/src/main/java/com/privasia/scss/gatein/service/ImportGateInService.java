@@ -25,9 +25,11 @@ import com.privasia.scss.common.enums.ContainerFullEmptyType;
 import com.privasia.scss.common.enums.ContainerPosition;
 import com.privasia.scss.common.enums.GateInOutStatus;
 import com.privasia.scss.common.enums.ImpExpFlagStatus;
+import com.privasia.scss.common.enums.TOSServiceType;
 import com.privasia.scss.common.enums.TransactionStatus;
 import com.privasia.scss.common.exception.BusinessException;
 import com.privasia.scss.common.exception.ResultsNotFoundException;
+import com.privasia.scss.common.util.CommonUtil;
 import com.privasia.scss.core.model.BaseCommonGateInOutAttribute;
 import com.privasia.scss.core.model.Card;
 import com.privasia.scss.core.model.Client;
@@ -159,6 +161,10 @@ public class ImportGateInService {
   @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
   public void saveGateInInfo(GateInWriteRequest gateInWriteRequest, Client gateInClient, SystemUser gateInClerk,
       Card card, HPABBooking hpabBooking) {
+
+    final TOSServiceType finalTOSServiceType =
+        CommonUtil.getTOSServiceTypeFromTOSIndicator(gateInWriteRequest.getTosIndicator());
+
     // construct a new export entity for each exportcontainer and save
     if (gateInWriteRequest.getImportContainers() == null || gateInWriteRequest.getImportContainers().isEmpty())
       throw new BusinessException("Invalid GateInWriteRequest to save Imports ! ");
@@ -199,6 +205,7 @@ public class ImportGateInService {
           gatePass.prepareForInsertFromOpus(card, gateInClerk, gateInClient, hpabBooking);
           System.out.println("gatePass.getContainer().getContainerFullOrEmpty() after "
               + gatePass.getContainer().getContainerFullOrEmpty());
+          gatePass.setTosServiceType(finalTOSServiceType);
           gatePass = gatePassRepository.save(gatePass);
         } else {
           throw new ResultsNotFoundException("Gatepass could not be found with the given gate pass number!");
