@@ -3,6 +3,7 @@ package com.privasia.scss.gatein.test.service;
 import static org.junit.Assert.fail;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -43,7 +44,7 @@ public class ImportExportGateInServiceTest extends GateInAbstractTest {
     gateInRequest.setImpContainer2(null);
     gateInRequest.setLaneNo(null);
     gateInRequest.setOddReject(false);
-    gateInRequest.setReferID(null);
+    gateInRequest.setReferID(Optional.ofNullable(null));
     gateInRequest.setTruckHeadNo("QK01");
     gateInRequest.setUserId(1l);
     gateInRequest.setUserName("Test");

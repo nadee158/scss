@@ -5,6 +5,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.privasia.scss.common.enums.SolasInstructionType;
 import com.privasia.scss.common.util.ApplicationConstants;
@@ -261,6 +264,11 @@ public class GateInResponse implements Serializable {
 
   public void setTosIndicator(String tosIndicator) {
     this.tosIndicator = tosIndicator;
+  }
+
+  @Override
+  public String toString() {
+    return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
   }
 
 
