@@ -23,12 +23,12 @@ public class SSRService {
 		LocalDateTime etaDate = exportContainer.getVesselETADate();
 		if(etaDate==null)
 			throw new BusinessException("Container " + exportContainer.getContainer().getContainerNumber() + "vessel ETA date not provided for ssr !");
-		etaDate.minusHours(4);
+		etaDate = etaDate.minusHours(4);
 
 		if (etaDate.isBefore(timeGateIn)) {
 			exportContainer.setReplanSSR(true);
 		} else {
-			etaDate.minusHours(6);
+			etaDate = etaDate.minusHours(6);
 			if (etaDate.isBefore(timeGateIn)) {
 				exportContainer.setOverClosingSSR(true);
 			}

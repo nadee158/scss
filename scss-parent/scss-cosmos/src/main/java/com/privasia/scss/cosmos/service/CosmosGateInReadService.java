@@ -71,6 +71,9 @@ public class CosmosGateInReadService {
 
 			});
 
+		}else{
+			gateInResponse.setImportContainers(null);
+			System.out.println("else part running in populateCosmosGateInImport **************************** ");
 		}
 
 		return new AsyncResult<GateInResponse>(gateInResponse);
@@ -82,7 +85,7 @@ public class CosmosGateInReadService {
 		if (!(gateInResponse.getExportContainers() == null || gateInResponse.getExportContainers().isEmpty())) {
 
 			gateInResponse.getExportContainers().forEach(exportContainer -> {
-
+				System.out.println("else part running in populateCosmosGateInExport **************************** "+exportContainer.getContainer().getContainerNumber());
 				Future<Boolean> primary = cosmosGateInExportService.fetchPrimanyInfoContainerInfo(exportContainer);
 				Future<Boolean> Secondary = cosmosGateInExportService.fetchSecondaryContainerInfo(exportContainer);
 
@@ -104,6 +107,9 @@ public class CosmosGateInReadService {
 				}
 
 			});
+		}else{
+			gateInResponse.setExportContainers(null);
+			System.out.println("else part running in populateCosmosGateInExport **************************** ");
 		}
 
 		return new AsyncResult<GateInResponse>(gateInResponse);

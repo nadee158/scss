@@ -258,19 +258,20 @@ public class CosmosService implements OpusCosmosBusinessService {
     if (gateInResponse.getExportContainers() == null || gateInResponse.getExportContainers().isEmpty()) {
 
       List<ExportContainer> exportContainers = new ArrayList<>();
+      gateInResponse.setExportContainers(exportContainers);
       ExportContainer exportContainer = null;
       if (StringUtils.isNotEmpty(gateInRequest.getExpContainer1())) {
         exportContainer = new ExportContainer();
         exportContainer.setContainer(new CommonContainerDTO());
         exportContainer.getContainer().setContainerNumber(StringUtils.upperCase(gateInRequest.getExpContainer1()));
-        exportContainers.add(exportContainer);
+        gateInResponse.getExportContainers().add(exportContainer);
       }
 
       if (StringUtils.isNotEmpty(gateInRequest.getExpContainer2())) {
         exportContainer = new ExportContainer();
         exportContainer.setContainer(new CommonContainerDTO());
         exportContainer.getContainer().setContainerNumber(StringUtils.upperCase(gateInRequest.getExpContainer2()));
-        exportContainers.add(exportContainer);
+        gateInResponse.getExportContainers().add(exportContainer);
       }
 
     }
