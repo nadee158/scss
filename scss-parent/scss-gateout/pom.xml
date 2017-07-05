@@ -29,23 +29,23 @@
 			<artifactId>junit</artifactId>
 			<scope>test</scope>
 		</dependency>
-		
-		 <dependency>
+
+		<dependency>
 			<groupId>com.privasia.scss</groupId>
 			<artifactId>scss-core</artifactId>
 			<version>1.0</version>
 		</dependency>
-		
+
 
 		<dependency>
 			<groupId>com.privasia.scss</groupId>
 			<artifactId>scss-cosmos</artifactId>
 			<version>1.0</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>com.privasia.scss</groupId>
-  			<artifactId>scss-opus</artifactId>
+			<artifactId>scss-opus</artifactId>
 			<version>1.0</version>
 			<exclusions>
 				<exclusion>
@@ -76,11 +76,21 @@
 			</plugins>
 		</pluginManagement>
 		<resources>
-	        <resource>
-	            <directory>src/main/resources</directory>
-	            <filtering>true</filtering>
-	        </resource>
-	    </resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+				<excludes>
+					<exclude>**/*.ttf</exclude>
+				</excludes>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>false</filtering>
+				<includes>
+					<include>**/*.ttf</include>
+				</includes>
+			</resource>
+		</resources>
 		<finalName>scss-gateout</finalName>
 	</build>
 
