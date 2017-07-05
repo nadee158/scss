@@ -838,14 +838,6 @@ public class GatePassService {
           gatePass.setPrintEir(printEir);
         }
 
-        if (StringUtils.isNotEmpty(container.getCugId())) {
-          long cardUsageID = Long.parseLong(container.getCugId());
-          Optional<CardUsage> cardUsage = cardUsageRepository.findOne(cardUsageID);
-          if (cardUsage.isPresent()) {
-            gatePass.setCardUsage(cardUsage.get());
-          }
-        }
-
         gatePass.setGatePassNo(gatePassNo);
 
         Optional<ClientDTO> client = clientRepository.getClientUnitNoByClientID(Long.parseLong(clientId));

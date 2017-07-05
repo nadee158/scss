@@ -100,9 +100,10 @@ public class OpusRequestResponseService {
 	 } 
   }
   
-  @Async
-  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRES_NEW, readOnly = false)
-  public Future<Long> saveOpusRequestResponse(OpusRequestResponseDTO opusRequestResponseDTO) {
+  //@Async
+  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
+  //public Future<Long> saveOpusRequestResponse(OpusRequestResponseDTO opusRequestResponseDTO) {
+  public void saveOpusRequestResponse(OpusRequestResponseDTO opusRequestResponseDTO) {
 
     OpusRequestResponse opusRequestResponse = null;
     Optional<Card> cardOpt = cardRepository.findOne(opusRequestResponseDTO.getCardID());
@@ -114,13 +115,19 @@ public class OpusRequestResponseService {
       // set id upon save dfdf
       opusRequestResponse.setOpusReqResID(CommonUtil.getUniqueID());
       System.out.println("before  opusRequestResponse ######################### " + opusRequestResponse.getOpusReqResID());
+      
+      System.out.println("Card version @ saveOpusRequestResponse ######################### " + card.getVersion());
+      /*System.out.println("Card version @ saveOpusRequestResponse card.getCardPrintStatus ######################### " + card.getCardPrintStatus());
+		if(card.getCardPrintStatus() == null){
+			System.out.println("Card version @ saveOpusRequestResponse card.getCardPrintStatus NULL ######################### " + card.getCardPrintStatus());
+		}*/
       opusRequestResponse = opusRepository.save(opusRequestResponse);
       System.out.println("save  opusRequestResponse ######################### "+ opusRequestResponse.getOpusReqResID());
     } catch (Exception e) {
       log.error("Error Occured when update Opus Response " + opusRequestResponse);
       log.error(e.getMessage());
     }
-    return new AsyncResult<Long>(opusRequestResponse.getOpusReqResID());
+    //return new AsyncResult<Long>(opusRequestResponse.getOpusReqResID());
   }
 
 

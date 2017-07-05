@@ -96,9 +96,9 @@ public class Card extends AuditEntity implements Serializable {
 	@Type(type = "com.privasia.scss.common.enumusertype.CardStatusEnumUserType")
 	private CardStatus cardStatus;
 
-	@Column(name = "CRD_PRINTSTATUS", nullable = true)
+	/*@Column(name = "CRD_PRINTSTATUS", nullable = true)
 	@Type(type = "com.privasia.scss.common.enumusertype.CardPrintStatusEnumUserType")
-	private CardPrintStatus cardPrintStatus;
+	private CardPrintStatus cardPrintStatus;*/
 
 	@Column(name = "CRD_PRINTDATE", nullable = true)
 	private LocalDateTime printDate;
@@ -233,13 +233,13 @@ public class Card extends AuditEntity implements Serializable {
 		this.cardStatus = cardStatus;
 	}
 
-	public CardPrintStatus getCardPrintStatus() {
+	/*public CardPrintStatus getCardPrintStatus() {
 		return cardPrintStatus;
 	}
 
 	public void setCardPrintStatus(CardPrintStatus cardPrintStatus) {
 		this.cardPrintStatus = cardPrintStatus;
-	}
+	}*/
 
 	public LocalDateTime getPrintDate() {
 		return printDate;

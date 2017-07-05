@@ -160,10 +160,6 @@ public class GatePass extends AuditEntity implements Serializable {
 	@JoinColumn(name = "GTP_PRINT_EIR", nullable = true, referencedColumnName = "PRINT_NO")
 	private PrintEir printEir;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "CUG_ID_SEQ", nullable = true, referencedColumnName = "CUG_ID_SEQ")
-	private CardUsage cardUsage;
-
 	@Column(name = "COSMOS_GTP_SEAL_1_ORIGIN")
 	private String cosmosSeal01Origin = StringUtils.EMPTY;
 
@@ -366,14 +362,6 @@ public class GatePass extends AuditEntity implements Serializable {
 
 	public void setPrintEir(PrintEir printEir) {
 		this.printEir = printEir;
-	}
-
-	public CardUsage getCardUsage() {
-		return cardUsage;
-	}
-
-	public void setCardUsage(CardUsage cardUsage) {
-		this.cardUsage = cardUsage;
 	}
 
 	public String getCosmosSeal01Origin() {

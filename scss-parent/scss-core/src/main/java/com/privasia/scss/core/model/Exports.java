@@ -295,10 +295,6 @@ public class Exports extends AuditEntity implements Serializable {
 	@Column(name = "COSMOS_NET_WEIGHT")
 	private Integer cosmosNetWeight;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "CUG_ID_SEQ", nullable = true, referencedColumnName = "CUG_ID_SEQ")
-	private CardUsage cardUsage;
-
 	@Column(name = " BACK_TO_BACK", nullable = true)
 	@Type(type = "yes_no")
 	private Boolean backToback = false;
@@ -765,14 +761,6 @@ public class Exports extends AuditEntity implements Serializable {
 
 	public void setHdlGoodsDescription(String hdlGoodsDescription) {
 		this.hdlGoodsDescription = hdlGoodsDescription;
-	}
-
-	public CardUsage getCardUsage() {
-		return cardUsage;
-	}
-
-	public void setCardUsage(CardUsage cardUsage) {
-		this.cardUsage = cardUsage;
 	}
 
 	public Boolean getBackToback() {
@@ -1321,7 +1309,6 @@ public class Exports extends AuditEntity implements Serializable {
 		this.setHdlGoodsCode(CommonUtil.changeCase(this.hdlGoodsCode, CommonUtil.LOWER_CASE));
 		this.setDgDescription(CommonUtil.changeCase(this.dgDescription, CommonUtil.LOWER_CASE));
 		this.setHdlGoodsDescription(CommonUtil.changeCase(this.hdlGoodsDescription, CommonUtil.LOWER_CASE));
-		this.setCardUsage(cardUsage);
 		this.getBaseCommonGateInOutAttribute().setHpabBooking(hpabBooking);
 		calculateWeightPercentages();
 		this.setHpabISOCode(CommonUtil.changeCase(this.hpabISOCode, CommonUtil.UPPER_CASE));

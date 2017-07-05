@@ -198,6 +198,12 @@ public class ImportExportGateOutService {
 		Optional<Card> cardOpt = cardRepository.findOne(gateOutWriteRequest.getCardID());
 		Card card = cardOpt.orElseThrow(
 				() -> new ResultsNotFoundException("Invalid Scan Card ID ! " + gateOutWriteRequest.getCardID()));
+		
+		System.out.println("Card version @ saveGateOutInfo ######################### " + card.getVersion());
+		/*System.out.println("Card version @ card.getCardPrintStatus ######################### " + card.getCardPrintStatus());
+		if(card.getCardPrintStatus() == null){
+			System.out.println("Card version @ card.getCardPrintStatus NULL ######################### " + card.getCardPrintStatus());
+		}*/
 
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		UserContext userContext = (UserContext) authentication.getPrincipal();
