@@ -38,19 +38,19 @@ public class CosmosGateInExportServiceTest extends GateInAbstractTest {
 		
 		ExportContainer exportContainer = new ExportContainer();
 		exportContainer.setContainer(new CommonContainerDTO());
-		exportContainer.getContainer().setContainerNumber("ASYT98765420");
+		exportContainer.getContainer().setContainerNumber("OPIP11111111");
 		List<ExportContainer> exportContainers = new ArrayList<ExportContainer>();
 		exportContainers.add(exportContainer);
 		
-		ImportContainer importContainer = new ImportContainer();
+		/*ImportContainer importContainer = new ImportContainer();
 		importContainer.setContainer(new CommonContainerDTO());
 		importContainer.getContainer().setContainerNumber("ATOS12345611");
 		List<ImportContainer> importContainers = new ArrayList<ImportContainer>();
-		importContainers.add(importContainer);
+		importContainers.add(importContainer);*/
 		
 		GateInResponse gateInResponse = new GateInResponse();
 		gateInResponse.setExportContainers(exportContainers);
-		gateInResponse.setImportContainers(importContainers);
+		gateInResponse.setImportContainers(null);
 		
 		//thrown.expect(BusinessException.class);
 		//thrown.expectMessage("Error cound while fetching container in cosmos "+exportContainer.getContainer().getContainerNumber());

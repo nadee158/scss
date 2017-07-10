@@ -129,7 +129,7 @@ public class AGSClientService {
 
 	}
 
-	private String sendRequestXml(String requestXML, int portNo) {
+	public String sendRequestXml(String requestXML, int portNo) {
 
 		Socket socket = null;
 		DataOutputStream out = null;

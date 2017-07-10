@@ -52,6 +52,7 @@ public class CosmosGateInReadService {
 		if (!(gateInResponse.getImportContainers() == null || gateInResponse.getImportContainers().isEmpty())) {
 
 			gateInResponse.getImportContainers().forEach(importContainer -> {
+				System.out.println("Running in populateCosmosGateInImport **************************** "+importContainer.getContainer().getContainerNumber());
 				cosmosGateInImportService.fetchContainerInfo(importContainer);
 
 				if (StringUtils.isNotEmpty(importContainer.getContainer().getContainerISOCode())) {
@@ -85,7 +86,7 @@ public class CosmosGateInReadService {
 		if (!(gateInResponse.getExportContainers() == null || gateInResponse.getExportContainers().isEmpty())) {
 
 			gateInResponse.getExportContainers().forEach(exportContainer -> {
-				System.out.println("else part running in populateCosmosGateInExport **************************** "+exportContainer.getContainer().getContainerNumber());
+				System.out.println("Running in populateCosmosGateInExport **************************** "+exportContainer.getContainer().getContainerNumber());
 				Future<Boolean> primary = cosmosGateInExportService.fetchPrimanyInfoContainerInfo(exportContainer);
 				Future<Boolean> Secondary = cosmosGateInExportService.fetchSecondaryContainerInfo(exportContainer);
 

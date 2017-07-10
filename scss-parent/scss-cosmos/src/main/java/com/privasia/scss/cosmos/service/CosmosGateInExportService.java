@@ -58,7 +58,7 @@ public class CosmosGateInExportService {
     return exportContainers;
   }
   
-  @Async
+  //@Async
   @Transactional(value = "as400TransactionManager", propagation = Propagation.REQUIRES_NEW, readOnly = true)
   public Future<Boolean> fetchPrimanyInfoContainerInfo(ExportContainer exportContainer){
 	  

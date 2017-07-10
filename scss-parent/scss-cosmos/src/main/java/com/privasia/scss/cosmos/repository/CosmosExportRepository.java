@@ -174,7 +174,9 @@ public class CosmosExportRepository {
       exportContainer.setVesselSCN(StringUtils.trim(rs.getString("REGN01")));
       exportContainer.setVesselName(StringUtils.trim(rs.getString("MVVA47")));
       exportContainer.setVesselStatus(rs.getString("BZFS01"));
-
+      
+      System.out.println("ETA DATA : "+rs.getString("ETAD01"));
+      
       exportContainer.setVesselETADate(DateUtil
           .getLocalDategFromString(rs.getString("ETAD01") + TextString.padding(rs.getString("ETAT01"), 6, '0', true)));
 
@@ -399,6 +401,12 @@ public class CosmosExportRepository {
 
     return exportContainer;
 
+  }
+  
+  public static void main(String args[]){
+	  
+	  System.out.println(DateUtil
+	          .getLocalDategFromString("20170612" + TextString.padding("20170612", 6, '0', true)));
   }
 
 }
