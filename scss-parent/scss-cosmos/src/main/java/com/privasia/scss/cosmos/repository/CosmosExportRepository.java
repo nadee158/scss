@@ -57,7 +57,8 @@ public class CosmosExportRepository {
     this.jdbcTemplate = jdbcTemplate;
   }
 
-  @Transactional(value = "as400TransactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+  @Transactional(value = "as400TransactionManager", propagation = Propagation.REQUIRED,
+      readOnly = true)
   public ExportContainer isOGABlock(ExportContainer exportContainer) {
 
     String containerNo = StringUtils.upperCase(exportContainer.getContainer().getContainerNumber());
@@ -75,7 +76,8 @@ public class CosmosExportRepository {
     return exportContainer;
   }
 
-  @Transactional(value = "as400TransactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+  @Transactional(value = "as400TransactionManager", propagation = Propagation.REQUIRED,
+      readOnly = true)
   public ExportContainer isInternalBlock(ExportContainer exportContainer) {
 
     String containerNo = StringUtils.upperCase(exportContainer.getContainer().getContainerNumber());
@@ -91,7 +93,8 @@ public class CosmosExportRepository {
 
   }
 
-  private ExportContainer extractInternalBlock(ExportContainer exportContainer, ResultSet rs, int rowNum) {
+  private ExportContainer extractInternalBlock(ExportContainer exportContainer, ResultSet rs,
+      int rowNum) {
 
     try {
       exportContainer.setInternalBlock(true);
@@ -101,18 +104,19 @@ public class CosmosExportRepository {
     } catch (SQLException e) {
       log.error("ExportContainer extractInternalBlock " + e.getMessage());
       e.printStackTrace();
-      throw new BusinessException(
-          "Error cound while fetching container in cosmos " + exportContainer.getContainer().getContainerNumber());
+      throw new BusinessException("Error cound while fetching container in cosmos "
+          + exportContainer.getContainer().getContainerNumber());
     }
 
   }
 
-  @Transactional(value = "as400TransactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+  @Transactional(value = "as400TransactionManager", propagation = Propagation.REQUIRED,
+      readOnly = true)
   public String checkContainerStatus(String containerNo, String timeGateIn) {
     try {
       containerNo = StringUtils.upperCase(containerNo);
-      return jdbcTemplate.queryForObject(queryContainerStatus, new Object[] {containerNo, timeGateIn},
-          (rs, i) -> extractContainerStatus(rs));
+      return jdbcTemplate.queryForObject(queryContainerStatus,
+          new Object[] {containerNo, timeGateIn}, (rs, i) -> extractContainerStatus(rs));
     } catch (EmptyResultDataAccessException e) {
       log.error("Container checkContainerStatus " + e.getMessage());
       e.printStackTrace();
@@ -134,23 +138,27 @@ public class CosmosExportRepository {
     }
   }
 
-  @Transactional(value = "as400TransactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+  @Transactional(value = "as400TransactionManager", propagation = Propagation.REQUIRED,
+      readOnly = true)
   public ExportContainer fetchContainerPrimanyInfo(ExportContainer exportContainer) {
-
-    String exportContainerNo = StringUtils.upperCase(exportContainer.getContainer().getContainerNumber());
-
+    System.out.println("fetchContainerPrimanyInfo repo");
+    String exportContainerNo =
+        StringUtils.upperCase(exportContainer.getContainer().getContainerNumber());
+    System.out.println("exportContainerNo " + exportContainerNo);
     try {
-      return jdbcTemplate.queryForObject(queryContainerPrimaryInfo, new Object[] {exportContainerNo},
+      return jdbcTemplate.queryForObject(queryContainerPrimaryInfo,
+          new Object[] {exportContainerNo},
           (rs, i) -> extractPrimaryContainerInfo(exportContainer, rs, i));
     } catch (EmptyResultDataAccessException e) {
       log.error("ExportContainer fetchContainerPrimanyInfo " + e.getMessage());
       e.printStackTrace();
-      throw new BusinessException(
-          "Container cound not found in cosmos " + exportContainer.getContainer().getContainerNumber());
+      throw new BusinessException("Container cound not found in cosmos "
+          + exportContainer.getContainer().getContainerNumber());
     }
   }
 
-  private ExportContainer extractPrimaryContainerInfo(ExportContainer exportContainer, ResultSet rs, int row) {
+  private ExportContainer extractPrimaryContainerInfo(ExportContainer exportContainer, ResultSet rs,
+      int row) {
 
     int rowcount = 0;
 
@@ -174,54 +182,60 @@ public class CosmosExportRepository {
       exportContainer.setVesselSCN(StringUtils.trim(rs.getString("REGN01")));
       exportContainer.setVesselName(StringUtils.trim(rs.getString("MVVA47")));
       exportContainer.setVesselStatus(rs.getString("BZFS01"));
-      
-      System.out.println("ETA DATA : "+rs.getString("ETAD01"));
-      
-      exportContainer.setVesselETADate(DateUtil
-          .getLocalDategFromString(rs.getString("ETAD01") + TextString.padding(rs.getString("ETAT01"), 6, '0', true)));
 
+      System.out.println("ETA DATA : " + rs.getString("ETAD01"));
+
+      exportContainer.setVesselETADate(DateUtil.getLocalDategFromString(
+          rs.getString("ETAD01") + TextString.padding(rs.getString("ETAT01"), 6, '0', true)));
+      System.out.println("rowcount bef " + rowcount);
       while (rs.next()) {
         rowcount += rs.getRow();
       }
-
+      System.out.println("rowcount aft " + rowcount);
       exportContainer.setTotalBooking(rowcount);
       if (rowcount > 1)
-        throw new BusinessException(
-            "Multiple Bookings found for container in COSMOS " + exportContainer.getContainer().getContainerNumber());
+        throw new BusinessException("Multiple Bookings found for container in COSMOS "
+            + exportContainer.getContainer().getContainerNumber());
 
       return exportContainer;
     } catch (SQLException e) {
       log.error("ExportContainer fetchContainerPrimanyInfo " + e.getMessage());
       e.printStackTrace();
-      throw new BusinessException(
-          "Error cound while fetching container in cosmos " + exportContainer.getContainer().getContainerNumber());
+      throw new BusinessException("Error cound while fetching container in cosmos "
+          + exportContainer.getContainer().getContainerNumber());
     }
 
   }
 
-  @Transactional(value = "as400TransactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+  @Transactional(value = "as400TransactionManager", propagation = Propagation.REQUIRED,
+      readOnly = true)
   public ExportContainer fetchContainerSecondaryInfo(ExportContainer exportContainer) {
 
-    String exportContainerNo = StringUtils.upperCase(exportContainer.getContainer().getContainerNumber());
+    String exportContainerNo =
+        StringUtils.upperCase(exportContainer.getContainer().getContainerNumber());
 
     try {
-      return jdbcTemplate.queryForObject(queryContainerSecondaryInfo, new Object[] {exportContainerNo},
+      return jdbcTemplate.queryForObject(queryContainerSecondaryInfo,
+          new Object[] {exportContainerNo},
           (rs, i) -> extractSecondaryContainerInfo(exportContainer, rs));
     } catch (EmptyResultDataAccessException e) {
       log.error("ExportContainer fetchContainerSecondaryInfo " + e.getMessage());
       e.printStackTrace();
-      throw new BusinessException(
-          "Container cound not found in cosmos " + exportContainer.getContainer().getContainerNumber());
+      throw new BusinessException("Container cound not found in cosmos "
+          + exportContainer.getContainer().getContainerNumber());
     }
   }
 
-  private ExportContainer extractSecondaryContainerInfo(ExportContainer exportContainer, ResultSet rs) {
-
+  private ExportContainer extractSecondaryContainerInfo(ExportContainer exportContainer,
+      ResultSet rs) {
+    System.out.println("exportContainer " + exportContainer.getContainer().getContainerNumber());
+    System.out.println("rs " + rs);
     try {
 
       exportContainer.setGateInOut(TextString.format(rs.getString("HDTP10")));
       // private String containerFullOrEmpty;// F,
-      exportContainer.getContainer().setContainerFullOrEmpty(TextString.format(rs.getString("CNBT03")));
+      exportContainer.getContainer()
+          .setContainerFullOrEmpty(TextString.format(rs.getString("CNBT03")));
 
       exportContainer.setExpOut(TextString.format(rs.getString("VMSR01")));
 
@@ -236,21 +250,25 @@ public class CosmosExportRepository {
       exportContainer.getContainer().setContainerISOCode(TextString.format(rs.getString("CNIS03")));
 
       // private String containerReeferIndicator;// N,
-      exportContainer.setReferFlag(ExportUtilService.getBooleanFromString(TextString.format(rs.getString("CNOR03"))));
+      exportContainer.setReferFlag(
+          ExportUtilService.getBooleanFromString(TextString.format(rs.getString("CNOR03"))));
       // private String containerReeferTempValue;// null,
       if (StringUtils.isNotEmpty(TextString.format(rs.getString("ORRT03")))) {
         // private String containerReeferTempSign;// null,
-        exportContainer
-            .setReferTempType(ExportUtilService.getCosmosReferTempSign(TextString.format(rs.getString("ORRT03"))));
-        exportContainer
-            .setReferTemp(ExportUtilService.getDoubleValueFromString(TextString.format(rs.getString("ORRT03"))));
+        exportContainer.setReferTempType(
+            ExportUtilService.getCosmosReferTempSign(TextString.format(rs.getString("ORRT03"))));
+        exportContainer.setReferTemp(
+            ExportUtilService.getDoubleValueFromString(TextString.format(rs.getString("ORRT03"))));
       }
       // private String containerReeferTempUnit;// null,
       exportContainer.setReeferTempUnit(TextString.format(rs.getString("ORTE03")));
 
-      exportContainer.setGrossWeight(ExportUtilService.getIntValueFromString(rs.getString("CNBG03")));
-      exportContainer.setCosmosNetWeight(ExportUtilService.getIntValueFromString(rs.getString("CNNG03")));
-      exportContainer.setTareWeight(ExportUtilService.getIntValueFromString(rs.getString("CNTG03")));
+      exportContainer
+          .setGrossWeight(ExportUtilService.getIntValueFromString(rs.getString("CNBG03")));
+      exportContainer
+          .setCosmosNetWeight(ExportUtilService.getIntValueFromString(rs.getString("CNNG03")));
+      exportContainer
+          .setTareWeight(ExportUtilService.getIntValueFromString(rs.getString("CNTG03")));
 
       // private String containerDGImdg;// null,
       exportContainer.setImdg(TextString.format(rs.getString("CNIM03")));
@@ -258,15 +276,20 @@ public class CosmosExportRepository {
       exportContainer.setDgUNCode(TextString.format(rs.getString("CNUN03")));
 
       // private String containerDamageCode1;//
-      exportContainer.setDamageCode_01(UtilService.constructDamageCode(TextString.format(rs.getString("DM0103"))));
+      exportContainer.setDamageCode_01(
+          UtilService.constructDamageCode(TextString.format(rs.getString("DM0103"))));
       // private String containerDamageCode2;//
-      exportContainer.setDamageCode_02(UtilService.constructDamageCode(TextString.format(rs.getString("DM0203"))));
+      exportContainer.setDamageCode_02(
+          UtilService.constructDamageCode(TextString.format(rs.getString("DM0203"))));
       // private String containerDamageCode3;//
-      exportContainer.setDamageCode_03(UtilService.constructDamageCode(TextString.format(rs.getString("DM0303"))));
+      exportContainer.setDamageCode_03(
+          UtilService.constructDamageCode(TextString.format(rs.getString("DM0303"))));
       // private String containerDamageCode4;//
-      exportContainer.setDamageCode_04(UtilService.constructDamageCode(TextString.format(rs.getString("DM0403"))));
+      exportContainer.setDamageCode_04(
+          UtilService.constructDamageCode(TextString.format(rs.getString("DM0403"))));
       // private String containerDamageCode5;//
-      exportContainer.setDamageCode_05(UtilService.constructDamageCode(TextString.format(rs.getString("DM0503"))));
+      exportContainer.setDamageCode_05(
+          UtilService.constructDamageCode(TextString.format(rs.getString("DM0503"))));
 
       String type = TextString.format(rs.getString("OT0103"));
       String val = TextString.format(rs.getString("OW0103"));
@@ -279,13 +302,14 @@ public class CosmosExportRepository {
     } catch (SQLException e) {
       log.error("ExportContainer extractSecondaryContainerInfo " + e.getMessage());
       e.printStackTrace();
-      throw new BusinessException(
-          "Error cound while fetching container in cosmos " + exportContainer.getContainer().getContainerNumber());
+      throw new BusinessException("Error cound while fetching container in cosmos "
+          + exportContainer.getContainer().getContainerNumber());
     }
 
   }
 
-  @Transactional(value = "as400TransactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+  @Transactional(value = "as400TransactionManager", propagation = Propagation.REQUIRED,
+      readOnly = true)
   public ExportContainer fetchSealInfo(ExportContainer exportContainer, String handlingId) {
 
     try {
@@ -297,7 +321,8 @@ public class CosmosExportRepository {
 
   }
 
-  private ExportContainer extractSealInfo(ExportContainer exportContainer, ResultSet rs, int rowNum) {
+  private ExportContainer extractSealInfo(ExportContainer exportContainer, ResultSet rs,
+      int rowNum) {
 
     if (exportContainer.getSealAttribute() == null) {
       exportContainer.setSealAttribute(new CommonSealDTO());
@@ -310,7 +335,8 @@ public class CosmosExportRepository {
 
       while (rs.next()) {
         exportContainer.getSealAttribute().setSeal02Number(rs.getString("SEAL2K"));
-        exportContainer.getSealAttribute().setSeal02Origin(TextString.format(rs.getString("SLOR2K")));
+        exportContainer.getSealAttribute()
+            .setSeal02Origin(TextString.format(rs.getString("SLOR2K")));
         exportContainer.getSealAttribute().setSeal02Type(TextString.format(rs.getString("SLTP2K")));
       }
 
@@ -318,13 +344,14 @@ public class CosmosExportRepository {
     } catch (SQLException e) {
       log.error("ExportContainer extractSealInfo " + e.getMessage());
       e.printStackTrace();
-      throw new BusinessException(
-          "Error cound while fetching container seal in cosmos " + exportContainer.getContainer().getContainerNumber());
+      throw new BusinessException("Error cound while fetching container seal in cosmos "
+          + exportContainer.getContainer().getContainerNumber());
     }
 
   }
 
-  @Transactional(value = "as400TransactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+  @Transactional(value = "as400TransactionManager", propagation = Propagation.REQUIRED,
+      readOnly = true)
   public ExportContainer fetchOOGInfo(ExportContainer exportContainer, String handlingId) {
 
     try {
@@ -336,7 +363,8 @@ public class CosmosExportRepository {
 
   }
 
-  private ExportContainer extractContainerOOGInfo(ExportContainer exportContainer, ResultSet rs, int rowNum) {
+  private ExportContainer extractContainerOOGInfo(ExportContainer exportContainer, ResultSet rs,
+      int rowNum) {
 
     try {
 
@@ -361,8 +389,8 @@ public class CosmosExportRepository {
     } catch (SQLException e) {
       log.error("ExportContainer extractContainerOOGInfo " + e.getMessage());
       e.printStackTrace();
-      throw new BusinessException(
-          "Error cound while fetching container OOG in cosmos " + exportContainer.getContainer().getContainerNumber());
+      throw new BusinessException("Error cound while fetching container OOG in cosmos "
+          + exportContainer.getContainer().getContainerNumber());
     }
     return exportContainer;
   }
@@ -402,11 +430,11 @@ public class CosmosExportRepository {
     return exportContainer;
 
   }
-  
-  public static void main(String args[]){
-	  
-	  System.out.println(DateUtil
-	          .getLocalDategFromString("20170612" + TextString.padding("20170612", 6, '0', true)));
+
+  public static void main(String args[]) {
+
+    System.out.println(DateUtil
+        .getLocalDategFromString("20170612" + TextString.padding("20170612", 6, '0', true)));
   }
 
 }

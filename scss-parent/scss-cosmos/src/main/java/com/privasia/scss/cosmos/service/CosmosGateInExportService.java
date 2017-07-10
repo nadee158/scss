@@ -44,12 +44,15 @@ public class CosmosGateInExportService {
   }
 
 
-  @Transactional(value = "as400TransactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+  @Transactional(value = "as400TransactionManager", propagation = Propagation.REQUIRED,
+      readOnly = true)
   public List<ExportContainer> setContainerStatus(List<ExportContainer> exportContainers) {
     if (!(exportContainers == null || exportContainers.isEmpty())) {
       exportContainers.forEach(exportContainer -> {
-        LocalDateTime timeGateIn = exportContainer.getBaseCommonGateInOutAttribute().getTimeGateIn();
-        String status = cosmosExportRepository.checkContainerStatus(exportContainer.getContainer().getContainerNumber(),
+        LocalDateTime timeGateIn =
+            exportContainer.getBaseCommonGateInOutAttribute().getTimeGateIn();
+        String status = cosmosExportRepository.checkContainerStatus(
+            exportContainer.getContainer().getContainerNumber(),
             DateUtil.getFormatteDateTime(timeGateIn, DateUtil.GLOBAL_DATE_PATTERN_YYYYMMDD));
         exportContainer.setRtgExecustionStatus(status);
 
@@ -57,30 +60,35 @@ public class CosmosGateInExportService {
     }
     return exportContainers;
   }
-  
-  //@Async
-  @Transactional(value = "as400TransactionManager", propagation = Propagation.REQUIRES_NEW, readOnly = true)
-  public Future<Boolean> fetchPrimanyInfoContainerInfo(ExportContainer exportContainer){
-	  
-	  exportContainer = cosmosExportRepository.fetchContainerPrimanyInfo(exportContainer);
-	  cosmosExportRepository.isInternalBlock(exportContainer);
-	  cosmosExportRepository.isOGABlock(exportContainer);
-	  
+
+  @Async
+  @Transactional(value = "as400TransactionManager", propagation = Propagation.REQUIRES_NEW,
+      readOnly = true)
+  public Future<Boolean> fetchPrimanyInfoContainerInfo(ExportContainer exportContainer) {
+    System.out.println("fetchPrimanyInfoContainerInfo service");
+    exportContainer = cosmosExportRepository.fetchContainerPrimanyInfo(exportContainer);
+    System.out.println("fetchPrimanyInfoContainerInfo service"
+        + exportContainer.getContainer().getContainerNumber());
+    cosmosExportRepository.isInternalBlock(exportContainer);
+    cosmosExportRepository.isOGABlock(exportContainer);
+
     return new AsyncResult<Boolean>(true);
   }
-  
+
   @Async
-  @Transactional(value = "as400TransactionManager", propagation = Propagation.REQUIRES_NEW, readOnly = true)
-  public Future<Boolean> fetchSecondaryContainerInfo(ExportContainer exportContainer){
-	  
-	  exportContainer = cosmosExportRepository.fetchContainerSecondaryInfo(exportContainer);
-	  
-	  return new AsyncResult<Boolean>(true);
+  @Transactional(value = "as400TransactionManager", propagation = Propagation.REQUIRES_NEW,
+      readOnly = true)
+  public Future<Boolean> fetchSecondaryContainerInfo(ExportContainer exportContainer) {
+
+    exportContainer = cosmosExportRepository.fetchContainerSecondaryInfo(exportContainer);
+
+    return new AsyncResult<Boolean>(true);
   }
 
-  public CosmosGateInExport constructCosmosGateInExport(CosmosCommonValuesDTO commonValuesDTO, ExportContainer exportContainer, int index) {
+  public CosmosGateInExport constructCosmosGateInExport(CosmosCommonValuesDTO commonValuesDTO,
+      ExportContainer exportContainer, int index) {
     CosmosGateInExport cosmosGateInExport = new CosmosGateInExport();
-    cosmosGateInExport.setCSMCTL(csmctlService.constructCSMCTL(commonValuesDTO)); 
+    cosmosGateInExport.setCSMCTL(csmctlService.constructCSMCTL(commonValuesDTO));
     cosmosGateInExport.setGINCNTDRP(gincntdrpService.constructGINCNTDRP(exportContainer));
     cosmosGateInExport.setIndex(index);
     return cosmosGateInExport;
