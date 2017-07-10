@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<SGS2Cosmos>
+    <Message index="1">
+        <CSMCTL>
+            <RQST>GSRQS</RQST>
+            <ACTN>CRT</ACTN>
+            <RTNC>0</RTNC>
+            <RQDS>CTEDSC</RQDS>
+            <RTNM>AS</RTNM>
+            <USID>TESTT</USID>
+            <RQUI>1499323452182</RQUI>
+            <TRMC>WPT1</TRMC>
+        </CSMCTL>
+        <GINTRCINF>
+            <MSGTSC>GINTRCINF</MSGTSC>
+            <LANESC>GB3</LANESC>
+            <VMIDSC>KN400</VMIDSC>
+            <ATDDSC>20170706</ATDDSC>
+            <ATDTSC>144412</ATDTSC>
+            <VMYKSC>KN</VMYKSC>
+        </GINTRCINF>
+    </Message>
+    <Message index="2">
+        <CSMCTL>
+            <RQST>GSRQS</RQST>
+            <ACTN>CRT</ACTN>
+            <RTNC>0</RTNC>
+            <RQDS>CTEDSE</RQDS>
+            <RTNM>AS</RTNM>
+            <USID>TESTT</USID>
+            <RQUI>1499323452182</RQUI>
+            <TRMC>WPT1</TRMC>
+        </CSMCTL>
+        <GINCNTPUP>
+            <MSGTSE>GINCNTPUP</MSGTSE>
+            <UNITSE>SYCT9000015</UNITSE>
+            <CNPVSE>M</CNPVSE>
+            <UPLKSE>MY</UPLKSE>
+            <UPPKSE>PKG</UPPKSE>
+            <UPOMSE>PKG</UPOMSE>
+            <CYOISE>N</CYOISE>
+            <CYCISE>N</CYCISE>
+            <ACHISE>Y</ACHISE>
+            <PCHISE>Y</PCHISE>
+            <CRORSE>Y</CRORSE>
+        </GINCNTPUP>
+    </Message>
+</SGS2Cosmos>
