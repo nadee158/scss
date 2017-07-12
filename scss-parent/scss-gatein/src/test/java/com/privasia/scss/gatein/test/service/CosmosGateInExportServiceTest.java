@@ -51,7 +51,7 @@ public class CosmosGateInExportServiceTest extends GateInAbstractTest {
 
     GateInResponse gateInResponse = new GateInResponse();
     gateInResponse.setExportContainers(exportContainers);
-    gateInResponse.setImportContainers(importContainers);
+    gateInResponse.setImportContainers(null);
 
     // thrown.expect(BusinessException.class);
     // thrown.expectMessage("Error cound while fetching container in cosmos
