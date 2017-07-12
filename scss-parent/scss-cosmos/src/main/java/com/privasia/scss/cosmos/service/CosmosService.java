@@ -5,6 +5,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -276,11 +277,23 @@ public class CosmosService implements OpusCosmosBusinessService {
         try {
           gateInResponse.setImportContainers(importResponse.get().getImportContainers());
           gateInResponse.setExportContainers(exportResponse.get().getExportContainers());
-        } catch (InterruptedException | ExecutionException e) {
+        } catch (ExecutionException e) {
           e.printStackTrace();
-          log.error("Error Occured while retrieve data data from cosmos");
+          log.error("ExecutionException while retrieve data data from cosmos");
           log.error(e.getMessage());
-          throw new BusinessException(e.getMessage());
+          Throwable ee = e.getCause();
+          if (ee instanceof BusinessException) {
+            BusinessException ex = (BusinessException) ee;
+            throw new BusinessException(ex.getErrorKey());
+          }
+          throw new BusinessException(e.getCause().getMessage());
+        } catch (CancellationException | InterruptedException e) {
+          e.printStackTrace();
+          log.error(
+              "CancellationException | InterruptedException Occured while retrieve data data from cosmos");
+          log.error(e.getMessage());
+          e.printStackTrace();
+          throw new BusinessException(e.getCause().getMessage());
         }
         break;
       } else {

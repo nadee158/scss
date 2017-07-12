@@ -108,16 +108,44 @@ public class CosmosGateInReadService {
             // check if any excpetions are thrown from async tasks
             try {
               primary.get();
-            } catch (CancellationException | ExecutionException | InterruptedException e) {
+            } catch (ExecutionException e) {
               e.printStackTrace();
-              throw new BusinessException(e.getMessage());
+              log.error("ExecutionException while retrieve data data from cosmos");
+              log.error(e.getMessage());
+              Throwable ee = e.getCause();
+              if (ee instanceof BusinessException) {
+                BusinessException ex = (BusinessException) ee;
+                throw new BusinessException(ex.getErrorKey());
+              }
+              throw new BusinessException(e.getCause().getMessage());
+            } catch (CancellationException | InterruptedException e) {
+              e.printStackTrace();
+              log.error(
+                  "CancellationException | InterruptedException while retrieve data data from cosmos");
+              log.error(e.getMessage());
+              e.printStackTrace();
+              throw new BusinessException(e.getCause().getMessage());
             }
 
             try {
               Secondary.get();
-            } catch (Exception e) {
+            } catch (ExecutionException e) {
               e.printStackTrace();
-              throw new BusinessException(e.getMessage());
+              log.error("ExecutionException while retrieve data data from cosmos");
+              log.error(e.getMessage());
+              Throwable ee = e.getCause();
+              if (ee instanceof BusinessException) {
+                BusinessException ex = (BusinessException) ee;
+                throw new BusinessException(ex.getErrorKey());
+              }
+              throw new BusinessException(e.getCause().getMessage());
+            } catch (CancellationException | InterruptedException e) {
+              e.printStackTrace();
+              log.error(
+                  "CancellationException | InterruptedException while retrieve data data from cosmos");
+              log.error(e.getMessage());
+              e.printStackTrace();
+              throw new BusinessException(e.getCause().getMessage());
             }
 
             System.out
