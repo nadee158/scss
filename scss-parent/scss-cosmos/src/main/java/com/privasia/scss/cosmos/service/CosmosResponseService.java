@@ -214,6 +214,7 @@ public class CosmosResponseService {
         .filter(element -> element != null).collect(Collectors.toList());
 
     if (callCardlist == null || callCardlist.isEmpty())
+    	//return gateInResponse;
       throw new BusinessException("Cannot find Call card code information from cosmos ");
 
 

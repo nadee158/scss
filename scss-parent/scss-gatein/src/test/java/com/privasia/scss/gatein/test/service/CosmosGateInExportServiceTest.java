@@ -37,7 +37,7 @@ public class CosmosGateInExportServiceTest extends GateInAbstractTest {
 
     ExportContainer exportContainer = new ExportContainer();
     exportContainer.setContainer(new CommonContainerDTO());
-    exportContainer.getContainer().setContainerNumber("OPIP11111111");
+    exportContainer.getContainer().setContainerNumber("PEKA00000000");
     List<ExportContainer> exportContainers = new ArrayList<ExportContainer>();
     exportContainers.add(exportContainer);
 

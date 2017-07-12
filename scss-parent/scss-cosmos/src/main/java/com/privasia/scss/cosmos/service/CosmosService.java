@@ -42,380 +42,341 @@ import com.privasia.scss.cosmos.dto.request.CosmosGateOutImport;
 import com.privasia.scss.cosmos.dto.request.CosmosGateOutWriteRequest;
 import com.privasia.scss.cosmos.repository.CosmosODDRepository;
 import com.privasia.scss.cosmos.xml.element.RequestMessage;
-import com.privasia.scss.cosmos.xml.element.service.CSMCTLService;
-import com.privasia.scss.cosmos.xml.element.service.GINTRCINFService;
-import com.privasia.scss.cosmos.xml.element.service.GOTTRCINFService;
 import com.privasia.scss.cosmos.xml.element.service.MessageService;
 
 @Service("cosmos")
 public class CosmosService implements OpusCosmosBusinessService {
 
-  private static final Logger log = LoggerFactory.getLogger(CosmosService.class);
+	private static final Logger log = LoggerFactory.getLogger(CosmosService.class);
 
-  @Value("${async.wait.time}")
-  private long asyncWaitTime;
+	@Value("${async.wait.time}")
+	private long asyncWaitTime;
 
-  private CosmosGateInReadService cosmosGateInReadService;
+	private CosmosGateInReadService cosmosGateInReadService;
 
-  private CosmosGateOutImportService cosmosGateOutImportService;
+	private CosmosGateOutImportService cosmosGateOutImportService;
 
-  private CosmosGateOutExportService cosmosGateOutExportService;
+	private CosmosGateOutExportService cosmosGateOutExportService;
 
-  private CosmosGateInWriteService cosmosGateInWriteService;
+	private CosmosGateInWriteService cosmosGateInWriteService;
 
-  private CosmosGateOutWriteService cosmosGateOutWriteService;
+	private CosmosGateOutWriteService cosmosGateOutWriteService;
 
-  private AGSClientService agsClientService;
+	private AGSClientService agsClientService;
 
-  private CSMCTLService csmctlService;
+	private CosmosResponseService cosmosResponseService;
 
-  private GINTRCINFService gintrcinfService;
+	private CosmosODDRepository cosmosODDRepository;
 
-  private GOTTRCINFService gottrcinfService;
+	private MessageService messageService;
 
-  private CosmosResponseService cosmosResponseService;
+	@Autowired
+	public void setCosmosGateInReadService(CosmosGateInReadService cosmosGateInReadService) {
+		this.cosmosGateInReadService = cosmosGateInReadService;
+	}
 
-  private CosmosODDRepository cosmosODDRepository;
+	@Autowired
+	public void setCosmosGateInWriteService(CosmosGateInWriteService cosmosGateInWriteService) {
+		this.cosmosGateInWriteService = cosmosGateInWriteService;
+	}
 
-  private MessageService messageService;
+	@Autowired
+	public void setCosmosGateOutWriteService(CosmosGateOutWriteService cosmosGateOutWriteService) {
+		this.cosmosGateOutWriteService = cosmosGateOutWriteService;
+	}
 
-  @Autowired
-  public void setCosmosGateInReadService(CosmosGateInReadService cosmosGateInReadService) {
-    this.cosmosGateInReadService = cosmosGateInReadService;
-  }
+	@Autowired
+	public void setCosmosGateOutImportService(CosmosGateOutImportService cosmosGateOutImportService) {
+		this.cosmosGateOutImportService = cosmosGateOutImportService;
+	}
 
-  @Autowired
-  public void setCosmosGateInWriteService(CosmosGateInWriteService cosmosGateInWriteService) {
-    this.cosmosGateInWriteService = cosmosGateInWriteService;
-  }
+	@Autowired
+	public void setCosmosGateOutExportService(CosmosGateOutExportService cosmosGateOutExportService) {
+		this.cosmosGateOutExportService = cosmosGateOutExportService;
+	}
 
-  @Autowired
-  public void setCosmosGateOutWriteService(CosmosGateOutWriteService cosmosGateOutWriteService) {
-    this.cosmosGateOutWriteService = cosmosGateOutWriteService;
-  }
+	@Autowired
+	public void setAgsClientService(AGSClientService agsClientService) {
+		this.agsClientService = agsClientService;
+	}
 
-  @Autowired
-  public void setCosmosGateOutImportService(CosmosGateOutImportService cosmosGateOutImportService) {
-    this.cosmosGateOutImportService = cosmosGateOutImportService;
-  }
+	@Autowired
+	public void setCosmosResponseService(CosmosResponseService cosmosResponseService) {
+		this.cosmosResponseService = cosmosResponseService;
+	}
 
-  @Autowired
-  public void setCosmosGateOutExportService(CosmosGateOutExportService cosmosGateOutExportService) {
-    this.cosmosGateOutExportService = cosmosGateOutExportService;
-  }
+	@Autowired
+	public void setCosmosODDRepository(CosmosODDRepository cosmosODDRepository) {
+		this.cosmosODDRepository = cosmosODDRepository;
+	}
 
-  @Autowired
-  public void setAgsClientService(AGSClientService agsClientService) {
-    this.agsClientService = agsClientService;
-  }
+	@Autowired
+	public void setMessageService(MessageService messageService) {
+		this.messageService = messageService;
+	}
 
-  @Autowired
-  public void setCsmctlService(CSMCTLService csmctlService) {
-    this.csmctlService = csmctlService;
-  }
+	@Override
+	public GateOutReponse sendGateOutReadRequest(GateOutRequest gateOutRequest, GateOutReponse gateOutReponse) {
+		// TODO Auto-generated method stub
+		// gateOutReponse-transaction type - switch
 
-  @Autowired
-  public void setGintrcinfService(GINTRCINFService gintrcinfService) {
-    this.gintrcinfService = gintrcinfService;
-  }
+		TransactionType trxType = TransactionType.fromCode(gateOutReponse.getTransactionType());
 
-  @Autowired
-  public void setGottrcinfService(GOTTRCINFService gottrcinfService) {
-    this.gottrcinfService = gottrcinfService;
-  }
+		switch (trxType) {
+		case IMPORT:
+			if (!(gateOutReponse.getImportContainers() == null || gateOutReponse.getImportContainers().isEmpty())) {
+				List<ImportContainer> updatedImportList = cosmosGateOutImportService
+						.fetchCosmosSeal(gateOutReponse.getImportContainers());
+				gateOutReponse.setImportContainers(updatedImportList);
+			}
+			break;
+		case EXPORT:
+			if (!(gateOutReponse.getExportContainers() == null || gateOutReponse.getExportContainers().isEmpty())) {
+				List<ExportContainer> updatedExportList = cosmosGateOutExportService
+						.setContainerStatus(gateOutReponse.getExportContainers());
+				gateOutReponse.setExportContainers(updatedExportList);
+			}
+			break;
+		case IMPORT_EXPORT:
+			if (!(gateOutReponse.getImportContainers() == null || gateOutReponse.getImportContainers().isEmpty())) {
+				List<ImportContainer> updatedImportList = cosmosGateOutImportService
+						.fetchCosmosSeal(gateOutReponse.getImportContainers());
+				gateOutReponse.setImportContainers(updatedImportList);
+			}
+			if (!(gateOutReponse.getExportContainers() == null || gateOutReponse.getExportContainers().isEmpty())) {
+				List<ExportContainer> updatedExportList = cosmosGateOutExportService
+						.setContainerStatus(gateOutReponse.getExportContainers());
+				gateOutReponse.setExportContainers(updatedExportList);
+			}
+			break;
 
-  @Autowired
-  public void setCosmosResponseService(CosmosResponseService cosmosResponseService) {
-    this.cosmosResponseService = cosmosResponseService;
-  }
+		default:
+			break;
+		}
 
-  @Autowired
-  public void setCosmosODDRepository(CosmosODDRepository cosmosODDRepository) {
-    this.cosmosODDRepository = cosmosODDRepository;
-  }
+		return gateOutReponse;
+	}
 
-  @Autowired
-  public void setMessageService(MessageService messageService) {
-    this.messageService = messageService;
-  }
+	@Override
+	public GateOutReponse sendGateOutWriteRequest(GateOutWriteRequest gateOutWriteRequest,
+			GateOutReponse gateOutReponse) {
 
-  @Override
-  public GateOutReponse sendGateOutReadRequest(GateOutRequest gateOutRequest,
-      GateOutReponse gateOutReponse) {
-    // TODO Auto-generated method stub
-    // gateOutReponse-transaction type - switch
+		ImpExpFlagStatus impExpFlag = ImpExpFlagStatus.fromValue(gateOutWriteRequest.getImpExpFlag());
 
-    TransactionType trxType = TransactionType.fromCode(gateOutReponse.getTransactionType());
+		CosmosCommonValuesDTO commonValuesDTO = getCommonValues(gateOutWriteRequest);
+		commonValuesDTO.setLoginUser(gateOutWriteRequest.getUserName());
 
-    switch (trxType) {
-      case IMPORT:
-        if (!(gateOutReponse.getImportContainers() == null
-            || gateOutReponse.getImportContainers().isEmpty())) {
-          List<ImportContainer> updatedImportList =
-              cosmosGateOutImportService.fetchCosmosSeal(gateOutReponse.getImportContainers());
-          gateOutReponse.setImportContainers(updatedImportList);
-        }
-        break;
-      case EXPORT:
-        if (!(gateOutReponse.getExportContainers() == null
-            || gateOutReponse.getExportContainers().isEmpty())) {
-          List<ExportContainer> updatedExportList =
-              cosmosGateOutExportService.setContainerStatus(gateOutReponse.getExportContainers());
-          gateOutReponse.setExportContainers(updatedExportList);
-        }
-        break;
-      case IMPORT_EXPORT:
-        if (!(gateOutReponse.getImportContainers() == null
-            || gateOutReponse.getImportContainers().isEmpty())) {
-          List<ImportContainer> updatedImportList =
-              cosmosGateOutImportService.fetchCosmosSeal(gateOutReponse.getImportContainers());
-          gateOutReponse.setImportContainers(updatedImportList);
-        }
-        if (!(gateOutReponse.getExportContainers() == null
-            || gateOutReponse.getExportContainers().isEmpty())) {
-          List<ExportContainer> updatedExportList =
-              cosmosGateOutExportService.setContainerStatus(gateOutReponse.getExportContainers());
-          gateOutReponse.setExportContainers(updatedExportList);
-        }
-        break;
+		CosmosGateOutWriteRequest cosmosGateOutWriteRequest = new CosmosGateOutWriteRequest();
 
-      default:
-        break;
-    }
+		int startIndex = 2;
+		switch (impExpFlag) {
+		case IMPORT:
+			// getImpRequestXML
+			if (!(gateOutWriteRequest.getImportContainers() == null
+					|| gateOutWriteRequest.getImportContainers().isEmpty())) {
 
-    return gateOutReponse;
-  }
+				List<CosmosGateOutImport> cosmosImportList = cosmosGateOutWriteService.constructCosmosGateOutImport(
+						commonValuesDTO, gateOutWriteRequest.getImportContainers(), startIndex);
+				if (cosmosImportList.isEmpty())
+					return gateOutReponse;
+				cosmosGateOutWriteRequest.setImportList(cosmosImportList);
+			}
+			break;
+		case EXPORT:
+			cosmosGateOutWriteRequest.setImportList(null);
+			cosmosGateOutWriteRequest.setExport(null);
+			break;
+		case IMPORT_EXPORT:
+			if (!(gateOutWriteRequest.getImportContainers() == null
+					|| gateOutWriteRequest.getImportContainers().isEmpty())) {
 
-  @Override
-  public GateOutReponse sendGateOutWriteRequest(GateOutWriteRequest gateOutWriteRequest,
-      GateOutReponse gateOutReponse) {
+				List<CosmosGateOutImport> cosmosImportList = cosmosGateOutWriteService.constructCosmosGateOutImport(
+						commonValuesDTO, gateOutWriteRequest.getImportContainers(), startIndex);
+				cosmosGateOutWriteRequest.setImportList(cosmosImportList);
+				startIndex += gateOutWriteRequest.getImportContainers().size();
+			}
+			if (!(gateOutWriteRequest.getExportContainers() == null
+					|| gateOutWriteRequest.getExportContainers().isEmpty())) {
+				Optional<CosmosGateOutExport> cosmosGateOutExportOpt = cosmosGateOutWriteService
+						.constructCosmosGateOutExport(commonValuesDTO, gateOutWriteRequest.getExportContainers(),
+								startIndex);
+				if (cosmosGateOutExportOpt.isPresent()) {
+					cosmosGateOutWriteRequest.setExport(cosmosGateOutExportOpt.get());
+				}
+			}
+			break;
+		default:
+			throw new BusinessException("Invalid transaction Type ! " + impExpFlag.name());
+		}
 
-    ImpExpFlagStatus impExpFlag = ImpExpFlagStatus.fromValue(gateOutWriteRequest.getImpExpFlag());
+		try {
+			RequestMessage requestMessage = messageService.constructGateInRootMessage(commonValuesDTO);
+			cosmosGateOutWriteRequest.setMessage(requestMessage);
 
-    CosmosCommonValuesDTO commonValuesDTO = getCommonValues(gateOutWriteRequest);
-    commonValuesDTO.setLoginUser(gateOutWriteRequest.getUserName());
+			String cosmosResponse = agsClientService.sendToCosmos(cosmosGateOutWriteRequest,
+					gateOutWriteRequest.getCosmosPort());
+			cosmosResponseService.extractCosmosGateOutResponse(cosmosResponse);
 
-    CosmosGateOutWriteRequest cosmosGateOutWriteRequest = new CosmosGateOutWriteRequest();
+		} catch (JAXBException e) {
+			e.printStackTrace();
+			throw new BusinessException("Error Sending request to cosmos!");
+		}
 
-    int startIndex = 2;
-    switch (impExpFlag) {
-      case IMPORT:
-        // getImpRequestXML
-        if (!(gateOutWriteRequest.getImportContainers() == null
-            || gateOutWriteRequest.getImportContainers().isEmpty())) {
+		return gateOutReponse;
+	}
 
-          List<CosmosGateOutImport> cosmosImportList =
-              cosmosGateOutWriteService.constructCosmosGateOutImport(commonValuesDTO,
-                  gateOutWriteRequest.getImportContainers(), startIndex);
-          if (cosmosImportList.isEmpty())
-            return gateOutReponse;
-          cosmosGateOutWriteRequest.setImportList(cosmosImportList);
-        }
-        break;
-      case EXPORT:
-        cosmosGateOutWriteRequest.setImportList(null);
-        cosmosGateOutWriteRequest.setExport(null);
-        break;
-      case IMPORT_EXPORT:
-        if (!(gateOutWriteRequest.getImportContainers() == null
-            || gateOutWriteRequest.getImportContainers().isEmpty())) {
+	@Override
+	public GateInResponse sendGateInReadRequest(GateInRequest gateInRequest, GateInResponse gateInResponse) {
 
-          List<CosmosGateOutImport> cosmosImportList =
-              cosmosGateOutWriteService.constructCosmosGateOutImport(commonValuesDTO,
-                  gateOutWriteRequest.getImportContainers(), startIndex);
-          cosmosGateOutWriteRequest.setImportList(cosmosImportList);
-          startIndex += gateOutWriteRequest.getImportContainers().size();
-        }
-        if (!(gateOutWriteRequest.getExportContainers() == null
-            || gateOutWriteRequest.getExportContainers().isEmpty())) {
-          Optional<CosmosGateOutExport> cosmosGateOutExportOpt =
-              cosmosGateOutWriteService.constructCosmosGateOutExport(commonValuesDTO,
-                  gateOutWriteRequest.getExportContainers(), startIndex);
-          if (cosmosGateOutExportOpt.isPresent()) {
-            cosmosGateOutWriteRequest.setExport(cosmosGateOutExportOpt.get());
-          }
-        }
-        break;
-      default:
-        throw new BusinessException("Invalid transaction Type ! " + impExpFlag.name());
-    }
+		long start = System.currentTimeMillis();
 
-    try {
-      RequestMessage requestMessage = messageService.constructGateInRootMessage(commonValuesDTO);
-      cosmosGateOutWriteRequest.setMessage(requestMessage);
+		Future<GateInResponse> importResponse = cosmosGateInReadService.populateCosmosGateInImport(gateInResponse);
 
-      String cosmosResponse = agsClientService.sendToCosmos(cosmosGateOutWriteRequest,
-          gateOutWriteRequest.getCosmosPort());
-      cosmosResponseService.extractCosmosGateOutResponse(cosmosResponse);
+		if (gateInResponse.getExportContainers() == null || gateInResponse.getExportContainers().isEmpty()) {
 
-    } catch (JAXBException e) {
-      e.printStackTrace();
-      throw new BusinessException("Error Sending request to cosmos!");
-    }
+			List<ExportContainer> exportContainers = new ArrayList<>();
+			gateInResponse.setExportContainers(exportContainers);
+			ExportContainer exportContainer = null;
+			if (StringUtils.isNotEmpty(gateInRequest.getExpContainer1())) {
+				exportContainer = new ExportContainer();
+				exportContainer.setContainer(new CommonContainerDTO());
+				exportContainer.getContainer()
+						.setContainerNumber(StringUtils.upperCase(gateInRequest.getExpContainer1()));
+				gateInResponse.getExportContainers().add(exportContainer);
+			}
 
-    return gateOutReponse;
-  }
+			if (StringUtils.isNotEmpty(gateInRequest.getExpContainer2())) {
+				exportContainer = new ExportContainer();
+				exportContainer.setContainer(new CommonContainerDTO());
+				exportContainer.getContainer()
+						.setContainerNumber(StringUtils.upperCase(gateInRequest.getExpContainer2()));
+				gateInResponse.getExportContainers().add(exportContainer);
+			}
 
-  @Override
-  public GateInResponse sendGateInReadRequest(GateInRequest gateInRequest,
-      GateInResponse gateInResponse) {
+		}
 
-    long start = System.currentTimeMillis();
+		Future<GateInResponse> exportResponse = cosmosGateInReadService.populateCosmosGateInExport(gateInResponse);
 
-    Future<GateInResponse> importResponse =
-        cosmosGateInReadService.populateCosmosGateInImport(gateInResponse);
+		while (true) {
+			// System.out.println("inside the loop populateCosmosGateInExport");
+			if (importResponse.isDone() && exportResponse.isDone()) {
+				System.out.println("now done populateCosmosGateInExport");
+				try {
+					gateInResponse.setImportContainers(importResponse.get().getImportContainers());
+					gateInResponse.setExportContainers(exportResponse.get().getExportContainers());
+				} catch (InterruptedException | ExecutionException e) {
+					e.printStackTrace();
+					log.error("Error Occured while retrieve data data from cosmos");
+					log.error(e.getMessage());
+				}
+				break;
+			} else {
+				// System.out.println("not done yet
+				// populateCosmosGateInExport");
+			}
 
-    if (gateInResponse.getExportContainers() == null
-        || gateInResponse.getExportContainers().isEmpty()) {
+			try {
+				System.out.println("waiting populateCosmosGateInExport " + asyncWaitTime);
+				Thread.sleep(5);
+			} catch (InterruptedException e) {
+				log.error(e.getMessage());
+				break;
+			}
+		}
+		long end = System.currentTimeMillis();
+		System.out.println("time : " + (end - start) / 1000.0 + "sec");
+		return gateInResponse;
+	}
 
-      List<ExportContainer> exportContainers = new ArrayList<>();
-      gateInResponse.setExportContainers(exportContainers);
-      ExportContainer exportContainer = null;
-      if (StringUtils.isNotEmpty(gateInRequest.getExpContainer1())) {
-        exportContainer = new ExportContainer();
-        exportContainer.setContainer(new CommonContainerDTO());
-        exportContainer.getContainer()
-            .setContainerNumber(StringUtils.upperCase(gateInRequest.getExpContainer1()));
-        gateInResponse.getExportContainers().add(exportContainer);
-      }
+	@Override
+	public GateInResponse sendGateInWriteRequest(GateInWriteRequest gateInWriteRequest) {
+		ImpExpFlagStatus impExpFlag = ImpExpFlagStatus.fromValue(gateInWriteRequest.getImpExpFlag());
 
-      if (StringUtils.isNotEmpty(gateInRequest.getExpContainer2())) {
-        exportContainer = new ExportContainer();
-        exportContainer.setContainer(new CommonContainerDTO());
-        exportContainer.getContainer()
-            .setContainerNumber(StringUtils.upperCase(gateInRequest.getExpContainer2()));
-        gateInResponse.getExportContainers().add(exportContainer);
-      }
+		CosmosCommonValuesDTO commonValuesDTO = getCommonValues(gateInWriteRequest);
+		commonValuesDTO.setLoginUser(gateInWriteRequest.getUserName());
 
-    }
+		CosmosGateInWriteRequest cosmosGateInWriteRequest = new CosmosGateInWriteRequest();
 
-    Future<GateInResponse> exportResponse =
-        cosmosGateInReadService.populateCosmosGateInExport(gateInResponse);
+		int startIndex = 2;
+		switch (impExpFlag) {
+		case IMPORT:
+			if (!(gateInWriteRequest.getImportContainers() == null
+					|| gateInWriteRequest.getImportContainers().isEmpty())) {
+				List<CosmosGateInImport> cosmosImportList = cosmosGateInWriteService.constructCosmosGateInImport(
+						commonValuesDTO, gateInWriteRequest.getImportContainers(), startIndex);
+				cosmosGateInWriteRequest.setImportList(cosmosImportList);
+			}
+			cosmosGateInWriteRequest.setExportList(null);
+			break;
+		case EXPORT:
+			if (!(gateInWriteRequest.getExportContainers() == null
+					|| gateInWriteRequest.getExportContainers().isEmpty())) {
+				List<CosmosGateInExport> cosmosExportList = cosmosGateInWriteService.constructCosmosGateInExport(
+						commonValuesDTO, gateInWriteRequest.getExportContainers(), startIndex);
+				cosmosGateInWriteRequest.setExportList(cosmosExportList);
+			}
+			cosmosGateInWriteRequest.setImportList(null);
+			break;
+		case IMPORT_EXPORT:
+			if (!(gateInWriteRequest.getImportContainers() == null
+					|| gateInWriteRequest.getImportContainers().isEmpty())) {
+				List<CosmosGateInImport> cosmosImportList = cosmosGateInWriteService.constructCosmosGateInImport(
+						commonValuesDTO, gateInWriteRequest.getImportContainers(), startIndex);
+				cosmosGateInWriteRequest.setImportList(cosmosImportList);
+				startIndex += gateInWriteRequest.getImportContainers().size();
+			}
+			if (!(gateInWriteRequest.getExportContainers() == null
+					|| gateInWriteRequest.getExportContainers().isEmpty())) {
+				List<CosmosGateInExport> cosmosExportList = cosmosGateInWriteService.constructCosmosGateInExport(
+						commonValuesDTO, gateInWriteRequest.getExportContainers(), startIndex);
+				cosmosGateInWriteRequest.setExportList(cosmosExportList);
+			}
+			break;
+		default:
+			throw new BusinessException("Invalid transaction Type ! " + impExpFlag.name());
+		}
+		GateInResponse gateInReponse = null;
+		try {
+			RequestMessage requestMessage = messageService.constructGateInRootMessage(commonValuesDTO);
+			cosmosGateInWriteRequest.setMessage(requestMessage);
 
-    while (true) {
-      // System.out.println("inside the loop populateCosmosGateInExport");
-      if (importResponse.isDone() && exportResponse.isDone()) {
-        System.out.println("now done populateCosmosGateInExport");
-        try {
-          gateInResponse.setImportContainers(importResponse.get().getImportContainers());
-          gateInResponse.setExportContainers(exportResponse.get().getExportContainers());
-        } catch (InterruptedException | ExecutionException e) {
-          e.printStackTrace();
-          log.error("Error Occured while retrieve data data from cosmos");
-          log.error(e.getMessage());
-        }
-        break;
-      } else {
-        // System.out.println("not done yet populateCosmosGateInExport");
-      }
+			String cosmosResponse = agsClientService.sendToCosmos(cosmosGateInWriteRequest,
+					gateInWriteRequest.getCosmosPort());
+			gateInReponse = cosmosResponseService.extractCosmosGateInResponse(cosmosResponse, gateInWriteRequest);
 
-      try {
-        System.out.println("waiting populateCosmosGateInExport " + asyncWaitTime);
-        Thread.sleep(5);
-      } catch (InterruptedException e) {
-        log.error(e.getMessage());
-        break;
-      }
-    }
-    long end = System.currentTimeMillis();
-    System.out.println("time : " + (end - start) / 1000.0 + "sec");
-    return gateInResponse;
-  }
+		} catch (JAXBException e) {
+			e.printStackTrace();
+			throw new BusinessException("Error Sending request to cosmos!");
+		}
 
-  @Override
-  public GateInResponse sendGateInWriteRequest(GateInWriteRequest gateInWriteRequest) {
-    ImpExpFlagStatus impExpFlag = ImpExpFlagStatus.fromValue(gateInWriteRequest.getImpExpFlag());
+		return gateInReponse;
+	}
 
-    CosmosCommonValuesDTO commonValuesDTO = getCommonValues(gateInWriteRequest);
-    commonValuesDTO.setLoginUser(gateInWriteRequest.getUserName());
+	private CosmosCommonValuesDTO getCommonValues(GateWriteRequest gateWriteRequest) {
+		CosmosCommonValuesDTO cosmosCommonValuesDTO = new CosmosCommonValuesDTO();
+		cosmosCommonValuesDTO.setMsgUniqueId(System.currentTimeMillis() + "");
+		cosmosCommonValuesDTO.setDate(DateUtil.getFormatteDate(LocalDate.now(), "yyyyMMdd"));
+		cosmosCommonValuesDTO.setTime(DateUtil.getFormatteTime(LocalTime.now(), "HHmmss"));
+		cosmosCommonValuesDTO.setLaneNo(StringUtils.upperCase(gateWriteRequest.getLaneNo()));
+		cosmosCommonValuesDTO.setTruckNo(StringUtils.upperCase(gateWriteRequest.getTruckHeadNo()));
+		cosmosCommonValuesDTO.setCompCode(StringUtils.upperCase(gateWriteRequest.getHaulageCode()));
+		return cosmosCommonValuesDTO;
+	}
 
-    CosmosGateInWriteRequest cosmosGateInWriteRequest = new CosmosGateInWriteRequest();
+	@Override
+	public ContainerValidationInfo sendODDContainerValidationRequest(GateOutRequest gateOutRequest) {
 
-    int startIndex = 2;
-    switch (impExpFlag) {
-      case IMPORT:
-        if (!(gateInWriteRequest.getImportContainers() == null
-            || gateInWriteRequest.getImportContainers().isEmpty())) {
-          List<CosmosGateInImport> cosmosImportList =
-              cosmosGateInWriteService.constructCosmosGateInImport(commonValuesDTO,
-                  gateInWriteRequest.getImportContainers(), startIndex);
-          cosmosGateInWriteRequest.setImportList(cosmosImportList);
-        }
-        cosmosGateInWriteRequest.setExportList(null);
-        break;
-      case EXPORT:
-        if (!(gateInWriteRequest.getExportContainers() == null
-            || gateInWriteRequest.getExportContainers().isEmpty())) {
-          List<CosmosGateInExport> cosmosExportList =
-              cosmosGateInWriteService.constructCosmosGateInExport(commonValuesDTO,
-                  gateInWriteRequest.getExportContainers(), startIndex);
-          cosmosGateInWriteRequest.setExportList(cosmosExportList);
-        }
-        cosmosGateInWriteRequest.setImportList(null);
-        break;
-      case IMPORT_EXPORT:
-        if (!(gateInWriteRequest.getImportContainers() == null
-            || gateInWriteRequest.getImportContainers().isEmpty())) {
-          List<CosmosGateInImport> cosmosImportList =
-              cosmosGateInWriteService.constructCosmosGateInImport(commonValuesDTO,
-                  gateInWriteRequest.getImportContainers(), startIndex);
-          cosmosGateInWriteRequest.setImportList(cosmosImportList);
-          startIndex += gateInWriteRequest.getImportContainers().size();
-        }
-        if (!(gateInWriteRequest.getExportContainers() == null
-            || gateInWriteRequest.getExportContainers().isEmpty())) {
-          List<CosmosGateInExport> cosmosExportList =
-              cosmosGateInWriteService.constructCosmosGateInExport(commonValuesDTO,
-                  gateInWriteRequest.getExportContainers(), startIndex);
-          cosmosGateInWriteRequest.setExportList(cosmosExportList);
-        }
-        break;
-      default:
-        throw new BusinessException("Invalid transaction Type ! " + impExpFlag.name());
-    }
-    GateInResponse gateInReponse = null;
-    try {
-      RequestMessage requestMessage = messageService.constructGateInRootMessage(commonValuesDTO);
-      cosmosGateInWriteRequest.setMessage(requestMessage);
+		ContainerValidationInfo validationInfo = new ContainerValidationInfo();
+		validationInfo.setContainerNo1(gateOutRequest.getOddImpContainer1());
+		validationInfo
+				.setContainerNo1Status(cosmosODDRepository.validateODDContainer(gateOutRequest.getOddImpContainer1()));
 
-      String cosmosResponse = agsClientService.sendToCosmos(cosmosGateInWriteRequest,
-          gateInWriteRequest.getCosmosPort());
-      gateInReponse =
-          cosmosResponseService.extractCosmosGateInResponse(cosmosResponse, gateInWriteRequest);
-
-    } catch (JAXBException e) {
-      e.printStackTrace();
-      throw new BusinessException("Error Sending request to cosmos!");
-    }
-
-    return gateInReponse;
-  }
-
-  private CosmosCommonValuesDTO getCommonValues(GateWriteRequest gateWriteRequest) {
-    CosmosCommonValuesDTO cosmosCommonValuesDTO = new CosmosCommonValuesDTO();
-    cosmosCommonValuesDTO.setMsgUniqueId(System.currentTimeMillis() + "");
-    cosmosCommonValuesDTO.setDate(DateUtil.getFormatteDate(LocalDate.now(), "yyyyMMdd"));
-    cosmosCommonValuesDTO.setTime(DateUtil.getFormatteTime(LocalTime.now(), "HHmmss"));
-    cosmosCommonValuesDTO.setLaneNo(StringUtils.upperCase(gateWriteRequest.getLaneNo()));
-    cosmosCommonValuesDTO.setTruckNo(StringUtils.upperCase(gateWriteRequest.getTruckHeadNo()));
-    cosmosCommonValuesDTO.setCompCode(StringUtils.upperCase(gateWriteRequest.getHaulageCode()));
-    return cosmosCommonValuesDTO;
-  }
-
-  @Override
-  public ContainerValidationInfo sendODDContainerValidationRequest(GateOutRequest gateOutRequest) {
-
-    ContainerValidationInfo validationInfo = new ContainerValidationInfo();
-    validationInfo.setContainerNo1(gateOutRequest.getOddImpContainer1());
-    validationInfo.setContainerNo1Status(
-        cosmosODDRepository.validateODDContainer(gateOutRequest.getOddImpContainer1()));
-
-    if (StringUtils.isNotEmpty(gateOutRequest.getOddImpContainer2())) {
-      validationInfo.setContainerNo2(gateOutRequest.getOddImpContainer2());
-      validationInfo.setContainerNo2Status(
-          cosmosODDRepository.validateODDContainer(gateOutRequest.getOddImpContainer2()));
-    }
-    return validationInfo;
-  }
+		if (StringUtils.isNotEmpty(gateOutRequest.getOddImpContainer2())) {
+			validationInfo.setContainerNo2(gateOutRequest.getOddImpContainer2());
+			validationInfo.setContainerNo2Status(
+					cosmosODDRepository.validateODDContainer(gateOutRequest.getOddImpContainer2()));
+		}
+		return validationInfo;
+	}
 
 }

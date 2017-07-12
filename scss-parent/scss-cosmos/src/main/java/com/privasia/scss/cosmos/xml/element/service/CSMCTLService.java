@@ -30,13 +30,13 @@ public class CSMCTLService {
 		return csmctl;
 	}
 	
-	public CSMCTL constructCSMCTLForImport(CosmosCommonValuesDTO commonValuesDTO) {
+	public CSMCTL constructCSMCTL(CosmosCommonValuesDTO commonValuesDTO, String rqds) {
 
 		CSMCTL csmctl = new CSMCTL();
 		csmctl.setRQST("GSRQS");
 		csmctl.setACTN("CRT");
 		csmctl.setRTNC("0");
-		csmctl.setRQDS("CTEDSE");
+		csmctl.setRQDS(rqds); //CTEDSE
 		csmctl.setRTNM("AS");
 		csmctl.setUSID(StringUtils.upperCase(commonValuesDTO.getLoginUser()));
 		csmctl.setRQUI(commonValuesDTO.getMsgUniqueId());

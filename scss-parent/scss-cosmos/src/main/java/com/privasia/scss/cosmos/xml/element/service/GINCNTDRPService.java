@@ -125,8 +125,11 @@ public class GINCNTDRPService {
 			oogindicator = "Y";
 			gincntdrp.setOVSRSE(Integer.toString(exportContainer.getOogOR()));
 		}
-
-		gincntdrp.setOOGISE(oogindicator);// OOG indicator : To capture Y or N,
+		
+		if(StringUtils.equalsIgnoreCase("Y", oogindicator)){
+			gincntdrp.setOOGISE(oogindicator);// OOG indicator : To capture Y or N,
+		}
+		
 
 	}
 

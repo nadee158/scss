@@ -68,7 +68,7 @@ public class CosmosGateInImportService {
 	public CosmosGateInImport constructCosmosGateInImport(CosmosCommonValuesDTO commonValuesDTO,
 			ImportContainer importContainer, int index) {
 		CosmosGateInImport cosmosGateInImport = new CosmosGateInImport();
-		cosmosGateInImport.setCSMCTL(csmctlService.constructCSMCTLForImport(commonValuesDTO));
+		cosmosGateInImport.setCSMCTL(csmctlService.constructCSMCTL(commonValuesDTO, "CTEDSE"));
 		cosmosGateInImport.setGINCNTPUP(gincntpupService.constructGINCNTPUP(importContainer));
 		cosmosGateInImport.setIndex(index);
 		return cosmosGateInImport;

@@ -59,7 +59,7 @@ public class CosmosGateOutImportService {
   public CosmosGateOutImport constructCosmosGateOutImport(CosmosCommonValuesDTO commonValuesDTO,
       ImportContainer importContainer, int index) {
     CosmosGateOutImport cosmosGateOutImport = new CosmosGateOutImport();
-    cosmosGateOutImport.setCSMCTL(csmctlService.constructCSMCTLForImport(commonValuesDTO));
+    cosmosGateOutImport.setCSMCTL(csmctlService.constructCSMCTL(commonValuesDTO, "CTEDSE"));
     cosmosGateOutImport.setGOTCNTINF(gotcntinfService.constructGOTCNTINF(importContainer));
     cosmosGateOutImport.setIndex(index);
     return cosmosGateOutImport;
