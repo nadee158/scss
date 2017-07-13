@@ -60,7 +60,7 @@ public final class KioskBoothRightsPredicates {
 		}
 	}
 
-	public static Predicate KioskBoothInfoByCardNumber(Integer cardNumber) {
+	public static Predicate KioskBoothInfoByCardNumber(Long cardNumber) {
 		if (cardNumber == null) {
 			return QKioskBoothRights.kioskBoothRights.isNull();
 		} else {

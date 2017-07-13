@@ -46,14 +46,18 @@ public class KioskBoothService {
 	@Autowired
 	private ModelMapper modelMapper;
 
-	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, readOnly = false)
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, readOnly = false)
 	public String activateBoothsForTransaction(KioskBoothRightsDTO kioskBoothRightDTO) {
+		
+		List<KioskBoothRights> lockedKioskList = fetchLockReleasedKioskBoothByKiosk(kioskBoothRightDTO.getKioskClientID());
+		if (!lockedKioskList.isEmpty())
+			throw new BusinessException("Transaction In Progress for the given Kiosk !"+kioskBoothRightDTO.getKioskClientID());
+		
+		List<KioskBoothRights> kioskListToActive = fetchKiosksToActivateTrx(kioskBoothRightDTO.getKioskClientID());
 
-		List<KioskBoothRights> boothListToActive = fetchBoothsToActivateTrx(kioskBoothRightDTO.getKioskClientID());
-
-		if (boothListToActive.isEmpty())
-			throw new ResultsNotFoundException("No Booth Info Found to Update!");
-		boothListToActive.stream().forEach(KioskBoothRights -> {
+		if (kioskListToActive.isEmpty())
+			throw new ResultsNotFoundException("No Kiosk Info Found to Update!");
+		kioskListToActive.stream().forEach(KioskBoothRights -> {
 			kioskBoothRightDTO.setKioskLockStatus(KioskLockStatus.ACTIVE.getValue());
 			kioskBoothRightDTO.setBoothClientID(KioskBoothRights.getKioskBoothRightsID().getBooth().getClientID());
 			modelMapper.map(kioskBoothRightDTO, KioskBoothRights);
@@ -64,7 +68,7 @@ public class KioskBoothService {
 
 	}
 
-	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, readOnly = false)
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, readOnly = false)
 	public String lockBoothTransaction(KioskBoothRightsDTO kioskBoothRightDTO) {
 
 		if (kioskBoothRightDTO.getKioskClientID() == null || kioskBoothRightDTO.getBoothClientID() == null)
@@ -96,7 +100,7 @@ public class KioskBoothService {
 
 	}
 
-	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, readOnly = false)
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, readOnly = false)
 	public String completeBoothTransaction(KioskBoothRightsDTO kioskBoothRightDTO) {
 
 		if (kioskBoothRightDTO.getKioskClientID() == null || kioskBoothRightDTO.getBoothClientID() == null)
@@ -127,8 +131,8 @@ public class KioskBoothService {
 		return "SUCCESS";
 	}
 
-	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, readOnly = true)
-	public List<KioskBoothRights> fetchBoothsToActivateTrx(Long kioskID) {
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, readOnly = true)
+	public List<KioskBoothRights> fetchKiosksToActivateTrx(Long kioskID) {
 
 		List<KioskLockStatus> kioskStatusList = new ArrayList<>();
 		kioskStatusList.add(KioskLockStatus.ACTIVE);
@@ -145,7 +149,7 @@ public class KioskBoothService {
 		return IteratorUtils.toList(boothIterator.iterator());
 	}
 
-	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, readOnly = true)
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, readOnly = true)
 	public List<KioskBoothRights> fetchActiveKioskBoothByKiosk(Long kioskID) {
 
 		List<KioskLockStatus> kioskStatusList = new ArrayList<>();
@@ -159,7 +163,7 @@ public class KioskBoothService {
 		return IteratorUtils.toList(boothIterator.iterator());
 	}
 
-	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, readOnly = true)
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, readOnly = true)
 	public List<KioskBoothRights> fetchLockReleasedKioskBoothByKiosk(Long kioskID) {
 
 		List<KioskLockStatus> kioskStatusList = new ArrayList<>();
@@ -174,7 +178,7 @@ public class KioskBoothService {
 		return IteratorUtils.toList(boothIterator.iterator());
 	}
 
-	@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
 	public List<ClientDTO> getKioskListByBooth(Long boothID) {
 
 		Optional<List<Client>> KioskListForBooth = clientRepository.getKioskListByBooth(boothID);
@@ -186,7 +190,7 @@ public class KioskBoothService {
 				.collect(Collectors.toList());
 	}
 
-	@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
 	public ClientInfo getKioskLoginInfo(String ipAddress) {
 		if (StringUtils.isNotEmpty(ipAddress)) {
 			Optional<Client> clientOpt = clientRepository.findByWebIPAddress(ipAddress);
@@ -212,7 +216,7 @@ public class KioskBoothService {
 		}
 	}
 
-	@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
 	public KioskBoothRightsDTO getLockedKioskBoothInfo(Long kioskID) {
 
 		if (kioskID == null)
@@ -224,8 +228,8 @@ public class KioskBoothService {
 
 	}
 
-	@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-	public List<KioskBoothRightsDTO> getBoothAccessRight(Long boothID, Long kioskID, Integer cardNumber) {
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+	public List<KioskBoothRightsDTO> getBoothAccessRight(Long boothID, Long kioskID, Long cardNumber) {
 		if (boothID != null) {
 			Iterable<KioskBoothRights> kioskList = applyBoothAccessRightPredicate(boothID, kioskID, cardNumber);
 			if (kioskList != null) {
@@ -266,7 +270,8 @@ public class KioskBoothService {
 		clientInfo.setWithCameraImage(Boolean.toString(client.isWithCameraImage()));
 		return clientInfo;
 	}
-
+	
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
 	public Optional<KioskBoothRights> fetchLockedKioskBoothInfoById(Long kioskID) {
 		Predicate kioskBoothInfoByKioskID = KioskBoothRightsPredicates.KioskBoothInfoByKioskID(kioskID);
 		Predicate kioskBoothStatus = KioskBoothRightsPredicates.KioskBoothStatus(KioskLockStatus.LOCK.getValue());
@@ -274,13 +279,15 @@ public class KioskBoothService {
 		KioskBoothRights lockedKiosk = kioskBoothRightsRepository.findOne(finalPredicate);
 		return Optional.ofNullable(lockedKiosk);
 	}
-
+	
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
 	public Iterable<KioskBoothRights> getKioskBoothInfoByKiosk(Long kioskID) {
 		Predicate kioskBoothInfoByKioskID = KioskBoothRightsPredicates.KioskBoothInfoByKioskID(kioskID);
 		return kioskBoothRightsRepository.findAll(kioskBoothInfoByKioskID);
 	}
-
-	public Iterable<KioskBoothRights> applyBoothAccessRightPredicate(Long boothID, Long kioskID, Integer cardNumber) {
+	
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+	public Iterable<KioskBoothRights> applyBoothAccessRightPredicate(Long boothID, Long kioskID, Long cardNumber) {
 		Predicate kioskBoothInfoByBoothID = null;
 		Predicate kioskBoothInfoByKioskID = null;
 		Predicate kioskBoothInfoByCardNo = null;

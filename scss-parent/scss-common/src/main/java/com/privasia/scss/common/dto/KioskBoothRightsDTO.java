@@ -24,7 +24,7 @@ public class KioskBoothRightsDTO implements Serializable {
 
 	private String kioskLockStatus = StringUtils.EMPTY;
 
-	private Integer cardNumber = null;
+	private Long cardNumber = null;
 
 	private String cardScanTime = StringUtils.EMPTY;
 
@@ -94,11 +94,11 @@ public class KioskBoothRightsDTO implements Serializable {
 		this.kioskLockStatus = kioskLockStatus;
 	}
 
-	public Integer getCardNumber() {
+	public Long getCardNumber() {
 		return cardNumber;
 	}
 
-	public void setCardNumber(Integer cardNumber) {
+	public void setCardNumber(Long cardNumber) {
 		this.cardNumber = cardNumber;
 	}
 

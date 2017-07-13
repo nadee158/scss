@@ -63,11 +63,11 @@ public class KioskBoothController {
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public CustomResponseEntity<ApiResponseObject<?>> getBoothAccessRight(@RequestBody KioskBoothRightsDTO kioskBoothRightsDTO) {
 	
-	Long boothID = kioskBoothRightsDTO.getBoothClientID();
+	Long boothID = kioskBoothRightsDTO.getBoothClientID(); 
 	Long kioskID = kioskBoothRightsDTO.getKioskClientID();
-	Integer cardNumber= kioskBoothRightsDTO.getCardNumber(); 
+	Long cardNumber= kioskBoothRightsDTO.getCardNumber(); 
 	
-    List<KioskBoothRightsDTO> kioskBoothRightInfos = kioskBoothService.getBoothAccessRight(boothID, kioskID, cardNumber); 
+    List<KioskBoothRightsDTO> kioskBoothRightInfos = kioskBoothService.getBoothAccessRight(boothID, kioskID, cardNumber);  
     return new CustomResponseEntity<ApiResponseObject<?>>(
         new ApiResponseObject<List<KioskBoothRightsDTO>>(HttpStatus.OK, kioskBoothRightInfos), HttpStatus.OK);
   }
