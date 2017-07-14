@@ -3,10 +3,13 @@ package com.privasia.scss.cosmos.xml.element;
 import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-
+@XmlType(propOrder = {"MSGTSE", "UNITSE", "ORRFSE", "UNISSE", "UNBTSE", "CNPVSE", "ORGVSE", "LYNDSE", "DM01SE", "DM02SE","DM03SE", "DM04SE","DM05SE",
+		"DM06SE","DM07SE","DM08SE","DM09SE","SO01SE","ST01SE","SN01SE","SO02SE", "ST02SE","SN02SE","UNBGSE","CNORSE","PLMNSE","RGRTSE","RGTESE","OOGISE","OVSVSE","OVSASE",
+		"OVSLSE","OVHGSE","OVSRSE","CNIMSE","CIM1SE","ISA1SE","CUN1SE","UOLCSE","UOLLSE","UOLOSE","CYOISE","CYCISE","ACHISE","PCHISE"})
 public class GINCNTDRP implements Serializable {
 
   private static final long serialVersionUID = 1L;

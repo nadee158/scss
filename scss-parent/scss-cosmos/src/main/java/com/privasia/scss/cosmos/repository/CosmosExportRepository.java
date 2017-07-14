@@ -115,12 +115,13 @@ public class CosmosExportRepository {
 					(rs, i) -> extractContainerStatus(rs));
 		} catch (EmptyResultDataAccessException e) {
 			log.error("Container checkContainerStatus " + e.getMessage());
-			e.printStackTrace();
-			throw new BusinessException("Container status cound not found in cosmos " + containerNo);
+			return extractContainerStatus(null);
+			//e.printStackTrace();
+			//throw new BusinessException("Container status cound not found in cosmos " + containerNo);
 		}
 	}
 
-	private String extractContainerStatus(ResultSet rs) throws SQLException {
+	private String extractContainerStatus(ResultSet rs)  {
 		try {
 			if (rs != null) {
 				return rs.getString("HDFS03");

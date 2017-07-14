@@ -57,7 +57,7 @@ public class AGSClientService {
 		// output pretty printed
 		//jaxbMarshaller.setProperty("jaxb.encoding", "ASCII");
 		//jaxbMarshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
-		jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+		jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, false);
 
 	
 		java.io.StringWriter sw = new StringWriter();

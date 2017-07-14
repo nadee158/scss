@@ -47,7 +47,7 @@ public class CosmosGateOutExportService {
       exportContainers.forEach(exportContainer -> {
         LocalDateTime timeGateIn = exportContainer.getBaseCommonGateInOutAttribute().getTimeGateIn();
         String status = cosmosExportRepository.checkContainerStatus(exportContainer.getContainer().getContainerNumber(),
-            DateUtil.getFormatteDateTime(timeGateIn, DateUtil.GLOBAL_DATE_PATTERN_YYYYMMDD));
+            DateUtil.getFormatteDateTime(timeGateIn, DateUtil.GLOBAL_DATE_PATTERN_yyyyMMdd));
         exportContainer.setRtgExecustionStatus(status);
 
       });

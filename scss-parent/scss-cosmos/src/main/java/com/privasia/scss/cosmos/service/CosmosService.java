@@ -122,7 +122,7 @@ public class CosmosService implements OpusCosmosBusinessService {
     // TODO Auto-generated method stub
     // gateOutReponse-transaction type - switch
 
-    TransactionType trxType = TransactionType.fromCode(gateOutReponse.getTransactionType());
+    TransactionType trxType = TransactionType.valueOf(gateOutReponse.getTransactionType());
 
     switch (trxType) {
       case IMPORT:
@@ -190,8 +190,21 @@ public class CosmosService implements OpusCosmosBusinessService {
         }
         break;
       case EXPORT:
-        cosmosGateOutWriteRequest.setImportList(null);
-        cosmosGateOutWriteRequest.setExport(null);
+			/*
+			 * cosmosGateOutWriteRequest.setImportList(null);
+			 * cosmosGateOutWriteRequest.setExport(null);
+			 */
+    	  startIndex = 1;
+    	  commonValuesDTO.setCompCode(null);
+			if (!(gateOutWriteRequest.getExportContainers() == null
+					|| gateOutWriteRequest.getExportContainers().isEmpty())) {
+				Optional<CosmosGateOutExport> cosmosGateOutExportOpt = cosmosGateOutWriteService
+						.constructCosmosGateOutExport(commonValuesDTO, gateOutWriteRequest.getExportContainers(),
+								startIndex);
+				if (cosmosGateOutExportOpt.isPresent()) {
+					cosmosGateOutWriteRequest.setExport(cosmosGateOutExportOpt.get());
+				}
+			}
         break;
       case IMPORT_EXPORT:
         if (!(gateOutWriteRequest.getImportContainers() == null
@@ -218,9 +231,9 @@ public class CosmosService implements OpusCosmosBusinessService {
     }
 
     try {
-      RequestMessage requestMessage = messageService.constructGateInRootMessage(commonValuesDTO);
+     /* RequestMessage requestMessage = messageService.constructGateInRootMessage(commonValuesDTO);
       cosmosGateOutWriteRequest.setMessage(requestMessage);
-
+*/
       String cosmosResponse = agsClientService.sendToCosmos(cosmosGateOutWriteRequest,
           gateOutWriteRequest.getCosmosPort());
       cosmosResponseService.extractCosmosGateOutResponse(cosmosResponse);

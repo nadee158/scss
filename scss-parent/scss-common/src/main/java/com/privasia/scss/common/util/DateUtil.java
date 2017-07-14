@@ -22,7 +22,7 @@ public class DateUtil {
   public static final String GLOBAL_DATE_PATTERN = "dd-MM-yyyy";
   public static final String GLOBAL_DATE_PATTERN_YYYYMMDD = "YYYYMMDD";
   public static final String GLOBAL_DATE_TIME_PATTERN = "dd-MM-yyyy HH:mm:ss";
-
+  public static final String GLOBAL_DATE_PATTERN_yyyyMMdd = "yyyyMMdd";
   // List of all date formats that we want to parse.
   // Add your own format here.
   private static List<SimpleDateFormat> dateFormats = new ArrayList<SimpleDateFormat>() {
