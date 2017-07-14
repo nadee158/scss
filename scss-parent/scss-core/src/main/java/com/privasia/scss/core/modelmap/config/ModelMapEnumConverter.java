@@ -16,7 +16,6 @@ import com.privasia.scss.common.enums.ContainerFullEmptyType;
 import com.privasia.scss.common.enums.ContainerPosition;
 import com.privasia.scss.common.enums.ContainerSize;
 import com.privasia.scss.common.enums.ExportOPTFlagType;
-import com.privasia.scss.common.enums.SSRBlockType;
 import com.privasia.scss.common.enums.GateInOutStatus;
 import com.privasia.scss.common.enums.GatePassStatus;
 import com.privasia.scss.common.enums.HDBSArrivalStatus;
@@ -26,10 +25,12 @@ import com.privasia.scss.common.enums.HpabReferStatus;
 import com.privasia.scss.common.enums.ImpExpFlagStatus;
 import com.privasia.scss.common.enums.KioskHLTCheckStatus;
 import com.privasia.scss.common.enums.KioskLockStatus;
+import com.privasia.scss.common.enums.LaneOpenFlag;
 import com.privasia.scss.common.enums.ReadWriteStatus;
 import com.privasia.scss.common.enums.RecordStatus;
 import com.privasia.scss.common.enums.ReferTempType;
 import com.privasia.scss.common.enums.SCSSHDBSStatus;
+import com.privasia.scss.common.enums.SSRBlockType;
 import com.privasia.scss.common.enums.SolasInstructionType;
 import com.privasia.scss.common.enums.SolasWeightType;
 import com.privasia.scss.common.enums.SolasWeightTypeSize;
@@ -69,7 +70,7 @@ public class ModelMapEnumConverter {
     };
   }
 
-  public static Converter<String, KioskLockStatus> convertStringToKioskLockStatus() { 
+  public static Converter<String, KioskLockStatus> convertStringToKioskLockStatus() {
 
     return new Converter<String, KioskLockStatus>() {
       @Override
@@ -1416,6 +1417,46 @@ public class ModelMapEnumConverter {
               return ReadWriteStatus.READ;
             case "W":
               return ReadWriteStatus.WRITE;
+            default:
+              return null;
+          }
+        } else {
+          return null;
+        }
+      }
+    };
+  }
+
+  public static Converter<String, LaneOpenFlag> convertStringToLaneOpenFlag() {
+    return new Converter<String, LaneOpenFlag>() {
+      @Override
+      public LaneOpenFlag convert(MappingContext<String, LaneOpenFlag> context) {
+        if (context.getSource() != null) {
+          switch (context.getSource()) {
+            case "O":
+              return LaneOpenFlag.OPENED;
+            case "R":
+              return LaneOpenFlag.READY;
+            default:
+              return null;
+          }
+        } else {
+          return null;
+        }
+      }
+    };
+  }
+
+  public static Converter<LaneOpenFlag, String> convertLaneOpenFlagToString() {
+    return new Converter<LaneOpenFlag, String>() {
+      @Override
+      public String convert(MappingContext<LaneOpenFlag, String> context) {
+        if (context.getSource() != null) {
+          switch (context.getSource()) {
+            case OPENED:
+              return LaneOpenFlag.OPENED.getValue();
+            case READY:
+              return LaneOpenFlag.READY.getValue();
             default:
               return null;
           }

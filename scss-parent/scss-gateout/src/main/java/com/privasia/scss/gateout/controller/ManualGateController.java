@@ -7,13 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
-
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.privasia.scss.common.dto.ApiResponseObject;
 import com.privasia.scss.common.dto.CustomResponseEntity;
+import com.privasia.scss.common.dto.LaneOpenDTO;
 import com.privasia.scss.gateout.service.LaneOpenService;
 
 /**
@@ -24,23 +24,32 @@ import com.privasia.scss.gateout.service.LaneOpenService;
 @RestController
 @RequestMapping("**/manualgate")
 public class ManualGateController {
-	
-	
-	private LaneOpenService laneOpenService;
-	
-	@Autowired
-	public void setLaneOpenService(LaneOpenService laneOpenService) {
-		this.laneOpenService = laneOpenService;
-	}
 
-	
-	@RequestMapping(value = "/open/{openGateSEQ}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, 
-															consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public CustomResponseEntity<ApiResponseObject<?>> updateOpenGate(@PathVariable Long openGateSEQ) {
 
-		String responseMessage = laneOpenService.updateOpenGate(openGateSEQ);
-		return new CustomResponseEntity<ApiResponseObject<?>>(
-				new ApiResponseObject<String>(HttpStatus.OK, responseMessage), HttpStatus.OK);
-	}
+  private LaneOpenService laneOpenService;
+
+  @Autowired
+  public void setLaneOpenService(LaneOpenService laneOpenService) {
+    this.laneOpenService = laneOpenService;
+  }
+
+
+  @RequestMapping(value = "/open/{openGateSEQ}", method = RequestMethod.PUT,
+      produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+  public CustomResponseEntity<ApiResponseObject<?>> updateOpenGate(@PathVariable Long openGateSEQ) {
+
+    String responseMessage = laneOpenService.updateOpenGate(openGateSEQ);
+    return new CustomResponseEntity<ApiResponseObject<?>>(new ApiResponseObject<String>(HttpStatus.OK, responseMessage),
+        HttpStatus.OK);
+  }
+
+  @RequestMapping(value = "/checklaneopenstatus/{laneID}", method = RequestMethod.GET,
+      produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+  public CustomResponseEntity<ApiResponseObject<?>> checkLaneOpenStatus(@PathVariable Long laneID) {
+
+    LaneOpenDTO laneOpenDTO = laneOpenService.checkLaneOpenStatus(laneID);
+    return new CustomResponseEntity<ApiResponseObject<?>>(
+        new ApiResponseObject<LaneOpenDTO>(HttpStatus.OK, laneOpenDTO), HttpStatus.OK);
+  }
 
 }

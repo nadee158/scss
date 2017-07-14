@@ -9,7 +9,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.privasia.scss.common.enums.ContainerSize;
 import com.privasia.scss.core.modelmap.config.ModelMapEnumConverter;
 import com.privasia.scss.core.modelmap.config.ModelMapLocalDateConverter;
 import com.privasia.scss.core.modelmap.config.ModelMapPropertyMap;
@@ -27,7 +26,7 @@ public class ModelMapConfig {
     ModelMapper modelMapper = new ModelMapper();
     configLocalDateTime(modelMapper);
     configEnums(modelMapper);
-    
+
     configProperty(modelMapper);
     return modelMapper;
   }
@@ -95,6 +94,11 @@ public class ModelMapConfig {
     modelMapper.addConverter(ModelMapEnumConverter.convertStringToSolasWeightType());
     modelMapper.addConverter(ModelMapEnumConverter.convertSolasWeightTypeToString());
 
+    modelMapper.addConverter(ModelMapEnumConverter.convertStringToLaneOpenFlag());
+    modelMapper.addConverter(ModelMapEnumConverter.convertLaneOpenFlagToString());
+
+
+
     return modelMapper;
   }
 
@@ -112,6 +116,7 @@ public class ModelMapConfig {
     modelMapper.addMappings(ModelMapPropertyMap.referRejectToReferRejectDTO());
     modelMapper.addMappings(ModelMapPropertyMap.referRejectReasonDTOToReferRejectReason());
     modelMapper.addMappings(ModelMapPropertyMap.WHODDToWHoddDTO());
+    modelMapper.addMappings(ModelMapPropertyMap.laneOpenToReferLaneOpenDTO());
     return modelMapper;
   }
 
