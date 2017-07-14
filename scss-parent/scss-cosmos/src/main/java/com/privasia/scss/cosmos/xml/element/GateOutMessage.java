@@ -32,7 +32,7 @@ public class GateOutMessage {
     return Index;
   }
 
-  @XmlAttribute
+  @XmlAttribute(name="Index")
   public void setIndex(int index) {
     Index = index;
   }

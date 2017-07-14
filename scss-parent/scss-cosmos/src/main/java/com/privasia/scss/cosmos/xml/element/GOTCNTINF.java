@@ -3,10 +3,12 @@ package com.privasia.scss.cosmos.xml.element;
 import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+@XmlType(propOrder = {"UNITSE", "SO01SE", "ST01SE", "SN01SE", "SO02SE", "ST02SE","SN02SE"})
 public class GOTCNTINF implements Serializable {
 
   private static final long serialVersionUID = 1L;

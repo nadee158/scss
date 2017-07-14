@@ -43,7 +43,7 @@ public class CosmosGateOutWriteService {
 
       for (ImportContainer importContainer : importContainers) {
 
-        if (!(StringUtils.equalsIgnoreCase(importContainer.getBaseCommonGateInOutAttribute().getEirStatus(),
+        if ((StringUtils.equalsIgnoreCase(importContainer.getBaseCommonGateInOutAttribute().getEirStatus(),
             TransactionStatus.APPROVED.getValue())
             && StringUtils.equalsIgnoreCase(importContainer.getCommonGateInOut().getGateInStatus(),
                 TransactionStatus.APPROVED.getValue()))) {

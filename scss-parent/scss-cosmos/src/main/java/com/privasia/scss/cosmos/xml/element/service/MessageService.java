@@ -46,5 +46,12 @@ public class MessageService {
 		requestMessage.setGOTTRCINF(null);
 		return requestMessage;
 	}
-
+	public RequestMessage constructGateOutRootMessage(CosmosCommonValuesDTO commonValuesDTO) {
+		RequestMessage requestMessage = new RequestMessage();
+		requestMessage.setIndex(1);
+		requestMessage.setCSMCTL(csmctlService.constructCSMCTL(commonValuesDTO));
+		requestMessage.setGOTTRCINF(gottrcinfService.constructGOTTRCINF(commonValuesDTO));
+		requestMessage.setGINTRCINF(null);
+		return requestMessage;
+	}
 }

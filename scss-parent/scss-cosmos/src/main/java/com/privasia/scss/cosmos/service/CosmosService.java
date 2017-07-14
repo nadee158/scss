@@ -231,9 +231,9 @@ public class CosmosService implements OpusCosmosBusinessService {
     }
 
     try {
-     /* RequestMessage requestMessage = messageService.constructGateInRootMessage(commonValuesDTO);
+      RequestMessage requestMessage = messageService.constructGateOutRootMessage(commonValuesDTO);
       cosmosGateOutWriteRequest.setMessage(requestMessage);
-*/
+
       String cosmosResponse = agsClientService.sendToCosmos(cosmosGateOutWriteRequest,
           gateOutWriteRequest.getCosmosPort());
       cosmosResponseService.extractCosmosGateOutResponse(cosmosResponse);

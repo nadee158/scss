@@ -40,7 +40,7 @@ public class CosmosGateInImport implements Serializable {
     return Index;
   }
 
-  @XmlAttribute
+  @XmlAttribute(name="Index")
   public void setIndex(int index) {
     Index = index;
   }

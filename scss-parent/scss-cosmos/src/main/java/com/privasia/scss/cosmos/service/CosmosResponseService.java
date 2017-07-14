@@ -153,8 +153,8 @@ public class CosmosResponseService {
     if (!(importContainers == null || importContainers.isEmpty())) {
 
       importContainers.stream().forEach(importContainer -> {
-        Optional<GINCNTPUPR> optElement = yardPositionlist.stream().filter(element -> StringUtils
-            .equalsIgnoreCase(element.getUNITSE(), importContainer.getContainer().getContainerNumber())).findAny();
+        Optional<GINCNTPUPR> optElement = yardPositionlist.stream().filter(element -> ((element != null) && StringUtils
+            .equalsIgnoreCase(element.getUNITSE(), importContainer.getContainer().getContainerNumber()))).findAny();
 
         GINCNTPUPR gincntpupr = optElement.orElseThrow(() -> new BusinessException(
             "Container No " + importContainer.getContainer().getContainerNumber() + " not found to populate data"));
