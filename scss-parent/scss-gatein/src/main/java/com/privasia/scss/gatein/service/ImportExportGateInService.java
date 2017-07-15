@@ -311,7 +311,7 @@ public class ImportExportGateInService {
      */
     gateInResponse.setGateINDateTime(gateInWriteRequest.getGateInDateTime());
     gateInResponse.setMessage(gateOutMessage);
-
+    gateInResponse.setUserId(userContext.getStaffName());
     return gateInResponse;
   }
 

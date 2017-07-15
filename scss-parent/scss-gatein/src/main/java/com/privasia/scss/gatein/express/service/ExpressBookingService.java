@@ -1,15 +1,15 @@
-package com.privasia.scss.express.service;
+package com.privasia.scss.gatein.express.service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.transaction.Transactional;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.privasia.scss.common.dto.BookingDTO;
 import com.privasia.scss.common.dto.BookingInfoDTO;
@@ -30,9 +30,8 @@ import com.privasia.scss.hpat.service.HPABService;
  * @author Nadeeshani Senevirathna
  *
  */
-@Service("expressService")
-@Transactional()
-public class ExpressService {
+@Service("expressBookingService")
+public class ExpressBookingService {
 
   private Logger log = Logger.getLogger(this.getClass());
 
@@ -57,6 +56,7 @@ public class ExpressService {
     this.commonCardService = commonCardService;
   }
 
+  @Transactional(propagation = Propagation.REQUIRED, readOnly = true, value = "transactionManager")
   public BookingInfoDTO getBookingInfo(Long cardNo) {
     BookingInfoDTO dto = new BookingInfoDTO();
 
@@ -127,5 +127,6 @@ public class ExpressService {
 
     return dto;
   }
+
 
 }
