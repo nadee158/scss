@@ -30,9 +30,9 @@ public class ExpressController {
   @Autowired
   private ExpressService expressService;
 
-  @RequestMapping(value = "/getbookinginfo/{cardNo}", method = RequestMethod.POST,
+  @RequestMapping(value = "/getbookinginfo/{cardNo}", method = RequestMethod.GET,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-  public CustomResponseEntity<ApiResponseObject<?>> getBookingInfo(@PathVariable String cardNo,
+  public CustomResponseEntity<ApiResponseObject<?>> getBookingInfo(@PathVariable Long cardNo,
       HttpServletRequest request) {
 
     BookingInfoDTO dto = expressService.getBookingInfo(cardNo);

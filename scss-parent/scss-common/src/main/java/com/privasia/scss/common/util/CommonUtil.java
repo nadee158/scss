@@ -22,7 +22,7 @@ public final class CommonUtil {
   public static final String LOWER_CASE = "L";
   private static final AtomicLong LAST_TIME_MS = new AtomicLong();
 
- 
+
 
   public static String formatMessageCode(String msgcode, Object[] args) {
 

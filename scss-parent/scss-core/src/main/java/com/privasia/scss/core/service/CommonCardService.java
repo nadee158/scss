@@ -26,108 +26,101 @@ import com.privasia.scss.core.repository.ODDRepository;
 @Service("commonCardService")
 public class CommonCardService {
 
-	private CardRepository cardRepository;
+  private CardRepository cardRepository;
 
-	private GatePassRepository gatePassRepository;
+  private GatePassRepository gatePassRepository;
 
-	private ExportsRepository exportsRepository;
+  private ExportsRepository exportsRepository;
 
-	private ODDRepository oddRepository;
-	
-	@Autowired
-	public void setCardRepository(CardRepository cardRepository) {
-		this.cardRepository = cardRepository;
-	}
-	
-	@Autowired
-	public void setGatePassRepository(GatePassRepository gatePassRepository) {
-		this.gatePassRepository = gatePassRepository;
-	}
+  private ODDRepository oddRepository;
 
-	@Autowired
-	public void setExportsRepository(ExportsRepository exportsRepository) {
-		this.exportsRepository = exportsRepository;
-	}
+  @Autowired
+  public void setCardRepository(CardRepository cardRepository) {
+    this.cardRepository = cardRepository;
+  }
 
-	@Autowired
-	public void setOddRepository(ODDRepository oddRepository) {
-		this.oddRepository = oddRepository;
-	}
+  @Autowired
+  public void setGatePassRepository(GatePassRepository gatePassRepository) {
+    this.gatePassRepository = gatePassRepository;
+  }
 
-	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
-	public boolean checkIfValidCard(Card card) {
-		if (!(card.getCardStatus() == null)) {
-			if (StringUtils.equals(card.getCardStatus().getValue(), CardStatus.ACTIVE.getValue())) {
-				if (!(card.getDateThrough() == null)) {
-					if (card.getDateThrough().isAfter(LocalDateTime.now())) {
-						return true;
-					} else {
-						card.setCardStatus(CardStatus.EXPIRED);
-						cardRepository.save(card);
-					}
-				}
-			}
-		}
-		return false;
-	}
+  @Autowired
+  public void setExportsRepository(ExportsRepository exportsRepository) {
+    this.exportsRepository = exportsRepository;
+  }
 
-	@Transactional(readOnly = true)
-	public Card getCardByCardNumber(long cardNumber) {
-		Optional<Card> cardOpt = cardRepository.findByCardNo(cardNumber);
-		if (cardOpt.isPresent()) {
-			return cardOpt.get();
-		}
-		throw new ResultsNotFoundException("Card was not found!");
-	}
+  @Autowired
+  public void setOddRepository(ODDRepository oddRepository) {
+    this.oddRepository = oddRepository;
+  }
 
-	@Transactional(propagation = Propagation.REQUIRED, readOnly = true, value = "transactionManager")
-	public InProgressTrxDTO isTrxInProgress(Long cardID) {
+  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
+  public boolean checkIfValidCard(Card card) {
+    if (card.getCardStatus() != null
+        && StringUtils.equals(card.getCardStatus().getValue(), CardStatus.ACTIVE.getValue())) {
+      if (card.getDateThrough() != null && card.getDateThrough().isAfter(LocalDateTime.now())) {
+        return true;
+      } else {
+        card.setCardStatus(CardStatus.EXPIRED);
+        cardRepository.save(card);
+      }
+    }
+    return false;
+  }
 
-		InProgressTrxDTO inProgressTrxDTO = new InProgressTrxDTO();
-		inProgressTrxDTO.setInProgress(false);
-		
-		if(cardID == null)
-			throw new BusinessException("Card information not provided!");
-		
-		long oddCount = oddRepository.countByCardIDAndEirStatus(cardID, TransactionStatus.INPROGRESS.getValue());
+  @Transactional(propagation = Propagation.REQUIRED, readOnly = true, value = "transactionManager")
+  public Card getCardByCardNumber(long cardNumber) {
+    Optional<Card> cardOpt = cardRepository.findByCardNo(cardNumber);
+    return cardOpt.orElseThrow(() -> new ResultsNotFoundException("Card was not found for card number " + cardNumber));
+  }
 
-		long impCount = gatePassRepository.countRecordsByCardIdAndEirStatus(cardID,
-				TransactionStatus.INPROGRESS.getValue());
+  @Transactional(propagation = Propagation.REQUIRED, readOnly = true, value = "transactionManager")
+  public InProgressTrxDTO isTrxInProgress(Long cardID) {
 
-		long expCount = exportsRepository.countRecordsByCardIdAndEirStatus(cardID,
-				TransactionStatus.INPROGRESS.getValue());
+    InProgressTrxDTO inProgressTrxDTO = new InProgressTrxDTO();
+    inProgressTrxDTO.setInProgress(false);
 
-		if (oddCount > 0) {
-			inProgressTrxDTO.setTrxType(TransactionType.ODD);
-			inProgressTrxDTO.setInProgress(true);
-		} else if (impCount > 0 && expCount > 0) {
-			inProgressTrxDTO.setTrxType(TransactionType.IMPORT_EXPORT);
-			inProgressTrxDTO.setInProgress(true);
-		} else if (impCount > 0) {
-			inProgressTrxDTO.setTrxType(TransactionType.IMPORT);
-			inProgressTrxDTO.setInProgress(true);
-		} else if (expCount > 0) {
-			inProgressTrxDTO.setTrxType(TransactionType.EXPORT);
-			inProgressTrxDTO.setInProgress(true);
-		}
-		return inProgressTrxDTO;
+    if (cardID == null)
+      throw new BusinessException("Card information not provided!");
 
-	}
+    long oddCount = oddRepository.countByCardIDAndEirStatus(cardID, TransactionStatus.INPROGRESS.getValue());
 
-	@Transactional(propagation = Propagation.REQUIRED, readOnly = true, value = "transactionManager")
-	public String getHaulierCodeByScanCard(Card card) {
-		// fetch company of which type is
-		// CompanyType - > HAULAGE
-		Company haulageCompany = card.getCompany();
-		if (haulageCompany == null)
-			throw new BusinessException("Company was not assigned for card id " + card.getCardID());
+    long impCount =
+        gatePassRepository.countRecordsByCardIdAndEirStatus(cardID, TransactionStatus.INPROGRESS.getValue());
 
-		if (haulageCompany.getCompanyType().equals(CompanyType.HAULAGE)) {
-			return haulageCompany.getCompanyCode();
-		} else {
-			throw new BusinessException("Not a haulage Company ! " + haulageCompany.getCompanyCode());
-		}
+    long expCount = exportsRepository.countRecordsByCardIdAndEirStatus(cardID, TransactionStatus.INPROGRESS.getValue());
 
-	}
+    if (oddCount > 0) {
+      inProgressTrxDTO.setTrxType(TransactionType.ODD);
+      inProgressTrxDTO.setInProgress(true);
+    } else if (impCount > 0 && expCount > 0) {
+      inProgressTrxDTO.setTrxType(TransactionType.IMPORT_EXPORT);
+      inProgressTrxDTO.setInProgress(true);
+    } else if (impCount > 0) {
+      inProgressTrxDTO.setTrxType(TransactionType.IMPORT);
+      inProgressTrxDTO.setInProgress(true);
+    } else if (expCount > 0) {
+      inProgressTrxDTO.setTrxType(TransactionType.EXPORT);
+      inProgressTrxDTO.setInProgress(true);
+    }
+    return inProgressTrxDTO;
+
+  }
+
+  @Transactional(propagation = Propagation.REQUIRED, readOnly = true, value = "transactionManager")
+  public String getHaulierCodeByScanCard(Card card) {
+    // fetch company of which type is
+    // CompanyType - > HAULAGE
+    Company haulageCompany = card.getCompany();
+    if (haulageCompany == null)
+      throw new BusinessException("Company was not assigned for card id " + card.getCardID());
+
+    if (haulageCompany.getCompanyType().equals(CompanyType.HAULAGE)) {
+      return haulageCompany.getCompanyCode();
+    } else {
+      throw new BusinessException("Not a haulage Company ! " + haulageCompany.getCompanyCode());
+    }
+
+  }
 
 }

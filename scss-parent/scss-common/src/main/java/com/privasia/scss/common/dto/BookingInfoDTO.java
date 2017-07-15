@@ -7,8 +7,6 @@ public class BookingInfoDTO implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
-  public static final String OK = "OK";
-  public static final String NOK = "NOK";
   public static final String CUS_CHECKING = "CUSTOM_CHECKING";
 
   public static final String BLACKLISTED_CARD_MESSAGE =
