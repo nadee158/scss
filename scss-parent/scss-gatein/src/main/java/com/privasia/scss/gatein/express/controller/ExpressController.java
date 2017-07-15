@@ -24,6 +24,7 @@ import com.privasia.scss.common.dto.GateInWriteRequest;
 import com.privasia.scss.common.dto.GateTicketInfoDTO;
 import com.privasia.scss.gatein.express.service.ExpressBookingService;
 import com.privasia.scss.gatein.express.service.ExpressGatePassService;
+import com.privasia.scss.gatein.express.service.ExpressODDService;
 import com.privasia.scss.gatein.util.GateInWriteRequestValidator;
 
 
@@ -42,6 +43,8 @@ public class ExpressController {
 
   private GateInWriteRequestValidator gateInWriteRequestValidator;
 
+  private ExpressODDService expressODDService;
+
 
   @Autowired
   public void setExpressBookingService(ExpressBookingService expressBookingService) {
@@ -56,6 +59,11 @@ public class ExpressController {
   @Autowired
   public void setGateInWriteRequestValidator(GateInWriteRequestValidator gateInWriteRequestValidator) {
     this.gateInWriteRequestValidator = gateInWriteRequestValidator;
+  }
+
+  @Autowired
+  public void setExpressODDService(ExpressODDService expressODDService) {
+    this.expressODDService = expressODDService;
   }
 
   @RequestMapping(value = "/getbookinginfo/{cardNo}", method = RequestMethod.GET,
@@ -81,6 +89,17 @@ public class ExpressController {
 
     return new CustomResponseEntity<ApiResponseObject<?>>(
         new ApiResponseObject<GateTicketInfoDTO>(HttpStatus.OK, gateTicketInfoDTO), HttpStatus.OK);
+  }
+
+  @RequestMapping(value = "/getgateticketinfoodd", method = RequestMethod.POST,
+      produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+  public CustomResponseEntity<ApiResponseObject<?>> getGateTicketInfoODD(
+      @RequestBody GateInWriteRequest gateInWriteRequest) {
+
+    GateTicketInfoDTO gateTicketInfoDTO = expressODDService.getGateTicketInfoODD(gateInWriteRequest);
+
+    return new CustomResponseEntity<ApiResponseObject<?>>(
+        new ApiResponseObject<GateTicketInfoDTO>(HttpStatus.OK, gateTicketInfoDTO), HttpStatus.CREATED);
   }
 
 }
