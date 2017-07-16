@@ -14,97 +14,108 @@ import com.privasia.scss.common.util.DateUtil;
 
 public class GateOutWriteRequest extends GateWriteRequest implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-	@NotNull(message = "gateOutClient is required!")
-	private Long gateOutClient;
+  @NotNull(message = "gateOutClient is required!")
+  private Long gateOutClient;
 
-	private Long gateOutBooth;
+  private Long gateOutBooth;
 
-	@NotNull(message = "gateOUTDateTime is required!")
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateUtil.GLOBAL_DATE_TIME_PATTERN)
-	private LocalDateTime gateOUTDateTime;// -string
+  @NotNull(message = "gateOUTDateTime is required!")
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateUtil.GLOBAL_DATE_TIME_PATTERN)
+  private LocalDateTime gateOUTDateTime;// -string
 
-	private boolean cancelPickUP = false;
+  private boolean cancelPickUP = false;
 
-	@NotNull(message = "impExpFlag is required!") // check if an allowed value
-													// in enum
-	private String impExpFlag;
+  @NotNull(message = "impExpFlag is required!") // check if an allowed value
+                                                // in enum
+  private String impExpFlag;
 
-	private byte[] transactionZipFile;
-	
-	private String reviseHeadNoRemarks = StringUtils.EMPTY;
+  private byte[] transactionZipFile;
 
-	private String reviseHeadNo = StringUtils.EMPTY;
+  private String reviseHeadNoRemarks = StringUtils.EMPTY;
 
-	
-	public Long getGateOutClient() {
-		return gateOutClient;
-	}
+  private String reviseHeadNo = StringUtils.EMPTY;
 
-	public void setGateOutClient(Long gateOutClient) {
-		this.gateOutClient = gateOutClient;
-	}
+  private String tosIndicator = StringUtils.EMPTY;
 
-	public LocalDateTime getGateOUTDateTime() {
-		return gateOUTDateTime;
-	}
 
-	public void setGateOUTDateTime(LocalDateTime gateOUTDateTime) {
-		this.gateOUTDateTime = gateOUTDateTime;
-	}
+  public Long getGateOutClient() {
+    return gateOutClient;
+  }
 
-	public String getImpExpFlag() {
-		return impExpFlag;
-	}
+  public void setGateOutClient(Long gateOutClient) {
+    this.gateOutClient = gateOutClient;
+  }
 
-	public void setImpExpFlag(String impExpFlag) {
-		this.impExpFlag = impExpFlag;
-	}
+  public LocalDateTime getGateOUTDateTime() {
+    return gateOUTDateTime;
+  }
 
-	public Long getGateOutBooth() {
-		return gateOutBooth;
-	}
+  public void setGateOUTDateTime(LocalDateTime gateOUTDateTime) {
+    this.gateOUTDateTime = gateOUTDateTime;
+  }
 
-	public void setGateOutBooth(Long gateOutBooth) {
-		this.gateOutBooth = gateOutBooth;
-	}
+  public String getImpExpFlag() {
+    return impExpFlag;
+  }
 
-	public boolean isCancelPickUP() {
-		return cancelPickUP;
-	}
+  public void setImpExpFlag(String impExpFlag) {
+    this.impExpFlag = impExpFlag;
+  }
 
-	public void setCancelPickUP(boolean cancelPickUP) {
-		this.cancelPickUP = cancelPickUP;
-	}
+  public Long getGateOutBooth() {
+    return gateOutBooth;
+  }
 
-	public byte[] getTransactionZipFile() {
-		return transactionZipFile;
-	}
+  public void setGateOutBooth(Long gateOutBooth) {
+    this.gateOutBooth = gateOutBooth;
+  }
 
-	public void setTransactionZipFile(byte[] transactionZipFile) {
-		this.transactionZipFile = transactionZipFile;
-	}
-	
-	public String getReviseHeadNoRemarks() {
-		return reviseHeadNoRemarks;
-	}
+  public boolean isCancelPickUP() {
+    return cancelPickUP;
+  }
 
-	public void setReviseHeadNoRemarks(String reviseHeadNoRemarks) {
-		this.reviseHeadNoRemarks = reviseHeadNoRemarks;
-	}
+  public void setCancelPickUP(boolean cancelPickUP) {
+    this.cancelPickUP = cancelPickUP;
+  }
 
-	public String getReviseHeadNo() {
-		return reviseHeadNo;
-	}
+  public byte[] getTransactionZipFile() {
+    return transactionZipFile;
+  }
 
-	public void setReviseHeadNo(String reviseHeadNo) {
-		this.reviseHeadNo = reviseHeadNo;
-	}
+  public void setTransactionZipFile(byte[] transactionZipFile) {
+    this.transactionZipFile = transactionZipFile;
+  }
 
-	@Override
-	public String toString() {
-		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
-	}
+  public String getReviseHeadNoRemarks() {
+    return reviseHeadNoRemarks;
+  }
+
+  public void setReviseHeadNoRemarks(String reviseHeadNoRemarks) {
+    this.reviseHeadNoRemarks = reviseHeadNoRemarks;
+  }
+
+  public String getReviseHeadNo() {
+    return reviseHeadNo;
+  }
+
+  public void setReviseHeadNo(String reviseHeadNo) {
+    this.reviseHeadNo = reviseHeadNo;
+  }
+
+
+  public String getTosIndicator() {
+    return tosIndicator;
+  }
+
+  public void setTosIndicator(String tosIndicator) {
+    this.tosIndicator = tosIndicator;
+  }
+
+  @Override
+  public String toString() {
+    return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
+  }
 
 }

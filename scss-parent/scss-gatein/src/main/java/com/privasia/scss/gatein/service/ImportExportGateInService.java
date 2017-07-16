@@ -2,6 +2,9 @@ package com.privasia.scss.gatein.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
@@ -26,8 +29,9 @@ import com.privasia.scss.common.enums.TransactionStatus;
 import com.privasia.scss.common.exception.BusinessException;
 import com.privasia.scss.common.exception.ResultsNotFoundException;
 import com.privasia.scss.common.interfaces.ContainerExternalDataService;
-import com.privasia.scss.common.interfaces.OpusCosmosBusinessService;
+import com.privasia.scss.common.interfaces.TOSService;
 import com.privasia.scss.common.security.model.UserContext;
+import com.privasia.scss.common.util.ApplicationConstants;
 import com.privasia.scss.core.model.Card;
 import com.privasia.scss.core.model.Client;
 import com.privasia.scss.core.model.HPABBooking;
@@ -173,7 +177,7 @@ public class ImportExportGateInService {
     }
 
 
-    OpusCosmosBusinessService businessService = containerExternalDataService.getImplementationService(implementor);
+    TOSService businessService = containerExternalDataService.getImplementationService(implementor);
     businessService.sendGateInReadRequest(gateInRequest, gateInResponse);
 
 
@@ -199,6 +203,127 @@ public class ImportExportGateInService {
     gateInResponse.setUserId(userContext.getStaffName());
     return gateInResponse;
   }
+
+  public void getTOSServiceDataAtGateInRead(GateInRequest gateInRequest, GateInResponse gateInResponse) {
+    // assign details from hpab booking
+    if (StringUtils.isNotEmpty(gateInRequest.getHpabSeqId())) {
+
+      TOSService businessService = containerExternalDataService.getImplementationService(implementor);
+      Future<GateInResponse> response = businessService.sendGateInReadRequest(gateInRequest, gateInResponse);
+
+      while (true) {
+
+        System.out.println("inside the loop getTOSServiceDataAtGateInRead");
+        log.debug("inside the loop getTOSServiceDataAtGateInRead");
+
+        if (response.isDone()) {
+
+          try {
+            response.get().setTosIndicator(implementor);
+            break;
+          } catch (InterruptedException | ExecutionException | CancellationException e) {
+            System.err.println("Error Occured while retrieve data data from " + implementor);
+            System.err.println(e.getMessage());
+            log.debug("Error Occured while retrieve data data from " + implementor);
+            log.debug(e.getMessage());
+          }
+        }
+
+        try {
+          System.out.println("waiting getTOSServiceDataAtGateInRead " + asyncWaitTime);
+          log.debug("waiting getTOSServiceDataAtGateInRead " + asyncWaitTime);
+          Thread.sleep(10);
+        } catch (InterruptedException e) {
+          log.error(e.getMessage());
+          break;
+        }
+
+      }
+
+    } else {
+      // no hpab or refer id present - access simultaniously
+      gateInResponse = sendAllTOSServiceGateInReadRequest(gateInRequest, gateInResponse);
+
+    }
+
+  }
+
+  public GateInResponse sendAllTOSServiceGateInReadRequest(GateInRequest gateInRequest, GateInResponse gateInResponse) {
+    long start = System.currentTimeMillis();
+
+    TOSService cosmosBusinessService =
+        containerExternalDataService.getImplementationService(ApplicationConstants.COSMOS);
+    TOSService opusBusinessService = containerExternalDataService.getImplementationService(ApplicationConstants.OPUS);
+
+    Future<GateInResponse> cosmosResponse = null;
+    Future<GateInResponse> opusResponse = null;
+
+
+    cosmosResponse = cosmosBusinessService.sendGateInReadRequest(gateInRequest, gateInResponse);
+
+    opusResponse = opusBusinessService.sendGateInReadRequest(gateInRequest, gateInResponse);
+
+    while (true) {
+      System.out.println("inside the loop sendAllTOSServiceGateInReadRequest");
+      log.debug("inside the loop sendAllTOSServiceGateInReadRequest");
+
+      if (cosmosResponse.isDone() && opusResponse.isDone()) {
+
+        System.out.println("now done sendAllTOSServiceGateInReadRequest");
+        System.err.println("gateInResponse.getTosIndicator() before: " + gateInResponse.getTosIndicator());
+        log.debug("now done sendAllTOSServiceGateInReadRequest");
+        log.debug("gateInResponse.getTosIndicator() before: " + gateInResponse.getTosIndicator());
+        try {
+          gateInResponse = cosmosResponse.get();
+          gateInResponse.setTosIndicator(ApplicationConstants.COSMOS);
+          System.err.println("COSMOS SUCCESS: ");
+          log.debug("COSMOS SUCCESS: ");
+        } catch (InterruptedException | ExecutionException | CancellationException e) {
+          System.err.println("Error Occured while retrieve data data from cosmos");
+          System.err.println(e.getMessage());
+          log.debug("Error Occured while retrieve data data from cosmos");
+          log.debug(e.getMessage());
+        }
+
+        try {
+          gateInResponse = opusResponse.get();
+          gateInResponse.setTosIndicator(ApplicationConstants.OPUS);
+          System.err.println("OPUS SUCCESS: ");
+          log.debug("OPUS SUCCESS: ");
+        } catch (InterruptedException | ExecutionException | CancellationException e) {
+          System.err.println("Error Occured while retrieve data data from opus");
+          System.err.println(e.getMessage());
+          log.debug("Error Occured while retrieve data data from opus");
+          log.debug(e.getMessage());
+        }
+        System.err.println("gateInResponse.getTosIndicator() after: " + gateInResponse.getTosIndicator());
+        log.debug("gateInResponse.getTosIndicator() after: " + gateInResponse.getTosIndicator());
+
+        if (StringUtils.isEmpty(gateInResponse.getTosIndicator())) {
+          throw new BusinessException("Data not found in opus or cosmos!");
+        }
+
+        break;
+      } else {
+        System.out.println("not done yet sendAllTOSServiceGateInReadRequest");
+        log.debug("not done yet sendAllTOSServiceGateInReadRequest");
+      }
+
+      try {
+        System.out.println("waiting sendAllTOSServiceGateInReadRequest " + asyncWaitTime);
+        log.debug("waiting sendAllTOSServiceGateInReadRequest " + asyncWaitTime);
+        Thread.sleep(10);
+      } catch (InterruptedException e) {
+        log.error(e.getMessage());
+        break;
+      }
+    }
+    long end = System.currentTimeMillis();
+    System.out.println("time : " + (end - start) / 1000.0 + "sec");
+
+    return gateInResponse;
+  }
+
 
   @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
   public GateInResponse saveGateInInfo(GateInWriteRequest gateInWriteRequest) {
@@ -240,7 +365,14 @@ public class ImportExportGateInService {
 
     GateInResponse gateInResponse = null;
 
-    OpusCosmosBusinessService businessService = containerExternalDataService.getImplementationService(implementor);
+    System.out.println("gateInWriteRequest.getTosIndicator() " + gateInWriteRequest.getTosIndicator());
+    if (StringUtils.isNotEmpty(gateInWriteRequest.getTosIndicator())) {
+      implementor = gateInWriteRequest.getTosIndicator();
+    } else {
+      gateInWriteRequest.setTosIndicator(implementor);
+    }
+
+    TOSService businessService = containerExternalDataService.getImplementationService(implementor);
 
     switch (impExpFlag) {
       case IMPORT:
@@ -299,15 +431,13 @@ public class ImportExportGateInService {
     /*
      * while (true) { if (impSave.isDone() && expSave.isDone()) {
      * 
-     * gateOutMessage.setCode(GateOutMessage.OK); gateOutMessage.setDescription(
-     * "Saved Successfully!");
+     * gateOutMessage.setCode(GateOutMessage.OK); gateOutMessage.setDescription( "Saved Successfully!");
      * 
      * System.out.println("WHILE LOOP BROKEN!!!!. "); break; } System.out.println(
      * "Continue doing something else. ");
      * 
-     * try { Thread.sleep(asyncWaitTime); } catch (InterruptedException e) {
-     * log.error(e.getMessage()); System.out.println( "WHILE LOOP BROKEN ON THREAD EXCEPTION!!!!. "
-     * ); break; } }
+     * try { Thread.sleep(asyncWaitTime); } catch (InterruptedException e) { log.error(e.getMessage());
+     * System.out.println( "WHILE LOOP BROKEN ON THREAD EXCEPTION!!!!. " ); break; } }
      */
     gateInResponse.setGateINDateTime(gateInWriteRequest.getGateInDateTime());
     gateInResponse.setMessage(gateOutMessage);

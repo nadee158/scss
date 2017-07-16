@@ -27,7 +27,7 @@ import com.privasia.scss.common.enums.TransactionStatus;
 import com.privasia.scss.common.exception.BusinessException;
 import com.privasia.scss.common.exception.ResultsNotFoundException;
 import com.privasia.scss.common.interfaces.ContainerExternalDataService;
-import com.privasia.scss.common.interfaces.OpusCosmosBusinessService;
+import com.privasia.scss.common.interfaces.TOSService;
 import com.privasia.scss.common.security.model.UserContext;
 import com.privasia.scss.core.model.Card;
 import com.privasia.scss.core.model.Client;
@@ -178,7 +178,14 @@ public class ImportExportGateOutService {
 
       // call opus or cosmos only for approved gate in state
       if (StringUtils.equalsIgnoreCase(TransactionStatus.APPROVED.getValue(), gateOutReponse.getGateInStatus())) {
-        OpusCosmosBusinessService businessService = containerExternalDataService.getImplementationService(implementor);
+        if (StringUtils.isNotEmpty(gateOutReponse.getTosIndicator())) {
+          implementor = gateOutReponse.getTosIndicator();
+        } else {
+          log.error("TosIndicator from db is null, setting the default " + gateOutReponse.getTosIndicator());
+          gateOutReponse.setTosIndicator(implementor);
+        }
+        TOSService businessService = containerExternalDataService.getImplementationService(implementor);
+
         gateOutReponse = businessService.sendGateOutReadRequest(gateOutRequest, gateOutReponse);
       }
 
@@ -239,7 +246,13 @@ public class ImportExportGateOutService {
           "Gate In status Required for the transaction : " + gateOutWriteRequest.getGateInStatus());
 
     if (StringUtils.equalsIgnoreCase(TransactionStatus.APPROVED.getValue(), gateOutWriteRequest.getGateInStatus())) {
-      OpusCosmosBusinessService businessService = containerExternalDataService.getImplementationService(implementor);
+      if (StringUtils.isNotEmpty(gateOutWriteRequest.getTosIndicator())) {
+        implementor = gateOutWriteRequest.getTosIndicator();
+      } else {
+        log.error("TosIndicator from UI is null, setting the default " + gateOutWriteRequest.getTosIndicator());
+        gateOutReponse.setTosIndicator(implementor);
+      }
+      TOSService businessService = containerExternalDataService.getImplementationService(implementor);
       gateOutReponse = businessService.sendGateOutWriteRequest(gateOutWriteRequest, gateOutReponse);
     }
 
@@ -273,15 +286,13 @@ public class ImportExportGateOutService {
     /*
      * while (true) { if (impSave.isDone() && expSave.isDone()) {
      * 
-     * gateOutMessage.setCode(GateOutMessage.OK); gateOutMessage.setDescription(
-     * "Saved Successfully!");
+     * gateOutMessage.setCode(GateOutMessage.OK); gateOutMessage.setDescription( "Saved Successfully!");
      * 
      * System.out.println("WHILE LOOP BROKEN!!!!. "); break; } System.out.println(
      * "Continue doing something else. ");
      * 
-     * try { Thread.sleep(asyncWaitTime); } catch (InterruptedException e) {
-     * log.error(e.getMessage()); System.out.println( "WHILE LOOP BROKEN ON THREAD EXCEPTION!!!!. "
-     * ); break; } }
+     * try { Thread.sleep(asyncWaitTime); } catch (InterruptedException e) { log.error(e.getMessage());
+     * System.out.println( "WHILE LOOP BROKEN ON THREAD EXCEPTION!!!!. " ); break; } }
      */
     gateOutReponse.setMessage(gateOutMessage);
     return gateOutReponse;

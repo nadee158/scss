@@ -10,170 +10,180 @@ import com.privasia.scss.common.util.DateUtil;
 
 public class GateOutReponse implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 1L;
 
-	private String userID;
-	private String laneNo;// LNO01,
-	private String haulageCode;// HAUCD,
-	private String truckHeadNo;// TRUCK,
-	private String truckPlateNo;// null,
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateUtil.GLOBAL_DATE_TIME_PATTERN)
-	private LocalDateTime gateOUTDateTime;// 20161130112233,
+  private String userID;
+  private String laneNo;// LNO01,
+  private String haulageCode;// HAUCD,
+  private String truckHeadNo;// TRUCK,
+  private String truckPlateNo;// null,
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateUtil.GLOBAL_DATE_TIME_PATTERN)
+  private LocalDateTime gateOUTDateTime;// 20161130112233,
 
-	private List<ImportContainer> importContainers = new ArrayList<ImportContainer>();
+  private List<ImportContainer> importContainers = new ArrayList<ImportContainer>();
 
-	private List<ExportContainer> exportContainers = new ArrayList<ExportContainer>();
+  private List<ExportContainer> exportContainers = new ArrayList<ExportContainer>();
 
-	private List<WHoddDTO> whODDContainers = new ArrayList<WHoddDTO>();
+  private List<WHoddDTO> whODDContainers = new ArrayList<WHoddDTO>();
 
-	// for gate in write
-	private String callCardNo;// 20161130112233,
+  // for gate in write
+  private String callCardNo;// 20161130112233,
 
-	private String transactionType;
+  private String transactionType;
 
-	private GateOutMessage message;
+  private GateOutMessage message;
 
-	private String clerkName;// - string
+  private String clerkName;// - string
 
-	private String gateInLaneNo;// -string
+  private String gateInLaneNo;// -string
 
-	// MM-dd-yyyy HH:mm
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateUtil.GLOBAL_DATE_TIME_PATTERN)
-	private LocalDateTime gateInDateTime;// -string
-	
-	private String gateInStatus;
+  // MM-dd-yyyy HH:mm
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateUtil.GLOBAL_DATE_TIME_PATTERN)
+  private LocalDateTime gateInDateTime;// -string
 
-	public String getUserID() {
-		return userID;
-	}
+  private String gateInStatus;
 
-	public void setUserID(String userID) {
-		this.userID = userID;
-	}
+  private String tosIndicator;
 
-	public String getLaneNo() {
-		return laneNo;
-	}
+  public String getUserID() {
+    return userID;
+  }
 
-	public void setLaneNo(String laneNo) {
-		this.laneNo = laneNo;
-	}
+  public void setUserID(String userID) {
+    this.userID = userID;
+  }
 
-	public String getHaulageCode() {
-		return haulageCode;
-	}
+  public String getLaneNo() {
+    return laneNo;
+  }
 
-	public void setHaulageCode(String haulageCode) {
-		this.haulageCode = haulageCode;
-	}
+  public void setLaneNo(String laneNo) {
+    this.laneNo = laneNo;
+  }
 
-	public String getTruckHeadNo() {
-		return truckHeadNo;
-	}
+  public String getHaulageCode() {
+    return haulageCode;
+  }
 
-	public void setTruckHeadNo(String truckHeadNo) {
-		this.truckHeadNo = truckHeadNo;
-	}
+  public void setHaulageCode(String haulageCode) {
+    this.haulageCode = haulageCode;
+  }
 
-	public String getTruckPlateNo() {
-		return truckPlateNo;
-	}
+  public String getTruckHeadNo() {
+    return truckHeadNo;
+  }
 
-	public void setTruckPlateNo(String truckPlateNo) {
-		this.truckPlateNo = truckPlateNo;
-	}
+  public void setTruckHeadNo(String truckHeadNo) {
+    this.truckHeadNo = truckHeadNo;
+  }
 
-	public LocalDateTime getGateOUTDateTime() {
-		return gateOUTDateTime;
-	}
+  public String getTruckPlateNo() {
+    return truckPlateNo;
+  }
 
-	public void setGateOUTDateTime(LocalDateTime gateOUTDateTime) {
-		this.gateOUTDateTime = gateOUTDateTime;
-	}
+  public void setTruckPlateNo(String truckPlateNo) {
+    this.truckPlateNo = truckPlateNo;
+  }
 
-	public List<ImportContainer> getImportContainers() {
-		return importContainers;
-	}
+  public LocalDateTime getGateOUTDateTime() {
+    return gateOUTDateTime;
+  }
 
-	public void setImportContainers(List<ImportContainer> importContainers) {
-		this.importContainers = importContainers;
-	}
+  public void setGateOUTDateTime(LocalDateTime gateOUTDateTime) {
+    this.gateOUTDateTime = gateOUTDateTime;
+  }
 
-	public List<ExportContainer> getExportContainers() {
-		return exportContainers;
-	}
+  public List<ImportContainer> getImportContainers() {
+    return importContainers;
+  }
 
-	public void setExportContainers(List<ExportContainer> exportContainers) {
-		this.exportContainers = exportContainers;
-	}
+  public void setImportContainers(List<ImportContainer> importContainers) {
+    this.importContainers = importContainers;
+  }
 
-	public String getCallCardNo() {
-		return callCardNo;
-	}
+  public List<ExportContainer> getExportContainers() {
+    return exportContainers;
+  }
 
-	public void setCallCardNo(String callCardNo) {
-		this.callCardNo = callCardNo;
-	}
+  public void setExportContainers(List<ExportContainer> exportContainers) {
+    this.exportContainers = exportContainers;
+  }
 
-	public List<WHoddDTO> getWhODDContainers() {
-		return whODDContainers;
-	}
+  public String getCallCardNo() {
+    return callCardNo;
+  }
 
-	public void setWhODDContainers(List<WHoddDTO> whODDContainers) {
-		this.whODDContainers = whODDContainers;
-	}
+  public void setCallCardNo(String callCardNo) {
+    this.callCardNo = callCardNo;
+  }
 
-	public String getTransactionType() {
-		return transactionType;
-	}
+  public List<WHoddDTO> getWhODDContainers() {
+    return whODDContainers;
+  }
 
-	public void setTransactionType(String transactionType) {
-		this.transactionType = transactionType;
-	}
+  public void setWhODDContainers(List<WHoddDTO> whODDContainers) {
+    this.whODDContainers = whODDContainers;
+  }
 
-	public GateOutMessage getMessage() {
-		return message;
-	}
+  public String getTransactionType() {
+    return transactionType;
+  }
 
-	public void setMessage(GateOutMessage message) {
-		this.message = message;
-	}
+  public void setTransactionType(String transactionType) {
+    this.transactionType = transactionType;
+  }
 
-	public String getClerkName() {
-		return clerkName;
-	}
+  public GateOutMessage getMessage() {
+    return message;
+  }
 
-	public void setClerkName(String clerkName) {
-		this.clerkName = clerkName;
-	}
+  public void setMessage(GateOutMessage message) {
+    this.message = message;
+  }
 
-	public String getGateInLaneNo() {
-		return gateInLaneNo;
-	}
+  public String getClerkName() {
+    return clerkName;
+  }
 
-	public void setGateInLaneNo(String gateInLaneNo) {
-		this.gateInLaneNo = gateInLaneNo;
-	}
+  public void setClerkName(String clerkName) {
+    this.clerkName = clerkName;
+  }
 
-	public LocalDateTime getGateInDateTime() {
-		return gateInDateTime;
-	}
+  public String getGateInLaneNo() {
+    return gateInLaneNo;
+  }
 
-	public void setGateInDateTime(LocalDateTime gateInDateTime) {
-		this.gateInDateTime = gateInDateTime;
-	}
+  public void setGateInLaneNo(String gateInLaneNo) {
+    this.gateInLaneNo = gateInLaneNo;
+  }
 
-	public String getGateInStatus() {
-		return gateInStatus;
-	}
+  public LocalDateTime getGateInDateTime() {
+    return gateInDateTime;
+  }
 
-	public void setGateInStatus(String gateInStatus) {
-		this.gateInStatus = gateInStatus;
-	}
-	
-	
+  public void setGateInDateTime(LocalDateTime gateInDateTime) {
+    this.gateInDateTime = gateInDateTime;
+  }
+
+  public String getGateInStatus() {
+    return gateInStatus;
+  }
+
+  public void setGateInStatus(String gateInStatus) {
+    this.gateInStatus = gateInStatus;
+  }
+
+  public String getTosIndicator() {
+    return tosIndicator;
+  }
+
+  public void setTosIndicator(String tosIndicator) {
+    this.tosIndicator = tosIndicator;
+  }
+
+
 
 }

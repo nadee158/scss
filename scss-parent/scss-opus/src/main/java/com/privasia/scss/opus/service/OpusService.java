@@ -1,23 +1,26 @@
 package com.privasia.scss.opus.service;
 
 import java.util.Optional;
+import java.util.concurrent.Future;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
 
 import com.google.gson.Gson;
 import com.privasia.scss.common.dto.ContainerValidationInfo;
-import com.privasia.scss.common.dto.GateInResponse;
 import com.privasia.scss.common.dto.GateInRequest;
+import com.privasia.scss.common.dto.GateInResponse;
 import com.privasia.scss.common.dto.GateInWriteRequest;
 import com.privasia.scss.common.dto.GateOutReponse;
 import com.privasia.scss.common.dto.GateOutRequest;
 import com.privasia.scss.common.dto.GateOutWriteRequest;
 import com.privasia.scss.common.exception.BusinessException;
-import com.privasia.scss.common.interfaces.OpusCosmosBusinessService;
+import com.privasia.scss.common.interfaces.TOSService;
 import com.privasia.scss.opus.dto.OpusGateInReadRequest;
 import com.privasia.scss.opus.dto.OpusGateInReadResponse;
 import com.privasia.scss.opus.dto.OpusGateInWriteRequest;
@@ -29,168 +32,170 @@ import com.privasia.scss.opus.dto.OpusGateOutWriteResponse;
 import com.privasia.scss.opus.dto.OpusRequestResponseDTO;
 
 @Service("opus")
-public class OpusService implements OpusCosmosBusinessService {
+public class OpusService implements TOSService {
 
-	private static final Log log = LogFactory.getLog(OpusService.class);
-	
-	private OpusGateInReadService opusGateInReadService;
+  private static final Log log = LogFactory.getLog(OpusService.class);
 
-	private OpusGateInWriteService opusGateInWriteService;
+  private OpusGateInReadService opusGateInReadService;
 
-	private OpusDTOConstructService opusDTOConstructService;
+  private OpusGateInWriteService opusGateInWriteService;
 
-	private OpusGateOutReadService opusGateOutReadService;
+  private OpusDTOConstructService opusDTOConstructService;
 
-	private OpusGateOutWriteService opusGateOutWriteService;
+  private OpusGateOutReadService opusGateOutReadService;
 
-	private Gson gson;
-	
-	@Autowired
-	public void setOpusGateInReadService(OpusGateInReadService opusGateInReadService) {
-		this.opusGateInReadService = opusGateInReadService;
-	}
+  private OpusGateOutWriteService opusGateOutWriteService;
 
-	@Autowired
-	public void setOpusGateOutReadService(OpusGateOutReadService opusGateOutReadService) {
-		this.opusGateOutReadService = opusGateOutReadService;
-	}
+  private Gson gson;
 
-	@Autowired
-	public void setOpusGateInWriteService(OpusGateInWriteService opusGateInWriteService) {
-		this.opusGateInWriteService = opusGateInWriteService;
-	}
+  @Autowired
+  public void setOpusGateInReadService(OpusGateInReadService opusGateInReadService) {
+    this.opusGateInReadService = opusGateInReadService;
+  }
 
-	@Autowired
-	public void setOpusDTOConstructService(OpusDTOConstructService opusDTOConstructService) {
-		this.opusDTOConstructService = opusDTOConstructService;
-	}
+  @Autowired
+  public void setOpusGateOutReadService(OpusGateOutReadService opusGateOutReadService) {
+    this.opusGateOutReadService = opusGateOutReadService;
+  }
 
-	@Autowired
-	public void setGson(Gson gson) {
-		this.gson = gson;
-	}
+  @Autowired
+  public void setOpusGateInWriteService(OpusGateInWriteService opusGateInWriteService) {
+    this.opusGateInWriteService = opusGateInWriteService;
+  }
 
-	@Autowired
-	public void setOpusGateOutWriteService(OpusGateOutWriteService opusGateOutWriteService) {
-		this.opusGateOutWriteService = opusGateOutWriteService;
-	}
+  @Autowired
+  public void setOpusDTOConstructService(OpusDTOConstructService opusDTOConstructService) {
+    this.opusDTOConstructService = opusDTOConstructService;
+  }
 
-	@Override
-	public GateInResponse sendGateInWriteRequest(GateInWriteRequest gateInWriteRequest) {
-		OpusGateInWriteRequest opusGateInWriteRequest = opusGateInWriteService
-				.constructOpusGateInWriteRequest(gateInWriteRequest);
+  @Autowired
+  public void setGson(Gson gson) {
+    this.gson = gson;
+  }
 
-		OpusRequestResponseDTO opusRequestResponseDTO = new OpusRequestResponseDTO(opusGateInWriteRequest, gson,
-				gateInWriteRequest.getCardID());
+  @Autowired
+  public void setOpusGateOutWriteService(OpusGateOutWriteService opusGateOutWriteService) {
+    this.opusGateOutWriteService = opusGateOutWriteService;
+  }
 
-		OpusGateInWriteResponse opusGateInWriteResponse = opusGateInWriteService
-				.getGateInWriteResponse(opusGateInWriteRequest, opusRequestResponseDTO);
+  @Override
+  public GateInResponse sendGateInWriteRequest(GateInWriteRequest gateInWriteRequest) {
+    OpusGateInWriteRequest opusGateInWriteRequest =
+        opusGateInWriteService.constructOpusGateInWriteRequest(gateInWriteRequest);
 
-		String errorMessage = opusDTOConstructService.hasErrorMessage(opusGateInWriteResponse.getErrorList());
-		log.error("ERROR MESSAGE FROM OPUS SERVICE: " + errorMessage);
-		if (StringUtils.isNotEmpty(errorMessage)) {
-			throw new BusinessException(errorMessage);
-		}
+    OpusRequestResponseDTO opusRequestResponseDTO =
+        new OpusRequestResponseDTO(opusGateInWriteRequest, gson, gateInWriteRequest.getCardID());
 
-		GateInResponse gateInResponse = new GateInResponse();
-		gateInResponse.setImportContainers(gateInWriteRequest.getImportContainers());
-		gateInResponse.setExportContainers(gateInWriteRequest.getExportContainers());
-		gateInResponse = opusGateInWriteService.constructGateInReponse(opusGateInWriteResponse, gateInResponse);
-		return gateInResponse;
-	}
+    OpusGateInWriteResponse opusGateInWriteResponse =
+        opusGateInWriteService.getGateInWriteResponse(opusGateInWriteRequest, opusRequestResponseDTO);
 
-	@Override
-	public GateOutReponse sendGateOutReadRequest(GateOutRequest gateOutRequest, GateOutReponse gateOutReponse) {
-		OpusGateOutReadRequest gateOutReadRequest = opusGateOutReadService.constructOpenGateOutRequest(gateOutRequest);
+    String errorMessage = opusDTOConstructService.hasErrorMessage(opusGateInWriteResponse.getErrorList());
+    log.error("ERROR MESSAGE FROM OPUS SERVICE: " + errorMessage);
+    if (StringUtils.isNotEmpty(errorMessage)) {
+      throw new BusinessException(errorMessage);
+    }
 
-		OpusRequestResponseDTO opusRequestResponseDTO = new OpusRequestResponseDTO(gateOutReadRequest, gson,
-				gateOutRequest.getCardID());
+    GateInResponse gateInResponse = new GateInResponse();
+    gateInResponse.setImportContainers(gateInWriteRequest.getImportContainers());
+    gateInResponse.setExportContainers(gateInWriteRequest.getExportContainers());
+    gateInResponse = opusGateInWriteService.constructGateInReponse(opusGateInWriteResponse, gateInResponse);
+    return gateInResponse;
+  }
 
-		OpusGateOutReadResponse gateOutReadResponse = opusGateOutReadService.getGateOutReadResponse(gateOutReadRequest,
-				opusRequestResponseDTO);
-		// check the errorlist of reponse
-		String errorMessage = opusDTOConstructService.hasErrorMessage(gateOutReadResponse.getErrorList());
-		log.error("ERROR MESSAGE FROM OPUS SERVICE: " + errorMessage);
-		if (StringUtils.isNotEmpty(errorMessage)) {
-			throw new BusinessException(errorMessage);
-		}
-		return opusGateOutReadService.constructGateOutReponse(gateOutReadResponse, gateOutReponse);
-	}
+  @Override
+  public GateOutReponse sendGateOutReadRequest(GateOutRequest gateOutRequest, GateOutReponse gateOutReponse) {
+    OpusGateOutReadRequest gateOutReadRequest = opusGateOutReadService.constructOpenGateOutRequest(gateOutRequest);
 
-	@Override
-	public GateOutReponse sendGateOutWriteRequest(GateOutWriteRequest gateOutWriteRequest,
-			GateOutReponse gateOutReponse) {
+    OpusRequestResponseDTO opusRequestResponseDTO =
+        new OpusRequestResponseDTO(gateOutReadRequest, gson, gateOutRequest.getCardID());
 
-		// call opus -
-		Optional<OpusGateOutWriteRequest> optOPUSGateOutWriteRequest = opusGateOutWriteService
-				.constructOpusGateOutWriteRequest(gateOutWriteRequest);
+    OpusGateOutReadResponse gateOutReadResponse =
+        opusGateOutReadService.getGateOutReadResponse(gateOutReadRequest, opusRequestResponseDTO);
+    // check the errorlist of reponse
+    String errorMessage = opusDTOConstructService.hasErrorMessage(gateOutReadResponse.getErrorList());
+    log.error("ERROR MESSAGE FROM OPUS SERVICE: " + errorMessage);
+    if (StringUtils.isNotEmpty(errorMessage)) {
+      throw new BusinessException(errorMessage);
+    }
+    return opusGateOutReadService.constructGateOutReponse(gateOutReadResponse, gateOutReponse);
+  }
 
-		if (optOPUSGateOutWriteRequest.isPresent()) {
-			OpusGateOutWriteRequest opusGateOutWriteRequest = optOPUSGateOutWriteRequest.get();
-			OpusRequestResponseDTO opusRequestResponseDTO = new OpusRequestResponseDTO(opusGateOutWriteRequest, gson,
-					gateOutWriteRequest.getCardID());
+  @Override
+  public GateOutReponse sendGateOutWriteRequest(GateOutWriteRequest gateOutWriteRequest,
+      GateOutReponse gateOutReponse) {
 
-			OpusGateOutWriteResponse opusGateOutWriteResponse = opusGateOutWriteService
-					.getGateOutWriteResponse(opusGateOutWriteRequest, opusRequestResponseDTO);
+    // call opus -
+    Optional<OpusGateOutWriteRequest> optOPUSGateOutWriteRequest =
+        opusGateOutWriteService.constructOpusGateOutWriteRequest(gateOutWriteRequest);
 
-			String errorMessage = opusDTOConstructService.hasErrorMessage(opusGateOutWriteResponse.getErrorList());
-			if (StringUtils.isNotEmpty(errorMessage)) {
-				throw new BusinessException(errorMessage);
+    if (optOPUSGateOutWriteRequest.isPresent()) {
+      OpusGateOutWriteRequest opusGateOutWriteRequest = optOPUSGateOutWriteRequest.get();
+      OpusRequestResponseDTO opusRequestResponseDTO =
+          new OpusRequestResponseDTO(opusGateOutWriteRequest, gson, gateOutWriteRequest.getCardID());
 
-			}
+      OpusGateOutWriteResponse opusGateOutWriteResponse =
+          opusGateOutWriteService.getGateOutWriteResponse(opusGateOutWriteRequest, opusRequestResponseDTO);
 
-			// TODO Auto-generated method stub
-			return opusGateOutWriteService.constructGateOutReponse(opusGateOutWriteResponse, gateOutReponse);
-		} else {
-			return gateOutReponse;
-		}
+      String errorMessage = opusDTOConstructService.hasErrorMessage(opusGateOutWriteResponse.getErrorList());
+      if (StringUtils.isNotEmpty(errorMessage)) {
+        throw new BusinessException(errorMessage);
 
-	}
+      }
 
-	@Override
-	public GateInResponse sendGateInReadRequest(GateInRequest gateInRequest, GateInResponse gateInResponse) {
+      // TODO Auto-generated method stub
+      return opusGateOutWriteService.constructGateOutReponse(opusGateOutWriteResponse, gateOutReponse);
+    } else {
+      return gateOutReponse;
+    }
 
-		OpusGateInReadRequest gateInReadRequest = opusGateInReadService.constructOpenGateInRequest(gateInRequest);
+  }
 
-		OpusRequestResponseDTO opusRequestResponseDTO = new OpusRequestResponseDTO(gateInReadRequest, gson,
-				gateInRequest.getCardID());
+  @Async
+  @Override
+  public Future<GateInResponse> sendGateInReadRequest(GateInRequest gateInRequest, GateInResponse gateInResponse) {
 
-		OpusGateInReadResponse gateInReadResponse = opusGateInReadService.getGateInReadResponse(gateInReadRequest,
-				opusRequestResponseDTO);
+    OpusGateInReadRequest gateInReadRequest = opusGateInReadService.constructOpenGateInRequest(gateInRequest);
 
-		String errorMessage = opusDTOConstructService.hasErrorMessage(gateInReadResponse.getErrorList());
-		if (StringUtils.isNotEmpty(errorMessage)) {
-			throw new BusinessException(errorMessage);
-		}
+    OpusRequestResponseDTO opusRequestResponseDTO =
+        new OpusRequestResponseDTO(gateInReadRequest, gson, gateInRequest.getCardID());
 
-		return  opusGateInReadService.constructGateInReponse(gateInReadResponse, gateInResponse);
-	}
+    OpusGateInReadResponse gateInReadResponse =
+        opusGateInReadService.getGateInReadResponse(gateInReadRequest, opusRequestResponseDTO);
 
-	@Override
-	public ContainerValidationInfo sendODDContainerValidationRequest(GateOutRequest gateOutRequest) {
-		OpusGateOutReadRequest gateOutReadRequest = opusGateOutReadService.constructOpenGateOutRequest(gateOutRequest);
+    String errorMessage = opusDTOConstructService.hasErrorMessage(gateInReadResponse.getErrorList());
+    if (StringUtils.isNotEmpty(errorMessage)) {
+      throw new BusinessException(errorMessage);
+    }
 
-		OpusRequestResponseDTO opusRequestResponseDTO = new OpusRequestResponseDTO(gateOutReadRequest, gson,
-				gateOutRequest.getCardID());
+    gateInResponse = opusGateInReadService.constructGateInReponse(gateInReadResponse, gateInResponse);
+    return new AsyncResult<GateInResponse>(gateInResponse);
+  }
 
-		OpusGateOutReadResponse gateOutReadResponse = opusGateOutReadService.getGateOutReadResponse(gateOutReadRequest,
-				opusRequestResponseDTO);
-		// check the errorlist of reponse
-		String errorMessage = opusDTOConstructService.hasErrorMessage(gateOutReadResponse.getErrorList());
-		log.error("ERROR MESSAGE FROM OPUS SERVICE: " + errorMessage);
-		if (StringUtils.isNotEmpty(errorMessage)) {
-			throw new BusinessException(errorMessage);
-		}
+  @Override
+  public ContainerValidationInfo sendODDContainerValidationRequest(GateOutRequest gateOutRequest) {
+    OpusGateOutReadRequest gateOutReadRequest = opusGateOutReadService.constructOpenGateOutRequest(gateOutRequest);
 
-		ContainerValidationInfo validationInfo = new ContainerValidationInfo();
-		validationInfo.setContainerNo1(gateOutRequest.getOddImpContainer1());
-		validationInfo.setContainerNo1Status(true);
+    OpusRequestResponseDTO opusRequestResponseDTO =
+        new OpusRequestResponseDTO(gateOutReadRequest, gson, gateOutRequest.getCardID());
 
-		if (StringUtils.isNotEmpty(gateOutRequest.getOddImpContainer2())) {
-			validationInfo.setContainerNo2(gateOutRequest.getOddImpContainer2());
-			validationInfo.setContainerNo2Status(true);
-		}
-		return validationInfo;
-	}
+    OpusGateOutReadResponse gateOutReadResponse =
+        opusGateOutReadService.getGateOutReadResponse(gateOutReadRequest, opusRequestResponseDTO);
+    // check the errorlist of reponse
+    String errorMessage = opusDTOConstructService.hasErrorMessage(gateOutReadResponse.getErrorList());
+    log.error("ERROR MESSAGE FROM OPUS SERVICE: " + errorMessage);
+    if (StringUtils.isNotEmpty(errorMessage)) {
+      throw new BusinessException(errorMessage);
+    }
+
+    ContainerValidationInfo validationInfo = new ContainerValidationInfo();
+    validationInfo.setContainerNo1(gateOutRequest.getOddImpContainer1());
+    validationInfo.setContainerNo1Status(true);
+
+    if (StringUtils.isNotEmpty(gateOutRequest.getOddImpContainer2())) {
+      validationInfo.setContainerNo2(gateOutRequest.getOddImpContainer2());
+      validationInfo.setContainerNo2Status(true);
+    }
+    return validationInfo;
+  }
 
 }
