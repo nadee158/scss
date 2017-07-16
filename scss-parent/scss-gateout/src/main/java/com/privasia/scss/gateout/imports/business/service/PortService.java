@@ -14,6 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.privasia.scss.common.dto.ImportContainer;
 import com.privasia.scss.common.enums.ClientGateType;
+import com.privasia.scss.common.enums.ClientType;
+import com.privasia.scss.common.enums.TransactionStatus;
 import com.privasia.scss.common.exception.BusinessException;
 import com.privasia.scss.core.model.Client;
 import com.privasia.scss.core.repository.ClientGateTypeRepository;
@@ -25,78 +27,98 @@ import com.privasia.scss.core.repository.ClientGateTypeRepository;
 @Service("portService")
 public class PortService {
 
-	private ClientGateTypeRepository clientGateTypeRepository;
+  private ClientGateTypeRepository clientGateTypeRepository;
 
-	@Autowired
-	public void setClientGateTypeRepository(ClientGateTypeRepository clientGateTypeRepository) {
-		this.clientGateTypeRepository = clientGateTypeRepository;
-	}
+  @Autowired
+  public void setClientGateTypeRepository(ClientGateTypeRepository clientGateTypeRepository) {
+    this.clientGateTypeRepository = clientGateTypeRepository;
+  }
 
-	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-	public void checkContainerTobeReleasedByPort(Client client, List<ImportContainer> importContainers) {
+  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+  public void checkContainerTobeReleasedByPort(Client client, List<ImportContainer> importContainers) {
 
-		Optional<List<String>> optGateTypes = clientGateTypeRepository.findAllGateTypeByClient(client);
+    if (client == null || importContainers == null || importContainers.isEmpty()) {
+      throw new BusinessException("Client and/or Import Containers are not available!");
+    }
 
-		List<String> gateTypes = optGateTypes.orElse(null);
+    String eirStatus = importContainers.get(0).getBaseCommonGateInOutAttribute().getEirStatus();
 
-		if (!(gateTypes == null || gateTypes.isEmpty())) {
-			importContainers.forEach(impContainer -> {
+    if (StringUtils.equals(eirStatus, TransactionStatus.APPROVED.getValue())) {
+      if (client.getType() != null && client.getType().equals(ClientType.GATE_IN)) {
+        throw new BusinessException("Gate out transaction not allowed for gate in lane " + client.getDescription()
+            + ". Please rescan the card at gate out lane and try again.");
+      }
+    }
 
-				Optional<String> moveType = Optional.of(impContainer.getMoveType());
+    Optional<List<String>> optGateTypes = clientGateTypeRepository.findAllGateTypeByClient(client.getClientID());
 
-				if (moveType.isPresent()) {
-					Optional<String> type = gateTypes.stream().findAny()
-							.filter(gate -> StringUtils.equalsIgnoreCase(gate, moveType.get()));
-					if (!type.isPresent()) {
-						ClientGateType clientGateType = ClientGateType.fromValue(moveType.get());
-						throw new BusinessException("Containers released by " + clientGateType.name()
-								+ " are only allowed to exit the port through "
-								+ clientGateType.getClientGateDescription() + ". Gate Pass No "
-								+ impContainer.getGatePassNo() + ".");
-					}
-				}
+    List<String> gateTypes = optGateTypes.orElse(null);
 
-				if (StringUtils.isNotBlank(impContainer.getGcsBlock())) {
+    System.out.println("gateTypes " + gateTypes);
 
-					if (StringUtils.equalsIgnoreCase("R", impContainer.getGcsBlock())
-							|| StringUtils.equalsIgnoreCase("RLS", impContainer.getGcsBlock())) {
-						Optional<String> type = gateTypes.stream().findAny()
-								.filter(gate -> StringUtils.equalsIgnoreCase(gate, ClientGateType.GCS.getValue()));
-						if (!type.isPresent())
-							throw new BusinessException(
-									"Containers released by GCS are only allowed to exit the port through Main gate. Gate Pass No "
-											+ impContainer.getGatePassNo() + ".");
-					}
-				}
+    if (!(gateTypes == null || gateTypes.isEmpty())) {
+      importContainers.forEach(impContainer -> {
 
-				if (StringUtils.isNotBlank(impContainer.getPkfzBlock())) {
+        if (StringUtils.isNotEmpty(impContainer.getMoveType())) {
 
-					if (StringUtils.equalsIgnoreCase("R", impContainer.getPkfzBlock())
-							|| StringUtils.equalsIgnoreCase("RLS", impContainer.getPkfzBlock())) {
-						Optional<String> type = gateTypes.stream().findAny()
-								.filter(gate -> StringUtils.equalsIgnoreCase(gate, ClientGateType.PKFZ.getValue()));
-						if (!type.isPresent())
-							throw new BusinessException(
-									"Containers released by PKFZ are only allowed to exit the port through Pkfz gate. Gate Pass No "
-											+ impContainer.getGatePassNo() + ".");
-					}
-				}
+          Optional<String> type = gateTypes.stream().findAny()
+              .filter(gate -> StringUtils.equalsIgnoreCase(gate, impContainer.getMoveType()));
+          if (!type.isPresent()) {
+            ClientGateType clientGateType = ClientGateType.fromValue(impContainer.getMoveType());
+            throw new BusinessException("Containers released by " + clientGateType.name()
+                + " are only allowed to exit the port through " + clientGateType.getClientGateDescription()
+                + ". Gate Pass No " + impContainer.getGatePassNo() + ".");
+          }
 
-				if (StringUtils.isNotBlank(impContainer.getLpkBlock())) {
 
-					if (StringUtils.equalsIgnoreCase("R", impContainer.getLpkBlock())
-							|| StringUtils.equalsIgnoreCase("RLS", impContainer.getLpkBlock())) {
-						Optional<String> type = gateTypes.stream().findAny()
-								.filter(gate -> StringUtils.equalsIgnoreCase(gate, ClientGateType.LPK.getValue()));
-						if (!type.isPresent())
-							throw new BusinessException(
-									"Containers released by LPK are only allowed to exit the port through mini booth. Gate Pass No "
-											+ impContainer.getGatePassNo() + ".");
-					}
-				}
-			});
-		}
+        } else {
 
-	}
+          if (StringUtils.isNotBlank(impContainer.getGcsBlock())) {
+
+            if (StringUtils.equalsIgnoreCase("R", impContainer.getGcsBlock())
+                || StringUtils.equalsIgnoreCase("RLS", impContainer.getGcsBlock())) {
+              Optional<String> type = gateTypes.stream().findAny()
+                  .filter(gate -> StringUtils.equalsIgnoreCase(gate, ClientGateType.GCS.getValue()));
+              if (!type.isPresent())
+                throw new BusinessException(
+                    "Containers released by GCS are only allowed to exit the port through Main gate. Gate Pass No "
+                        + impContainer.getGatePassNo() + ".");
+            }
+          }
+
+          if (StringUtils.isNotBlank(impContainer.getPkfzBlock())) {
+
+            if (StringUtils.equalsIgnoreCase("R", impContainer.getPkfzBlock())
+                || StringUtils.equalsIgnoreCase("RLS", impContainer.getPkfzBlock())) {
+              Optional<String> type = gateTypes.stream().findAny()
+                  .filter(gate -> StringUtils.equalsIgnoreCase(gate, ClientGateType.PKFZ.getValue()));
+              if (!type.isPresent())
+                throw new BusinessException(
+                    "Containers released by PKFZ are only allowed to exit the port through Pkfz gate. Gate Pass No "
+                        + impContainer.getGatePassNo() + ".");
+            }
+          }
+
+          if (StringUtils.isNotBlank(impContainer.getLpkBlock())) {
+
+            if (StringUtils.equalsIgnoreCase("R", impContainer.getLpkBlock())
+                || StringUtils.equalsIgnoreCase("RLS", impContainer.getLpkBlock())) {
+              Optional<String> type = gateTypes.stream().findAny()
+                  .filter(gate -> StringUtils.equalsIgnoreCase(gate, ClientGateType.LPK.getValue()));
+              if (!type.isPresent())
+                throw new BusinessException(
+                    "Containers released by LPK are only allowed to exit the port through mini booth. Gate Pass No "
+                        + impContainer.getGatePassNo() + ".");
+            }
+          }
+
+        }
+
+
+
+      });
+    }
+
+  }
 
 }

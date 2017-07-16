@@ -7,7 +7,6 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.privasia.scss.core.model.Client;
 import com.privasia.scss.core.model.ClientGateType;
 
 /**
@@ -17,7 +16,7 @@ import com.privasia.scss.core.model.ClientGateType;
 
 public interface ClientGateTypeRepository extends BaseRepository<ClientGateType, Long> {
 
-	@Query(name="ClientGateType.findAllGateTypeByClient")
-	public Optional<List<String>> findAllGateTypeByClient(@Param("client") Client client);
+  @Query(name = "ClientGateType.findAllGateTypeByClient")
+  public Optional<List<String>> findAllGateTypeByClient(@Param("clientID") long clientID);
 
 }
