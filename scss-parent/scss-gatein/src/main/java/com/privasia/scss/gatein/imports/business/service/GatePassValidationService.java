@@ -239,7 +239,7 @@ public class GatePassValidationService {
 						if (StringUtils.isNotBlank(lineCode)) {
 							EdoExpiryForLineResponseType responseType = etpWebserviceClient
 									.getEdoExpiryForLine(lineCode);
-							if (responseType.isEdoExpiryEnabled()) {
+							if (responseType!=null && responseType.isEdoExpiryEnabled()) {
 								if (edoExpiryDate == null) {
 									throw new BusinessException("Gate Pass No " + gatePass.getGatePassNo()
 											+ "  Demurrage Expiry Date is Empty");

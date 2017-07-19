@@ -245,8 +245,8 @@ public class CosmosExportRepository {
 				// private String containerReeferTempSign;// null,
 				exportContainer.setReferTempType(
 						ExportUtilService.getCosmosReferTempSign(TextString.format(rs.getString("ORRT03"))));
-				exportContainer.setReferTemp(
-						ExportUtilService.getDoubleValueFromString(TextString.format(rs.getString("ORRT03"))));
+				exportContainer.setReferTemp(Math.abs(
+						ExportUtilService.getDoubleValueFromString(TextString.format(rs.getString("ORRT03")))));
 			}
 			// private String containerReeferTempUnit;// null,
 			exportContainer.setReeferTempUnit(TextString.format(rs.getString("ORTE03")));
@@ -353,7 +353,8 @@ public class CosmosExportRepository {
 
 			String type307 = TextString.format(rs.getString("OT0307"));
 			String val307 = TextString.format(rs.getString("OW0307"));
-
+			setOGG(exportContainer, type207, val207);
+			setOGG(exportContainer, type307, val307);
 			while (rs.next()) {
 				type207 = TextString.format(rs.getString("OT0207"));
 				val207 = TextString.format(rs.getString("OW0207"));

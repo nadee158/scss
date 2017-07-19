@@ -52,7 +52,7 @@
 						<schema>
 							<!--<url>http://172.21.95.22:8081/u/services/etpIntegrationService?wsdl</url> -->
 							
-							<url>http://172.21.77.80:8091/eTerminalPlus/services/etpIntegrationService?wsdl</url>
+							<url>http://172.21.77.80:8081/eTerminalPlus/services/etpIntegrationService?wsdl</url>
 						</schema>
 					</schemas>
 					<forceRegenerate>false</forceRegenerate>  

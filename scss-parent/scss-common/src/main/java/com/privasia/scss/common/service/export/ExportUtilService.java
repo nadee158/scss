@@ -22,9 +22,9 @@ public class ExportUtilService {
 
 	public static String getCosmosReferTempSign(String value) {
 		if (value != null) {
-			if (StringUtils.startsWith("-", value)) {
+			if (StringUtils.startsWith(value,"-")) {
 				return "-";
-			} else if (StringUtils.startsWith("+", value)) {
+			} else if (StringUtils.startsWith(value,"+")) {
 				return "+";
 			} else {
 				return "";
