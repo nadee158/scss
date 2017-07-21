@@ -227,6 +227,8 @@ public class ExportContainer extends BaseContainer implements Serializable {
 	private boolean ogaBlock = false;
 
 	private Optional<Long> shipSCNID;
+	
+	private String tosServiceType;
 
 	@Override
 	public String toString() {
@@ -1008,6 +1010,16 @@ public class ExportContainer extends BaseContainer implements Serializable {
 	public void setShipSCNID(Optional<Long> shipSCNID) {
 		this.shipSCNID = shipSCNID;
 	}
+
+	public String getTosServiceType() {
+		return tosServiceType;
+	}
+
+	public void setTosServiceType(String tosServiceType) {
+		this.tosServiceType = tosServiceType;
+	}
+	
+	
 
 
 }

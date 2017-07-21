@@ -34,6 +34,7 @@ import com.privasia.scss.common.enums.SSRBlockType;
 import com.privasia.scss.common.enums.SolasInstructionType;
 import com.privasia.scss.common.enums.SolasWeightType;
 import com.privasia.scss.common.enums.SolasWeightTypeSize;
+import com.privasia.scss.common.enums.TOSServiceType;
 import com.privasia.scss.common.enums.TransactionStatus;
 import com.privasia.scss.common.enums.TransactionType;
 import com.privasia.scss.common.enums.VesselStatus;
@@ -1466,5 +1467,47 @@ public class ModelMapEnumConverter {
       }
     };
   }
+  
+  public static Converter<TOSServiceType, String> convertTOSServiceTypeToString() {
+
+	    return new Converter<TOSServiceType, String>() {
+	      @Override
+	      public String convert(MappingContext<TOSServiceType, String> context) {
+	        if (context.getSource() != null) {
+	          switch (context.getSource()) {
+	            case COSMOS:
+	              return TOSServiceType.COSMOS.getValue();
+	            case OPUS:
+	              return TOSServiceType.OPUS.getValue();
+	            default:
+	              return null;
+	          }
+	        } else {
+	          return null;
+	        }
+	      }
+	    };
+	  }
+
+	  public static Converter<String, TOSServiceType> convertStringToTOSServiceType() {
+
+	    return new Converter<String, TOSServiceType>() {
+	      @Override
+	      public TOSServiceType convert(MappingContext<String, TOSServiceType> context) {
+	        if (context.getSource() != null) {
+	          switch (context.getSource()) {
+	            case "cosmos":
+	              return TOSServiceType.COSMOS;
+	            case "opus":
+	              return TOSServiceType.OPUS;
+	            default:
+	              return null;
+	          }
+	        } else {
+	          return null;
+	        }
+	      }
+	    };
+	  }
 
 }

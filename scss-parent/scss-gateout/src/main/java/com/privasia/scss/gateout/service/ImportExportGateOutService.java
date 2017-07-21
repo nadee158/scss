@@ -48,8 +48,8 @@ public class ImportExportGateOutService {
   @Value("${async.wait.time}")
   private long asyncWaitTime;
 
-  @Value("${service.implementor}")
-  private String implementor;
+  /*@Value("${service.implementor}")
+  private String implementor;*/
 
   private ImportGateOutService importGateOutService;
 
@@ -178,15 +178,8 @@ public class ImportExportGateOutService {
 
       // call opus or cosmos only for approved gate in state
       if (StringUtils.equalsIgnoreCase(TransactionStatus.APPROVED.getValue(), gateOutReponse.getGateInStatus())) {
-        if (StringUtils.isNotEmpty(gateOutReponse.getTosIndicator())) {
-          implementor = gateOutReponse.getTosIndicator();
-        } else {
-          log.error("TosIndicator from db is null, setting the default " + gateOutReponse.getTosIndicator());
-          gateOutReponse.setTosIndicator(implementor);
-        }
-        TOSService businessService = containerExternalDataService.getImplementationService(implementor);
-
-        gateOutReponse = businessService.sendGateOutReadRequest(gateOutRequest, gateOutReponse);
+         TOSService businessService = containerExternalDataService.getImplementationService(gateOutReponse.getTosIndicator());
+         gateOutReponse = businessService.sendGateOutReadRequest(gateOutRequest, gateOutReponse);
       }
 
       return gateOutReponse;
@@ -246,13 +239,7 @@ public class ImportExportGateOutService {
           "Gate In status Required for the transaction : " + gateOutWriteRequest.getGateInStatus());
 
     if (StringUtils.equalsIgnoreCase(TransactionStatus.APPROVED.getValue(), gateOutWriteRequest.getGateInStatus())) {
-      if (StringUtils.isNotEmpty(gateOutWriteRequest.getTosIndicator())) {
-        implementor = gateOutWriteRequest.getTosIndicator();
-      } else {
-        log.error("TosIndicator from UI is null, setting the default " + gateOutWriteRequest.getTosIndicator());
-        gateOutReponse.setTosIndicator(implementor);
-      }
-      TOSService businessService = containerExternalDataService.getImplementationService(implementor);
+      TOSService businessService = containerExternalDataService.getImplementationService(gateOutWriteRequest.getTosIndicator());
       gateOutReponse = businessService.sendGateOutWriteRequest(gateOutWriteRequest, gateOutReponse);
     }
 

@@ -52,6 +52,7 @@ public class GateInReferService {
 				gateInResponse.setGateINDateTime(referReject.getReferDateTime());
 				gateInResponse.setPmVerified(referReject.getPmVerified());
 				gateInResponse.setAxleVerified(referReject.getAxleVerified());
+				gateInResponse.setTosIndicator(referReject.getTosServiceType().getValue());
 				if (referReject.getBaseCommonGateInOut() != null) {
 					
 					if(referReject.getBaseCommonGateInOut().getHpabBooking()!=null){

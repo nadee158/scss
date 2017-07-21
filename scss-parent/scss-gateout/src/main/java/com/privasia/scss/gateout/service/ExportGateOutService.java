@@ -105,6 +105,7 @@ public class ExportGateOutService {
 			}
 			gateOutRequest.setTruckHeadNo(export.getBaseCommonGateInOutAttribute().getPmHeadNo());
 			gateOutReponse.setGateInStatus(export.getCommonGateInOut().getGateInStatus().getValue());
+			gateOutReponse.setTosIndicator(export.getTosServiceType().getValue());
 		});
 
 		return exportContainerList;

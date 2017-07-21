@@ -175,6 +175,7 @@ public class ImportGateInService {
       importContainer.getBaseCommonGateInOutAttribute().setPmHeadNo(gateInWriteRequest.getTruckHeadNo());
       importContainer.getBaseCommonGateInOutAttribute().setPmPlateNo(gateInWriteRequest.getTruckPlateNo());
       importContainer.getBaseCommonGateInOutAttribute().setTimeGateInOk(LocalDateTime.now());
+      importContainer.setTosServiceType(gateInWriteRequest.getTosIndicator());
 
       if (importContainer.getCommonGateInOut() == null) {
         importContainer.setCommonGateInOut(new CommonGateInOutDTO());
