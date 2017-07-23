@@ -16,6 +16,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
 
+import com.privasia.scss.common.dto.GateInRequest;
 import com.privasia.scss.common.dto.GateInResponse;
 import com.privasia.scss.common.exception.BusinessException;
 import com.privasia.scss.common.exception.ResultsNotFoundException;
@@ -191,5 +192,18 @@ public class CosmosGateInReadService {
 
     return new AsyncResult<GateInResponse>(gateInResponse);
   }
+  
+  public GateInResponse constructGateInReponse(GateInRequest gateInRequest,
+			GateInResponse gateInResponse) {
+
+		gateInResponse.setUserId(String.valueOf(gateInRequest.getUserId()));
+		//LocalDateTime localDateTime = DateUtil.getLocalDategFromString(gateInReadResponse.getGateInDateTime());
+
+		//gateInReponse.setGateINDateTime(localDateTime);
+		gateInResponse.setHaulageCode(gateInRequest.getHaulageCode());
+		gateInResponse.setLaneNo(gateInRequest.getLaneNo());
+		gateInResponse.setTruckHeadNo(gateInRequest.getTruckHeadNo());
+		return gateInResponse;
+	}
 
 }

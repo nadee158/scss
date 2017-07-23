@@ -36,6 +36,7 @@ import com.privasia.scss.core.repository.CardRepository;
 import com.privasia.scss.core.repository.ClientRepository;
 import com.privasia.scss.core.repository.SystemUserRepository;
 import com.privasia.scss.core.service.CommonCardService;
+import com.privasia.scss.cosmos.service.CosmosService;
 import com.privasia.scss.gateout.imports.business.service.PortService;
 import com.privasia.scss.gateout.imports.exports.business.service.ImportExportCommonGateOutBusinessService;
 import com.privasia.scss.gateout.whodd.service.ODDGateOutService;
@@ -237,9 +238,9 @@ public class ImportExportGateOutService {
     if (StringUtils.isEmpty(gateOutWriteRequest.getGateInStatus()))
       throw new BusinessException(
           "Gate In status Required for the transaction : " + gateOutWriteRequest.getGateInStatus());
-
+    OpusCosmosBusinessService businessService=null;
     if (StringUtils.equalsIgnoreCase(TransactionStatus.APPROVED.getValue(), gateOutWriteRequest.getGateInStatus())) {
-      OpusCosmosBusinessService businessService = containerExternalDataService.getImplementationService(implementor);
+       businessService = containerExternalDataService.getImplementationService(implementor);
       gateOutReponse = businessService.sendGateOutWriteRequest(gateOutWriteRequest, gateOutReponse);
     }
 
@@ -265,7 +266,13 @@ public class ImportExportGateOutService {
       default:
         break;
     }
-
+    if (businessService != null && businessService instanceof CosmosService) {
+		gateOutReponse.setTransactionType(impExpFlag.toString());
+		gateOutReponse.setImportContainers(gateOutWriteRequest.getImportContainers());
+		gateOutReponse.setExportContainers(gateOutWriteRequest.getExportContainers());
+//		gateOutReponse.setWhODDContainers(gateOutWriteRequest.getWhoddContainers());
+		gateOutReponse = businessService.sendGateOutReadRequest(null, gateOutReponse);
+	}
     GateOutMessage gateOutMessage = new GateOutMessage();
     gateOutMessage.setCode(GateOutMessage.OK);
     gateOutMessage.setDescription("Saved Successfully!");

@@ -324,6 +324,7 @@ public class CosmosService implements OpusCosmosBusinessService {
     }
     long end = System.currentTimeMillis();
     System.out.println("time : " + (end - start) / 1000.0 + "sec");
+    cosmosGateInReadService.constructGateInReponse(gateInRequest, gateInResponse);
     return gateInResponse;
   }
 

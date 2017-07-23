@@ -158,8 +158,9 @@ public class CosmosResponseService {
 
         GINCNTPUPR gincntpupr = optElement.orElseThrow(() -> new BusinessException(
             "Container No " + importContainer.getContainer().getContainerNumber() + " not found to populate data"));
-
+        if(gincntpupr.getPKIDSE()!=null)
         importContainer.setYardBayCode(gincntpupr.getPKIDSE().trim());
+        if(gincntpupr.getPSIDSE()!=null)
         importContainer.setYardPosition(gincntpupr.getPSIDSE().trim());
 
       });
@@ -192,8 +193,9 @@ public class CosmosResponseService {
 
         GINCNTDRPR gincntdrpr = optElement.orElseThrow(() -> new BusinessException(
             "Container No " + exportContainer.getContainer().getContainerNumber() + " not found to populate data"));
-
+        if(gincntdrpr.getPKIDSE()!=null)
         exportContainer.setYardBayCode(gincntdrpr.getPKIDSE().trim());
+        if(gincntdrpr.getPSIDSE()!=null)
         exportContainer.setYardPosition(gincntdrpr.getPSIDSE().trim());
 
       });
