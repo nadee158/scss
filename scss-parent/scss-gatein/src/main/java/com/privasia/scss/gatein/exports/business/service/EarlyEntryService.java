@@ -10,6 +10,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -69,8 +70,8 @@ public class EarlyEntryService {
 			if (vesselETADate == null)
 				throw new BusinessException("Container " + container.getContainer().getContainerNumber()
 						+ "vessel ETA date not provided for early entry !");
-			vesselETADate = vesselETADate.minusDays(1);
-			earlyEnrtyDate = now.until(vesselETADate, ChronoUnit.DAYS);
+			//vesselETADate = vesselETADate.minusDays(1);
+			earlyEnrtyDate = now.until(vesselETADate, ChronoUnit.DAYS)+1;
 			// System.out.println("earlyEnrtyDate "+earlyEnrtyDate);
 			// Before Eta Date
 			if (earlyEnrtyDate > 1) {
@@ -163,7 +164,7 @@ public class EarlyEntryService {
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
 	public Optional<Integer> getStoragePeriod(ExportContainer exportContainer) {
 		if (exportContainer != null) {
-			String shipCodeStr = exportContainer.getShippingLine();
+			String shipCodeStr = StringUtils.trim(exportContainer.getShippingLine());
 			Optional<ShipCode> optionalShipCode = shipCodeRepository.findByShipStatusAndShippingCode(ShipStatus.ACTIVE,
 					shipCodeStr);
 			if (optionalShipCode.isPresent()) {

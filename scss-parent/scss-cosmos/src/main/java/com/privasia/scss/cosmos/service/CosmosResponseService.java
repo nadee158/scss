@@ -246,7 +246,8 @@ public class CosmosResponseService {
   }
 
   private String getCosmosError(SGS2CosmosResponse cosmosResponse) {
-
+	  String[] error = new String[1];
+	  try{
     List<ResponseMessage> elementList = cosmosResponse.getResponseMessage();
 
     if (elementList == null || elementList.isEmpty())
@@ -257,17 +258,23 @@ public class CosmosResponseService {
     if (csmctlList == null || csmctlList.isEmpty())
       throw new BusinessException("Invalid cosmos response. No CSMCTL elements");
 
-    Optional<CSMCTL> optElement = csmctlList.stream().findFirst();
+   /* Optional<CSMCTL> optElement =*/ csmctlList.stream().forEach(csmctl ->{
 
-    CSMCTL csmctl = optElement.orElseThrow(() -> new BusinessException("Invalid cosmos response. No CSMCTL elements"));
+    //CSMCTL csmctl = optElement.orElseThrow(() -> new BusinessException("Invalid cosmos response. No CSMCTL elements"));
 
-    if (csmctl.getERRI() == null || StringUtils.isEmpty(csmctl.getERRI())) {
+   /* if (csmctl.getERRI() == null || StringUtils.isEmpty(csmctl.getERRI())) {
       return null;
     } else {
       return csmctl.getERRI().trim();
 
-    }
-
+    }*/
+	if(StringUtils.isNotBlank(csmctl.getERRI()))
+		error[0] =csmctl.getERRI().trim();
+    });
+	  }catch(Exception e){
+		  throw new BusinessException("Invalid cosmos response. No CSMCTL elements");
+	  }
+    return error[0];
   }
 
   private GateInResponse setManualPlanIndicatorForExports(GateInResponse gateInResponse) {
