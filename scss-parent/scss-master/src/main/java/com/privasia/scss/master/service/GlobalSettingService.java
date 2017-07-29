@@ -21,9 +21,15 @@ public class GlobalSettingService {
 	@Autowired
 	private GlobalSettingRepository globalSettingRepository;
 	
-	@Transactional(propagation=Propagation.REQUIRED, readOnly=true)
+	@Transactional(value = "transactionManager", propagation=Propagation.REQUIRED, readOnly=true)
 	public boolean isCustomCheckBeforeTransaction(){
 		return globalSettingRepository.isCustomCheckBeforeTransaction();
+		
+	}
+	
+	@Transactional(value = "transactionManager", propagation=Propagation.REQUIRED, readOnly=true)
+	public boolean mainGateCustomCheck(){
+		return globalSettingRepository.mainGateCustomCheck();
 		
 	}
 

@@ -1,7 +1,9 @@
 package com.privasia.scss.gateout.service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
@@ -132,8 +134,18 @@ public class CustomsService {
   public String updateCustomsODD(CustomsDTO customsDTO) {
 
     Predicate byGateInStatus = ODDPredicates.byGateInStatus(TransactionStatus.APPROVED);
-    Predicate byWHoddIDList = ODDPredicates.byWHoddIDList(Arrays
-        .asList(customsDTO.getOddIdSeq01().orElse(null), customsDTO.getOddIdSeq02().orElse(null)));
+    
+    List<Long> oddIDList = new ArrayList<Long>();
+    
+    if(customsDTO.getOddIdSeq01().isPresent()){
+    	oddIDList.add(customsDTO.getOddIdSeq01().get());
+    }
+    
+    if(customsDTO.getOddIdSeq02().isPresent()){
+    	oddIDList.add(customsDTO.getOddIdSeq02().get());
+    }
+    
+    Predicate byWHoddIDList = ODDPredicates.byWHoddIDList(oddIDList);
 
     Predicate condition = ExpressionUtils.allOf(byGateInStatus, byWHoddIDList);
     Iterable<WHODD> whODDList = oddRepository.findAll(condition);
@@ -145,10 +157,12 @@ public class CustomsService {
         customs.setWhODD(whODD);
         if (customs.getContainer01() == null) {
           customs.setContainer01(
-              constructCustomContainer(whODD.getContainer01(), whODD.getImpExpFlag()));
+              constructCustomContainer(customsDTO.getFullOREmptyCon01().get(), whODD.getContainer01(), 
+            		  whODD.getImpExpFlag(), customsDTO.getTransactionStatus()));
         } else {
           customs.setContainer02(
-              constructCustomContainer(whODD.getContainer02(), whODD.getImpExpFlag()));
+              constructCustomContainer(customsDTO.getFullOREmptyCon02().get(), whODD.getContainer02(),
+            		  whODD.getImpExpFlag(), customsDTO.getTransactionStatus()));
         }
 
         customsRepository.save(customs);
@@ -186,9 +200,9 @@ public class CustomsService {
       final Customs customs = constructCustoms(customsDTO, TransactionType.IMPORT);
       gatePassList.forEach(gatePass -> {
         if (customs.getContainer01() == null) {
-          customs.setContainer01(constructCustomContainer(gatePass));
+          customs.setContainer01(constructCustomContainer(customsDTO.getFullOREmptyCon01().get(), gatePass, customsDTO.getTransactionStatus()));
         } else {
-          customs.setContainer02(constructCustomContainer(gatePass));
+          customs.setContainer02(constructCustomContainer(customsDTO.getFullOREmptyCon02().get(), gatePass, customsDTO.getTransactionStatus()));
         }
       });
 
@@ -226,9 +240,9 @@ public class CustomsService {
       final Customs customs = constructCustoms(customsDTO, TransactionType.EXPORT);
       exportsList.forEach(exports -> {
         if (customs.getContainer01() == null) {
-          customs.setContainer01(constructCustomContainer(exports));
+          customs.setContainer01(constructCustomContainer(customsDTO.getFullOREmptyCon01().get(), exports, customsDTO.getTransactionStatus()));
         } else {
-          customs.setContainer02(constructCustomContainer(exports));
+          customs.setContainer02(constructCustomContainer(customsDTO.getFullOREmptyCon02().get(), exports, customsDTO.getTransactionStatus()));
         }
       });
       customsRepository.save(customs);
@@ -246,24 +260,24 @@ public class CustomsService {
     return "success";
   }
 
-  private CustomContainer constructCustomContainer(Exports exports) {
+  private CustomContainer constructCustomContainer(String fullOrEmpty, Exports exports, String transactionStatus) {
     CustomContainer customContainer = new CustomContainer();
-    customContainer.setContainerFullOrEmpty(exports.getContainer().getContainerFullOrEmpty());
+    customContainer.setContainerFullOrEmpty(ContainerFullEmptyType.fromValue(fullOrEmpty));
     customContainer.setContainerNumber(exports.getContainer().getContainerNumber());
-    customContainer.setCustomEirStatus(exports.getBaseCommonGateInOutAttribute().getEirStatus());
+    customContainer.setCustomEirStatus(TransactionStatus.fromCode(transactionStatus));
     customContainer.setCustomRejection(exports.getCommonGateInOut().getRejectReason());
     customContainer.setExport(exports);
 
     return customContainer;
   }
 
-  private CustomContainer constructCustomContainer(GatePass gatePass) {
+  private CustomContainer constructCustomContainer(String fullOrEmpty, GatePass gatePass, String transactionStatus) {
     CustomContainer customContainer = new CustomContainer();
     customContainer.setContainerNumber(gatePass.getContainer().getContainerNumber());
-    customContainer.setContainerFullOrEmpty(gatePass.getContainer().getContainerFullOrEmpty());
+    customContainer.setContainerFullOrEmpty(ContainerFullEmptyType.fromValue(fullOrEmpty));
     customContainer.setGatePass(gatePass);
     customContainer.setCustomRejection(gatePass.getCommonGateInOut().getRejectReason());
-    customContainer.setCustomEirStatus(gatePass.getBaseCommonGateInOutAttribute().getEirStatus());
+    customContainer.setCustomEirStatus(TransactionStatus.fromCode(transactionStatus));
 
     Optional<WDCGatePass> optionalWdcGatePass =
         wdcGatePassRepository.findByGatePassNO(gatePass.getGatePassNo());
@@ -280,22 +294,21 @@ public class CustomsService {
     return customContainer;
   }
 
-  private CustomContainer constructCustomContainer(ODDContainerDetails oddContainerDetails,
-      ImpExpFlagStatus impExpFlag) {
-
+  private CustomContainer constructCustomContainer(String fullOrEmpty, ODDContainerDetails oddContainerDetails,
+      ImpExpFlagStatus impExpFlag, String transactionStatus) {
+	
     if (oddContainerDetails != null
-        && (StringUtils.equalsIgnoreCase(oddContainerDetails.getFullOrEmpty().getValue(),
-            ContainerFullEmptyType.FULL.getValue()))) {
+        && (StringUtils.equalsIgnoreCase(fullOrEmpty, ContainerFullEmptyType.FULL.getValue()))) {
 
       if ((StringUtils.equalsIgnoreCase(impExpFlag.getValue(), ImpExpFlagStatus.EXPORT.getValue()))
-          && (StringUtils.equalsIgnoreCase(oddContainerDetails.getOddStatus().getValue(),
+          && (StringUtils.equalsIgnoreCase(transactionStatus,
               TransactionStatus.APPROVED.getValue()))) {
         return null;
       }
       CustomContainer customContainer = new CustomContainer();
-      customContainer.setContainerFullOrEmpty(oddContainerDetails.getFullOrEmpty());
+      customContainer.setContainerFullOrEmpty(ContainerFullEmptyType.fromValue(fullOrEmpty));
       customContainer.setContainerNumber(oddContainerDetails.getContainerNo());
-      customContainer.setCustomEirStatus(oddContainerDetails.getOddStatus());
+      customContainer.setCustomEirStatus(TransactionStatus.fromCode(transactionStatus));
       customContainer.setOddLocation(oddContainerDetails.getLocation().getOddCode());
       customContainer.setCustomRejection(oddContainerDetails.getRejectionReason());
       return customContainer;

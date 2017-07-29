@@ -16,5 +16,8 @@ public interface GlobalSettingRepository extends BaseRepository<GlobalSetting, L
 	
 	@Query(name="GlobalSetting.isCustomCheckBeforeTransaction")
 	boolean isCustomCheckBeforeTransaction();
+	
+	@Query(name="GlobalSetting.mainGateCustomCheck")
+	boolean mainGateCustomCheck();
 
 }
