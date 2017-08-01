@@ -13,63 +13,61 @@ public class CustomsDTO implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private Long exportIDSeq01;
-	private Long exportIDSeq02;
-	private Long gatePassIDSeq01;
-	private Long gatePassIDSeq02;
-	private Long oddIdSeq01;
-	private Long oddIdSeq02;
+	private CustomsExportInfo exportContainer01Info;
+	private CustomsExportInfo exportContainer02Info;
+	private CustomsGatePassInfo importContainer01Info;
+	private CustomsGatePassInfo importContainer02Info;
+	private CustomsODDInfo importODDInfo;
+	private CustomsODDInfo exportODDInfo;
 	private Long gateOutClientId;
-	private String fullOREmptyCon01; //F or E
-	private String fullOREmptyCon02;
-	private String transactionStatus;
-
-	public Optional<Long> getExportIDSeq01() {
-		return Optional.ofNullable(exportIDSeq01);
+	private String transactionType;
+	
+	public Optional<CustomsExportInfo> getExportContainer01Info() {
+		return Optional.ofNullable(exportContainer01Info);
 	}
 
-	public void setExportIDSeq01(Long exportIDSeq01) {
-		this.exportIDSeq01 = exportIDSeq01;
+	public void setExportContainer01Info(CustomsExportInfo exportContainer01Info) {
+		this.exportContainer01Info = exportContainer01Info;
 	}
 
-	public Optional<Long> getExportIDSeq02() {
-		return Optional.ofNullable(exportIDSeq02);
+	public Optional<CustomsExportInfo> getExportContainer02Info() {
+		return Optional.ofNullable(exportContainer02Info);
 	}
 
-	public void setExportIDSeq02(Long exportIDSeq02) {
-		this.exportIDSeq02 = exportIDSeq02;
+	public void setExportContainer02Info(CustomsExportInfo exportContainer02Info) {
+		this.exportContainer02Info = exportContainer02Info;
 	}
 
-	public Optional<Long> getGatePassIDSeq01() {
-		return Optional.ofNullable(gatePassIDSeq01);
+	public Optional<CustomsGatePassInfo> getImportContainer01Info() {
+		return Optional.ofNullable(importContainer01Info);
 	}
 
-	public void setGatePassIDSeq01(Long gatePassIDSeq01) {
-		this.gatePassIDSeq01 = gatePassIDSeq01;
+	public void setImportContainer01Info(CustomsGatePassInfo importContainer01Info) {
+		this.importContainer01Info = importContainer01Info;
 	}
 
-	public Optional<Long> getGatePassIDSeq02() {
-		return Optional.ofNullable(gatePassIDSeq02);
+	public Optional<CustomsGatePassInfo> getImportContainer02Info() {
+		return Optional.ofNullable(importContainer02Info);
 	}
 
-	public void setGatePassIDSeq02(Long gatePassIDSeq02) {
-		this.gatePassIDSeq02 = gatePassIDSeq02;
+	public void setImportContainer02Info(CustomsGatePassInfo importContainer02Info) {
+		this.importContainer02Info = importContainer02Info;
 	}
 
-	public Optional<Long> getOddIdSeq01() {
-		return Optional.ofNullable(oddIdSeq01);
+	public Optional<CustomsODDInfo> getImportODDInfo() {
+		return Optional.ofNullable(importODDInfo);
 	}
 
-	public void setOddIdSeq01(Long oddIdSeq01) {
-		this.oddIdSeq01 = oddIdSeq01;
+	public void setImportODDInfo(CustomsODDInfo importODDInfo) {
+		this.importODDInfo = importODDInfo;
 	}
 
-	public Optional<Long> getOddIdSeq02() {
-		return Optional.ofNullable(oddIdSeq02);
+	public Optional<CustomsODDInfo> getExportODDInfo() {
+		return Optional.ofNullable(exportODDInfo);
 	}
 
-	public void setOddIdSeq02(Long oddIdSeq02) {
-		this.oddIdSeq02 = oddIdSeq02;
+	public void setExportODDInfo(CustomsODDInfo exportODDInfo) {
+		this.exportODDInfo = exportODDInfo;
 	}
 
 	public Long getGateOutClientId() {
@@ -79,29 +77,13 @@ public class CustomsDTO implements Serializable {
 	public void setGateOutClientId(Long gateOutClientId) {
 		this.gateOutClientId = gateOutClientId;
 	}
-
-	public Optional<String> getFullOREmptyCon01() {
-		return Optional.ofNullable(fullOREmptyCon01);
-	}
-
-	public void setFullOREmptyCon01(String fullOREmptyCon01) {
-		this.fullOREmptyCon01 = fullOREmptyCon01;
-	}
-
-	public Optional<String> getFullOREmptyCon02() {
-		return Optional.ofNullable(fullOREmptyCon02);
-	}
-
-	public void setFullOREmptyCon02(String fullOREmptyCon02) {
-		this.fullOREmptyCon02 = fullOREmptyCon02;
-	}
 	
-	public String getTransactionStatus() {
-		return transactionStatus;
+	public String getTransactionType() {
+		return transactionType;
 	}
 
-	public void setTransactionStatus(String transactionStatus) {
-		this.transactionStatus = transactionStatus;
+	public void setTransactionType(String transactionType) {
+		this.transactionType = transactionType;
 	}
 
 	@Override

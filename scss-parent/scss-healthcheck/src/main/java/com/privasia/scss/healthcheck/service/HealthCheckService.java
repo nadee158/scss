@@ -37,7 +37,7 @@ public class HealthCheckService {
   private ModelMapper modelMapper;
 
 
-  @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
+  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
   public List<HealthCheckInfoDTO> getHealthCheckInfo(int size) {
 
     log.info("******* Request for Get Health Check Info ******* ");
@@ -59,7 +59,7 @@ public class HealthCheckService {
     return null;
   }
 
-  @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
+  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
   public Long saveKioskHealthCheckInfo(HealthCheckInfoDTO healthCheckInfo) {
 
     log.info("******* Request for Save Kiosk Health Check Info ******* ");
@@ -68,11 +68,17 @@ public class HealthCheckService {
     KioskHLTCheck kioskHLTCheck = convertDTOToDomain(healthCheckInfo);
     
     kioskHLTCheck.setNotificationStatus(false);
-    kioskHLTCheck.setBooth(clientRepository.findOne(healthCheckInfo.getBoothClientID()).orElseGet(null));
-    kioskHLTCheck.setKiosk(clientRepository.findOne(healthCheckInfo.getKioskClientID()).orElseGet(null));
+    
+    if(healthCheckInfo.getBoothClientID()!= null){
+    	kioskHLTCheck.setBooth(clientRepository.findOne(healthCheckInfo.getBoothClientID()).orElseGet(null));
+    }
+    
+    if(healthCheckInfo.getKioskClientID()!= null){
+    	kioskHLTCheck.setKiosk(clientRepository.findOne(healthCheckInfo.getKioskClientID()).orElseGet(null));
+    }
     
     kioskHLTCheck = kioskHLTCheckRepository.save(kioskHLTCheck);
-
+    
     if(kioskHLTCheck.getHealthCheckSeq() == null)
     	throw new BusinessException("Error saving Kiosk Health Check info ! ");
     return kioskHLTCheck.getHealthCheckSeq();

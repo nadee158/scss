@@ -52,10 +52,14 @@ public class LPSService {
 		Client client = optClient.orElseThrow(()-> new ResultsNotFoundException("Invalid Client Id : "+clientID+" Not found."));
 		
 		String response = null;
+		//172.16.178.11
 		
 		if(client.isCsmControl() || StringUtils.isEmpty(client.getLpsIPAddress())){
 			response = "Transaction Successful. LPS controlled by Westports.";
 		}else{
+			System.out.println("client.getLpsIPAddress() "+client.getLpsIPAddress());
+			System.out.println("client.isCsmControl() "+client.isCsmControl());
+			System.out.println("defaultServerPort "+defaultServerPort);
 			response = openGateByIP(client.getLpsIPAddress(), defaultServerPort);
 			
 			return LPSService.convertResponseToAMessage(response);
@@ -117,6 +121,8 @@ public class LPSService {
 	}
 	
 	private static String convertResponseToAMessage(String res) {
+		
+		System.out.println("Response message : "+res);
 		
 		switch (res) {
 		case "O":

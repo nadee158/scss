@@ -43,7 +43,7 @@ public class HealthCheckController {
 
   @RequestMapping(value = "/save", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
       consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-  public CustomResponseEntity<ApiResponseObject<?>> saveReferReject(
+  public CustomResponseEntity<ApiResponseObject<?>> saveHealthCheckInfo(
       @RequestBody HealthCheckInfoDTO healthCheckInfoDTO) {
 
     Long result = healthCheckService.saveKioskHealthCheckInfo(healthCheckInfoDTO);
