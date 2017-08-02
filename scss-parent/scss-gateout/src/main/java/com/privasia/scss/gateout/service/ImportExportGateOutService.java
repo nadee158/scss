@@ -44,272 +44,264 @@ import com.privasia.scss.gateout.whodd.service.ODDGateOutService;
 @Service("importExportGateOutService")
 public class ImportExportGateOutService {
 
-  private static final Log log = LogFactory.getLog(ImportExportGateOutService.class);
+	private static final Log log = LogFactory.getLog(ImportExportGateOutService.class);
 
-  @Value("${async.wait.time}")
-  private long asyncWaitTime;
+	@Value("${async.wait.time}")
+	private long asyncWaitTime;
 
-  @Value("${service.implementor}")
-  private String implementor;
+	@Value("${service.implementor}")
+	private String implementor;
 
-  private ImportGateOutService importGateOutService;
+	private ImportGateOutService importGateOutService;
 
-  private ExportGateOutService exportGateOutService;
+	private ExportGateOutService exportGateOutService;
 
-  private ODDGateOutService oddGateOutService;
+	private ODDGateOutService oddGateOutService;
 
-  private CommonCardService commonCardService;
+	private CommonCardService commonCardService;
 
-  private ClientRepository clientRepository;
+	private ClientRepository clientRepository;
 
-  private CardRepository cardRepository;
+	private CardRepository cardRepository;
 
-  private SystemUserRepository systemUserRepository;
+	private SystemUserRepository systemUserRepository;
 
-  private ImportExportCommonGateOutBusinessService importExportCommonGateOutBusinessService;
+	private ImportExportCommonGateOutBusinessService importExportCommonGateOutBusinessService;
 
-  private PortService portService;
+	private ContainerExternalDataService containerExternalDataService;
 
-  private ContainerExternalDataService containerExternalDataService;
-
-  @Autowired
-  public void setContainerExternalDataService(ContainerExternalDataService containerExternalDataService) {
-    this.containerExternalDataService = containerExternalDataService;
-  }
-
-  @Autowired
-  public void setCardRepository(CardRepository cardRepository) {
-    this.cardRepository = cardRepository;
-  }
-
-  @Autowired
-  public void setImportGateOutService(ImportGateOutService importGateOutService) {
-    this.importGateOutService = importGateOutService;
-  }
-
-  @Autowired
-  public void setExportGateOutService(ExportGateOutService exportGateOutService) {
-    this.exportGateOutService = exportGateOutService;
-  }
-
-  @Autowired
-  public void setCommonCardService(CommonCardService commonCardService) {
-    this.commonCardService = commonCardService;
-  }
-
-  @Autowired
-  public void setClientRepository(ClientRepository clientRepository) {
-    this.clientRepository = clientRepository;
-  }
-
-  @Autowired
-  public void setSystemUserRepository(SystemUserRepository systemUserRepository) {
-    this.systemUserRepository = systemUserRepository;
-  }
-
-  @Autowired
-  public void setImportExportCommonGateOutBusinessService(
-      ImportExportCommonGateOutBusinessService importExportCommonGateOutBusinessService) {
-    this.importExportCommonGateOutBusinessService = importExportCommonGateOutBusinessService;
-  }
-
-  @Autowired
-  public void setPortService(PortService portService) {
-    this.portService = portService;
-  }
-
-  @Autowired
-  public void setOddGateOutService(ODDGateOutService oddGateOutService) {
-    this.oddGateOutService = oddGateOutService;
-  }
-
-  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-  public GateOutReponse populateGateOut(GateOutRequest gateOutRequest) {
-
-    GateOutReponse gateOutReponse = new GateOutReponse();
-    gateOutReponse.setGateOUTDateTime(gateOutRequest.getGateOUTDateTime());
-
-    Optional<Card> cardOpt = cardRepository.findOne(gateOutRequest.getCardID());
-    Card card =
-        cardOpt.orElseThrow(() -> new ResultsNotFoundException("Invalid Scan Card ID ! " + gateOutRequest.getCardID()));
-    gateOutRequest.setComID(card.getCompany().getCompanyID());
-
-    gateOutRequest.setHaulageCode(commonCardService.getHaulierCodeByScanCard(card));
-
-    Optional<Client> clientOpt = clientRepository.findOne(gateOutRequest.getClientID());
-    Client client =
-        clientOpt.orElseThrow(() -> new ResultsNotFoundException("Invalid lane ID ! " + gateOutRequest.getClientID()));
-    if (StringUtils.isEmpty(client.getUnitNo()))
-      throw new BusinessException("Unit no does not setup for client " + client.getClientID());
-    gateOutRequest.setLaneNo(client.getUnitNo());
-
-    InProgressTrxDTO trxDTO = commonCardService.isTrxInProgress(gateOutRequest.getCardID());
-
-    if (trxDTO.isInProgress()) {
-
-      List<ExportContainer> exportContainers = null;
-
-      List<ImportContainer> importContainers = null;
-
-      switch (trxDTO.getTrxType()) {
-        case EXPORT:
-          exportContainers = exportGateOutService.populateGateOut(gateOutRequest, gateOutReponse);
-          break;
-        case IMPORT:
-          importContainers = importGateOutService.populateGateOut(gateOutRequest, gateOutReponse);
-          break;
-        case IMPORT_EXPORT:
-          exportContainers = exportGateOutService.populateGateOut(gateOutRequest, gateOutReponse);
-          importContainers = importGateOutService.populateGateOut(gateOutRequest, gateOutReponse);
-          break;
-        case ODD:
-          gateOutReponse = oddGateOutService.populateGateOut(gateOutRequest, gateOutReponse);
-          return gateOutReponse;
-        default:
-          break;
-      }
-
-      Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-      UserContext userContext = (UserContext) authentication.getPrincipal();
-      gateOutRequest.setUserName(userContext.getUsername());
-
-      gateOutReponse.setImportContainers(importContainers);
-      gateOutReponse.setExportContainers(exportContainers);
-      gateOutReponse.setTransactionType(trxDTO.getTrxType().name());
-
-      // call opus or cosmos only for approved gate in state
-      if (StringUtils.equalsIgnoreCase(TransactionStatus.APPROVED.getValue(), gateOutReponse.getGateInStatus())) {
-        OpusCosmosBusinessService businessService = containerExternalDataService.getImplementationService(implementor);
-        gateOutReponse = businessService.sendGateOutReadRequest(gateOutRequest, gateOutReponse);
-      }
-
-      return gateOutReponse;
-    } else {
-      throw new BusinessException(
-          "No Valid Gate in Transaction Found for the Scan Card : " + gateOutRequest.getCardID());
-    }
-
-  }
-
-
-  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
-  public GateOutReponse saveGateOutInfo(GateOutWriteRequest gateOutWriteRequest) {
-
-    Optional<Card> cardOpt = cardRepository.findOne(gateOutWriteRequest.getCardID());
-    Card card = cardOpt
-        .orElseThrow(() -> new ResultsNotFoundException("Invalid Scan Card ID ! " + gateOutWriteRequest.getCardID()));
-
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    UserContext userContext = (UserContext) authentication.getPrincipal();
-    log.info("userContext.getUsername() " + userContext.getUsername());
-    gateOutWriteRequest.setUserName(userContext.getUsername());
-    Optional<SystemUser> systemUserOpt = systemUserRepository.findOne(userContext.getUserID());
-    SystemUser user = systemUserOpt
-        .orElseThrow(() -> new ResultsNotFoundException("Invalid Login User ! " + userContext.getUsername()));
-
-    Optional<Client> clientOpt = clientRepository.findOne(gateOutWriteRequest.getGateOutClient());
-    Client client = clientOpt
-        .orElseThrow(() -> new ResultsNotFoundException("Invalid lane ID ! " + gateOutWriteRequest.getGateOutClient()));
-    if (StringUtils.isEmpty(client.getUnitNo()))
-      throw new BusinessException("Unit no does not setup for client " + client.getClientID());
-    gateOutWriteRequest.setLaneNo(client.getUnitNo());
-    gateOutWriteRequest.setCosmosPort(client.getCosmosPortNo());
-
-    Optional<Client> boothOpt = clientRepository.findOne(gateOutWriteRequest.getGateOutBooth());
-    Client booth = boothOpt
-        .orElseThrow(() -> new ResultsNotFoundException("Invalid Booth ID ! " + gateOutWriteRequest.getGateOutBooth()));
-
-    gateOutWriteRequest.setHaulageCode(commonCardService.getHaulierCodeByScanCard(card));
-
-    List<ImportContainer> importContainers = null;
-    List<ExportContainer> exportContainers = null;
-
-    if (StringUtils.isEmpty(gateOutWriteRequest.getImpExpFlag()))
-      throw new BusinessException("Invalid GateOutWriteRequest Empty ImpExpFlag");
-    ImpExpFlagStatus impExpFlag = ImpExpFlagStatus.fromValue(gateOutWriteRequest.getImpExpFlag());
-
-    importExportCommonGateOutBusinessService.isValidGateOutLane(client, gateOutWriteRequest);
-
-    GateOutReponse gateOutReponse = new GateOutReponse();
-    gateOutReponse.setGateOUTDateTime(gateOutWriteRequest.getGateOUTDateTime());
-    gateOutReponse.setImportContainers(importContainers);
-    gateOutReponse.setExportContainers(exportContainers);
-
-    if (StringUtils.isEmpty(gateOutWriteRequest.getGateInStatus()))
-      throw new BusinessException(
-          "Gate In status Required for the transaction : " + gateOutWriteRequest.getGateInStatus());
-    OpusCosmosBusinessService businessService=null;
-    if (StringUtils.equalsIgnoreCase(TransactionStatus.APPROVED.getValue(), gateOutWriteRequest.getGateInStatus())) {
-       businessService = containerExternalDataService.getImplementationService(implementor);
-      gateOutReponse = businessService.sendGateOutWriteRequest(gateOutWriteRequest, gateOutReponse);
-    }
-
-    /*
-     * Future<Boolean> impSave = null; Future<Boolean> expSave = null;
-     */
-
-    switch (impExpFlag) {
-      case IMPORT:
-        portService.checkContainerTobeReleasedByPort(client, gateOutWriteRequest.getImportContainers());
-        importGateOutService.saveGateOutInfo(gateOutWriteRequest, client, user, booth);
-        // expSave = new AsyncResult<Boolean>(true);
-        break;
-      case EXPORT:
-        // impSave = new AsyncResult<Boolean>(true);
-        exportGateOutService.saveGateOutInfo(gateOutWriteRequest, client, user, booth);
-        break;
-      case IMPORT_EXPORT:
-        portService.checkContainerTobeReleasedByPort(client, gateOutWriteRequest.getImportContainers());
-        importGateOutService.saveGateOutInfo(gateOutWriteRequest, client, user, booth);
-        exportGateOutService.saveGateOutInfo(gateOutWriteRequest, client, user, booth);
-        break;
-      default:
-        break;
-    }
-    if (businessService != null && businessService instanceof CosmosService) {
-		gateOutReponse.setTransactionType(impExpFlag.toString());
-		gateOutReponse.setImportContainers(gateOutWriteRequest.getImportContainers());
-		gateOutReponse.setExportContainers(gateOutWriteRequest.getExportContainers());
-//		gateOutReponse.setWhODDContainers(gateOutWriteRequest.getWhoddContainers());
-		gateOutReponse = businessService.sendGateOutReadRequest(null, gateOutReponse);
+	@Autowired
+	public void setContainerExternalDataService(ContainerExternalDataService containerExternalDataService) {
+		this.containerExternalDataService = containerExternalDataService;
 	}
-    GateOutMessage gateOutMessage = new GateOutMessage();
-    gateOutMessage.setCode(GateOutMessage.OK);
-    gateOutMessage.setDescription("Saved Successfully!");
 
-    /*
-     * while (true) { if (impSave.isDone() && expSave.isDone()) {
-     * 
-     * gateOutMessage.setCode(GateOutMessage.OK); gateOutMessage.setDescription(
-     * "Saved Successfully!");
-     * 
-     * System.out.println("WHILE LOOP BROKEN!!!!. "); break; } System.out.println(
-     * "Continue doing something else. ");
-     * 
-     * try { Thread.sleep(asyncWaitTime); } catch (InterruptedException e) {
-     * log.error(e.getMessage()); System.out.println( "WHILE LOOP BROKEN ON THREAD EXCEPTION!!!!. "
-     * ); break; } }
-     */
-    gateOutReponse.setMessage(gateOutMessage);
-    return gateOutReponse;
-  }
+	@Autowired
+	public void setCardRepository(CardRepository cardRepository) {
+		this.cardRepository = cardRepository;
+	}
 
+	@Autowired
+	public void setImportGateOutService(ImportGateOutService importGateOutService) {
+		this.importGateOutService = importGateOutService;
+	}
 
-  @SolasApplicable
-  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
-  public GateOutReponse testSaveGateOutInfo(GateOutWriteRequest gateOutWriteRequest) {
+	@Autowired
+	public void setExportGateOutService(ExportGateOutService exportGateOutService) {
+		this.exportGateOutService = exportGateOutService;
+	}
 
-    exportGateOutService.testSolas(gateOutWriteRequest);
+	@Autowired
+	public void setCommonCardService(CommonCardService commonCardService) {
+		this.commonCardService = commonCardService;
+	}
 
-    GateOutReponse gateOutReponse = new GateOutReponse();
-    GateOutMessage gateOutMessage = new GateOutMessage();
-    gateOutMessage.setCode(GateOutMessage.OK);
-    gateOutMessage.setDescription("Saved Successfully!");
+	@Autowired
+	public void setClientRepository(ClientRepository clientRepository) {
+		this.clientRepository = clientRepository;
+	}
 
+	@Autowired
+	public void setSystemUserRepository(SystemUserRepository systemUserRepository) {
+		this.systemUserRepository = systemUserRepository;
+	}
 
-    gateOutReponse.setMessage(gateOutMessage);
-    return gateOutReponse;
+	@Autowired
+	public void setImportExportCommonGateOutBusinessService(
+			ImportExportCommonGateOutBusinessService importExportCommonGateOutBusinessService) {
+		this.importExportCommonGateOutBusinessService = importExportCommonGateOutBusinessService;
+	}
 
-  }
+	@Autowired
+	public void setOddGateOutService(ODDGateOutService oddGateOutService) {
+		this.oddGateOutService = oddGateOutService;
+	}
+
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+	public GateOutReponse populateGateOut(GateOutRequest gateOutRequest) {
+
+		GateOutReponse gateOutReponse = new GateOutReponse();
+		gateOutReponse.setGateOUTDateTime(gateOutRequest.getGateOUTDateTime());
+
+		Optional<Card> cardOpt = cardRepository.findOne(gateOutRequest.getCardID());
+		Card card = cardOpt.orElseThrow(
+				() -> new ResultsNotFoundException("Invalid Scan Card ID ! " + gateOutRequest.getCardID()));
+		gateOutRequest.setComID(card.getCompany().getCompanyID());
+
+		gateOutRequest.setHaulageCode(commonCardService.getHaulierCodeByScanCard(card));
+
+		Optional<Client> clientOpt = clientRepository.findOne(gateOutRequest.getClientID());
+		Client client = clientOpt
+				.orElseThrow(() -> new ResultsNotFoundException("Invalid lane ID ! " + gateOutRequest.getClientID()));
+		if (StringUtils.isEmpty(client.getUnitNo()))
+			throw new BusinessException("Unit no does not setup for client " + client.getClientID());
+		gateOutRequest.setLaneNo(client.getUnitNo());
+
+		InProgressTrxDTO trxDTO = commonCardService.isTrxInProgress(gateOutRequest.getCardID());
+
+		if (trxDTO.isInProgress()) {
+
+			List<ExportContainer> exportContainers = null;
+
+			List<ImportContainer> importContainers = null;
+
+			switch (trxDTO.getTrxType()) {
+			case EXPORT:
+				exportContainers = exportGateOutService.populateGateOut(gateOutRequest, gateOutReponse);
+				break;
+			case IMPORT:
+				importContainers = importGateOutService.populateGateOut(gateOutRequest, gateOutReponse);
+				break;
+			case IMPORT_EXPORT:
+				exportContainers = exportGateOutService.populateGateOut(gateOutRequest, gateOutReponse);
+				importContainers = importGateOutService.populateGateOut(gateOutRequest, gateOutReponse);
+				break;
+			case ODD:
+				gateOutReponse = oddGateOutService.populateGateOut(gateOutRequest, gateOutReponse);
+				return gateOutReponse;
+			default:
+				break;
+			}
+
+			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+			UserContext userContext = (UserContext) authentication.getPrincipal();
+			gateOutRequest.setUserName(userContext.getUsername());
+
+			gateOutReponse.setImportContainers(importContainers);
+			gateOutReponse.setExportContainers(exportContainers);
+			gateOutReponse.setTransactionType(trxDTO.getTrxType().name());
+
+			// call opus or cosmos only for approved gate in state
+			if (StringUtils.equalsIgnoreCase(TransactionStatus.APPROVED.getValue(), gateOutReponse.getGateInStatus())) {
+				OpusCosmosBusinessService businessService = containerExternalDataService
+						.getImplementationService(implementor);
+				gateOutReponse = businessService.sendGateOutReadRequest(gateOutRequest, gateOutReponse);
+			}
+
+			return gateOutReponse;
+		} else {
+			throw new BusinessException(
+					"No Valid Gate in Transaction Found for the Scan Card : " + gateOutRequest.getCardID());
+		}
+
+	}
+
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
+	public GateOutReponse saveGateOutInfo(GateOutWriteRequest gateOutWriteRequest) {
+
+		Optional<Card> cardOpt = cardRepository.findOne(gateOutWriteRequest.getCardID());
+		Card card = cardOpt.orElseThrow(
+				() -> new ResultsNotFoundException("Invalid Scan Card ID ! " + gateOutWriteRequest.getCardID()));
+
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		UserContext userContext = (UserContext) authentication.getPrincipal();
+		log.info("userContext.getUsername() " + userContext.getUsername());
+		gateOutWriteRequest.setUserName(userContext.getUsername());
+		Optional<SystemUser> systemUserOpt = systemUserRepository.findOne(userContext.getUserID());
+		SystemUser user = systemUserOpt
+				.orElseThrow(() -> new ResultsNotFoundException("Invalid Login User ! " + userContext.getUsername()));
+
+		Optional<Client> clientOpt = clientRepository.findOne(gateOutWriteRequest.getGateOutClient());
+		Client client = clientOpt.orElseThrow(
+				() -> new ResultsNotFoundException("Invalid lane ID ! " + gateOutWriteRequest.getGateOutClient()));
+		if (StringUtils.isEmpty(client.getUnitNo()))
+			throw new BusinessException("Unit no does not setup for client " + client.getClientID());
+		gateOutWriteRequest.setLaneNo(client.getUnitNo());
+		gateOutWriteRequest.setCosmosPort(client.getCosmosPortNo());
+
+		Optional<Client> boothOpt = clientRepository.findOne(gateOutWriteRequest.getGateOutBooth());
+		Client booth = boothOpt.orElseThrow(
+				() -> new ResultsNotFoundException("Invalid Booth ID ! " + gateOutWriteRequest.getGateOutBooth()));
+
+		gateOutWriteRequest.setHaulageCode(commonCardService.getHaulierCodeByScanCard(card));
+
+		List<ImportContainer> importContainers = null;
+		List<ExportContainer> exportContainers = null;
+
+		if (StringUtils.isEmpty(gateOutWriteRequest.getImpExpFlag()))
+			throw new BusinessException("Invalid GateOutWriteRequest Empty ImpExpFlag");
+		ImpExpFlagStatus impExpFlag = ImpExpFlagStatus.fromValue(gateOutWriteRequest.getImpExpFlag());
+
+		importExportCommonGateOutBusinessService.isValidGateOutLane(client, gateOutWriteRequest);
+		importExportCommonGateOutBusinessService.checkContainerTobeReleasedByPort(client, gateOutWriteRequest);
+
+		GateOutReponse gateOutReponse = new GateOutReponse();
+		gateOutReponse.setGateOUTDateTime(gateOutWriteRequest.getGateOUTDateTime());
+		gateOutReponse.setImportContainers(importContainers);
+		gateOutReponse.setExportContainers(exportContainers);
+
+		if (StringUtils.isEmpty(gateOutWriteRequest.getGateInStatus()))
+			throw new BusinessException(
+					"Gate In status Required for the transaction : " + gateOutWriteRequest.getGateInStatus());
+
+		OpusCosmosBusinessService businessService = null;
+		if (StringUtils.equalsIgnoreCase(TransactionStatus.APPROVED.getValue(),
+				gateOutWriteRequest.getGateInStatus())) {
+			businessService = containerExternalDataService.getImplementationService(implementor);
+			gateOutReponse = businessService.sendGateOutWriteRequest(gateOutWriteRequest, gateOutReponse);
+		}
+
+		/*
+		 * Future<Boolean> impSave = null; Future<Boolean> expSave = null;
+		 */
+
+		switch (impExpFlag) {
+		case IMPORT:
+			importGateOutService.saveGateOutInfo(gateOutWriteRequest, client, user, booth);
+			// expSave = new AsyncResult<Boolean>(true);
+			break;
+		case EXPORT:
+			// impSave = new AsyncResult<Boolean>(true);
+			exportGateOutService.saveGateOutInfo(gateOutWriteRequest, client, user, booth);
+			break;
+		case IMPORT_EXPORT:
+			importGateOutService.saveGateOutInfo(gateOutWriteRequest, client, user, booth);
+			exportGateOutService.saveGateOutInfo(gateOutWriteRequest, client, user, booth);
+			break;
+		default:
+			break;
+		}
+		if (businessService != null && businessService instanceof CosmosService) {
+			gateOutReponse.setTransactionType(impExpFlag.toString());
+			gateOutReponse.setImportContainers(gateOutWriteRequest.getImportContainers());
+			gateOutReponse.setExportContainers(gateOutWriteRequest.getExportContainers());
+			// gateOutReponse.setWhODDContainers(gateOutWriteRequest.getWhoddContainers());
+			gateOutReponse = businessService.sendGateOutReadRequest(null, gateOutReponse);
+		}
+		GateOutMessage gateOutMessage = new GateOutMessage();
+		gateOutMessage.setCode(GateOutMessage.OK);
+		gateOutMessage.setDescription("Saved Successfully!");
+
+		/*
+		 * while (true) { if (impSave.isDone() && expSave.isDone()) {
+		 * 
+		 * gateOutMessage.setCode(GateOutMessage.OK);
+		 * gateOutMessage.setDescription( "Saved Successfully!");
+		 * 
+		 * System.out.println("WHILE LOOP BROKEN!!!!. "); break; }
+		 * System.out.println( "Continue doing something else. ");
+		 * 
+		 * try { Thread.sleep(asyncWaitTime); } catch (InterruptedException e) {
+		 * log.error(e.getMessage()); System.out.println(
+		 * "WHILE LOOP BROKEN ON THREAD EXCEPTION!!!!. " ); break; } }
+		 */
+		gateOutReponse.setMessage(gateOutMessage);
+		return gateOutReponse;
+	}
+
+	@SolasApplicable
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
+	public GateOutReponse testSaveGateOutInfo(GateOutWriteRequest gateOutWriteRequest) {
+
+		exportGateOutService.testSolas(gateOutWriteRequest);
+
+		GateOutReponse gateOutReponse = new GateOutReponse();
+		GateOutMessage gateOutMessage = new GateOutMessage();
+		gateOutMessage.setCode(GateOutMessage.OK);
+		gateOutMessage.setDescription("Saved Successfully!");
+
+		gateOutReponse.setMessage(gateOutMessage);
+		return gateOutReponse;
+
+	}
 
 }

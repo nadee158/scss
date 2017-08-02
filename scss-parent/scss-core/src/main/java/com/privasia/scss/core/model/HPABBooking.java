@@ -140,8 +140,10 @@ public class HPABBooking extends AuditEntity implements Serializable {
 
 			if (StringUtils.isEmpty(dto.getExpContainer01())) {
 				dto.setExpContainer01(hpabBookingDetail.getContainerNumber());
+				dto.setContainer01Size(hpabBookingDetail.getContainerSize().orElse(null));
 			} else {
 				dto.setExpContainer02(hpabBookingDetail.getContainerNumber());
+				dto.setContainer02Size(hpabBookingDetail.getContainerSize().orElse(null));
 			}
 		}
 
@@ -150,10 +152,12 @@ public class HPABBooking extends AuditEntity implements Serializable {
 			if (StringUtils.isEmpty(dto.getImpGatePass01())) {
 				dto.setImpGatePass01(hpabBookingDetail.getImpGatePassNumber());
 				dto.setImpContainer01(hpabBookingDetail.getContainerNumber());
+				dto.setContainer01Size(hpabBookingDetail.getContainerSize().orElse(null));
 
 			} else {
 				dto.setImpGatePass02(hpabBookingDetail.getImpGatePassNumber());
 				dto.setImpContainer02(hpabBookingDetail.getContainerNumber());
+				dto.setContainer02Size(hpabBookingDetail.getContainerSize().orElse(null));
 
 			}
 		}
@@ -162,10 +166,12 @@ public class HPABBooking extends AuditEntity implements Serializable {
 			if (StringUtils.isEmpty(dto.getIttGatePass01())) {
 				dto.setIttGatePass01(hpabBookingDetail.getImpGatePassNumber());
 				dto.setImpContainer01(hpabBookingDetail.getContainerNumber());
+				dto.setContainer01Size(hpabBookingDetail.getContainerSize().orElse(null));
 
 			} else {
 				dto.setIttGatePass02(hpabBookingDetail.getImpGatePassNumber());
 				dto.setImpContainer02(hpabBookingDetail.getContainerNumber());
+				dto.setContainer02Size(hpabBookingDetail.getContainerSize().orElse(null));
 			}
 		}
 

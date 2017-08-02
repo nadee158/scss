@@ -48,12 +48,16 @@ public class BookingDTO implements Serializable {
 
     if (StringUtils.isNotBlank(hpat.getImpGatePass01())) {
       this.setGatePass1(hpat.getImpGatePass01());
+      this.setContainer1(hpat.getImpContainer01());
+      this.setLength1(hpat.getContainer01Size());
     } else {
       this.setGatePass1("");
     }
 
     if (StringUtils.isNotBlank(hpat.getImpGatePass02())) {
       this.setGatePass2(hpat.getImpGatePass02());
+      this.setContainer2(hpat.getImpContainer02());
+      this.setLength2(hpat.getContainer02Size());
     } else {
       this.setGatePass2("");
     }
@@ -81,6 +85,7 @@ public class BookingDTO implements Serializable {
     // this.setBookingEndTime(this.getBookingDateTime(hpatForm.getApptEndDateFormat()));
 
     this.setTruckHeadNo(hpat.getPmNo());
+    
   }
 
   public BookingDTO(HDBSBkgDetailGridDTO gridDtoItem) {

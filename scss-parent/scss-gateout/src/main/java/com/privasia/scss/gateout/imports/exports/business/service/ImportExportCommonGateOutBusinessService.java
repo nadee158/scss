@@ -4,6 +4,7 @@
 package com.privasia.scss.gateout.imports.exports.business.service;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +17,7 @@ import com.privasia.scss.common.enums.ImpExpFlagStatus;
 import com.privasia.scss.common.enums.TransactionStatus;
 import com.privasia.scss.common.exception.BusinessException;
 import com.privasia.scss.core.model.Client;
+import com.privasia.scss.gateout.imports.business.service.PortService;
 
 /**
  * @author Janaka
@@ -23,6 +25,13 @@ import com.privasia.scss.core.model.Client;
  */
 @Service("importExportCommonGateOutBusinessService")
 public class ImportExportCommonGateOutBusinessService {
+	
+	private PortService portService;
+	
+	@Autowired
+	public void setPortService(PortService portService) {
+		this.portService = portService;
+	}
 
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
 	public void isValidGateOutLane(Client client, GateOutWriteRequest gateOutWriteRequest) {
@@ -65,6 +74,23 @@ public class ImportExportCommonGateOutBusinessService {
 			}
 
 		}
+
+	}
+	
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+	public void checkContainerTobeReleasedByPort(Client client, GateOutWriteRequest gateOutWriteRequest) {
+
+		ImpExpFlagStatus impExpFlag = ImpExpFlagStatus.fromValue(gateOutWriteRequest.getImpExpFlag());
+
+		switch (impExpFlag) {
+		case IMPORT:
+		case IMPORT_EXPORT:
+			portService.checkContainerTobeReleasedByPort(client, gateOutWriteRequest.getImportContainers());
+			break;
+		default:
+			break;
+		}
+
 
 	}
 

@@ -79,8 +79,8 @@ public class ExpressBookingService {
     if (card.getSmartCardUser() == null) {
       throw new BusinessException("The Smart Card User is not available for card no " + cardNo);
     }
-
-    if (StringUtils.equals(card.getCompany().getCompanyType().getValue(), CompanyType.HAULAGE.getValue())) {
+    
+    if (!StringUtils.equalsIgnoreCase(card.getCompany().getCompanyType().getValue(), CompanyType.HAULAGE.getValue())) {
       throw new BusinessException("The Smart Card User is not a Haulage Driver");
     }
 

@@ -49,6 +49,8 @@ public class HpatDto implements Serializable {
 	private String impContainer02;
 	private String ittGatePass01;
 	private String ittGatePass02;
+	private String container01Size;
+	private String container02Size;
 
 	public HpatDto() {
 		super();
@@ -257,5 +259,23 @@ public class HpatDto implements Serializable {
 	public void setImpContainer02(String impContainer02) {
 		this.impContainer02 = impContainer02;
 	}
+
+	public String getContainer01Size() {
+		return container01Size;
+	}
+
+	public void setContainer01Size(String container01Size) {
+		this.container01Size = container01Size;
+	}
+
+	public String getContainer02Size() {
+		return container02Size;
+	}
+
+	public void setContainer02Size(String container02Size) {
+		this.container02Size = container02Size;
+	}
+	
+	
 
 }
