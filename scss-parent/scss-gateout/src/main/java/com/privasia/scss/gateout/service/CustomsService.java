@@ -148,8 +148,8 @@ public class CustomsService {
 			deleteCustomsByGateOutClientId(customsDTO.getGateOutClientId());
 			custom = constructCustoms(customsDTO, TransactionType.IMPORT);
 			updateCustomsImport(custom, customsDTO);
-			custom = constructCustoms(customsDTO, TransactionType.EXPORT);
-			updateCustomsExport(custom, customsDTO);
+			//custom = constructCustoms(customsDTO, TransactionType.EXPORT);
+			//updateCustomsExport(custom, customsDTO);
 			return "success";
 		case ODD_IMPORT:
 
@@ -195,7 +195,7 @@ public class CustomsService {
 
 	}
 
-	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRES_NEW, readOnly = false)
 	public String updateCustomsODD(Customs customs, CustomsODDInfo customsODDInfo) {
 		
 		System.out.println("CustomsODDInfo : "+customsODDInfo.toString());
@@ -230,7 +230,7 @@ public class CustomsService {
 					CustomsReport customsReport = new CustomsReport();
 					modelMapper.map(customs, customsReport);
 					customsReport.setCustomsReportID(customs.getCustomsID());
-					customsReportRepository.save(customsReport);
+					//customsReportRepository.save(customsReport);
 				} else {
 					throw new BusinessException("Save customs failed ! ");
 				}
@@ -242,7 +242,7 @@ public class CustomsService {
 		return null;
 	}
 
-	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRES_NEW, readOnly = false)
 	public String updateCustomsImport(Customs customs, CustomsDTO customsDTO) {
 		Predicate byContainerFullOrEmpty = GatePassPredicates.byContainerFullOrEmpty(ContainerFullEmptyType.FULL);
 		Predicate byCancelPickup = GatePassPredicates.byCancelPickup(false);
@@ -281,22 +281,22 @@ public class CustomsService {
 				CustomsReport customsReport = new CustomsReport(); 
 				modelMapper.map(customs, customsReport);
 				customsReport.setCustomsReportID(customs.getCustomsID());
-				customsReportRepository.save(customsReport);
+				//customsReportRepository.save(customsReport);
 			} else {
 				throw new BusinessException("Save customs failed ! ");
 			}
 
 		} else {
-			throw new BusinessException("Save customs failed. Given data not valid ");
+			throw new BusinessException("Save customs failed. Given Import data not valid ");
 		}
 		return "success";
 	}
 
-	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRES_NEW, readOnly = false)
 	public String updateCustomsExport(Customs customs, CustomsDTO customsDTO) {
 
 		Predicate byContainerFullOrEmpty = ExportsPredicates.byContainerFullOrEmpty(ContainerFullEmptyType.FULL);
-		Predicate byGateInStatus = ExportsPredicates.byEirStatus(TransactionStatus.APPROVED);
+		Predicate byGateInStatus = ExportsPredicates.byEirStatus(TransactionStatus.INPROGRESS);
 		
 		List<Long> exportIDList = new ArrayList<>();
 		Map<Long, CustomsExportInfo> exportCustoms = new HashMap<Long,CustomsExportInfo>();  
@@ -332,12 +332,12 @@ public class CustomsService {
 				CustomsReport customsReport = new CustomsReport();
 				modelMapper.map(customs, customsReport);
 				customsReport.setCustomsReportID(customs.getCustomsID());
-				customsReportRepository.save(customsReport);
+				//customsReportRepository.save(customsReport);
 			} else {
 				throw new BusinessException("Save customs failed ! ");
 			}
 		} else {
-			throw new BusinessException("Save customs failed. Given data not valid ");
+			throw new BusinessException("Save customs failed. Given Export data not valid ");
 		}
 		return "success";
 	}
