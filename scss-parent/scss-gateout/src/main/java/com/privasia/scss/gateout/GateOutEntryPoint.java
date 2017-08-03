@@ -28,7 +28,7 @@ import com.privasia.scss.etpws.ETPWsEntryPoint;
 @EnableAutoConfiguration
 @ComponentScan(basePackages = {"com.privasia.scss.cosmos.*", "com.privasia.scss.gateout.*",
     "com.privasia.scss.core.*", "com.privasia.scss.opus.*", "com.privasia.scss.etpws.*",
-    "com.privasia.scss.common.*",})
+    "com.privasia.scss.common.*","com.privasia.scss.hpat.*"})
 @Import({AS400DBConfig.class, SCSSEntryPoint.class, OracleDBConfig.class, ETPWsEntryPoint.class,
     EmailConfig.class})
 @EnableAsync

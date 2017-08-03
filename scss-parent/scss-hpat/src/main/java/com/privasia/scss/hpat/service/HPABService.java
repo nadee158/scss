@@ -347,5 +347,31 @@ public class HPABService {
 //		return true;
 
 	}
+	@Async
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRES_NEW, readOnly = false)
+	public void updateHPABAfterGateOut(String hpabID) {
 
+		Optional<HPABBooking> hpabBookingOpt = hpabBookingRepository.findByBookingIDAndStatus(hpabID, 
+				HpabReferStatus.COMPLETE);
+
+		HPABBooking booking = hpabBookingOpt
+				.orElseThrow(() -> new ResultsNotFoundException("Invalid HPAB Bookibg ID Provided ! " + hpabID));
+
+		booking.setStatus(HpabReferStatus.REJECT);
+
+		hpabBookingRepository.save(booking);
+
+		Optional<String> optGlobalString = wdcGlobalSettingRepository.fetchGlobalStringByGlobalCode("ETP_HPAT"); 
+
+		if (optGlobalString.isPresent()) {
+
+			if (StringUtils.isNotBlank(optGlobalString.get())
+					&& StringUtils.equalsIgnoreCase("Y", optGlobalString.get())) {
+				etpWebserviceClient.updateHpabRejectStatus(hpabID);
+			}
+		}
+
+//		return true;
+
+	}
 }

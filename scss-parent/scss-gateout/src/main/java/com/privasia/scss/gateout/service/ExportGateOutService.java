@@ -34,6 +34,8 @@ import com.privasia.scss.core.repository.ExportsQRepository;
 import com.privasia.scss.core.repository.ExportsRepository;
 import com.privasia.scss.core.repository.ShipCodeRepository;
 import com.privasia.scss.gateout.dto.FileDTO;
+import com.privasia.scss.hpat.service.HPABService;
+
 
 @Service("exportGateOutService")
 public class ExportGateOutService {
@@ -48,6 +50,7 @@ public class ExportGateOutService {
 
 	private ExportsQRepository exportsQRepository;
 	
+	private HPABService hpabService;
 	
 	@Autowired
 	public void setModelMapper(ModelMapper modelMapper) {
@@ -68,6 +71,11 @@ public class ExportGateOutService {
 	public void setExportsQRepository(ExportsQRepository exportsQRepository) {
 		this.exportsQRepository = exportsQRepository;
 	}
+	
+	@Autowired
+	  public void setHpabService(HPABService hpabService) {
+	    this.hpabService = hpabService;
+	  }
 	
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
 	public List<ExportContainer> populateGateOut(GateOutRequest gateOutRequest, GateOutReponse gateOutReponse) {
@@ -162,7 +170,16 @@ public class ExportGateOutService {
 			exports.getBaseCommonGateInOutAttribute().setGateOutClient(gateOutClient);
 			exports.getCommonGateInOut().setRejectReason(exportContainer.getGateOutRemarks());
 
-			exportsRepository.save(exports);
+			exports = exportsRepository.save(exports);
+			if (StringUtils.equalsIgnoreCase(exports.getBaseCommonGateInOutAttribute().getEirStatus().getValue(),
+					TransactionStatus.REJECT.getValue())) {
+				if (exports.getBaseCommonGateInOutAttribute().getHpabBooking() != null && StringUtils
+						.isNotEmpty(exports.getBaseCommonGateInOutAttribute().getHpabBooking().getBookingID())) {
+					hpabService.updateHPABAfterGateOut(
+							exports.getBaseCommonGateInOutAttribute().getHpabBooking().getBookingID());
+				}
+			}
+			
 			//No need to update to Export_Q as the data is already deleted from Export_Q by wdc scheduler and inserted into Export_Q2
 			/*if(StringUtils.equalsIgnoreCase(exports.getCommonGateInOut().getGateInStatus().getValue(), TransactionStatus.APPROVED.getValue())){
 				Optional<ExportsQ> exportQOpt = exportsQRepository.findOne(exports.getExportID());
