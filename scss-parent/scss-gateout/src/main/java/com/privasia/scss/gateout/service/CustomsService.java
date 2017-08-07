@@ -245,24 +245,37 @@ public class CustomsService {
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRES_NEW, readOnly = false)
 	public String updateCustomsImport(Customs customs, CustomsDTO customsDTO) {
 		Predicate byContainerFullOrEmpty = GatePassPredicates.byContainerFullOrEmpty(ContainerFullEmptyType.FULL);
-		Predicate byCancelPickup = GatePassPredicates.byCancelPickup(false);
 		
 		List<Long> gatePassIDList = new ArrayList<>();
 		Map<Long,CustomsGatePassInfo> importCustoms = new HashMap<Long,CustomsGatePassInfo>();  
 		
 		if(customsDTO.getImportContainer01Info() != null && customsDTO.getImportContainer01Info().isPresent()){
+			
+			CustomsGatePassInfo containerInfo = customsDTO.getImportContainer01Info().get();
+			
+			if(containerInfo.getTrxStatus() == null || StringUtils.equalsIgnoreCase(TransactionStatus.REJECT.getValue(), 
+					containerInfo.getTrxStatus()))
+				throw new BusinessException("Invalid Transaction status for Import transaction : "+ containerInfo.getGatePassIDSeq());
+			
 			gatePassIDList.add(customsDTO.getImportContainer01Info().get().getGatePassIDSeq());
 			importCustoms.put(customsDTO.getImportContainer01Info().get().getGatePassIDSeq(), customsDTO.getImportContainer01Info().get());
 		}
 		
 		if(customsDTO.getImportContainer02Info() != null && customsDTO.getImportContainer02Info().isPresent()){
+			
+			CustomsGatePassInfo containerInfo = customsDTO.getImportContainer02Info().get();
+			
+			if(containerInfo.getTrxStatus() == null || StringUtils.equalsIgnoreCase(TransactionStatus.REJECT.getValue(), 
+					containerInfo.getTrxStatus()))
+				throw new BusinessException("Invalid Transaction status for Import transaction : "+ containerInfo.getGatePassIDSeq());
+			
 			gatePassIDList.add(customsDTO.getImportContainer02Info().get().getGatePassIDSeq());
 			importCustoms.put(customsDTO.getImportContainer02Info().get().getGatePassIDSeq(), customsDTO.getImportContainer02Info().get());
 		}
 		
 		Predicate byGatePassIDList = GatePassPredicates.byGatePassIDList(gatePassIDList);
 
-		Predicate condition = ExpressionUtils.allOf(byContainerFullOrEmpty, byCancelPickup, byGatePassIDList);
+		Predicate condition = ExpressionUtils.allOf(byContainerFullOrEmpty, byGatePassIDList);
 		Iterable<GatePass> gatePassList = gatePassRepository.findAll(condition);
 		if ((gatePassList != null && gatePassList.iterator().hasNext())) {
 			gatePassList.forEach(gatePass -> {
@@ -296,24 +309,38 @@ public class CustomsService {
 	public String updateCustomsExport(Customs customs, CustomsDTO customsDTO) {
 
 		Predicate byContainerFullOrEmpty = ExportsPredicates.byContainerFullOrEmpty(ContainerFullEmptyType.FULL);
-		Predicate byGateInStatus = ExportsPredicates.byEirStatus(TransactionStatus.REJECT);
 		
 		List<Long> exportIDList = new ArrayList<>();
 		Map<Long, CustomsExportInfo> exportCustoms = new HashMap<Long,CustomsExportInfo>();  
 		
 		if(customsDTO.getExportContainer01Info() != null && customsDTO.getExportContainer01Info().isPresent()){
+			
+			CustomsExportInfo containerInfo = customsDTO.getExportContainer01Info().get();
+			
+			if(containerInfo.getTrxStatus() == null || StringUtils.equalsIgnoreCase(TransactionStatus.APPROVED.getValue(), 
+					containerInfo.getTrxStatus()))
+				throw new BusinessException("Invalid Transaction status for export transaction : "+ containerInfo.getExportIDSeq());
+			
 			exportIDList.add(customsDTO.getExportContainer01Info().get().getExportIDSeq());
 			exportCustoms.put(customsDTO.getExportContainer01Info().get().getExportIDSeq(), customsDTO.getExportContainer01Info().get());
 		}
 		
 		if(customsDTO.getExportContainer02Info() != null && customsDTO.getExportContainer02Info().isPresent()){
+			
+			CustomsExportInfo containerInfo = customsDTO.getExportContainer02Info().get();
+			
+			if(containerInfo.getTrxStatus() == null || StringUtils.equalsIgnoreCase(TransactionStatus.APPROVED.getValue(), 
+					containerInfo.getTrxStatus()))
+				throw new BusinessException("Invalid Transaction status for export transaction : "+ containerInfo.getExportIDSeq());
+			
+			
 			exportIDList.add(customsDTO.getExportContainer02Info().get().getExportIDSeq());
 			exportCustoms.put(customsDTO.getExportContainer02Info().get().getExportIDSeq(), customsDTO.getExportContainer02Info().get());
 		}
 		
 		Predicate byExportsIDList = ExportsPredicates.byExportsIDList(exportIDList);
 
-		Predicate condition = ExpressionUtils.allOf(byContainerFullOrEmpty, byGateInStatus, byExportsIDList);
+		Predicate condition = ExpressionUtils.allOf(byContainerFullOrEmpty, byExportsIDList);
 		Iterable<Exports> exportsList = exportsRepository.findAll(condition);
 		if ((exportsList != null && exportsList.iterator().hasNext())) {
 			
