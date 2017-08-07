@@ -81,8 +81,8 @@ public class BookingDTO implements Serializable {
     // }
 
     this.setBookingType("CY");
-    // this.setBookingStartTime(this.getBookingDateTime(hpatForm.getApptStartDateFormat()));
-    // this.setBookingEndTime(this.getBookingDateTime(hpatForm.getApptEndDateFormat()));
+    //this.setBookingStartTime(this.getBookingDateTime(hpatForm.getApptStartDateFormat()));
+    //this.setBookingEndTime(this.getBookingDateTime(hpatForm.getApptEndDateFormat()));
 
     this.setTruckHeadNo(hpat.getPmNo());
     

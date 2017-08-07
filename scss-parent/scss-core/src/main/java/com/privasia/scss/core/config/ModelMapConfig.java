@@ -117,6 +117,7 @@ public class ModelMapConfig {
     modelMapper.addMappings(ModelMapPropertyMap.referRejectReasonDTOToReferRejectReason());
     modelMapper.addMappings(ModelMapPropertyMap.WHODDToWHoddDTO());
     modelMapper.addMappings(ModelMapPropertyMap.laneOpenToReferLaneOpenDTO());
+    modelMapper.addMappings(ModelMapPropertyMap.CustomsToCustomsReport());
     return modelMapper;
   }
 
