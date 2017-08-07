@@ -13,7 +13,7 @@ import java.util.Map;
  */
 public enum HpabReferStatus implements Enumable {
 
-  ACTIVE("ACTV"), CANCEL("CAN"), COMPLETE("COMP"), EXPIRED("EXPIRED");
+  ACTIVE("ACTV"), CANCEL("CAN"), COMPLETE("COMP"), EXPIRED("EXPIRED"), REJECT("REJ");
 
 
   private final String hpatStatus;

@@ -85,6 +85,29 @@ public class ETPWebserviceClient extends WebServiceGatewaySupport {
     }
 
   }
+  public void updateHpabRejectStatus(String bookingId) {
+	    try {
+	      ObjectFactory objFac = new ObjectFactory();
+	      UpdateHpatStatusRequestType reqObj = new UpdateHpatStatusRequestType();
+	      reqObj.setBookingId(bookingId);
+	      reqObj.setStatus(BookingStatusType.REJ);
+	      JAXBElement<UpdateHpatStatusRequestType> request = objFac.createUpdateHpatStatusRequest(reqObj);
+
+	      log.info("Requesting web service for " + bookingId);
+	      log.info("Requesting web service status for " + BookingStatusType.REJ.value());
+	      log.info("clientDefaultUri " + clientDefaultUri);
+	      log.info("wsServerUri " + wsServerUri);
+
+	      JAXBElement<UpdateHpatStatusResponseType> response =
+	          (JAXBElement<UpdateHpatStatusResponseType>) getWebServiceTemplate().marshalSendAndReceive(wsServerUri,
+	              request, new SoapActionCallback(clientDefaultUri + "/updateHpatStatus"));
+	      log.error("Requesting web service for " + response.getValue().getCode());
+	      
+	    } catch (Exception ex) {
+	      log.error(ex.getMessage());
+	    }
+
+	  }
 
   public List<SolasETPDTO> updateSolasToEtp(List<SolasETPDTO> solasETPDTOs) {
 
