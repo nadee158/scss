@@ -20,13 +20,13 @@ import org.springframework.web.bind.annotation.RestController;
 import com.privasia.scss.common.dto.ApiResponseObject;
 import com.privasia.scss.common.dto.BookingInfoDTO;
 import com.privasia.scss.common.dto.CustomResponseEntity;
+import com.privasia.scss.common.dto.GateInRequest;
 import com.privasia.scss.common.dto.GateInWriteRequest;
 import com.privasia.scss.common.dto.GateTicketInfoDTO;
 import com.privasia.scss.gatein.express.service.ExpressBookingService;
 import com.privasia.scss.gatein.express.service.ExpressGatePassService;
 import com.privasia.scss.gatein.express.service.ExpressODDService;
 import com.privasia.scss.gatein.util.GateInWriteRequestValidator;
-
 
 /**
  * @author Nadeeshani Senevirathna
@@ -36,70 +36,55 @@ import com.privasia.scss.gatein.util.GateInWriteRequestValidator;
 @RequestMapping("**/express")
 public class ExpressController {
 
+	private ExpressBookingService expressBookingService;
 
-  private ExpressBookingService expressBookingService;
+	private ExpressGatePassService expressGatePassService;
 
-  private ExpressGatePassService expressGatePassService;
+	private ExpressODDService expressODDService;
 
-  private GateInWriteRequestValidator gateInWriteRequestValidator;
+	@Autowired
+	public void setExpressBookingService(ExpressBookingService expressBookingService) {
+		this.expressBookingService = expressBookingService;
+	}
 
-  private ExpressODDService expressODDService;
+	@Autowired
+	public void setExpressGatePassService(ExpressGatePassService expressGatePassService) {
+		this.expressGatePassService = expressGatePassService;
+	}
 
+	@Autowired
+	public void setExpressODDService(ExpressODDService expressODDService) {
+		this.expressODDService = expressODDService;
+	}
 
-  @Autowired
-  public void setExpressBookingService(ExpressBookingService expressBookingService) {
-    this.expressBookingService = expressBookingService;
-  }
+	@RequestMapping(value = "/getbookinginfo/{cardNo}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public CustomResponseEntity<ApiResponseObject<?>> getBookingInfo(@PathVariable Long cardNo,
+			HttpServletRequest request) {
 
-  @Autowired
-  public void setExpressGatePassService(ExpressGatePassService expressGatePassService) {
-    this.expressGatePassService = expressGatePassService;
-  }
+		BookingInfoDTO dto = expressBookingService.getBookingInfo(cardNo);
 
-  @Autowired
-  public void setGateInWriteRequestValidator(GateInWriteRequestValidator gateInWriteRequestValidator) {
-    this.gateInWriteRequestValidator = gateInWriteRequestValidator;
-  }
+		return new CustomResponseEntity<ApiResponseObject<?>>(new ApiResponseObject<BookingInfoDTO>(HttpStatus.OK, dto),
+				HttpStatus.OK);
+	}
 
-  @Autowired
-  public void setExpressODDService(ExpressODDService expressODDService) {
-    this.expressODDService = expressODDService;
-  }
+	@RequestMapping(value = "/getgateticketinfo", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public CustomResponseEntity<ApiResponseObject<?>> getGateTicketInfo(@RequestBody GateInRequest gateInRequest)
+			throws BindException {
 
-  @RequestMapping(value = "/getbookinginfo/{cardNo}", method = RequestMethod.GET,
-      produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-  public CustomResponseEntity<ApiResponseObject<?>> getBookingInfo(@PathVariable Long cardNo,
-      HttpServletRequest request) {
+		GateTicketInfoDTO gateTicketInfoDTO = expressGatePassService.getGateTicketInfo(gateInRequest);
 
-    BookingInfoDTO dto = expressBookingService.getBookingInfo(cardNo);
+		return new CustomResponseEntity<ApiResponseObject<?>>(
+				new ApiResponseObject<GateTicketInfoDTO>(HttpStatus.OK, gateTicketInfoDTO), HttpStatus.OK);
+	}
 
-    return new CustomResponseEntity<ApiResponseObject<?>>(new ApiResponseObject<BookingInfoDTO>(HttpStatus.OK, dto),
-        HttpStatus.OK);
-  }
+	@RequestMapping(value = "/getgateticketinfoodd", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public CustomResponseEntity<ApiResponseObject<?>> getGateTicketInfoODD(
+			@RequestBody GateInWriteRequest gateInWriteRequest) {
 
-  @RequestMapping(value = "/getgateticketinfo", method = RequestMethod.PUT,
-      produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-  public CustomResponseEntity<ApiResponseObject<?>> getGateTicketInfo(
-      @Valid @RequestBody GateInWriteRequest gateInWriteRequest, BindingResult bindingResult) throws BindException {
-    gateInWriteRequestValidator.validate(gateInWriteRequest, bindingResult);
-    if (bindingResult.hasErrors()) {
-      throw new BindException(bindingResult);
-    }
-    GateTicketInfoDTO gateTicketInfoDTO = expressGatePassService.getGateTicketInfo(gateInWriteRequest);
+		GateTicketInfoDTO gateTicketInfoDTO = expressODDService.getGateTicketInfoODD(gateInWriteRequest);
 
-    return new CustomResponseEntity<ApiResponseObject<?>>(
-        new ApiResponseObject<GateTicketInfoDTO>(HttpStatus.OK, gateTicketInfoDTO), HttpStatus.OK);
-  }
-
-  @RequestMapping(value = "/getgateticketinfoodd", method = RequestMethod.POST,
-      produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-  public CustomResponseEntity<ApiResponseObject<?>> getGateTicketInfoODD(
-      @RequestBody GateInWriteRequest gateInWriteRequest) {
-
-    GateTicketInfoDTO gateTicketInfoDTO = expressODDService.getGateTicketInfoODD(gateInWriteRequest);
-
-    return new CustomResponseEntity<ApiResponseObject<?>>(
-        new ApiResponseObject<GateTicketInfoDTO>(HttpStatus.OK, gateTicketInfoDTO), HttpStatus.CREATED);
-  }
+		return new CustomResponseEntity<ApiResponseObject<?>>(
+				new ApiResponseObject<GateTicketInfoDTO>(HttpStatus.OK, gateTicketInfoDTO), HttpStatus.CREATED);
+	}
 
 }

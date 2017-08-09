@@ -245,6 +245,9 @@ public class ImportExportGateInService {
     switch (impExpFlag) {
       case IMPORT:
         if (StringUtils.equalsIgnoreCase(gateInWriteRequest.getGateInStatus(), TransactionStatus.APPROVED.getValue())) {
+        	
+        	System.out.println("&&&&&&&&&&&&&&  gateInWriteRequest.getImportContainers().size &&&&&&&&&& "+gateInWriteRequest.getImportContainers().size());
+        	
           gateInResponse = businessService.sendGateInWriteRequest(gateInWriteRequest);
           gateInWriteRequest.setImportContainers(gateInResponse.getImportContainers());
         } else {

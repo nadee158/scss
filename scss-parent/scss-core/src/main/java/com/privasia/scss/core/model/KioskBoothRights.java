@@ -106,7 +106,7 @@ public class KioskBoothRights extends AuditEntity implements Serializable {
 	@Embedded
 	@AttributeOverrides({ @AttributeOverride(name = "containerNumber", column = @Column(name = "CT1")),
 			@AttributeOverride(name = "containerISOCode", column = @Column(name = "CT1ISO")),
-			@AttributeOverride(name = "containerLength", column = @Column(name = "CT1S")),
+			//@AttributeOverride(name = "containerLength", column = @Column(name = "CT1S")),
 			@AttributeOverride(name = "containerFullOrEmpty", column = @Column(name = "CT1FE")),
 			@AttributeOverride(name = "cancelPickup", column = @Column(name = "CT1CANPICKUP")),
 			@AttributeOverride(name = "location", column = @Column(name = "CT1LOC")),
@@ -114,15 +114,14 @@ public class KioskBoothRights extends AuditEntity implements Serializable {
 			@AttributeOverride(name = "others", column = @Column(name = "CT1_OTHERS")),
 			@AttributeOverride(name = "rejectRemarks", column = @Column(name = "CT1_REJECT_REMARK")),
 			@AttributeOverride(name = "customCheck", column = @Column(name = "CT1_CUSTOM_CHECK")),
-			// @AttributeOverride(name = "shipper", column = @Column(name =
-			// "CT1S")),
+			@AttributeOverride(name = "shipper", column = @Column(name ="CT1S")),
 			@AttributeOverride(name = "line", column = @Column(name = "CT1L")) })
 	private KioskBoothContainerAttribute container01;
 
 	@Embedded
 	@AttributeOverrides({ @AttributeOverride(name = "containerNumber", column = @Column(name = "CT2")),
 			@AttributeOverride(name = "containerISOCode", column = @Column(name = "CT2ISO")),
-			@AttributeOverride(name = "containerLength", column = @Column(name = "CT2S")),
+			@AttributeOverride(name = "shipper", column = @Column(name = "CT2S")),
 			@AttributeOverride(name = "containerFullOrEmpty", column = @Column(name = "CT2FE")),
 			@AttributeOverride(name = "cancelPickup", column = @Column(name = "CT2CANPICKUP")),
 			@AttributeOverride(name = "location", column = @Column(name = "CT2LOC")),
@@ -130,15 +129,13 @@ public class KioskBoothRights extends AuditEntity implements Serializable {
 			@AttributeOverride(name = "others", column = @Column(name = "CT2_OTHERS")),
 			@AttributeOverride(name = "rejectRemarks", column = @Column(name = "CT2_REJECT_REMARK")),
 			@AttributeOverride(name = "customCheck", column = @Column(name = "CT2_CUSTOM_CHECK")),
-			// @AttributeOverride(name = "shipper", column = @Column(name =
-			// "CT2S")),
 			@AttributeOverride(name = "line", column = @Column(name = "CT2L")) })
 	private KioskBoothContainerAttribute container02;
 
 	@Embedded
 	@AttributeOverrides({ @AttributeOverride(name = "containerNumber", column = @Column(name = "CT3")),
 			@AttributeOverride(name = "containerISOCode", column = @Column(name = "CT3ISO")),
-			@AttributeOverride(name = "containerLength", column = @Column(name = "CT3S")),
+			@AttributeOverride(name = "shipper", column = @Column(name = "CT3S")),
 			@AttributeOverride(name = "containerFullOrEmpty", column = @Column(name = "CT3FE")),
 			@AttributeOverride(name = "cancelPickup", column = @Column(name = "CT3CANPICKUP")),
 			@AttributeOverride(name = "location", column = @Column(name = "CT3LOC")),
@@ -146,15 +143,13 @@ public class KioskBoothRights extends AuditEntity implements Serializable {
 			@AttributeOverride(name = "others", column = @Column(name = "CT3_OTHERS")),
 			@AttributeOverride(name = "rejectRemarks", column = @Column(name = "CT3_REJECT_REMARK")),
 			@AttributeOverride(name = "customCheck", column = @Column(name = "CT3_CUSTOM_CHECK")),
-			// @AttributeOverride(name = "shipper", column = @Column(name =
-			// "CT3S")),
 			@AttributeOverride(name = "line", column = @Column(name = "CT3L")) })
 	private KioskBoothContainerAttribute container03;
 
 	@Embedded
 	@AttributeOverrides({ @AttributeOverride(name = "containerNumber", column = @Column(name = "CT4")),
 			@AttributeOverride(name = "containerISOCode", column = @Column(name = "CT4ISO")),
-			@AttributeOverride(name = "containerLength", column = @Column(name = "CT4S")),
+			@AttributeOverride(name = "shipper", column = @Column(name = "CT4S")),
 			@AttributeOverride(name = "containerFullOrEmpty", column = @Column(name = "CT4FE")),
 			@AttributeOverride(name = "cancelPickup", column = @Column(name = "CT4CANPICKUP")),
 			@AttributeOverride(name = "location", column = @Column(name = "CT4LOC")),
@@ -162,8 +157,6 @@ public class KioskBoothRights extends AuditEntity implements Serializable {
 			@AttributeOverride(name = "others", column = @Column(name = "CT4_OTHERS")),
 			@AttributeOverride(name = "rejectRemarks", column = @Column(name = "CT4_REJECT_REMARK")),
 			@AttributeOverride(name = "customCheck", column = @Column(name = "CT4_CUSTOM_CHECK")),
-			// @AttributeOverride(name = "shipper", column = @Column(name =
-			// "CT4S")),
 			@AttributeOverride(name = "line", column = @Column(name = "CT4L")) })
 	private KioskBoothContainerAttribute container04;
 

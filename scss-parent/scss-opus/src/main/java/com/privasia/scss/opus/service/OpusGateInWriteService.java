@@ -72,7 +72,7 @@ public class OpusGateInWriteService {
 		HttpEntity<OpusGateInWriteRequest> request = new HttpEntity<OpusGateInWriteRequest>(opusGateInWriteRequest,
 				headers);
 
-		log.info("OpusGateInWriteResponse : -" + (new Gson()).toJson(opusGateInWriteRequest));
+		log.info("OpusGateInWriteRequest : -" + (new Gson()).toJson(opusGateInWriteRequest));
 
 		opusRequestResponseDTO.setSendTime(LocalDateTime.now());
 		ResponseEntity<OpusGateInWriteResponse> response = restTemplate.postForEntity(gateInWriteResponseURL, request,
@@ -111,11 +111,16 @@ public class OpusGateInWriteService {
 
 	public OpusGateInWriteRequest constructOpusGateInWriteRequest(GateInWriteRequest gateInWriteRequest) {
 		OpusGateInWriteRequest opusGateInWriteRequest = new OpusGateInWriteRequest();
-
+		
+		System.out.println("&&&&&&&&&&&&&&  gateInWriteRequest.getImportContainers().size  2 &&&&&&&&&& "+gateInWriteRequest.getImportContainers().size());
+		
 		List<GIWriteRequestExportContainer> exportContainerListCY = opusDTOConstructService
 				.exportContainerListToGIWriteRequestExportContainerList(gateInWriteRequest);
 		List<GIWriteRequestImportContainer> importContainerListCY = opusDTOConstructService
 				.importContainerListToGIWriteRequestImportContainerList(gateInWriteRequest);
+		
+		
+		System.out.println("&&&&&&&&&&&&&&  gateInWriteRequest.getImportContainers().size  4 &&&&&&&&&& "+gateInWriteRequest.getImportContainers().size());
 
 		opusGateInWriteRequest.setGateINDateTime(DateUtil.getJsonDateFromDate(gateInWriteRequest.getGateInDateTime()));
 		opusGateInWriteRequest.setHaulageCode(gateInWriteRequest.getHaulageCode());
@@ -128,6 +133,9 @@ public class OpusGateInWriteService {
 		opusGateInWriteRequest.setTrailerWeight(Integer.toString(gateInWriteRequest.getTrailerWeight()));
 		opusGateInWriteRequest.setTruckPlateNo(gateInWriteRequest.getTruckPlateNo());
 		opusGateInWriteRequest.setTruckWeight(Integer.toString(gateInWriteRequest.getTruckWeight()));
+		
+		System.out.println("&&&&&&&&&&&&&&  opusGateInWriteRequest &&&&&&&&&& "+opusGateInWriteRequest);
+		
 		return opusGateInWriteRequest;
 	}
 

@@ -37,7 +37,6 @@ import com.privasia.scss.core.repository.ClientRepository;
 import com.privasia.scss.core.repository.SystemUserRepository;
 import com.privasia.scss.core.service.CommonCardService;
 import com.privasia.scss.cosmos.service.CosmosService;
-import com.privasia.scss.gateout.imports.business.service.PortService;
 import com.privasia.scss.gateout.imports.exports.business.service.ImportExportCommonGateOutBusinessService;
 import com.privasia.scss.gateout.whodd.service.ODDGateOutService;
 
@@ -260,13 +259,7 @@ public class ImportExportGateOutService {
 		default:
 			break;
 		}
-		if (businessService != null && businessService instanceof CosmosService) {
-			gateOutReponse.setTransactionType(impExpFlag.toString());
-			gateOutReponse.setImportContainers(gateOutWriteRequest.getImportContainers());
-			gateOutReponse.setExportContainers(gateOutWriteRequest.getExportContainers());
-			// gateOutReponse.setWhODDContainers(gateOutWriteRequest.getWhoddContainers());
-			gateOutReponse = businessService.sendGateOutReadRequest(null, gateOutReponse);
-		}
+		
 		GateOutMessage gateOutMessage = new GateOutMessage();
 		gateOutMessage.setCode(GateOutMessage.OK);
 		gateOutMessage.setDescription("Saved Successfully!");

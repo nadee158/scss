@@ -36,14 +36,14 @@ public class KioskBoothContainerAttribute  implements Serializable {
 
 	private String customCheck;
 
-	// private String shipper;
+	private String shipper;
 
 	private String line;
 
 	private String containerNumber;
 
-	@Type(type = "com.privasia.scss.common.enumusertype.ContainerSizeEnumUserType")
-	private ContainerSize containerLength;
+	/*@Type(type = "com.privasia.scss.common.enumusertype.ContainerSizeEnumUserType")
+	private ContainerSize containerLength;*/
 
 	private String containerISOCode;
 
@@ -102,11 +102,13 @@ public class KioskBoothContainerAttribute  implements Serializable {
 		this.customCheck = customCheck;
 	}
 
-	/*
-	 * public String getShipper() { return shipper; }
-	 * 
-	 * public void setShipper(String shipper) { this.shipper = shipper; }
-	 */
+	public String getShipper() {
+		return shipper;
+	}
+
+	public void setShipper(String shipper) {
+		this.shipper = shipper;
+	}
 
 	public String getLine() {
 		return line;
@@ -124,13 +126,13 @@ public class KioskBoothContainerAttribute  implements Serializable {
 		this.containerNumber = containerNumber;
 	}
 
-	public ContainerSize getContainerLength() {
+	/*public ContainerSize getContainerLength() {
 		return containerLength;
 	}
 
 	public void setContainerLength(ContainerSize containerLength) {
 		this.containerLength = containerLength;
-	}
+	}*/
 
 	public String getContainerISOCode() {
 		return containerISOCode;

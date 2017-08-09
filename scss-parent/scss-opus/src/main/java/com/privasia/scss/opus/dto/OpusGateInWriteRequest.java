@@ -4,6 +4,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 public class OpusGateInWriteRequest extends OpusBaseGateWriteRequest implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -71,10 +74,7 @@ public class OpusGateInWriteRequest extends OpusBaseGateWriteRequest implements 
 
 	@Override
 	public String toString() {
-		return "OpusGateInWriteRequest [userID=" + getUserID() + ", laneNo=" + getLaneNo() + ", truckHeadNo=" + getTruckHeadNo()
-				+ ",truckWeight=" + truckWeight + ", trailerNo=" + trailerNo + ", trailerWeight="
-				+ trailerWeight + ", truckPlateNo=" + getTruckPlateNo() + ", gateINDateTime=" + gateINDateTime + ", haulageCode=" + getHaulageCode() 
-				+ ", exportContainerListCY=" + exportContainerListCY + ", importContainerListCY=" + importContainerListCY + "]";
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
 	}
 
 }

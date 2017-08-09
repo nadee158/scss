@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.privasia.scss.common.dto.GateInRequest;
 import com.privasia.scss.common.dto.GateInResponse;
 import com.privasia.scss.common.dto.GateInWriteRequest;
 import com.privasia.scss.common.dto.GateTicketInfoDTO;
@@ -54,26 +55,32 @@ public class ExpressGatePassService {
   }
 
   @Transactional(propagation = Propagation.REQUIRED, readOnly = false, value = "transactionManager")
-  public GateTicketInfoDTO getGateTicketInfo(GateInWriteRequest gateInWriteRequest) {
-    log.warn("getGateTicketInfo starting: gateInWriteRequest:-  " + gateInWriteRequest);
-    // hardcoding value as requested
-    boolean isCheckPreArrival = false;
-
-    if (gateInWriteRequest.getImportContainers() == null || gateInWriteRequest.getImportContainers().isEmpty()) {
-      throw new BusinessException("Import Containers are not available!");
-    }
-
-    // validateGatePass for import containers
-    log.warn("validateGatePass for import containers starting: gateInWriteRequest:-  " + gateInWriteRequest);
-    gateInWriteRequest.getImportContainers().forEach(importContainer -> {
-      gatePassValidationService.validateGatePass(gateInWriteRequest.getCardID(), importContainer.getGatePassNo(),
-          isCheckPreArrival, gateInWriteRequest.getHpatBookingId(), gateInWriteRequest.getTruckHeadNo());
-    });
-    log.warn("validateGatePass for import containers finished: gateInWriteRequest:-  " + gateInWriteRequest);
-
+  public GateTicketInfoDTO getGateTicketInfo(GateInRequest gateInRequest) {
+    log.warn("getGateTicketInfo starting: gateInRequest:-  " + gateInRequest);
+   
+    if (gateInRequest.getGatePass1() == null && gateInRequest.getGatePass2() == null) 
+    	throw new BusinessException("Gate Pass Information are not available!");
+    
+    //do the populate
+    GateInResponse gateInResponse =  importExportGateInService.populateGateIn(gateInRequest);
+    
+    
+    GateInWriteRequest gateInWriteRequest = new GateInWriteRequest();
+    gateInWriteRequest.setImpExpFlag("I");
+    gateInWriteRequest.setCardID(gateInRequest.getCardID());
+    gateInWriteRequest.setGateInClient(gateInRequest.getClientID());
+    gateInWriteRequest.setGateInStatus("A");
+    gateInWriteRequest.setLaneNo(gateInResponse.getLaneNo());
+    gateInWriteRequest.setTruckPlateNo(gateInResponse.getTruckPlateNo());
+    gateInWriteRequest.setTruckHeadNo(gateInResponse.getTruckHeadNo());
+    gateInWriteRequest.setHpatBookingId(gateInRequest.getHpabSeqId());
+    gateInWriteRequest.setImportContainers(gateInResponse.getImportContainers());
+    gateInWriteRequest.setGateInDateTime(gateInRequest.getGateInDateTime());
+    gateInWriteRequest.setTrailerNo("AXBN8198");
+    
     // saving gate in info
     log.warn("saving gate in info starting: gateInWriteRequest:-  " + gateInWriteRequest);
-    GateInResponse gateInResponse = importExportGateInService.saveGateInInfo(gateInWriteRequest);
+    gateInResponse = importExportGateInService.saveGateInInfo(gateInWriteRequest);
     log.warn("saving gate in info completed: gateInResponse :- " + gateInResponse);
 
     GateTicketInfoDTO gateTicketInfoDTO = printGatePassInfo(gateInWriteRequest, gateInResponse);

@@ -7,9 +7,11 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -240,8 +242,8 @@ public class HDBSService {
     return hdbsBookingResponse;
   }
 
-  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-  public HDBSBkgGridDTO createPredicatesAndFindHDBS(long cardNo) {
+  @Transactional(value = "transactionManager", propagation = Propagation.REQUIRES_NEW, readOnly = true)
+  public HDBSBkgGridDTO createPredicatesAndFindHDBS(Card card) {
 
     LocalDateTime dateFrom = LocalDateTime.now().minus(1, ChronoUnit.HOURS);
     LocalDateTime dateTo = LocalDateTime.now().plus(2, ChronoUnit.HOURS);
@@ -252,29 +254,15 @@ public class HDBSService {
 
     List<HDBSStatus> hdbsStatusList = new ArrayList<>();
     hdbsStatusList.add(HDBSStatus.ACCEPTED);
-
-    Predicate byCardNo = HDBSBookingMasterPredicates.byCardNo(String.valueOf(cardNo));
-    Predicate byAPPTDateFrom = HDBSBookingMasterPredicates.byApptDateTimeFromBetween(dateFrom, dateTo);
-    Predicate byDrayageBooking = HDBSBookingMasterPredicates.byDrayageBooking(0);
-    Predicate byHDBSStatus = HDBSBookingMasterPredicates.byHDBSStatusTypes(hdbsStatusList);
-    Predicate byNullableSCSS = HDBSBookingMasterPredicates.byNullableSCSSStatusCode();
-
-    Predicate condition =
-        ExpressionUtils.allOf(byCardNo, byAPPTDateFrom, byDrayageBooking, byHDBSStatus, byNullableSCSS);
-
-    OrderSpecifier<LocalDateTime> orderByAPPStartDate = HDBSBookingMasterPredicates.orderByAppointmentStartDateAsc();
-
-    Iterable<HDBSBkgMaster> bookingList = hdbsBookingMasterRepository.findAll(condition, orderByAPPStartDate);
-
-    bookingList.forEach((hdbsbkgMaster) -> {
-      if (!(hdbsbkgMaster.getHdbsBookingDetails() == null || hdbsbkgMaster.getHdbsBookingDetails().isEmpty())) {
-        hdbsbkgMaster.getHdbsBookingDetails().forEach(detail -> {
-          HDBSBkgDetailGridDTO hdbs = constructDetailGridDetailDTO(detail);
-          setDuration(hdbs);
-          hdbsBookingList.add(hdbs);
-        });
-      }
-    });
+    
+    Optional<List<HDBSBkgDetailGridDTO>> hdbsBookingListOpt = createPredicatesAndFindHDBS(card, dateFrom, dateTo, hdbsStatusList);
+    
+    
+    if(hdbsBookingListOpt.isPresent()){
+    	hdbsBookingList = hdbsBookingListOpt.get();
+    }else{
+    	hdbsBookingList = null;
+    }
 
     gridDTo.setHdbsBkgDetailGridDTOList(hdbsBookingList);
     return gridDTo;
@@ -302,16 +290,20 @@ public class HDBSService {
     Iterable<HDBSBkgMaster> bookingList = hdbsBookingMasterRepository.findAll(condition, orderByAPPStartDate);
 
     Iterator<HDBSBkgMaster> bookingIterator = bookingList.iterator();
-
+    
+    Set<HDBSBkgDetailGridDTO> gridSet = new HashSet<HDBSBkgDetailGridDTO>();
+    
     if (bookingIterator.hasNext()) {
       bookingList.forEach((hdbsbkgMaster) -> {
         hdbsbkgMaster.getHdbsBookingDetails().forEach(detail -> {
           HDBSBkgDetailGridDTO hdbs = constructDetailGridDetailDTO(detail);
           setDuration(hdbs);
-          hdbsBookingList.get().add(hdbs);
+          gridSet.add(hdbs);
         });
 
       });
+      
+      hdbsBookingList.get().addAll(gridSet);
     }
     return hdbsBookingList;
 

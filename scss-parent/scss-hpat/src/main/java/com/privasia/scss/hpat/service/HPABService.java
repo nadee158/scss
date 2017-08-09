@@ -99,7 +99,7 @@ public class HPABService {
 
 	}
 
-	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRES_NEW, readOnly = true)
 	public List<HpatDto> findEtpHpab4ImpAndExp(Long cardId, LocalDateTime systemDateTime, List<String> bookingTypes)
 			throws ResultsNotFoundException {
 
