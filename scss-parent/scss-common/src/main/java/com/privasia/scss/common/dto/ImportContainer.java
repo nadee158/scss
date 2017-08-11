@@ -7,9 +7,6 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.privasia.scss.common.enums.ContainerPosition;
-import com.privasia.scss.common.enums.GateInOutStatus;
-import com.privasia.scss.common.enums.GatePassStatus;
 import com.privasia.scss.common.util.DateUtil;
 
 public class ImportContainer extends BaseContainer implements Serializable {

@@ -52,6 +52,7 @@ public class JwtTokenFactory {
         claims.put("staffName", userContext.getStaffName());
         claims.put("staffNumber", userContext.getStaffNumber());
         claims.put("userID", userContext.getUserID());
+        claims.put("clientIP", userContext.getClientIP());
 
         DateTime currentTime = new DateTime();
 
@@ -77,6 +78,7 @@ public class JwtTokenFactory {
         claims.put("staffName", userContext.getStaffName());
         claims.put("staffNumber", userContext.getStaffNumber());
         claims.put("userID", userContext.getUserID());
+        claims.put("clientIP", userContext.getClientIP());
         
         DateTime currentTime = new DateTime();
         

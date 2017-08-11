@@ -21,6 +21,7 @@ import org.springframework.util.Assert;
 
 import com.privasia.scss.common.security.model.UserContext;
 import com.privasia.scss.core.model.Login;
+import com.privasia.scss.core.security.model.token.SCSSUsernamePasswordAuthenticationToken;
 import com.privasia.scss.core.service.SecurityService;
 
 /**
@@ -43,16 +44,22 @@ public class SCSSAuthenticationProvider implements AuthenticationProvider {
   @Override
   public Authentication authenticate(Authentication authentication) throws AuthenticationException {
     Assert.notNull(authentication, "No authentication data provided");
-
+    
     String username = (String) authentication.getPrincipal();
     String password = (String) authentication.getCredentials();
+    
+    SCSSUsernamePasswordAuthenticationToken scssauth = (SCSSUsernamePasswordAuthenticationToken) authentication;
+    
+    String clientIP = scssauth.getClientIP();
+    
+    System.out.println("$$$$$$$$$$$$$$$$  clientIP : &&&&&&&&& "+ clientIP);
 
     Login loguser = securityService.getByUsername(username)
         .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
-
-    List<Long> functionList = loguser.getRole().getRoleRights().stream()
+    
+    /*List<Long> functionList = loguser.getRole().getRoleRights().stream()
         .map(roleRights -> roleRights.getRoleRightsID().getFunction().getFunctionID())
-        .collect(Collectors.toList());
+        .collect(Collectors.toList());*/
 
 
     if (!encoder.matches(password, loguser.getPassword())) {
@@ -61,11 +68,14 @@ public class SCSSAuthenticationProvider implements AuthenticationProvider {
 
     if (loguser.getRole() == null)
       throw new InsufficientAuthenticationException("User has no roles assigned");
+    
+   // String clientIP = "192.168.234.204";
+    List<Long> functionList = securityService.getRoleAndClientRights(loguser.getRole().getRoleID(), clientIP);
 
     UserContext userContext = UserContext.create(loguser.getSystemUser().getSystemUserID(),
         loguser.getUserName(), AuthorityUtils.createAuthorityList(loguser.getRole().getRoleName()),
         functionList, loguser.getSystemUser().getCommonContactAttribute().getPersonName(),
-        loguser.getSystemUser().getStaffNumber());
+        loguser.getSystemUser().getStaffNumber(), clientIP);
 
 
 

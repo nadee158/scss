@@ -14,11 +14,14 @@ public class LoginRequest {
 	
 	private String username;
     private String password;
+    private String clientIP;
 
     @JsonCreator
-    public LoginRequest(@JsonProperty("username") String username, @JsonProperty("password") String password) {
+    public LoginRequest(@JsonProperty("username") String username, @JsonProperty("password") String password,
+    		@JsonProperty("clientIP") String clientIP) {
         this.username = username;
         this.password = password;
+        this.clientIP = clientIP;
     }
 
     public String getUsername() {
@@ -28,5 +31,11 @@ public class LoginRequest {
     public String getPassword() {
         return password;
     }
+
+	public String getClientIP() {
+		return clientIP;
+	}
+    
+    
 
 }

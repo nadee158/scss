@@ -330,13 +330,4 @@ public class BaseContainer implements Serializable {
     this.rtgExecustionDateTime = rtgExecustionDateTime;
   }
 
-
-  public static long getSerialversionuid() {
-    return serialVersionUID;
-  }
-
-  // #####################################################################
-
-
-
 }

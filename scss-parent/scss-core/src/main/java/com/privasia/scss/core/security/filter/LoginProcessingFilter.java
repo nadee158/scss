@@ -32,6 +32,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.privasia.scss.core.config.WebUtil;
 import com.privasia.scss.core.exception.AuthMethodNotSupportedException;
 import com.privasia.scss.core.security.model.LoginRequest;
+import com.privasia.scss.core.security.model.token.SCSSUsernamePasswordAuthenticationToken;
 
 
 public class LoginProcessingFilter extends AbstractAuthenticationProcessingFilter {
@@ -64,11 +65,18 @@ public class LoginProcessingFilter extends AbstractAuthenticationProcessingFilte
 
         LoginRequest loginRequest = objectMapper.readValue(request.getReader(), LoginRequest.class);
         
-        if (StringUtils.isBlank(loginRequest.getUsername()) || StringUtils.isBlank(loginRequest.getPassword())) {
-            throw new AuthenticationServiceException("Username or Password not provided");
+        System.out.println("Authentication attemptAuthentication "+loginRequest.getClientIP());
+        
+        if (StringUtils.isBlank(loginRequest.getUsername()) || StringUtils.isBlank(loginRequest.getPassword())
+        		|| StringUtils.isBlank(loginRequest.getClientIP())) {
+            throw new AuthenticationServiceException("Username or Password or clientIP not provided");
         }
 
-        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword());
+        //UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword());
+        
+        UsernamePasswordAuthenticationToken token = 
+        
+        new SCSSUsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword(), loginRequest.getClientIP());
 
         return this.getAuthenticationManager().authenticate(token);
     }

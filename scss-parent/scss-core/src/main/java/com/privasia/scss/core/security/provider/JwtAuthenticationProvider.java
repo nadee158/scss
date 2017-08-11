@@ -67,9 +67,10 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
     String staffNumber = jwsClaims.getBody().get("staffNumber", String.class);
 
     Long userID = (jwsClaims.getBody().get("userID", Integer.class)).longValue();
+    
+    String clientIP = (jwsClaims.getBody().get("clientIP", String.class));
 
-
-    UserContext context = UserContext.create(userID, subject, authorities, functions, staffName, staffNumber);
+    UserContext context = UserContext.create(userID, subject, authorities, functions, staffName, staffNumber, clientIP);
 
     return new JwtAuthenticationToken(context, context.getAuthorities());
   }

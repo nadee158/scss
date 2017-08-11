@@ -80,18 +80,23 @@ public class RefreshTokenEndpoint {
     String subject = refreshToken.getSubject();
     Login loguser = securityService.getByUsername(subject)
         .orElseThrow(() -> new UsernameNotFoundException("User not found: " + subject));
+    
+    String clientIP = refreshToken.getClaims().getBody().get("clientIP", String.class);
 
-    List<Long> functionList = loguser.getRole().getRoleRights().stream()
+    /*List<Long> functionList = loguser.getRole().getRoleRights().stream()
         .map(roleRights -> roleRights.getRoleRightsID().getFunction().getFunctionID())
-        .collect(Collectors.toList());
+        .collect(Collectors.toList());*/
 
     if (loguser.getRole() == null)
       throw new InsufficientAuthenticationException("User has no roles assigned");
+    
+    System.out.println("clientIP : "+clientIP);
+    List<Long> functionList = securityService.getRoleAndClientRights(loguser.getRole().getRoleID(), clientIP);
 
     UserContext userContext = UserContext.create(loguser.getSystemUser().getSystemUserID(),
         loguser.getUserName(), AuthorityUtils.createAuthorityList(loguser.getRole().getRoleName()),
         functionList, loguser.getSystemUser().getCommonContactAttribute().getPersonName(),
-        loguser.getSystemUser().getStaffNumber());
+        loguser.getSystemUser().getStaffNumber(), clientIP);
 
     JwtToken accessToken = tokenFactory.createAccessJwtToken(userContext);
 

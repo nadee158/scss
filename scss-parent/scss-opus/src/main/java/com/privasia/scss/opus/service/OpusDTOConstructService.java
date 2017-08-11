@@ -52,10 +52,6 @@ public class OpusDTOConstructService {
 		giWriteRequestImpContainer.setContainerFullOrEmpty(commonContainerDTO.getContainerFullOrEmpty());
 		giWriteRequestImpContainer.setPositionOnTruck(importContainer.getContainerPosition());
 		
-		
-		System.out.println("commonContainerDTO.getContainerNumber(): " + commonContainerDTO.getContainerNumber());
-		System.out.println("commonContainerDTO.getContainerFullOrEmpty(): " + commonContainerDTO.getContainerFullOrEmpty());
-		System.out.println("importContainer.getContainerPosition(): " + importContainer.getContainerPosition());
 
 		return giWriteRequestImpContainer;
 	}
@@ -621,8 +617,6 @@ public class OpusDTOConstructService {
 				giWriteRequestImportContainers.add(importContainerToGIWriteRequestImportContainer(importContainer));
 			});
 			return giWriteRequestImportContainers;
-		}else{
-			System.out.println("&&&&&&&&&&&&&&  gateInWriteRequest.getImportContainers().size  3 &&&&&&&&&& "+gateInWriteRequest.getImportContainers().size());
 		}
 		return null;
 	}
