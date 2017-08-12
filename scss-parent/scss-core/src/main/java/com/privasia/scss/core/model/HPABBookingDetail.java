@@ -262,8 +262,9 @@ public class HPABBookingDetail extends AuditEntity implements Serializable {
 		if (exportContainer.getBaseCommonGateInOutAttribute() == null) {
 			exportContainer.setBaseCommonGateInOutAttribute(new BaseCommonGateInOutDTO());
 		}
+		if(StringUtils.isNotBlank(this.hpabBooking.getBookingID())){
 		exportContainer.getBaseCommonGateInOutAttribute().setHpabBooking(this.hpabBooking.getBookingID());
-
+		}
 		if (exportContainer.getContainer() == null) {
 			exportContainer.setContainer(new CommonContainerDTO());
 		}
@@ -292,9 +293,12 @@ public class HPABBookingDetail extends AuditEntity implements Serializable {
 		if(StringUtils.isNotEmpty(this.expSealNo02)){
 			exportContainer.getSealAttribute().setSeal02Number(this.expSealNo02);
 		}
-		
+		if(StringUtils.isNotBlank(this.containerISO)){
 		exportContainer.setHpabISOCode(containerISO);
+		}
+		if(StringUtils.isNotBlank(this.expBookingNo)){
 		exportContainer.setBookingNo(expBookingNo);
+		}
 		return exportContainer;
 	}
 
@@ -307,25 +311,36 @@ public class HPABBookingDetail extends AuditEntity implements Serializable {
 		if (importContainer.getBaseCommonGateInOutAttribute() == null) {
 			importContainer.setBaseCommonGateInOutAttribute(new BaseCommonGateInOutDTO());
 		}
+		if(StringUtils.isNotBlank(this.hpabBooking.getBookingID())){
 		importContainer.getBaseCommonGateInOutAttribute().setHpabBooking(this.hpabBooking.getBookingID());
-
+		}
 		if (importContainer.getContainer() == null) {
 			importContainer.setContainer(new CommonContainerDTO());
 		}
 		// importContainer.getContainer().setContainerNumber(this.containerNumber);
+		if(StringUtils.isNotBlank(this.containerISO)){
 		importContainer.getContainer().setContainerISOCode(this.containerISO);
+		}
 		if (getContainerSize().isPresent()) {
+			if(StringUtils.isNotBlank(this.containerSize))
 			importContainer.getContainer().setContainerHeight(Integer.parseInt(this.containerSize));
 		}
-
+		if(StringUtils.isNotBlank(this.containerType)){
 		importContainer.setContainerType(this.containerType);
+		}
+		if(StringUtils.isNotBlank(this.expSealNo01) || StringUtils.isNotBlank(this.expSealNo02)){
 		importContainer.setSealAttribute(new CommonSealDTO());
 		importContainer.getSealAttribute().setSeal01Number(this.expSealNo01);
 		importContainer.getSealAttribute().setSeal02Number(this.expSealNo02);
+		}
+		if(StringUtils.isNotBlank(this.impGatePassNumber)){
 		importContainer.setGatePassNo(Long.parseLong(this.impGatePassNumber));
+		}
 		if (getContainerLength().isPresent()) {
+			if(StringUtils.isNotBlank(this.containerLength))
 			importContainer.setContainerLength(Integer.parseInt(this.containerLength));
 		}
+		
 
 		return importContainer;
 	}

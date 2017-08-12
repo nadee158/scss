@@ -155,9 +155,9 @@ public class ImportExportGateInService {
      * if the refer id avaliable then fetch here. then pass export container list
      */
     // refere reject details
-    if (gateInRequest.getReferID().isPresent()) {
+    /*if (gateInRequest.getReferID().isPresent()) {
       gateInResponse = gateInReferService.fetchReferDataForExport(gateInRequest.getReferID().get());
-    }
+    }*/
 
     gateInResponse.setCheckPreArrival(gateInRequest.isCheckPreArrival());
     gateInResponse.setGateINDateTime(gateInRequest.getGateInDateTime());
@@ -176,7 +176,14 @@ public class ImportExportGateInService {
     OpusCosmosBusinessService businessService = containerExternalDataService.getImplementationService(implementor);
     businessService.sendGateInReadRequest(gateInRequest, gateInResponse);
 
-
+    /*
+     * if the refer id avaliable then fetch here. then pass export container list
+     */
+    // refere reject details
+    if (gateInRequest.getReferID().isPresent()) {
+      gateInResponse = gateInReferService.fetchReferDataForExport(gateInRequest.getReferID().get(),gateInResponse);
+    }
+    
     // assign details from hpab booking
     if ((StringUtils.isNotEmpty(gateInRequest.getHpabSeqId())) && (!(gateInRequest.getReferID().isPresent()))) {
       gateInResponse = hpabService.populateHpabForImpExp(gateInResponse, gateInRequest.getHpabSeqId());

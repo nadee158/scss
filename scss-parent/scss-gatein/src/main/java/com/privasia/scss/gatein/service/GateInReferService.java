@@ -42,12 +42,12 @@ public class GateInReferService {
 	}
 
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-	public GateInResponse fetchReferDataForExport(Long referID) {
+	public GateInResponse fetchReferDataForExport(Long referID, GateInResponse gateInResponse ) {
 		Optional<ReferReject> optReferReject = referRejectRepository.findOne(referID);
 		if (optReferReject.isPresent()) {
 			ReferReject referReject = optReferReject.get();
 			if (!(referReject.getReferRejectDetails() == null || referReject.getReferRejectDetails().isEmpty())) {
-				GateInResponse gateInResponse = new GateInResponse();
+//				GateInResponse gateInResponse = new GateInResponse();
 				gateInResponse.setExpWeightBridge(referReject.getExpWeightBridge());
 				gateInResponse.setGateINDateTime(referReject.getReferDateTime());
 				gateInResponse.setPmVerified(referReject.getPmVerified());
@@ -66,10 +66,13 @@ public class GateInReferService {
 				gateInResponse.setTrailerWeight(referReject.getTrailerWeight());
 				gateInResponse.setTruckWeight(referReject.getPmWeight());
 				
-				List<ExportContainer> exportContainers = new ArrayList<ExportContainer>();
+				List<ExportContainer> exportContainers =  gateInResponse.getExportContainers(); //new ArrayList<ExportContainer>();
 				referReject.getReferRejectDetails().forEach(referRejectDetail -> {
-					ExportContainer exportContainer = new ExportContainer();
-
+//					ExportContainer exportContainer = new ExportContainer();
+					Optional<ExportContainer> exportContainerOpt = exportContainers.stream().filter(
+							p -> p.getContainer().getContainerNumber().equals(referRejectDetail.getContainerNo()))
+							.findFirst();
+					ExportContainer exportContainer = exportContainerOpt.get();
 					if (referRejectDetail.getSolas() != null) {
 						if (exportContainer.getSolas() == null) {
 							exportContainer.setSolas(new CommonSolasDTO());
@@ -100,6 +103,7 @@ public class GateInReferService {
 					exportContainer.getContainer().setContainerNumber(referRejectDetail.getContainerNo());
 					exportContainer.getContainer().setContainerISOCode(referRejectDetail.getContainerIsoCode());
 					exportContainer.setShippingLine(referRejectDetail.getLineCode());
+					if(!exportContainers.contains(exportContainer))
 					exportContainers.add(exportContainer);
 
 				});
