@@ -291,6 +291,7 @@ public class ImportExportGateInService {
 
     if (StringUtils.isNotEmpty(gateInWriteRequest.getHpatBookingId())) {
       hpabService.updateHPABAfterGateIn(gateInWriteRequest.getHpatBookingId());
+      hpabService.updateETPAfterGateIn(gateInWriteRequest.getHpatBookingId());
     }
 
     GateOutMessage gateOutMessage = new GateOutMessage();

@@ -234,7 +234,7 @@ public class CosmosService implements OpusCosmosBusinessService {
 					|| gateOutWriteRequest.getExportContainers().isEmpty())) {
 				cosmosGateOutExportService.setContainerStatus(gateOutWriteRequest.getExportContainers());
 			}
-		
+
 		} catch (JAXBException e) {
 			e.printStackTrace();
 			throw new BusinessException("Error Sending request to cosmos!");

@@ -320,8 +320,8 @@ public class HPABService {
 
 	}
 
-	@Async
-	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRES_NEW, readOnly = false)
+	
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
 	public void updateHPABAfterGateIn(String hpabID) {
 
 		Optional<HPABBooking> hpabBookingOpt = hpabBookingRepository.findByBookingIDAndStatus(hpabID, 
@@ -333,6 +333,12 @@ public class HPABService {
 		booking.setStatus(HpabReferStatus.COMPLETE);
 
 		hpabBookingRepository.save(booking);
+	}
+	
+	
+	@Async
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRES_NEW, readOnly = true)
+	public void updateETPAfterGateIn(String hpabID) {
 
 		Optional<String> optGlobalString = wdcGlobalSettingRepository.fetchGlobalStringByGlobalCode("ETP_HPAT"); 
 
@@ -343,10 +349,9 @@ public class HPABService {
 				etpWebserviceClient.updateHpabStatus(hpabID);
 			}
 		}
-
-//		return true;
-
 	}
+	
+	
 	@Async
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRES_NEW, readOnly = false)
 	public void updateHPABAfterGateOut(String hpabID) {
