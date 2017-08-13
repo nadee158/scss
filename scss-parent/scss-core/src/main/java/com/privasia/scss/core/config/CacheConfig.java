@@ -1,5 +1,7 @@
 package com.privasia.scss.core.config;
 
+import java.util.concurrent.TimeUnit;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Bean;

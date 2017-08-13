@@ -1,6 +1,7 @@
 package com.privasia.scss.core.service;
 
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.ListOperations;
@@ -35,6 +36,7 @@ public class CachedTokenValidatorService {
       listOps.leftPush("userLoginList", key);
 
       redisTemplate.opsForSet().add("tokens", token);
+      redisTemplate.expire(key, 10, TimeUnit.DAYS);
 
       // String refreshTokenKey = refreshToken;
       // redisTemplate.opsForHash().put(refreshTokenKey, "token", UUID.randomUUID().toString());
@@ -61,6 +63,7 @@ public class CachedTokenValidatorService {
 
       if (existingRecord != null) {
         redisTemplate.opsForHash().put(key, "token", newtoken);
+        
       }
 
       // String refreshTokenKey = refreshToken;

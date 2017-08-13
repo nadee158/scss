@@ -14,14 +14,14 @@
 	<url>http://maven.apache.org</url>
 
 	<inceptionYear>2016</inceptionYear>
-	
+
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
-	
+
 	<dependencies>
-	
+
 		<dependency>
 			<groupId>org.springframework.ws</groupId>
 			<artifactId>spring-ws-core</artifactId>
@@ -31,7 +31,49 @@
 
 	<build>
 		<plugins>
-			
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>properties-maven-plugin</artifactId>
+				<version>1.0-alpha-2</version>
+				<executions>
+					<!-- Associate the read-project-properties goal with the initialize 
+						phase, to read the properties file. -->
+					<execution>
+						<phase>initialize</phase>
+						<goals>
+							<goal>read-project-properties</goal>
+						</goals>
+						<configuration>
+							<files>
+								<file>${basedir}/src/main/resources/ws-${activatedProperties}.properties</file>
+							</files>	
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.6</version>
+				<executions>
+					<execution>
+						<phase>initialize</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target>
+								<echo>Displaying value of properties</echo>
+								<echo>[ws.url] ${ws.server.uri}</echo>
+								<echo>[project.activeProfiles] ${activatedProperties}</echo>
+							</target>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
 			<!-- tag::wsdl[] -->
 			<plugin>
 				<groupId>org.jvnet.jaxb2.maven2</groupId>
@@ -45,28 +87,29 @@
 					</execution>
 				</executions>
 				<configuration>
+					<echo>Displaying value of properties</echo>
+					<echo>[ws.etp.url] ${ws.server.uri}</echo>
 					<schemaLanguage>WSDL</schemaLanguage>
 					<generateDirectory>${project.build.sourceDirectory}</generateDirectory>
 					<generatePackage>com.privasia.scss.etpws.service</generatePackage>
 					<schemas>
 						<schema>
-							<!--<url>http://172.21.95.22:8081/u/services/etpIntegrationService?wsdl</url> -->
-							
-							<url>http://172.21.77.80:8081/eTerminalPlus/services/etpIntegrationService?wsdl</url>
+							<!--<url>http://172.21.77.80:8081/eTerminalPlus/services/etpIntegrationService?wsdl</url> -->
+							<url>${ws.server.uri}?wsdl</url>
 						</schema>
 					</schemas>
-					<forceRegenerate>false</forceRegenerate>  
-                    <removeOldOutput>false</removeOldOutput>
+					<forceRegenerate>false</forceRegenerate>
+					<removeOldOutput>false</removeOldOutput>
 				</configuration>
 			</plugin>
 			<!-- end::wsdl[] -->
 		</plugins>
 		<resources>
-	        <resource>
-	            <directory>src/main/resources</directory>
-	            <filtering>true</filtering>
-	        </resource>
-	    </resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
 		<finalName>scss-etpws</finalName>
 	</build>
 

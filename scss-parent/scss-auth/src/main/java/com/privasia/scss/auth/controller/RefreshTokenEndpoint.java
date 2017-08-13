@@ -90,7 +90,6 @@ public class RefreshTokenEndpoint {
     if (loguser.getRole() == null)
       throw new InsufficientAuthenticationException("User has no roles assigned");
     
-    System.out.println("clientIP : "+clientIP);
     List<Long> functionList = securityService.getRoleAndClientRights(loguser.getRole().getRoleID(), clientIP);
 
     UserContext userContext = UserContext.create(loguser.getSystemUser().getSystemUserID(),
