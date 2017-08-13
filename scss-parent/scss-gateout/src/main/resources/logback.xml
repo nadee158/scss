@@ -2,10 +2,13 @@
 <configuration>
 
 	<property name="FILE_NAME" value="scss-gateout" />
+	<property name="COSMOS_FILE_NAME" value="scss-cosmos-gate-out" />
 	<property name="LOG_HOME" value="${catalina.base}/scss_logs/${FILE_NAME}" />
+	<property name="COSMOS_LOG_HOME" value="${catalina.base}/scss_logs/scss-cosmos" />
 
-	<appender name="FILE-AUDIT"	class="ch.qos.logback.core.rolling.RollingFileAppender">
-	
+	<appender name="FILE-AUDIT"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+
 		<file>${LOG_HOME}/${FILE_NAME}.log</file>
 		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
 			<Pattern>
@@ -15,18 +18,46 @@
 
 		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
 			<!-- rollover daily -->
-			<fileNamePattern>${LOG_HOME}/archived/${FILE_NAME}.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
-			<timeBasedFileNamingAndTriggeringPolicy	class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+			<fileNamePattern>${LOG_HOME}/archived/${FILE_NAME}.%d{yyyy-MM-dd}.%i.log
+			</fileNamePattern>
+			<timeBasedFileNamingAndTriggeringPolicy
+				class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
 				<maxFileSize>50MB</maxFileSize>
 			</timeBasedFileNamingAndTriggeringPolicy>
 		</rollingPolicy>
 
 	</appender>
 
+	<appender name="COSMOS-FILE-AUDIT"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+
+		<file>${COSMOS_LOG_HOME}/${COSMOS_FILE_NAME}.log</file>
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<Pattern>
+				%d{yyyy-MM-dd HH:mm:ss} - %msg%n
+			</Pattern>
+		</encoder>
+
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<!-- rollover daily -->
+			<fileNamePattern>${COSMOS_LOG_HOME}/archived/${COSMOS_FILE_NAME}.%d{yyyy-MM-dd}.%i.log
+			</fileNamePattern>
+			<timeBasedFileNamingAndTriggeringPolicy
+				class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				<maxFileSize>50MB</maxFileSize>
+			</timeBasedFileNamingAndTriggeringPolicy>
+		</rollingPolicy>
+
+	</appender>
+
+	<logger name="com.privasia.scss.cosmos" level="info" additivity="false">
+		<appender-ref ref="COSMOS-FILE-AUDIT" />
+	</logger>
+
 	<logger name="com.privasia.scss" level="debug" additivity="false">
 		<appender-ref ref="FILE-AUDIT" />
 	</logger>
-	
+
 	<logger name="org.springframework" level="error" additivity="false">
 		<appender-ref ref="FILE-AUDIT" />
 	</logger>
