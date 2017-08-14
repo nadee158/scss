@@ -48,9 +48,9 @@ public class ClientController {
 	
 	@RequestMapping(value = "/opengate/{clientID}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public CustomResponseEntity<ApiResponseObject<?>> openGate(@PathVariable Long clientID) {
-		String status = lPSService.openGate(clientID);
+		//String status = lPSService.openGate(clientID);
 		 return new CustomResponseEntity<ApiResponseObject<?>>(
-			        new ApiResponseObject<String>(HttpStatus.OK, status), HttpStatus.OK);
+			        new ApiResponseObject<String>(HttpStatus.OK, "Transaction Successful. LPS is in Manual Control Mode."), HttpStatus.OK);
 	}
 	
 }
