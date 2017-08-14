@@ -63,7 +63,7 @@ public class AGSClientService {
 		java.io.StringWriter sw = new StringWriter();
 		jaxbMarshaller.marshal(writeRequest, sw);
 		
-		System.out.println("requestXML : "+ sw.toString());
+		log.debug("requestXML : "+ sw.toString());
 		
 		/*String s = "<?xml version=\"1.0\" encoding=\"ASCII\" standalone=\"no\"?>\n"
 				+ "<SGS2Cosmos>\n"
@@ -119,7 +119,7 @@ public class AGSClientService {
 		
 		String responseXML = null;
 		responseXML = sendRequestXml(sw.toString(), portNo);
-		System.out.println("responseXML : "+ responseXML);
+		log.debug("responseXML : "+ responseXML);
 
 		if (StringUtils.isEmpty(responseXML))
 			throw new BusinessException(

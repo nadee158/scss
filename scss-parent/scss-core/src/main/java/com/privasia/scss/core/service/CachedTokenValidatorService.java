@@ -36,7 +36,7 @@ public class CachedTokenValidatorService {
       listOps.leftPush("userLoginList", key);
 
       redisTemplate.opsForSet().add("tokens", token);
-      redisTemplate.expire(key, 10, TimeUnit.DAYS);
+      redisTemplate.expire(key, 2, TimeUnit.DAYS);
 
       // String refreshTokenKey = refreshToken;
       // redisTemplate.opsForHash().put(refreshTokenKey, "token", UUID.randomUUID().toString());
