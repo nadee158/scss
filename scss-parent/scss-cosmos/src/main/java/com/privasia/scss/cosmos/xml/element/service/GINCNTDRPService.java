@@ -78,15 +78,14 @@ public class GINCNTDRPService {
 
 	private void setIMDG(GINCNTDRP gincntdrp, ExportContainer exportContainer) {
 		if (StringUtils.isNotEmpty(exportContainer.getImdg())) {
-			gincntdrp.setCNIMSE(exportContainer.getImdg());
 			gincntdrp.setCIM1SE(exportContainer.getImdg());
 			gincntdrp.setISA1SE(exportContainer.getImdgLabelID());
 
 			if (StringUtils.equals(exportContainer.getImdg(), "5.1")
 					|| StringUtils.equals(exportContainer.getImdg(), "5.2")) {
-				gincntdrp.setISA1SE(exportContainer.getImdg());
+				gincntdrp.setISI1SE(exportContainer.getImdg());
 			} else {
-				gincntdrp.setISA1SE(exportContainer.getImdg().substring(0, 1));
+				gincntdrp.setISI1SE(exportContainer.getImdg().substring(0, 1));
 			}
 
 		}
