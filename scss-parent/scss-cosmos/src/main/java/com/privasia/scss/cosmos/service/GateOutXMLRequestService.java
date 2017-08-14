@@ -115,7 +115,7 @@ public class GateOutXMLRequestService {
     gincntdrp.setOVHGSE("OVHGSE");
     gincntdrp.setOVSRSE("OVSRSE");
 
-    gincntdrp.setCNIMSE("CNIMSE");
+    //gincntdrp.setCNIMSE("CNIMSE");
     gincntdrp.setCIM1SE("CIM1SE");
     gincntdrp.setISA1SE("ISA1SE");
 
