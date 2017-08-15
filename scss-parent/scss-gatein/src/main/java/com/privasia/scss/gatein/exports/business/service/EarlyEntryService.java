@@ -71,7 +71,9 @@ public class EarlyEntryService {
 				throw new BusinessException("Container " + container.getContainer().getContainerNumber()
 						+ "vessel ETA date not provided for early entry !");
 			//vesselETADate = vesselETADate.minusDays(1);
-			earlyEnrtyDate = now.until(vesselETADate, ChronoUnit.DAYS)+1;
+//			earlyEnrtyDate = now.until(vesselETADate, ChronoUnit.DAYS)+1;
+			earlyEnrtyDate = now.truncatedTo(ChronoUnit.DAYS).until(vesselETADate.truncatedTo(ChronoUnit.DAYS),
+					ChronoUnit.DAYS);
 			// System.out.println("earlyEnrtyDate "+earlyEnrtyDate);
 			// Before Eta Date
 			if (earlyEnrtyDate > 1) {
