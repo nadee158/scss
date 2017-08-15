@@ -15,6 +15,7 @@ public class CustomsGatePassInfo implements Serializable {
 	private Long gatePassIDSeq;
 	private String fullOrEmpty; 
 	private String trxStatus;
+	private String rejectRemarks;
 
 	public Long getGatePassIDSeq() {
 		return gatePassIDSeq;
@@ -38,6 +39,14 @@ public class CustomsGatePassInfo implements Serializable {
 
 	public void setFullOrEmpty(String fullOrEmpty) {
 		this.fullOrEmpty = fullOrEmpty;
+	}
+	
+	public String getRejectRemarks() {
+		return rejectRemarks;
+	}
+
+	public void setRejectRemarks(String rejectRemarks) {
+		this.rejectRemarks = rejectRemarks;
 	}
 
 	@Override

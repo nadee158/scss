@@ -9,118 +9,116 @@ import com.privasia.scss.common.enums.SolasInstructionType;
 
 public class CommonSolasDTO implements Serializable {
 
-  /**
-   * 
-   */
-  private static final long serialVersionUID = 1L;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
-  private Integer mgw = 0;
+	private Integer mgw = 0;
 
-  private String faLedgerCode;
+	private String faLedgerCode;
 
-  private String solasRefNumber;
+	private String solasRefNumber;
 
-  private String solasDetailID;
+	private String solasDetailID;
 
-  private String solasInstruction = SolasInstructionType.VGM_INSTRUCTION_NO_SOLAS.getValue();
+	private String solasInstruction = SolasInstructionType.VGM_INSTRUCTION_NO_SOLAS.getValue();
 
-  private String shipperVGM;
+	private String shipperVGM;
 
-  private String vgmWitnessName;
+	private String vgmWitnessName;
 
-  private String vgmWitnessID;
+	private String vgmWitnessID;
 
-  private String vgmWeighingStation;
+	private String vgmWeighingStation;
 
-  public Integer getMgw() {
-    return mgw;
-  }
+	private boolean directEntry = false;
 
-  public void setMgw(Integer mgw) {
-    this.mgw = mgw;
-  }
+	public Integer getMgw() {
+		return mgw;
+	}
 
-  public String getFaLedgerCode() {
-    return faLedgerCode;
-  }
+	public void setMgw(Integer mgw) {
+		this.mgw = mgw;
+	}
 
-  public void setFaLedgerCode(String faLedgerCode) {
-    this.faLedgerCode = faLedgerCode;
-  }
+	public String getFaLedgerCode() {
+		return faLedgerCode;
+	}
 
-  public String getSolasRefNumber() {
-    return solasRefNumber;
-  }
+	public void setFaLedgerCode(String faLedgerCode) {
+		this.faLedgerCode = faLedgerCode;
+	}
 
-  public void setSolasRefNumber(String solasRefNumber) {
-    this.solasRefNumber = solasRefNumber;
-  }
+	public String getSolasRefNumber() {
+		return solasRefNumber;
+	}
 
-  public String getSolasDetailID() {
-    return solasDetailID;
-  }
+	public void setSolasRefNumber(String solasRefNumber) {
+		this.solasRefNumber = solasRefNumber;
+	}
 
-  public void setSolasDetailID(String solasDetailID) {
-    this.solasDetailID = solasDetailID;
-  }
+	public String getSolasDetailID() {
+		return solasDetailID;
+	}
 
-  public String getSolasInstruction() {
-    return solasInstruction;
-  }
+	public void setSolasDetailID(String solasDetailID) {
+		this.solasDetailID = solasDetailID;
+	}
 
-  public void setSolasInstruction(String solasInstruction) {
-    this.solasInstruction = solasInstruction;
-  }
+	public String getSolasInstruction() {
+		return solasInstruction;
+	}
 
-  public String getShipperVGM() {
-    return shipperVGM;
-  }
+	public void setSolasInstruction(String solasInstruction) {
+		this.solasInstruction = solasInstruction;
+	}
 
-  public void setShipperVGM(String shipperVGM) {
-    this.shipperVGM = shipperVGM;
-  }
+	public String getShipperVGM() {
+		return shipperVGM;
+	}
 
-  public String getVgmWitnessName() {
-    return vgmWitnessName;
-  }
+	public void setShipperVGM(String shipperVGM) {
+		this.shipperVGM = shipperVGM;
+	}
 
-  public void setVgmWitnessName(String vgmWitnessName) {
-    this.vgmWitnessName = vgmWitnessName;
-  }
+	public String getVgmWitnessName() {
+		return vgmWitnessName;
+	}
 
-  public String getVgmWitnessID() {
-    return vgmWitnessID;
-  }
+	public void setVgmWitnessName(String vgmWitnessName) {
+		this.vgmWitnessName = vgmWitnessName;
+	}
 
-  public void setVgmWitnessID(String vgmWitnessID) {
-    this.vgmWitnessID = vgmWitnessID;
-  }
+	public String getVgmWitnessID() {
+		return vgmWitnessID;
+	}
 
-  public String getVgmWeighingStation() {
-    return vgmWeighingStation;
-  }
+	public void setVgmWitnessID(String vgmWitnessID) {
+		this.vgmWitnessID = vgmWitnessID;
+	}
 
-  public void setVgmWeighingStation(String vgmWeighingStation) {
-    this.vgmWeighingStation = vgmWeighingStation;
-  }
+	public String getVgmWeighingStation() {
+		return vgmWeighingStation;
+	}
 
-  @Override
-  public String toString() {
-    return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
-  }
+	public void setVgmWeighingStation(String vgmWeighingStation) {
+		this.vgmWeighingStation = vgmWeighingStation;
+	}
+	
+	public boolean isDirectEntry() {
+		return directEntry;
+	}
 
-  public CommonSolasDTO initializeWithDefaultValues() {
-    this.mgw = 50;
-    this.faLedgerCode = "456";
-    this.solasRefNumber = "758";
-    this.solasDetailID = "54";
-    this.solasInstruction = SolasInstructionType.VGM_INSTRUCTION_NO_SOLAS.getValue();
-    this.shipperVGM = "878";
-    this.vgmWitnessName = "vgmWiNme";
-    this.vgmWitnessID = "10";
-    this.vgmWeighingStation = "stn";
-    return this;
-  }
+	public void setDirectEntry(boolean directEntry) {
+		this.directEntry = directEntry;
+	}
 
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
+	}
+
+	
 
 }

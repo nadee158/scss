@@ -17,6 +17,8 @@ public class CustomsODDInfo implements Serializable {
 	private String fullOrEmptyCon02;
 	private String trxStatusCon01;
 	private String trxStatusCon02;
+	private String rejectRemarksCon01;
+	private String rejectRemarksCon02;
 
 	public  Long getOddIdSeq() {
 		return oddIdSeq;
@@ -56,6 +58,22 @@ public class CustomsODDInfo implements Serializable {
 
 	public void setTrxStatusCon02(String trxStatusCon02) {
 		this.trxStatusCon02 = trxStatusCon02;
+	}
+	
+	public String getRejectRemarksCon01() {
+		return rejectRemarksCon01;
+	}
+
+	public void setRejectRemarksCon01(String rejectRemarksCon01) {
+		this.rejectRemarksCon01 = rejectRemarksCon01;
+	}
+
+	public String getRejectRemarksCon02() {
+		return rejectRemarksCon02;
+	}
+
+	public void setRejectRemarksCon02(String rejectRemarksCon02) {
+		this.rejectRemarksCon02 = rejectRemarksCon02;
 	}
 
 	@Override

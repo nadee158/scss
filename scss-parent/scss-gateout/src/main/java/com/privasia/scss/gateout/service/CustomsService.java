@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.resource.transaction.spi.TransactionCoordinatorOwner;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -116,9 +117,11 @@ public class CustomsService {
 
 		switch (trxType) {
 		case IMPORT:
-			
-			if ((customsDTO.getImportContainer01Info() == null && customsDTO.getImportContainer01Info().isPresent() == false) &&
-					(customsDTO.getImportContainer02Info() == null && customsDTO.getImportContainer02Info().isPresent() == false))
+
+			if ((customsDTO.getImportContainer01Info() == null
+					&& customsDTO.getImportContainer01Info().isPresent() == false)
+					&& (customsDTO.getImportContainer02Info() == null
+							&& customsDTO.getImportContainer02Info().isPresent() == false))
 				throw new BusinessException("Import Information not provided");
 
 			deleteCustomsByGateOutClientId(customsDTO.getGateOutClientId());
@@ -127,22 +130,28 @@ public class CustomsService {
 			return "success";
 		case EXPORT:
 
-			if ((customsDTO.getExportContainer01Info() == null && customsDTO.getExportContainer01Info().isPresent() == false) &&
-					(customsDTO.getExportContainer02Info() == null && customsDTO.getExportContainer02Info().isPresent() == false))
+			if ((customsDTO.getExportContainer01Info() == null
+					&& customsDTO.getExportContainer01Info().isPresent() == false)
+					&& (customsDTO.getExportContainer02Info() == null
+							&& customsDTO.getExportContainer02Info().isPresent() == false))
 				throw new BusinessException("Export Information not provided");
-			
+
 			deleteCustomsByGateOutClientId(customsDTO.getGateOutClientId());
 			custom = constructCustoms(customsDTO, TransactionType.EXPORT);
 			updateCustomsExport(custom, customsDTO);
 			return "success";
 		case IMPORT_EXPORT:
-			
-			if ((customsDTO.getImportContainer01Info() == null && customsDTO.getImportContainer01Info().isPresent() == false) &&
-					(customsDTO.getImportContainer02Info() == null && customsDTO.getImportContainer02Info().isPresent() == false))
+
+			if ((customsDTO.getImportContainer01Info() == null
+					&& customsDTO.getImportContainer01Info().isPresent() == false)
+					&& (customsDTO.getImportContainer02Info() == null
+							&& customsDTO.getImportContainer02Info().isPresent() == false))
 				throw new BusinessException("Import Information not provided");
 
-			if ((customsDTO.getExportContainer01Info() == null && customsDTO.getExportContainer01Info().isPresent() == false) &&
-					(customsDTO.getExportContainer02Info() == null && customsDTO.getExportContainer02Info().isPresent() == false))
+			if ((customsDTO.getExportContainer01Info() == null
+					&& customsDTO.getExportContainer01Info().isPresent() == false)
+					&& (customsDTO.getExportContainer02Info() == null
+							&& customsDTO.getExportContainer02Info().isPresent() == false))
 				throw new BusinessException("Export Information not provided");
 
 			deleteCustomsByGateOutClientId(customsDTO.getGateOutClientId());
@@ -155,7 +164,7 @@ public class CustomsService {
 
 			if (customsDTO.getImportODDInfo() == null && customsDTO.getImportODDInfo().isPresent() == false)
 				throw new BusinessException("ODD Import Information not provided");
-			
+
 			deleteCustomsByGateOutClientId(customsDTO.getGateOutClientId());
 			custom = constructCustoms(customsDTO, TransactionType.IMPORT);
 			updateCustomsODD(custom, customsDTO.getImportODDInfo().get());
@@ -179,7 +188,6 @@ public class CustomsService {
 			if (customsDTO.getExportODDInfo() == null && customsDTO.getExportODDInfo().isPresent() == false)
 				throw new BusinessException("ODD Export Information not provided");
 
-			
 			deleteCustomsByGateOutClientId(customsDTO.getGateOutClientId());
 			custom = constructCustoms(customsDTO, TransactionType.EXPORT);
 			updateCustomsODD(custom, customsDTO.getExportODDInfo().get());
@@ -191,88 +199,87 @@ public class CustomsService {
 		default:
 			throw new BusinessException("No transaction type to update customs !");
 		}
-		 
 
 	}
 
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRES_NEW, readOnly = false)
 	public String updateCustomsODD(Customs customs, CustomsODDInfo customsODDInfo) {
-		
-		System.out.println("CustomsODDInfo : "+customsODDInfo.toString());
 
-		Predicate byGateInStatus = ODDPredicates.byGateInStatus(TransactionStatus.APPROVED);
+		System.out.println("CustomsODDInfo : " + customsODDInfo.toString());
 
-		Predicate byWHoddIDList = ODDPredicates.byODDSeq(customsODDInfo.getOddIdSeq());
+		Optional<WHODD> optionalODDContainer = oddRepository.findOne(customsODDInfo.getOddIdSeq());
 
-		Predicate condition = ExpressionUtils.allOf(byGateInStatus, byWHoddIDList);
-		Iterable<WHODD> whODDList = oddRepository.findAll(condition);
-		if ((whODDList != null && whODDList.iterator().hasNext())) {
-			System.out.println("whODDList.iterator().hasNext() : "+whODDList.iterator().hasNext());
-			whODDList.forEach(whODD -> {
-				customs.setWhODD(whODD);
-				if (customs.getContainer01() == null) {
-					
-					System.out.println("customsODDInfo.getFullOREmptyCon01().get() : "+customsODDInfo.getFullOrEmptyCon01());
-					
-					customs.setContainer01(constructCustomContainer(customsODDInfo.getFullOrEmptyCon01(),
-							whODD.getContainer01(), whODD.getImpExpFlag(), customsODDInfo.getTrxStatusCon01()));
-				} else {
-					
-					System.out.println("else customsODDInfo.getFullOREmptyCon01().get() : "+customsODDInfo.getFullOrEmptyCon01());
-					System.out.println("else customsODDInfo.getFullOREmptyCon01().get() : "+customsODDInfo.getFullOrEmptyCon02());
-					
-					customs.setContainer02(constructCustomContainer(customsODDInfo.getFullOrEmptyCon02(),
-							whODD.getContainer02(), whODD.getImpExpFlag(), customsODDInfo.getTrxStatusCon02()));
-				}
+		WHODD whODD = optionalODDContainer.orElseThrow(() -> new ResultsNotFoundException(
+				"" + "Save customs failed. ODD Information not found ! " + customsODDInfo.getOddIdSeq()));
 
-				customsRepository.save(customs);
-				if (!(customs.getCustomsID() == null || customs.getCustomsID() == 0)) {
-					CustomsReport customsReport = new CustomsReport();
-					modelMapper.map(customs, customsReport);
-					customsReport.setCustomsReportID(customs.getCustomsID());
-					customsReportRepository.save(customsReport);
-				} else {
-					throw new BusinessException("Save customs failed ! ");
-				}
-			});
+		customs.setWhODD(whODD);
+		if (customs.getContainer01() == null) {
+
+			System.out.println("customsODDInfo.getFullOREmptyCon01().get() : " + customsODDInfo.getFullOrEmptyCon01());
+
+			customs.setContainer01(constructCustomContainer(customsODDInfo.getFullOrEmptyCon01(),
+					whODD.getContainer01(), whODD.getImpExpFlag(), customsODDInfo.getTrxStatusCon01(),
+					customsODDInfo.getRejectRemarksCon01()));
 		} else {
-			throw new BusinessException("Save customs failed. Given data not valid ");
+
+			System.out.println(
+					"else customsODDInfo.getFullOREmptyCon01().get() : " + customsODDInfo.getFullOrEmptyCon01());
+			System.out.println(
+					"else customsODDInfo.getFullOREmptyCon02().get() : " + customsODDInfo.getFullOrEmptyCon02());
+
+			customs.setContainer02(constructCustomContainer(customsODDInfo.getFullOrEmptyCon02(),
+					whODD.getContainer02(), whODD.getImpExpFlag(), customsODDInfo.getTrxStatusCon02(),
+					customsODDInfo.getRejectRemarksCon01()));
 		}
 
-		return null;
+		customsRepository.save(customs);
+		if (!(customs.getCustomsID() == null || customs.getCustomsID() == 0)) {
+			CustomsReport customsReport = new CustomsReport();
+			modelMapper.map(customs, customsReport);
+			customsReport.setCustomsReportID(customs.getCustomsID());
+			customsReportRepository.save(customsReport);
+		} else {
+			throw new BusinessException("Save customs failed ! ");
+		}
+
+		return "success";
 	}
 
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRES_NEW, readOnly = false)
 	public String updateCustomsImport(Customs customs, CustomsDTO customsDTO) {
 		Predicate byContainerFullOrEmpty = GatePassPredicates.byContainerFullOrEmpty(ContainerFullEmptyType.FULL);
-		
+
 		List<Long> gatePassIDList = new ArrayList<>();
-		Map<Long,CustomsGatePassInfo> importCustoms = new HashMap<Long,CustomsGatePassInfo>();  
-		
-		if(customsDTO.getImportContainer01Info() != null && customsDTO.getImportContainer01Info().isPresent()){
-			
+		Map<Long, CustomsGatePassInfo> importCustoms = new HashMap<Long, CustomsGatePassInfo>();
+
+		if (customsDTO.getImportContainer01Info() != null && customsDTO.getImportContainer01Info().isPresent()) {
+
 			CustomsGatePassInfo containerInfo = customsDTO.getImportContainer01Info().get();
-			
-			if(containerInfo.getTrxStatus() == null || StringUtils.equalsIgnoreCase(TransactionStatus.REJECT.getValue(), 
-					containerInfo.getTrxStatus()))
-				throw new BusinessException("Invalid Transaction status for Import transaction : "+ containerInfo.getGatePassIDSeq());
-			
+
+			if (containerInfo.getTrxStatus() == null
+					|| StringUtils.equalsIgnoreCase(TransactionStatus.REJECT.getValue(), containerInfo.getTrxStatus()))
+				throw new BusinessException(
+						"Invalid Transaction status for Import transaction : " + containerInfo.getGatePassIDSeq());
+
 			gatePassIDList.add(customsDTO.getImportContainer01Info().get().getGatePassIDSeq());
-			importCustoms.put(customsDTO.getImportContainer01Info().get().getGatePassIDSeq(), customsDTO.getImportContainer01Info().get());
+			importCustoms.put(customsDTO.getImportContainer01Info().get().getGatePassIDSeq(),
+					customsDTO.getImportContainer01Info().get());
 		}
-		
-		if(customsDTO.getImportContainer02Info() != null && customsDTO.getImportContainer02Info().isPresent()){
-			
+
+		if (customsDTO.getImportContainer02Info() != null && customsDTO.getImportContainer02Info().isPresent()) {
+
 			CustomsGatePassInfo containerInfo = customsDTO.getImportContainer02Info().get();
-			
-			if(containerInfo.getTrxStatus() == null || StringUtils.equalsIgnoreCase(TransactionStatus.REJECT.getValue(), 
-					containerInfo.getTrxStatus()))
-				throw new BusinessException("Invalid Transaction status for Import transaction : "+ containerInfo.getGatePassIDSeq());
-			
+
+			if (containerInfo.getTrxStatus() == null
+					|| StringUtils.equalsIgnoreCase(TransactionStatus.REJECT.getValue(), containerInfo.getTrxStatus()))
+				throw new BusinessException(
+						"Invalid Transaction status for Import transaction : " + containerInfo.getGatePassIDSeq());
+
 			gatePassIDList.add(customsDTO.getImportContainer02Info().get().getGatePassIDSeq());
-			importCustoms.put(customsDTO.getImportContainer02Info().get().getGatePassIDSeq(), customsDTO.getImportContainer02Info().get());
+			importCustoms.put(customsDTO.getImportContainer02Info().get().getGatePassIDSeq(),
+					customsDTO.getImportContainer02Info().get());
 		}
-		
+
 		Predicate byGatePassIDList = GatePassPredicates.byGatePassIDList(gatePassIDList);
 
 		Predicate condition = ExpressionUtils.allOf(byContainerFullOrEmpty, byGatePassIDList);
@@ -282,16 +289,16 @@ public class CustomsService {
 				CustomsGatePassInfo containerInfo = importCustoms.get(gatePass.getGatePassID());
 				if (customs.getContainer01() == null) {
 					customs.setContainer01(constructCustomContainer(containerInfo.getFullOrEmpty(), gatePass,
-							containerInfo.getTrxStatus()));
+							containerInfo.getTrxStatus(), containerInfo.getRejectRemarks()));
 				} else {
 					customs.setContainer02(constructCustomContainer(containerInfo.getFullOrEmpty(), gatePass,
-							containerInfo.getTrxStatus()));
+							containerInfo.getTrxStatus(), containerInfo.getRejectRemarks()));
 				}
 			});
 
 			customsRepository.save(customs);
 			if (!(customs.getCustomsID() == null || customs.getCustomsID() == 0)) {
-				CustomsReport customsReport = new CustomsReport(); 
+				CustomsReport customsReport = new CustomsReport();
 				modelMapper.map(customs, customsReport);
 				customsReport.setCustomsReportID(customs.getCustomsID());
 				customsReportRepository.save(customsReport);
@@ -309,49 +316,52 @@ public class CustomsService {
 	public String updateCustomsExport(Customs customs, CustomsDTO customsDTO) {
 
 		Predicate byContainerFullOrEmpty = ExportsPredicates.byContainerFullOrEmpty(ContainerFullEmptyType.FULL);
-		
+
 		List<Long> exportIDList = new ArrayList<>();
-		Map<Long, CustomsExportInfo> exportCustoms = new HashMap<Long,CustomsExportInfo>();  
-		
-		if(customsDTO.getExportContainer01Info() != null && customsDTO.getExportContainer01Info().isPresent()){
-			
+		Map<Long, CustomsExportInfo> exportCustoms = new HashMap<Long, CustomsExportInfo>();
+
+		if (customsDTO.getExportContainer01Info() != null && customsDTO.getExportContainer01Info().isPresent()) {
+
 			CustomsExportInfo containerInfo = customsDTO.getExportContainer01Info().get();
-			
-			if(containerInfo.getTrxStatus() == null || StringUtils.equalsIgnoreCase(TransactionStatus.APPROVED.getValue(), 
-					containerInfo.getTrxStatus()))
-				throw new BusinessException("Invalid Transaction status for export transaction : "+ containerInfo.getExportIDSeq());
-			
+
+			if (containerInfo.getTrxStatus() == null || StringUtils
+					.equalsIgnoreCase(TransactionStatus.APPROVED.getValue(), containerInfo.getTrxStatus()))
+				throw new BusinessException(
+						"Invalid Transaction status for export transaction : " + containerInfo.getExportIDSeq());
+
 			exportIDList.add(customsDTO.getExportContainer01Info().get().getExportIDSeq());
-			exportCustoms.put(customsDTO.getExportContainer01Info().get().getExportIDSeq(), customsDTO.getExportContainer01Info().get());
+			exportCustoms.put(customsDTO.getExportContainer01Info().get().getExportIDSeq(),
+					customsDTO.getExportContainer01Info().get());
 		}
-		
-		if(customsDTO.getExportContainer02Info() != null && customsDTO.getExportContainer02Info().isPresent()){
-			
+
+		if (customsDTO.getExportContainer02Info() != null && customsDTO.getExportContainer02Info().isPresent()) {
+
 			CustomsExportInfo containerInfo = customsDTO.getExportContainer02Info().get();
-			
-			if(containerInfo.getTrxStatus() == null || StringUtils.equalsIgnoreCase(TransactionStatus.APPROVED.getValue(), 
-					containerInfo.getTrxStatus()))
-				throw new BusinessException("Invalid Transaction status for export transaction : "+ containerInfo.getExportIDSeq());
-			
-			
+
+			if (containerInfo.getTrxStatus() == null || StringUtils
+					.equalsIgnoreCase(TransactionStatus.APPROVED.getValue(), containerInfo.getTrxStatus()))
+				throw new BusinessException(
+						"Invalid Transaction status for export transaction : " + containerInfo.getExportIDSeq());
+
 			exportIDList.add(customsDTO.getExportContainer02Info().get().getExportIDSeq());
-			exportCustoms.put(customsDTO.getExportContainer02Info().get().getExportIDSeq(), customsDTO.getExportContainer02Info().get());
+			exportCustoms.put(customsDTO.getExportContainer02Info().get().getExportIDSeq(),
+					customsDTO.getExportContainer02Info().get());
 		}
-		
+
 		Predicate byExportsIDList = ExportsPredicates.byExportsIDList(exportIDList);
 
 		Predicate condition = ExpressionUtils.allOf(byContainerFullOrEmpty, byExportsIDList);
 		Iterable<Exports> exportsList = exportsRepository.findAll(condition);
 		if ((exportsList != null && exportsList.iterator().hasNext())) {
-			
+
 			exportsList.forEach(exports -> {
 				CustomsExportInfo containerInfo = exportCustoms.get(exports.getExportID());
 				if (customs.getContainer01() == null) {
 					customs.setContainer01(constructCustomContainer(containerInfo.getFullOrEmpty(), exports,
-							containerInfo.getTrxStatus()));
+							containerInfo.getTrxStatus(), containerInfo.getRejectRemarks()));
 				} else {
 					customs.setContainer02(constructCustomContainer(containerInfo.getFullOrEmpty(), exports,
-							containerInfo.getTrxStatus()));
+							containerInfo.getTrxStatus(), containerInfo.getRejectRemarks()));
 				}
 			});
 			customsRepository.save(customs);
@@ -369,23 +379,25 @@ public class CustomsService {
 		return "success";
 	}
 
-	private CustomContainer constructCustomContainer(String fullOrEmpty, Exports exports, String transactionStatus) {
+	private CustomContainer constructCustomContainer(String fullOrEmpty, Exports exports, String transactionStatus,
+			String rejectRemarks) {
 		CustomContainer customContainer = new CustomContainer();
 		customContainer.setContainerFullOrEmpty(ContainerFullEmptyType.fromValue(fullOrEmpty));
 		customContainer.setContainerNumber(exports.getContainer().getContainerNumber());
 		customContainer.setCustomEirStatus(TransactionStatus.fromCode(transactionStatus));
-		customContainer.setCustomRejection(exports.getCommonGateInOut().getRejectReason());
+		customContainer.setCustomRejection(rejectRemarks);
 		customContainer.setExport(exports);
 
 		return customContainer;
 	}
 
-	private CustomContainer constructCustomContainer(String fullOrEmpty, GatePass gatePass, String transactionStatus) {
+	private CustomContainer constructCustomContainer(String fullOrEmpty, GatePass gatePass, String transactionStatus,
+			String rejectRemarks) {
 		CustomContainer customContainer = new CustomContainer();
 		customContainer.setContainerNumber(gatePass.getContainer().getContainerNumber());
 		customContainer.setContainerFullOrEmpty(ContainerFullEmptyType.fromValue(fullOrEmpty));
 		customContainer.setGatePass(gatePass);
-		customContainer.setCustomRejection(gatePass.getCommonGateInOut().getRejectReason());
+		customContainer.setCustomRejection(rejectRemarks);
 		customContainer.setCustomEirStatus(TransactionStatus.fromCode(transactionStatus));
 
 		Optional<WDCGatePass> optionalWdcGatePass = wdcGatePassRepository.findByGatePassNO(gatePass.getGatePassNo());
@@ -402,7 +414,7 @@ public class CustomsService {
 	}
 
 	private CustomContainer constructCustomContainer(String fullOrEmpty, ODDContainerDetails oddContainerDetails,
-			ImpExpFlagStatus impExpFlag, String transactionStatus) {
+			ImpExpFlagStatus impExpFlag, String transactionStatus, String rejectRemarks) {
 
 		if (oddContainerDetails != null
 				&& (StringUtils.equalsIgnoreCase(fullOrEmpty, ContainerFullEmptyType.FULL.getValue()))) {
@@ -416,7 +428,7 @@ public class CustomsService {
 			customContainer.setContainerNumber(oddContainerDetails.getContainerNo());
 			customContainer.setCustomEirStatus(TransactionStatus.fromCode(transactionStatus));
 			customContainer.setOddLocation(oddContainerDetails.getLocation().getOddCode());
-			customContainer.setCustomRejection(oddContainerDetails.getRejectionReason());
+			customContainer.setCustomRejection(rejectRemarks);
 			return customContainer;
 		}
 		return null;

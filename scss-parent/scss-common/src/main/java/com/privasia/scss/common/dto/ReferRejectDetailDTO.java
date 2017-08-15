@@ -213,34 +213,4 @@ public class ReferRejectDetailDTO implements Serializable {
     return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
   }
 
-
-  public ReferRejectDetailDTO initializeWithDefaultValues() {
-    // this.referRejectID = 10l;
-    this.referRejectDetailID = 11l;
-    this.containerNo = StringUtils.EMPTY;
-    this.containerIsoCode = StringUtils.EMPTY;
-    // this.seal = Optional.of(new
-    // CommonSealDTO().initializeWithDefaultValues());
-    this.remarks = StringUtils.EMPTY;
-    this.status = StringUtils.EMPTY;
-    this.supervisorRemarks = StringUtils.EMPTY;
-    this.rejectBy = 50l;
-    this.referBy = 20l;
-    this.expPmBTM = 250;
-    this.expNetWeight = 550;
-    this.doubleBooking = false;
-    this.lineCode = StringUtils.EMPTY;
-    this.gateInTime = LocalDateTime.now();
-    this.position = StringUtils.EMPTY;
-    this.measuredWeightBridge = 450;
-    this.solas = new CommonSolasDTO().initializeWithDefaultValues();
-    /// this.referRejectReasons = Optional.of(new
-    /// HashSet<ReferRejectReasonDTO>());
-    // this.referRejectReasons.get().add(new
-    /// ReferRejectReasonDTO().initializeWithDefaultValues());
-    // this.referRejectReasons.get().add(new
-    /// ReferRejectReasonDTO().initializeWithDefaultValues());
-    return this;
-  }
-
 }

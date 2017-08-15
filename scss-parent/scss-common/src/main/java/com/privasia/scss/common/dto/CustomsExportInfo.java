@@ -15,6 +15,7 @@ public class CustomsExportInfo implements Serializable {
 	private Long exportIDSeq;
 	private String fullOrEmpty; 
 	private String trxStatus;
+	private String rejectRemarks;
 
 	public Long getExportIDSeq() {
 		return exportIDSeq;
@@ -38,6 +39,15 @@ public class CustomsExportInfo implements Serializable {
 
 	public void setFullOrEmpty(String fullOrEmpty) {
 		this.fullOrEmpty = fullOrEmpty;
+	}
+	
+
+	public String getRejectRemarks() {
+		return rejectRemarks;
+	}
+
+	public void setRejectRemarks(String rejectRemarks) {
+		this.rejectRemarks = rejectRemarks;
 	}
 
 	@Override

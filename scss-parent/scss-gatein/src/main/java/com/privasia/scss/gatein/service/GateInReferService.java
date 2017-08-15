@@ -1,6 +1,5 @@
 package com.privasia.scss.gatein.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,7 +23,6 @@ import com.privasia.scss.core.repository.ReferRejectRepository;
  *         microservice
  */
 @Service("gateInReferService")
-@Transactional
 public class GateInReferService {
 
 	private ReferRejectRepository referRejectRepository;
@@ -72,6 +70,7 @@ public class GateInReferService {
 							p -> p.getContainer().getContainerNumber().equals(referRejectDetail.getContainerNo()))
 							.findFirst();
 					ExportContainer exportContainer = exportContainerOpt.get();
+					
 					if (referRejectDetail.getSolas() != null) {
 						if (exportContainer.getSolas() == null) {
 							exportContainer.setSolas(new CommonSolasDTO());
@@ -101,6 +100,7 @@ public class GateInReferService {
 					exportContainer.getContainer().setContainerNumber(referRejectDetail.getContainerNo());
 					exportContainer.getContainer().setContainerISOCode(referRejectDetail.getContainerIsoCode());
 					exportContainer.setShippingLine(referRejectDetail.getLineCode());
+					exportContainer.setContainerPosition(referRejectDetail.getPosition().getValue());
 					if(!exportContainers.contains(exportContainer))
 					exportContainers.add(exportContainer);
 
@@ -114,20 +114,5 @@ public class GateInReferService {
 		}
 		return null;
 	}
-
-	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% CANT FIND FIELDS IN ExportContainer to
-	// set following fields
-	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	// f.setCardIdSeq(rejectFrom.getCrdCardidSeq());
-	// f.setExpWeightBridge(rejectFrom.getExpWeightBridge());
-	// f.setCugIdSeq(rejectFrom.getCugIdSeq());
-	// f.setTimeIn(rejectFrom.getReferDateTime());
-	// f.setHpatSeqId(rejectFrom.getHpatSeqId());
-	// f.setPmVerified(StringUtils.isBlank(rejectFrom.getPmVerified()) ? "F"
-	// :
-	// rejectFrom.getPmVerified().toUpperCase());
-	// f.setTrailerVerified(StringUtils.isBlank(rejectFrom.getTrailerVerified())
-	// ? "F" :
-	// rejectFrom.getTrailerVerified().toUpperCase());
 
 }

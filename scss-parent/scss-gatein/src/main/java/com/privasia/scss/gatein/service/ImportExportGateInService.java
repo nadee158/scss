@@ -193,7 +193,7 @@ public class ImportExportGateInService {
             .equalsIgnoreCase(ContainerFullEmptyType.FULL.getValue(), expCon.getContainer().getContainerFullOrEmpty())))
             .findAny().isPresent();
         if (fullExist)
-          solasService.calculateTerminalVGM(gateInResponse.getExportContainers(), false);
+          solasService.calculateTerminalVGM(gateInResponse.getExportContainers());
       }
 
     }
