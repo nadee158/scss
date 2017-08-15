@@ -66,9 +66,8 @@ public class GateInReferService {
 				gateInResponse.setTrailerWeight(referReject.getTrailerWeight());
 				gateInResponse.setTruckWeight(referReject.getPmWeight());
 				
-				List<ExportContainer> exportContainers =  gateInResponse.getExportContainers(); //new ArrayList<ExportContainer>();
+				List<ExportContainer> exportContainers =  gateInResponse.getExportContainers(); 
 				referReject.getReferRejectDetails().forEach(referRejectDetail -> {
-//					ExportContainer exportContainer = new ExportContainer();
 					Optional<ExportContainer> exportContainerOpt = exportContainers.stream().filter(
 							p -> p.getContainer().getContainerNumber().equals(referRejectDetail.getContainerNo()))
 							.findFirst();
@@ -78,7 +77,6 @@ public class GateInReferService {
 							exportContainer.setSolas(new CommonSolasDTO());
 						}
 						modelMapper.map(referRejectDetail.getSolas(), exportContainer.getSolas());
-						gateInResponse.setSolasInstruction(exportContainer.getSolas().getSolasInstruction());
 						
 					}
 

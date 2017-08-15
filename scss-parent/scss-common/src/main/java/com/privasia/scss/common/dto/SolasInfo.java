@@ -2,6 +2,8 @@ package com.privasia.scss.common.dto;
 
 import java.io.Serializable;
 
+import com.privasia.scss.common.enums.SolasInstructionType;
+
 /**
  * @author Nadeeshani Senevirathna
  *
@@ -21,9 +23,11 @@ public class SolasInfo implements Serializable {
 
 	private String solasDetailID;
 
-	private String solasInstruction;
+	private String solasInstruction = SolasInstructionType.VGM_INSTRUCTION_NO_SOLAS.getValue();
 
 	private String shipperVGM;
+	
+	private boolean directEntry = false;
 
 	public SolasInfo() {
 		super();
@@ -76,5 +80,15 @@ public class SolasInfo implements Serializable {
 	public void setShipperVGM(String shipperVGM) {
 		this.shipperVGM = shipperVGM;
 	}
+
+	public boolean isDirectEntry() {
+		return directEntry;
+	}
+
+	public void setDirectEntry(boolean directEntry) {
+		this.directEntry = directEntry;
+	}
+	
+	
 
 }

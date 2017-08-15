@@ -212,7 +212,7 @@ public class ExportGateInService {
 			exportContainer.setVariance(gateInWriteRequest.getVariance());
 			exportContainer.setBackToback(backToback);
 
-			exportContainer.setTrailerPlateNo(gateInWriteRequest.getTrailerNo());
+			exportContainer.setTrailerPlateNo(gateInWriteRequest.getTrailerNo()); 
 			exportContainer.setTrailerWeight(Integer.toString(gateInWriteRequest.getTrailerWeight()));
 			exportContainer.setPmWeight(Integer.toString(gateInWriteRequest.getTruckWeight()));
 

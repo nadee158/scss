@@ -53,7 +53,6 @@ import com.privasia.scss.core.repository.PrintRejectRepository;
 import com.privasia.scss.core.repository.ReferReasonRepository;
 import com.privasia.scss.core.repository.ReferRejectDetailRepository;
 import com.privasia.scss.core.repository.ReferRejectRepository;
-import com.privasia.scss.core.repository.SupervisorReferRejectReasonRepository;
 import com.privasia.scss.core.repository.SystemUserRepository;
 import com.privasia.scss.core.security.util.SecurityHelper;
 
@@ -75,8 +74,6 @@ public class ReferRejectService {
   private SystemUserRepository systemUserRepository;
 
   private ClientRepository clientRepository;
-
-  private SupervisorReferRejectReasonRepository supervisorReferRejectReasonRepository;
 
   private PrintRejectRepository printRejectRepository;
 
@@ -112,12 +109,6 @@ public class ReferRejectService {
   @Autowired
   public void setClientRepository(ClientRepository clientRepository) {
     this.clientRepository = clientRepository;
-  }
-
-  @Autowired
-  public void setSupervisorReferRejectReasonRepository(
-      SupervisorReferRejectReasonRepository supervisorReferRejectReasonRepository) {
-    this.supervisorReferRejectReasonRepository = supervisorReferRejectReasonRepository;
   }
 
   @Autowired
@@ -231,7 +222,7 @@ public class ReferRejectService {
   }
 
   @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
-  public ReferReject saveReferReject(GateInWriteRequest gateInWriteRequest) {
+  public ReferReject saveReferReject(GateInWriteRequest gateInWriteRequest) { 
 
     ReferRejectDTO referRejectDTO = gateInWriteRequest.getReferRejectDTO()
         .orElseThrow(() -> new BusinessException("No refer reject data is available to save"));

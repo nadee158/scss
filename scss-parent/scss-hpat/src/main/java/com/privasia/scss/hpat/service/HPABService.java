@@ -291,7 +291,6 @@ public class HPABService {
 					}
 
 					ExportContainer exportContainerCons = bookingDetail.constructExportContainer(exportContainer);
-					gateInResponse.setSolasInstruction(exportContainerCons.getSolas().getSolasInstruction());
 					updatedExportContainers.add(exportContainerCons);
 					break;
 				case EMPTY_PICKUP:

@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.privasia.scss.common.enums.SolasInstructionType;
 import com.privasia.scss.common.util.ApplicationConstants;
 import com.privasia.scss.common.util.DateUtil;
 
@@ -27,7 +26,7 @@ public class GateInResponse implements Serializable {
 	private LocalDateTime gateINDateTime;// 20161130112233,
 	private boolean checkPreArrival = false;// -boolean
 
-	private List<ImportContainer> importContainers = new ArrayList<ImportContainer>();
+	private List<ImportContainer> importContainers = new ArrayList<ImportContainer>(); 
 
 	private List<ExportContainer> exportContainers = new ArrayList<ExportContainer>();
 
@@ -39,8 +38,6 @@ public class GateInResponse implements Serializable {
 	private String callCardNo;// 20161130112233,
 
 	private GateOutMessage message;
-
-	private String solasInstruction = SolasInstructionType.VGM_INSTRUCTION_NO_SOLAS.getValue();
 
 	private String trailerPlate;
 
@@ -154,14 +151,6 @@ public class GateInResponse implements Serializable {
 
 	public void setExpWeightBridge(Integer expWeightBridge) {
 		this.expWeightBridge = expWeightBridge;
-	}
-
-	public String getSolasInstruction() {
-		return solasInstruction;
-	}
-
-	public void setSolasInstruction(String solasInstruction) {
-		this.solasInstruction = solasInstruction;
 	}
 
 	public List<WHoddDTO> getWhoddContainers() {

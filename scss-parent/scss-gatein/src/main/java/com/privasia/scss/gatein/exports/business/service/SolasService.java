@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -31,6 +33,8 @@ import com.privasia.scss.core.repository.SolasWeightConfigRepository;
  */
 @Service("solasService")
 public class SolasService {
+	
+	private static final Log log = LogFactory.getLog(SolasService.class);
 
 	@Value("${solas.cert.name}")
 	private String solasCertName;
@@ -127,6 +131,9 @@ public class SolasService {
 			}
 
 			firstContainer.setWithinTolerance(false);
+			
+			int PFAT = pmWeight + axelWeight + fuelWeight + tireWeight;
+			
 			if (optLastContainer != null && optLastContainer.isPresent()) {
 				ExportContainer lastContainer = optLastContainer.get();
 				lastContainer.setWithinTolerance(false);
@@ -194,9 +201,7 @@ public class SolasService {
 			} else {// this is for single container
 				
 				if(directEntry){
-					
-					int weighbridge = firstContainer.getExpNetWeight() + pmWeight + axelWeight + fuelWeight + tireWeight; 
-					firstContainer.setExpWeightBridge(weighbridge);
+					calculateWeighbridge(firstContainer, PFAT);
 				}else{
 					int terminalVGM = firstContainer.getExpWeightBridge() - pmWeight - axelWeight - fuelWeight - tireWeight;
 					firstContainer.setExpNetWeight(terminalVGM);
@@ -208,16 +213,32 @@ public class SolasService {
 				
 			}
 
-			if (StringUtils.equalsIgnoreCase(firstContainer.getSolas().getSolasInstruction(),
+			/*if (StringUtils.equalsIgnoreCase(firstContainer.getSolas().getSolasInstruction(),
 					SolasInstructionType.VGM_INSTRUCTION_SHIPPER.getValue())) {
 				calculateTolerance(exportContainers, tolerance);
-			}
+			}*/
+			
+			exportContainers.forEach(exportContainer ->{
+				calculateTolerance(exportContainer, tolerance);
+			});
+			
+			
+			
 		} else {
 			throw new BusinessException("SolasApplicable Applicable only for Full Containers !");
 		}
 
 		return exportContainers;
 
+	}
+	
+	
+	private ExportContainer calculateWeighbridge(ExportContainer exportContainer, int PFAT){
+		
+		int weighbridge = exportContainer.getExpNetWeight() + PFAT;
+		exportContainer.setExpWeightBridge(weighbridge);
+		return exportContainer;
+		
 	}
 
 	public List<ExportContainer> calculateTolerance(List<ExportContainer> exportContainers, int tolerance) {
@@ -253,6 +274,44 @@ public class SolasService {
 				});
 
 		return exportContainers;
+
+	}
+	
+	
+	private ExportContainer calculateTolerance(ExportContainer exportContainer, int tolerance) {
+		
+		log.info("Container "+exportContainer.getContainer().getContainerNumber() +" SolasInstructionType "+ exportContainer.getSolas().getSolasInstruction()+
+				" ContainerFullEmpty "+exportContainer.getContainer().getContainerFullOrEmpty());
+	
+		if(StringUtils.equalsIgnoreCase(ContainerFullEmptyType.FULL.getValue(),
+				exportContainer.getContainer().getContainerFullOrEmpty()) && StringUtils.equalsIgnoreCase(exportContainer.getSolas().getSolasInstruction(),
+						SolasInstructionType.VGM_INSTRUCTION_SHIPPER.getValue())){
+			
+			BigDecimal tolerancePercentage = new BigDecimal(tolerance);
+			
+			if(exportContainer.getSolas().getShipperVGM() == null || Integer.parseInt(exportContainer.getSolas().getShipperVGM()) == 0 )
+				throw new BusinessException("For Container "+ exportContainer.getContainer().getContainerNumber() + 
+						" Provided Shipper VGM : "+exportContainer.getSolas().getShipperVGM()+" cannot calculate variance");
+			
+			BigDecimal shipperVGM = new BigDecimal(exportContainer.getSolas().getShipperVGM()).setScale(2,
+					BigDecimal.ROUND_UP);
+			
+			BigDecimal terminalVGM = new BigDecimal(exportContainer.getExpNetWeight()).setScale(2, BigDecimal.ROUND_UP);
+			BigDecimal variance = ((shipperVGM.subtract(terminalVGM)).divide(shipperVGM, 4,
+					BigDecimal.ROUND_HALF_UP)).multiply(new BigDecimal(100));
+			exportContainer.setCalculatedVariance(String.valueOf(variance));
+			
+			// checking if in range
+			if (variance.compareTo(tolerancePercentage) <= 0
+					&& variance.compareTo(tolerancePercentage.negate()) >= 0) {
+				exportContainer.setWithinTolerance(true);
+			} else {
+				exportContainer.setWithinTolerance(false);
+			}
+			
+		}
+		
+		return exportContainer;
 
 	}
 

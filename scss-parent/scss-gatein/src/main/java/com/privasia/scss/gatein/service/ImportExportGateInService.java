@@ -181,7 +181,7 @@ public class ImportExportGateInService {
      */
     // refere reject details
     if (gateInRequest.getReferID().isPresent()) {
-      gateInResponse = gateInReferService.fetchReferDataForExport(gateInRequest.getReferID().get(),gateInResponse);
+      gateInResponse = gateInReferService.fetchReferDataForExport(gateInRequest.getReferID().get(),gateInResponse); 
     }
     
     // assign details from hpab booking
