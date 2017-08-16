@@ -26,6 +26,12 @@ public final class ExportsPredicates {
 
 	private ExportsPredicates() {
 	}
+	
+	public static Predicate byExportsID(long exportID) {
+		
+		return QExports.exports.exportID.eq(exportID);
+		
+	}
 
 	public static Predicate byPMPlateNo(String plateNo) {
 		if (StringUtils.isEmpty(plateNo)) {

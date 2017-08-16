@@ -17,18 +17,19 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.privasia.scss.common.annotation.DontValidateSeal;
 import com.privasia.scss.common.annotation.ISaDG;
-import com.privasia.scss.common.annotation.LoggingInfor;
 import com.privasia.scss.common.annotation.UpdateReferReject;
 import com.privasia.scss.common.dto.BaseCommonGateInOutDTO;
 import com.privasia.scss.common.dto.CommonGateInOutDTO;
 import com.privasia.scss.common.dto.ExportContainer;
 import com.privasia.scss.common.dto.GateInResponse;
 import com.privasia.scss.common.dto.GateInWriteRequest;
+import com.privasia.scss.common.dto.ManualPlanDTO;
 import com.privasia.scss.common.enums.ContainerFullEmptyType;
 import com.privasia.scss.common.enums.HpabReferStatus;
 import com.privasia.scss.common.enums.ReferStatus;
 import com.privasia.scss.common.enums.TransactionStatus;
 import com.privasia.scss.common.exception.BusinessException;
+import com.privasia.scss.common.exception.ResultsNotFoundException;
 import com.privasia.scss.core.model.Card;
 import com.privasia.scss.core.model.Client;
 import com.privasia.scss.core.model.Exports;
@@ -184,21 +185,15 @@ public class ExportGateInService {
 			Card card, HPABBooking hpabBooking) {
 		// construct a new export entity for each exportcontainer and save
 
-		System.out.println("gateInWriteRequest.getExportContainers() " + gateInWriteRequest.getExportContainers());
-
 		if (gateInWriteRequest.getExportContainers() == null || gateInWriteRequest.getExportContainers().isEmpty())
 			throw new BusinessException("Invalid GateInWriteRequest to save Exports ! ");
-		System.out.println(
-				"gateInWriteRequest.getExportContainers().size() " + gateInWriteRequest.getExportContainers().size());
-
-
+		
 		boolean backToback = gateInWriteRequest.getExportContainers().size() == 2 ? true : false;
 
 		gateInWriteRequest.getExportContainers().forEach(exportContainer -> {
 			if (exportContainer.getBaseCommonGateInOutAttribute() == null) {
 				exportContainer.setBaseCommonGateInOutAttribute(new BaseCommonGateInOutDTO());
 			}
-			System.out.println("gateInWriteRequest.getGateInDateTime() " + gateInWriteRequest.getGateInDateTime());
 
 			// assign values from header level to container level
 			exportContainer.getBaseCommonGateInOutAttribute().setEirStatus(TransactionStatus.INPROGRESS.getValue());
@@ -221,7 +216,7 @@ public class ExportGateInService {
 			}
 			exportContainer.getCommonGateInOut().setGateInStatus(gateInWriteRequest.getGateInStatus());
 			exportContainer.getCommonGateInOut().setRejectReason(gateInWriteRequest.getRejectReason());
-
+			
 			Exports exports = new Exports();
 			modelMapper.map(exportContainer, exports);
 
@@ -231,6 +226,7 @@ public class ExportGateInService {
 				scn = shipSCNRepository.fetchContainerSCN(exportContainer.getVesselSCN(),
 						exportContainer.getContainer().getContainerNumber()).orElse(null);
 			}
+			
 			exports.prepareForInsertFromOpus(gateInClerk, card, gateInClient, scn, hpabBooking,
 					damageCodeRepository);
 			exports = exportsRepository.save(exports);
@@ -240,7 +236,6 @@ public class ExportGateInService {
 				ExportsQ exportsQ = new ExportsQ();
 				modelMapper.map(exports, exportsQ);
 				exportsQ = exportsQRepository.save(exportsQ);
-				System.out.println("exportsQ.getExportID() after save " + exportsQ.getExportID());
 			}
 			
 			exportContainer.setExportID(exports.getExportID());
@@ -345,6 +340,28 @@ public class ExportGateInService {
 		return false;
 
 	}
+	
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+	public ManualPlanDTO fetchManualplaninfo(long exportSeqID) {
+	
+		Optional<Exports> exportsOpt = exportsRepository.findOne(exportSeqID);
+		
+		Exports exports = exportsOpt.orElseThrow(() -> new ResultsNotFoundException("Given exports data not found "+exportSeqID));
+		
+		TransactionStatus eirStatus = exports.getBaseCommonGateInOutAttribute().getEirStatus();
+		
+		if(StringUtils.equalsIgnoreCase(eirStatus.getValue(), TransactionStatus.INPROGRESS.getValue()))
+			throw new BusinessException("Transaction status "+ eirStatus.name() +" not valid for given export data " + exportSeqID);
+		
+		ManualPlanDTO manualPlanDTO = new ManualPlanDTO();
+		manualPlanDTO.setExportID(exports.getExportID());
+		manualPlanDTO.setYardBayCode(exports.getYardBayCode());
+		manualPlanDTO.setYardPosition(exports.getYardPosition());
+		
+		return manualPlanDTO;
+
+	}
+
 
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
 	public void testDGValidationLog(GateInWriteRequest gateInWriteRequest) {
@@ -366,11 +383,6 @@ public class ExportGateInService {
 
 		});
 
-	}
-
-	@LoggingInfor
-	public String testLogging(String name, int age) {
-		return "my name is " + name + " and age " + age;
 	}
 
 }

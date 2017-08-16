@@ -50,18 +50,6 @@ public class TestController {
     return new ResponseEntity<String>("OK", HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/testlog", method = RequestMethod.GET,
-      produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
-      consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-  public ResponseEntity<String> testlog() {
-
-    System.out.println("came to test log");
-    exportService.testLogging("isuru", 29);
-
-    return new ResponseEntity<String>("OK", HttpStatus.OK);
-
-  }
-
   @HasAuthority(functions = {"12345"})
   @RequestMapping(value = "/testreferreject", method = RequestMethod.PUT,
       produces = MediaType.APPLICATION_JSON_UTF8_VALUE,

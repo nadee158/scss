@@ -151,14 +151,6 @@ public class ImportExportGateInService {
 
     GateInResponse gateInResponse = new GateInResponse();
 
-    /*
-     * if the refer id avaliable then fetch here. then pass export container list
-     */
-    // refere reject details
-    /*if (gateInRequest.getReferID().isPresent()) {
-      gateInResponse = gateInReferService.fetchReferDataForExport(gateInRequest.getReferID().get());
-    }*/
-
     gateInResponse.setCheckPreArrival(gateInRequest.isCheckPreArrival());
     gateInResponse.setGateINDateTime(gateInRequest.getGateInDateTime());
     gateInResponse.setExpWeightBridge(gateInRequest.getExpWeightBridge());
@@ -188,12 +180,12 @@ public class ImportExportGateInService {
     if ((StringUtils.isNotEmpty(gateInRequest.getHpabSeqId())) && (!(gateInRequest.getReferID().isPresent()))) {
       gateInResponse = hpabService.populateHpabForImpExp(gateInResponse, gateInRequest.getHpabSeqId());
 
-      if (gateInResponse.getExportContainers() != null) {
+      if (!(gateInResponse.getExportContainers() == null || gateInResponse.getExportContainers().isEmpty())) {
         boolean fullExist = gateInResponse.getExportContainers().stream().filter(expCon -> (StringUtils
             .equalsIgnoreCase(ContainerFullEmptyType.FULL.getValue(), expCon.getContainer().getContainerFullOrEmpty())))
             .findAny().isPresent();
         if (fullExist)
-          solasService.calculateTerminalVGM(gateInResponse.getExportContainers());
+          solasService.calculateSolasVGM(gateInResponse.getExportContainers(), true);
       }
 
     }

@@ -34,7 +34,7 @@ public class SolasController {
 	public CustomResponseEntity<ApiResponseObject<?>> calculateVGM(
 			@RequestBody List<ExportContainer> exportContainers) {
 		logger.info("exportContainers.size() " + exportContainers.size());
-		exportContainers = solasService.calculateTerminalVGM(exportContainers);
+		exportContainers = solasService.calculateSolasVGM(exportContainers, false); 
 		return new CustomResponseEntity<ApiResponseObject<?>>(
 				new ApiResponseObject<List<ExportContainer>>(HttpStatus.OK, exportContainers), HttpStatus.OK);
 	}

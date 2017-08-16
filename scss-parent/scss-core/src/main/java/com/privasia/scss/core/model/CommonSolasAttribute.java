@@ -45,10 +45,6 @@ public class CommonSolasAttribute implements Serializable {
 	@Column(name = "SHIPPER_VGM")
 	private String shipperVGM;
 
-	@Column(name = "IS_DIRECT_ENTRY", nullable = true)
-	@Type(type = "true_false")
-	private boolean directEntry = false;
-
 	public Integer getMgw() {
 		return mgw;
 	}
@@ -95,14 +91,6 @@ public class CommonSolasAttribute implements Serializable {
 
 	public void setShipperVGM(String shipperVGM) {
 		this.shipperVGM = shipperVGM;
-	}
-
-	public boolean isDirectEntry() {
-		return directEntry;
-	}
-
-	public void setDirectEntry(boolean directEntry) {
-		this.directEntry = directEntry;
 	}
 
 	public SolasInfo constructSolasInfo() {

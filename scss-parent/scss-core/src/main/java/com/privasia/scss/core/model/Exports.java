@@ -385,6 +385,10 @@ public class Exports extends AuditEntity implements Serializable {
 
 	@Column(name = "SOLAS_CERT")
 	private String solasCertNo;
+	
+	@Column(name = "IS_DIRECT_ENTRY", nullable = true)
+	@Type(type = "true_false")
+	private boolean directEntry = false;
 
 	@Embedded
 	@AttributeOverrides({ @AttributeOverride(name = "mgw", column = @Column(name = "MGW")),
@@ -1109,6 +1113,14 @@ public class Exports extends AuditEntity implements Serializable {
 
 	public void setCosmosNetWeight(Integer cosmosNetWeight) {
 		this.cosmosNetWeight = cosmosNetWeight;
+	}
+	
+	public boolean isDirectEntry() {
+		return directEntry;
+	}
+
+	public void setDirectEntry(boolean directEntry) {
+		this.directEntry = directEntry;
 	}
 
 	@Override

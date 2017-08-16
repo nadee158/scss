@@ -56,7 +56,7 @@ public class SolasService {
 
 	}
 
-	public List<ExportContainer> calculateTerminalVGM(List<ExportContainer> exportContainers) {
+	public List<ExportContainer> calculateSolasVGM(List<ExportContainer> exportContainers,  boolean initialRequest) {
 
 		boolean fullPresent = exportContainers.stream()
 				.filter(expCon -> StringUtils.equalsIgnoreCase(ContainerFullEmptyType.FULL.getValue(),
@@ -64,6 +64,18 @@ public class SolasService {
 				.findAny().isPresent();
 
 		if (fullPresent) {
+
+			ExportContainer firstContainer = exportContainers.stream()
+					.filter(expCon -> StringUtils.equalsIgnoreCase(ContainerFullEmptyType.FULL.getValue(),
+							expCon.getContainer().getContainerFullOrEmpty()))
+					.findFirst().get();
+
+			Optional<ExportContainer> optContainer = exportContainers.stream()
+					.filter(expCon -> StringUtils.equalsIgnoreCase(ContainerFullEmptyType.FULL.getValue(),
+							expCon.getContainer().getContainerFullOrEmpty())
+							&& (!StringUtils.equalsIgnoreCase(firstContainer.getContainer().getContainerNumber(),
+									expCon.getContainer().getContainerNumber())))
+					.findAny();
 
 			Optional<List<SolasWeightConfig>> optSolasMasterData = solasWeightConfigRepository
 					.findByWeightTypeIn(Arrays.asList(SolasWeightType.FUEL, SolasWeightType.TYRE,
@@ -96,57 +108,49 @@ public class SolasService {
 					.orElseThrow(() -> new ResultsNotFoundException("For Solas Tolerance Information not Found ! "))
 					.getDefaultValue();
 
+			int pmWeight = 0;
+			int axelWeight = 0;
+
+			if (StringUtils.isNotEmpty(firstContainer.getPmWeight())) {
+				pmWeight = Integer.parseInt(firstContainer.getPmWeight());
+			} else {
+				Optional<SolasWeightConfig> optPM = solasMasterData.stream().filter(solasConfig -> StringUtils
+						.equalsIgnoreCase(SolasWeightType.PM.getValue(), solasConfig.getWeightType().getValue()))
+						.findFirst();
+				pmWeight = optPM
+						.orElseThrow(() -> new ResultsNotFoundException("For Solas PM Information not Found ! "))
+						.getDefaultValue();
+			}
+
+			if (StringUtils.isNotEmpty(firstContainer.getTrailerWeight())) {
+				axelWeight = Integer.parseInt(firstContainer.getTrailerWeight());
+			} else {
+				Optional<SolasWeightConfig> optAxel = solasMasterData.stream().filter(solasConfig -> StringUtils
+						.equalsIgnoreCase(SolasWeightType.TRAILER.getValue(), solasConfig.getWeightType().getValue()))
+						.findFirst();
+				axelWeight = optAxel
+						.orElseThrow(() -> new ResultsNotFoundException("For Solas Trailer Information not Found ! "))
+						.getDefaultValue();
+			}
+
+			int PFAT = pmWeight + axelWeight + fuelWeight + tireWeight;
+			
+			
+			if(firstContainer.getExpWeightBridge() == null || firstContainer.getExpWeightBridge().intValue() == 0) {
+				
+				calculateWeightBridge(firstContainer, optContainer, PFAT, initialRequest);
+				
+			}
+			calculateTernimalVGM(firstContainer, optContainer, PFAT);
+
 			exportContainers.stream()
 					.filter(expCon -> StringUtils.equalsIgnoreCase(ContainerFullEmptyType.FULL.getValue(),
 							expCon.getContainer().getContainerFullOrEmpty()))
 					.forEach(exportContainer -> {
 
-						int pmWeight = 0;
-						int axelWeight = 0;
-
-						exportContainer.setWithinTolerance(false);
-						boolean dirctEntry = exportContainer.getSolas().isDirectEntry();
-
-						if (StringUtils.isNotEmpty(exportContainer.getPmWeight())) {
-							pmWeight = Integer.parseInt(exportContainer.getPmWeight());
-						} else {
-							Optional<SolasWeightConfig> optPM = solasMasterData.stream()
-									.filter(solasConfig -> StringUtils.equalsIgnoreCase(SolasWeightType.PM.getValue(),
-											solasConfig.getWeightType().getValue()))
-									.findFirst();
-							pmWeight = optPM
-									.orElseThrow(
-											() -> new ResultsNotFoundException("For Solas PM Information not Found ! "))
-									.getDefaultValue();
-						}
-
-						if (StringUtils.isNotEmpty(exportContainer.getTrailerWeight())) {
-							axelWeight = Integer.parseInt(exportContainer.getTrailerWeight());
-						} else {
-							Optional<SolasWeightConfig> optAxel = solasMasterData.stream()
-									.filter(solasConfig -> StringUtils.equalsIgnoreCase(
-											SolasWeightType.TRAILER.getValue(), solasConfig.getWeightType().getValue()))
-									.findFirst();
-							axelWeight = optAxel.orElseThrow(
-									() -> new ResultsNotFoundException("For Solas Trailer Information not Found ! "))
-									.getDefaultValue();
-						}
-
-						int PFAT = pmWeight + axelWeight + fuelWeight + tireWeight;
-
-						if (dirctEntry && (exportContainer.getExpWeightBridge() == null 
-								|| exportContainer.getExpWeightBridge().intValue() == 0)) {
-							// calculate ternimalVGM
-							calculateWeightBridge(exportContainer, PFAT);
-
-						}else{
-							// calculate ternimalVGM
-							calculateTernimalVGM(exportContainer, PFAT);
-						}
-
 						exportContainer.setTireWeight(String.valueOf(tireWeight));
 						exportContainer.setFuelWeight(String.valueOf(fuelWeight));
-						
+
 						if (StringUtils.equalsIgnoreCase(exportContainer.getSolas().getSolasInstruction(),
 								SolasInstructionType.VGM_INSTRUCTION_SHIPPER.getValue())) {
 							calculateTolerance(exportContainer, tolerance);
@@ -156,38 +160,144 @@ public class SolasService {
 		} else {
 			throw new BusinessException("SolasApplicable Applicable only for Full Containers !");
 		}
-		// both ternimal vgm
-		// when direct entry true no calculation require why - weightBridge
-		// knows, ternimal vgm provided
-		// when direct entry false calculation required ternimal VGM
-		// both Shipper
-		// when direct entry has to be fasle calculation require for ternimal
-		// vgm, ( for tollernce ) weightBridge knows
-		// when direct entry has to be true no calculation require why -
-		// weightBridge knows, ternimal vgm provided
-		// one terminal vgm and one shipper vgm
-		// for terminal vgm
-		// direct entry true no calculation require why - weightBridge knows,
-		// ternimal vgm provided
-		// direct entry false calculation required ternimal VGM
-		// for shipper vgm
-		// always direct entry has to be fasle
-		// calculation require for ternimal vgm, weightBridge knows
 
 		return exportContainers;
 
 	}
 
-	private ExportContainer calculateTernimalVGM(ExportContainer exportContainer, int PFAT) {
-		int terminalVGM = exportContainer.getExpWeightBridge() - PFAT;
-		exportContainer.setExpNetWeight(terminalVGM);
-		return exportContainer;
+	private void calculateTernimalVGM(ExportContainer firstContainer, Optional<ExportContainer> optContainer,
+			int PFAT) {
+
+		firstContainer.setWithinTolerance(false);
+		boolean dirctEntryFirst = firstContainer.getSolas().isDirectEntry();
+
+		if (dirctEntryFirst) {
+			// we know the ternimal vgm for first container
+
+			if (optContainer.isPresent()) {
+				ExportContainer secondContainer = optContainer.get();
+				secondContainer.setWithinTolerance(false);
+				boolean dirctEntrySecond = secondContainer.getSolas().isDirectEntry();
+
+				if (dirctEntrySecond) {
+
+					// back to back container directEntry true we no need to
+					// calculate ternimal vgm
+					log.info(firstContainer.getContainer().getContainerNumber()
+							+ "is a back to back container directEntry  " + dirctEntryFirst + " ternimanal vgm "
+							+ firstContainer.getExpNetWeight());
+
+					log.info(secondContainer.getContainer().getContainerNumber()
+							+ "is a back to back container directEntry  " + secondContainer + " ternimanal vgm "
+							+ secondContainer.getExpNetWeight());
+
+				} else {
+					// first container ternimal vgm we know
+					// second container ternimal vgm need to calcuate
+
+					int terminalVGM = secondContainer.getExpWeightBridge() - firstContainer.getExpNetWeight() - PFAT;
+					secondContainer.setExpNetWeight(terminalVGM);
+
+				}
+
+			} else {
+				// single container directEntry true we no need to calculate
+				// ternimal vgm
+				log.info(firstContainer.getContainer().getContainerNumber() + "is a single container directEntry  "
+						+ dirctEntryFirst + " ternimanal vgm " + firstContainer.getExpNetWeight());
+			}
+
+		} else {
+
+			// we have to calculate ternimal vgm for first container
+
+			if (optContainer.isPresent()) {
+				ExportContainer secondContainer = optContainer.get();
+				secondContainer.setWithinTolerance(false);
+				boolean dirctEntrySecond = secondContainer.getSolas().isDirectEntry();
+
+				if (dirctEntrySecond) {
+
+					// back to back container directEntry false first container
+					// we no need to calculate ternimal vgm this
+					// second container we no need to calculate ternimal vgm
+					int terminalVGM = firstContainer.getExpWeightBridge() - secondContainer.getExpNetWeight() - PFAT;
+					firstContainer.setExpNetWeight(terminalVGM);
+
+				} else {
+					// back to back containers.
+					// we need to calculate both ternimal vgm need to calcuate
+
+					int terminalVGM = (firstContainer.getExpWeightBridge() - PFAT) / 2;
+					firstContainer.setExpNetWeight(terminalVGM);
+					secondContainer.setExpNetWeight(terminalVGM);
+
+				}
+
+			} else {
+				// single container directEntry false we need to calculate
+				// ternimal vgm for first container
+				int terminalVGM = firstContainer.getExpWeightBridge() - PFAT;
+				firstContainer.setExpNetWeight(terminalVGM);
+			}
+
+		}
+
 	}
-	
-	private ExportContainer calculateWeightBridge(ExportContainer exportContainer, int PFAT) {
-		int weighBridge = exportContainer.getExpNetWeight() + PFAT;
-		exportContainer.setExpWeightBridge(weighBridge);
-		return exportContainer;
+
+	private void calculateWeightBridge(ExportContainer firstContainer, Optional<ExportContainer> optContainer, 
+			int PFAT, boolean initialRequest) {
+		
+		boolean dirctEntryFirst = firstContainer.getSolas().isDirectEntry();
+
+		if (dirctEntryFirst) {
+			// we know the ternimal vgm for first container
+
+			if (optContainer.isPresent()) {
+				ExportContainer secondContainer = optContainer.get();
+				boolean dirctEntrySecond = secondContainer.getSolas().isDirectEntry();
+
+				if (dirctEntrySecond) {
+					//back to back containers . ternimal vgm provided to calculate weigh bridge
+					int weighBridge = firstContainer.getExpNetWeight() + + secondContainer.getExpNetWeight() + PFAT;
+					firstContainer.setExpWeightBridge(weighBridge);
+					secondContainer.setExpWeightBridge(weighBridge);
+
+				} else {
+					
+					// ternimal vgm should be provided to calculate weight bridge
+					
+					log.info(secondContainer.getContainer().getContainerNumber() + "container directEntry  "
+							+ dirctEntrySecond + " ternimanal vgm " + secondContainer.getExpNetWeight());
+					
+					if(!initialRequest){
+						
+						throw new BusinessException("container "+secondContainer.getContainer().getContainerNumber()
+								+" need to provide ternimanal vgm to calculate weigh bridge");
+					}
+
+				}
+
+			} else {
+				// single container directEntry true we no need to calculate
+				// ternimal vgm can calculate weigh bridge
+				int weighBridge = firstContainer.getExpNetWeight() + PFAT;
+				firstContainer.setExpWeightBridge(weighBridge);
+			}
+
+		} else {
+
+			// ternimal vgm should be provided to calculate weigh bridge
+			log.info(firstContainer.getContainer().getContainerNumber() + "container directEntry  "
+					+ dirctEntryFirst + " ternimanal vgm " + firstContainer.getExpNetWeight());
+			
+			if(!initialRequest){
+				throw new BusinessException("container "+firstContainer.getContainer().getContainerNumber()
+						+" need to provide ternimanal vgm to calculate weigh bridge");
+			}
+			
+		}
+		
 	}
 
 	private ExportContainer calculateTolerance(ExportContainer exportContainer, int tolerance) {
@@ -196,28 +306,28 @@ public class SolasService {
 				+ exportContainer.getSolas().getSolasInstruction() + " ContainerFullEmpty "
 				+ exportContainer.getContainer().getContainerFullOrEmpty());
 
-			BigDecimal tolerancePercentage = new BigDecimal(tolerance);
+		BigDecimal tolerancePercentage = new BigDecimal(tolerance);
 
-			if (exportContainer.getSolas().getShipperVGM() == null
-					|| Integer.parseInt(exportContainer.getSolas().getShipperVGM()) == 0)
-				throw new BusinessException("For Container " + exportContainer.getContainer().getContainerNumber()
-						+ " Provided Shipper VGM : " + exportContainer.getSolas().getShipperVGM()
-						+ " cannot calculate variance");
+		if (exportContainer.getSolas().getShipperVGM() == null
+				|| Integer.parseInt(exportContainer.getSolas().getShipperVGM()) == 0)
+			throw new BusinessException(
+					"For Container " + exportContainer.getContainer().getContainerNumber() + " Provided Shipper VGM : "
+							+ exportContainer.getSolas().getShipperVGM() + " cannot calculate variance");
 
-			BigDecimal shipperVGM = new BigDecimal(exportContainer.getSolas().getShipperVGM()).setScale(2,
-					BigDecimal.ROUND_UP);
+		BigDecimal shipperVGM = new BigDecimal(exportContainer.getSolas().getShipperVGM()).setScale(2,
+				BigDecimal.ROUND_UP);
 
-			BigDecimal terminalVGM = new BigDecimal(exportContainer.getExpNetWeight()).setScale(2, BigDecimal.ROUND_UP);
-			BigDecimal variance = ((shipperVGM.subtract(terminalVGM)).divide(shipperVGM, 4, BigDecimal.ROUND_HALF_UP))
-					.multiply(new BigDecimal(100));
-			exportContainer.setCalculatedVariance(String.valueOf(variance));
+		BigDecimal terminalVGM = new BigDecimal(exportContainer.getExpNetWeight()).setScale(2, BigDecimal.ROUND_UP);
+		BigDecimal variance = ((shipperVGM.subtract(terminalVGM)).divide(shipperVGM, 4, BigDecimal.ROUND_HALF_UP))
+				.multiply(new BigDecimal(100));
+		exportContainer.setCalculatedVariance(String.valueOf(variance));
 
-			// checking if in range
-			if (variance.compareTo(tolerancePercentage) <= 0 && variance.compareTo(tolerancePercentage.negate()) >= 0) {
-				exportContainer.setWithinTolerance(true);
-			} else {
-				exportContainer.setWithinTolerance(false);
-			}
+		// checking if in range
+		if (variance.compareTo(tolerancePercentage) <= 0 && variance.compareTo(tolerancePercentage.negate()) >= 0) {
+			exportContainer.setWithinTolerance(true);
+		} else {
+			exportContainer.setWithinTolerance(false);
+		}
 
 		return exportContainer;
 

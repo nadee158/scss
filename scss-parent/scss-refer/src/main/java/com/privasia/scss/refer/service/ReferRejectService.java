@@ -277,8 +277,6 @@ public class ReferRejectService {
 
     referReject.setReferRejectDetails(referRejectDetails);
 
-    boolean doubleBoooking = referRejectDetails.size() == 2 ? true : false;
-
     HPABBooking hpabBooking = null;
     if (StringUtils.isNotEmpty(baseCommonGateInOut.getHpabBooking())) {
       hpabBooking = hpabBookingRepository.findOne(baseCommonGateInOut.getHpabBooking()).orElseThrow(
@@ -297,7 +295,7 @@ public class ReferRejectService {
           .filter(e -> (StringUtils.isNotEmpty(e.getContainerNo()))
               && (StringUtils.equalsIgnoreCase(e.getContainerNo(), detailDTO.getContainerNo())))
           .findFirst().orElse(referRejectDetail);
-      referRejectDetail.setDoubleBooking(doubleBoooking);
+      referRejectDetail.setDoubleBooking(null);
       referRejectDetail.setGateInTime(gateInWriteRequest.getGateInDateTime());
       updateRejectDetailReference(detailDTO, referRejectDetail, referRejectF,
           referRejectF.getBaseCommonGateInOut().getGateInClerk());
