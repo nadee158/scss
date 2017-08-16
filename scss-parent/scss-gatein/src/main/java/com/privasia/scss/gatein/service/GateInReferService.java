@@ -103,6 +103,7 @@ public class GateInReferService {
 					exportContainer.getContainer().setContainerNumber(referRejectDetail.getContainerNo());
 					exportContainer.getContainer().setContainerISOCode(referRejectDetail.getContainerIsoCode());
 					exportContainer.setShippingLine(referRejectDetail.getLineCode());
+					exportContainer.setContainerPosition(referRejectDetail.getPosition().getValue());
 					if(!exportContainers.contains(exportContainer))
 					exportContainers.add(exportContainer);
 
