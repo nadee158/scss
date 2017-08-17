@@ -8,6 +8,8 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.hibernate.annotations.Type;
 import org.springframework.beans.BeanUtils;
 
@@ -91,6 +93,11 @@ public class CommonSolasAttribute implements Serializable {
 
 	public void setShipperVGM(String shipperVGM) {
 		this.shipperVGM = shipperVGM;
+	}
+	
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
 	}
 
 	public SolasInfo constructSolasInfo() {

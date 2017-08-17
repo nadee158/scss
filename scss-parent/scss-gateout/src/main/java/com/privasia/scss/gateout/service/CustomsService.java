@@ -8,7 +8,8 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
-import org.hibernate.resource.transaction.spi.TransactionCoordinatorOwner;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ import com.privasia.scss.common.dto.CustomsDTO;
 import com.privasia.scss.common.dto.CustomsExportInfo;
 import com.privasia.scss.common.dto.CustomsGatePassInfo;
 import com.privasia.scss.common.dto.CustomsODDInfo;
+import com.privasia.scss.common.dto.ODDContainerDetailsDTO;
 import com.privasia.scss.common.enums.ContainerFullEmptyType;
 import com.privasia.scss.common.enums.ImpExpFlagStatus;
 import com.privasia.scss.common.enums.TransactionStatus;
@@ -32,12 +34,10 @@ import com.privasia.scss.core.model.Customs;
 import com.privasia.scss.core.model.CustomsReport;
 import com.privasia.scss.core.model.Exports;
 import com.privasia.scss.core.model.GatePass;
-import com.privasia.scss.core.model.ODDContainerDetails;
 import com.privasia.scss.core.model.WDCGatePass;
 import com.privasia.scss.core.model.WHODD;
 import com.privasia.scss.core.predicate.ExportsPredicates;
 import com.privasia.scss.core.predicate.GatePassPredicates;
-import com.privasia.scss.core.predicate.ODDPredicates;
 import com.privasia.scss.core.repository.ClientRepository;
 import com.privasia.scss.core.repository.CustomsReportRepository;
 import com.privasia.scss.core.repository.CustomsRepository;
@@ -50,6 +50,8 @@ import com.querydsl.core.types.Predicate;
 
 @Service("customsService")
 public class CustomsService {
+	
+	private static final Log log = LogFactory.getLog(CustomsService.class);
 
 	private ExportsRepository exportsRepository;
 
@@ -213,23 +215,16 @@ public class CustomsService {
 				"" + "Save customs failed. ODD Information not found ! " + customsODDInfo.getOddIdSeq()));
 
 		customs.setWhODD(whODD);
-		if (customs.getContainer01() == null) {
+		if (customsODDInfo.getContainer01() != null) {
 
-			System.out.println("customsODDInfo.getFullOREmptyCon01().get() : " + customsODDInfo.getFullOrEmptyCon01());
+			customs.setContainer01(constructCustomContainer(customsODDInfo.getContainer01(), whODD.getImpExpFlag(),
+					whODD.getContainer01().getLocation().getOddCode()));
+		} 
+		
+		if (whODD.getContainer02() != null) {
 
-			customs.setContainer01(constructCustomContainer(customsODDInfo.getFullOrEmptyCon01(),
-					whODD.getContainer01(), whODD.getImpExpFlag(), customsODDInfo.getTrxStatusCon01(),
-					customsODDInfo.getRejectRemarksCon01()));
-		} else {
-
-			System.out.println(
-					"else customsODDInfo.getFullOREmptyCon01().get() : " + customsODDInfo.getFullOrEmptyCon01());
-			System.out.println(
-					"else customsODDInfo.getFullOREmptyCon02().get() : " + customsODDInfo.getFullOrEmptyCon02());
-
-			customs.setContainer02(constructCustomContainer(customsODDInfo.getFullOrEmptyCon02(),
-					whODD.getContainer02(), whODD.getImpExpFlag(), customsODDInfo.getTrxStatusCon02(),
-					customsODDInfo.getRejectRemarksCon01()));
+			customs.setContainer02(constructCustomContainer(customsODDInfo.getContainer02(), whODD.getImpExpFlag(),
+					whODD.getContainer02().getLocation().getOddCode()));
 		}
 
 		customsRepository.save(customs);
@@ -413,22 +408,21 @@ public class CustomsService {
 		return customContainer;
 	}
 
-	private CustomContainer constructCustomContainer(String fullOrEmpty, ODDContainerDetails oddContainerDetails,
-			ImpExpFlagStatus impExpFlag, String transactionStatus, String rejectRemarks) {
+	private CustomContainer constructCustomContainer(ODDContainerDetailsDTO oddContainerDetails, ImpExpFlagStatus impExpFlag, String location) {
 
 		if (oddContainerDetails != null
-				&& (StringUtils.equalsIgnoreCase(fullOrEmpty, ContainerFullEmptyType.FULL.getValue()))) {
+				&& (StringUtils.equalsIgnoreCase(oddContainerDetails.getFullOrEmpty(), ContainerFullEmptyType.FULL.getValue()))) {
 
 			if ((StringUtils.equalsIgnoreCase(impExpFlag.getValue(), ImpExpFlagStatus.EXPORT.getValue()))
-					&& (StringUtils.equalsIgnoreCase(transactionStatus, TransactionStatus.APPROVED.getValue()))) {
+					&& (StringUtils.equalsIgnoreCase(oddContainerDetails.getOddStatus(), TransactionStatus.APPROVED.getValue()))) {
 				return null;
 			}
 			CustomContainer customContainer = new CustomContainer();
-			customContainer.setContainerFullOrEmpty(ContainerFullEmptyType.fromValue(fullOrEmpty));
+			customContainer.setContainerFullOrEmpty(ContainerFullEmptyType.fromValue(oddContainerDetails.getFullOrEmpty()));
 			customContainer.setContainerNumber(oddContainerDetails.getContainerNo());
-			customContainer.setCustomEirStatus(TransactionStatus.fromCode(transactionStatus));
-			customContainer.setOddLocation(oddContainerDetails.getLocation().getOddCode());
-			customContainer.setCustomRejection(rejectRemarks);
+			customContainer.setCustomEirStatus(TransactionStatus.fromCode(oddContainerDetails.getOddStatus()));
+			customContainer.setOddLocation(location);
+			customContainer.setCustomRejection(oddContainerDetails.getRejectionReason());
 			return customContainer;
 		}
 		return null;
@@ -455,11 +449,15 @@ public class CustomsService {
 
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
 	public String checkCustomStatus(Long clientID) {
+		
+		log.info("checkCustomStatus clientID "+clientID);
+		
 		String status = customsRepository.checkCustomStatus(clientID);
+		log.info("checkCustomStatus status "+ status);
 		if (StringUtils.isEmpty(status)) {
 			status = LPS.RES_WAIT;
 		}
-		System.out.println("******* Response for Check Custom Status ******* " + status);
+		log.info("******* Response for Check Custom Status ******* " + status);
 		return status;
 	}
 }

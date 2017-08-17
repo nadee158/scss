@@ -90,9 +90,8 @@ public class GatePassValidationService {
 
 		GatePass gatePass = scssGatePassOpt
 				.orElseThrow(() -> new BusinessException("Invalid Gate Pass. Not Found !" + gatePassNo));
+
 		Optional<WDCGatePass> wdcGatePassOpt = wdcGatePassRepository.findByGatePassNO(gatePass.getGatePassNo());
-		WDCGatePass wdcGatePass = wdcGatePassOpt
-				.orElseThrow(() -> new BusinessException("Gate Pass Not Found In WDC !" + gatePass.getGatePassNo()));
 
 		if (gatePass.getBaseCommonGateInOutAttribute() != null
 				&& gatePass.getBaseCommonGateInOutAttribute().getEirStatus() != null
@@ -102,14 +101,14 @@ public class GatePassValidationService {
 			gatePassUsedOrInprogress(gatePass, eirStatus);
 			isGatePassCancelled(gatePass, gatePassStatus);
 			isGatePassValid(gatePass, gatePassStatus, eirStatus);
-			isGatePassExpired(gatePass, today, wdcGatePass);
+			isGatePassExpired(gatePass, today, wdcGatePassOpt);
 			isGatePassExpiredByYPN(gatePass, today);
 
 			Optional<WDCGlobalSetting> wdcGlobalSettingOpt = wdcGlobalSettingRepository.findOne("EDO_EXP");
 			if (wdcGlobalSettingOpt.isPresent()) {
 				WDCGlobalSetting wdcGlobalSetting = wdcGlobalSettingOpt.get();
 				String etpEdoExpiryDateFlag = wdcGlobalSetting.getGlobalString();
-				isEDOExpired(gatePass, today, wdcGatePass, etpEdoExpiryDateFlag);
+				isEDOExpired(gatePass, today, wdcGatePassOpt, etpEdoExpiryDateFlag);
 			}
 
 			Optional<Card> cardOpt = cardRepository.findOne(cardIdSeq);
@@ -169,23 +168,31 @@ public class GatePassValidationService {
 
 	}
 
-	private void isGatePassExpired(GatePass gatePass, LocalDateTime today, WDCGatePass wdcGatePass) {
+	private void isGatePassExpired(GatePass gatePass, LocalDateTime today, Optional<WDCGatePass> wdcGatePassOpt) {
 
-		LocalDateTime wdcValidateDate = wdcGatePass.getGatePassValidDate();
+		if (wdcGatePassOpt.isPresent()) {
 
-		log.debug("------START check gatepass is valid ---- GatePassNo: " + gatePass.getGatePassNo() + " / Today "
-				+ today + " / WDCValidateDate " + wdcValidateDate);
+			WDCGatePass wdcGatePass = wdcGatePassOpt.get();
 
-		if (wdcValidateDate != null && today.isAfter(wdcValidateDate)) {
+			LocalDateTime wdcValidateDate = wdcGatePass.getGatePassValidDate();
+
+			log.debug("------START check gatepass is valid ---- GatePassNo: " + gatePass.getGatePassNo() + " / Today "
+					+ today + " / WDCValidateDate " + wdcValidateDate);
+
+			if (wdcValidateDate != null && today.isAfter(wdcValidateDate)) {
+
+				log.debug("------END check gatepass is valid ---- GatePassNo: " + gatePass.getGatePassNo() + " / Today "
+						+ today + " / WDCValidateDate " + wdcValidateDate);
+				throw new BusinessException("Gate Pass No " + gatePass.getGatePassNo() + " is already Expired");
+
+			}
 
 			log.debug("------END check gatepass is valid ---- GatePassNo: " + gatePass.getGatePassNo() + " / Today "
 					+ today + " / WDCValidateDate " + wdcValidateDate);
-			throw new BusinessException("Gate Pass No " + gatePass.getGatePassNo() + " is already Expired");
-
+		} else {
+			log.debug("------START isGatePassExpired ---- GatePassNo: " + gatePass.getGatePassNo() + " / Today " + today
+					+ " / Gate pass  not Present in WDC Gate pass table ");
 		}
-
-		log.debug("------END check gatepass is valid ---- GatePassNo: " + gatePass.getGatePassNo() + " / Today " + today
-				+ " / WDCValidateDate " + wdcValidateDate);
 
 	}
 
@@ -209,52 +216,63 @@ public class GatePassValidationService {
 
 	}
 
-	private void isEDOExpired(GatePass gatePass, LocalDateTime today, WDCGatePass wdcGatePass,
+	private void isEDOExpired(GatePass gatePass, LocalDateTime today, Optional<WDCGatePass> wdcGatePassOpt,
 			String etpEdoExpiryDateFlag) {
 
 		/**
 		 * Edo Expiry Date //edo logs
+		 *
 		 */
-		if (StringUtils.equalsIgnoreCase("Y", etpEdoExpiryDateFlag)) {
 
-			log.debug("------START check EDO Expired ---- GatePassNo: " + gatePass.getGatePassNo()
-					+ " / etpEdoExpiryDateFlag " + etpEdoExpiryDateFlag + " / GateOrder " + wdcGatePass.getGateOrder()
-					+ " / Today " + today + " / LineCode " + wdcGatePass.getGateOrder().getLineCode()
-					+ " / ETPEdoExpiryDateFlag " + etpEdoExpiryDateFlag);
+		if (wdcGatePassOpt.isPresent()) {
 
-			if (wdcGatePass.getGateOrder() != null) {
-				String gateOrderType = wdcGatePass.getGateOrder().getTypeCode();
-				if (StringUtils.equalsIgnoreCase(WDCGateOrderType.IMPORT.getValue(), gateOrderType)
-						|| StringUtils.equalsIgnoreCase(WDCGateOrderType.IMPORT_CHARGABLE.getValue(), gateOrderType)
-						|| StringUtils.equalsIgnoreCase(WDCGateOrderType.IMPORT_NON_CHARGABLE.getValue(),
-								gateOrderType)) {
-					LocalDateTime edoExpiryDate = wdcGatePass.getEdoExpiryDate();
-					if (edoExpiryDate != null) {
-						if (today.isAfter(edoExpiryDate)) {
-							throw new BusinessException(
-									"Gate Pass No " + gatePass.getGatePassNo() + "  Demurrage already Expired");
-						}
-					} else {
-						String lineCode = wdcGatePass.getGateOrder().getLineCode();
-						if (StringUtils.isNotBlank(lineCode)) {
-							EdoExpiryForLineResponseType responseType = etpWebserviceClient
-									.getEdoExpiryForLine(lineCode);
-							if (responseType!=null && responseType.isEdoExpiryEnabled()) {
-								if (edoExpiryDate == null) {
-									throw new BusinessException("Gate Pass No " + gatePass.getGatePassNo()
-											+ "  Demurrage Expiry Date is Empty");
+			WDCGatePass wdcGatePass = wdcGatePassOpt.get();
+
+			if (StringUtils.equalsIgnoreCase("Y", etpEdoExpiryDateFlag)) {
+
+				log.debug("------START check EDO Expired ---- GatePassNo: " + gatePass.getGatePassNo()
+						+ " / etpEdoExpiryDateFlag " + etpEdoExpiryDateFlag + " / GateOrder "
+						+ wdcGatePass.getGateOrder() + " / Today " + today + " / LineCode "
+						+ wdcGatePass.getGateOrder().getLineCode() + " / ETPEdoExpiryDateFlag " + etpEdoExpiryDateFlag);
+
+				if (wdcGatePass.getGateOrder() != null) {
+					String gateOrderType = wdcGatePass.getGateOrder().getTypeCode();
+					if (StringUtils.equalsIgnoreCase(WDCGateOrderType.IMPORT.getValue(), gateOrderType)
+							|| StringUtils.equalsIgnoreCase(WDCGateOrderType.IMPORT_CHARGABLE.getValue(), gateOrderType)
+							|| StringUtils.equalsIgnoreCase(WDCGateOrderType.IMPORT_NON_CHARGABLE.getValue(),
+									gateOrderType)) {
+						LocalDateTime edoExpiryDate = wdcGatePass.getEdoExpiryDate();
+						if (edoExpiryDate != null) {
+							if (today.isAfter(edoExpiryDate)) {
+								throw new BusinessException(
+										"Gate Pass No " + gatePass.getGatePassNo() + "  Demurrage already Expired");
+							}
+						} else {
+							String lineCode = wdcGatePass.getGateOrder().getLineCode();
+							if (StringUtils.isNotBlank(lineCode)) {
+								EdoExpiryForLineResponseType responseType = etpWebserviceClient
+										.getEdoExpiryForLine(lineCode);
+								if (responseType != null && responseType.isEdoExpiryEnabled()) {
+									if (edoExpiryDate == null) {
+										throw new BusinessException("Gate Pass No " + gatePass.getGatePassNo()
+												+ "  Demurrage Expiry Date is Empty");
+									}
 								}
 							}
 						}
 					}
 				}
 			}
-		}
 
-		log.debug("------End check EDO Expired ---- GatePassNo: " + gatePass.getGatePassNo()
-				+ " / etpEdoExpiryDateFlag " + etpEdoExpiryDateFlag + " / GateOrder " + wdcGatePass.getGateOrder()
-				+ " / Today " + today + " / LineCode " + wdcGatePass.getGateOrder().getLineCode()
-				+ " / ETPEdoExpiryDateFlag " + etpEdoExpiryDateFlag);
+			log.debug("------End check EDO Expired ---- GatePassNo: " + gatePass.getGatePassNo()
+					+ " / etpEdoExpiryDateFlag " + etpEdoExpiryDateFlag + " / GateOrder " + wdcGatePass.getGateOrder()
+					+ " / Today " + today + " / LineCode " + wdcGatePass.getGateOrder().getLineCode()
+					+ " / ETPEdoExpiryDateFlag " + etpEdoExpiryDateFlag);
+
+		}else{
+			log.debug("------End check EDO Expired ---- GatePassNo: " + gatePass.getGatePassNo() +" not Present in WDC Gate pass table");
+		}
+		
 	}
 
 	private void matchCompany(GatePass gatePass, Card card) {

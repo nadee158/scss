@@ -206,7 +206,12 @@ public class DGContainerService {
 	private boolean isKpaClass2(ExportContainer exportContainer) {
 
 		if (StringUtils.equals(LpkClassType.LPK_CLASS2.getValue(), exportContainer.getLpkClass())) {
-			int hours = dgHours.get(exportContainer.getHdlGoodsCode()).orElse(72);
+			Optional<String>  hdlGoodsDesc =  null;
+			if (exportContainer.getHdlGoodsDescription()!=null){
+				hdlGoodsDesc=dgHours.keySet().stream().filter(desc -> desc.contains(exportContainer.getHdlGoodsDescription())).findFirst();
+			}
+			Integer hours = 72;
+			if(hdlGoodsDesc!=null) hours = dgHours.get(hdlGoodsDesc.orElse("72 HOURS")).get();
 			LocalDateTime vesselETADate = exportContainer.getVesselETADate().plusHours(2);
 			LocalDateTime allowGateInDate = vesselETADate.minusHours(hours);
 			LocalDateTime now = LocalDateTime.now();

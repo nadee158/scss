@@ -33,8 +33,8 @@ public class SolasController {
 	@RequestMapping(value = "/calculatevgm/", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public CustomResponseEntity<ApiResponseObject<?>> calculateVGM(
 			@RequestBody List<ExportContainer> exportContainers) {
-		logger.info("exportContainers.size() " + exportContainers.size());
-		exportContainers = solasService.calculateSolasVGM(exportContainers, false); 
+
+		exportContainers = solasService.calculateSolasVGM(exportContainers, false);
 		return new CustomResponseEntity<ApiResponseObject<?>>(
 				new ApiResponseObject<List<ExportContainer>>(HttpStatus.OK, exportContainers), HttpStatus.OK);
 	}

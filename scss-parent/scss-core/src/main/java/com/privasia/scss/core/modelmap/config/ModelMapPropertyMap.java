@@ -137,11 +137,8 @@ public final class ModelMapPropertyMap {
 				skip().getBaseCommonGateInOutAttribute().setGateOutClient(null);
 				skip().setPrintEir(null);
 				skip().setManualPlanIndicator(null);
+				map().setDirectEntry(source.getSolas().isDirectEntry());
 				
-				if(source.getSolas() != null){
-					map().setDirectEntry(source.getSolas().isDirectEntry());
-				}
-
 			}
 		};
 	}

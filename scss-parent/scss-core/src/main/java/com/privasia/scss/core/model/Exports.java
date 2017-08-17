@@ -983,10 +983,6 @@ public class Exports extends AuditEntity implements Serializable {
 		this.solas = solas;
 	}
 
-	public static long getSerialversionuid() {
-		return serialVersionUID;
-	}
-
 	public BaseCommonGateInOutAttribute getBaseCommonGateInOutAttribute() {
 		return baseCommonGateInOutAttribute;
 	}
