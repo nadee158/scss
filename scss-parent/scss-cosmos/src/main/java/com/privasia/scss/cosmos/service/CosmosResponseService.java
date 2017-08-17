@@ -73,6 +73,11 @@ public class CosmosResponseService {
         setManualPlanIndicatorForExports(gateInResponse);
         setCallCardCode(response, gateInResponse);
         gateInResponse.setManualPlanIndicator(true);
+        
+        gateInResponse.getExportContainers().forEach(exportContainer-> {
+        	exportContainer.setManualPlanIndicator(true);
+        });
+        
         return gateInResponse;
 
       } else {

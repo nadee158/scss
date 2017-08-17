@@ -1,7 +1,6 @@
 package com.privasia.scss.core.service;
 
 import java.math.BigDecimal;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.privasia.scss.common.exception.BusinessException;
 import com.privasia.scss.core.config.JwtSettings;
 import com.privasia.scss.core.exception.InvalidJwtTokenException;
 import com.privasia.scss.core.model.Login;

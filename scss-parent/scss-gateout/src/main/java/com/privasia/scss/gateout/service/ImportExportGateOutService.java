@@ -36,7 +36,6 @@ import com.privasia.scss.core.repository.CardRepository;
 import com.privasia.scss.core.repository.ClientRepository;
 import com.privasia.scss.core.repository.SystemUserRepository;
 import com.privasia.scss.core.service.CommonCardService;
-import com.privasia.scss.cosmos.service.CosmosService;
 import com.privasia.scss.gateout.imports.exports.business.service.ImportExportCommonGateOutBusinessService;
 import com.privasia.scss.gateout.whodd.service.ODDGateOutService;
 

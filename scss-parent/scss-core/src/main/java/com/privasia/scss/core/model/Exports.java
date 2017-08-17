@@ -1125,7 +1125,7 @@ public class Exports extends AuditEntity implements Serializable {
 	}
 
 	public void prepareForInsertFromOpus(SystemUser gateInClerk, Card card, Client gateInClient, ShipSCN scn,
-			HPABBooking hpabBooking, DamageCodeRepository damageCodeRepository) {
+			HPABBooking hpabBooking, DamageCodeRepository damageCodeRepository, Boolean manualPlanIndicator) {
 		if (this.getBaseCommonGateInOutAttribute() == null) {
 			this.setBaseCommonGateInOutAttribute(new BaseCommonGateInOutAttribute());
 		}
@@ -1134,7 +1134,6 @@ public class Exports extends AuditEntity implements Serializable {
 		}
 		this.getBaseCommonGateInOutAttribute().setTimeGateInOk(LocalDateTime.now());
 		this.getBaseCommonGateInOutAttribute().setCard(card);
-		this.setManualPlanIndicator(ExportOPTFlagType.OPTFLAG_NORMAL);
 		this.getBaseCommonGateInOutAttribute().setEirStatus(TransactionStatus.INPROGRESS);
 		this.setBookingNo(CommonUtil.changeCase(this.bookingNo, CommonUtil.UPPER_CASE));
 		if (this.container == null) {
@@ -1338,6 +1337,12 @@ public class Exports extends AuditEntity implements Serializable {
 				.setFaLedgerCode(CommonUtil.changeCase(this.getSolas().getFaLedgerCode(), CommonUtil.UPPER_CASE));
 		this.getSolas()
 				.setSolasRefNumber(CommonUtil.changeCase(this.getSolas().getSolasRefNumber(), CommonUtil.LOWER_CASE));
+		
+		if(manualPlanIndicator == null || manualPlanIndicator == false){
+			this.setManualPlanIndicator(ExportOPTFlagType.OPTFLAG_NORMAL);
+		}else{
+			this.setManualPlanIndicator(ExportOPTFlagType.OPTFLAG_MANUAL);
+		}
 	}
 
 	private void calculateWeightPercentages() {
