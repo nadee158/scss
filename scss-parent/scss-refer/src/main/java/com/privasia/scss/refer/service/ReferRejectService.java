@@ -150,6 +150,9 @@ public class ReferRejectService {
   private ReferRejectListDTO constructReferRejectListDTO(ReferReject referReject) {
     ReferRejectListDTO listDTO = new ReferRejectListDTO();
     listDTO.setReferId(referReject.getReferRejectID());
+    
+    listDTO.setExpWeightBridge(referReject.getExpWeightBridge());
+    
 
     if (referReject.getBaseCommonGateInOut() != null) {
 
@@ -162,7 +165,9 @@ public class ReferRejectService {
       }
 
       Card card = baseCommonGateInOut.getCard();
+      
       if (card != null) {
+    	listDTO.setCardID(card.getCardID());
         Company company = card.getCompany();
         if (company != null) {
           listDTO.setHaulierCompany(company.getCompanyName());

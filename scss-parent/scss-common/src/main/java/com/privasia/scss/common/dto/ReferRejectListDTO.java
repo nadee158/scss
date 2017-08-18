@@ -37,6 +37,10 @@ public class ReferRejectListDTO implements Serializable {
 
 	private String contNo02;
 
+	private long cardID;
+
+	private int expWeightBridge;
+
 	// ReferReject.referRejectDetails.doubleBooking
 	private boolean doubleBooking = false;
 
@@ -112,9 +116,25 @@ public class ReferRejectListDTO implements Serializable {
 		this.contNo02 = contNo02;
 	}
 
+	public long getCardID() {
+		return cardID;
+	}
+
+	public void setCardID(long cardID) {
+		this.cardID = cardID;
+	}
+
+	public int getExpWeightBridge() {
+		return expWeightBridge;
+	}
+
+	public void setExpWeightBridge(int expWeightBridge) {
+		this.expWeightBridge = expWeightBridge;
+	}
+
 	@Override
-	public String toString(){
-	    return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
 	}
 
 }
