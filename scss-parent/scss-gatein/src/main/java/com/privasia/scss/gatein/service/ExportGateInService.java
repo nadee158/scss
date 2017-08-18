@@ -25,7 +25,6 @@ import com.privasia.scss.common.dto.GateInResponse;
 import com.privasia.scss.common.dto.GateInWriteRequest;
 import com.privasia.scss.common.dto.ManualPlanDTO;
 import com.privasia.scss.common.enums.ContainerFullEmptyType;
-import com.privasia.scss.common.enums.ExportOPTFlagType;
 import com.privasia.scss.common.enums.HpabReferStatus;
 import com.privasia.scss.common.enums.ReferStatus;
 import com.privasia.scss.common.enums.TransactionStatus;

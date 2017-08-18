@@ -42,7 +42,7 @@ public class ETPSolasLogDetail extends AuditEntity implements Serializable {
 
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_SCSS_ETP_SOLAS_LOG_DETAIL")
-  @SequenceGenerator(name = "SEQ_SCSS_ETP_SOLAS_LOG_DETAIL", sequenceName = "ETP_SOLAS_DEL_SEQ")
+  @SequenceGenerator(name = "SEQ_SCSS_ETP_SOLAS_LOG_DETAIL", sequenceName = "ETP_SOLAS_DEL_SEQ", allocationSize = 1)
   @Column(name = "ETP_SOLAS_DEL_SEQ")
   private Long etpSolasDetailID;
 

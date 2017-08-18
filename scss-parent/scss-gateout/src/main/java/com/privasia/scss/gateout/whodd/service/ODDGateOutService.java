@@ -322,7 +322,7 @@ public class ODDGateOutService {
 						.orElseThrow(() -> new ResultsNotFoundException("Invalid HDBS Booking Detail ID :"
 								+ whODD.getContainer01().getHdbsBkgDetailNo().get().getHdbsBKGDetailID()));
 
-				hdbsBookingDetail.setScssStatusCode(SCSSHDBSStatus.fromValue(whODDdto.getContainer02().getOddStatus()));
+				hdbsBookingDetail.setScssStatusCode(SCSSHDBSStatus.fromValue(whODDdto.getContainer01().getOddStatus()));
 				hdbsBookingDetail.setOddTimeGateOutOk(whODD.getTimeGateOutOk());
 				hdbsBookingDetail.setContainerNo(whODD.getContainer01().getContainerNo());
 			}

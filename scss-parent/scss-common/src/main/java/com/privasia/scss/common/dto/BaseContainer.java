@@ -12,7 +12,7 @@ public class BaseContainer implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
-  private PrintEirDTO printEir;
+  //private PrintEirDTO printEir;
 
   private CommonContainerDTO container;
 
@@ -72,14 +72,14 @@ public class BaseContainer implements Serializable {
   private LocalDateTime rtgExecustionDateTime;// ;":"20161212101010"
 
 
-  public PrintEirDTO getPrintEir() {
+  /*public PrintEirDTO getPrintEir() {
     return printEir;
   }
 
 
   public void setPrintEir(PrintEirDTO printEir) {
     this.printEir = printEir;
-  }
+  }*/
 
 
   public CommonContainerDTO getContainer() {

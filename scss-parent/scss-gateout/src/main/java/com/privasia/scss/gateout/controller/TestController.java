@@ -1,5 +1,8 @@
 package com.privasia.scss.gateout.controller;
 
+import java.util.Optional;
+
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -12,8 +15,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.privasia.scss.common.dto.ApiResponseObject;
 import com.privasia.scss.common.dto.CustomResponseEntity;
+import com.privasia.scss.common.dto.ExportContainer;
 import com.privasia.scss.common.dto.GateOutWriteRequest;
 import com.privasia.scss.common.dto.ImportContainer;
+import com.privasia.scss.core.model.Exports;
+import com.privasia.scss.core.modelmap.config.ModelMapPropertyMap;
+import com.privasia.scss.core.repository.ExportsRepository;
 import com.privasia.scss.cosmos.repository.CosmosImportRepository;
 import com.privasia.scss.gateout.service.ImportExportGateOutService;
 
@@ -26,6 +33,12 @@ public class TestController {
 
 	@Autowired
 	private ImportExportGateOutService importExportGateOutService;
+	
+	@Autowired
+	private ExportsRepository exportsRepository;
+	
+	@Autowired
+	private ModelMapper modelMapper;
 
 	
 
@@ -43,6 +56,18 @@ public class TestController {
 		importExportGateOutService.testSaveGateOutInfo(gateOutWriteRequest);
 
 		return new CustomResponseEntity<ApiResponseObject<?>>(new ApiResponseObject<String>(HttpStatus.OK, "OK"),
+				HttpStatus.OK);
+	}
+	
+	
+	@RequestMapping(value = "/populate/{expid}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public CustomResponseEntity<ApiResponseObject<?>> populateExports(@PathVariable("expid") long expID) {
+
+		Optional<Exports> exportsOPT = exportsRepository.findOne(expID);
+		
+		ExportContainer exp = modelMapper.map(exportsOPT.get(), ExportContainer.class);
+
+		return new CustomResponseEntity<ApiResponseObject<?>>(new ApiResponseObject<ExportContainer>(HttpStatus.OK, exp),
 				HttpStatus.OK);
 	}
 
