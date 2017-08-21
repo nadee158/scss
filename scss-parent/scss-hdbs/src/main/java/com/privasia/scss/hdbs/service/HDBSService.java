@@ -493,7 +493,7 @@ public class HDBSService {
 			containerDetailsDTO.setHdbsArrivalStatus(ApplicationConstants.EARLY);
 		}
 		
-		oddDTO.setPmHeadNo(bkgDetails.gethDBSBkgMaster().getPlateNo());
+		oddDTO.setPmHeadNo(bkgDetails.gethDBSBkgMaster().getPmHeadNo());
 		oddDTO.setPmPlateNo(bkgDetails.gethDBSBkgMaster().getPlateNo());
 		
 		if (oddDTO.getContainer01() == null) {
