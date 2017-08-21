@@ -42,7 +42,7 @@ public class LaneOpen extends AuditEntity implements Serializable {
 	
 	@Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_SCSS_LANE_OPENED")
-    @SequenceGenerator(name = "SEQ_SCSS_LANE_OPENED", sequenceName = "LO_SEQ")
+    @SequenceGenerator(name = "SEQ_SCSS_LANE_OPENED", sequenceName = "LO_SEQ", allocationSize = 1)
 	@Column(name = "LO_SEQ")
 	private Long laneOpenID;
 	

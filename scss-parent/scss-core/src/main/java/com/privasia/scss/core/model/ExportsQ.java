@@ -56,7 +56,6 @@ public class ExportsQ extends AuditEntity implements Serializable {
 			@AttributeOverride(name = "containerFullOrEmpty", column = @Column(name = "EXP_FULL_EMPTY_FLAG", nullable = true)) })
 	private CommonContainerAttribute container;
 
-	/* COMMON GATE IN ATTRIBUTE STARTS */
 	@Column(name = "EXP_EIRNO")
 	private Long eirNumber;
 

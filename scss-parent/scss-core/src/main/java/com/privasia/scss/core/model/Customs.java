@@ -41,7 +41,7 @@ public class Customs extends AuditEntity implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_SCSS_CUSTOMS")
-	@SequenceGenerator(name = "SEQ_SCSS_CUSTOMS", sequenceName = "SEQ_CSM_SEQ_ID")
+	@SequenceGenerator(name = "SEQ_SCSS_CUSTOMS", sequenceName = "SEQ_CSM_SEQ_ID", allocationSize = 1)
 	@Column(name = "CSM_SEQ_ID")
 	private Long customsID;
 

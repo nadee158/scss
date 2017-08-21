@@ -245,6 +245,7 @@ public class ODDGateInService {
                 "Invalid HDBS Booking Detail ID :" + whODDdto.getContainer01().getHdbsBkgDetailNoId()));
             whODD.getContainer01().setHdbsBkgDetailNo(hdbsBookingDetail);
             whODD.getContainer01().setHdbsStatus(hdbsBookingDetail.getStatusCode());
+            whODD.getContainer01().setContainerNo(hdbsBookingDetail.getContainerNo());
             hdbsBookingDetail.setScssStatusCode(SCSSHDBSStatus.IN_PROGRESS);
             hdbsBookingDetail.setOddTimeGateInOk(whODD.getTimeGateInOk());
             hdbsBookingDetail.setWhodd(whODD);
@@ -272,6 +273,7 @@ public class ODDGateInService {
 
             whODD.getContainer02().setHdbsBkgDetailNo(hdbsBookingDetail);
             whODD.getContainer02().setHdbsStatus(hdbsBookingDetail.getStatusCode());
+            whODD.getContainer02().setContainerNo(hdbsBookingDetail.getContainerNo());
             hdbsBookingDetail.setScssStatusCode(SCSSHDBSStatus.IN_PROGRESS);
             hdbsBookingDetail.setOddTimeGateInOk(whODD.getTimeGateInOk());
             hdbsBookingDetail.setWhodd(whODD);

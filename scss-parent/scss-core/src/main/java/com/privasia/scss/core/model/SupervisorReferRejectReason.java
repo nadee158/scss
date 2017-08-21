@@ -38,7 +38,7 @@ public class SupervisorReferRejectReason extends AuditEntity implements Serializ
 	
 	@Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_SCSS_REJECT_SUP_REASON")
-    @SequenceGenerator(name = "SEQ_SCSS_REJECT_SUP_REASON", sequenceName = "SEQ_REJECT_SUP_REASON")
+    @SequenceGenerator(name = "SEQ_SCSS_REJECT_SUP_REASON", sequenceName = "SEQ_REJECT_SUP_REASON", allocationSize = 1)
 	@Column(name = "REJECT_SUP_REASON_ID")
 	private Long supRefRejectReasonID;
 	

@@ -36,7 +36,7 @@ public class DGValidateLog extends AuditEntity implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_SCSS_DG_VALIDATE_LOG")
-	@SequenceGenerator(name = "SEQ_SCSS_DG_VALIDATE_LOG", sequenceName = "SEQ_SCSS_DG_VALIDATE_LOG")
+	@SequenceGenerator(name = "SEQ_SCSS_DG_VALIDATE_LOG", sequenceName = "SEQ_SCSS_DG_VALIDATE_LOG", allocationSize = 1)
 	@Column(name = "DG_VALIDATE_LOG_ID")
 	private Long dgValidateLogId;
 

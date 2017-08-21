@@ -28,7 +28,7 @@ public class SealValidateLog extends AuditEntity implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_SCSS_SEAL_VALIDATE_LOG")
-	@SequenceGenerator(name = "SEQ_SCSS_SEAL_VALIDATE_LOG", sequenceName = "SEQ_SCSS_SEAL_VALIDATE_LOG")
+	@SequenceGenerator(name = "SEQ_SCSS_SEAL_VALIDATE_LOG", sequenceName = "SEQ_SCSS_SEAL_VALIDATE_LOG", allocationSize = 1)
 	@Column(name = "SEAL_VALIDATE_LOG_ID")
 	private Long sealValidateLogId;
 
