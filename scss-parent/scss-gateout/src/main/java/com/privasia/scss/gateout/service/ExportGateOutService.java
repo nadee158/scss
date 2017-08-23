@@ -3,6 +3,7 @@ package com.privasia.scss.gateout.service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.privasia.scss.common.annotation.SolasApplicable;
+import com.privasia.scss.common.dto.BoothTransactionInfo;
 import com.privasia.scss.common.dto.ExportContainer;
 import com.privasia.scss.common.dto.GateOutReponse;
 import com.privasia.scss.common.dto.GateOutRequest;
@@ -24,18 +26,17 @@ import com.privasia.scss.common.dto.GateOutWriteRequest;
 import com.privasia.scss.common.enums.ShipStatus;
 import com.privasia.scss.common.enums.TransactionStatus;
 import com.privasia.scss.common.exception.BusinessException;
-import com.privasia.scss.common.exception.ResultsNotFoundException;
 import com.privasia.scss.core.model.Client;
 import com.privasia.scss.core.model.Exports;
-import com.privasia.scss.core.model.ExportsQ;
 import com.privasia.scss.core.model.ShipCode;
 import com.privasia.scss.core.model.SystemUser;
-import com.privasia.scss.core.repository.ExportsQRepository;
+import com.privasia.scss.core.predicate.ExportsPredicates;
 import com.privasia.scss.core.repository.ExportsRepository;
 import com.privasia.scss.core.repository.ShipCodeRepository;
 import com.privasia.scss.gateout.dto.FileDTO;
 import com.privasia.scss.hpat.service.HPABService;
-
+import com.querydsl.core.types.ExpressionUtils;
+import com.querydsl.core.types.Predicate;
 
 @Service("exportGateOutService")
 public class ExportGateOutService {
@@ -48,10 +49,8 @@ public class ExportGateOutService {
 
 	private ExportsRepository exportsRepository;
 
-	private ExportsQRepository exportsQRepository;
-	
 	private HPABService hpabService;
-	
+
 	@Autowired
 	public void setModelMapper(ModelMapper modelMapper) {
 		this.modelMapper = modelMapper;
@@ -68,15 +67,10 @@ public class ExportGateOutService {
 	}
 
 	@Autowired
-	public void setExportsQRepository(ExportsQRepository exportsQRepository) {
-		this.exportsQRepository = exportsQRepository;
+	public void setHpabService(HPABService hpabService) {
+		this.hpabService = hpabService;
 	}
-	
-	@Autowired
-	  public void setHpabService(HPABService hpabService) {
-	    this.hpabService = hpabService;
-	  }
-	
+
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
 	public List<ExportContainer> populateGateOut(GateOutRequest gateOutRequest, GateOutReponse gateOutReponse) {
 
@@ -97,11 +91,13 @@ public class ExportGateOutService {
 					LocalDateTime timeGateIn = export.getBaseCommonGateInOutAttribute().getTimeGateIn();
 					gateOutReponse.setGateInDateTime(timeGateIn);
 				}
-				if(export.getBaseCommonGateInOutAttribute().getGateInClerk()!=null){
-					gateOutReponse.setClerkName(export.getBaseCommonGateInOutAttribute().getGateInClerk().getCommonContactAttribute().getPersonName());
+				if (export.getBaseCommonGateInOutAttribute().getGateInClerk() != null) {
+					gateOutReponse.setClerkName(export.getBaseCommonGateInOutAttribute().getGateInClerk()
+							.getCommonContactAttribute().getPersonName());
 				}
-				if(export.getBaseCommonGateInOutAttribute().getGateInClient()!=null){
-					gateOutReponse.setGateInLaneNo(export.getBaseCommonGateInOutAttribute().getGateInClient().getLaneNo());
+				if (export.getBaseCommonGateInOutAttribute().getGateInClient() != null) {
+					gateOutReponse
+							.setGateInLaneNo(export.getBaseCommonGateInOutAttribute().getGateInClient().getLaneNo());
 				}
 			}
 			// adding log info
@@ -141,7 +137,7 @@ public class ExportGateOutService {
 		}
 		return null;
 	}
-	
+
 	@SolasApplicable
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
 	public void saveGateOutInfo(GateOutWriteRequest gateOutWriteRequest, Client gateOutClient, SystemUser gateOutClerk,
@@ -179,17 +175,22 @@ public class ExportGateOutService {
 							exports.getBaseCommonGateInOutAttribute().getHpabBooking().getBookingID());
 				}
 			}
-			
-			//No need to update to Export_Q as the data is already deleted from Export_Q by wdc scheduler and inserted into Export_Q2
-			/*if(StringUtils.equalsIgnoreCase(exports.getCommonGateInOut().getGateInStatus().getValue(), TransactionStatus.APPROVED.getValue())){
-				Optional<ExportsQ> exportQOpt = exportsQRepository.findOne(exports.getExportID());
-				ExportsQ exportq = exportQOpt.orElseThrow(() -> new ResultsNotFoundException(
-						"Not valid Gate In ExportQ Process found ! " + exports.getExportID()));
 
-				modelMapper.map(exports, exportq);
-				exportsQRepository.save(exportq);
-			}*/
-		
+			// No need to update to Export_Q as the data is already deleted from
+			// Export_Q by wdc scheduler and inserted into Export_Q2
+			/*
+			 * if(StringUtils.equalsIgnoreCase(exports.getCommonGateInOut().
+			 * getGateInStatus().getValue(),
+			 * TransactionStatus.APPROVED.getValue())){ Optional<ExportsQ>
+			 * exportQOpt = exportsQRepository.findOne(exports.getExportID());
+			 * ExportsQ exportq = exportQOpt.orElseThrow(() -> new
+			 * ResultsNotFoundException(
+			 * "Not valid Gate In ExportQ Process found ! " +
+			 * exports.getExportID()));
+			 * 
+			 * modelMapper.map(exports, exportq);
+			 * exportsQRepository.save(exportq); }
+			 */
 
 		});
 
@@ -235,14 +236,53 @@ public class ExportGateOutService {
 		if (exportsOptList.isPresent() && !exportsOptList.get().isEmpty()) {
 			exportsOptList.get().forEach(exports -> {
 				assignUpdatedValuesExports(exports, fileDTO);
-				log.info("before save to exports ********************** "+fileDTO.getFileName().get());
-				System.out.println("before save to exports ********************** "+fileDTO.getFileName().get());
+				log.info("before save to exports ********************** " + fileDTO.getFileName().get());
+				System.out.println("before save to exports ********************** " + fileDTO.getFileName().get());
 				exportsRepository.save(exports);
 			});
 		} else {
 			throw new BusinessException("Invalid Exports ID to update file reference : "
 					+ fileDTO.getExportNoSeq1().orElse(null) + " / " + fileDTO.getExportNoSeq2().orElse(null));
 		}
+	}
+
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+	public List<Exports> populateSaveTransaction(BoothTransactionInfo boothTransactionInfo) {
+
+		ArrayList<Long> exportIDList = new ArrayList<>();
+
+		if (!(boothTransactionInfo.getExportID01() == null || boothTransactionInfo.getExportID01() == 0)) {
+			exportIDList.add(boothTransactionInfo.getExportID01());
+		}
+
+		if (!(boothTransactionInfo.getExportID02() == null || boothTransactionInfo.getExportID02() == 0)) {
+			exportIDList.add(boothTransactionInfo.getExportID02());
+		}
+
+		Predicate idListPredicate = ExportsPredicates.byExportsIDList(exportIDList);
+
+		Predicate gateoutClientPredicate = ExportsPredicates.byGateOutClient(boothTransactionInfo.getGateoutClientID());
+
+		Predicate condition = ExpressionUtils.allOf(idListPredicate, gateoutClientPredicate);
+
+		Iterable<Exports> bookingList = exportsRepository.findAll(condition);
+
+		Iterator<Exports> exports = bookingList.iterator();
+
+		ArrayList<Exports> exportContainers = new ArrayList<>();
+
+		if (exports != null && exports.hasNext()) {
+
+			while (exports.hasNext()) {
+				exportContainers.add(exports.next());
+			}
+
+		} else {
+			throw new BusinessException("Provided Exports information not valid ");
+		}
+
+		return exportContainers;
+
 	}
 
 	private Exports assignUpdatedValuesExports(Exports exports, FileDTO fileDTO) {

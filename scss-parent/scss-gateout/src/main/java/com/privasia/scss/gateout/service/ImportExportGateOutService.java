@@ -1,11 +1,13 @@
 package com.privasia.scss.gateout.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
@@ -15,6 +17,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.privasia.scss.common.annotation.SolasApplicable;
+import com.privasia.scss.common.dto.BoothTransactionInfo;
 import com.privasia.scss.common.dto.ExportContainer;
 import com.privasia.scss.common.dto.GateOutMessage;
 import com.privasia.scss.common.dto.GateOutReponse;
@@ -22,8 +25,10 @@ import com.privasia.scss.common.dto.GateOutRequest;
 import com.privasia.scss.common.dto.GateOutWriteRequest;
 import com.privasia.scss.common.dto.ImportContainer;
 import com.privasia.scss.common.dto.InProgressTrxDTO;
+import com.privasia.scss.common.dto.WHoddDTO;
 import com.privasia.scss.common.enums.ImpExpFlagStatus;
 import com.privasia.scss.common.enums.TransactionStatus;
+import com.privasia.scss.common.enums.TransactionType;
 import com.privasia.scss.common.exception.BusinessException;
 import com.privasia.scss.common.exception.ResultsNotFoundException;
 import com.privasia.scss.common.interfaces.ContainerExternalDataService;
@@ -31,7 +36,10 @@ import com.privasia.scss.common.interfaces.OpusCosmosBusinessService;
 import com.privasia.scss.common.security.model.UserContext;
 import com.privasia.scss.core.model.Card;
 import com.privasia.scss.core.model.Client;
+import com.privasia.scss.core.model.Exports;
+import com.privasia.scss.core.model.GatePass;
 import com.privasia.scss.core.model.SystemUser;
+import com.privasia.scss.core.model.WHODD;
 import com.privasia.scss.core.repository.CardRepository;
 import com.privasia.scss.core.repository.ClientRepository;
 import com.privasia.scss.core.repository.SystemUserRepository;
@@ -67,6 +75,8 @@ public class ImportExportGateOutService {
 	private ImportExportCommonGateOutBusinessService importExportCommonGateOutBusinessService;
 
 	private ContainerExternalDataService containerExternalDataService;
+	
+	private ModelMapper modelMapper;
 
 	@Autowired
 	public void setContainerExternalDataService(ContainerExternalDataService containerExternalDataService) {
@@ -112,6 +122,11 @@ public class ImportExportGateOutService {
 	@Autowired
 	public void setOddGateOutService(ODDGateOutService oddGateOutService) {
 		this.oddGateOutService = oddGateOutService;
+	}
+	
+	@Autowired
+	public void setModelMapper(ModelMapper modelMapper) {
+		this.modelMapper = modelMapper;
 	}
 
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
@@ -258,26 +273,134 @@ public class ImportExportGateOutService {
 		default:
 			break;
 		}
-		
+
 		GateOutMessage gateOutMessage = new GateOutMessage();
 		gateOutMessage.setCode(GateOutMessage.OK);
 		gateOutMessage.setDescription("Saved Successfully!");
 
-		/*
-		 * while (true) { if (impSave.isDone() && expSave.isDone()) {
-		 * 
-		 * gateOutMessage.setCode(GateOutMessage.OK);
-		 * gateOutMessage.setDescription( "Saved Successfully!");
-		 * 
-		 * System.out.println("WHILE LOOP BROKEN!!!!. "); break; }
-		 * System.out.println( "Continue doing something else. ");
-		 * 
-		 * try { Thread.sleep(asyncWaitTime); } catch (InterruptedException e) {
-		 * log.error(e.getMessage()); System.out.println(
-		 * "WHILE LOOP BROKEN ON THREAD EXCEPTION!!!!. " ); break; } }
-		 */
 		gateOutReponse.setMessage(gateOutMessage);
 		return gateOutReponse;
+	}
+
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+	public GateOutReponse populateTransaction(BoothTransactionInfo boothTransactionInfo) {
+
+		GateOutReponse gateOutReponse = new GateOutReponse();
+
+		if (boothTransactionInfo.getGateoutClientID() == null || boothTransactionInfo.getGateoutClientID() == 0)
+			throw new BusinessException("Please provide the gate out lane ID ");
+
+		if (StringUtils.isEmpty(boothTransactionInfo.getTransactionType()))
+			throw new BusinessException("Please provide the transaction type ");
+
+		TransactionType trxType = TransactionType.fromCode(boothTransactionInfo.getTransactionType());
+		List<Exports> exportsList = null;
+		List<GatePass> gatePassList = null;
+		List<WHODD> whODDList = null;
+		switch (trxType) {
+		case EXPORT:
+			exportsList = exportGateOutService.populateSaveTransaction(boothTransactionInfo);
+			populateGateOutResponseByExports(exportsList, gateOutReponse);
+			break;
+		case IMPORT:
+			gatePassList = importGateOutService.populateSaveTransaction(boothTransactionInfo);
+			populateGateOutResponseByImport(gatePassList, gateOutReponse);
+			break;
+		case IMPORT_EXPORT:
+			exportsList = exportGateOutService.populateSaveTransaction(boothTransactionInfo);
+			populateGateOutResponseByExports(exportsList, gateOutReponse);
+			gatePassList = importGateOutService.populateSaveTransaction(boothTransactionInfo);
+			populateGateOutResponseByImport(gatePassList, gateOutReponse);
+			break;
+		case ODD:
+			whODDList = oddGateOutService.populateSaveTransaction(boothTransactionInfo);
+			populateGateOutResponseByWHODD(whODDList, gateOutReponse);
+			break;
+		default:
+			throw new BusinessException("Not a Valid Transaction type : " + boothTransactionInfo.getTransactionType());
+
+		}
+
+		return gateOutReponse;
+
+	}
+	
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+	public GateOutReponse populateGateOutResponseByExports(List<Exports> exportsList, GateOutReponse gateOutReponse) {
+
+		Exports exportContainer = exportsList.get(0);
+		gateOutReponse.setGateInDateTime(exportContainer.getBaseCommonGateInOutAttribute().getTimeGateIn());
+		gateOutReponse.setGateOUTDateTime(exportContainer.getBaseCommonGateInOutAttribute().getTimeGateOut());
+		gateOutReponse.setTruckHeadNo(exportContainer.getBaseCommonGateInOutAttribute().getPmHeadNo());
+		gateOutReponse.setGateInStatus(exportContainer.getCommonGateInOut().getGateInStatus().getValue());
+		gateOutReponse.setGateInLaneNo(exportContainer.getBaseCommonGateInOutAttribute().getGateInClient().getLaneNo());
+		gateOutReponse.setTruckPlateNo(exportContainer.getBaseCommonGateInOutAttribute().getPmPlateNo());
+		gateOutReponse.setClerkName(exportContainer.getBaseCommonGateInOutAttribute().getGateInClerk()
+				.getCommonContactAttribute().getPersonName());
+
+		ArrayList<ExportContainer> exportContainers = new ArrayList<>();
+
+		exportsList.forEach(exports -> {
+			exportContainers.add(modelMapper.map(exports, ExportContainer.class));
+
+		});
+
+		gateOutReponse.setExportContainers(exportContainers);
+
+		return gateOutReponse;
+
+	}
+	
+	
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+	public GateOutReponse populateGateOutResponseByImport(List<GatePass> gatePassList, GateOutReponse gateOutReponse) {
+
+		GatePass importContainer = gatePassList.get(0);
+		gateOutReponse.setGateInDateTime(importContainer.getBaseCommonGateInOutAttribute().getTimeGateIn());
+		gateOutReponse.setGateOUTDateTime(importContainer.getBaseCommonGateInOutAttribute().getTimeGateOut());
+		gateOutReponse.setTruckHeadNo(importContainer.getBaseCommonGateInOutAttribute().getPmHeadNo());
+		gateOutReponse.setGateInStatus(importContainer.getCommonGateInOut().getGateInStatus().getValue());
+		gateOutReponse.setGateInLaneNo(importContainer.getBaseCommonGateInOutAttribute().getGateInClient().getLaneNo());
+		gateOutReponse.setTruckPlateNo(importContainer.getBaseCommonGateInOutAttribute().getPmPlateNo());
+		gateOutReponse.setClerkName(importContainer.getBaseCommonGateInOutAttribute().getGateInClerk()
+				.getCommonContactAttribute().getPersonName());
+
+		ArrayList<ImportContainer> importContainers = new ArrayList<>();
+
+		gatePassList.forEach(gatePass -> {
+			importContainers.add(modelMapper.map(importContainers, ImportContainer.class));
+
+		});
+
+		gateOutReponse.setImportContainers(importContainers);
+
+		return gateOutReponse;
+
+	}
+	
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+	public GateOutReponse populateGateOutResponseByWHODD(List<WHODD> oddList, GateOutReponse gateOutReponse) {
+
+		WHODD whContainer = oddList.get(0);
+		gateOutReponse.setGateInDateTime(whContainer.getTimeGateIn());
+		gateOutReponse.setGateOUTDateTime(whContainer.getTimeGateOut());
+		gateOutReponse.setTruckHeadNo(whContainer.getPmHeadNo());
+		gateOutReponse.setGateInStatus(whContainer.getGateInStatus().getValue());
+		gateOutReponse.setGateInLaneNo(whContainer.getGateInClient().getLaneNo());
+		gateOutReponse.setTruckPlateNo(whContainer.getPmPlateNo());
+		gateOutReponse.setClerkName(whContainer.getGateInClerk().getCommonContactAttribute().getPersonName());
+
+		ArrayList<WHoddDTO> whODDContainers = new ArrayList<>();
+
+		oddList.forEach(whODD -> {
+			whODDContainers.add(modelMapper.map(whODD, WHoddDTO.class));
+
+		});
+
+		gateOutReponse.setWhODDContainers(whODDContainers);
+
+		return gateOutReponse;
+
 	}
 
 	@SolasApplicable

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.privasia.scss.common.dto.ApiResponseObject;
+import com.privasia.scss.common.dto.BoothTransactionInfo;
 import com.privasia.scss.common.dto.CustomResponseEntity;
 import com.privasia.scss.common.dto.GateOutReponse;
 import com.privasia.scss.common.dto.GateOutRequest;
@@ -95,6 +96,15 @@ public class GateOutController {
 
 		return new CustomResponseEntity<ApiResponseObject<?>>(
 				new ApiResponseObject<String>(HttpStatus.CREATED, response), HttpStatus.CREATED);
+	}
+	
+	@RequestMapping(value = "/populatetranx", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public CustomResponseEntity<ApiResponseObject<?>> populateSavedTransactionInFot(@RequestBody BoothTransactionInfo boothTransactionInfo) {
+		
+		GateOutReponse gateOutReponse = importExportGateOutService.populateTransaction(boothTransactionInfo);
+
+		return new CustomResponseEntity<ApiResponseObject<?>>(
+				new ApiResponseObject<GateOutReponse>(HttpStatus.OK, gateOutReponse), HttpStatus.OK);
 	}
 
 }

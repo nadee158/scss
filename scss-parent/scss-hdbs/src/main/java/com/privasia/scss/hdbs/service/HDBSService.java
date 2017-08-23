@@ -12,11 +12,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.Spliterator;
-import java.util.Spliterators;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
@@ -45,13 +42,10 @@ import com.privasia.scss.common.util.ApplicationConstants;
 import com.privasia.scss.common.util.DateUtil;
 import com.privasia.scss.core.model.Card;
 import com.privasia.scss.core.model.HDBSBkgDetail;
-import com.privasia.scss.core.model.HDBSBkgMaster;
 import com.privasia.scss.core.model.ODDLocation;
 import com.privasia.scss.core.predicate.HDBSBookingDetailsPredicates;
-import com.privasia.scss.core.predicate.HDBSBookingMasterPredicates;
 import com.privasia.scss.core.repository.CardRepository;
 import com.privasia.scss.core.repository.HDBSBookingDetailRepository;
-import com.privasia.scss.core.repository.HDBSBookingMasterRepository;
 import com.privasia.scss.core.repository.ODDLocationRepository;
 import com.privasia.scss.core.repository.WDCGlobalSettingRepository;
 import com.querydsl.core.types.ExpressionUtils;
@@ -67,8 +61,6 @@ public class HDBSService {
 
 	private HDBSBookingDetailRepository hdbsBookingDetailRepository;
 
-	private HDBSBookingMasterRepository hdbsBookingMasterRepository;
-
 	private CardRepository cardRepository;
 
 	private WDCGlobalSettingRepository wdcGlobalSettingRepository;
@@ -80,11 +72,6 @@ public class HDBSService {
 	@Autowired
 	public void setHdbsBookingDetailRepository(HDBSBookingDetailRepository hdbsBookingDetailRepository) {
 		this.hdbsBookingDetailRepository = hdbsBookingDetailRepository;
-	}
-
-	@Autowired
-	public void setHdbsBookingMasterRepository(HDBSBookingMasterRepository hdbsBookingMasterRepository) {
-		this.hdbsBookingMasterRepository = hdbsBookingMasterRepository;
 	}
 
 	@Autowired
@@ -404,6 +391,7 @@ public class HDBSService {
 				List<HDBSBkgDetail> convertedBookings = new ArrayList<>();
 				bookingIterator.forEachRemaining(convertedBookings::add);
 				
+				
 				List<HDBSBkgDetail> pickupList = convertedBookings.stream().filter(bkgDetail -> StringUtils.equalsIgnoreCase(bkgDetail.getHdbsBkgType().getValue(),
 							HDBSBookingType.PICKUP.getValue())).collect(Collectors.toList());
 				
@@ -431,7 +419,7 @@ public class HDBSService {
 					if (gateInRequest.isOddReject()) {
 						exportODDDTO.setGateInStatus(TransactionStatus.REJECT.getValue());
 					}
-					pickupList.forEach(bkgDetail -> {
+					dropList.forEach(bkgDetail -> {
 							setODDContainerInfo(exportODDDTO, bkgDetail, ImpExpFlagStatus.EXPORT);
 
 					});
@@ -441,7 +429,7 @@ public class HDBSService {
 					
 				}
 				
-				if(!(pickupList.isEmpty() && dropList.isEmpty())){
+				if(!pickupList.isEmpty() && !dropList.isEmpty()){
 					gateInResponse.setImpExpFlagStatus(ImpExpFlagStatus.IMPORT_EXPORT.getValue());
 				}
 				

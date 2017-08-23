@@ -78,5 +78,13 @@ public final class GatePassPredicates {
 			return QGatePass.gatePass.commonGateInOut.kioskCancelPickUp.eq(cancelPickup);
 		}
 	}
+	
+	public static Predicate byGateOutClient(Long gateoutClientID) {
+		if (gateoutClientID == null || gateoutClientID == 0) {
+			return QGatePass.gatePass.baseCommonGateInOutAttribute.gateOutClient.isNull();
+		} else {
+			return QGatePass.gatePass.baseCommonGateInOutAttribute.gateOutClient.clientID.eq(gateoutClientID);
+		}
+	}
 
 }

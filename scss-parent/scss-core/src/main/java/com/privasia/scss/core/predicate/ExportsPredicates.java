@@ -115,6 +115,14 @@ public final class ExportsPredicates {
 			return QExports.exports.exportID.in(expIDList);
 		}
 	}
+	
+	public static Predicate byGateOutClient(Long gateoutClientID) {
+		if (gateoutClientID == null || gateoutClientID == 0) {
+			return QExports.exports.baseCommonGateInOutAttribute.gateOutClient.isNull();
+		} else {
+			return QExports.exports.baseCommonGateInOutAttribute.gateOutClient.clientID.eq(gateoutClientID);
+		}
+	}
 
 	public static Predicate byEirStatus(TransactionStatus eirStatus) {
 		if (eirStatus == null) {

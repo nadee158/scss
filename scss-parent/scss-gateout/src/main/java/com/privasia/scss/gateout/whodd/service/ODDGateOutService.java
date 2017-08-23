@@ -3,6 +3,7 @@ package com.privasia.scss.gateout.whodd.service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.privasia.scss.common.dto.BoothTransactionInfo;
 import com.privasia.scss.common.dto.ContainerValidationInfo;
 import com.privasia.scss.common.dto.GateOutMessage;
 import com.privasia.scss.common.dto.GateOutReponse;
@@ -44,6 +46,7 @@ import com.privasia.scss.core.model.ODDImportReason;
 import com.privasia.scss.core.model.ODDLocation;
 import com.privasia.scss.core.model.SystemUser;
 import com.privasia.scss.core.model.WHODD;
+import com.privasia.scss.core.predicate.ODDPredicates;
 import com.privasia.scss.core.repository.CardRepository;
 import com.privasia.scss.core.repository.ClientRepository;
 import com.privasia.scss.core.repository.HDBSBookingDetailRepository;
@@ -54,6 +57,8 @@ import com.privasia.scss.core.repository.ODDRepository;
 import com.privasia.scss.core.repository.SystemUserRepository;
 import com.privasia.scss.core.service.CommonCardService;
 import com.privasia.scss.gateout.dto.FileDTO;
+import com.querydsl.core.types.ExpressionUtils;
+import com.querydsl.core.types.Predicate;
 
 @Service("oddGateOutService")
 public class ODDGateOutService {
@@ -464,6 +469,45 @@ public class ODDGateOutService {
 
 		}
 	}
+	
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+	public List<WHODD> populateSaveTransaction(BoothTransactionInfo boothTransactionInfo) {
+
+		ArrayList<Long> whODDIDList = new ArrayList<>();
+
+		if (!(boothTransactionInfo.getOddIdSeq01() == null || boothTransactionInfo.getOddIdSeq01() == 0)) {
+			whODDIDList.add(boothTransactionInfo.getOddIdSeq01());
+		}
+
+		if (!(boothTransactionInfo.getOddIdSeq02() == null || boothTransactionInfo.getOddIdSeq02() == 0)) {
+			whODDIDList.add(boothTransactionInfo.getOddIdSeq02());
+		}
+
+		Predicate idListPredicate = ODDPredicates.byWHoddIDList(whODDIDList);
+
+		Predicate gateoutClientPredicate = ODDPredicates.byGateOutClient(boothTransactionInfo.getGateoutClientID());
+
+		Predicate condition = ExpressionUtils.allOf(idListPredicate, gateoutClientPredicate);
+
+		Iterable<WHODD> bookingList = oddRepository.findAll(condition);
+
+		Iterator<WHODD> oddItr = bookingList.iterator();
+	
+		ArrayList<WHODD> whoddContainers = new ArrayList<>();
+
+		if (oddItr != null && oddItr.hasNext()) {
+			while (oddItr.hasNext()) {
+				whoddContainers.add(oddItr.next());
+			}
+
+		} else {
+			throw new BusinessException("Provided WHODD information not valid ");
+		}
+
+		return whoddContainers;
+
+	}
+
 
 	private WHODD assignUpdatedValuedWHODDobj(WHODD whoDDobj, FileDTO fileDTO) {
 		switch (fileDTO.getCollectionType()) {

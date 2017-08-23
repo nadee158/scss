@@ -106,7 +106,6 @@ public class KioskBoothRights extends AuditEntity implements Serializable {
 	@Embedded
 	@AttributeOverrides({ @AttributeOverride(name = "containerNumber", column = @Column(name = "CT1")),
 			@AttributeOverride(name = "containerISOCode", column = @Column(name = "CT1ISO")),
-			//@AttributeOverride(name = "containerLength", column = @Column(name = "CT1S")),
 			@AttributeOverride(name = "containerFullOrEmpty", column = @Column(name = "CT1FE")),
 			@AttributeOverride(name = "cancelPickup", column = @Column(name = "CT1CANPICKUP")),
 			@AttributeOverride(name = "location", column = @Column(name = "CT1LOC")),

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import com.privasia.scss.common.enums.ImpExpFlagStatus;
 import com.privasia.scss.common.enums.TransactionStatus;
+import com.privasia.scss.core.model.QExports;
 import com.privasia.scss.core.model.QWHODD;
 import com.querydsl.core.types.Predicate;
 
@@ -90,6 +91,15 @@ public final class ODDPredicates {
 			return QWHODD.wHODD.oddIdSeq.isNull();
 		} else {
 			return QWHODD.wHODD.oddIdSeq.in(oddIDList);
+		}
+	}
+	
+	
+	public static Predicate byGateOutClient(Long gateoutClientID) {
+		if (gateoutClientID == null || gateoutClientID == 0) {
+			return QWHODD.wHODD.gateOutClient.isNull();
+		} else {
+			return QWHODD.wHODD.gateOutClient.clientID.eq(gateoutClientID);
 		}
 	}
 

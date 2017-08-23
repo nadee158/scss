@@ -240,7 +240,8 @@ public class ReferRejectService {
 
     // manual conversion
     if (gateInWriteRequest.getWeightBridge() <= 0)
-      throw new BusinessException("Incorrect Weight Bridge !");
+    	gateInWriteRequest.setWeightBridge(0); //pkfz....
+      //throw new BusinessException("Incorrect Weight Bridge !");
 
     // update refer reject dto object from gateInWriteRequest
     if (referRejectDTO.getBaseCommonGateInOut() == null) {
