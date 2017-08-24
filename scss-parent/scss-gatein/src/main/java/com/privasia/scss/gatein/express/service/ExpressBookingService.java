@@ -117,7 +117,7 @@ public class ExpressBookingService {
 			log.info("No HPAT Bookings were found");
 		}
 
-		HDBSBkgGridDTO gridDto = hdbsService.createPredicatesAndFindHDBS(card);
+		HDBSBkgGridDTO gridDto = hdbsService.findHDBSForExpressLane(card);
 		if (!(gridDto == null || gridDto.getHdbsBkgDetailGridDTOList() == null
 				|| gridDto.getHdbsBkgDetailGridDTOList().isEmpty())) {
 			gridDto.getHdbsBkgDetailGridDTOList().forEach(gridDtoItem -> {

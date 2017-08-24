@@ -43,7 +43,13 @@ public class KioskBoothRights extends AuditEntity implements Serializable {
 	@Column(name = "KIOSK_LOCK_STATUS")
 	@Type(type = "com.privasia.scss.common.enumusertype.KioskLockStatusEnumUserType")
 	private KioskLockStatus kioskLockStatus;
+	
+	@Column(name = "BOOTH_UNITNO", nullable = true)
+	private String boothUnitNo;
 
+	@Column(name = "SEAL_ENTER_TIME")
+	private LocalDateTime sealEnteredTime;
+	
 	@Column(name = "CARDNUMBER")
 	private Long cardNumber;
 
@@ -357,6 +363,22 @@ public class KioskBoothRights extends AuditEntity implements Serializable {
 
 	public void setContainer04(KioskBoothContainerAttribute container04) {
 		this.container04 = container04;
+	}
+	
+	public String getBoothUnitNo() {
+		return boothUnitNo;
+	}
+
+	public void setBoothUnitNo(String boothUnitNo) {
+		this.boothUnitNo = boothUnitNo;
+	}
+
+	public LocalDateTime getSealEnteredTime() {
+		return sealEnteredTime;
+	}
+
+	public void setSealEnteredTime(LocalDateTime sealEnteredTime) {
+		this.sealEnteredTime = sealEnteredTime;
 	}
 
 	@Override

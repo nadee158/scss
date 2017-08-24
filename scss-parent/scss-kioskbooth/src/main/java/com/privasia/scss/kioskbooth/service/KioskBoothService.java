@@ -1,5 +1,7 @@
 package com.privasia.scss.kioskbooth.service;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -63,6 +65,7 @@ public class KioskBoothService {
 			kioskBoothRightDTO.setKioskLockStatus(KioskLockStatus.ACTIVE.getValue());
 			kioskBoothRightDTO.setBoothClientID(KioskBoothRights.getKioskBoothRightsID().getBooth().getClientID());
 			modelMapper.map(kioskBoothRightDTO, KioskBoothRights);
+			KioskBoothRights.setSealEnteredTime(LocalDateTime.now());
 			kioskBoothRightsRepository.save(KioskBoothRights);
 		});
 

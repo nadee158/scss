@@ -51,6 +51,14 @@ public final class HDBSBookingDetailsPredicates {
 	public static Predicate byApptDateTimeFrom(LocalDateTime apptDateTimeFrom) {
 		return QHDBSBkgDetail.hDBSBkgDetail.apptDateTimeFrom.goe(apptDateTimeFrom);
 	}
+	
+	public static Predicate byApptDateTimeStart(LocalDateTime apptDateTimeStart) {
+		return QHDBSBkgDetail.hDBSBkgDetail.apptDateTimeFrom.goe(apptDateTimeStart);
+	}
+	
+	public static Predicate byApptDateTimeEnd(LocalDateTime apptDateTimeEnd) {
+		return QHDBSBkgDetail.hDBSBkgDetail.apptDateTimeFrom.loe(apptDateTimeEnd);
+	}
 
 	public static Predicate byApptDateTimeFromBetween(LocalDateTime timeFrom, LocalDateTime timeTo) {
 		return QHDBSBkgDetail.hDBSBkgDetail.apptDateTimeFrom.between(timeFrom, timeTo);

@@ -234,7 +234,7 @@ public class HDBSService {
 	}
 
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRES_NEW, readOnly = true)
-	public HDBSBkgGridDTO createPredicatesAndFindHDBS(Card card) {
+	public HDBSBkgGridDTO findHDBSForExpressLane(Card card) {
 
 		LocalDateTime dateFrom = LocalDateTime.now().minus(1, ChronoUnit.HOURS);
 		LocalDateTime dateTo = LocalDateTime.now().plus(2, ChronoUnit.HOURS);
@@ -246,7 +246,7 @@ public class HDBSService {
 		List<HDBSStatus> hdbsStatusList = new ArrayList<>();
 		hdbsStatusList.add(HDBSStatus.ACCEPTED);
 
-		Optional<List<HDBSBkgDetailGridDTO>> hdbsBookingListOpt = createPredicatesAndFindHDBS(card, dateFrom, dateTo,
+		Optional<List<HDBSBkgDetailGridDTO>> hdbsBookingListOpt = createPredicatesForExpressLane(card, dateFrom, dateTo,
 				hdbsStatusList);
 
 		if (hdbsBookingListOpt.isPresent()) {
@@ -269,6 +269,45 @@ public class HDBSService {
 		Predicate byCardNo = HDBSBookingDetailsPredicates.byCardNo(String.valueOf(card.getCardNo()));
 		Predicate byAPPTDateFrom = HDBSBookingDetailsPredicates.byApptDateTimeFrom(dateFrom);
 		Predicate byAPPTDateTo = HDBSBookingDetailsPredicates.byApptDateTimeToActual(dateTo);
+		Predicate byDrayageBooking = HDBSBookingDetailsPredicates.byDrayageBooking(0);
+		Predicate byHDBSStatus = HDBSBookingDetailsPredicates.byHDBSStatusTypes(statusList);
+		Predicate byNullableSCSS = HDBSBookingDetailsPredicates.byNullableSCSSStatusCode();
+
+		Predicate condition = ExpressionUtils.allOf(byCardNo, byAPPTDateFrom, byAPPTDateTo, byDrayageBooking,
+				byHDBSStatus, byNullableSCSS);
+
+		OrderSpecifier<LocalDateTime> orderByAPPStartDate = HDBSBookingDetailsPredicates
+				.orderByAppointmentStartDateAsc();
+
+		Iterable<HDBSBkgDetail> bookingList = hdbsBookingDetailRepository.findAll(condition, orderByAPPStartDate);
+
+		Iterator<HDBSBkgDetail> bookingIterator = bookingList.iterator();
+
+		Set<HDBSBkgDetailGridDTO> gridSet = new HashSet<HDBSBkgDetailGridDTO>();
+
+		if (bookingIterator.hasNext()) {
+			bookingList.forEach(detail -> {
+				HDBSBkgDetailGridDTO hdbs = constructDetailGridDetailDTO(detail);
+				setDuration(hdbs);
+				gridSet.add(hdbs);
+
+			});
+
+			hdbsBookingList.get().addAll(gridSet);
+		}
+		return hdbsBookingList;
+
+	}
+	
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
+	public Optional<List<HDBSBkgDetailGridDTO>> createPredicatesForExpressLane(Card card, LocalDateTime startTime,
+			LocalDateTime endTime, List<HDBSStatus> statusList) {
+
+		final Optional<List<HDBSBkgDetailGridDTO>> hdbsBookingList = Optional.of(new ArrayList<HDBSBkgDetailGridDTO>());
+
+		Predicate byCardNo = HDBSBookingDetailsPredicates.byCardNo(String.valueOf(card.getCardNo()));
+		Predicate byAPPTDateFrom = HDBSBookingDetailsPredicates.byApptDateTimeStart(startTime);
+		Predicate byAPPTDateTo = HDBSBookingDetailsPredicates.byApptDateTimeEnd(endTime);
 		Predicate byDrayageBooking = HDBSBookingDetailsPredicates.byDrayageBooking(0);
 		Predicate byHDBSStatus = HDBSBookingDetailsPredicates.byHDBSStatusTypes(statusList);
 		Predicate byNullableSCSS = HDBSBookingDetailsPredicates.byNullableSCSSStatusCode();

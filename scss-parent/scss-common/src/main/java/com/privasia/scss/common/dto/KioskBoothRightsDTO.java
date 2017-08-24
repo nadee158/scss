@@ -23,6 +23,8 @@ public class KioskBoothRightsDTO implements Serializable {
 	private Long kioskClientID;
 
 	private String kioskLockStatus = StringUtils.EMPTY;
+	
+	private String boothUnitNo = StringUtils.EMPTY;
 
 	private Long cardNumber = null;
 
@@ -277,7 +279,12 @@ public class KioskBoothRightsDTO implements Serializable {
 	public void setContainer04(KioskBoothContainerDTO container04) {
 		this.container04 = container04;
 	}
-
 	
+	public String getBoothUnitNo() {
+		return boothUnitNo;
+	}
 
+	public void setBoothUnitNo(String boothUnitNo) {
+		this.boothUnitNo = boothUnitNo;
+	}
 }
