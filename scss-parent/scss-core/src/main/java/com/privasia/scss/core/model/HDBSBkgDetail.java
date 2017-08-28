@@ -17,6 +17,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import com.privasia.scss.common.enums.ContainerSize;
 import com.privasia.scss.common.enums.HDBSBookingType;
@@ -66,6 +67,7 @@ public class HDBSBkgDetail extends AuditEntity implements Serializable {
 	private ContainerSize containerSize;
 
 	@Column(name = "APPT_DATETIME_FROM")
+	@DateTimeFormat(pattern = "M/d/yyyy h:mm:ss a")
 	private LocalDateTime apptDateTimeFrom;
 
 	@Column(name = "APPT_DATETIME_TO")

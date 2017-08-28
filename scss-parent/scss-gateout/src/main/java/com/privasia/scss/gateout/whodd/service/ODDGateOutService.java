@@ -146,7 +146,7 @@ public class ODDGateOutService {
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = true, value = "as400TransactionManager")
 	public ContainerValidationInfo validateODDContainers(GateOutRequest gateOutRequest) {
 
-		Optional<Card> cardOpt = cardRepository.findOne(gateOutRequest.getCardID());
+		Optional<Card> cardOpt = cardRepository.findOne(gateOutRequest.getCardID()); 
 		Card card = cardOpt.orElseThrow(
 				() -> new ResultsNotFoundException("Invalid Scan Card ID ! " + gateOutRequest.getCardID()));
 		gateOutRequest.setComID(card.getCompany().getCompanyID());

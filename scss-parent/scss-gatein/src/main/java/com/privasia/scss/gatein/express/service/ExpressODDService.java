@@ -80,7 +80,7 @@ public class ExpressODDService {
     log.warn("saving gate in info completed: gateInResponse :- " + gateInResponse);
 
     GateTicketInfoDTO gateTicketInfoDTO = printGatePassInfoODD(gateInWriteRequest, gateInResponse);
-    log.warn("getGateTicketInfo ending: gateTicketInfoDTO:-  " + gateTicketInfoDTO);
+    log.warn("getGateTicketInfo ending: gateTicketInfoDTO:-  " + gateTicketInfoDTO); 
     return gateTicketInfoDTO;
   }
 

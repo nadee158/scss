@@ -17,9 +17,9 @@ public class HDBSBkgDetailGridDTO implements Serializable {
 
 	private String hdbsBKGDetailID;
 
-	private String hDBSBkgMasterPmHeadNo;
+	//private String hDBSBkgMasterPmHeadNo;
 
-	private String hDBSBkgMasterPlateNo;
+	//private String hDBSBkgMasterPlateNo;
 
 	private String hDBSBkgMasterDepotCode;
 
@@ -134,6 +134,8 @@ public class HDBSBkgDetailGridDTO implements Serializable {
 	private boolean acceptBooking;
 
 	private String pmHeadNo;
+	
+	private String plateNo;
 
 	private String durration = StringUtils.EMPTY;
 	private String status = StringUtils.EMPTY;
@@ -147,7 +149,7 @@ public class HDBSBkgDetailGridDTO implements Serializable {
 		this.hdbsBKGDetailID = hdbsBKGDetailID;
 	}
 
-	public String gethDBSBkgMasterPmHeadNo() {
+	/*public String gethDBSBkgMasterPmHeadNo() {
 		return hDBSBkgMasterPmHeadNo;
 	}
 
@@ -161,7 +163,7 @@ public class HDBSBkgDetailGridDTO implements Serializable {
 
 	public void sethDBSBkgMasterPlateNo(String hDBSBkgMasterPlateNo) {
 		this.hDBSBkgMasterPlateNo = hDBSBkgMasterPlateNo;
-	}
+	}*/
 
 	public String gethDBSBkgMasterDepotCode() {
 		return hDBSBkgMasterDepotCode;
@@ -582,6 +584,16 @@ public class HDBSBkgDetailGridDTO implements Serializable {
 	public void setPmHeadNo(String pmHeadNo) {
 		this.pmHeadNo = pmHeadNo;
 	}
+
+	public String getPlateNo() {
+		return plateNo;
+	}
+
+	public void setPlateNo(String plateNo) {
+		this.plateNo = plateNo;
+	}
+
+
 
 	public static Comparator<HDBSBkgDetailGridDTO> ApptDateTimeFromComparator = new Comparator<HDBSBkgDetailGridDTO>() {
 

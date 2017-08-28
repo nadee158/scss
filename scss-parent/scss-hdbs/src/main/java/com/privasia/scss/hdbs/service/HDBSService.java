@@ -4,6 +4,7 @@
 package com.privasia.scss.hdbs.service;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -235,9 +236,12 @@ public class HDBSService {
 
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRES_NEW, readOnly = true)
 	public HDBSBkgGridDTO findHDBSForExpressLane(Card card) {
+		
+	    LocalDateTime now = LocalDateTime.now();
 
-		LocalDateTime dateFrom = LocalDateTime.now().minus(1, ChronoUnit.HOURS);
-		LocalDateTime dateTo = LocalDateTime.now().plus(2, ChronoUnit.HOURS);
+		LocalDateTime dateFrom = now.minus(1, ChronoUnit.HOURS);
+		LocalDateTime dateTo = now.plus(2, ChronoUnit.HOURS);
+		
 
 		HDBSBkgGridDTO gridDTo = new HDBSBkgGridDTO();
 
@@ -328,7 +332,7 @@ public class HDBSService {
 			bookingList.forEach(detail -> {
 				HDBSBkgDetailGridDTO hdbs = constructDetailGridDetailDTO(detail);
 				setDuration(hdbs);
-				gridSet.add(hdbs);
+				gridSet.add(hdbs); 
 
 			});
 
@@ -340,6 +344,8 @@ public class HDBSService {
 
 	private HDBSBkgDetailGridDTO constructDetailGridDetailDTO(HDBSBkgDetail detail) {
 		HDBSBkgDetailGridDTO detailGridDTO = modelMapper.map(detail, HDBSBkgDetailGridDTO.class);
+		detailGridDTO.setPmHeadNo(detail.gethDBSBkgMaster().getPmHeadNo());
+		detailGridDTO.setPlateNo(detail.gethDBSBkgMaster().getPlateNo());
 		detailGridDTO.setContainerSize(detail.getContainerSize().getValue());
 		return detailGridDTO;
 	}

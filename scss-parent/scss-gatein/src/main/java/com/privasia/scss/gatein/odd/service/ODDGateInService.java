@@ -255,7 +255,7 @@ public class ODDGateInService {
 
           whODDdto.getContainer02().setOddStatus(TransactionStatus.INPROGRESS.getValue());
           Optional<ODDLocation> optLocation = oddLocationRepository
-              .findByOddCodeAndStatusCode(whODDdto.getContainer02().getLocation().getOddCode(), RecordStatus.ACTIVE);
+              .findByOddCodeAndStatusCode(whODDdto.getContainer02().getLocation().getOddCode(), RecordStatus.ACTIVE); 
 
           ODDLocation location = optLocation.orElseThrow(() -> new ResultsNotFoundException(
               "Invalid location provided for container " + whODDdto.getContainer02().getContainerNo() + " / "
