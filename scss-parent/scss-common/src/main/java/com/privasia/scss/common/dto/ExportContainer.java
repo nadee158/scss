@@ -175,7 +175,7 @@ public class ExportContainer extends BaseContainer implements Serializable {
 
 	private boolean bypassDg;
 
-	private boolean dgWithinWindowEntry;
+	private boolean dgWithinWindowEntry = true;
 	private boolean accessToByPassDg;
 
 	private String dgMessage;
