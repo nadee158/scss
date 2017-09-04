@@ -130,7 +130,7 @@ public class ODDGateInService {
     Optional<Client> clientOpt = clientRepository.findOne(gateInWriteRequest.getGateInClient());
     Client gateInClient = clientOpt
         .orElseThrow(() -> new ResultsNotFoundException("Invalid lane ID ! " + gateInWriteRequest.getGateInClient()));
-
+    
     gateInWriteRequest.getWhoddContainers().forEach(whODDdto -> {
 
       if (StringUtils.isEmpty(whODDdto.getImpExpFlag()))

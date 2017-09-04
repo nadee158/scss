@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.privasia.scss.common.dto.ExportContainer;
+import com.privasia.scss.common.dto.GateInRequest;
 import com.privasia.scss.common.dto.GateInResponse;
 import com.privasia.scss.common.dto.HpatDto;
 import com.privasia.scss.common.dto.ImportContainer;
@@ -226,13 +227,13 @@ public class HPABService {
 	// rename method to populateHpabForImpExp
 	// return GateOutReponse
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
-	public GateInResponse populateHpabForImpExp(GateInResponse gateInResponse, String hpabSeqId) {
+	public GateInResponse populateHpabForImpExp(GateInResponse gateInResponse, GateInRequest gateInRequest) {
 
-		Optional<HPABBooking> hpatBookingOpt = hpabBookingRepository.findByBookingIDAndStatus(hpabSeqId,
+		Optional<HPABBooking> hpatBookingOpt = hpabBookingRepository.findByBookingIDAndStatus(gateInRequest.getHpabSeqId(),
 				HpabReferStatus.ACTIVE);
 
 		HPABBooking booking = hpatBookingOpt
-				.orElseThrow(() -> new ResultsNotFoundException("Invalid HPAB Bookibg ID ! " + hpabSeqId));
+				.orElseThrow(() -> new ResultsNotFoundException("Invalid HPAB Bookibg ID ! " + gateInRequest.getHpabSeqId()));
 
 		List<ImportContainer> updatedImportContainers = new ArrayList<ImportContainer>();
 		List<ExportContainer> updatedExportContainers = new ArrayList<ExportContainer>();
@@ -378,4 +379,5 @@ public class HPABService {
 //		return true;
 
 	}
+	
 }

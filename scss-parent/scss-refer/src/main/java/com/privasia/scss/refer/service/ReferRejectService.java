@@ -153,12 +153,14 @@ public class ReferRejectService {
     
     listDTO.setExpWeightBridge(referReject.getExpWeightBridge());
     
-
     if (referReject.getBaseCommonGateInOut() != null) {
 
       BaseCommonGateInOutAttribute baseCommonGateInOut = referReject.getBaseCommonGateInOut();
       listDTO.setPmHeadNo(baseCommonGateInOut.getPmHeadNo());
-
+      
+      if(baseCommonGateInOut.getHpabBooking() != null)
+    	  listDTO.setHpabSeqID(baseCommonGateInOut.getHpabBooking().getBookingID());
+      
       Client client = baseCommonGateInOut.getGateInClient();
       if (client != null) {
         listDTO.setBoothNo(client.getUnitNo());

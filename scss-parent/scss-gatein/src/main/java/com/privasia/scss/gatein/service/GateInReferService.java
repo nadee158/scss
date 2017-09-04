@@ -1,8 +1,10 @@
 package com.privasia.scss.gatein.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -45,7 +47,6 @@ public class GateInReferService {
 		if (optReferReject.isPresent()) {
 			ReferReject referReject = optReferReject.get();
 			if (!(referReject.getReferRejectDetails() == null || referReject.getReferRejectDetails().isEmpty())) {
-//				GateInResponse gateInResponse = new GateInResponse();
 				gateInResponse.setExpWeightBridge(referReject.getExpWeightBridge());
 				gateInResponse.setGateINDateTime(referReject.getReferDateTime());
 				gateInResponse.setPmVerified(referReject.getPmVerified());
@@ -64,12 +65,20 @@ public class GateInReferService {
 				gateInResponse.setTrailerWeight(referReject.getTrailerWeight());
 				gateInResponse.setTruckWeight(referReject.getPmWeight());
 				
-				List<ExportContainer> exportContainers =  gateInResponse.getExportContainers(); 
+				List<ExportContainer> exportContainers =  gateInResponse.getExportContainers();
+				
 				referReject.getReferRejectDetails().forEach(referRejectDetail -> {
-					Optional<ExportContainer> exportContainerOpt = exportContainers.stream().filter(
-							p -> p.getContainer().getContainerNumber().equals(referRejectDetail.getContainerNo()))
-							.findFirst();
-					ExportContainer exportContainer = exportContainerOpt.get();
+					
+					ExportContainer exportContainer = null;
+					
+					if(StringUtils.isEmpty(gateInResponse.getHpabBookingId())){
+						exportContainer = new ExportContainer();
+					}else{
+						Optional<ExportContainer> exportContainerOpt = exportContainers.stream().filter(
+								p -> p.getContainer().getContainerNumber().equals(referRejectDetail.getContainerNo()))
+								.findFirst();
+						exportContainer = exportContainerOpt.get();
+					}
 					
 					if (referRejectDetail.getSolas() != null) {
 						if (exportContainer.getSolas() == null) {
@@ -101,13 +110,14 @@ public class GateInReferService {
 					exportContainer.getContainer().setContainerISOCode(referRejectDetail.getContainerIsoCode());
 					exportContainer.setShippingLine(referRejectDetail.getLineCode());
 					exportContainer.setContainerPosition(referRejectDetail.getPosition().getValue());
+					
+					if(exportContainers == null || exportContainers.isEmpty())
+						gateInResponse.setExportContainers(new ArrayList<ExportContainer>());
+					
 					if(!exportContainers.contains(exportContainer))
 					exportContainers.add(exportContainer);
 
 				});
-				
-				
-
 				gateInResponse.setExportContainers(exportContainers);
 				return gateInResponse;
 			}

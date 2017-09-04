@@ -97,7 +97,6 @@ public class ImportGateInService {
 
     List<ImportContainer> importContainers = new ArrayList<ImportContainer>();
     gatePassList.forEach(gatePass -> {
-      System.out.println("ggatePass.getGatePassID : " + gatePass.getGatePassID());
       ImportContainer importContainer = new ImportContainer();
       modelMapper.map(gatePass, importContainer);
 

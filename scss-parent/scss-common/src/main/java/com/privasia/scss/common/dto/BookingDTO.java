@@ -90,7 +90,10 @@ public class BookingDTO implements Serializable {
 	}
 
 	public BookingDTO(HDBSBkgDetailGridDTO gridDtoItem) {
-		this.setBookingId(gridDtoItem.getHdbsBkgDetailNo());
+		
+		System.out.println("gridDtoItem.getHdbsBKGDetailID() "+gridDtoItem.getHdbsBKGDetailID());
+		
+		this.setBookingId(gridDtoItem.getHdbsBKGDetailID());
 
 		if (StringUtils.isNotBlank(gridDtoItem.getContainerNo())) {
 			this.setContainer1(gridDtoItem.getContainerNo());
