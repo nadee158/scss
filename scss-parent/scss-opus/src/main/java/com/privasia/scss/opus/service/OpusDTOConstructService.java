@@ -137,11 +137,11 @@ public class OpusDTOConstructService {
 			if (StringUtils.equalsIgnoreCase(solasDTO.getSolasInstruction(),
 					SolasInstructionType.VGM_INSTRUCTION_SHIPPER.getValue()) && exportContainer.isWithinTolerance()) {
 				giWriteRequestExpContainer.setVgmNetWeight(String.valueOf(exportContainer.getShipperVGM()));
-				giWriteRequestExpContainer.setContainerNetWeight(String.valueOf(exportContainer.getShipperVGM()));
+				giWriteRequestExpContainer.setContainerNetWeight(String.valueOf(exportContainer.getGrossWeight()));
 			} else {
 				if (exportContainer.getExpNetWeight() != null) {
 					giWriteRequestExpContainer.setVgmNetWeight(String.valueOf(exportContainer.getExpNetWeight()));
-					giWriteRequestExpContainer.setContainerNetWeight(String.valueOf(exportContainer.getExpNetWeight()));
+					giWriteRequestExpContainer.setContainerNetWeight(String.valueOf(exportContainer.getGrossWeight()));
 				}
 				
 			}
