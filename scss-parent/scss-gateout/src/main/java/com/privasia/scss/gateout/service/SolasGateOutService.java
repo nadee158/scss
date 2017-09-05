@@ -136,7 +136,6 @@ public class SolasGateOutService {
 			Iterator<Exports> etpSolasIterator = exportsList.iterator();
 
 			if (etpSolasIterator.hasNext()) {
-				System.out.println("etpSolasIterator.hasNext() ***************************");
 				final List<SolasETPDTO> solasETPDTOs = new ArrayList<SolasETPDTO>();
 
 				try {
@@ -168,7 +167,6 @@ public class SolasGateOutService {
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = false)
 	public SolasPassFileDTO generateSolasCertificateInfo(List<Long> expIDList) throws IOException, JRException {
 		
-		System.out.println("calling generateSolasCertificateInfo *************************** ");
 		log.info("calling generateSolasCertificateInfo *************************** ");
 		
 		if (expIDList == null || expIDList.isEmpty()) {
@@ -238,11 +236,9 @@ public class SolasGateOutService {
 					// save to mongodb
 					fileId = fileService.saveFileToMongoDB(fileInfoDTO);
 					log.info("fileId  *************************** "+fileId);
-					System.out.println("fileId  *************************** "+fileId);
 					// save to file references
 					if (fileId.isPresent()) {
 						log.info("fileId  *************************** "+fileId.get());
-						System.out.println("calling exportGateOutService.updateExportReference  *************************** "+fileId);
 						log.info("calling exportGateOutService.updateExportReference  *************************** "+fileId);
 						exportGateOutService.updateExportReference(fileInfoDTO);
 					}else{
@@ -254,7 +250,6 @@ public class SolasGateOutService {
 				return solasPassFileDTO;
 			}else{
 				log.info("*********** exportsList is empty ****************");
-				System.out.println("*********** exportsList is empty ****************");
 			}
 		}else{
 			log.info("*********** exportsList is null ****************");

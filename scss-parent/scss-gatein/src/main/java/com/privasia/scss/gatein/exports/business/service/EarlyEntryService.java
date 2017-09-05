@@ -58,10 +58,6 @@ public class EarlyEntryService {
 	public boolean isContainerHasAOpening(ExportContainer container) {// !c1.isAllowIn()
 
 		final LocalDateTime now = LocalDateTime.now();
-
-		// final LocalDateTime now = LocalDateTime.of(2017, 06, 05, 11, 50, 30);
-		// System.out.println("now *************** "+now);
-
 		Optional<Integer> storagePeriod = getStoragePeriod(container);
 
 		if (storagePeriod.isPresent()) {
@@ -74,7 +70,6 @@ public class EarlyEntryService {
 //			earlyEnrtyDate = now.until(vesselETADate, ChronoUnit.DAYS)+1;
 			earlyEnrtyDate = now.truncatedTo(ChronoUnit.DAYS).until(vesselETADate.truncatedTo(ChronoUnit.DAYS),
 					ChronoUnit.DAYS);
-			// System.out.println("earlyEnrtyDate "+earlyEnrtyDate);
 			// Before Eta Date
 			if (earlyEnrtyDate > 1) {
 				if (earlyEnrtyDate <= storagePeriod.get()) {

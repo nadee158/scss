@@ -158,7 +158,6 @@ public class ImportExportGateInService {
 		// fetch hpab data
 		if (StringUtils.isNotEmpty(gateInRequest.getHpabSeqId())) {
 			gateInResponse = hpabService.populateHpabForImpExp(gateInResponse, gateInRequest);
-
 		}
 
 		/*

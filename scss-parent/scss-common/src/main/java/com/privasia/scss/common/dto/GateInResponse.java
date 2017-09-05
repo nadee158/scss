@@ -5,6 +5,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.privasia.scss.common.util.ApplicationConstants;
 import com.privasia.scss.common.util.DateUtil;
@@ -26,7 +29,7 @@ public class GateInResponse implements Serializable {
 	private LocalDateTime gateINDateTime;// 20161130112233,
 	private boolean checkPreArrival = false;// -boolean
 
-	private List<ImportContainer> importContainers = new ArrayList<ImportContainer>(); 
+	private List<ImportContainer> importContainers = new ArrayList<ImportContainer>();
 
 	private List<ExportContainer> exportContainers = new ArrayList<ExportContainer>();
 
@@ -42,19 +45,19 @@ public class GateInResponse implements Serializable {
 	private String trailerPlate;
 
 	private Integer trailerWeight;
-	
+
 	private Integer truckWeight;
-	
+
 	private Boolean axleVerified;
-	
+
 	private Boolean pmVerified;
-	
+
 	private String hpabBookingId;
-	
+
 	private String impExpFlagStatus;
-	
+
 	private boolean manualPlanIndicator = false;
-	
+
 	private String manualPlanDescription;
 
 	public String getLaneNo() {
@@ -184,7 +187,7 @@ public class GateInResponse implements Serializable {
 	public void setTrailerWeight(Integer trailerWeight) {
 		this.trailerWeight = trailerWeight;
 	}
-	
+
 	public Boolean getAxleVerified() {
 		return axleVerified;
 	}
@@ -222,14 +225,14 @@ public class GateInResponse implements Serializable {
 	}
 
 	public void setManualPlanIndicator(boolean manualPlanIndicator) {
-		
+
 		if (!(this.getExportContainers() == null || this.getExportContainers().isEmpty())) {
 
 			this.manualPlanIndicator = this.getExportContainers().stream()
-				.filter(expContainer -> expContainer.getManualPlanIndicator()).findAny().isPresent();
+					.filter(expContainer -> expContainer.getManualPlanIndicator()).findAny().isPresent();
 			this.setManualPlanDescription(ApplicationConstants.INF0016);
 
-		}else{
+		} else {
 			this.manualPlanIndicator = manualPlanIndicator;
 		}
 	}
@@ -242,5 +245,9 @@ public class GateInResponse implements Serializable {
 		this.manualPlanDescription = manualPlanDescription;
 	}
 
-	
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
+	}
+
 }

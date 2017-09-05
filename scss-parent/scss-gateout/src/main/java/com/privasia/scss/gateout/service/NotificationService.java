@@ -114,7 +114,6 @@ public class NotificationService {
           emailContent = emailService.prepareAndSaveEmail(shipEmail.getEmailTo(), subject, context,
               EmailTemplate.DSO_SEAL_TEMPLATE.getValue());
         }
-        System.out.println("DSO_SEAL_CONTENT " + emailContent);
       }
     });
   }
@@ -134,7 +133,6 @@ public class NotificationService {
         Context context = new Context();
         String subject =
             "CONTAINER SIZE DISCREPANCY - " + StringUtils.trim(exportContainer.getContainer().getContainerNumber());
-        System.out.println("subject " + subject);
         try {
           context.setVariable(ApplicationConstants.EMAIL_BCC, shipEmail.getEmailBCC());
           context.setVariable(ApplicationConstants.EMAIL_CC, shipEmail.getEmailCC());
@@ -160,7 +158,6 @@ public class NotificationService {
           emailContent = emailService.prepareAndSaveEmail(shipEmail.getEmailTo(), subject, context,
               EmailTemplate.CONTAINER_SIZE_TEMPLATE.getValue());
         }
-        System.out.println("CONTAINER_SIZE_CONTENT " + emailContent);
       }
     });
   }
@@ -205,7 +202,6 @@ public class NotificationService {
           emailContent = emailService.prepareAndSaveEmail(shipEmail.getEmailTo(), subject, context,
               EmailTemplate.NON_STANDARD_SEAL_LINE_CODE_TEMPLATE.getValue());
         }
-        System.out.println("NON_STANDARD_SEAL_LINE_CODE_CONTENT " + emailContent);
       }
     });
   }
@@ -253,7 +249,6 @@ public class NotificationService {
           emailContent = emailService.prepareAndSaveEmail(shipEmail.getEmailTo(), subject, context,
               EmailTemplate.WRONG_DOOR_TEMPLATE.getValue());
         }
-        System.out.println("WRONG_DOOR_CONTENT " + emailContent);
       }
     });
   }
@@ -314,7 +309,6 @@ public class NotificationService {
                 EmailTemplate.WEIGHT_TEMPLATE.getValue());
           }
 
-          System.out.println("EMAIL_CONTENT " + emailContent);
 
         }
       }
@@ -323,17 +317,13 @@ public class NotificationService {
 
   @Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
   public void sendKioskHealthCheckMails() {
-    System.out.println("sendKioskHealthCheckMails called !--------------------------");
     Boolean notificationStatus = false;
     long totalPendingNotificationCount =
         kioskHLTCheckRepository.getCountHealthCheckInfoForNofitication(notificationStatus);
-    System.out.println("totalPendingNotificationCount :" + totalPendingNotificationCount);
     if (totalPendingNotificationCount > 0) {
       long fetchedCount = 0;
       while (fetchedCount <= totalPendingNotificationCount) {
-        System.out.println("fetchedCount BEFORE :" + fetchedCount);
         fetchedCount = fetchedCount + pageSize;
-        System.out.println("fetchedCount AFTER :" + fetchedCount);
         Map<String, List<NotificationDTO>> notifications = getNotifications(notificationStatus);
         if (!(notifications == null || notifications.isEmpty())) {
           Context context = new Context();

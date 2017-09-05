@@ -70,9 +70,7 @@ public class OpusRequestResponseService {
       opusRequestResponse.setSendTime(LocalDateTime.now());
       // set id upon save dfdf
       opusRequestResponse.setOpusReqResID(CommonUtil.getUniqueID());
-      System.out.println("before  opusRequestResponse ######################### ");
       opusRequestResponse = opusRepository.save(opusRequestResponse);
-      System.out.println("save  opusRequestResponse ######################### ");
     } catch (Exception e) {
       log.error("Error Occured when update Opus Response " + opusRequestResponse);
       log.error(e.getMessage());

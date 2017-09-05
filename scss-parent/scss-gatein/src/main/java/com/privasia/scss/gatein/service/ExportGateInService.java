@@ -367,8 +367,6 @@ public class ExportGateInService {
 	public void testDGValidationLog(GateInWriteRequest gateInWriteRequest) {
 		// construct a new export entity for each exportcontainer and save
 
-		System.out.println("gateInWriteRequest.getExportContainers() " + gateInWriteRequest.getExportContainers());
-
 		gateInWriteRequest.getExportContainers().forEach(exportContainer -> {
 			if (exportContainer.getBaseCommonGateInOutAttribute() == null) {
 				exportContainer.setBaseCommonGateInOutAttribute(new BaseCommonGateInOutDTO());

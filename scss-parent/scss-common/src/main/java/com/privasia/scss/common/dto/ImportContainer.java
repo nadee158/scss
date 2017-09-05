@@ -662,10 +662,4 @@ public class ImportContainer extends BaseContainer implements Serializable {
   }
 
 
-  public static long getSerialversionuid() {
-    return serialVersionUID;
-  }
-
-
-
 }

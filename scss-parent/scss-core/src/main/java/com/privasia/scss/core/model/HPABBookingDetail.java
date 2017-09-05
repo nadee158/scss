@@ -282,7 +282,7 @@ public class HPABBookingDetail extends AuditEntity implements Serializable {
 			exportContainer.getSolas().setSolasRefNumber(solasInfo.getSolasRefNumber());
 
 		}
-		// exportContainer.getContainer().setContainerNumber(containerNumber);
+		exportContainer.getContainer().setContainerNumber(containerNumber);
 		if (exportContainer.getSealAttribute() == null) {
 			exportContainer.setSealAttribute(new CommonSealDTO());
 		}
@@ -317,7 +317,7 @@ public class HPABBookingDetail extends AuditEntity implements Serializable {
 		if (importContainer.getContainer() == null) {
 			importContainer.setContainer(new CommonContainerDTO());
 		}
-		// importContainer.getContainer().setContainerNumber(this.containerNumber);
+		importContainer.getContainer().setContainerNumber(this.containerNumber);
 		if(StringUtils.isNotBlank(this.containerISO)){
 		importContainer.getContainer().setContainerISOCode(this.containerISO);
 		}

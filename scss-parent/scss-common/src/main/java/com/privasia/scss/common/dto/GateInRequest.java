@@ -7,6 +7,9 @@ import java.util.Optional;
 
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.privasia.scss.common.util.DateUtil;
 
@@ -202,6 +205,11 @@ public class GateInRequest implements Serializable {
 
 	public void setOddReject(boolean oddReject) {
 		this.oddReject = oddReject;
+	}
+	
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
 	}
 	
 	

@@ -32,7 +32,6 @@ public class GridFSRepository {
 		
 		gridFS = new GridFS(dbFactory.getDb(), fileDTO.getCollectionType().getValue());
 		GridFSInputFile file = gridFS.createFile(fileDTO.getFileStream(), fileDTO.getFileName().get(), true);
-		System.out.println("fileDTO.getFileSize() "+fileDTO.getFileSize());
 		
 		file.setChunkSize(1024);
 		file.setMetaData(metadata);

@@ -237,7 +237,6 @@ public class ExportGateOutService {
 			exportsOptList.get().forEach(exports -> {
 				assignUpdatedValuesExports(exports, fileDTO);
 				log.info("before save to exports ********************** " + fileDTO.getFileName().get());
-				System.out.println("before save to exports ********************** " + fileDTO.getFileName().get());
 				exportsRepository.save(exports);
 			});
 		} else {

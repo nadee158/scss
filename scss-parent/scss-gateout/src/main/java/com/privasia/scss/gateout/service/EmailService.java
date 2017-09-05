@@ -55,7 +55,7 @@ public class EmailService {
 
 
   public String prepareAndSendEmail(String recipient, String subject, Context context, String templateName) {
-    System.out.println("prepareAndSendEmail ");
+    
     emailContent = null;
     MimeMessagePreparator messagePreparator = mimeMessage -> {
       MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, true, "UTF-8"); // true =
@@ -76,10 +76,8 @@ public class EmailService {
       messageHelper.setTo(new InternetAddress(recipient));
       messageHelper.setSubject(subject);
       emailContent = build(context, templateName);
-      System.out.println("EMAIL CONTENT :" + emailContent);
       messageHelper.setText(emailContent, true);
     };
-    System.out.println("messagePreparator " + messagePreparator);
     javaMailSender.send(messagePreparator);
     return emailContent;
   }
