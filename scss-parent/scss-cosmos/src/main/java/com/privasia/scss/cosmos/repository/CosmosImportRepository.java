@@ -80,6 +80,7 @@ public class CosmosImportRepository {
       importContainer.getContainer().setContainerISOCode(TextString.format(rs.getString("CNIS03")));
       importContainer.setOrderFOT(TextString.format(rs.getString("ORRF05")));
       importContainer.setCurrentPosition(TextString.format(rs.getString("PSEX45")));
+      
     } catch (SQLException e) {
       log.error("ImportContainer mapToImportContainer " + e.getMessage());
       e.printStackTrace();

@@ -23,6 +23,7 @@ import com.privasia.scss.common.exception.ResultsNotFoundException;
 import com.privasia.scss.common.service.export.ExportUtilService;
 import com.privasia.scss.cosmos.model.ISOCode;
 import com.privasia.scss.cosmos.oracle.repository.ISOCodeCosmosRepository;
+import com.privasia.scss.cosmos.util.TextString;
 
 @Service("cosmosGateInReadService")
 public class CosmosGateInReadService {
@@ -57,8 +58,6 @@ public class CosmosGateInReadService {
         || gateInResponse.getImportContainers().isEmpty())) {
 
       gateInResponse.getImportContainers().forEach(importContainer -> {
-        System.out.println("Running in populateCosmosGateInImport **************************** "
-            + importContainer.getContainer().getContainerNumber());
         cosmosGateInImportService.fetchContainerInfo(importContainer);
 
         if (StringUtils.isNotEmpty(importContainer.getContainer().getContainerISOCode())) {
@@ -75,13 +74,15 @@ public class CosmosGateInReadService {
           importContainer.setContainerType(iso.getType());
           importContainer.setTareWeight(iso.getTareWeight());
         }
+        
+        System.out.println("********************* POSITION @ 1.1****************** "+ importContainer.getContainerPosition());
+        System.out.println("********************* POSITION @ 1.1****************** "+ importContainer.getCurrentPosition());
 
       });
 
     } else {
       gateInResponse.setImportContainers(null);
-      System.out
-          .println("else part running in populateCosmosGateInImport **************************** ");
+      
     }
 
     return new AsyncResult<GateInResponse>(gateInResponse);

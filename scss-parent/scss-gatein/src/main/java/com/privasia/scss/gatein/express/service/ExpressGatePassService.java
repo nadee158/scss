@@ -78,6 +78,17 @@ public class ExpressGatePassService {
     gateInWriteRequest.setGateInDateTime(gateInRequest.getGateInDateTime());
     gateInWriteRequest.setTrailerNo("AXBN8198");
     
+    
+    /**
+	 * Container Position On the Truck
+	 */
+    if (gateInWriteRequest.getImportContainers().size() == 1) {
+    	gateInWriteRequest.getImportContainers().get(0).setContainerPosition("M");
+	} else {
+		gateInWriteRequest.getImportContainers().get(0).setContainerPosition("F");
+		gateInWriteRequest.getImportContainers().get(1).setContainerPosition("A");
+	}
+    
     // saving gate in info
     log.warn("saving gate in info starting: gateInWriteRequest:-  " + gateInWriteRequest);
     gateInResponse = importExportGateInService.saveGateInInfo(gateInWriteRequest);

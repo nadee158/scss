@@ -4,13 +4,11 @@
 package com.privasia.scss.gatein.express.controller;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.validation.BindException;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,7 +24,6 @@ import com.privasia.scss.common.dto.GateTicketInfoDTO;
 import com.privasia.scss.gatein.express.service.ExpressBookingService;
 import com.privasia.scss.gatein.express.service.ExpressGatePassService;
 import com.privasia.scss.gatein.express.service.ExpressODDService;
-import com.privasia.scss.gatein.util.GateInWriteRequestValidator;
 
 /**
  * @author Nadeeshani Senevirathna
