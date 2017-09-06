@@ -156,37 +156,10 @@ public class ImportExportGateInService {
 		gateInResponse.setExpWeightBridge(gateInRequest.getExpWeightBridge());
 
 		// fetch hpab data
-		if (StringUtils.isNotEmpty(gateInRequest.getHpabSeqId())) {
+		if (StringUtils.isNotEmpty(gateInRequest.getHpabSeqId()) && !gateInRequest.getReferID().isPresent()) {
 			gateInResponse = hpabService.populateHpabForImpExp(gateInResponse, gateInRequest);
 		}
-
-		/*
-		 * if the refer id avaliable then fetch here. then pass export container
-		 * list
-		 */
-		// refere reject details
-		if (gateInRequest.getReferID().isPresent()) {
-			gateInResponse = gateInReferService.fetchReferDataForExport(gateInRequest.getReferID().get(),
-					gateInResponse);
-			
-			if (!(gateInResponse.getImportContainers() == null || gateInResponse.getImportContainers().isEmpty())) {
-				
-				gateInResponse.getImportContainers().forEach(importContainer -> {
-					
-					Long gatePassNo = importContainer.getGatePassNo();
-					
-					if(gateInRequest.getGatePass1() == null || gateInRequest.getGatePass1() == 0){
-						gateInRequest.setGatePass1(gatePassNo);
-					}else{
-						gateInRequest.setGatePass2(gatePassNo);
-					}
-					
-				});
-				
-			}
-			
-		}
-
+		
 		if ((gateInRequest.getGatePass1() != null && gateInRequest.getGatePass1() > 0)
 				|| (gateInRequest.getGatePass2() != null && gateInRequest.getGatePass2() > 0)) {
 
@@ -196,9 +169,17 @@ public class ImportExportGateInService {
 			gateInResponse.setImportContainers(importContainerList);
 		}
 		
-		if (gateInRequest.getReferID() == null || !gateInRequest.getReferID().isPresent()) {
-			OpusCosmosBusinessService businessService = containerExternalDataService.getImplementationService(implementor);
-			businessService.sendGateInReadRequest(gateInRequest, gateInResponse);
+		OpusCosmosBusinessService businessService = containerExternalDataService.getImplementationService(implementor);
+		businessService.sendGateInReadRequest(gateInRequest, gateInResponse);
+		
+		/*
+		 * if the refer id avaliable then fetch here. then pass export container
+		 * list
+		 */
+		// refere reject details
+		if (gateInRequest.getReferID().isPresent()) {
+			gateInResponse = gateInReferService.fetchReferDataForExport(gateInRequest.getReferID().get(),
+					gateInResponse);
 		}
 
 		if (!(gateInResponse.getExportContainers() == null || gateInResponse.getExportContainers().isEmpty())) {

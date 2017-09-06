@@ -44,7 +44,9 @@ public class ReferRejectListDTO implements Serializable {
 	// ReferReject.referRejectDetails.doubleBooking
 	private boolean doubleBooking = false;
 	
-	private String hpabSeqID;
+	private Long gatePass01;
+	
+	private Long gatePass02;
 
 	public Long getReferId() {
 		return referId;
@@ -134,12 +136,20 @@ public class ReferRejectListDTO implements Serializable {
 		this.expWeightBridge = expWeightBridge;
 	}
 	
-	public String getHpabSeqID() {
-		return hpabSeqID;
+	public Long getGatePass01() {
+		return gatePass01;
 	}
 
-	public void setHpabSeqID(String hpabSeqID) {
-		this.hpabSeqID = hpabSeqID;
+	public void setGatePass01(Long gatePass01) {
+		this.gatePass01 = gatePass01;
+	}
+
+	public Long getGatePass02() {
+		return gatePass02;
+	}
+
+	public void setGatePass02(Long gatePass02) {
+		this.gatePass02 = gatePass02;
 	}
 
 	@Override
