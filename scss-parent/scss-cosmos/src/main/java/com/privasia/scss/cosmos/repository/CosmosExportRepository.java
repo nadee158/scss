@@ -165,8 +165,8 @@ public class CosmosExportRepository {
 			}
 
 			exportContainer.getContainer().setContainerFullOrEmpty(rs.getString("CNBT03"));
-			exportContainer.setShippingLine(rs.getString("LYND05"));
-			exportContainer.setShippingAgent(rs.getString("ORGV05"));
+			exportContainer.setShippingLine(StringUtils.trimToEmpty(rs.getString("LYND05")));
+			exportContainer.setShippingAgent(StringUtils.trimToEmpty(rs.getString("ORGV05")));
 
 			exportContainer.setVesselCode(rs.getString("VMID01"));
 			exportContainer.setVesselVoyageIN(rs.getString("RSIN01"));
