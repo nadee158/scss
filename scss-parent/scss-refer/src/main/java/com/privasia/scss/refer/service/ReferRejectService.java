@@ -7,6 +7,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.xml.soap.Detail;
+
 import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,7 @@ import com.privasia.scss.common.dto.ReferRejectDTO;
 import com.privasia.scss.common.dto.ReferRejectDetailDTO;
 import com.privasia.scss.common.dto.ReferRejectListDTO;
 import com.privasia.scss.common.dto.ReferRejectReasonDTO;
+import com.privasia.scss.common.enums.ContainerFullEmptyType;
 import com.privasia.scss.common.enums.HpabReferStatus;
 import com.privasia.scss.common.enums.ReferStatus;
 import com.privasia.scss.common.enums.TransactionStatus;
@@ -148,6 +151,8 @@ public class ReferRejectService {
   }
 
   private ReferRejectListDTO constructReferRejectListDTO(ReferReject referReject) {
+	
+	  
     ReferRejectListDTO listDTO = new ReferRejectListDTO();
     listDTO.setReferId(referReject.getReferRejectID());
     
@@ -158,9 +163,26 @@ public class ReferRejectService {
       BaseCommonGateInOutAttribute baseCommonGateInOut = referReject.getBaseCommonGateInOut();
       listDTO.setPmHeadNo(baseCommonGateInOut.getPmHeadNo());
       
-      if(baseCommonGateInOut.getHpabBooking() != null)
-    	  listDTO.setHpabSeqID(baseCommonGateInOut.getHpabBooking().getBookingID());
-      
+  	if(!(referReject.getBaseCommonGateInOut().getHpabBooking() == null)){
+  		
+  		HPABBooking booking  = referReject.getBaseCommonGateInOut().getHpabBooking();
+  		
+  		System.out.println("HPAB ID *************************** "+booking.getBookingID());
+  		System.out.println("DETAIL SIZE *************************** "+booking.getHpabBookingDetails().size());
+  		
+  		booking.getHpabBookingDetails().forEach(detail-> {
+  			
+  			if(StringUtils.isNotEmpty(detail.getImpGatePassNumber())){
+  				if(listDTO.getGatePass01() == null){
+  	  	        	listDTO.setGatePass01(Long.parseLong(detail.getImpGatePassNumber()));
+  	  	        }else{
+  	  	        	listDTO.setGatePass02(Long.parseLong(detail.getImpGatePassNumber()));
+  	  	        }
+  			}
+  		});
+  	}
+  	
+     
       Client client = baseCommonGateInOut.getGateInClient();
       if (client != null) {
         listDTO.setBoothNo(client.getUnitNo());
@@ -187,10 +209,13 @@ public class ReferRejectService {
     }
 
     referReject.getReferRejectDetails().forEach(referRejectDetail -> {
+    	
       if (StringUtils.isBlank(listDTO.getContNo01())) {
         listDTO.setContNo01(referRejectDetail.getContainerNo());
+        
       } else {
         listDTO.setContNo02(referRejectDetail.getContainerNo());
+        
       }
 
       if (referRejectDetail.getDoubleBooking() != null) {
