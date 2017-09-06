@@ -198,6 +198,8 @@ public class OpusDTOConstructService {
 		importContainer.setOrderNo(gIReadResponseImportContainer.getImpOrderNo());
 		importContainer.setImpOrderStatus(gIReadResponseImportContainer.getImpOrderStatus());
 		importContainer.setImpOrderType(gIReadResponseImportContainer.getImpOrderType());
+		//FOT Oder in opus same as DO
+		importContainer.setOrderFOT(gIReadResponseImportContainer.getImpOrderNo());	
 		// private String containerInOrOut;// OUT,
 		importContainer.setGateInOut(gIReadResponseImportContainer.getContainerInOrOut());
 		// private String containerShippingLine;// CMA,
