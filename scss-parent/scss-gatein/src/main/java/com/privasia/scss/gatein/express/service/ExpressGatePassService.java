@@ -64,7 +64,6 @@ public class ExpressGatePassService {
     //do the populate
     GateInResponse gateInResponse =  importExportGateInService.populateGateIn(gateInRequest);
     
-    
     GateInWriteRequest gateInWriteRequest = new GateInWriteRequest();
     gateInWriteRequest.setImpExpFlag("I");
     gateInWriteRequest.setCardID(gateInRequest.getCardID());

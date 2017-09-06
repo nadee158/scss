@@ -3,6 +3,9 @@ package com.privasia.scss.common.dto;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 public class HpatDto implements Serializable {
 
 	public static String DELETION_ACTIVE = "A";
@@ -275,7 +278,11 @@ public class HpatDto implements Serializable {
 	public void setContainer02Size(String container02Size) {
 		this.container02Size = container02Size;
 	}
-	
+
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
+	}
 	
 
 }

@@ -39,7 +39,7 @@ public class HPATController {
   public CustomResponseEntity<ApiResponseObject<?>> findEtpHpat4ImpAndExp(@PathVariable Long cardID,
       @PathVariable List<String> bookingTypes) {
 
-    List<HpatDto> dtos = hpatService.findEtpHpab4ImpAndExp(cardID, LocalDateTime.now(), bookingTypes);
+    List<HpatDto> dtos = hpatService.findEtpHpab4ImpAndExp(cardID, LocalDateTime.now(), bookingTypes, false);
 
     if (dtos == null) {
       dtos = new ArrayList<HpatDto>();

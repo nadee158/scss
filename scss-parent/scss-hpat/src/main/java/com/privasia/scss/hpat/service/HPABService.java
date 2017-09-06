@@ -52,6 +52,7 @@ public class HPABService {
 	private ETPWebserviceClient etpWebserviceClient;
 
 	private WDCGlobalSettingRepository wdcGlobalSettingRepository;
+	
 
 	@Autowired
 	public void setHpabBookingRepository(HPABBookingRepository hpabBookingRepository) {
@@ -75,7 +76,7 @@ public class HPABService {
 
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
 	public List<HpatDto> createPredicatesAndFindHpab4ImpAndExp(Long cardId, LocalDateTime date,
-			List<BookingType> bookingTypes) {
+			List<BookingType> bookingTypes, boolean importOnly) {
 		List<HpatDto> dtoList = new ArrayList<HpatDto>();
 		Optional<Card> card = cardRepository.findOne(cardId); // need to handle
 																// optional
@@ -91,7 +92,11 @@ public class HPABService {
 			Iterable<HPABBooking> bookingList = hpabBookingRepository.findAll(condition, sortSpec);
 
 			bookingList.forEach((HPABBooking b) -> {
-				dtoList.add(b.constructHpatDto());
+				HpatDto dto = b.constructHpatDto(importOnly);
+				if(dto!=null){
+					dtoList.add(b.constructHpatDto(importOnly));
+				}
+				
 			});
 			return dtoList;
 		} else {
@@ -101,7 +106,7 @@ public class HPABService {
 	}
 
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRES_NEW, readOnly = true)
-	public List<HpatDto> findEtpHpab4ImpAndExp(Long cardId, LocalDateTime systemDateTime, List<String> bookingTypes)
+	public List<HpatDto> findEtpHpab4ImpAndExp(Long cardId, LocalDateTime systemDateTime, List<String> bookingTypes, boolean importOnly)
 			throws ResultsNotFoundException {
 
 		List<HpatDto> hpats = null;
@@ -115,10 +120,11 @@ public class HPABService {
 				throw new BusinessException("Invalid Booking Type!");
 			}
 		});
-		hpats = createPredicatesAndFindHpab4ImpAndExp(cardId, systemDateTime, convertedBookingTypes);
+		hpats = createPredicatesAndFindHpab4ImpAndExp(cardId, systemDateTime, convertedBookingTypes, importOnly);
 		if (hpats != null && !hpats.isEmpty()) {
 
 			for (HpatDto hpat : hpats) {
+				
 				if (StringUtils.isBlank(hpat.getApptStart()))
 					continue;
 				if (systemDateTime.isAfter(hpat.getApptEndDate()))

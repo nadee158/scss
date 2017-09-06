@@ -108,6 +108,46 @@ public class HPABBooking extends AuditEntity implements Serializable {
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "hpabBooking")
 	private Set<HPABBookingDetail> hpabBookingDetails;
 
+	public HpatDto constructHpatDto(boolean importOnly) { 
+		
+		
+		if(importOnly){
+			
+			boolean exsist = this.getHpabBookingDetails().stream().filter(detail -> 
+					StringUtils.equalsIgnoreCase(BookingType.EXPORT.getValue(), detail.getBookingType().getValue())).findAny().isPresent();
+			
+			if(exsist){
+				// export booking are available
+				return null;
+			}
+		}
+		
+		
+		HpatDto dto = new HpatDto();
+		dto.setBookingId(this.getBookingID());
+		dto.setDriverId(this.getDriverICNumber());
+		dto.setBuffer(this.getBuffer());
+		dto.setComId(this.getHaulierCode());
+		dto.setCrdScardno(this.getCardNo());
+		dto.setPmNo(this.getPmNumber());
+		dto.setFromScss("Y");
+		dto.setStatus(this.getStatus().getValue());
+		dto.setTrlrNo(this.getTrailerNo());
+		dto.setTrlrType(this.getTrailerType());
+		dto.setApptStartDate(this.getAppointmentStartDate());
+		dto.setApptEndDate(this.getAppointmentEndDate());
+
+		if (this.getAppointmentStartDate() != null) {
+			dto.setApptStart(DateUtil.getFormatteDateTime(this.getAppointmentStartDate()));
+		}
+		if (this.getAppointmentEndDate() != null) {
+			dto.setApptEnd(DateUtil.getFormatteDateTime(this.getAppointmentEndDate()));
+		}
+
+		this.getHpabBookingDetails().forEach(detail -> setGatePassAndContainDetail(detail, dto));
+		return dto;
+	}
+	
 	public HpatDto constructHpatDto() { 
 		HpatDto dto = new HpatDto();
 		dto.setBookingId(this.getBookingID());
@@ -135,7 +175,7 @@ public class HPABBooking extends AuditEntity implements Serializable {
 	}
 
 	public void setGatePassAndContainDetail(HPABBookingDetail hpabBookingDetail, HpatDto dto) {
-
+	
 		if (StringUtils.equals(BookingType.EXPORT.getValue(), hpabBookingDetail.getBookingType().getValue())) {
 
 			if (StringUtils.isEmpty(dto.getExpContainer01())) {

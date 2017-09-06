@@ -88,6 +88,72 @@ public class BookingDTO implements Serializable {
 		this.setTruckHeadNo(hpat.getPmNo());
 
 	}
+	
+	
+	public BookingDTO(HpatDto hpat, boolean importOnly) {
+		
+		
+		if(importOnly){
+		
+			
+		}
+
+		this.setBookingId(hpat.getBookingId());
+
+		if (StringUtils.isNotBlank(hpat.getExpContainer01())) {
+			this.setContainer1(hpat.getExpContainer01());
+		} else {
+			this.setContainer1("");
+		}
+
+		if (StringUtils.isNotBlank(hpat.getExpContainer02())) {
+			this.setContainer2(hpat.getExpContainer02());
+		} else {
+			this.setContainer2("");
+		}
+
+		if (StringUtils.isNotBlank(hpat.getImpGatePass01())) {
+			this.setGatePass1(hpat.getImpGatePass01());
+			this.setContainer1(hpat.getImpContainer01());
+			this.setLength1(hpat.getContainer01Size());
+		} else {
+			this.setGatePass1("");
+		}
+
+		if (StringUtils.isNotBlank(hpat.getImpGatePass02())) {
+			this.setGatePass2(hpat.getImpGatePass02());
+			this.setContainer2(hpat.getImpContainer02());
+			this.setLength2(hpat.getContainer02Size());
+		} else {
+			this.setGatePass2("");
+		}
+
+		if (StringUtils.equals(HpabReferStatus.ACTIVE.getValue(), hpat.getStatus())) {
+			this.setBookingStatus("ON TIME");
+		} else {
+			this.setBookingStatus(hpat.getStatus());
+		}
+
+		// if (StringUtils.isNotBlank(hpatForm.getImpContSize1())) {
+		// this.setLength1(hpatForm.getImpContSize1());
+		// } else {
+		// this.setLength1("");
+		// }
+		//
+		// if (StringUtils.isNotBlank(hpatForm.getImpContSize2())) {
+		// this.setLength2(hpatForm.getImpContSize2());
+		// } else {
+		// this.setLength2("");
+		// }
+
+		this.setBookingType("CY");
+		this.setBookingStartTime(hpat.getApptStart());
+		this.setBookingEndTime(hpat.getApptEnd());
+
+		this.setTruckHeadNo(hpat.getPmNo());
+
+	}
+
 
 	public BookingDTO(HDBSBkgDetailGridDTO gridDtoItem) {
 		

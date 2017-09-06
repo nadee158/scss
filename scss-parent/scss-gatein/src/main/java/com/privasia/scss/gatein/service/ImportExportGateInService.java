@@ -221,7 +221,7 @@ public class ImportExportGateInService {
 
 		SystemUser gateInClerk = systemUserRepository.findOne(SecurityHelper.getCurrentUserId())
 				.orElseThrow(() -> new AuthenticationServiceException(
-						"Log in User Not Found : " + SecurityHelper.getCurrentUserId()));
+						"Log in User Not Found : " + SecurityHelper.getCurrentUserId())); 
 
 		HPABBooking hpabBooking = null;
 

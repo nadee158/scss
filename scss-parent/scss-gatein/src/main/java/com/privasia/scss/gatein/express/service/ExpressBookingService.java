@@ -101,13 +101,13 @@ public class ExpressBookingService {
 		List<String> bookingTypes = new ArrayList<String>();
 		bookingTypes.add(BookingType.IMPORT.getValue());
 		bookingTypes.add(BookingType.IMPORT_ITT.getValue());
-
+		
 		List<BookingDTO> bookingDTos = new ArrayList<BookingDTO>();
 
 		List<HpatDto> hpats = null;
 		try {
 			hpats = hpabService.findEtpHpab4ImpAndExp(card.getCardID(), LocalDateTime.now(),
-					bookingTypes);
+					bookingTypes, true);
 			if (!(hpats == null || hpats.isEmpty())) {
 				hpats.forEach(hpat -> {
 					bookingDTos.add(new BookingDTO(hpat));

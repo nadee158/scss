@@ -1,10 +1,13 @@
 package com.privasia.scss.core.repository;
 
+import org.springframework.data.querydsl.QueryDslPredicateExecutor;
+
 import com.privasia.scss.common.enums.BookingType;
 import com.privasia.scss.common.enums.HpabReferStatus;
+import com.privasia.scss.core.model.HPABBooking;
 import com.privasia.scss.core.model.HPABBookingDetail;
 
-public interface HPABBookingDetailRepository extends BaseRepository<HPABBookingDetail, Long> {
+public interface HPABBookingDetailRepository extends BaseRepository<HPABBookingDetail, Long>{
 
   HPABBookingDetail findByContainerNumberAndBookingTypeAndHpabBooking_StatusAndHpabBooking_CardNo(String containerNo,
       BookingType import1, HpabReferStatus active, String cardNo);
