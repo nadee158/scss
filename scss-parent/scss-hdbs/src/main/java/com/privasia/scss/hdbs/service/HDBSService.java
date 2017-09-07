@@ -238,8 +238,8 @@ public class HDBSService {
 	public HDBSBkgGridDTO findHDBSForExpressLane(Card card) {
 		
 	    LocalDateTime now = LocalDateTime.now();
-
-		LocalDateTime dateFrom = now.minus(1, ChronoUnit.HOURS);
+	    //Driver must arrive 2 hour before and 2 hour after the appointment time as per discussion with user
+		LocalDateTime dateFrom = now.minus(2, ChronoUnit.HOURS);
 		LocalDateTime dateTo = now.plus(2, ChronoUnit.HOURS);
 		
 
