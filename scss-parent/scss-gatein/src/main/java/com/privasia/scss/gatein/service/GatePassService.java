@@ -832,11 +832,11 @@ public class GatePassService {
         gatePass.setGateInLaneNo(StringUtils.upperCase(container.getGateInLaneNo()));
 
         gatePass.setCallCard(transactionDTO.getCallCard());
-        Optional<PrintEir> printEirOpt = printEirRepository.findOne(container.getPrintEIRNo());
-        if (printEirOpt.isPresent()) {
-          PrintEir printEir = printEirOpt.get();
-          gatePass.setPrintEir(printEir);
-        }
+        //Optional<PrintEir> printEirOpt = printEirRepository.findOne(container.getPrintEIRNo());
+        //if (printEirOpt.isPresent()) {
+          //PrintEir printEir = printEirOpt.get();
+          //gatePass.setPrintEir(printEir);
+        //}
 
         gatePass.setGatePassNo(gatePassNo);
 
