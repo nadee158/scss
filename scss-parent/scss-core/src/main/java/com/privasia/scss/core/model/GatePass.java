@@ -74,7 +74,7 @@ public class GatePass extends AuditEntity implements Serializable {
 	private Company company;
 
 	@Embedded
-	@AttributeOverrides({ @AttributeOverride(name = "eirNumber", column = @Column(name = "GTP_EIRNO")),
+	@AttributeOverrides({ @AttributeOverride(name = "eirNumber", column = @Column(name = "GTP_PRINT_EIR")),
 			@AttributeOverride(name = "impExpFlag", column = @Column(name = "GTP_IMPEXPFLAG", nullable = true)),
 			@AttributeOverride(name = "rejectReason", column = @Column(name = "GTP_REJECTREASON")),
 			@AttributeOverride(name = "kioskConfirmed", column = @Column(name = "KIOSK_CONFIRMED")),

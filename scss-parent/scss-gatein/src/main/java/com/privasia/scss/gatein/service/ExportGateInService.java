@@ -189,7 +189,7 @@ public class ExportGateInService {
 			throw new BusinessException("Invalid GateInWriteRequest to save Exports ! ");
 		
 		boolean backToback = gateInWriteRequest.getExportContainers().size() == 2 ? true : false;
-
+		Long printEIRNo = exportsRepository.getNextPrintEIRNo();
 		gateInWriteRequest.getExportContainers().forEach(exportContainer -> {
 			if (exportContainer.getBaseCommonGateInOutAttribute() == null) {
 				exportContainer.setBaseCommonGateInOutAttribute(new BaseCommonGateInOutDTO());
@@ -216,7 +216,7 @@ public class ExportGateInService {
 			}
 			exportContainer.getCommonGateInOut().setGateInStatus(gateInWriteRequest.getGateInStatus());
 			exportContainer.getCommonGateInOut().setRejectReason(gateInWriteRequest.getRejectReason());
-			
+			exportContainer.getCommonGateInOut().setEirNumber(printEIRNo);
 			Exports exports = new Exports();
 			modelMapper.map(exportContainer, exports);
 

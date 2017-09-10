@@ -69,7 +69,7 @@ public class Exports extends AuditEntity implements Serializable {
 	private CommonContainerAttribute container;
 
 	@Embedded
-	@AttributeOverrides({ @AttributeOverride(name = "eirNumber", column = @Column(name = "EXP_EIRNO")),
+	@AttributeOverrides({ @AttributeOverride(name = "eirNumber", column = @Column(name = "EXP_PRINT_EIR")),
 			@AttributeOverride(name = "impExpFlag", column = @Column(name = "EXP_IMPEXPFLAG", nullable = true)),
 			@AttributeOverride(name = "rejectReason", column = @Column(name = "EXP_REJECTREASON")),
 			@AttributeOverride(name = "kioskConfirmed", column = @Column(name = "KIOSK_CONFIRMED")),
@@ -268,7 +268,7 @@ public class Exports extends AuditEntity implements Serializable {
 	private LocalDateTime gcsLastCheck;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "EXP_PRINT_EIR", nullable = true, referencedColumnName = "PRINT_NO")
+	@JoinColumn(name = "EXP_EIRNO", nullable = true, referencedColumnName = "PRINT_NO")
 	private PrintEir printEir;
 
 	@Column(name = "USER_REMARKS")
