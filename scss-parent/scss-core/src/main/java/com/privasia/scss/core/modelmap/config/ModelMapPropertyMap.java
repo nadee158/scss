@@ -110,7 +110,7 @@ public final class ModelMapPropertyMap {
 				skip().getBaseCommonGateInOutAttribute().setGateOutBoothClerk(null);
 				skip().getBaseCommonGateInOutAttribute().setGateOutClerk(null);
 				skip().getBaseCommonGateInOutAttribute().setGateOutClient(null);
-				skip().setPrintEir(null);
+				//skip().setPrintEir(null);
 			}
 		};
 	}

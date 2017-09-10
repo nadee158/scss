@@ -21,4 +21,7 @@ public interface ExportsRepository extends BaseRepository<Exports, Long>, QueryD
 
   public Optional<List<Exports>> findByExportIDIn(List<Long> expIDList);
 
+  @Query(name = "Eir.getNextPrintEIRNo",nativeQuery = true)
+  public Long getNextPrintEIRNo();
+
 }

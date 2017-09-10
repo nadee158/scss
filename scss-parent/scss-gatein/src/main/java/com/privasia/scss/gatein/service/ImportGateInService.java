@@ -137,6 +137,7 @@ public class ImportGateInService {
     // construct a new export entity for each exportcontainer and save
     if (gateInWriteRequest.getImportContainers() == null || gateInWriteRequest.getImportContainers().isEmpty())
       throw new BusinessException("Invalid GateInWriteRequest to save Imports ! ");
+    	Long printEIRNo = gatePassRepository.getNextPrintEIRNo();
     gateInWriteRequest.getImportContainers().forEach(importContainer -> {
       if (importContainer.getBaseCommonGateInOutAttribute() == null) {
         importContainer.setBaseCommonGateInOutAttribute(new BaseCommonGateInOutDTO());
@@ -150,7 +151,7 @@ public class ImportGateInService {
       importContainer.getBaseCommonGateInOutAttribute().setPmHeadNo(gateInWriteRequest.getTruckHeadNo());
       importContainer.getBaseCommonGateInOutAttribute().setPmPlateNo(gateInWriteRequest.getTruckPlateNo());
       importContainer.getBaseCommonGateInOutAttribute().setTimeGateInOk(LocalDateTime.now());
-
+      importContainer.setPrintEIRNo(printEIRNo);
       if (importContainer.getCommonGateInOut() == null) {
         importContainer.setCommonGateInOut(new CommonGateInOutDTO());
       }

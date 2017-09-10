@@ -29,5 +29,7 @@ public interface GatePassRepository extends BaseRepository<GatePass, Long>, Quer
   @Query(name = "GatePass.fetchInProgressTransaction")
   public Optional<List<GatePass>> fetchInProgressTransaction(@Param("cardID") long cardId, @Param("comID") long comId,
       @Param("eirStatus") TransactionStatus eirStatus);
-
+  
+  @Query(name = "Eir.getNextPrintEIRNo",nativeQuery = true)
+  public Long getNextPrintEIRNo();
 }

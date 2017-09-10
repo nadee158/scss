@@ -75,7 +75,7 @@ public class GatePass extends AuditEntity implements Serializable {
 	private Company company;
 
 	@Embedded
-	@AttributeOverrides({ @AttributeOverride(name = "eirNumber", column = @Column(name = "GTP_EIRNO")),
+	@AttributeOverrides({ @AttributeOverride(name = "eirNumber", column = @Column(name = "GTP_PRINT_EIR")),
 			@AttributeOverride(name = "impExpFlag", column = @Column(name = "GTP_IMPEXPFLAG", nullable = true)),
 			@AttributeOverride(name = "rejectReason", column = @Column(name = "GTP_REJECTREASON")),
 			@AttributeOverride(name = "kioskConfirmed", column = @Column(name = "KIOSK_CONFIRMED")),
@@ -157,10 +157,10 @@ public class GatePass extends AuditEntity implements Serializable {
 	@Column(name = "GTP_CALL_CARD")
 	private Long callCard;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+/*	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "GTP_PRINT_EIR", nullable = true, referencedColumnName = "PRINT_NO")
 	private PrintEir printEir;
-
+*/
 	@Column(name = "COSMOS_GTP_SEAL_1_ORIGIN")
 	private String cosmosSeal01Origin = StringUtils.EMPTY;
 
@@ -361,13 +361,13 @@ public class GatePass extends AuditEntity implements Serializable {
 		this.callCard = callCard;
 	}
 
-	public PrintEir getPrintEir() {
+	/*public PrintEir getPrintEir() {
 		return printEir;
 	}
 
 	public void setPrintEir(PrintEir printEir) {
 		this.printEir = printEir;
-	}
+	}*/
 
 	public String getCosmosSeal01Origin() {
 		return cosmosSeal01Origin;
@@ -568,7 +568,7 @@ public class GatePass extends AuditEntity implements Serializable {
 				CommonUtil.changeCase(this.getBaseCommonGateInOutAttribute().getPmPlateNo(), CommonUtil.UPPER_CASE));
 		this.setYardPosition(CommonUtil.changeCase(this.yardPosition, CommonUtil.UPPER_CASE));
 		this.setBayCode(CommonUtil.changeCase(this.bayCode, CommonUtil.UPPER_CASE));
-		this.setPrintEir(printEir);
+//		this.setPrintEir(printEir);
 		this.getBaseCommonGateInOutAttribute().setHpabBooking(hpabBooking);
 		this.getCommonGateInOut().setRejectReason(
 				CommonUtil.changeCase(this.getCommonGateInOut().getRejectReason(), CommonUtil.UPPER_CASE));
