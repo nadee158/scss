@@ -45,7 +45,7 @@ public class GateInWriteRequest extends GateWriteRequest implements Serializable
 
 	private Optional<ReferRejectDTO> referRejectDTO;
 
-	
+	private String tosIndicator;
 
 	public Optional<ReferRejectDTO> getReferRejectDTO() {
 		return referRejectDTO;
@@ -166,7 +166,14 @@ public class GateInWriteRequest extends GateWriteRequest implements Serializable
 	public void setOddReject(boolean oddReject) {
 		this.oddReject = oddReject;
 	}
+	
+	public String getTosIndicator() {
+		return tosIndicator;
+	}
 
+	public void setTosIndicator(String tosIndicator) {
+		this.tosIndicator = tosIndicator;
+	}
 
 	@Override
 	public String toString() {

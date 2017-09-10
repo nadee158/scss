@@ -96,8 +96,11 @@ public class ModelMapConfig {
 
     modelMapper.addConverter(ModelMapEnumConverter.convertStringToLaneOpenFlag());
     modelMapper.addConverter(ModelMapEnumConverter.convertLaneOpenFlagToString());
+    
+    modelMapper.addConverter(ModelMapEnumConverter.convertTOSServiceTypeToString());
+    modelMapper.addConverter(ModelMapEnumConverter.convertStringToTOSServiceType());
 
-
+ 
 
     return modelMapper;
   }

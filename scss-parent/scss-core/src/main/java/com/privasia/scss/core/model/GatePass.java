@@ -29,6 +29,7 @@ import com.privasia.scss.common.enums.ContainerSize;
 import com.privasia.scss.common.enums.GateInOutStatus;
 import com.privasia.scss.common.enums.GatePassStatus;
 import com.privasia.scss.common.enums.ImpExpFlagStatus;
+import com.privasia.scss.common.enums.TOSServiceType;
 import com.privasia.scss.common.enums.TransactionStatus;
 import com.privasia.scss.common.util.CommonUtil;
 
@@ -192,6 +193,10 @@ public class GatePass extends AuditEntity implements Serializable {
 	@Column(name = "FORCED_SEAL")
 	@Type(type = "yes_no")
 	private Boolean forcedSeal;
+	
+	@Column(name = "TOS_SERVICE_TYPE", nullable = true)
+	@Type(type = "com.privasia.scss.common.enumusertype.TOSServiceTypeEnumUserType")
+	private TOSServiceType tosServiceType;
 
 	public Long getGatePassID() {
 		return gatePassID;
@@ -446,10 +451,6 @@ public class GatePass extends AuditEntity implements Serializable {
 		this.sealChange = sealChange;
 	}
 
-	public static long getSerialversionuid() {
-		return serialVersionUID;
-	}
-
 	public Boolean getForcedSeal() {
 		return forcedSeal;
 	}
@@ -481,7 +482,16 @@ public class GatePass extends AuditEntity implements Serializable {
 	public void setContainerLength(ContainerSize containerLength) {
 		this.containerLength = containerLength;
 	}
+	
+	public TOSServiceType getTosServiceType() {
+		return tosServiceType;
+	}
 
+	public void setTosServiceType(TOSServiceType tosServiceType) {
+		this.tosServiceType = tosServiceType;
+	}
+
+	
 	@Override
 	public String toString(){
 	    return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);

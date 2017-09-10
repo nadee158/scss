@@ -31,6 +31,7 @@ import org.hibernate.annotations.Type;
 import com.privasia.scss.common.enums.ContainerPosition;
 import com.privasia.scss.common.enums.ExportOPTFlagType;
 import com.privasia.scss.common.enums.SSRBlockType;
+import com.privasia.scss.common.enums.TOSServiceType;
 import com.privasia.scss.common.enums.GateInOutStatus;
 import com.privasia.scss.common.enums.ImpExpFlagStatus;
 import com.privasia.scss.common.enums.ReferTempType;
@@ -398,6 +399,10 @@ public class Exports extends AuditEntity implements Serializable {
 			@AttributeOverride(name = "solasInstruction", column = @Column(name = "VGM_TYPE")),
 			@AttributeOverride(name = "shipperVGM", column = @Column(name = "SHIPPER_VGM")) })
 	private CommonSolasAttribute solas;
+	
+	@Column(name = "TOS_SERVICE_TYPE", nullable = true)
+	@Type(type = "com.privasia.scss.common.enumusertype.TOSServiceTypeEnumUserType")
+	private TOSServiceType tosServiceType;
 
 	public Long getExportID() {
 		return exportID;
@@ -1117,6 +1122,14 @@ public class Exports extends AuditEntity implements Serializable {
 
 	public void setDirectEntry(boolean directEntry) {
 		this.directEntry = directEntry;
+	}
+	
+	public TOSServiceType getTosServiceType() {
+		return tosServiceType;
+	}
+
+	public void setTosServiceType(TOSServiceType tosServiceType) {
+		this.tosServiceType = tosServiceType;
 	}
 
 	@Override
