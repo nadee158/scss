@@ -16,6 +16,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
 
 import com.privasia.scss.common.dto.CommonContainerDTO;
@@ -32,7 +34,7 @@ import com.privasia.scss.common.dto.ImportContainer;
 import com.privasia.scss.common.enums.ImpExpFlagStatus;
 import com.privasia.scss.common.enums.TransactionType;
 import com.privasia.scss.common.exception.BusinessException;
-import com.privasia.scss.common.interfaces.OpusCosmosBusinessService;
+import com.privasia.scss.common.interfaces.TOSService;
 import com.privasia.scss.common.util.DateUtil;
 import com.privasia.scss.cosmos.dto.common.CosmosCommonValuesDTO;
 import com.privasia.scss.cosmos.dto.request.CosmosGateInExport;
@@ -46,7 +48,7 @@ import com.privasia.scss.cosmos.xml.element.RequestMessage;
 import com.privasia.scss.cosmos.xml.element.service.MessageService;
 
 @Service("cosmos")
-public class CosmosService implements OpusCosmosBusinessService {
+public class CosmosService implements TOSService {
 
 	private static final Logger log = LoggerFactory.getLogger(CosmosService.class);
 
@@ -243,10 +245,9 @@ public class CosmosService implements OpusCosmosBusinessService {
 		return gateOutReponse;
 	}
 
+	@Async
 	@Override
-	public GateInResponse sendGateInReadRequest(GateInRequest gateInRequest, GateInResponse gateInResponse) {
-
-		long start = System.currentTimeMillis();
+	public Future<GateInResponse> sendGateInReadRequest(GateInRequest gateInRequest, GateInResponse gateInResponse) {
 
 		Future<GateInResponse> importResponse = cosmosGateInReadService.populateCosmosGateInImport(gateInResponse);
 
@@ -277,14 +278,11 @@ public class CosmosService implements OpusCosmosBusinessService {
 
 		while (true) {
 
-			// System.out.println("inside the loop populateCosmosGateInExport");
 			if (importResponse.isDone() && exportResponse.isDone()) {
-				System.out.println("now done populateCosmosGateInExport");
 				try {
 					gateInResponse.setImportContainers(importResponse.get().getImportContainers());
 					gateInResponse.setExportContainers(exportResponse.get().getExportContainers());
 				} catch (ExecutionException e) {
-					e.printStackTrace();
 					log.error("ExecutionException while retrieve data data from cosmos");
 					log.error(e.getMessage());
 					Throwable ee = e.getCause();
@@ -294,31 +292,24 @@ public class CosmosService implements OpusCosmosBusinessService {
 					}
 					throw new BusinessException(e.getCause().getMessage());
 				} catch (CancellationException | InterruptedException e) {
-					e.printStackTrace();
 					log.error(
 							"CancellationException | InterruptedException Occured while retrieve data data from cosmos");
 					log.error(e.getMessage());
-					e.printStackTrace();
 					throw new BusinessException(e.getCause().getMessage());
 				}
 				break;
-			} else {
-				// System.out.println("not done yet
-				// populateCosmosGateInExport");
-			}
+			} 
 
 			try {
-				System.out.println("waiting populateCosmosGateInExport " + asyncWaitTime);
 				Thread.sleep(5);
 			} catch (InterruptedException e) {
 				log.error(e.getMessage());
 				break;
 			}
 		}
-		long end = System.currentTimeMillis();
-		System.out.println("time : " + (end - start) / 1000.0 + "sec");
+
 		cosmosGateInReadService.constructGateInReponse(gateInRequest, gateInResponse);
-		return gateInResponse;
+		return new AsyncResult<GateInResponse>(gateInResponse);
 	}
 
 	@Override
@@ -395,9 +386,10 @@ public class CosmosService implements OpusCosmosBusinessService {
 		cosmosCommonValuesDTO.setCompCode(StringUtils.upperCase(gateWriteRequest.getHaulageCode()));
 		return cosmosCommonValuesDTO;
 	}
-
+	
+	@Async
 	@Override
-	public ContainerValidationInfo sendODDContainerValidationRequest(GateOutRequest gateOutRequest) {
+	public Future<ContainerValidationInfo> sendODDContainerValidationRequest(GateOutRequest gateOutRequest) {
 
 		ContainerValidationInfo validationInfo = new ContainerValidationInfo();
 		validationInfo.setContainerNo1(gateOutRequest.getOddImpContainer1());
@@ -409,7 +401,7 @@ public class CosmosService implements OpusCosmosBusinessService {
 			validationInfo.setContainerNo2Status(
 					cosmosODDRepository.validateODDContainer(gateOutRequest.getOddImpContainer2()));
 		}
-		return validationInfo;
+		return new AsyncResult<ContainerValidationInfo>(validationInfo);
 	}
 
 }

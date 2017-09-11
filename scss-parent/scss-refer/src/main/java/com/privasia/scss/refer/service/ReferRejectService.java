@@ -33,6 +33,7 @@ import com.privasia.scss.common.dto.ReferRejectReasonDTO;
 import com.privasia.scss.common.enums.ContainerFullEmptyType;
 import com.privasia.scss.common.enums.HpabReferStatus;
 import com.privasia.scss.common.enums.ReferStatus;
+import com.privasia.scss.common.enums.TOSServiceType;
 import com.privasia.scss.common.enums.TransactionStatus;
 import com.privasia.scss.common.exception.BusinessException;
 import com.privasia.scss.common.exception.ResultsNotFoundException;
@@ -302,7 +303,7 @@ public class ReferRejectService {
 
     referReject.setStatusCode(HpabReferStatus.ACTIVE);
     referReject.setReferDateTime(gateInWriteRequest.getGateInDateTime());
-
+    referReject.setTosServiceType(TOSServiceType.fromValue(gateInWriteRequest.getTosIndicator()));
 
     Set<ReferRejectDetail> referRejectDetails = referRejectDetailsDTOs.stream()
         .map(referRejectDetailDTO -> modelMapper.map(referRejectDetailDTO, ReferRejectDetail.class))

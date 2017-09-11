@@ -59,6 +59,8 @@ public class GateInResponse implements Serializable {
 	private boolean manualPlanIndicator = false;
 
 	private String manualPlanDescription;
+	
+	private String tosIndicator;
 
 	public String getLaneNo() {
 		return laneNo;
@@ -243,6 +245,14 @@ public class GateInResponse implements Serializable {
 
 	public void setManualPlanDescription(String manualPlanDescription) {
 		this.manualPlanDescription = manualPlanDescription;
+	}
+	
+	public String getTosIndicator() {
+		return tosIndicator;
+	}
+
+	public void setTosIndicator(String tosIndicator) {
+		this.tosIndicator = tosIndicator;
 	}
 
 	@Override

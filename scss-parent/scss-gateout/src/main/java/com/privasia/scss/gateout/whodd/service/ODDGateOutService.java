@@ -6,8 +6,13 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,11 +36,12 @@ import com.privasia.scss.common.enums.ContainerFullEmptyType;
 import com.privasia.scss.common.enums.GateInOutStatus;
 import com.privasia.scss.common.enums.ImpExpFlagStatus;
 import com.privasia.scss.common.enums.SCSSHDBSStatus;
+import com.privasia.scss.common.enums.TOSServiceType;
 import com.privasia.scss.common.enums.TransactionStatus;
 import com.privasia.scss.common.exception.BusinessException;
 import com.privasia.scss.common.exception.ResultsNotFoundException;
 import com.privasia.scss.common.interfaces.ContainerExternalDataService;
-import com.privasia.scss.common.interfaces.OpusCosmosBusinessService;
+import com.privasia.scss.common.interfaces.TOSService;
 import com.privasia.scss.common.security.model.UserContext;
 import com.privasia.scss.core.model.Card;
 import com.privasia.scss.core.model.Client;
@@ -62,10 +68,12 @@ import com.querydsl.core.types.Predicate;
 
 @Service("oddGateOutService")
 public class ODDGateOutService {
-
-	@Value("${service.implementor}")
-	private String implementor;
-
+	
+	private static final Log log = LogFactory.getLog(ODDGateOutService.class);
+	
+	@Value("${async.wait.time}")
+	private long asyncWaitTime;
+	
 	private ODDRepository oddRepository;
 
 	private ODDLocationRepository oddLocationRepository;
@@ -164,10 +172,74 @@ public class ODDGateOutService {
 		UserContext userContext = (UserContext) authentication.getPrincipal();
 		gateOutRequest.setUserName(userContext.getUsername());
 
-		OpusCosmosBusinessService businessService = containerExternalDataService.getImplementationService(implementor);
+		ContainerValidationInfo validateInfo = accessAllTOStoODDContainerValidation(gateOutRequest);
 
-		ContainerValidationInfo validateInfo = businessService.sendODDContainerValidationRequest(gateOutRequest);
+		return validateInfo;
+	}
+	
+	public ContainerValidationInfo accessAllTOStoODDContainerValidation(GateOutRequest gateOutRequest) {
+		long start = System.currentTimeMillis();
 
+		TOSService cosmosBusinessService = containerExternalDataService.getImplementationService(TOSServiceType.COSMOS.getValue());
+		TOSService opusBusinessService = containerExternalDataService.getImplementationService(TOSServiceType.OPUS.getValue());
+
+		Future<ContainerValidationInfo> cosmosResponse = null;
+		Future<ContainerValidationInfo> opusResponse = null;
+
+		cosmosResponse = cosmosBusinessService.sendODDContainerValidationRequest(gateOutRequest);
+
+		opusResponse = opusBusinessService.sendODDContainerValidationRequest(gateOutRequest);
+		
+		ContainerValidationInfo validateInfo = null;
+
+		while (true) {
+			log.debug("inside the loop sendAllTOSServiceGateInReadRequest");
+
+			if (cosmosResponse.isDone() && opusResponse.isDone()) {
+
+				log.debug("now done sendAllTOSServiceGateInReadRequest");
+	
+				try {
+					validateInfo = cosmosResponse.get();
+					validateInfo.setTosIndicator(TOSServiceType.COSMOS.getValue());
+					log.info("COSMOS SUCCESS: ");
+				} catch (InterruptedException | ExecutionException | CancellationException e) {
+					log.debug("Error Occured while retrieve data data from cosmos");
+					log.debug(e.getMessage());
+				}
+
+				try {
+					validateInfo = opusResponse.get();
+					validateInfo.setTosIndicator(TOSServiceType.OPUS.getValue());
+					log.info("OPUS SUCCESS: ");
+				} catch (InterruptedException | ExecutionException | CancellationException e) {
+					log.debug("Error Occured while retrieve data data from opus");
+					log.debug(e.getMessage());
+				}
+				
+				if (StringUtils.isEmpty(validateInfo.getTosIndicator())) {
+					log.info("ODD container not found in TOS services : "+gateOutRequest.getExpContainer1()+" / : "+gateOutRequest.getExpContainer2()+ 
+							gateOutRequest.getImpContainer1()+" / : "+gateOutRequest.getImpContainer2());
+					throw new BusinessException("Data not found in opus or cosmos!");
+				}
+
+				break;
+			} else {
+				
+				log.debug("not done yet accessAllTOStoODDContainerValidation");
+			}
+
+			try {
+				
+				log.debug("waiting accessAllTOStoODDContainerValidation " + asyncWaitTime);
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+				log.error(e.getMessage());
+				break;
+			}
+		}
+		long end = System.currentTimeMillis();
+		log.info("time : " + (end - start) / 1000.0 + "sec");
 		return validateInfo;
 	}
 
@@ -391,6 +463,7 @@ public class ODDGateOutService {
 			whODD.setTimeGateOutOk(LocalDateTime.now());
 			whODD.setGateOutClerk(gateOutClerk);
 			whODD.setGateOutClient(gateOutClient);
+			whODD.setTosServiceType(TOSServiceType.fromValue(gateOutWriteRequest.getTosIndicator()));
 
 			if (!(gateOutWriteRequest.getGateOutBooth() == null && gateOutWriteRequest.getGateOutBooth() == 0)) {
 				Client gateOutBooth = clientRepository.findOne(gateOutWriteRequest.getGateOutBooth())

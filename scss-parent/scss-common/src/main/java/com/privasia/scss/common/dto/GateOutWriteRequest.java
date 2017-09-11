@@ -37,6 +37,7 @@ public class GateOutWriteRequest extends GateWriteRequest implements Serializabl
 
 	private String reviseHeadNo = StringUtils.EMPTY;
 
+	private String tosIndicator = StringUtils.EMPTY;
 	
 	public Long getGateOutClient() {
 		return gateOutClient;
@@ -100,6 +101,14 @@ public class GateOutWriteRequest extends GateWriteRequest implements Serializabl
 
 	public void setReviseHeadNo(String reviseHeadNo) {
 		this.reviseHeadNo = reviseHeadNo;
+	}
+	
+	public String getTosIndicator() {
+		return tosIndicator;
+	}
+
+	public void setTosIndicator(String tosIndicator) {
+		this.tosIndicator = tosIndicator;
 	}
 
 	@Override

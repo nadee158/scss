@@ -217,6 +217,7 @@ public class ExportGateInService {
 			exportContainer.getCommonGateInOut().setGateInStatus(gateInWriteRequest.getGateInStatus());
 			exportContainer.getCommonGateInOut().setRejectReason(gateInWriteRequest.getRejectReason());
 			exportContainer.getCommonGateInOut().setEirNumber(printEIRNo);
+			exportContainer.setTosServiceType(gateInWriteRequest.getTosIndicator());
 			Exports exports = new Exports();
 			modelMapper.map(exportContainer, exports);
 

@@ -32,7 +32,7 @@ import com.privasia.scss.common.enums.TransactionType;
 import com.privasia.scss.common.exception.BusinessException;
 import com.privasia.scss.common.exception.ResultsNotFoundException;
 import com.privasia.scss.common.interfaces.ContainerExternalDataService;
-import com.privasia.scss.common.interfaces.OpusCosmosBusinessService;
+import com.privasia.scss.common.interfaces.TOSService;
 import com.privasia.scss.common.security.model.UserContext;
 import com.privasia.scss.core.model.Card;
 import com.privasia.scss.core.model.Client;
@@ -55,9 +55,6 @@ public class ImportExportGateOutService {
 	@Value("${async.wait.time}")
 	private long asyncWaitTime;
 
-	@Value("${service.implementor}")
-	private String implementor;
-
 	private ImportGateOutService importGateOutService;
 
 	private ExportGateOutService exportGateOutService;
@@ -75,7 +72,7 @@ public class ImportExportGateOutService {
 	private ImportExportCommonGateOutBusinessService importExportCommonGateOutBusinessService;
 
 	private ContainerExternalDataService containerExternalDataService;
-	
+
 	private ModelMapper modelMapper;
 
 	@Autowired
@@ -123,7 +120,7 @@ public class ImportExportGateOutService {
 	public void setOddGateOutService(ODDGateOutService oddGateOutService) {
 		this.oddGateOutService = oddGateOutService;
 	}
-	
+
 	@Autowired
 	public void setModelMapper(ModelMapper modelMapper) {
 		this.modelMapper = modelMapper;
@@ -185,8 +182,8 @@ public class ImportExportGateOutService {
 
 			// call opus or cosmos only for approved gate in state
 			if (StringUtils.equalsIgnoreCase(TransactionStatus.APPROVED.getValue(), gateOutReponse.getGateInStatus())) {
-				OpusCosmosBusinessService businessService = containerExternalDataService
-						.getImplementationService(implementor);
+				TOSService businessService = containerExternalDataService
+						.getImplementationService(gateOutReponse.getTosIndicator());
 				gateOutReponse = businessService.sendGateOutReadRequest(gateOutRequest, gateOutReponse);
 			}
 
@@ -246,10 +243,10 @@ public class ImportExportGateOutService {
 			throw new BusinessException(
 					"Gate In status Required for the transaction : " + gateOutWriteRequest.getGateInStatus());
 
-		OpusCosmosBusinessService businessService = null;
 		if (StringUtils.equalsIgnoreCase(TransactionStatus.APPROVED.getValue(),
 				gateOutWriteRequest.getGateInStatus())) {
-			businessService = containerExternalDataService.getImplementationService(implementor);
+			TOSService businessService = containerExternalDataService
+					.getImplementationService(gateOutWriteRequest.getTosIndicator());
 			gateOutReponse = businessService.sendGateOutWriteRequest(gateOutWriteRequest, gateOutReponse);
 		}
 
@@ -324,7 +321,7 @@ public class ImportExportGateOutService {
 		return gateOutReponse;
 
 	}
-	
+
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
 	public GateOutReponse populateGateOutResponseByExports(List<Exports> exportsList, GateOutReponse gateOutReponse) {
 
@@ -350,8 +347,7 @@ public class ImportExportGateOutService {
 		return gateOutReponse;
 
 	}
-	
-	
+
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
 	public GateOutReponse populateGateOutResponseByImport(List<GatePass> gatePassList, GateOutReponse gateOutReponse) {
 
@@ -377,7 +373,7 @@ public class ImportExportGateOutService {
 		return gateOutReponse;
 
 	}
-	
+
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
 	public GateOutReponse populateGateOutResponseByWHODD(List<WHODD> oddList, GateOutReponse gateOutReponse) {
 

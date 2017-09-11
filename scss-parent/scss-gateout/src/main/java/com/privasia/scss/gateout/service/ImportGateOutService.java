@@ -136,6 +136,7 @@ public class ImportGateOutService {
 			}
 			gateOutRequest.setTruckHeadNo(gatePass.getBaseCommonGateInOutAttribute().getPmHeadNo());
 			gateOutReponse.setGateInStatus(gatePass.getCommonGateInOut().getGateInStatus().getValue());
+			gateOutReponse.setTosIndicator(gatePass.getTosServiceType().getValue());
 		});
 
 		return importContainerList;

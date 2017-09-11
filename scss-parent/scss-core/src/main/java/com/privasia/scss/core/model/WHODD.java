@@ -25,6 +25,7 @@ import org.hibernate.annotations.Type;
 
 import com.privasia.scss.common.enums.GateInOutStatus;
 import com.privasia.scss.common.enums.ImpExpFlagStatus;
+import com.privasia.scss.common.enums.TOSServiceType;
 import com.privasia.scss.common.enums.TransactionStatus;
 
 @Entity
@@ -160,6 +161,10 @@ public class WHODD extends AuditEntity implements Serializable {
 
 	@Column(name = "ODD_TRX_SLIP_NO")
 	private String trxSlipNo;
+	
+	@Column(name = "TOS_SERVICE_TYPE", nullable = true)
+	@Type(type = "com.privasia.scss.common.enumusertype.TOSServiceTypeEnumUserType")
+	private TOSServiceType tosServiceType;
 
 	public Long getOddIdSeq() {
 		return oddIdSeq;
@@ -400,5 +405,15 @@ public class WHODD extends AuditEntity implements Serializable {
 	public void setTrxSlipNo(String trxSlipNo) {
 		this.trxSlipNo = trxSlipNo;
 	}
+
+	public TOSServiceType getTosServiceType() {
+		return tosServiceType;
+	}
+
+	public void setTosServiceType(TOSServiceType tosServiceType) {
+		this.tosServiceType = tosServiceType;
+	}
+	
+	
 
 }

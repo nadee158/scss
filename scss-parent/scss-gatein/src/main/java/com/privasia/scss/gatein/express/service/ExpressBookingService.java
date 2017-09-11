@@ -106,7 +106,7 @@ public class ExpressBookingService {
 
 		List<HpatDto> hpats = null;
 		try {
-			hpats = hpabService.findEtpHpab4ImpAndExp(card.getCardID(), LocalDateTime.now(),
+			hpats = hpabService.findEtpHpab4ImpAndExp(card.getCardID(), LocalDateTime.now().plusHours(24),
 					bookingTypes, true);
 			if (!(hpats == null || hpats.isEmpty())) {
 				hpats.forEach(hpat -> {

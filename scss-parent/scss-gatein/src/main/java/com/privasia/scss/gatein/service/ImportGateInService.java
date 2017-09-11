@@ -25,6 +25,7 @@ import com.privasia.scss.common.enums.ContainerFullEmptyType;
 import com.privasia.scss.common.enums.ContainerPosition;
 import com.privasia.scss.common.enums.GateInOutStatus;
 import com.privasia.scss.common.enums.ImpExpFlagStatus;
+import com.privasia.scss.common.enums.TOSServiceType;
 import com.privasia.scss.common.enums.TransactionStatus;
 import com.privasia.scss.common.exception.BusinessException;
 import com.privasia.scss.common.exception.ResultsNotFoundException;
@@ -152,6 +153,7 @@ public class ImportGateInService {
       importContainer.getBaseCommonGateInOutAttribute().setPmPlateNo(gateInWriteRequest.getTruckPlateNo());
       importContainer.getBaseCommonGateInOutAttribute().setTimeGateInOk(LocalDateTime.now());
       importContainer.setPrintEIRNo(printEIRNo);
+      importContainer.setTosServiceType(gateInWriteRequest.getTosIndicator());
       if (importContainer.getCommonGateInOut() == null) {
         importContainer.setCommonGateInOut(new CommonGateInOutDTO());
       }
@@ -192,6 +194,7 @@ public class ImportGateInService {
     gatePass.getBaseCommonGateInOutAttribute().setTimeGateInOk(LocalDateTime.now());
     gatePass.getCommonGateInOut().setImpExpFlag(
         ImpExpFlagStatus.fromValue(StringUtils.upperCase(importContainer.getCommonGateInOut().getImpExpFlag())));
+    gatePass.setTosServiceType(TOSServiceType.fromValue(importContainer.getTosServiceType()));
     gatePass.setOrderNo(StringUtils.upperCase(importContainer.getOrderNo()));
     gatePass.setCurrentPosition(StringUtils.upperCase(importContainer.getCurrentPosition()));
     gatePass.setGateInOut(GateInOutStatus.fromValue(StringUtils.upperCase(importContainer.getGateInOut())));

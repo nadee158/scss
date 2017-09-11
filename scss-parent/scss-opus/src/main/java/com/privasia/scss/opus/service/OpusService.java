@@ -1,11 +1,14 @@
 package com.privasia.scss.opus.service;
 
 import java.util.Optional;
+import java.util.concurrent.Future;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
 
 import com.google.gson.Gson;
@@ -17,7 +20,7 @@ import com.privasia.scss.common.dto.GateOutReponse;
 import com.privasia.scss.common.dto.GateOutRequest;
 import com.privasia.scss.common.dto.GateOutWriteRequest;
 import com.privasia.scss.common.exception.BusinessException;
-import com.privasia.scss.common.interfaces.OpusCosmosBusinessService;
+import com.privasia.scss.common.interfaces.TOSService;
 import com.privasia.scss.opus.dto.OpusGateInReadRequest;
 import com.privasia.scss.opus.dto.OpusGateInReadResponse;
 import com.privasia.scss.opus.dto.OpusGateInWriteRequest;
@@ -29,10 +32,10 @@ import com.privasia.scss.opus.dto.OpusGateOutWriteResponse;
 import com.privasia.scss.opus.dto.OpusRequestResponseDTO;
 
 @Service("opus")
-public class OpusService implements OpusCosmosBusinessService {
+public class OpusService implements TOSService {
 
 	private static final Log log = LogFactory.getLog(OpusService.class);
-	
+
 	private OpusGateInReadService opusGateInReadService;
 
 	private OpusGateInWriteService opusGateInWriteService;
@@ -44,7 +47,7 @@ public class OpusService implements OpusCosmosBusinessService {
 	private OpusGateOutWriteService opusGateOutWriteService;
 
 	private Gson gson;
-	
+
 	@Autowired
 	public void setOpusGateInReadService(OpusGateInReadService opusGateInReadService) {
 		this.opusGateInReadService = opusGateInReadService;
@@ -147,8 +150,9 @@ public class OpusService implements OpusCosmosBusinessService {
 
 	}
 
+	@Async
 	@Override
-	public GateInResponse sendGateInReadRequest(GateInRequest gateInRequest, GateInResponse gateInResponse) {
+	public Future<GateInResponse> sendGateInReadRequest(GateInRequest gateInRequest, GateInResponse gateInResponse) {
 
 		OpusGateInReadRequest gateInReadRequest = opusGateInReadService.constructOpenGateInRequest(gateInRequest);
 
@@ -163,11 +167,13 @@ public class OpusService implements OpusCosmosBusinessService {
 			throw new BusinessException(errorMessage);
 		}
 
-		return  opusGateInReadService.constructGateInReponse(gateInReadResponse, gateInResponse);
+		gateInResponse = opusGateInReadService.constructGateInReponse(gateInReadResponse, gateInResponse);
+		return new AsyncResult<GateInResponse>(gateInResponse);
 	}
-
+	
+	@Async
 	@Override
-	public ContainerValidationInfo sendODDContainerValidationRequest(GateOutRequest gateOutRequest) {
+	public Future<ContainerValidationInfo> sendODDContainerValidationRequest(GateOutRequest gateOutRequest) {
 		OpusGateOutReadRequest gateOutReadRequest = opusGateOutReadService.constructOpenGateOutRequest(gateOutRequest);
 
 		OpusRequestResponseDTO opusRequestResponseDTO = new OpusRequestResponseDTO(gateOutReadRequest, gson,
@@ -190,7 +196,7 @@ public class OpusService implements OpusCosmosBusinessService {
 			validationInfo.setContainerNo2(gateOutRequest.getOddImpContainer2());
 			validationInfo.setContainerNo2Status(true);
 		}
-		return validationInfo;
+		return new AsyncResult<ContainerValidationInfo>(validationInfo);
 	}
 
 }

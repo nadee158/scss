@@ -20,6 +20,7 @@ public class ContainerValidationInfo implements Serializable {
 	private String containerNo1;
 	private boolean containerNo2Status;
 	private String containerNo2;
+	private String tosIndicator;
 	
 	public String getContainerNo1() {
 		return containerNo1;
@@ -45,5 +46,12 @@ public class ContainerValidationInfo implements Serializable {
 	public void setContainerNo2Status(boolean containerNo2Status) {
 		this.containerNo2Status = containerNo2Status;
 	}
+	public String getTosIndicator() {
+		return tosIndicator;
+	}
+	public void setTosIndicator(String tosIndicator) {
+		this.tosIndicator = tosIndicator;
+	}
+	
 
 }

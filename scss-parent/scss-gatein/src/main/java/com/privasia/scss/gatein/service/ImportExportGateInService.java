@@ -2,6 +2,9 @@ package com.privasia.scss.gatein.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
@@ -22,11 +25,12 @@ import com.privasia.scss.common.dto.GateOutMessage;
 import com.privasia.scss.common.dto.ImportContainer;
 import com.privasia.scss.common.enums.ContainerFullEmptyType;
 import com.privasia.scss.common.enums.ImpExpFlagStatus;
+import com.privasia.scss.common.enums.TOSServiceType;
 import com.privasia.scss.common.enums.TransactionStatus;
 import com.privasia.scss.common.exception.BusinessException;
 import com.privasia.scss.common.exception.ResultsNotFoundException;
 import com.privasia.scss.common.interfaces.ContainerExternalDataService;
-import com.privasia.scss.common.interfaces.OpusCosmosBusinessService;
+import com.privasia.scss.common.interfaces.TOSService;
 import com.privasia.scss.common.security.model.UserContext;
 import com.privasia.scss.core.model.Card;
 import com.privasia.scss.core.model.Client;
@@ -43,14 +47,11 @@ import com.privasia.scss.hpat.service.HPABService;
 
 @Service("importExportGateInService")
 public class ImportExportGateInService {
-
+	
+	private static final Log log = LogFactory.getLog(ImportExportGateInService.class);
+	
 	@Value("${async.wait.time}")
 	private long asyncWaitTime;
-
-	@Value("${service.implementor}")
-	private String implementor;
-
-	private static final Log log = LogFactory.getLog(ImportExportGateInService.class);
 
 	private ImportGateInService importGateInService;
 
@@ -169,8 +170,10 @@ public class ImportExportGateInService {
 			gateInResponse.setImportContainers(importContainerList);
 		}
 		
-		OpusCosmosBusinessService businessService = containerExternalDataService.getImplementationService(implementor);
-		businessService.sendGateInReadRequest(gateInRequest, gateInResponse);
+		/*TOSService businessService = containerExternalDataService.getImplementationService(implementor);
+		businessService.sendGateInReadRequest(gateInRequest, gateInResponse);*/
+		
+		fetchTOSServiceDataForGateInRead(gateInRequest, gateInResponse);
 		
 		/*
 		 * if the refer id avaliable then fetch here. then pass export container
@@ -196,6 +199,118 @@ public class ImportExportGateInService {
 
 		gateInResponse.setLaneNo(client.getUnitNo());
 		gateInResponse.setUserId(userContext.getStaffName());
+		return gateInResponse;
+	}
+	
+	
+	public void fetchTOSServiceDataForGateInRead(GateInRequest gateInRequest, GateInResponse gateInResponse) {
+		// assign details from hpab booking
+		if (gateInRequest.getReferID().isPresent()) {
+
+			TOSService businessService = containerExternalDataService
+					.getImplementationService(gateInResponse.getTosIndicator());
+			Future<GateInResponse> response = businessService.sendGateInReadRequest(gateInRequest, gateInResponse);
+
+			while (true) {
+
+				log.debug("inside the loop getTOSServiceDataAtGateInRead");
+
+				if (response.isDone()) {
+
+					try {
+						response.get().setTosIndicator(gateInResponse.getTosIndicator());
+						break;
+					} catch (InterruptedException | ExecutionException | CancellationException e) {
+						log.debug("Error Occured while retrieve data data from " + gateInResponse.getTosIndicator());
+						log.debug(e.getMessage());
+					}
+				}
+
+				try {
+					log.debug("waiting getTOSServiceDataAtGateInRead " + asyncWaitTime);
+					Thread.sleep(10);
+				} catch (InterruptedException e) {
+					log.error(e.getMessage());
+					break;
+				}
+
+			}
+
+		} else {
+			// no refer id present - access simultaniously
+			gateInResponse = accessAllTOStoFetchGateInReadRequest(gateInRequest, gateInResponse);
+
+		}
+
+	}
+
+	public GateInResponse accessAllTOStoFetchGateInReadRequest(GateInRequest gateInRequest,
+			GateInResponse gateInResponse) {
+		long start = System.currentTimeMillis();
+
+		TOSService cosmosBusinessService = containerExternalDataService
+				.getImplementationService(TOSServiceType.COSMOS.getValue());
+		TOSService opusBusinessService = containerExternalDataService
+				.getImplementationService(TOSServiceType.OPUS.getValue());
+
+		Future<GateInResponse> cosmosResponse = null;
+		Future<GateInResponse> opusResponse = null;
+
+		cosmosResponse = cosmosBusinessService.sendGateInReadRequest(gateInRequest, gateInResponse);
+
+		opusResponse = opusBusinessService.sendGateInReadRequest(gateInRequest, gateInResponse);
+
+		while (true) {
+			System.out.println("inside the loop sendAllTOSServiceGateInReadRequest");
+			log.debug("inside the loop sendAllTOSServiceGateInReadRequest");
+
+			if (cosmosResponse.isDone() && opusResponse.isDone()) {
+
+				log.debug("now done sendAllTOSServiceGateInReadRequest");
+				log.debug("gateInResponse.getTosIndicator() before: " + gateInResponse.getTosIndicator());
+				try {
+					gateInResponse = cosmosResponse.get();
+					gateInResponse.setTosIndicator(TOSServiceType.COSMOS.getValue());
+					
+					log.debug("COSMOS SUCCESS: ");
+				} catch (InterruptedException | ExecutionException | CancellationException e) {
+					
+					log.debug("Error Occured while retrieve data data from cosmos");
+					log.debug(e.getMessage());
+				}
+
+				try {
+					gateInResponse = opusResponse.get();
+					gateInResponse.setTosIndicator(TOSServiceType.OPUS.getValue());
+					
+					log.debug("OPUS SUCCESS: ");
+				} catch (InterruptedException | ExecutionException | CancellationException e) {
+					
+					log.debug("Error Occured while retrieve data data from opus");
+					log.debug(e.getMessage());
+				}
+				log.debug("gateInResponse.getTosIndicator() after: " + gateInResponse.getTosIndicator());
+
+				if (StringUtils.isEmpty(gateInResponse.getTosIndicator())) {
+					throw new BusinessException("Data not found in opus or cosmos!");
+				}
+
+				break;
+			} else {
+				log.debug("not done yet sendAllTOSServiceGateInReadRequest");
+			}
+
+			try {
+				log.debug("waiting sendAllTOSServiceGateInReadRequest " + asyncWaitTime);
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+				log.error(e.getMessage());
+				break;
+			}
+		}
+		long end = System.currentTimeMillis();
+		System.out.println("time : " + (end - start) / 1000.0 + "sec");
+
 		return gateInResponse;
 	}
 
@@ -241,7 +356,13 @@ public class ImportExportGateInService {
 
 		GateInResponse gateInResponse = null;
 
-		OpusCosmosBusinessService businessService = containerExternalDataService.getImplementationService(implementor);
+		log.info("gateInWriteRequest.getTosIndicator() " + gateInWriteRequest.getTosIndicator());
+
+		if (StringUtils.isEmpty(gateInWriteRequest.getTosIndicator()))
+			throw new BusinessException("Tos Indicator Not provided From Client Application");
+
+		TOSService businessService = containerExternalDataService
+				.getImplementationService(gateInWriteRequest.getTosIndicator());
 
 		switch (impExpFlag) {
 		case IMPORT:

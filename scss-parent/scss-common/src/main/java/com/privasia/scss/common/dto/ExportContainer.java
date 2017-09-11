@@ -228,6 +228,8 @@ public class ExportContainer extends BaseContainer implements Serializable {
 
 	private Optional<Long> shipSCNID;
 
+	private String tosServiceType;
+
 	@Override
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
@@ -240,7 +242,7 @@ public class ExportContainer extends BaseContainer implements Serializable {
 	public void setExportID(Long exportID) {
 		this.exportID = exportID;
 	}
-	
+
 	public Boolean getManualPlanIndicator() {
 		return manualPlanIndicator;
 	}
@@ -1009,5 +1011,12 @@ public class ExportContainer extends BaseContainer implements Serializable {
 		this.shipSCNID = shipSCNID;
 	}
 
+	public String getTosServiceType() {
+		return tosServiceType;
+	}
+
+	public void setTosServiceType(String tosServiceType) {
+		this.tosServiceType = tosServiceType;
+	}
 
 }
