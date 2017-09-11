@@ -255,6 +255,8 @@ public class ImportExportGateInService {
 
 		Future<GateInResponse> cosmosResponse = null;
 		Future<GateInResponse> opusResponse = null;
+		boolean opus = false;
+		boolean cosmos = false;
 
 		cosmosResponse = cosmosBusinessService.sendGateInReadRequest(gateInRequest, gateInResponse);
 
@@ -270,8 +272,7 @@ public class ImportExportGateInService {
 				log.debug("gateInResponse.getTosIndicator() before: " + gateInResponse.getTosIndicator());
 				try {
 					gateInResponse = cosmosResponse.get();
-					gateInResponse.setTosIndicator(TOSServiceType.COSMOS.getValue());
-					
+					cosmos = true;
 					log.debug("COSMOS SUCCESS: ");
 				} catch (InterruptedException | ExecutionException | CancellationException e) {
 					
@@ -281,8 +282,7 @@ public class ImportExportGateInService {
 
 				try {
 					gateInResponse = opusResponse.get();
-					gateInResponse.setTosIndicator(TOSServiceType.OPUS.getValue());
-					
+					opus = true;
 					log.debug("OPUS SUCCESS: ");
 				} catch (InterruptedException | ExecutionException | CancellationException e) {
 					
@@ -290,11 +290,17 @@ public class ImportExportGateInService {
 					log.debug(e.getMessage());
 				}
 				log.debug("gateInResponse.getTosIndicator() after: " + gateInResponse.getTosIndicator());
-
-				if (StringUtils.isEmpty(gateInResponse.getTosIndicator())) {
+				
+				if(opus && cosmos){
+					throw new BusinessException("Data found in both TOS services. opus and cosmos !");
+				}else if(opus){
+					gateInResponse.setTosIndicator(TOSServiceType.OPUS.getValue());
+				}else if(cosmos){
+					gateInResponse.setTosIndicator(TOSServiceType.COSMOS.getValue());
+				}else{
 					throw new BusinessException("Data not found in opus or cosmos!");
 				}
-
+				
 				break;
 			} else {
 				log.debug("not done yet sendAllTOSServiceGateInReadRequest");

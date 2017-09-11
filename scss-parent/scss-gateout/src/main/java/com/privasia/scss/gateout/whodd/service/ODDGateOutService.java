@@ -185,6 +185,8 @@ public class ODDGateOutService {
 
 		Future<ContainerValidationInfo> cosmosResponse = null;
 		Future<ContainerValidationInfo> opusResponse = null;
+		boolean opus = false;
+		boolean cosmos = false;
 
 		cosmosResponse = cosmosBusinessService.sendODDContainerValidationRequest(gateOutRequest);
 
@@ -201,7 +203,11 @@ public class ODDGateOutService {
 	
 				try {
 					validateInfo = cosmosResponse.get();
-					validateInfo.setTosIndicator(TOSServiceType.COSMOS.getValue());
+					
+					if(validateInfo.isContainerNo1Status() || validateInfo.isContainerNo2Status()){
+						cosmos = true;
+					}
+					
 					log.info("COSMOS SUCCESS: ");
 				} catch (InterruptedException | ExecutionException | CancellationException e) {
 					log.debug("Error Occured while retrieve data data from cosmos");
@@ -210,18 +216,27 @@ public class ODDGateOutService {
 
 				try {
 					validateInfo = opusResponse.get();
-					validateInfo.setTosIndicator(TOSServiceType.OPUS.getValue());
+					opus = true;
 					log.info("OPUS SUCCESS: ");
 				} catch (InterruptedException | ExecutionException | CancellationException e) {
 					log.debug("Error Occured while retrieve data data from opus");
 					log.debug(e.getMessage());
 				}
 				
-				if (StringUtils.isEmpty(validateInfo.getTosIndicator())) {
+				
+				
+				if(opus && cosmos){
+					throw new BusinessException("Data found in both TOS services. opus and cosmos !");
+				}else if(opus){
+					validateInfo.setTosIndicator(TOSServiceType.OPUS.getValue());
+				}else if(cosmos){
+					validateInfo.setTosIndicator(TOSServiceType.COSMOS.getValue());
+				}else {
 					log.info("ODD container not found in TOS services : "+gateOutRequest.getExpContainer1()+" / : "+gateOutRequest.getExpContainer2()+ 
 							gateOutRequest.getImpContainer1()+" / : "+gateOutRequest.getImpContainer2());
 					throw new BusinessException("Data not found in opus or cosmos!");
 				}
+			
 
 				break;
 			} else {
