@@ -27,6 +27,7 @@ import com.privasia.scss.common.enums.TransactionStatus;
 import com.privasia.scss.common.enums.TransactionType;
 import com.privasia.scss.common.exception.BusinessException;
 import com.privasia.scss.common.exception.ResultsNotFoundException;
+import com.privasia.scss.common.util.DateUtil;
 import com.privasia.scss.common.util.LPS;
 import com.privasia.scss.core.model.Client;
 import com.privasia.scss.core.model.CustomContainer;
@@ -109,7 +110,7 @@ public class CustomsService {
 		this.wdcGatePassRepository = wdcGatePassRepository;
 	}
 
-	public String updateCustoms(CustomsDTO customsDTO) {
+	public CustomsDTO updateCustoms(CustomsDTO customsDTO) {
 
 		if (StringUtils.isEmpty(customsDTO.getTransactionType()))
 			throw new BusinessException("Transaction Type need to provided");
@@ -129,7 +130,8 @@ public class CustomsService {
 			deleteCustomsByGateOutClientId(customsDTO.getGateOutClientId());
 			custom = constructCustoms(customsDTO, TransactionType.IMPORT);
 			updateCustomsImport(custom, customsDTO);
-			return "success";
+			customsDTO.setCustomUpdateDateTime(DateUtil.getFormatteDateTime(custom.getTimeGateOut()));
+			return customsDTO;
 		case EXPORT:
 
 			if ((customsDTO.getExportContainer01Info() == null
@@ -141,7 +143,8 @@ public class CustomsService {
 			deleteCustomsByGateOutClientId(customsDTO.getGateOutClientId());
 			custom = constructCustoms(customsDTO, TransactionType.EXPORT);
 			updateCustomsExport(custom, customsDTO);
-			return "success";
+			customsDTO.setCustomUpdateDateTime(DateUtil.getFormatteDateTime(custom.getTimeGateOut()));
+			return customsDTO;
 		case IMPORT_EXPORT:
 
 			if ((customsDTO.getImportContainer01Info() == null
@@ -161,7 +164,8 @@ public class CustomsService {
 			updateCustomsImport(custom, customsDTO);
 			custom = constructCustoms(customsDTO, TransactionType.EXPORT);
 			updateCustomsExport(custom, customsDTO);
-			return "success";
+			customsDTO.setCustomUpdateDateTime(DateUtil.getFormatteDateTime(custom.getTimeGateOut()));
+			return customsDTO;
 		case ODD_IMPORT:
 
 			if (customsDTO.getImportODDInfo() == null && customsDTO.getImportODDInfo().isPresent() == false)
@@ -170,7 +174,8 @@ public class CustomsService {
 			deleteCustomsByGateOutClientId(customsDTO.getGateOutClientId());
 			custom = constructCustoms(customsDTO, TransactionType.IMPORT);
 			updateCustomsODD(custom, customsDTO.getImportODDInfo().get());
-			return "success";
+			customsDTO.setCustomUpdateDateTime(DateUtil.getFormatteDateTime(custom.getTimeGateOut()));
+			return customsDTO;
 
 		case ODD_EXPORT:
 
@@ -180,7 +185,8 @@ public class CustomsService {
 			deleteCustomsByGateOutClientId(customsDTO.getGateOutClientId());
 			custom = constructCustoms(customsDTO, TransactionType.EXPORT);
 			updateCustomsODD(custom, customsDTO.getExportODDInfo().get());
-			return "success";
+			customsDTO.setCustomUpdateDateTime(DateUtil.getFormatteDateTime(custom.getTimeGateOut()));
+			return customsDTO;
 
 		case ODD_IMPORT_EXPORT:
 
@@ -195,8 +201,8 @@ public class CustomsService {
 			updateCustomsODD(custom, customsDTO.getExportODDInfo().get());
 			custom = constructCustoms(customsDTO, TransactionType.IMPORT);
 			updateCustomsODD(custom, customsDTO.getImportODDInfo().get());
-
-			return "success";
+			customsDTO.setCustomUpdateDateTime(DateUtil.getFormatteDateTime(custom.getTimeGateOut()));
+			return customsDTO;
 
 		default:
 			throw new BusinessException("No transaction type to update customs !");

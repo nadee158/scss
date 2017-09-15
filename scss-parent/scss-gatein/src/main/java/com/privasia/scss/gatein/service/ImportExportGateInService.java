@@ -32,6 +32,7 @@ import com.privasia.scss.common.exception.ResultsNotFoundException;
 import com.privasia.scss.common.interfaces.ContainerExternalDataService;
 import com.privasia.scss.common.interfaces.TOSService;
 import com.privasia.scss.common.security.model.UserContext;
+import com.privasia.scss.common.util.ApplicationConstants;
 import com.privasia.scss.core.model.Card;
 import com.privasia.scss.core.model.Client;
 import com.privasia.scss.core.model.HPABBooking;
@@ -42,6 +43,7 @@ import com.privasia.scss.core.repository.HPABBookingRepository;
 import com.privasia.scss.core.repository.SystemUserRepository;
 import com.privasia.scss.core.security.util.SecurityHelper;
 import com.privasia.scss.core.service.CommonCardService;
+import com.privasia.scss.core.service.WDCGlobalSettingService;
 import com.privasia.scss.gatein.exports.business.service.SolasService;
 import com.privasia.scss.hpat.service.HPABService;
 
@@ -74,6 +76,13 @@ public class ImportExportGateInService {
 	private SolasService solasService;
 
 	private HPABBookingRepository hpabBookingRepository;
+	
+	private WDCGlobalSettingService wdcGlobalSettingService;
+
+	@Autowired
+	public void setWdcGlobalSettingService(WDCGlobalSettingService wdcGlobalSettingService) {
+		this.wdcGlobalSettingService = wdcGlobalSettingService;
+	}
 
 	@Autowired
 	public void setExternalContainerInformationService(ContainerExternalDataService containerExternalDataService) {
@@ -173,7 +182,7 @@ public class ImportExportGateInService {
 		/*TOSService businessService = containerExternalDataService.getImplementationService(implementor);
 		businessService.sendGateInReadRequest(gateInRequest, gateInResponse);*/
 		
-		fetchTOSServiceDataForGateInRead(gateInRequest, gateInResponse);
+		gateInResponse=fetchTOSServiceDataForGateInRead(gateInRequest, gateInResponse);
 		
 		/*
 		 * if the refer id avaliable then fetch here. then pass export container
@@ -203,12 +212,12 @@ public class ImportExportGateInService {
 	}
 	
 	
-	public void fetchTOSServiceDataForGateInRead(GateInRequest gateInRequest, GateInResponse gateInResponse) {
+	public GateInResponse fetchTOSServiceDataForGateInRead(GateInRequest gateInRequest, GateInResponse gateInResponse) {
 		// assign details from hpab booking
 		if (gateInRequest.getReferID().isPresent()) {
-
+			if(StringUtils.isNotBlank(gateInRequest.getTosIndicator())){
 			TOSService businessService = containerExternalDataService
-					.getImplementationService(gateInResponse.getTosIndicator());
+					.getImplementationService(gateInRequest.getTosIndicator());
 			Future<GateInResponse> response = businessService.sendGateInReadRequest(gateInRequest, gateInResponse);
 
 			while (true) {
@@ -235,12 +244,17 @@ public class ImportExportGateInService {
 				}
 
 			}
+			}
+			else {
+				throw new BusinessException("No Tos Indicator found for Refer List !");
+			}
 
 		} else {
 			// no refer id present - access simultaniously
 			gateInResponse = accessAllTOStoFetchGateInReadRequest(gateInRequest, gateInResponse);
 
 		}
+		return gateInResponse;
 
 	}
 
@@ -255,25 +269,55 @@ public class ImportExportGateInService {
 
 		Future<GateInResponse> cosmosResponse = null;
 		Future<GateInResponse> opusResponse = null;
+		GateInResponse cosmosGateInResponse = null;
+		GateInResponse opusGateInResponse = null;
+		 
+		 try {
+			cosmosGateInResponse = (GateInResponse) gateInResponse.clone();
+			opusGateInResponse = (GateInResponse) gateInResponse.clone();
+		} catch (CloneNotSupportedException e1) {
+			log.debug("Error Occured while retrieve data data " + e1.getMessage());
+		}
+		TOSServiceType tosServiceType = TOSServiceType.fromValue(wdcGlobalSettingService.getWDCGlobalSetting(ApplicationConstants.TOS_FLAG));
+		if(tosServiceType==null){
+			tosServiceType = TOSServiceType.BOTH;
+		}
 		boolean opus = false;
 		boolean cosmos = false;
-
+		
+		switch (tosServiceType){
+		case COSMOS:
 		cosmosResponse = cosmosBusinessService.sendGateInReadRequest(gateInRequest, gateInResponse);
-
+		break;
+		case OPUS:
 		opusResponse = opusBusinessService.sendGateInReadRequest(gateInRequest, gateInResponse);
-
+		break;
+		case BOTH:
+		default:
+		cosmosResponse = cosmosBusinessService.sendGateInReadRequest(gateInRequest, cosmosGateInResponse);
+		opusResponse = opusBusinessService.sendGateInReadRequest(gateInRequest, opusGateInResponse);		
+		}
 		while (true) {
 			System.out.println("inside the loop sendAllTOSServiceGateInReadRequest");
 			log.debug("inside the loop sendAllTOSServiceGateInReadRequest");
 
-			if (cosmosResponse.isDone() && opusResponse.isDone()) {
+			if ((TOSServiceType.BOTH.equals(tosServiceType) && cosmosResponse.isDone() && opusResponse.isDone())
+					|| (TOSServiceType.OPUS.equals(tosServiceType) && opusResponse.isDone())
+					|| (TOSServiceType.COSMOS.equals(tosServiceType) && cosmosResponse.isDone())) {
 
 				log.debug("now done sendAllTOSServiceGateInReadRequest");
 				log.debug("gateInResponse.getTosIndicator() before: " + gateInResponse.getTosIndicator());
 				try {
+					if(TOSServiceType.COSMOS.equals(tosServiceType)){
 					gateInResponse = cosmosResponse.get();
 					cosmos = true;
 					log.debug("COSMOS SUCCESS: ");
+					}
+					if (TOSServiceType.BOTH.equals(tosServiceType)) {
+						gateInResponse = cosmosGateInResponse = cosmosResponse.get();
+						cosmos = true;
+						log.debug("COSMOS SUCCESS: ");
+					}
 				} catch (InterruptedException | ExecutionException | CancellationException e) {
 					
 					log.debug("Error Occured while retrieve data data from cosmos");
@@ -281,9 +325,16 @@ public class ImportExportGateInService {
 				}
 
 				try {
+					if(TOSServiceType.OPUS.equals(tosServiceType)){
 					gateInResponse = opusResponse.get();
-					opus = true;
+					opus = true; 
 					log.debug("OPUS SUCCESS: ");
+					}
+					if (TOSServiceType.BOTH.equals(tosServiceType)) {
+						gateInResponse = opusGateInResponse = opusResponse.get();
+						opus = true;
+						log.debug("OPUS SUCCESS: ");
+					}
 				} catch (InterruptedException | ExecutionException | CancellationException e) {
 					
 					log.debug("Error Occured while retrieve data data from opus");

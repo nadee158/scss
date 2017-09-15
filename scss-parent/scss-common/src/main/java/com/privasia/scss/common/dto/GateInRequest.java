@@ -36,7 +36,7 @@ public class GateInRequest implements Serializable {
 	private boolean checkPreArrival = false;// -boolean
 	private String hpabSeqId;// -string
 	private String haulageCode;
-
+	private String tosIndicator;
 	@NotNull(message = "Please enter a date for Gate in date time")
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateUtil.GLOBAL_DATE_TIME_PATTERN)
 	private LocalDateTime gateInDateTime;// -string
@@ -207,6 +207,20 @@ public class GateInRequest implements Serializable {
 		this.oddReject = oddReject;
 	}
 	
+	/**
+	 * @return the tosIndicator
+	 */
+	public String getTosIndicator() {
+		return tosIndicator;
+	}
+
+	/**
+	 * @param tosIndicator the tosIndicator to set
+	 */
+	public void setTosIndicator(String tosIndicator) {
+		this.tosIndicator = tosIndicator;
+	}
+
 	@Override
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);

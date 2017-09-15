@@ -37,6 +37,7 @@ import com.privasia.scss.gateout.dto.FileDTO;
 import com.privasia.scss.hpat.service.HPABService;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Predicate;
+import com.privasia.scss.gateout.service.IsoCodeService;;
 
 @Service("exportGateOutService")
 public class ExportGateOutService {
@@ -51,6 +52,13 @@ public class ExportGateOutService {
 
 	private HPABService hpabService;
 
+	private IsoCodeService isoCodeService;
+
+	@Autowired
+	public void setIsoCodeService(IsoCodeService isoCodeService) {
+		this.isoCodeService = isoCodeService;
+	}
+	
 	@Autowired
 	public void setModelMapper(ModelMapper modelMapper) {
 		this.modelMapper = modelMapper;
@@ -78,7 +86,7 @@ public class ExportGateOutService {
 				TransactionStatus.INPROGRESS);
 		List<Exports> inprogressExpList = optExpList.orElseThrow(() -> new BusinessException(
 				"No InProgress Export Transaction for the scan card ! " + gateOutRequest.getCardID()));
-
+		
 		List<ExportContainer> exportContainerList = new ArrayList<ExportContainer>();
 
 		inprogressExpList.forEach(export -> {
@@ -111,6 +119,7 @@ public class ExportGateOutService {
 			gateOutReponse.setGateInStatus(export.getCommonGateInOut().getGateInStatus().getValue());
 			gateOutReponse.setTosIndicator(export.getTosServiceType().getValue());
 		});
+		 isoCodeService.setExportISOInfo(exportContainerList);
 
 		return exportContainerList;
 

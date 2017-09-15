@@ -106,6 +106,8 @@ public class ImportContainer extends BaseContainer implements Serializable {
 	private String pkfzBlock;
 
 	private String lpkBlock;
+	
+	private String yardPosition;
 
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateUtil.GLOBAL_DATE_TIME_PATTERN)
 	private LocalDateTime cusGCSReleaseDate;
@@ -564,5 +566,11 @@ public class ImportContainer extends BaseContainer implements Serializable {
 	public void setTosServiceType(String tosServiceType) {
 		this.tosServiceType = tosServiceType;
 	}
+	public String getYardPosition() {
+		return yardPosition;
+	}
 
+	public void setYardPosition(String yardPosition) {
+		this.yardPosition = yardPosition;
+	}
 }

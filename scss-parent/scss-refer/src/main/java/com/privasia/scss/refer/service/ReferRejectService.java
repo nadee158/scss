@@ -156,7 +156,8 @@ public class ReferRejectService {
 	  
     ReferRejectListDTO listDTO = new ReferRejectListDTO();
     listDTO.setReferId(referReject.getReferRejectID());
-    
+    if(referReject.getTosServiceType()!=null)
+    listDTO.setTosIndicator(referReject.getTosServiceType().getValue());
     listDTO.setExpWeightBridge(referReject.getExpWeightBridge());
     
     if (referReject.getBaseCommonGateInOut() != null) {

@@ -71,6 +71,8 @@ public class KioskBoothRightsDTO implements Serializable {
 	private KioskBoothContainerDTO container03 = null;
 
 	private KioskBoothContainerDTO container04 = null;
+	
+	private String customUpdateDateTime = StringUtils.EMPTY;;
 
 	public Long getBoothClientID() {
 		return boothClientID;
@@ -286,5 +288,13 @@ public class KioskBoothRightsDTO implements Serializable {
 
 	public void setBoothUnitNo(String boothUnitNo) {
 		this.boothUnitNo = boothUnitNo;
+	}
+
+	public String getCustomUpdateDateTime() {
+		return customUpdateDateTime;
+	}
+
+	public void setCustomUpdateDateTime(String customUpdateDateTime) {
+		this.customUpdateDateTime = customUpdateDateTime;
 	}
 }

@@ -108,6 +108,9 @@ public class KioskBoothRights extends AuditEntity implements Serializable {
 
 	@Column(name = "REFER_REASON_02")
 	private String referReason02List;
+	
+	@Column(name = "CUS_UPDATE_TIME")
+	private LocalDateTime customUpdateDateTime;
 
 	@Embedded
 	@AttributeOverrides({ @AttributeOverride(name = "containerNumber", column = @Column(name = "CT1")),
@@ -379,6 +382,14 @@ public class KioskBoothRights extends AuditEntity implements Serializable {
 
 	public void setSealEnteredTime(LocalDateTime sealEnteredTime) {
 		this.sealEnteredTime = sealEnteredTime;
+	}
+
+	public LocalDateTime getCustomUpdateDateTime() {
+		return customUpdateDateTime;
+	}
+
+	public void setCustomUpdateDateTime(LocalDateTime customUpdateDateTime) {
+		this.customUpdateDateTime = customUpdateDateTime;
 	}
 
 	@Override

@@ -7,6 +7,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.privasia.scss.common.enums.TOSServiceType;
 import com.privasia.scss.common.util.DateUtil;
 
 public class ReferRejectListDTO implements Serializable {
@@ -48,6 +49,8 @@ public class ReferRejectListDTO implements Serializable {
 	
 	private Long gatePass02;
 
+	private String tosIndicator;
+		
 	public Long getReferId() {
 		return referId;
 	}
@@ -150,6 +153,14 @@ public class ReferRejectListDTO implements Serializable {
 
 	public void setGatePass02(Long gatePass02) {
 		this.gatePass02 = gatePass02;
+	}
+
+	public String getTosIndicator() {
+		return tosIndicator;
+	}
+
+	public void setTosIndicator(String tosIndicator) {
+		this.tosIndicator = tosIndicator;
 	}
 
 	@Override

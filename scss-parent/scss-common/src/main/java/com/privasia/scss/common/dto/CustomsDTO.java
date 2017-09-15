@@ -1,6 +1,7 @@
 package com.privasia.scss.common.dto;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -21,6 +22,7 @@ public class CustomsDTO implements Serializable {
 	private CustomsODDInfo exportODDInfo;
 	private Long gateOutClientId;
 	private String transactionType;
+	private String customUpdateDateTime;
 	
 	public Optional<CustomsExportInfo> getExportContainer01Info() {
 		return Optional.ofNullable(exportContainer01Info);
@@ -84,6 +86,14 @@ public class CustomsDTO implements Serializable {
 
 	public void setTransactionType(String transactionType) {
 		this.transactionType = transactionType;
+	}
+
+	public String getCustomUpdateDateTime() {
+		return customUpdateDateTime;
+	}
+
+	public void setCustomUpdateDateTime(String customUpdateDateTime) {
+		this.customUpdateDateTime = customUpdateDateTime;
 	}
 
 	@Override

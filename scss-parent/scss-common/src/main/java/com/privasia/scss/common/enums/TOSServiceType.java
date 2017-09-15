@@ -13,7 +13,7 @@ import java.util.Map;
  */
 public enum TOSServiceType implements Enumable {
 
-  OPUS("opus"), COSMOS("cosmos");
+  OPUS("opus"), COSMOS("cosmos"), BOTH("opus_cosmos");
 
   private final String tosServiceType;
 

@@ -352,6 +352,9 @@ public class OpusDTOConstructService {
 			exportContainer.setReferTemp(ExportUtilService
 					.getDoubleValueFromString(gIReadResponseExporterContainer.getContainerReeferTempValue()));
 		}
+		else {
+			exportContainer.setReferTemp(null);
+		}
 		// private String containerReeferTempUnit;// null,
 		exportContainer.setReeferTempUnit(gIReadResponseExporterContainer.getContainerReeferTempUnit());
 

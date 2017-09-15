@@ -131,4 +131,5 @@ public interface ApplicationConstants {
   public static final String COSMOS_MSG_CODE_PROPERTY_FILE = "classpath:cosmos_msg_codes.properties";
   
   public static final String INF0016 = "Container(s) are re-planned.";
+public static final String TOS_FLAG = "TOS_FLAG";
 }

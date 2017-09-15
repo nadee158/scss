@@ -72,7 +72,7 @@ public class GateInReferService {
 					
 					ExportContainer exportContainer = null;
 					
-					if(StringUtils.isEmpty(gateInResponse.getHpabBookingId())){
+					if(StringUtils.isEmpty(gateInResponse.getHpabBookingId()) && (exportContainers == null || exportContainers.isEmpty())){
 						exportContainer = new ExportContainer();
 					}else{
 						Optional<ExportContainer> exportContainerOpt = exportContainers.stream().filter(

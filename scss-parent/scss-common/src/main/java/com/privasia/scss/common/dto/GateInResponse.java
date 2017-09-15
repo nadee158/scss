@@ -12,7 +12,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.privasia.scss.common.util.ApplicationConstants;
 import com.privasia.scss.common.util.DateUtil;
 
-public class GateInResponse implements Serializable {
+public class GateInResponse implements Serializable, Cloneable {
 
 	/**
 	 * 
@@ -258,6 +258,25 @@ public class GateInResponse implements Serializable {
 	@Override
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
+	}
+
+	public Object clone() throws CloneNotSupportedException {
+		GateInResponse gateInResponse = (GateInResponse) super.clone();
+		if(axleVerified!=null)
+		gateInResponse.setAxleVerified(new Boolean(axleVerified.booleanValue()));
+		if(pmVerified!=null)
+		gateInResponse.setPmVerified(new Boolean(pmVerified.booleanValue()));
+		if(exportContainers!=null)
+		gateInResponse.setExportContainers(new ArrayList(exportContainers));
+		if(importContainers!=null)
+		gateInResponse.setImportContainers(new ArrayList(importContainers));
+		if(whoddContainers!=null)
+		gateInResponse.setWhoddContainers(new ArrayList(whoddContainers));
+		gateInResponse.setGateINDateTime(gateINDateTime);
+		if(expWeightBridge!=null)
+		gateInResponse.setExpWeightBridge(new Integer(expWeightBridge.intValue()));
+		gateInResponse.setMessage(message);
+		return gateInResponse;
 	}
 
 }

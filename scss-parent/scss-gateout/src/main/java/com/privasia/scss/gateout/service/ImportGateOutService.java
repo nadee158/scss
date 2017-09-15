@@ -93,6 +93,14 @@ public class ImportGateOutService {
 	public void setCosmosImportRepository(CosmosImportRepository cosmosImportRepository) {
 		this.cosmosImportRepository = cosmosImportRepository;
 	}
+	
+	@Autowired
+	private IsoCodeService isoCodeService;
+
+	@Autowired
+	public void setIsoCodeService(IsoCodeService isoCodeService) {
+		this.isoCodeService = isoCodeService;
+	}
 
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, readOnly = true)
 	public List<ImportContainer> populateGateOut(GateOutRequest gateOutRequest, GateOutReponse gateOutReponse) {
@@ -138,7 +146,8 @@ public class ImportGateOutService {
 			gateOutReponse.setGateInStatus(gatePass.getCommonGateInOut().getGateInStatus().getValue());
 			gateOutReponse.setTosIndicator(gatePass.getTosServiceType().getValue());
 		});
-
+		isoCodeService.setImportISOInfo(importContainerList);
+		
 		return importContainerList;
 
 	}

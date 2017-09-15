@@ -33,9 +33,9 @@ public class CustomsController {
 	public CustomResponseEntity<ApiResponseObject<?>> updateCustoms(@RequestBody CustomsDTO customsDTO)
 			throws BindException {
 
-		String result = customsService.updateCustoms(customsDTO);
+		CustomsDTO result = customsService.updateCustoms(customsDTO);
 
-		return new CustomResponseEntity<ApiResponseObject<?>>(new ApiResponseObject<String>(HttpStatus.OK, result),
+		return new CustomResponseEntity<ApiResponseObject<?>>(new ApiResponseObject<CustomsDTO>(HttpStatus.OK, result),
 				HttpStatus.OK);
 	}
 
