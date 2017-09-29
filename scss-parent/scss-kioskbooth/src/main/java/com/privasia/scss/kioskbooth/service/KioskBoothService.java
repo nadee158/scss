@@ -84,7 +84,7 @@ public class KioskBoothService {
 		if (activeKioskBoothList.isEmpty())
 			throw new ResultsNotFoundException("Invalid Kiosk ID !" + kioskBoothRightDTO.getKioskClientID());
 
-		activeKioskBoothList.stream().forEach(KioskBoothRights -> {
+			activeKioskBoothList.stream().forEach(KioskBoothRights -> {
 
 			int retval = KioskBoothRights.getKioskBoothRightsID().getBooth().getClientID()
 					.compareTo(kioskBoothRightDTO.getBoothClientID());
@@ -104,7 +104,7 @@ public class KioskBoothService {
 
 	}
 
-	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, readOnly = false)
+	/*@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, readOnly = false)
 	public String completeBoothTransaction(KioskBoothRightsDTO kioskBoothRightDTO) {
 
 		if (kioskBoothRightDTO.getKioskClientID() == null || kioskBoothRightDTO.getBoothClientID() == null)
@@ -133,6 +133,63 @@ public class KioskBoothService {
 		});
 
 		return "SUCCESS";
+	}*/
+	
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, readOnly = false)
+	public String completeBoothTransaction(KioskBoothRightsDTO kioskBoothRightDTO) {
+
+		if (kioskBoothRightDTO.getKioskClientID() == null || kioskBoothRightDTO.getBoothClientID() == null)
+			throw new BusinessException("Kiosk Information and/or booth information is null!");
+		
+		KioskBoothRights lockKiosk = fetchLockKiosk(
+				kioskBoothRightDTO.getKioskClientID(), kioskBoothRightDTO.getBoothClientID());
+		kioskBoothRightDTO.setKioskLockStatus(KioskLockStatus.COMPLETE.getValue());
+		modelMapper.map(kioskBoothRightDTO, lockKiosk);
+		kioskBoothRightsRepository.save(lockKiosk);
+
+		List<KioskBoothRights> realeasedkioskBoothList = fetchReleasedKioskBoothByKiosk(
+				kioskBoothRightDTO.getKioskClientID());
+
+		if (realeasedkioskBoothList.isEmpty())
+			throw new ResultsNotFoundException("Invalid Kiosk ID !" + kioskBoothRightDTO.getKioskClientID());
+
+			realeasedkioskBoothList.stream().forEach(kioskBoothRights -> {
+				kioskBoothRights.setKioskLockStatus(KioskLockStatus.ACTIVE);
+				kioskBoothRightsRepository.save(kioskBoothRights);
+
+		});
+
+		return "SUCCESS";
+	}
+	
+	
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, readOnly = true)
+	public KioskBoothRights fetchLockKiosk(Long kioskID, Long boothID) {
+
+		Predicate byStatus = KioskBoothRightsPredicates.KioskBoothStatus(KioskLockStatus.LOCK);
+		Predicate byKioskID = KioskBoothRightsPredicates.KioskBoothInfoByKioskID(kioskID);
+		Predicate byBoothID = KioskBoothRightsPredicates.KioskBoothInfoByBoothID(boothID);
+		Predicate condition = ExpressionUtils.allOf(byKioskID, byBoothID, byStatus);
+
+		Iterable<KioskBoothRights> boothIterator = kioskBoothRightsRepository.findAll(condition);
+		List<KioskBoothRights> lockList = IteratorUtils.toList(boothIterator.iterator());
+		
+		if(lockList.isEmpty() || lockList.size() > 1){
+			throw new BusinessException("Invalid Records fetch. KioskID : "+kioskID +" / BoothID" + boothID);
+		}
+		
+		return lockList.get(0);
+	}
+	
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, readOnly = true)
+	public List<KioskBoothRights> fetchReleasedKioskBoothByKiosk(Long kioskID) {
+
+		Predicate byStatus = KioskBoothRightsPredicates.KioskBoothStatus(KioskLockStatus.RELEASED);
+		Predicate byKioskID = KioskBoothRightsPredicates.KioskBoothInfoByKioskID(kioskID);
+		Predicate condition = ExpressionUtils.allOf(byKioskID, byStatus);
+		Iterable<KioskBoothRights> boothIterator = kioskBoothRightsRepository.findAll(condition);
+
+		return IteratorUtils.toList(boothIterator.iterator());
 	}
 
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, readOnly = true)
