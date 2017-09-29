@@ -157,9 +157,10 @@ public class ImportGateOutService {
 
 		Optional<WDCGatePass> optionalWdcGatePass = wdcGatePassRepository
 				.findByGatePassNO(importContainer.getGatePassNo());
-
-		WDCGatePass wdcGatePass = optionalWdcGatePass.orElseThrow(() -> new ResultsNotFoundException(
-				"GCS Declaration could be found for the given Gate Pass Numbers! " + importContainer.getGatePassNo()));
+		if(optionalWdcGatePass.isPresent()){
+		WDCGatePass wdcGatePass = optionalWdcGatePass.get(); // no need to throw business validation as non-wdc gatepass wont hav this info
+		/*WDCGatePass wdcGatePass = optionalWdcGatePass.orElseThrow(() -> new ResultsNotFoundException(
+				"GCS Declaration could be found for the given Gate Pass Numbers! " + importContainer.getGatePassNo()));*/
 
 		log.info("getGateOrder" + wdcGatePass.getGateOrder());
 		log.info("getLineCode" + wdcGatePass.getGateOrder().getLineCode());
@@ -174,6 +175,8 @@ public class ImportGateOutService {
 		importContainer.setCusGCSReleaseDate(wdcGatePass.getCusGCSReleaseDate());
 		importContainer.setPortSecurity(wdcGatePass.getDateTimeADD());
 		importContainer.setGatePassIssued(wdcGatePass.getDateTimeADD());
+		importContainer.setMoveType(wdcGatePass.getGateOrder().getMoveType());
+		}
 		return importContainer;
 
 	}

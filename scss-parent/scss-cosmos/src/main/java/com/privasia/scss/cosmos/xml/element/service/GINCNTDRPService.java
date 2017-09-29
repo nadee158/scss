@@ -24,7 +24,7 @@ public class GINCNTDRPService {
 		gincntdrp.setUNITSE(TextString.toEscapeXmlUpperCase(exportContainer.getContainer().getContainerNumber()));
 
 		// Order Reference : To capture Booking Ref no
-		gincntdrp.setORRFSE(TextString.toEscapeXmlUpperCase(exportContainer.getBookingNo()));
+		gincntdrp.setORRFSE(StringUtils.trim(TextString.toEscapeXmlUpperCase(exportContainer.getBookingNo())));
 
 		// : To capture container ISO code
 		gincntdrp.setUNISSE(TextString.toUpperCase(exportContainer.getContainer().getContainerISOCode()));// Container

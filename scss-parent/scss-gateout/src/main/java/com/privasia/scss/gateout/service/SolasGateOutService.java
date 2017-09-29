@@ -355,13 +355,13 @@ public class SolasGateOutService {
 
 			solasPassFileDTO.setC1WithInTolerance(exports.isWithinTolerance());
 			solasPassFileDTO.setContainer01No(exports.getContainer().getContainerNumber());
-			solasPassFileDTO.setTerminalVGMC1(exports.getSolas().getMgw());
+			solasPassFileDTO.setTerminalVGMC1(exports.getExpNetWeight());
 			solasPassFileDTO.setExportSEQ01(Long.toString(exports.getExportID()));
 
 		} else {
 			solasPassFileDTO.setC2WithInTolerance(exports.isWithinTolerance());
 			solasPassFileDTO.setContainer02No(exports.getContainer().getContainerNumber());
-			solasPassFileDTO.setTerminalVGMC2(exports.getSolas().getMgw());
+			solasPassFileDTO.setTerminalVGMC2(exports.getExpNetWeight());
 			solasPassFileDTO.setExportSEQ02(Long.toString(exports.getExportID()));
 		}
 		return solasPassFileDTO;

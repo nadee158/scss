@@ -156,7 +156,7 @@ public class CosmosExportRepository {
 		int rowcount = 0;
 
 		try {
-			exportContainer.setBookingNo(rs.getString("ORRF05"));
+			exportContainer.setBookingNo(StringUtils.trim(rs.getString("ORRF05")));
 			if (StringUtils.isNotEmpty(exportContainer.getBookingNo())) {
 				exportContainer.setBookingNoExist(true);
 			} else {
@@ -164,22 +164,22 @@ public class CosmosExportRepository {
 						+ exportContainer.getContainer().getContainerNumber());
 			}
 
-			exportContainer.getContainer().setContainerFullOrEmpty(rs.getString("CNBT03"));
-			exportContainer.setShippingLine(StringUtils.trimToEmpty(rs.getString("LYND05")));
-			exportContainer.setShippingAgent(StringUtils.trimToEmpty(rs.getString("ORGV05")));
+			exportContainer.getContainer().setContainerFullOrEmpty(StringUtils.trim(rs.getString("CNBT03")));
+			exportContainer.setShippingLine(StringUtils.trimToEmpty(StringUtils.trim(rs.getString("LYND05"))));
+			exportContainer.setShippingAgent(StringUtils.trimToEmpty(StringUtils.trim(rs.getString("ORGV05"))));
 
-			exportContainer.setVesselCode(rs.getString("VMID01"));
-			exportContainer.setVesselVoyageIN(rs.getString("RSIN01"));
-			exportContainer.setVesselVoyageOUT(rs.getString("RSUT01"));
-			exportContainer.setVesselVisitID(rs.getString("BZID01"));
+			exportContainer.setVesselCode(StringUtils.trim(rs.getString("VMID01")));
+			exportContainer.setVesselVoyageIN(StringUtils.trim(rs.getString("RSIN01")));
+			exportContainer.setVesselVoyageOUT(StringUtils.trim(rs.getString("RSUT01")));
+			exportContainer.setVesselVisitID(StringUtils.trim(rs.getString("BZID01")));
 			exportContainer.setVesselSCN(StringUtils.trim(rs.getString("REGN01")));
 			exportContainer.setVesselName(StringUtils.trim(rs.getString("MVVA47")));
-			exportContainer.setVesselStatus(rs.getString("BZFS01"));
+			exportContainer.setVesselStatus(StringUtils.trim(rs.getString("BZFS01")));
 
 			System.out.println("ETA DATA : " + rs.getString("ETAD01"));
 
 			exportContainer.setVesselETADate(DateUtil.getLocalDategFromString(
-					rs.getString("ETAD01") + TextString.padding(rs.getString("ETAT01"), 6, '0', true)));
+					StringUtils.trim(rs.getString("ETAD01")) + TextString.padding(rs.getString("ETAT01"), 6, '0', true)));
 			System.out.println("rowcount bef " + rowcount);
 			while (rs.next()) {
 				rowcount += rs.getRow();

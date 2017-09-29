@@ -61,8 +61,8 @@ public class PortService {
 
         if (StringUtils.isNotEmpty(impContainer.getMoveType())) {
 
-          Optional<String> type = gateTypes.stream().findAny()
-              .filter(gate -> StringUtils.equalsIgnoreCase(gate, impContainer.getMoveType()));
+          Optional<String> type = gateTypes.stream()
+              .filter(gate -> StringUtils.equalsIgnoreCase(gate, impContainer.getMoveType())).findAny();
           if (!type.isPresent()) {
             ClientGateType clientGateType = ClientGateType.fromValue(impContainer.getMoveType());
             throw new BusinessException("Containers released by " + clientGateType.name()
@@ -77,8 +77,8 @@ public class PortService {
 
             if (StringUtils.equalsIgnoreCase("R", impContainer.getGcsBlock())
                 || StringUtils.equalsIgnoreCase("RLS", impContainer.getGcsBlock())) {
-              Optional<String> type = gateTypes.stream().findAny()
-                  .filter(gate -> StringUtils.equalsIgnoreCase(gate, ClientGateType.GCS.getValue()));
+              Optional<String> type = gateTypes.stream()
+                  .filter(gate -> StringUtils.equalsIgnoreCase(gate, ClientGateType.GCS.getValue())).findAny();
               if (!type.isPresent())
                 throw new BusinessException(
                     "Containers released by GCS are only allowed to exit the port through Main gate. Gate Pass No "
@@ -90,8 +90,8 @@ public class PortService {
 
             if (StringUtils.equalsIgnoreCase("R", impContainer.getPkfzBlock())
                 || StringUtils.equalsIgnoreCase("RLS", impContainer.getPkfzBlock())) {
-              Optional<String> type = gateTypes.stream().findAny()
-                  .filter(gate -> StringUtils.equalsIgnoreCase(gate, ClientGateType.PKFZ.getValue()));
+              Optional<String> type = gateTypes.stream()
+                  .filter(gate -> StringUtils.equalsIgnoreCase(gate, ClientGateType.PKFZ.getValue())).findAny();
               if (!type.isPresent())
                 throw new BusinessException(
                     "Containers released by PKFZ are only allowed to exit the port through Pkfz gate. Gate Pass No "
@@ -103,8 +103,8 @@ public class PortService {
 
             if (StringUtils.equalsIgnoreCase("R", impContainer.getLpkBlock())
                 || StringUtils.equalsIgnoreCase("RLS", impContainer.getLpkBlock())) {
-              Optional<String> type = gateTypes.stream().findAny()
-                  .filter(gate -> StringUtils.equalsIgnoreCase(gate, ClientGateType.LPK.getValue()));
+              Optional<String> type = gateTypes.stream()
+                  .filter(gate -> StringUtils.equalsIgnoreCase(gate, ClientGateType.LPK.getValue())).findAny();
               if (!type.isPresent())
                 throw new BusinessException(
                     "Containers released by LPK are only allowed to exit the port through mini booth. Gate Pass No "

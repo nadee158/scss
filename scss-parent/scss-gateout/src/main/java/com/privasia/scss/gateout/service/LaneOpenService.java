@@ -13,7 +13,10 @@ import com.privasia.scss.common.enums.LaneOpenFlag;
 import com.privasia.scss.common.exception.BusinessException;
 import com.privasia.scss.common.exception.ResultsNotFoundException;
 import com.privasia.scss.core.model.LaneOpen;
+import com.privasia.scss.core.predicate.LaneOpenPredicate;
 import com.privasia.scss.core.repository.LaneOpenRepository;
+import com.querydsl.core.types.ExpressionUtils;
+import com.querydsl.core.types.Predicate;
 
 @Service("laneOpenService")
 public class LaneOpenService {
@@ -46,9 +49,15 @@ public class LaneOpenService {
 
   @Transactional(propagation = Propagation.REQUIRED, readOnly = true, value = "transactionManager")
   public LaneOpenDTO checkLaneOpenStatus(Long laneID) {
-    Optional<LaneOpen> laneOpenOptional = laneOpenRepository.findByLaneID_ClientID(laneID);
-    LaneOpen laneOpen = laneOpenOptional
-        .orElseThrow(() -> new BusinessException("Lane opened could not be found for the client id " + laneID));
+	Predicate byLaneID = LaneOpenPredicate.bylaneOpenID(laneID);
+	Predicate byLaneOpenStatus = LaneOpenPredicate.byLaneOpenFlag(LaneOpenFlag.READY);
+	Predicate byDateTimeOpened = LaneOpenPredicate.byDateTimeUpdate(null);
+	Predicate condition = ExpressionUtils.allOf(ExpressionUtils.and(ExpressionUtils.and(byLaneID, byLaneOpenStatus),byDateTimeOpened));
+   //Optional<LaneOpen> laneOpenOptional = laneOpenRepository.findByLaneID_ClientID(laneID);
+	/*LaneOpen laneOpen = laneOpenOptional
+	        .orElseThrow(() -> new BusinessException("Lane opened could not be found for the client id " + laneID));*/
+	 LaneOpen laneOpen = laneOpenRepository.findOne(condition);
+	if(laneOpen==null ) throw new BusinessException("Lane opened could not be found for the client id " + laneID);
     LaneOpenDTO laneOpenDTO = new LaneOpenDTO();
     modelMapper.map(laneOpen, laneOpenDTO);
     return laneOpenDTO;

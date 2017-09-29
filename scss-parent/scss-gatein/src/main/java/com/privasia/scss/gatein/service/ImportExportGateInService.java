@@ -232,6 +232,7 @@ public class ImportExportGateInService {
 					} catch (InterruptedException | ExecutionException | CancellationException e) {
 						log.debug("Error Occured while retrieve data data from " + gateInResponse.getTosIndicator());
 						log.debug(e.getMessage());
+						break;
 					}
 				}
 
