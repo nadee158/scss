@@ -7,6 +7,8 @@ import java.io.Serializable;
 
 import javax.persistence.Embeddable;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.hibernate.annotations.Type;
 
 import com.privasia.scss.common.enums.ContainerFullEmptyType;
@@ -148,6 +150,11 @@ public class KioskBoothContainerAttribute  implements Serializable {
 
 	public void setContainerFullOrEmpty(ContainerFullEmptyType containerFullOrEmpty) {
 		this.containerFullOrEmpty = containerFullOrEmpty;
+	}
+	
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
 	}
 
 }

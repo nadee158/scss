@@ -6,6 +6,8 @@ package com.privasia.scss.common.dto;
 import java.io.Serializable;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 /**
  * @author Janaka
@@ -296,5 +298,10 @@ public class KioskBoothRightsDTO implements Serializable {
 
 	public void setCustomUpdateDateTime(String customUpdateDateTime) {
 		this.customUpdateDateTime = customUpdateDateTime;
+	}
+	
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
 	}
 }

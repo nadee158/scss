@@ -1,8 +1,11 @@
 package com.privasia.scss.kioskbooth.controller;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -22,6 +25,8 @@ import com.privasia.scss.kioskbooth.service.KioskBoothService;
 @RestController
 @RequestMapping("**/kioskbooth")
 public class KioskBoothController {
+	
+	private static final Log log = LogFactory.getLog(KioskBoothController.class);
 
 	@Autowired
 	private KioskBoothService kioskBoothService;
@@ -29,7 +34,13 @@ public class KioskBoothController {
 	@RequestMapping(value = "/activatetrx", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public CustomResponseEntity<ApiResponseObject<?>> activateBoothsByKioskId(
 			@RequestBody KioskBoothRightsDTO kioskBoothRightsDTO) {
+		log.info("######################################################## ");
+		log.info("activatetrx serive start : "+LocalDateTime.now());
+		log.info("request  : "+kioskBoothRightsDTO);
 		String status = kioskBoothService.activateBoothsForTransaction(kioskBoothRightsDTO);
+		log.info("activatetrx response : "+status);
+		log.info("activatetrx serive end : "+LocalDateTime.now());
+		log.info("######################################################## ");
 		return new CustomResponseEntity<ApiResponseObject<?>>(new ApiResponseObject<String>(HttpStatus.OK, status),
 				HttpStatus.OK);
 	}

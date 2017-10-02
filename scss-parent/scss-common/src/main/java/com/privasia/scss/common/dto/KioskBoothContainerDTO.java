@@ -3,6 +3,8 @@ package com.privasia.scss.common.dto;
 import java.io.Serializable;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 public class KioskBoothContainerDTO implements Serializable {
 
@@ -137,9 +139,7 @@ public class KioskBoothContainerDTO implements Serializable {
 
 	@Override
 	public String toString() {
-		return "KioskBoothContainerDTO [cancelPickup=" + cancelPickup + ", location=" + location + ", status=" + status
-				+ ", others=" + others + ", rejectRemarks=" + rejectRemarks + ", customCheck=" + customCheck
-				+ ", shipper=" + shipper + ", line=" + line + "]";
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
 	}
 
 }

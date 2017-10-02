@@ -12,6 +12,8 @@ import java.util.stream.StreamSupport;
 
 import org.apache.commons.collections4.IteratorUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,11 +34,14 @@ import com.privasia.scss.core.model.KioskBoothRights;
 import com.privasia.scss.core.predicate.KioskBoothRightsPredicates;
 import com.privasia.scss.core.repository.ClientRepository;
 import com.privasia.scss.core.repository.KioskBoothRightsRepository;
+import com.privasia.scss.kioskbooth.controller.KioskBoothController;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Predicate;
 
 @Service("kioskBoothService")
 public class KioskBoothService {
+	
+	private static final Log log = LogFactory.getLog(KioskBoothService.class);
 
 	@Autowired
 	private KioskBoothRightsRepository kioskBoothRightsRepository;
@@ -49,9 +54,15 @@ public class KioskBoothService {
 
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, readOnly = false)
 	public String activateBoothsForTransaction(KioskBoothRightsDTO kioskBoothRightDTO) {
-
+		
+		
+		log.info("######################################################## ");
+		log.info("activateBoothsForTransaction  method start : "+LocalDateTime.now());
+	
+		
 		List<KioskBoothRights> lockedKioskList = fetchLockReleasedKioskBoothByKiosk(
 				kioskBoothRightDTO.getKioskClientID());
+		
 		if (!lockedKioskList.isEmpty())
 			throw new BusinessException(
 					"Transaction In Progress for the given Kiosk !" + kioskBoothRightDTO.getKioskClientID());
@@ -60,13 +71,26 @@ public class KioskBoothService {
 
 		if (kioskListToActive.isEmpty())
 			throw new ResultsNotFoundException("No Kiosk Info Found to Update!");
+		
+		log.info("kioskListToActive size "+kioskListToActive.size());
+		
 		kioskListToActive.stream().forEach(KioskBoothRights -> {
 			kioskBoothRightDTO.setKioskLockStatus(KioskLockStatus.ACTIVE.getValue());
 			kioskBoothRightDTO.setBoothClientID(KioskBoothRights.getKioskBoothRightsID().getBooth().getClientID());
 			modelMapper.map(kioskBoothRightDTO, KioskBoothRights);
+			log.info("AFTER MAPPING FROM DTO  &&&&&&&&&&&&&&&&&&&&&&&&&&");
+			log.info(KioskBoothRights);
+			log.info("AFTER MAPPING FROM DTO END  &&&&&&&&&&&&&&&&&&&&&&&&&&");
 			KioskBoothRights.setSealEnteredTime(LocalDateTime.now());
+			log.info("SealEnteredTime :  "+KioskBoothRights.getSealEnteredTime());
+			log.info("before save kioskbooths rights kioskID "+KioskBoothRights.getKioskBoothRightsID().getKiosk().getClientID()+" / "
+					+KioskBoothRights.getKioskBoothRightsID().getBooth().getClientID());
 			kioskBoothRightsRepository.save(KioskBoothRights);
+			log.info("save kioskbooths rights ");
 		});
+		
+		log.info("######################################################## ");
+		log.info("activateBoothsForTransaction  method end bofore : "+LocalDateTime.now());
 
 		return "SUCCESS";
 
@@ -194,6 +218,9 @@ public class KioskBoothService {
 
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE, readOnly = true)
 	public List<KioskBoothRights> fetchKiosksToActivateTrx(Long kioskID) {
+		
+		log.info("######################################################## ");
+		log.info("fetchKiosksToActivateTrx  method start : "+LocalDateTime.now());
 
 		List<KioskLockStatus> kioskStatusList = new ArrayList<>();
 		kioskStatusList.add(KioskLockStatus.ACTIVE);
@@ -206,6 +233,9 @@ public class KioskBoothService {
 		Predicate condition = ExpressionUtils.allOf(byKioskID, statusOR);
 
 		Iterable<KioskBoothRights> boothIterator = kioskBoothRightsRepository.findAll(condition);
+		
+		log.info("fetchKiosksToActivateTrx  method end before : "+LocalDateTime.now());
+		log.info("######################################################## ");
 
 		return IteratorUtils.toList(boothIterator.iterator());
 	}

@@ -15,6 +15,8 @@ import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.hibernate.annotations.Type;
 
 import com.privasia.scss.common.enums.KioskLockStatus;
@@ -417,6 +419,11 @@ public class KioskBoothRights extends AuditEntity implements Serializable {
 	public int hashCode() {
 		int result = Objects.hash(getKioskBoothRightsID().getBooth().getClientID());
 		return result += Objects.hash(getKioskBoothRightsID().getKiosk().getClientID());
+	}
+	
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
 	}
 
 }
