@@ -285,7 +285,8 @@ public class SolasGateOutService {
 
 		solasETPDTO.setSolasDetail(exports.getSolas().getSolasDetailID());
 		solasETPDTO.setSolasRefNumber(exports.getSolas().getSolasRefNumber());
-		solasETPDTO.setTerminalVGM(exports.getSolas().getMgw());
+//		solasETPDTO.setTerminalVGM(exports.getSolas().getMgw());
+		solasETPDTO.setTerminalVGM(exports.getExpNetWeight());
 
 		/*if (StringUtils.isNotBlank(exports.getCalculatedVariance())) {
 			solasETPDTO.setTolerance(Integer.parseInt(exports.getCalculatedVariance()));

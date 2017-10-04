@@ -34,7 +34,6 @@ import com.privasia.scss.core.model.KioskBoothRights;
 import com.privasia.scss.core.predicate.KioskBoothRightsPredicates;
 import com.privasia.scss.core.repository.ClientRepository;
 import com.privasia.scss.core.repository.KioskBoothRightsRepository;
-import com.privasia.scss.kioskbooth.controller.KioskBoothController;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Predicate;
 
@@ -178,7 +177,7 @@ public class KioskBoothService {
 			throw new ResultsNotFoundException("Invalid Kiosk ID !" + kioskBoothRightDTO.getKioskClientID());
 
 			realeasedkioskBoothList.stream().forEach(kioskBoothRights -> {
-				kioskBoothRights.setKioskLockStatus(KioskLockStatus.ACTIVE);
+				kioskBoothRights.setKioskLockStatus(KioskLockStatus.COMPLETE);
 				kioskBoothRightsRepository.save(kioskBoothRights);
 
 		});

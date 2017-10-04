@@ -23,12 +23,12 @@ public class KioskBoothRightsPK implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	@ManyToOne(fetch = FetchType.LAZY, cascade=CascadeType.MERGE)
-	@JoinColumn(name = "BOOTH_ID", nullable = false, referencedColumnName = "CLI_CLIENTID_SEQ")
+	@ManyToOne(fetch = FetchType.LAZY, cascade=CascadeType.REFRESH)
+	@JoinColumn(name = "BOOTH_ID", nullable = false, referencedColumnName = "CLI_CLIENTID_SEQ", insertable = false, updatable = false)
 	private Client booth;
 
-	@ManyToOne(fetch = FetchType.LAZY, cascade=CascadeType.MERGE)
-	@JoinColumn(name = "KIOSK_ID", nullable = false, referencedColumnName = "CLI_CLIENTID_SEQ")
+	@ManyToOne(fetch = FetchType.LAZY, cascade=CascadeType.REFRESH)
+	@JoinColumn(name = "KIOSK_ID", nullable = false, referencedColumnName = "CLI_CLIENTID_SEQ", insertable = false, updatable = false)
 	private Client kiosk;
 
 	public Client getBooth() {
